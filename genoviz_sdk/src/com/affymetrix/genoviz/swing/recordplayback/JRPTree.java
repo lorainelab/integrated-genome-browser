@@ -72,4 +72,9 @@ public class JRPTree extends JTree implements JRPWidget {
 	public String getId() {
 		return id;
 	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return true;
+	}
 }

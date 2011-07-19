@@ -4,6 +4,7 @@ import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -18,7 +19,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *  subclass is more control of where the JCheckBox is placed inside the
  *  dialog.
  */
-public final class MergeOptionChooser extends JFileChooser implements ActionListener{
+public final class MergeOptionChooser extends JRPFileChooser implements ActionListener{
 	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
@@ -26,8 +27,8 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 	public final JComboBox speciesCB = new JComboBox();
 	public final JComboBox versionCB = new JComboBox();
 
-	public MergeOptionChooser() {
-		super();
+	public MergeOptionChooser(String id) {
+		super(id);
 		
 		speciesCB.addActionListener(this);
 		versionCB.addActionListener(this);

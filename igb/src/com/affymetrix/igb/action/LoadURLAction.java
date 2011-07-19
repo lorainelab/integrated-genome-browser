@@ -25,7 +25,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public final class LoadURLAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
-	private static final MergeOptionChooser chooser = new MergeOptionChooser();
+	private static final MergeOptionChooser chooser = new MergeOptionChooser("loadURL");
 	private final JFrame gviewerFrame;
 	private final Box mergeOptionBox = chooser.box;
 	private JDialog dialog = null;

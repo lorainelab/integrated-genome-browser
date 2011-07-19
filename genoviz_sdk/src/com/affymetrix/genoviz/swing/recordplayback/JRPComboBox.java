@@ -41,7 +41,7 @@ public class JRPComboBox extends JComboBox implements JRPWidget {
 			}
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setSelectedItem(\"" + getSelectedItem() + "\")"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPComboBox.this, "setSelectedItem(\"" + getSelectedItem() + "\")"));
 			}
 			@Override
 			public void popupMenuCanceled(PopupMenuEvent e) {}
@@ -50,5 +50,10 @@ public class JRPComboBox extends JComboBox implements JRPWidget {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return false;
 	}
 }

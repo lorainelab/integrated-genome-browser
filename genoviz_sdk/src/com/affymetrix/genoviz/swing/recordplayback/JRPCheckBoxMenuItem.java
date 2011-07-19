@@ -52,7 +52,7 @@ public class JRPCheckBoxMenuItem extends JCheckBoxMenuItem implements JRPWidget 
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "doClick()"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPCheckBoxMenuItem.this, "doClick()"));
 			}
 		});
     }
@@ -60,5 +60,10 @@ public class JRPCheckBoxMenuItem extends JCheckBoxMenuItem implements JRPWidget 
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return true;
 	}
 }

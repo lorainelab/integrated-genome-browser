@@ -42,12 +42,17 @@ public class JRPButton extends JButton implements JRPWidget {
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "doClick()"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPButton.this, "doClick()"));
 			}
 		});
     }
     @Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return true;
 	}
 }

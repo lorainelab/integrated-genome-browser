@@ -62,7 +62,7 @@ public class JRPCheckBox extends JCheckBox implements JRPWidget {
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "doClick()"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPCheckBox.this, "doClick()"));
 			}
 		});
     }
@@ -75,5 +75,10 @@ public class JRPCheckBox extends JCheckBox implements JRPWidget {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return true;
 	}
 }

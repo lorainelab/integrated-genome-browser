@@ -4,6 +4,8 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
@@ -47,18 +49,55 @@ public class JRPTable extends JTable implements JRPWidget {
 		this.id = id;
 		init();
 	}
+	private void addSelectionListener(ListSelectionModel newModel) {
+		newModel.addListSelectionListener(
+			new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+//					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
+				}
+			}
+		);
+	}
+	private void addColumnSelectionListener(ListSelectionModel newModel) {
+		newModel.addListSelectionListener(
+			new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+//					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
+				}
+			}
+		);
+	}
     private void init() {
 		RecordPlaybackHolder.getInstance().addWidget(this);
-//		addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTable.this));
-//			}
-//		});
+		if (getSelectionModel() != null) {
+			addSelectionListener(getSelectionModel());
+		}
+		if (getColumnModel() != null) {
+			TableColumnModel tableColumnModel = getColumnModel();
+			if (tableColumnModel.getSelectionModel() != null) {
+				addColumnSelectionListener(tableColumnModel.getSelectionModel());
+			}
+		}
     }
-
+    @Override
+    public void setColumnModel(TableColumnModel columnModel) {
+    	super.setColumnModel(columnModel);
+    	addColumnSelectionListener(columnModel.getSelectionModel());
+    }
+    @Override
+    public void setSelectionModel(ListSelectionModel newModel) {
+    	super.setSelectionModel(newModel);
+    	addSelectionListener(newModel);
+    }
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return false;
 	}
 }

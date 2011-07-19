@@ -43,7 +43,7 @@ public class JRPTextField extends JTextField implements JRPWidget {
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setText(\"" + getText() + "\")"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTextField.this, "setText(\"" + getText() + "\")"));
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -52,5 +52,10 @@ public class JRPTextField extends JTextField implements JRPWidget {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return false;
 	}
 }

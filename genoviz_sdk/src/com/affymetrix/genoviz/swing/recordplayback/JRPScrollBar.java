@@ -30,12 +30,17 @@ public class JRPScrollBar extends JScrollBar implements JRPWidget {
 			
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPScrollBar.this, "setValue(" + getValue() + ")"));
 			}
 		});
     }
     @Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return false;
 	}
 }

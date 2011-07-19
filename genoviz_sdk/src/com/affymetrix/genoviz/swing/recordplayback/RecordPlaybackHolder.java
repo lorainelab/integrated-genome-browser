@@ -51,12 +51,14 @@ public class RecordPlaybackHolder {
 	}
 
 	public void recordOperation(Operation operation) {
-		int lastIndex = operations.size() - 1;
-		if (lastIndex >= 0) {
-			Operation lastOperation = operations.get(lastIndex);
-			if (operation.getId().equals(lastOperation.getId())) {
-				operations.set(lastIndex, operation);
-				return;
+		if (!operation.getWidget().consecutiveOK()) {
+			int lastIndex = operations.size() - 1;
+			if (lastIndex >= 0) {
+				Operation lastOperation = operations.get(lastIndex);
+				if (operation.getId().equals(lastOperation.getId())) {
+					operations.set(lastIndex, operation);
+					return;
+				}
 			}
 		}
 		operations.add(operation);

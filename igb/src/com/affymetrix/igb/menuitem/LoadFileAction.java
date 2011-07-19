@@ -109,8 +109,8 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 
-	private static MergeOptionChooser getFileChooser() {
-		chooser = new MergeOptionChooser();
+	private static MergeOptionChooser getFileChooser(String id) {
+		chooser = new MergeOptionChooser(id);
 		chooser.setMultiSelectionEnabled(true);
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
 		for (String name : nameToExtensionMap.keySet()) {
@@ -143,7 +143,7 @@ public final class LoadFileAction extends AbstractAction {
 	/** Load a file into the global singleton genometry model. */
 	private static void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
-		MergeOptionChooser fileChooser = getFileChooser();
+		MergeOptionChooser fileChooser = getFileChooser("LoadFile");
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));
@@ -461,7 +461,7 @@ public final class LoadFileAction extends AbstractAction {
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 
-		if(!getFileChooser().accept(new File(friendlyName))){
+		if(!getFileChooser("openURI").accept(new File(friendlyName))){
 			return false;
 		}
 

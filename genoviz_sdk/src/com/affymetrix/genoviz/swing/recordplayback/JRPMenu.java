@@ -35,7 +35,7 @@ public class JRPMenu extends JMenu implements JRPWidget {
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "doClick()"));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPMenu.this, "doClick()"));
 			}
 		});
     }
@@ -43,5 +43,10 @@ public class JRPMenu extends JMenu implements JRPWidget {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+    @Override
+	public boolean consecutiveOK() {
+		return true;
 	}
 }

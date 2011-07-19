@@ -1069,16 +1069,14 @@ public final class GeneralLoadView extends IGBTabPanel
 		return (String) speciesCB.getSelectedItem();
 	}
 
-	public void removeFeature(final GenericFeature feature){
+	public CThreadWorker removeFeature(final GenericFeature feature, final boolean refresh){
 		if(feature == null)
-			return;
+			return null;
 
-		SwingWorker<Void, Void> delete = new SwingWorker<Void, Void>() {
+		CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  "+feature.featureName) {
 
 			@Override
-			protected Void doInBackground(){
-				igbService.addNotLockedUpMsg("Removing feature  "+feature.featureName);
-
+			protected Void runInBackground() {
 				for(BioSeq bioseq : feature.gVersion.group.getSeqList()){
 					for(String method : feature.getMethods()){
 						TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
@@ -1098,17 +1096,20 @@ public final class GeneralLoadView extends IGBTabPanel
 			}
 
 			@Override
-			protected void done() {
-				// Refresh
-				GeneralLoadView.getLoadView().refreshTreeView();
-				GeneralLoadView.getLoadView().createFeaturesTable();
-				gviewer.dataRemoved();
+			protected void finished() {
+				if(refresh){
+					// Refresh
+					GeneralLoadView.getLoadView().refreshTreeView();
+					GeneralLoadView.getLoadView().createFeaturesTable();
+					gviewer.dataRemoved();
+				}
 				TierMaintenanceListenerHolder.getInstance().fireTierRemoved();
-				igbService.removeNotLockedUpMsg("Removing feature  "+feature.featureName);
 			}
 		};
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
+		
+		return delete;
 	}
 	
 	protected AbstractAction getRefreshDataAction() {

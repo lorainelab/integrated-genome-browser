@@ -1,7 +1,10 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.thread.CThreadListener;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
@@ -9,6 +12,7 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
+import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -256,13 +260,59 @@ class JTableX extends JTable implements MouseListener {
 			String message = "Really remove all data sets ?";
 			if (featureSize > 0 && Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 					PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+				final java.util.List<CThreadWorker> deletes	= new java.util.ArrayList<CThreadWorker>(featureSize);
 				for (int row = 0; row < featureSize; row++) {
-					GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
+					CThreadWorker delete = GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row), false);
+					if(delete != null){
+						deletes.add(delete);
+					}
 				}
+				new RefreshListener(deletes);
 			}
 		}
 	}
 
+	private class RefreshListener implements CThreadListener {
+
+		final java.util.List<CThreadWorker> deletes;
+
+		RefreshListener(java.util.List<CThreadWorker> deletes) {
+			this.deletes = deletes;
+			addListeners();
+		}
+
+		public void heardThreadEvent(CThreadEvent cte) {
+			if (allFinished()) {
+				deletes.clear();
+				ThreadUtils.runOnEventQueue(new Runnable() {
+
+					public void run() {
+						// Refresh
+						GeneralLoadView.getLoadView().refreshTreeView();
+						GeneralLoadView.getLoadView().createFeaturesTable();
+						Application.getSingleton().getMapView().dataRemoved();
+					}
+				});
+			}
+		}
+
+		private void addListeners(){
+			for(CThreadWorker delete : deletes){
+				delete.addThreadListener(this);
+			}
+			heardThreadEvent(null);
+		}
+		
+		private boolean allFinished() {
+			for (CThreadWorker delete : deletes) {
+				if (!delete.isDone()) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
 	public void mouseClicked(MouseEvent e) { }
 	public void mousePressed(MouseEvent e) { }
 	public void mouseEntered(MouseEvent e) { }

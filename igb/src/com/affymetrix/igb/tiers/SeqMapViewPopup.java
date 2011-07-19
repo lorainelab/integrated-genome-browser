@@ -711,14 +711,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //}
 
     BioSeq aseq = gmodel.getSelectedSeq();
-	String id = null;
+	String human_name = "depth: " + atier.getLabel();
+	String id = TrackStyle.getUniqueName(human_name);
 	DependentData dd = null;
 	String method = atier.getAnnotStyle().getMethodName();
 	if(bothDirection){
-		id = atier.getLabel() + getSymbol(Direction.BOTH);
+		human_name += getSymbol(Direction.BOTH);
 		dd = new DependentData(id,DependentType.SUMMARY,method,Direction.BOTH);
 	}else{
-		id = atier.getLabel() + getSymbol(atier.getDirection());
+		human_name += getSymbol(atier.getDirection());
 		dd = new DependentData(id,DependentType.SUMMARY,method,atier.getDirection());
 	}
 	
@@ -730,7 +731,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		return;
     }
 
-	gsym.setGraphName("depth: " + id);
+	gsym.setGraphName(human_name);
 	gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 	gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
     gviewer.setAnnotatedSeq(aseq, true, true);

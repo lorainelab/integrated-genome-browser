@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
-import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -181,7 +180,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
-        JRPScrollBar y_scroller = new JRPScrollBar("", JScrollBar.VERTICAL);
+        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
         seqmap.setOffsetScroller(y_scroller);
 
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);

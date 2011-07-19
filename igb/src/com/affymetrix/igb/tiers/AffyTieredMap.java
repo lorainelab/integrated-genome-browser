@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
-import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -102,7 +101,7 @@ public class AffyTieredMap extends NeoMap {
 		show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
 	}
 
-	AffyTieredMap(boolean hscroll, boolean vscroll, JRPScrollBar vscroller) {
+	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
 		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 		this.scroller[Y] = vscroller;
 	}

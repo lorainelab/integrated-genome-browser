@@ -17,7 +17,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.Adjustable;
 import java.awt.Color;
@@ -1037,7 +1036,7 @@ public abstract class NeoAbstractWidget extends Container
 	 *            to be associated with the axis.
 	 *            Typically this will be a scrollbar.
 	 */
-	public abstract void setScroller(int id, JRPScrollBar adj);
+	public abstract void setScroller(int id, JScrollBar adj);
 
 	/**
 	 * scrolls this widget along the specified axis.

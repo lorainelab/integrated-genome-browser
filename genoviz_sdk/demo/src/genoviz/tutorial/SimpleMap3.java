@@ -32,7 +32,7 @@ public class SimpleMap3 extends SimpleMap1 {
 		map.setRangeZoomer(zoomer);
 		scroller = new JScrollBar(JScrollBar.HORIZONTAL);
 		add("South", scroller);
-		//map.setRangeScroller(scroller);
+		map.setRangeScroller(scroller);
 	}
 
 	public static void main (String argv[]) {

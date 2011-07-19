@@ -22,7 +22,6 @@ import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -59,7 +58,7 @@ public class TrackView {
 
 
 	/**List of Dependent data */
-	private static final List<DependentData> dependent_list = new ArrayList<DependentData>();
+	private static final Map<BioSeq, List<DependentData>> dependent_list = new HashMap<BioSeq, List<DependentData>>();
 
 	static void clear() {
 		style2forwardTierGlyph.clear();
@@ -203,6 +202,18 @@ public class TrackView {
 				doMiddlegroundShading((SymWithProps)annotSym, seq);
 			}
 		}
+		
+		List<DependentData> dd_list = dependent_list.get(seq);
+		if (dd_list != null) {
+			for (DependentData d : dd_list) {
+				SymWithProps sym = d.getSym();
+				if (sym != null) {
+					addAnnotationGlyphs(smv, sym);
+					// TODO: reimplement middleground shading in a generic fashion
+					doMiddlegroundShading(sym, seq);
+				}
+			}
+		}
 	}
 
 	private static void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
@@ -279,17 +290,27 @@ public class TrackView {
 		if(seq == null)
 			return null;
 
-		dependent_list.add(dd);
+		List<DependentData> dd_list = dependent_list.get(seq);
+		if(dd_list == null){
+			dd_list = new ArrayList<DependentData>();
+			dependent_list.put(seq, dd_list);
+		}
+		
+		dd_list.add(dd);
 		return dd.createTier(seq);
 	}
 
 	public static void updateDependentData() {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if (seq != null) {
-			for (DependentData dd : dependent_list) {
-				dd.createTier(seq);
-			}
-		}
+		if (seq == null)
+			return;
+		
+		List<DependentData> dd_list = dependent_list.get(seq);
+		if(dd_list == null)
+			return;
+		
+		for (DependentData dd : dd_list)
+			dd.createTier(seq);
 	}
 
 	public static void delete(AffyTieredMap map, String method, ITrackStyle style){
@@ -337,16 +358,20 @@ public class TrackView {
 	
 	public static void deleteDependentData(AffyTieredMap map, String method, BioSeq seq) {
 		DependentData dd = null;
-		for (int i = 0; i < dependent_list.size(); i++) {
-			dd = dependent_list.get(i);
+		List<DependentData> dd_list = dependent_list.get(seq);
+		if(dd_list == null)
+			return;
+		
+		for (int i = 0; i < dd_list.size(); i++) {
+			dd = dd_list.get(i);
 			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
 					|| method.equals(dd.getID())) {
-				dependent_list.remove(dd);
-				GlyphI glyph = map.getItem(dd.getSym());
-				if(glyph != null){
-					map.removeItem(glyph);
-				}
-				seq.unloadAnnotation(dd.getSym());
+				dd_list.remove(dd);
+//				GlyphI glyph = map.getItem(dd.getSym());
+//				if(glyph != null){
+//					map.removeItem(glyph);
+//				}
+//				seq.unloadAnnotation(dd.getSym());
 			}
 		}
 	}

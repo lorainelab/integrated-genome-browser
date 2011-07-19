@@ -53,8 +53,6 @@ public class DependentData {
 			return null;
 		}
 		
-		SymWithProps temp = sym;
-
 		if (type == DependentType.MISMATCH){
 			sym = createMisMatchGraph(aseq, psym);
 		}else if (type == DependentType.SUMMARY) { //Check if type is summary.
@@ -63,11 +61,6 @@ public class DependentData {
 			sym = createCoverageTier(aseq, psym);
 		}
 
-		if(temp != null){
-			aseq.removeAnnotation(temp);
-		}
-
-		aseq.addAnnotation(sym);
 		return sym;
 	}
 

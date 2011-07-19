@@ -48,6 +48,7 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Color;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -686,7 +687,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setSeparate(false); // there are not separate (+) and (-) strands
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-
+	style.setForeground(atier.getForegroundColor());
+	
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
@@ -729,10 +731,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 
 	gsym.setGraphName("depth: " + id);
+	gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+	gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
     gviewer.setAnnotatedSeq(aseq, true, true);
-    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
-    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-    gl.setColor(atier.getForegroundColor());
+//    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
+//    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+//    gl.setColor(atier.getForegroundColor());
   }
 
   void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {

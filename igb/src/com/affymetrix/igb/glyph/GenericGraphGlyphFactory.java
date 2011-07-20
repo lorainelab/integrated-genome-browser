@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -124,7 +125,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
-		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
+		GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(newgraf, gstate);
+		if (graph_glyph == null) {
+			graph_glyph = new GraphGlyph(newgraf, gstate);
+		}
 		ITrackStyle tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 		tier_style.setCollapsed(isGenome);

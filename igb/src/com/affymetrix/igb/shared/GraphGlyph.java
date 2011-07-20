@@ -50,7 +50,7 @@ import java.text.AttributedString;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public final class GraphGlyph extends Glyph {
+public class GraphGlyph extends Glyph {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 
@@ -58,10 +58,10 @@ public final class GraphGlyph extends Glyph {
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
 	private static final int xpix_offset = 0;
-	private static final Point zero_point = new Point(0, 0);
-	private static final Point2D.Double coord = new Point2D.Double(0, 0);
-	private static final Point curr_point = new Point(0, 0);
-	private static final Point prev_point = new Point(0, 0);
+	protected static final Point zero_point = new Point(0, 0);
+	protected static final Point2D.Double coord = new Point2D.Double(0, 0);
+	protected static final Point curr_point = new Point(0, 0);
+	protected static final Point prev_point = new Point(0, 0);
 	private static final Timer tim = new Timer();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -71,7 +71,7 @@ public final class GraphGlyph extends Glyph {
 	private float point_max_ycoord = Float.POSITIVE_INFINITY;
 	private float point_min_ycoord = Float.NEGATIVE_INFINITY;
 	// assumes sorted points, each x corresponding to y
-	private final GraphSym graf;
+	protected final GraphSym graf;
 	public static final int handle_width = 10;  // width of handle in pixels
 	private static final int pointer_width = 10;
 	private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
@@ -353,8 +353,7 @@ public final class GraphGlyph extends Glyph {
 
 	}
 
-
-	private void bigDrawLoop(
+	protected void bigDrawLoop(
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
 			GraphType graph_style, Graphics g, Point max_x_plus_width) {
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {

@@ -118,6 +118,7 @@ public final class UnibrowHairline {
   public void setKeepHairlineInView(boolean b) {
     keep_hairline_in_view = b;
 	hairline.setShowHairline(b);
+	map.updateWidget();
   }
 
   /**

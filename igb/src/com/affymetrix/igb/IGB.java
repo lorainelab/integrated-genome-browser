@@ -443,6 +443,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_clampView", ClampViewAction.getAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
+		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTip.getAction()));
 	}

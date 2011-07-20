@@ -25,6 +25,10 @@ public final class UnibrowHairline {
 
   public static final String PREF_KEEP_HAIRLINE_IN_VIEW = "Keep zoom stripe in view";
   public static final boolean default_keep_hairline_in_view = true;
+  
+  /** Name of a boolean preference for whether the hairline label should be on. */
+  public static final String PREF_HAIRLINE_LABELED = "Zoom Stripe Label On";
+  public static final boolean default_show_hairline_label = true;
     
   static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 12);
 
@@ -47,7 +51,7 @@ public final class UnibrowHairline {
   private double focus = 1;
 
   private boolean keep_hairline_in_view = true;
-  
+
   PreferenceChangeListener pcl;
 
   public UnibrowHairline(NeoMap the_map) {
@@ -84,7 +88,8 @@ public final class UnibrowHairline {
     hairline.setLabeled(false);
     // hairline.setFont(DEFAULT_FONT);
     setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
-
+	setShowHairlineLabel(PreferenceUtils.getBooleanParam(PREF_HAIRLINE_LABELED, default_show_hairline_label));
+	
     //map.addMouseListener( mouse_listener );
     //visible_range.addListener( hairline );
     map.getView().addPreDrawViewListener(pre_draw_listener);
@@ -96,6 +101,9 @@ public final class UnibrowHairline {
         }
         if (pce.getKey().equals(PREF_KEEP_HAIRLINE_IN_VIEW)) {
           setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
+        }
+		if (pce.getKey().equals(PREF_HAIRLINE_LABELED)) {
+          setShowHairlineLabel(PreferenceUtils.getBooleanParam(PREF_HAIRLINE_LABELED, default_show_hairline_label));
         }
       }
     };
@@ -112,6 +120,15 @@ public final class UnibrowHairline {
 	hairline.setShowHairline(b);
   }
 
+  /**
+   * Sets the flag determining whether the hairline should show label.
+   * @param b 
+   */
+  public void setShowHairlineLabel(boolean b){
+	hairline.setLabeled(b);
+	map.updateWidget();
+  }
+  
   /** Sets the location of the hairline.  This is the only supported
    *  way to move the hairline.  Does *NOT* call map.updateWidget() and
    *  but you will probably want to do that after calling this method.

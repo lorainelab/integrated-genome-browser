@@ -11,7 +11,6 @@ import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -69,7 +68,6 @@ import com.affymetrix.igb.action.MapModeAction;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
-import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.view.load.AutoLoad;
 import com.affymetrix.igb.tiers.CoordinateStyle;
@@ -133,7 +131,7 @@ public class SeqMapView extends JPanel
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-	private boolean hairline_is_labeled = true;
+
 	private boolean show_prop_tooltip = true;
 	private MapMode mapMode;
 	private JToggleButton select_mode_button;
@@ -182,8 +180,6 @@ public class SeqMapView extends JPanel
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
 	public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
-	/** Name of a boolean preference for whether the hairline lable should be on. */
-	public static final String PREF_HAIRLINE_LABELED = "Zoom Stripe Label On";
 	/** Name of a boolean preference for whether the horizontal zoom slider is above the map. */
 	private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
 	/** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
@@ -830,7 +826,7 @@ public class SeqMapView extends JPanel
 			hairline.destroy();
 		}
 		hairline = new UnibrowHairline(seqmap);
-		hairline.getShadow().setLabeled(hairline_is_labeled);
+		//hairline.getShadow().setLabeled(hairline_is_labeled);
 		addPreviousTierGlyphs(seqmap, temp_tiers);
 		axis_tier = addAxisTier(axis_index);
 		addAnnotationTracks();
@@ -1501,29 +1497,6 @@ public class SeqMapView extends JPanel
 	/** Sets the hairline position to the given spot. Does not call map.updateWidget() */
 	public final void setZoomSpotY(double y) {
 		seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, y);
-	}
-
-	/**
-	 * Toggles the hairline between labeled/unlabeled and returns true
-	 * if it ends up labeled.
-	 *
-	 * @return true if hairline is labeled
-	 */
-	public final boolean toggleHairlineLabel() {
-		hairline_is_labeled = !hairline_is_labeled;
-		if (hairline != null) {
-			Shadow s = hairline.getShadow();
-			s.setLabeled(hairline_is_labeled);
-			seqmap.updateWidget();
-		}
-		if (ToggleHairlineLabelAction.getAction() != null) {
-			ToggleHairlineLabelAction.getAction().putValue(Action.SELECTED_KEY, hairline_is_labeled);
-		}
-		return hairline_is_labeled;
-	}
-
-	public final boolean isHairlineLabeled() {
-		return hairline_is_labeled;
 	}
 
 	private JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {

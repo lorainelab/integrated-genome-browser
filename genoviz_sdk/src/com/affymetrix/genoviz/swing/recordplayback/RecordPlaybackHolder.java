@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -27,7 +25,7 @@ public class RecordPlaybackHolder {
 	}
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
+//			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
 		widgets.put(widget.getId(), widget);
 	}

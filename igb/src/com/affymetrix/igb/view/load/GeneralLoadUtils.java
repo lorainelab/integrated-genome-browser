@@ -813,38 +813,26 @@ public final class GeneralLoadUtils {
 		optimized_spans.addAll(spans);
 		Thread thread = Thread.currentThread();
 		
-		switch (feature.gVersion.gServer.serverType) {
-			case DAS2:
-				for (SeqSpan optimized_span : optimized_spans) {
-					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
+		for (SeqSpan optimized_span : optimized_spans) {
+			if (thread.isInterrupted()) break;
+			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
+			
+			switch (feature.gVersion.gServer.serverType) {
+				case DAS2:
 					Das2.loadFeatures(optimized_span, feature);
-					if(thread.isInterrupted()){
-						break;
-					}
-				}
-				break;
-
-			case DAS:
-				for (SeqSpan optimized_span : optimized_spans) {
-					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
+					break;
+	
+				case DAS:			
 					Das.loadFeatures(optimized_span, feature);
-					if(thread.isInterrupted()){
-						break;
-					}
-				}
-				break;
+					break;
 
-			case QuickLoad:
-			case LocalFiles:
-				for (SeqSpan optimized_span : optimized_spans) {
-					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
+				case QuickLoad:
+				case LocalFiles:
 					((QuickLoad) feature.symL).loadFeatures(optimized_span, feature);
-					if(thread.isInterrupted()){
-						break;
-					}
-				}
-				break;
+					break;
+			}
 		}
+		
 	}
 
 	/**

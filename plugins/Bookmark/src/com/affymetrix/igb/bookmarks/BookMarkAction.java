@@ -267,11 +267,20 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     if (markMI != null) {
       return markMI;
     }
-    markMI = new BookmarkJMenuItem(bm);
+    markMI = new BookmarkJMenuItem(getIdFromName(bm.getName()), bm);
     component_hash.put(bm, markMI);
     parent_menu.add(markMI);
     markMI.addActionListener(this);
     return markMI;
+  }
+
+  private String getIdFromName(String name) {
+    String id = "";
+    try {
+    	id = "Bookmark_" + URLEncoder.encode("UTF-8", name);
+    }
+    catch (Exception x) {}
+    return id;
   }
 
   private JRPMenu addBookmarkListMenu(JRPMenu parent_menu, BookmarkList bm_list) {

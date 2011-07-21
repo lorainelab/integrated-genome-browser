@@ -28,8 +28,8 @@ public final class BookmarkJMenuItem extends JRPMenuItem {
 	 *  The bookmark may change its Font and/or Icon based on whether
 	 *  the bookmark is designed to open in Unibrow or in an external browser.
 	 */
-	public BookmarkJMenuItem(Bookmark b) {
-		super(b.getName());
+	public BookmarkJMenuItem(String id, Bookmark b) {
+		super(id, b.getName());
 		Font f = this.getFont();
 		Font f2 = new Font(f.getName(), b.isUnibrowControl() ? Font.BOLD : Font.ITALIC, f.getSize());
 		setFont(f2);

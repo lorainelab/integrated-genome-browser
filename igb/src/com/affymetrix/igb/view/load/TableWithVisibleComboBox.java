@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
+import com.affymetrix.genometryImpl.thread.CThreadMonitor;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -267,49 +268,23 @@ class JTableX extends JTable implements MouseListener {
 						deletes.add(delete);
 					}
 				}
-				new RefreshListener(deletes);
-			}
-		}
-	}
+				CThreadMonitor monitor = new CThreadMonitor(deletes) {
 
-	private class RefreshListener implements CThreadListener {
+					@Override
+					public void done() {
+						ThreadUtils.runOnEventQueue(new Runnable() {
 
-		final java.util.List<CThreadWorker> deletes;
-
-		RefreshListener(java.util.List<CThreadWorker> deletes) {
-			this.deletes = deletes;
-			addListeners();
-		}
-
-		public void heardThreadEvent(CThreadEvent cte) {
-			if (allFinished()) {
-				deletes.clear();
-				ThreadUtils.runOnEventQueue(new Runnable() {
-
-					public void run() {
-						// Refresh
-						GeneralLoadView.getLoadView().refreshTreeView();
-						GeneralLoadView.getLoadView().createFeaturesTable();
-						Application.getSingleton().getMapView().dataRemoved();
+							public void run() {
+								// Refresh
+								GeneralLoadView.getLoadView().refreshTreeView();
+								GeneralLoadView.getLoadView().createFeaturesTable();
+								Application.getSingleton().getMapView().dataRemoved();
+							}
+						});
 					}
-				});
-			}
-		}
+				};
 
-		private void addListeners(){
-			for(CThreadWorker delete : deletes){
-				delete.addThreadListener(this);
 			}
-			heardThreadEvent(null);
-		}
-		
-		private boolean allFinished() {
-			for (CThreadWorker delete : deletes) {
-				if (!delete.isDone()) {
-					return false;
-				}
-			}
-			return true;
 		}
 	}
 	

@@ -42,7 +42,6 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -905,8 +904,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
-				combo_style.setBackground(TrackStyle.getDefaultInstance().getBackground());
-				combo_style.setForeground(TrackStyle.getDefaultInstance().getForeground());
+				combo_style.setBackground(igbService.getDefaultBackgroundColor());
+				combo_style.setForeground(igbService.getDefaultForegroundColor());
 			}
 			//combo_style.setHeight(5); // just use the default height
 

@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -42,6 +43,7 @@ public final class GenericFeature {
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
+	private RefreshStatus lastRefresh;
 	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
 	private final Set<String> methods = new HashSet<String>();
@@ -77,7 +79,8 @@ public final class GenericFeature {
 		}
 		this.setFriendlyURL();
 		this.setAutoload(autoload);
-		methods.add(featureName);
+		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
+		//methods.add(featureName);
 	}
 
 	public void setAutoload(boolean auto){
@@ -194,6 +197,14 @@ public final class GenericFeature {
 		style.setFeature(this);
 	}
 
+	public void setLastRefreshStatus(RefreshStatus status){
+		lastRefresh = status;
+	}
+	
+	public RefreshStatus getLastRefreshStatus(){
+		return lastRefresh;
+	}
+	
 	/**
 	 * Delete given method on a given bioseq.
 	 * @param method	Method to be deleted.

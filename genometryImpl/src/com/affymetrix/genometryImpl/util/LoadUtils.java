@@ -72,6 +72,25 @@ public final class LoadUtils {
 		}
 	};
 
+	public static enum RefreshStatus {
+		NOT_REFRESHED ("Feature not refeshed yet."),
+		NO_DATA_LOADED ("No data found in visible region."),
+		NO_SEQ_PRESENT ("Current sequence is not present on feature."),
+		NO_NEW_DATA_LOADED ("All data in visible region is already loaded."),
+		DATA_LOADED ("Data Loaded");
+	
+		private String message;
+		
+		RefreshStatus(String message){
+			this.message = message;
+		}
+		
+		@Override
+		public String toString(){
+			return message;
+		}
+	};
+	
 	/**
 	 * Used to give a friendly name for QuickLoad features.
 	 * @param name

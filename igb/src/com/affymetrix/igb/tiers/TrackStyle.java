@@ -223,8 +223,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
 		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
 		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
-		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getStartColor());
-		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getEndColor());
+		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getForwardColor());
+		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
 		
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
@@ -357,8 +357,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		label_field = template.getLabelField();
 		show2tracks = template.getShow2Tracks();  // depth of visible glyph tree
 		track_name_size = template.getTrackNameSize();
-		start_color = template.getStartColor();
-		end_color = template.getEndColor();
+		start_color = template.getForwardColor();
+		end_color = template.getReverseColor();
 		direction_type = template.direction_type;
 	}
 
@@ -520,11 +520,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	/** The color of the start direction. */
-	public Color getStartColor() {
+	public Color getForwardColor() {
 		return start_color;
 	}
 
-	public void setStartColor(Color c) {
+	public void setForwardColor(Color c) {
 		this.start_color = c;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
@@ -535,11 +535,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	/** The color of the start direction. */
-	public Color getEndColor() {
+	public Color getReverseColor() {
 		return end_color;
 	}
 
-	public void setEndColor(Color c) {
+	public void setReverseColor(Color c) {
 		this.end_color = c;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {

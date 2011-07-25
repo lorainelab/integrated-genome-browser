@@ -283,7 +283,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			pglyph = (GlyphI) glyphClass.newInstance();
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-		pglyph.setColor(getSymColor(insym, the_style));
+		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType())));
 		map.setDataModelFromOriginalSym(pglyph, sym);
 		return pglyph;
 	}
@@ -340,8 +340,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
-		Color start_color = the_style.getStartColor();
-		Color end_color = the_style.getEndColor();
+//		Color start_color = the_style.getStartColor();
+//		Color end_color = the_style.getEndColor();
 		for (int i = 0; i < childCount; i++) {
 			SeqSymmetry child = sym.getChild(i);
 			SeqSpan cspan = gviewer.getViewSeqSpan(child);
@@ -350,16 +350,16 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
 				GlyphI cglyph = getChild(cspan, i==0, i==childCount-1, direction_type);
-				Color child_color = getSymColor(child, the_style);
+				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
 				map.setDataModelFromOriginalSym(cglyph, child);
 				
-				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
-					addColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
-				}
+//				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
+//					addCdsColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
+//				}
 				
 				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
 				if(alignResidueGlyph != null){
@@ -396,7 +396,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return (GlyphI) child_glyph_class.newInstance();
 	}
 		
-	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style) {
+	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, DIRECTION_TYPE direction_type) {
+		if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
+			if(isForward)
+				return style.getForwardColor();
+			return style.getReverseColor();
+		}
+		
 		boolean use_score_colors = style.getColorByScore();
 		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
 
@@ -456,7 +462,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
-	private static void addColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
+	private static void addCdsColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
 		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
 				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
 			return;

@@ -713,8 +713,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 				removeTrackDefaultButton.setEnabled(false);
 			}
-			possitiveColorComboBox.setSelectedColor(selectedStyle.getStartColor());
-			negativeColorComboBox.setSelectedColor(selectedStyle.getEndColor());
+			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
+			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -971,7 +971,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							break;
 						case COL_POS_STRAND_COLOR:
 							if (style.equals(default_annot_style)) {
-								style.setStartColor((Color) value);
+								style.setForwardColor((Color) value);
 							} else {
 								element.propertyMap.put(PROP_START_COLOR, value);
 							}
@@ -979,7 +979,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							break;
 						case COL_NEG_STRAND_COLOR:
 							if (style.equals(default_annot_style)) {
-								style.setEndColor((Color) value);
+								style.setReverseColor((Color) value);
 							} else {
 								element.propertyMap.put(PROP_END_COLOR, value);
 							}

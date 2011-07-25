@@ -853,8 +853,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				colorCheckBox.setEnabled(false);
 				arrowCheckBox.setEnabled(false);
 			}
-			possitiveColorComboBox.setSelectedColor(selectedStyle.getStartColor());
-			negativeColorComboBox.setSelectedColor(selectedStyle.getEndColor());
+			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
+			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -1091,11 +1091,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 							style.setCollapsed(((Boolean) value).booleanValue());
 							break;
 						case COL_POS_STRAND_COLOR:
-							style.setStartColor((Color) value);
+							style.setForwardColor((Color) value);
 							possitiveColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_NEG_STRAND_COLOR:
-							style.setEndColor((Color) value);
+							style.setReverseColor((Color) value);
 							negativeColorComboBox.setSelectedColor((Color) value);
 							break;
 						default:

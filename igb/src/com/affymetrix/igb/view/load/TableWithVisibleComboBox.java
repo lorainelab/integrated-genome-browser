@@ -1,9 +1,7 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadMonitor;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -42,6 +40,7 @@ public final class TableWithVisibleComboBox {
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
 	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
+	static final Icon info_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/TipOfTheDay16.gif");
 	
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -67,6 +66,7 @@ public final class TableWithVisibleComboBox {
 		table.setRowEditorModel(FeaturesTableModel.LOAD_STRATEGY_COLUMN, choices);
 		table.setRowEditorModel(FeaturesTableModel.DELETE_FEATURE_COLUMN, action);
 		table.setRowEditorModel(FeaturesTableModel.REFRESH_FEATURE_COLUMN, action);
+		table.setRowEditorModel(FeaturesTableModel.INFO_FEATURE_COLUMN, action);
 
 		for (int row = 0; row < featureSize; row++) {
 			GenericFeature gFeature = ftm.getFeature(row);
@@ -91,6 +91,9 @@ public final class TableWithVisibleComboBox {
 		c = table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
 		c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
+		
+		c = table.getColumnModel().getColumn(FeaturesTableModel.INFO_FEATURE_COLUMN);
+		c.setCellRenderer(new LabelTableCellRenderer(null, false));
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -189,6 +192,14 @@ class JTableX extends JTable implements MouseListener {
 		   return new TableWithVisibleComboBox.ColumnRenderer();
 	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
 		   return new LabelTableCellRenderer(TableWithVisibleComboBox.delete_icon, true);
+	   }if(column == FeaturesTableModel.INFO_FEATURE_COLUMN){
+		   FeaturesTableModel ftm = (FeaturesTableModel) getModel();
+		   GenericFeature feature = ftm.getFeature(row);
+		   //Set icon here
+		   switch(feature.getLastRefreshStatus()){
+				case NO_DATA_LOADED:
+					return new LabelTableCellRenderer(TableWithVisibleComboBox.info_icon, true);
+		   }
 	   }
 
 	   return super.getCellRenderer(row,column);

@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 
 import java.util.ArrayList;
@@ -23,19 +24,20 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener{
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"","Choose Load Mode", "Data Set","Data Source", "x"};
+	private static final String[] columnNames = {"","","Choose Load Mode", "Data Set","Data Source", "x"};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	static final int REFRESH_FEATURE_COLUMN = 0;
-	static final int LOAD_STRATEGY_COLUMN = 1;
-	static final int FEATURE_NAME_COLUMN = 2;
-	private static final int SERVER_NAME_COLUMN = 3;
-	static final int DELETE_FEATURE_COLUMN = 4;
+	static final int INFO_FEATURE_COLUMN = 0;
+	static final int REFRESH_FEATURE_COLUMN = 1;
+	static final int LOAD_STRATEGY_COLUMN = 2;
+	static final int FEATURE_NAME_COLUMN = 3;
+	private static final int SERVER_NAME_COLUMN = 4;
+	static final int DELETE_FEATURE_COLUMN = 5;
 	private List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 	static final String DELETE_COMMAND = "delete";
 	static final String REFRESH_COMMAND = "refresh";
-
+	
 	FeaturesTableModel(GeneralLoadView glv) {
 		this.glv = glv;
 		this.features = null;
@@ -80,6 +82,13 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		// Also sort these features so the features to be loaded are at the top.
 
 		return visibleFeatures;
+	}
+
+	public void genericFeatureRefreshed(GenericFeature feature) {
+		int row = getRow(feature);
+		if (row >= 0) {
+			fireTableCellUpdated(row, INFO_FEATURE_COLUMN);
+		}
 	}
 
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
@@ -132,6 +141,8 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 		GenericFeature gFeature = features.get(row);
 		switch (col) {
+			case INFO_FEATURE_COLUMN:
+				return "";
 			case REFRESH_FEATURE_COLUMN:
 				return REFRESH_COMMAND;
 			case LOAD_STRATEGY_COLUMN:
@@ -145,7 +156,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 				return gFeature.featureName;
 			case SERVER_NAME_COLUMN:
 				// return the friendly server name
-				return gFeature.gVersion.gServer.serverName + " (" + gFeature.gVersion.gServer.serverType + ")";
+				return gFeature.gVersion.gServer.serverName + " (" + gFeature.gVersion.gServer.serverType + ")";			
 			case DELETE_FEATURE_COLUMN:
 				return DELETE_COMMAND;
 				
@@ -168,21 +179,34 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 			return true;
 		
-		if (col != LOAD_STRATEGY_COLUMN) {
+		if (col != LOAD_STRATEGY_COLUMN && col != INFO_FEATURE_COLUMN) {
 			return false;
 		}
-		if(getFeature(row) == null){
+		
+		GenericFeature feature = getFeature(row);
+		
+		if(feature == null){
 			return false;
 		}
+		
+		if(col == INFO_FEATURE_COLUMN){
+			switch(feature.getLastRefreshStatus()){
+				case NO_DATA_LOADED:
+					return true;	
+			}
+			return false;
+		}
+		
 		// This cell is only editable if the feature isn't already fully loaded.
-		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME);
+		return (feature.getLoadStrategy() != LoadStrategy.GENOME);
 	}
 
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 
 		if(value == null || (col != LOAD_STRATEGY_COLUMN &&
-				col != DELETE_FEATURE_COLUMN && col != REFRESH_FEATURE_COLUMN)){
+				col != DELETE_FEATURE_COLUMN && col != REFRESH_FEATURE_COLUMN &&
+				col != INFO_FEATURE_COLUMN)){
 			return;
 		}
 
@@ -192,6 +216,11 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			return;
 		}
 
+		if (col == INFO_FEATURE_COLUMN){
+			ErrorHandler.errorPanel(gFeature.getLastRefreshStatus().toString());
+			return;
+		}
+		
 		if (col == DELETE_FEATURE_COLUMN){
 			String message = "Really remove entire " + gFeature.featureName + " data set ?";
 			if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),

@@ -204,7 +204,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		this.setBorder(BorderFactory.createEtchedBorder());
 
 		ServerList.getServerInstance().addServerInitListener(this);
-
+		
 		GeneralLoadUtils.loadServerMapping();
 		populateSpeciesData();
 		addListeners();
@@ -985,6 +985,10 @@ public final class GeneralLoadView extends IGBTabPanel
 				col.setResizable(false);
 				col.setMaxWidth(10);
 
+				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.INFO_FEATURE_COLUMN);
+				col.setResizable(false);
+				col.setMaxWidth(10);
+				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());

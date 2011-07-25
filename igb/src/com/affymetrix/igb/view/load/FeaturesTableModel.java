@@ -217,7 +217,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == INFO_FEATURE_COLUMN){
-			ErrorHandler.errorPanel(gFeature.getLastRefreshStatus().toString());
+			ErrorHandler.errorPanel(gFeature.featureName, gFeature.getLastRefreshStatus().toString());
 			return;
 		}
 		

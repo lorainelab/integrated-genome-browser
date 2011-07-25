@@ -1,49 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2Source;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.general.FeatureLoading;
-import com.affymetrix.igb.general.ResidueLoading;
-import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.featureloader.QuickLoad;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
-import com.affymetrix.igb.featureloader.Das;
-import com.affymetrix.igb.featureloader.Das2;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.igb.util.ThreadHandler;
-import com.affymetrix.igb.view.SeqGroupView;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +19,52 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasSource;
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Source;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.general.FeatureLoading;
+import com.affymetrix.igb.general.ResidueLoading;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.featureloader.QuickLoad;
+import com.affymetrix.igb.featureloader.Das;
+import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.util.ThreadHandler;
+import com.affymetrix.igb.view.SeqGroupView;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 
 /**
  *
@@ -122,7 +124,7 @@ public final class GeneralLoadUtils {
 	 * Map to store directory name associated with the server on a cached server.
 	 */
 	private static Map<String, String> servermapping = new HashMap<String, String>();
-	
+
 
 	
 	/**
@@ -770,11 +772,12 @@ public final class GeneralLoadUtils {
 		if (optimized_sym == null) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+			setLastRefreshStatus(feature, false);
 			return;
 		}
 		
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
-		final CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>("Loading feature " + feature.featureName) {
 
 			@Override
 			protected Boolean runInBackground() {
@@ -785,7 +788,7 @@ public final class GeneralLoadUtils {
 				}catch(Exception ex){
 					ex.printStackTrace();
 				}
-				return null;
+				return false;
 			}
 
 			@Override
@@ -803,6 +806,15 @@ public final class GeneralLoadUtils {
 				if (gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
 					SeqGroupView.getInstance().refreshTable();
 				}
+				
+				try {
+					boolean result = get();
+					setLastRefreshStatus(feature, result);
+				} catch (Exception ex) {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+							Level.SEVERE, null, "Unable to get refresh action result.");
+				}
+				
 				TierMaintenanceListenerHolder.getInstance().fireTierAdded();
 			}
 		};
@@ -840,6 +852,19 @@ public final class GeneralLoadUtils {
 		return result;
 	}
 	
+	private static void setLastRefreshStatus(GenericFeature feature, boolean result) {
+		if (result) {
+			feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
+		} else {
+			if (feature.getMethods().isEmpty()) {
+				feature.setLastRefreshStatus(RefreshStatus.NO_DATA_LOADED);
+			}else{
+				feature.setLastRefreshStatus(RefreshStatus.NO_NEW_DATA_LOADED);
+			}
+		}
+		GeneralLoadView.feature_model.genericFeatureRefreshed(feature);
+	}
+		
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.
 	 * @param sym the SeqSymmetry to walk.

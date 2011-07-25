@@ -218,7 +218,8 @@ public final class GenericFeature {
 				requestSym.removeChild(sym);
 			}
 		}
-
+		
+		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
 
 	/**

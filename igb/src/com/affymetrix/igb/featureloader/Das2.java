@@ -47,18 +47,19 @@ public class Das2 {
 	 * @param overlap
 	 * @return true or false
 	 */
-	public static void loadFeatures(final SeqSpan span, final GenericFeature feature) {
+	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
 		final Das2Type dtype = (Das2Type) feature.typeObj;
 		final Das2Region region = ((Das2VersionedSource) feature.gVersion.versionSourceObj).getSegment(span.getBioSeq());
 
 		if (dtype == null || region == null) {
-			return;
+			return false;
 		}
-		loadSpan(feature, span, region, dtype);
+		
+		return loadSpan(feature, span, region, dtype);
 	}
 
 
-    private static void loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
+    private static boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 
         String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
@@ -74,10 +75,12 @@ public class Das2 {
         try {
             String query_part = DetermineQueryPart(region, overlap_filter, type.getURI(), format);
             String feature_query = request_root + "?" + query_part;
-			LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
+			return LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		
+		return false;
     }
 
    private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
@@ -190,7 +193,7 @@ public class Das2 {
 		
 		if(thread.isInterrupted()){
 			feature.removeCurrentRequest(span);
-			return true;
+			return false;
 		}
 		
         try {
@@ -288,7 +291,7 @@ public class Das2 {
 			if(thread.isInterrupted()){
 				feature.removeCurrentRequest(span);
 				feats = null;
-				return true;
+				return false;
 			}
 			
 			for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(feats).entrySet()) {
@@ -304,7 +307,8 @@ public class Das2 {
 			
 			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 			
-            return (feats != null);
+            return (feats != null && !feats.isEmpty());
+			
         } catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 			return false;

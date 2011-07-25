@@ -122,6 +122,9 @@ public final class GeneralLoadUtils {
 	 * Map to store directory name associated with the server on a cached server.
 	 */
 	private static Map<String, String> servermapping = new HashMap<String, String>();
+	
+
+	
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 * @param serverName
@@ -774,10 +777,11 @@ public final class GeneralLoadUtils {
 		final CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
 			@Override
-			protected Object runInBackground() {
+			protected Boolean runInBackground() {
 				try{
-					loadFeaturesForSym(feature, optimized_sym);
+					boolean result = loadFeaturesForSym(feature, optimized_sym);
 					TrackView.updateDependentData();
+					return result;
 				}catch(Exception ex){
 					ex.printStackTrace();
 				}
@@ -806,35 +810,36 @@ public final class GeneralLoadUtils {
 		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 	
-	private static void loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
+	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
 		Thread thread = Thread.currentThread();
-		
+		boolean result = false;
 		for (SeqSpan optimized_span : optimized_spans) {
 			if (thread.isInterrupted()) break;
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 			
 			switch (feature.gVersion.gServer.serverType) {
 				case DAS2:
-					Das2.loadFeatures(optimized_span, feature);
+					if(Das2.loadFeatures(optimized_span, feature)) result = true;
 					break;
 	
 				case DAS:			
-					Das.loadFeatures(optimized_span, feature);
+					if(Das.loadFeatures(optimized_span, feature)) result = true;
 					break;
 
 				case QuickLoad:
 				case LocalFiles:
-					((QuickLoad) feature.symL).loadFeatures(optimized_span, feature);
+					if (((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) result = true;
 					break;
 			}
 		}
 		
+		return result;
 	}
-
+	
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.
 	 * @param sym the SeqSymmetry to walk.

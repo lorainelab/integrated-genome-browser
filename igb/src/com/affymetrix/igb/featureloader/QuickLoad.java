@@ -138,31 +138,32 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	public void loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
 
 		if (this.symL != null && this.symL.isResidueLoader) {
 			loadResiduesThread(feature, overlapSpan);
+			return true;
 		}else{
-			loadSymmetriesThread(feature, overlapSpan);
+			return loadSymmetriesThread(feature, overlapSpan);
 		}
 	}
 
-	private void loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+	private boolean loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 			throws OutOfMemoryError, IOException {
 
 		if (QuickLoad.this.extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
 			QuickLoad.this.getGenome();
-			return;
+			return true;
 		}
 		
 		//Do not not anything in case of genome. Just refresh.
 		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
-			return;
+			return false;
 		}
 
-		loadAndAddSymmetries(feature, overlapSpan);
+		return loadAndAddSymmetries(feature, overlapSpan);
 	}
 	
 
@@ -216,10 +217,11 @@ public final class QuickLoad extends SymLoader {
 	 * @throws IOException
 	 * @throws OutOfMemoryError
 	 */
-	private void loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
+	private boolean loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws IOException, OutOfMemoryError {
 
-		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) return;
+		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) 
+			return false;
 
 		setStyle(feature);
 
@@ -235,14 +237,17 @@ public final class QuickLoad extends SymLoader {
 		if(Thread.currentThread().isInterrupted()){
 			feature.removeCurrentRequest(span);
 			results = null;
-			return;
+			return false;
 		}
 		
+		boolean ret = false;
 		if (results != null) {
-			addSymmtries(span, results, feature, extension);
+			ret = addSymmtries(span, results, feature, extension);
 		}
+		
 		feature.addLoadedSpanRequest(span); // this span is now considered loaded.
-
+		
+		return ret;
 	}
 
 	private void loadAndAddAllSymmetries(final GenericFeature feature)
@@ -297,9 +302,10 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	private static void addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
+	private static boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
-		for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
+		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
+		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
@@ -309,6 +315,8 @@ public final class QuickLoad extends SymLoader {
 				feature.addMethod(entry.getKey());
 			}
 		}
+		
+		return (entries != null && !entries.isEmpty());
 	}
 	
 	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) {

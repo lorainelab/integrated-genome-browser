@@ -48,7 +48,7 @@ public final class Das {
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static void loadFeatures(final SeqSpan span, final GenericFeature feature) {
+	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
 
 		BioSeq current_seq = span.getBioSeq();
 		Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
@@ -73,7 +73,7 @@ public final class Das {
 			if (Thread.currentThread().isInterrupted()) {
 				feature.removeCurrentRequest(span);
 				dassyms = null;
-				return;
+				return false;
 			}
 			SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
 			for (DASSymmetry sym : dassyms) {
@@ -82,6 +82,8 @@ public final class Das {
 		}
 		//The span is now considered loaded.
 		feature.addLoadedSpanRequest(span);
+		
+		return (dassyms != null && !dassyms.isEmpty());
 	}
 
 	/**

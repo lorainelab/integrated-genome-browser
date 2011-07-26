@@ -288,7 +288,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     if (sub_menu != null) {
       return sub_menu;
     }
-    sub_menu = new JRPMenu(bm_list.getName());
+    sub_menu = new JRPMenu(getIdFromName(bm_list.getName()),bm_list.getName());
     component_hash.put(bm_list,  sub_menu);
     parent_menu.add(sub_menu);
     return sub_menu;

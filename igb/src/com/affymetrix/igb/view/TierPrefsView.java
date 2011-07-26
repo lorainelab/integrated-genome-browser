@@ -103,6 +103,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	}
 
 	public void setSelectedRows() {
+		if(table.getRowCount() == 0)
+			return;
+		
 		selectedRows = table.getSelectedRows();
 		if (selectedTiers != null) {
 			table.removeRowSelectionInterval(0, table.getRowCount() - 1);

@@ -219,9 +219,8 @@ public final class GenericFeature {
 			}
 		}
 		
-		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
-
+	
 	/**
 	 * Remove all methods and set feature invisible.
 	 * @param group
@@ -229,7 +228,12 @@ public final class GenericFeature {
 	public void clear(){
 		// Remove all childred from request
 		requestSym.removeChildren();
+		if(currentRequestSym.getChildCount() > 0){
+			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.serverType);
+			currentRequestSym.removeChildren();
+		}
 		this.setInvisible();
+		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
 	
 	/**

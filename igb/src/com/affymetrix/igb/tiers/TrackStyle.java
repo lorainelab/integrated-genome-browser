@@ -54,6 +54,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double y = default_y;
 	private Color start_color = default_start;
 	private Color end_color = default_end; 
+	private boolean show_summary = default_show_summary;
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
@@ -780,6 +781,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());
 	}
 
+	public void setShowSummary(boolean b) {
+		show_summary = b;
+	}
+
+	public boolean getShowSummary() {
+		return show_summary;
+	}
+	
 	/** Whether this style should be customizable in a preferences panel.
 	 *  Sometimes there are temporary styles created where some of the options
 	 *  simply don't make sense and shouldn't be shown to the user in the

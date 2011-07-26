@@ -33,6 +33,7 @@ public interface TrackConstants {
 	static final boolean default_connected = true;
 	static final boolean default_collapsed = false;
 	static final boolean default_expandable = true;
+	static final boolean default_show_summary = false;
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.CYAN;
 	static final Color default_background = Color.BLACK;

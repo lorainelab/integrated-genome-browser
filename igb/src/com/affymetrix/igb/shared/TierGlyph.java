@@ -9,6 +9,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
+import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -105,7 +106,18 @@ public class TierGlyph extends SolidGlyph {
 
 	public void setSummary(GlyphI summary){
 		this.summary = summary;
-		
+	}
+	
+	public GlyphI getSummary(){
+		return summary;
+	}
+	
+	private boolean showSummary() {
+		if (style instanceof TrackStyle) {
+			return ((TrackStyle) style).getShowSummary();
+		}
+
+		return false;
 	}
 	
 	public ITrackStyle getAnnotStyle() {
@@ -280,7 +292,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	public void drawTraversal(ViewI view)  {
-		if(view.getTransform().getScaleX() < 0.002 && summary != null){
+		if(summary != null && (view.getTransform().getScaleX() < 0.002 || showSummary())){
 			summary.setCoordBox(this.getCoordBox());
 			summary.draw(view);
 			return;

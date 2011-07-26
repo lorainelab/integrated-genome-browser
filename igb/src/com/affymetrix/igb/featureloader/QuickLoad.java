@@ -160,7 +160,6 @@ public final class QuickLoad extends SymLoader {
 		
 		//Do not not anything in case of genome. Just refresh.
 		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
-			feature.removeCurrentRequest(overlapSpan);
 			return false;
 		}
 
@@ -222,7 +221,6 @@ public final class QuickLoad extends SymLoader {
 			throws IOException, OutOfMemoryError {
 
 		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())){
-			feature.addLoadedSpanRequest(span);
 			return false;
 		}
 
@@ -238,7 +236,6 @@ public final class QuickLoad extends SymLoader {
 		results = this.getRegion(span);
 		
 		if(Thread.currentThread().isInterrupted()){
-			feature.removeCurrentRequest(span);
 			results = null;
 			return false;
 		}
@@ -247,9 +244,7 @@ public final class QuickLoad extends SymLoader {
 		if (results != null) {
 			ret = addSymmtries(span, results, feature, extension);
 		}
-		
-		feature.addLoadedSpanRequest(span); // this span is now considered loaded.
-		
+				
 		return ret;
 	}
 
@@ -327,9 +322,10 @@ public final class QuickLoad extends SymLoader {
 		if (results != null && !results.isEmpty()) {
 			// TODO: make this more general.  Since we can't currently optimize all residue requests,
 			// we are simply considering the span loaded if it loads the entire chromosome
-			if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
-				feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
-			}
+			// Since all request are optimized considering every request to be loaded -- HV 07/26/11
+			//if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
+			//	feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
+			//}
 			BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
 		}
 	}

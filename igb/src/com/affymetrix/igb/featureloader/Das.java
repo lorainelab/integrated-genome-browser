@@ -71,7 +71,6 @@ public final class Das {
 		// Special case : When a feature make more than one Track, set feature for each track.
 		if (dassyms != null) {
 			if (Thread.currentThread().isInterrupted()) {
-				feature.removeCurrentRequest(span);
 				dassyms = null;
 				return false;
 			}
@@ -80,8 +79,6 @@ public final class Das {
 				feature.addMethod(sym.getType());
 			}
 		}
-		//The span is now considered loaded.
-		feature.addLoadedSpanRequest(span);
 		
 		return (dassyms != null && !dassyms.isEmpty());
 	}

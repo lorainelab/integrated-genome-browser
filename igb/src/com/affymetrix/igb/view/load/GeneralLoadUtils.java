@@ -830,7 +830,7 @@ public final class GeneralLoadUtils {
 		Thread thread = Thread.currentThread();
 		boolean result = false;
 		for (SeqSpan optimized_span : optimized_spans) {
-			if (thread.isInterrupted()) break;
+			
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 			
 			switch (feature.gVersion.gServer.serverType) {
@@ -847,6 +847,13 @@ public final class GeneralLoadUtils {
 					if (((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) result = true;
 					break;
 			}
+			
+			if (thread.isInterrupted()){
+				feature.removeCurrentRequest(optimized_span);
+				break;
+			}
+			
+			feature.addLoadedSpanRequest(optimized_span);
 		}
 		
 		return result;

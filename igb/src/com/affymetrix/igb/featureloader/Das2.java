@@ -203,6 +203,7 @@ public class Das2 {
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
+					feature.removeCurrentRequest(span);
                     return false;
                 }
                 // for now, assume that when caching, content type returned is same as content type requested
@@ -223,6 +224,7 @@ public class Das2 {
 
                 if (response_code >= 400 && response_code < 600) {
                     System.out.println("Server returned error code, aborting response parsing!");
+					feature.removeCurrentRequest(span);
                     return false;
                 }
                 String content_type = query_con.getContentType();
@@ -248,6 +250,7 @@ public class Das2 {
 			if (fileTypeHandler == null) {
 				Logger.getLogger(SymLoader.class.getName()).log(
 					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
+				feature.removeCurrentRequest(span);
 				return false;
 			}
 			else {

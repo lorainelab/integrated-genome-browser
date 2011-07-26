@@ -160,6 +160,7 @@ public final class QuickLoad extends SymLoader {
 		
 		//Do not not anything in case of genome. Just refresh.
 		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
+			feature.removeCurrentRequest(overlapSpan);
 			return false;
 		}
 
@@ -220,8 +221,10 @@ public final class QuickLoad extends SymLoader {
 	private boolean loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws IOException, OutOfMemoryError {
 
-		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) 
+		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())){
+			feature.addLoadedSpanRequest(span);
 			return false;
+		}
 
 		setStyle(feature);
 

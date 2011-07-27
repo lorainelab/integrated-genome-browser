@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.PropertyHolder;
 import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -43,6 +44,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final String PROPERTY = "property";
 	private static final List<String> prop_order = determineOrder();
 	private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
+	private PropertyViewHelper helper = new PropertyViewHelper(table);
 
 	PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
@@ -242,7 +244,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			}
 		};
 		table.setModel(model);
-//		table.setDefaultRenderer(Object.class, helper);
+		table.setDefaultRenderer(Object.class, helper);
 
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);

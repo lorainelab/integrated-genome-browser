@@ -250,10 +250,16 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		// seems no longer needed
 		//map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
 		List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
-		for (int i = 0; i < hcount; i++) {
-			Object obj = hits.get(i);
-			if (obj instanceof GraphGlyph) {
-				graphs.add((GraphGlyph) obj);
+		if (preserve_selections) {
+			for (int i = 0; i < hcount; i++) {
+				Object obj = hits.get(i);
+				if (obj instanceof GraphGlyph) {
+					graphs.add((GraphGlyph) obj);
+				}
+			}
+		} else {
+			if (topgl != null && topgl instanceof GraphGlyph) {
+				graphs.add((GraphGlyph) topgl);
 			}
 		}
 		int gcount = graphs.size();

@@ -245,7 +245,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
-			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
+			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, map, coordseq);
 			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, map);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
@@ -318,7 +318,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private void addChildren(
-			SeqSymmetry insym, SeqSymmetry sym, ITrackStyleExtended the_style, BioSeq annotseq,
+			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, ITrackStyleExtended the_style, BioSeq annotseq,
 			GlyphI pglyph, AffyTieredMap map, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
@@ -349,7 +349,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
-				GlyphI cglyph = getChild(cspan, i==0, i==childCount-1, direction_type);
+				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);

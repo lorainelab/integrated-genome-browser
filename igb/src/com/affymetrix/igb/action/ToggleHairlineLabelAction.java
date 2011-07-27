@@ -22,7 +22,7 @@ public class ToggleHairlineLabelAction extends javax.swing.AbstractAction implem
 
 		this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
-		//PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
 
 	public static ToggleHairlineLabelAction getAction() {
@@ -39,7 +39,8 @@ public class ToggleHairlineLabelAction extends javax.swing.AbstractAction implem
           return;
         }
 		if (pce.getKey().equals(UnibrowHairline.PREF_HAIRLINE_LABELED)) {
-			actionPerformed(null);
+			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
         }
 	}
 

@@ -2,8 +2,8 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.UnibrowHairline;
-import java.util.prefs.PreferenceChangeEvent;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv
@@ -14,7 +14,7 @@ public class ToggleHairlineAction extends javax.swing.AbstractAction implements 
 	private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
 
 	private ToggleHairlineAction() {
-		super("Keep zoom stripe in view");
+		super(BUNDLE.getString("toggleHairline"));
 		//this.putValue(MNEMONIC_KEY, java.awt.event.KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		//this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
@@ -33,12 +33,13 @@ public class ToggleHairlineAction extends javax.swing.AbstractAction implements 
 				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, (Boolean)getValue(SELECTED_KEY));
 	}
 
-	public void preferenceChange(PreferenceChangeEvent pce) {
+	public void preferenceChange(java.util.prefs.PreferenceChangeEvent pce) {
 		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
           return;
         }
 		if (pce.getKey().equals(UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW)) {
-			actionPerformed(null);
+			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
+				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
         }
 	}
 

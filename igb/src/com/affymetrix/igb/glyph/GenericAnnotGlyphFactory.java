@@ -166,7 +166,10 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 		if (gsym != null) {
 			GraphState state = new GraphState(meth, tier.getAnnotStyle());
-			GraphGlyph graph_glyph = new GraphGlyph(gsym, state);
+			GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(gsym, state);
+			if (graph_glyph == null) {
+				graph_glyph = new GraphGlyph(gsym, state);
+			}
 			graph_glyph.drawHandle(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 			tier.setSummary(graph_glyph);

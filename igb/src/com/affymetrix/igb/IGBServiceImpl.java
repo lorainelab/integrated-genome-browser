@@ -62,6 +62,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -666,6 +667,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
+	}
+
+	@Override
+	public void addMisMatchTier(GlyphI atier, String prefix) {
+		SeqMapViewPopup.addMisMatchTier((TierGlyph)atier, prefix);
 	}
 
 }

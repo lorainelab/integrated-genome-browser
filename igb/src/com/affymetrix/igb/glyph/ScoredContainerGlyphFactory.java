@@ -35,6 +35,7 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
+import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -232,7 +233,10 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private static void displayGraphSym(GraphIntervalSym graf, SeqMapView smv) {
-		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
+		GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(graf, graf.getGraphState());
+		if (graph_glyph == null) {
+			graph_glyph = new GraphGlyph(graf, graf.getGraphState());
+		}
 		GraphState gstate = graph_glyph.getGraphState();
 		ITrackStyle tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());

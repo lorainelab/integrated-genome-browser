@@ -28,7 +28,7 @@ import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackClickListener;
+import com.affymetrix.igb.shared.TrackClickHolder;
 import com.affymetrix.igb.view.GlyphResizer;
 
 import java.awt.geom.Rectangle2D;
@@ -48,7 +48,6 @@ public final class TierLabelManager implements PropertyHolder {
 	private final static int yoffset_pop = 0;
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
-	private final Set<TrackClickListener> track_click_listeners = new CopyOnWriteArraySet<TrackClickListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
 	private Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
 
@@ -109,8 +108,6 @@ public final class TierLabelManager implements PropertyHolder {
 		public void mousePressed(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				TierGlyph lastClickedGlyph = getTierGlyph(nevt);
-				doTrackClick(lastClickedGlyph);
 				List<GlyphI> selected_glyphs = nevt.getItems();
 				GlyphI topgl = null;
 				if (!selected_glyphs.isEmpty()) {
@@ -562,6 +559,7 @@ public final class TierLabelManager implements PropertyHolder {
 			pl.popupNotify(popup, this);
 		}
 
+		TrackClickHolder.getInstance().doTrackClick(popup, getSelectedTiers());
 		if (popup.getComponentCount() > 0) {
 			popup.show(labelmap, e.getX() + xoffset_pop, e.getY() + yoffset_pop);
 		}
@@ -635,16 +633,6 @@ public final class TierLabelManager implements PropertyHolder {
 	public interface TrackSelectionListener {
 
 		public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler);
-	}
-
-	public void addTrackClickListener(TrackClickListener l) {
-		track_click_listeners.add(l);
-	}
-
-	public void doTrackClick(TierGlyph clickedGlyph) {
-		for (TrackClickListener l : track_click_listeners) {
-			l.trackClickNotify(clickedGlyph);
-		}
 	}
 
 	@Override

@@ -324,4 +324,8 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
+
+	//
+	public void addMisMatchTier(GlyphI atier, String prefix);
+
 }

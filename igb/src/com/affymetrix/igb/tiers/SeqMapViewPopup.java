@@ -220,7 +220,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = current_tiers.get(0);
-      addMisMatchTier(current_tier);
+      addMisMatchTier(current_tier, "mismatch");
     }
   };
 
@@ -620,9 +620,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-  private void addMisMatchTier(TierGlyph atier) {
+  public static void addMisMatchTier(TierGlyph atier, String prefix) {
 	BioSeq aseq = gmodel.getSelectedSeq();
-	String human_name = "mismatch: " + atier.getLabel();
+	String human_name = prefix + ": " + atier.getLabel();
 	String unique_name = TrackStyle.getUniqueName(human_name);
 	String method = atier.getAnnotStyle().getMethodName();
 	SeqSymmetry tsym = aseq.getAnnotation(method);
@@ -669,7 +669,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
-    gviewer.setAnnotatedSeq(aseq, true, true);
+    IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
   }
 
   private void addSymCoverageTier(TierGlyph atier) {

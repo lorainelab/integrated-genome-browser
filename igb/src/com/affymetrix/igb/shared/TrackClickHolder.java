@@ -3,6 +3,8 @@ package com.affymetrix.igb.shared;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JPopupMenu;
+
 public class TrackClickHolder {
 	private static TrackClickHolder instance = new TrackClickHolder();
 	private TrackClickHolder() {
@@ -12,17 +14,23 @@ public class TrackClickHolder {
 		return instance;
 	}
 
-	private List<TrackClickListener> TrackClickListeners = new ArrayList<TrackClickListener>();
+	private List<TrackClickListener> trackClickListeners = new ArrayList<TrackClickListener>();
 
 	public void addTrackClickListener(TrackClickListener TrackClickListener) {
-		TrackClickListeners.add(TrackClickListener);
+		trackClickListeners.add(TrackClickListener);
 	}
 
 	public void removeTrackClickListener(TrackClickListener TrackClickListener) {
-		TrackClickListeners.remove(TrackClickListener);
+		trackClickListeners.remove(TrackClickListener);
 	}
 
 	public List<TrackClickListener> getTrackClickListeners() {
-		return TrackClickListeners;
+		return trackClickListeners;
+	}
+
+	public void doTrackClick(JPopupMenu popup, List<TierGlyph> selectedGlyphs) {
+		for (TrackClickListener l : trackClickListeners) {
+			l.trackClickNotify(popup, selectedGlyphs);
+		}
 	}
 }

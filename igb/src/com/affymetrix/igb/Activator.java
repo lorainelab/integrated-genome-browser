@@ -19,6 +19,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
+import com.affymetrix.igb.shared.TrackClickHolder;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.window.service.IWindowService;
 
@@ -86,7 +87,7 @@ public class Activator implements BundleActivator {
 			new ExtensionPointHandler(TrackClickListener.class) {
 				@Override
 				public void addService(Object o) {
-					igb.getMapView().getTierManager().addTrackClickListener((TrackClickListener)o);
+					TrackClickHolder.getInstance().addTrackClickListener((TrackClickListener)o);
 				}
 				@Override
 				public void removeService(Object o) {}

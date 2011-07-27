@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
@@ -290,10 +291,11 @@ public final class BookmarkUnibrowControlServlet {
 
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
-		if(!LocalUrlCacher.isValidURL(query_url)){
-			return null;
-		}
-
+		// This method of authentication does not work for Das2
+		//if (!LocalUrlCacher.isValidURL(query_url)) {
+		//	return null;
+		//}
+		
 		GenericFeature feature = igbService.getFeature(gServer, query_url);
 
 		if (feature == null) {

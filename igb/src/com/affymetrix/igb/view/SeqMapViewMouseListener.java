@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
+import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
@@ -36,7 +38,8 @@ import javax.swing.ToolTipManager;
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
  *  users, it is not standard, but should be fine.
  */
-final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener, NeoRubberBandListener, PropertyListener {
+final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener, 
+		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -60,6 +63,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	private final SeqMapView smv;
 	private final AffyTieredMap map;
 	private transient MouseEvent rubber_band_start = null;
+	private transient boolean is_graph_dragging = false;
 	private int num_last_selections = 0;
 	private int no_of_prop_being_displayed = 0;
 	int select_start, select_end;
@@ -85,7 +89,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mousePressed(MouseEvent evt) {
-
+		
 		if (map instanceof AffyLabelledTierMap) {
 			((AffyLabelledTierMap) map).getLabelMap().clearSelected();
 		}
@@ -106,7 +110,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseReleased(MouseEvent evt) {
-		
+				
 		num_last_selections = map.getSelected().size();
 
 		if(PROCESS_SUB_SELECTION){
@@ -178,11 +182,20 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		smv.setToolTip(glyphs);	// empty tooltip
 	}
 
+	public void heardGlyphDrag(NeoGlyphDragEvent evt) {
+		if(evt.getID() == NeoGlyphDragEvent.DRAG_IN_PROGRESS){
+			is_graph_dragging = true;
+		}else if (evt.getID() == NeoGlyphDragEvent.DRAG_ENDED){
+			is_graph_dragging = false;
+		}
+	}
+	
 	private void processSelections(MouseEvent evt, boolean post_selections) {
 
-		if (!(evt instanceof NeoMouseEvent)) {
+		if (!(evt instanceof NeoMouseEvent) || 	is_graph_dragging) {
 			return;
 		}
+		
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
 		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
 
@@ -468,7 +481,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	private void processSubSelection(MouseEvent evt) {
-		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null || (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode)) {
+		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null || 
+				(smv.getMapMode() != SeqMapView.MapMode.MapSelectMode) || is_graph_dragging) {
 			return;
 		}
 

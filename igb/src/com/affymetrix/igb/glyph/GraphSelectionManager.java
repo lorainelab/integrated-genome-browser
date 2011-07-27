@@ -452,6 +452,7 @@ public final class GraphSelectionManager
 	dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 
     dragger.addGlyphDragListener(this);
+	dragger.addGlyphDragListener(gviewer.getMouseListener());
     dragger.startDrag(gl, nevt, trans, false);
 
   }

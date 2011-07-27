@@ -19,7 +19,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
-import com.affymetrix.igb.tiers.TierLabelManager;
+import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.window.service.IWindowService;
 
 /**
@@ -83,22 +83,10 @@ public class Activator implements BundleActivator {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
 		}
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(TierLabelManager.PopupListener.class) {
+			new ExtensionPointHandler(TrackClickListener.class) {
 				@Override
 				public void addService(Object o) {
-					igb.getMapView().getTierManager().addPopupListener((TierLabelManager.PopupListener)o);
-				}
-				@Override
-				public void removeService(Object o) {
-					igb.getMapView().getTierManager().removePopupListener((TierLabelManager.PopupListener)o);
-				}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(TierLabelManager.TrackClickListener.class) {
-				@Override
-				public void addService(Object o) {
-					igb.getMapView().getTierManager().addTrackClickListener((TierLabelManager.TrackClickListener)o);
+					igb.getMapView().getTierManager().addTrackClickListener((TrackClickListener)o);
 				}
 				@Override
 				public void removeService(Object o) {}

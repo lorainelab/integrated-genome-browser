@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 

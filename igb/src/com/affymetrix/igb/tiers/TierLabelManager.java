@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.view.GlyphResizer;
 
 import java.awt.geom.Rectangle2D;
@@ -642,14 +643,8 @@ public final class TierLabelManager implements PropertyHolder {
 
 	public void doTrackClick(TierGlyph clickedGlyph) {
 		for (TrackClickListener l : track_click_listeners) {
-			l.trackClickNotify(clickedGlyph, this);
+			l.trackClickNotify(clickedGlyph);
 		}
-	}
-
-	/** An interface that to listener for track click events. */
-	public interface TrackClickListener {
-
-		public void trackClickNotify(TierGlyph topLevelGlyph, TierLabelManager handler);
 	}
 
 	@Override

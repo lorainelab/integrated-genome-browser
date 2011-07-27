@@ -32,7 +32,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.search.mode.ISearchMode;
 import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
-import com.affymetrix.igb.tiers.TierLabelManager;
+import com.affymetrix.igb.shared.TrackClickListener;
 
 public class DummyContext implements BundleContext {
 	private Map<String, List<Object>> servicesMap = new HashMap<String, List<Object>>();
@@ -45,8 +45,7 @@ public class DummyContext implements BundleContext {
 	private static final String GRAPH_OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
 	private static final String ANNOTATION_OPERATOR_SERVICE_FILTER = "(objectClass=" + AnnotationOperator.class.getName() + ")";
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
-	private static final String POPUP_LISTENER_FILTER = "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")";
-	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")";
+	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TrackClickListener.class.getName() + ")";
 	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
 	private static final String TIER_MAINTENANCE_LISTENER_FILTER = "(objectClass=" + TierMaintenanceListener.class.getName() + ")";
 	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
@@ -153,11 +152,8 @@ public class DummyContext implements BundleContext {
 		if (FILETYPEHANDLER_FACTORY_SERVICE_FILTER.equals(filter)) {
 			return service instanceof FileTypeHandler;
 		}
-		if (POPUP_LISTENER_FILTER.equals(filter)) {
-			return service instanceof TierLabelManager.PopupListener;
-		}
 		if (TRACK_CLICK_LISTENER_FILTER.equals(filter)) {
-			return service instanceof TierLabelManager.TrackClickListener;
+			return service instanceof TrackClickListener;
 		}
 		if (GLYPH_PROCESSOR_FILTER.equals(filter)) {
 			return service instanceof GlyphProcessor;

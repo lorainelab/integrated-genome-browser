@@ -216,8 +216,7 @@ public final class QuickLoadServerModel {
 
 		}catch (Exception ex) {
 			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-					Level.FINE, "Couldn''t found either annots.xml or annots.txt for {0}", genome_name);
-			System.out.println("Couldn't process file " + filename);
+					Level.SEVERE, "Couldn''t found either annots.xml or annots.txt for {0}", genome_name);
 			ex.printStackTrace();
 			return false;
 		} finally {
@@ -305,7 +304,7 @@ public final class QuickLoadServerModel {
 					ginfo_stream = getInputStream(ginfo_path, getCacheAnnots(), false);
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-						Level.FINE, "couldn''t find {0}, looking instead for {1}", new Object[]{liftAll, genomeTxt});
+						Level.WARNING, "couldn''t find {0}, looking instead for {1}", new Object[]{liftAll, genomeTxt});
 					ginfo_stream = null;
 				}
 			}
@@ -315,7 +314,8 @@ public final class QuickLoadServerModel {
 				try {
 					cinfo_stream = getInputStream(cinfo_path, getCacheAnnots(), false);
 				} catch (Exception ex) {
-					System.err.println("ERROR: could find " + lift_path + " or " + ginfo_path +" or "+ cinfo_path);
+					Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+						Level.WARNING, "ERROR: could find {0} or {1} or {2}", new Object[]{lift_path, ginfo_path, cinfo_path});
 					ex.printStackTrace();
 					cinfo_stream = null;
 				}
@@ -356,12 +356,14 @@ public final class QuickLoadServerModel {
 			try {
 				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
 			} catch (Exception e) {
-				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+						Level.WARNING, "ERROR: Couldn''t open ''{0}{1}\n:  {2}", new Object[]{getLoadURL(), contentsTxt, e.toString()});
 				istr = null; // dealt with below
 			}
 
 			if (istr == null) {
-				System.out.println("Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+						Level.SEVERE,"Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
 				return;
 			}
 
@@ -380,7 +382,7 @@ public final class QuickLoadServerModel {
 					genome_name = fields[0];
 					genome_name = genome_name.trim();
 					if (genome_name.length() == 0) {
-						System.out.println("Found blank QuickLoad genome -- skipping");
+						Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.INFO,"Found blank QuickLoad genome -- skipping");
 						continue;
 					}
 					group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group

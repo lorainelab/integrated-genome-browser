@@ -184,7 +184,7 @@ public final class ResidueLoading {
 
 	public static List<GenericVersion> getVersions(BioSeq aseq, GenericServer server) {
 		List<GenericVersion> versions = new ArrayList<GenericVersion>();
-		for (GenericVersion version : aseq.getSeqGroup().getEnabledVersions()) {
+		for (GenericVersion version : aseq.getSeqGroup().getAllVersions()) {
 			if (server.equals(version.gServer)) {
 				versions.add(version);
 			}

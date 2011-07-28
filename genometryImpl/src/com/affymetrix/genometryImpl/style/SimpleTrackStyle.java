@@ -62,10 +62,6 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public void setDirectionType(int s) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	public int getDirectionType() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

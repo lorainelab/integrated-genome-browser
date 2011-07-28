@@ -626,10 +626,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return file_type;
 	}
 
-	public void setDirectionType(int direction_type) {
-		setDirectionType(DIRECTION_TYPE.valueFor(direction_type));
-	}
-
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
 		if (getNode() != null) {

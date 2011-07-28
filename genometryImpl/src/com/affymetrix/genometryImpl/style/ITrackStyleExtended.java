@@ -36,14 +36,13 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setLabelField(String s);
 	String getLabelField();
 	
-	void setDirectionType(int i);
-	int getDirectionType();
-	
 	void setForwardColor(Color c);
 	Color getForwardColor();
 	
 	void setReverseColor(Color c);
 	Color getReverseColor();
+	
+	int getDirectionType();
 	
 	String getFileType();
 }

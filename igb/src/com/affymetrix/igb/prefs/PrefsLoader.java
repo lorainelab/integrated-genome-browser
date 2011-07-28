@@ -65,10 +65,9 @@ public abstract class PrefsLoader {
 		LoadDefaultAPIPrefsFromJar();
 		LoadWebPrefs(def_prefs_url);
 		LoadFileOrURLPrefs(prefs_list);
-		ServerList.getServerInstance().loadServerPrefs();
-		ServerList.getRepositoryInstance().loadServerPrefs();
-		ServerList.getSequenceServerInstance().loadServerPrefs();
-
+		for (ServerList serverList : ServerList.getServerLists()) {
+			serverList.loadServerPrefs();
+		}
 		prefsLoaded = true;
 	}
 

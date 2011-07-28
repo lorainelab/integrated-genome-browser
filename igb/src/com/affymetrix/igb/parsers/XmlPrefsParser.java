@@ -123,12 +123,11 @@ public final class XmlPrefsParser {
 					processAnnotStyle(el);
 				} else if (name.equalsIgnoreCase("annotation_url")) {
 					processLinkUrl(el);
-				} else if (name.equalsIgnoreCase("server")) {
-					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
-				} else if (name.equalsIgnoreCase("repository")) {
-					processServer(el, ServerList.getRepositoryInstance(), null);
-				} else if (name.equalsIgnoreCase("sequenceServer")) {
-					processServer(el, ServerList.getSequenceServerInstance(), getServerType(el.getAttribute("type")));
+				} else {
+					ServerList serverList = ServerList.getServerList(name.toLowerCase());
+					if (serverList != null) {
+						processServer(el, serverList, serverList.hasTypes() ? getServerType(el.getAttribute("type")) : null);
+					}
 				}
 			}
 		}

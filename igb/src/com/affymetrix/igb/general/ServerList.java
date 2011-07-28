@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -16,10 +15,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -32,18 +31,20 @@ import java.util.prefs.Preferences;
  *
  * @version $Id$
  */
-public final class ServerList {
-	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+public abstract class ServerList {
+	protected final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
 
-	private static ServerList serverInstance = new ServerList("server");
-	private static ServerList repositoryInstance = new ServerList("repository");
-	private static ServerList sequenceServerInstance = new ServerList("sequenceServer");
+	private static Map<String, ServerList> serverListMap = new HashMap<String, ServerList>();
+	private static ServerList serverInstance = new DataSourceList();
+	private static ServerList repositoryInstance = new RepositoryList();
+	private static ServerList sequenceServerInstance = new SequenceServerList();
 
 	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null,null);
 	private final String textName;
-	private ServerList(String textName) {
+	protected ServerList(String textName) {
 		this.textName = textName;
+		serverListMap.put(textName, this);
 	}
 	public static final ServerList getServerInstance() {
 		return serverInstance;
@@ -54,13 +55,18 @@ public final class ServerList {
 	public static final ServerList getSequenceServerInstance() {
 		return sequenceServerInstance;
 	}
-
+	public static ServerList getServerList(String name) {
+		return serverListMap.get(name);
+	}
+	public static List<ServerList> getServerLists() {
+		return new ArrayList<ServerList>(serverListMap.values());
+	}
 	public String getTextName() {
 		return textName;
 	}
 
 	public boolean hasTypes() {
-		return this != repositoryInstance;
+		return true;
 	}
 
 	public Set<GenericServer> getEnabledServers() {
@@ -99,24 +105,7 @@ public final class ServerList {
 		return true;
 	}
 
-	private int getServerOrder(GenericServer server) {
-		String url = GeneralUtils.URLEncode(ServerUtils.formatURL(server.URL, server.serverType));
-		return Integer.parseInt(PreferenceUtils.getSequenceServersNode().node(url).get("order", "0"));
-	}
-
 	public synchronized Collection<GenericServer> getAllServers() {
-		if (this == sequenceServerInstance) {
-			ArrayList<GenericServer> allServers = new ArrayList<GenericServer>(url2server.values());
-			Collections.sort(allServers,
-				new Comparator<GenericServer>() {
-					@Override
-					public int compare(GenericServer o1, GenericServer o2) {
-						return getServerOrder(o1) - getServerOrder(o2);
-					}
-				}
-			);
-			return allServers;
-		}
 		return url2server.values();
 	}
 
@@ -288,21 +277,7 @@ public final class ServerList {
 		}
 	}
 
-	private Preferences getPreferencesNode() {
-		if (this == serverInstance) {
-			return PreferenceUtils.getServersNode();
-		}
-		else if (this == repositoryInstance) {
-			return PreferenceUtils.getRepositoriesNode();
-		}
-		else if (this == sequenceServerInstance){
-			return PreferenceUtils.getSequenceServersNode();
-		}
-		else {
-			return null;
-		}
-			
-	}
+	protected abstract Preferences getPreferencesNode();
 
 	public void updateServerURLsInPrefs() {
 		Preferences servers = getPreferencesNode();

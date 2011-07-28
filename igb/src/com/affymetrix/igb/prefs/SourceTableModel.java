@@ -143,4 +143,13 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		this.init();
 	}
 
+	public void switchRows(int rowIndex) {
+		if (rowIndex < 0 || rowIndex >= servers.size() - 1) {
+			return;
+		}
+		GenericServer firstServer = servers.get(rowIndex);
+		servers.set(rowIndex, servers.get(rowIndex + 1));
+		servers.set(rowIndex + 1, firstServer);
+		this.fireTableDataChanged();
+	}
 }

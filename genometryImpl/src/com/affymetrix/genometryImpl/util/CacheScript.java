@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -405,7 +404,7 @@ public class CacheScript extends Thread {
 
 					String serverURL = ServerUtils.formatURL(server_url, server_type);
 					Object serverInfo = ServerUtils.getServerInfo(server_type, serverURL, server_name);
-					GenericServer server = new GenericServer(server_name, serverURL, server_type, enabled, serverInfo);
+					GenericServer server = new GenericServer(server_name, serverURL, server_type, enabled, serverInfo, null);
 					serverList.add(server);
 				}
 			}

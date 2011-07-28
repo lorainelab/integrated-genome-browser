@@ -127,6 +127,8 @@ public final class XmlPrefsParser {
 					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
 				} else if (name.equalsIgnoreCase("repository")) {
 					processServer(el, ServerList.getRepositoryInstance(), null);
+				} else if (name.equalsIgnoreCase("sequenceServer")) {
+					processServer(el, ServerList.getSequenceServerInstance(), getServerType(el.getAttribute("type")));
 				}
 			}
 		}

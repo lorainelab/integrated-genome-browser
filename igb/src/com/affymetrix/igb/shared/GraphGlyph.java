@@ -356,6 +356,8 @@ public class GraphGlyph extends Glyph {
 	protected void bigDrawLoop(
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
 			GraphType graph_style, Graphics g, Point max_x_plus_width) {
+int iiiii = 1;
+iiiii = 1;
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds

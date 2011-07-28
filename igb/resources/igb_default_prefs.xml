@@ -28,6 +28,18 @@
 
 <repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" />
 
+<!-- Specify sequence servers here with type, name, and url.  Type is "das", "das2", or "quickload" -->
+
+<sequenceServer type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" />
+<sequenceServer type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" />
+<sequenceServer type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="2" />
+<sequenceServer type="quickload" name="Bioviz" url="http://bioviz.org/quickload/" order="3" />
+<sequenceServer type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="4" />
+<sequenceServer type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="5" />
+<sequenceServer type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" order="6" />
+<sequenceServer type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="7" />
+<sequenceServer type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" order="8" />
+
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)

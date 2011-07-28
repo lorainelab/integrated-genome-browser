@@ -67,6 +67,7 @@ public abstract class PrefsLoader {
 		LoadFileOrURLPrefs(prefs_list);
 		ServerList.getServerInstance().loadServerPrefs();
 		ServerList.getRepositoryInstance().loadServerPrefs();
+		ServerList.getSequenceServerInstance().loadServerPrefs();
 
 		prefsLoaded = true;
 	}

@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -912,10 +911,6 @@ public final class GeneralLoadUtils {
 			return false;
 		}*/
 
-		// Determine list of servers that might have this chromosome sequence.
-		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
-		versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
-
 		if ((min <= 0) && (max >= aseq.getLength())) {
 			min = 0;
 			max = aseq.getLength();
@@ -927,9 +922,7 @@ public final class GeneralLoadUtils {
 			return true;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
-		
-		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
+		return ResidueLoading.getResidues(genomeVersionName, aseq, min, max, span);
 	}
 
 

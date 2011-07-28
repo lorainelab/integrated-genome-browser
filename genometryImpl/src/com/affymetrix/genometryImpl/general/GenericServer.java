@@ -1,15 +1,12 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -40,27 +37,25 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 			ServerStatus.NotInitialized;				// Is this server initialized?
 	private final boolean primary;
 
-	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, boolean primary) {
+	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, Preferences node, boolean primary) {
 		this(
 				serverName,
 				URL,
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
-									 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				node,
 				serverObj, primary);
 	}
 
-	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj) {
+	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, Preferences node) {
 		this(
 				serverName,
 				URL,
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
-					 				 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				node,
 				serverObj, false);
 	}
 
@@ -81,7 +76,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.URL = URL;
 		this.serverType = serverType;
 		this.enabled = enabled;
-		this.node = node;
+		this.node = node == null ? PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)) : node;
 		this.serverObj = serverObj;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 		this.referenceOnly = referenceOnly;
@@ -258,5 +253,41 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 			}
 		}
 		return "";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((URL == null) ? 0 : URL.hashCode());
+		result = prime * result
+				+ ((serverName == null) ? 0 : serverName.hashCode());
+		result = prime * result
+				+ ((serverType == null) ? 0 : serverType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenericServer other = (GenericServer) obj;
+		if (URL == null) {
+			if (other.URL != null)
+				return false;
+		} else if (!URL.equals(other.URL))
+			return false;
+		if (serverName == null) {
+			if (other.serverName != null)
+				return false;
+		} else if (!serverName.equals(other.serverName))
+			return false;
+		if (serverType != other.serverType)
+			return false;
+		return true;
 	}
 }

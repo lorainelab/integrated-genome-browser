@@ -56,7 +56,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -64,6 +63,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadPrefsView;
+import com.affymetrix.igb.view.PickSequenceServerView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadSequence;
@@ -82,6 +82,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final String CHOOSE = "Choose";
 	public static int TAB_DATALOAD_PREFS = -1;
+	public static int PICK_SEQUENCE_SERVER_PREFS = -1;
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private AnnotatedSeqGroup curGroup = null;
 	private final JRPComboBox versionCB;
@@ -210,6 +211,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		addListeners();
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView());
+		PICK_SEQUENCE_SERVER_PREFS = pp.addPrefEditorComponent(new PickSequenceServerView());
 	}
 
 	private void addListeners() {
@@ -527,7 +529,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				} finally{
-					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
+//					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
 				}
 			}
 		};
@@ -582,8 +584,6 @@ public final class GeneralLoadView extends IGBTabPanel
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
-		}finally{
-			Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq.getID());
 		}
 
 		return true;

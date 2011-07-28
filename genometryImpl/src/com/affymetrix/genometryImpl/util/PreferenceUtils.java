@@ -104,6 +104,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("repositories");
 	}
 
+	public static Preferences getSequenceServersNode() {
+		return PreferenceUtils.getTopNode().node("sequenceServers");
+	}
+
 	public static Preferences getGraphPrefsNode() {
 		return PreferenceUtils.getTopNode().node("graphs");
 	}
@@ -496,6 +500,15 @@ public abstract class PreferenceUtils {
 			}
 		});
 		return combo_box;
+	}
+
+	public static boolean isEmpty(Preferences preferences) {
+		boolean empty = true;
+		try {
+			empty = preferences.childrenNames() != null && preferences.childrenNames().length > 0;
+		}
+		catch (BackingStoreException x) {}
+		return empty;
 	}
 
 	private static String shortNodeName(String s, boolean remove_slash) {

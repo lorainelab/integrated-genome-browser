@@ -82,7 +82,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		final JPanel sourcePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(sourcePanel);
 		final SourceTableModel sourceTableModel = new SourceTableModel(serverList);
-		sourcesTable = createSourcesTable(sourceTableModel);
+		sourcesTable = createSourcesTable(sourceTableModel, isSortable());
 		sourcesScrollPane = new JScrollPane(sourcesTable);
 
 		sourcePanel.setLayout(layout);
@@ -126,15 +126,19 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		removeServerButton.setEnabled(enable);
 	}
 
+	protected abstract boolean isSortable();
+
 	protected abstract Group addServerComponents(Group group1, Group group2);
 	protected abstract Group getServerButtons(Group group);
 
-	private static JTable createSourcesTable(SourceTableModel sourceTableModel) {
+	private static JTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
 		final JTable table = new JTable(sourceTableModel);
 
 		table.setFillsViewportHeight(true);
-		table.setAutoCreateRowSorter(true);
-		table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
+		table.setAutoCreateRowSorter(sortable);
+		if (sortable) {
+			table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
+		}
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		TableCellRenderer renderer = new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = -1l;

@@ -59,6 +59,10 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 		return "Edit plugin repositories and preferences";
 	}
 
+	protected boolean isSortable() {
+		return true;
+	}
+
 	@Override
 	protected Group addAddSourceComponents(AddSourceGroupCreator addSourceGroupCreator, GroupLayout layout) {
 		return addSourceGroupCreator.createGroup1(layout)

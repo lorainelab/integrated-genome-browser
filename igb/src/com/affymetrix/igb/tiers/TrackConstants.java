@@ -29,6 +29,7 @@ public interface TrackConstants {
 	static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
 	static final String PREF_TRACK_SIZE = "Track Name Size";
 	static final String PREF_DIRECTION_TYPE = "Direction Type";
+	static final String PREF_VIEW_MODE = "View Mode";
 	static final boolean default_show = true;
 	static final boolean default_connected = true;
 	static final boolean default_collapsed = false;

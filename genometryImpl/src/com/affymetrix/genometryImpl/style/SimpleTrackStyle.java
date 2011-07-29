@@ -82,4 +82,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	public void setViewMode(String s) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getViewMode() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 }

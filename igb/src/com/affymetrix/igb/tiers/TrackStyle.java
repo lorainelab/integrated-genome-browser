@@ -61,6 +61,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String track_name;
+	private String view_mode;
 	final private String method_name;
 	private Preferences node;
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
@@ -331,6 +332,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				direction_type = prev_direction_type;
 			}
 		}
+		String viewmodestring = (String) props.getProperty(PROP_VIEW_MODE);
+		if (viewmodestring != null) {
+			view_mode = viewmodestring;
+		}
 		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");
@@ -360,6 +365,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		track_name_size = template.getTrackNameSize();
 		start_color = template.getForwardColor();
 		end_color = template.getReverseColor();
+		view_mode = template.getViewMode();
 		direction_type = template.direction_type;
 	}
 
@@ -750,6 +756,21 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return custom_heatmap;
 	}
 
+	
+	public void setViewMode(String s) {
+		view_mode = s;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
+			}
+			getNode().put(PREF_VIEW_MODE, s);
+		}
+	}
+
+	public String getViewMode() {
+		return view_mode;
+	}
+	
 	public void copyPropertiesFrom(ITrackStyle g) {
 		setForeground(g.getForeground());
 		setShow(g.getShow());

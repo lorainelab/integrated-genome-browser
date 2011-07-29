@@ -42,6 +42,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setReverseColor(Color c);
 	Color getReverseColor();
 	
+	void setViewMode(String s);
+	String getViewMode();
+	
 	int getDirectionType();
 	
 	String getFileType();

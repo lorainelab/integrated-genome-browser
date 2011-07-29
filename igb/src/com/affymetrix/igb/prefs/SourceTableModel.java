@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.jidesoft.utils.SwingWorker;
 
 import java.util.ArrayList;
@@ -121,7 +120,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 						@Override
 						protected Void doInBackground() throws Exception {
-							GeneralLoadUtils.discoverServer(server);
+							serverList.discoverServer(server);
 							return null;
 						}
 					};

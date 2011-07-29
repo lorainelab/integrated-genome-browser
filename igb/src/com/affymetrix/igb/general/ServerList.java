@@ -4,12 +4,11 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -407,18 +406,9 @@ public abstract class ServerList {
 
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
-			GeneralLoadUtils.removeServer(server);
-
-			if(!removedManually)
+			server.setEnabled(false);
+			if (!removedManually) {
 				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(1) + " " + server.serverName + " is not responding. Disabling it for this session.");
-			
-			if (server.serverType != ServerType.LocalFiles) {
-				if (server.serverType == null) {
-					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
-				}
-				else {
-					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
-				}
 			}
 		}
 
@@ -442,4 +432,7 @@ public abstract class ServerList {
 		}
 		return null;
 	}
+
+	public abstract boolean discoverServer(GenericServer gServer);
+	public abstract GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName);
 }

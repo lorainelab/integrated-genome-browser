@@ -1,5 +1,6 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -25,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +66,8 @@ public final class ResidueLoading {
 		if (span == null) {
 			span = new SimpleSeqSpan(min, max, aseq);
 		}
+		String speciesName = GenometryModel.getGenometryModel().getSelectedSeqGroup().getOrganism();
+		List<GenericVersion> versions = ((SequenceServerList)ServerList.getSequenceServerInstance()).getGenericVersions(speciesName);
 		String seq_name = aseq.getID();
 		boolean residuesLoaded = false;
 		for (GenericServer server : ServerList.getSequenceServerInstance().getAllServers()) {
@@ -76,17 +78,17 @@ public final class ResidueLoading {
 			Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq_name+" from "+serverDescription);
 			switch (server.serverType) {
 			case DAS2:
-				if (getDAS2Residues(server, genomeVersionName, aseq, min, max, span)) {
+				if (getDAS2Residues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}
 				break;
 			case QuickLoad:
-				if (getQuickLoadResidues(server, genomeVersionName, aseq, min, max, span)) {
+				if (getQuickLoadResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}
 				break;
 			case DAS:
-				if (getDASResidues(server, genomeVersionName, aseq, min, max, span)) {
+				if (getDASResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}
 				break;
@@ -120,11 +122,13 @@ public final class ResidueLoading {
 		return false;
 	}
 
-	private static boolean getDAS2Residues(GenericServer server, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
-		List<GenericVersion> versions = getVersions(aseq, server);
+	private static boolean getDAS2Residues(GenericServer server, List<GenericVersion> versions, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
 		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
 			Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
 			Set<String> format = das2version.getResidueFormat(seq_name);
 			FORMAT[] formats = null;
@@ -155,11 +159,13 @@ public final class ResidueLoading {
 		return false;
 	}
 
-	private static boolean getQuickLoadResidues(GenericServer server, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
-		List<GenericVersion> versions = getVersions(aseq, server);
+	private static boolean getQuickLoadResidues(GenericServer server, List<GenericVersion> versions, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
 			String residues = GetQuickLoadResidues(server, version, seq_group, seq_name, server.URL, span, aseq);
 			if (residues != null) {
 				BioSeq.addResiduesToComposition(aseq, residues, span);
@@ -169,10 +175,12 @@ public final class ResidueLoading {
 		return false;
 	}
 
-	private static boolean getDASResidues(GenericServer server, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
-		List<GenericVersion> versions = getVersions(aseq, server);
+	private static boolean getDASResidues(GenericServer server, List<GenericVersion> versions, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
 			String residues = DasLoader.getDasResidues(version, seq_name, min, max);
 			if (residues != null) {
 				BioSeq.addResiduesToComposition(aseq, residues, span);
@@ -180,16 +188,6 @@ public final class ResidueLoading {
 			}
 		}
 		return false;
-	}
-
-	public static List<GenericVersion> getVersions(BioSeq aseq, GenericServer server) {
-		List<GenericVersion> versions = new ArrayList<GenericVersion>();
-		for (GenericVersion version : aseq.getSeqGroup().getAllVersions()) {
-			if (server.equals(version.gServer)) {
-				versions.add(version);
-			}
-		}
-		return versions;
 	}
 
 	/**

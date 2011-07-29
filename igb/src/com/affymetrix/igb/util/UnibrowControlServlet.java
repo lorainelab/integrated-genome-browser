@@ -113,7 +113,7 @@ public final class UnibrowControlServlet {
 		} else if (!gServer.isEnabled()) {
 			// enable the server for this session only
 			gServer.enableForSession();
-			GeneralLoadUtils.discoverServer(gServer);
+			ServerList.getServerInstance().discoverServer(gServer);
 		}
 		return gServer;
 	}

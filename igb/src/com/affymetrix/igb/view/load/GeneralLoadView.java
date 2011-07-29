@@ -235,7 +235,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
-					GeneralLoadUtils.discoverServer(gServer);
+					ServerList.getServerInstance().discoverServer(gServer);
 					return null;
 				}
 			};
@@ -258,12 +258,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		if (gServer.serverType != ServerType.LocalFiles) {
-			if (gServer.serverType == null) {
-				igbService.removeNotLockedUpMsg("Loading repository " + gServer);
-			}
-			else {
-				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
-			}
+			igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		}
 
 		// Need to refresh species names

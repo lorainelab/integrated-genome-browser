@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -27,6 +28,8 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.Authenticator.RequestorType;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -58,6 +61,7 @@ public final class PickSequenceServerView extends ServerPrefsView {
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addComponent(sourcePanel));
+		populateServerData();
 	}
 
 	protected JPanel initSourcePanel(String viewName) {
@@ -233,4 +237,24 @@ public final class PickSequenceServerView extends ServerPrefsView {
 		layout.linkSize(name, type);
 		layout.linkSize(SwingConstants.VERTICAL, name, type, url);
 	}
+
+	/**
+	 * Discover servers, species, etc., asynchronously.
+	 * @param loadGenome parameter to check if genomes should be loaded from
+	 * actual server or not.
+	 */
+	private void populateServerData() {
+		for (final GenericServer gServer : ServerList.getSequenceServerInstance().getEnabledServers()) {
+			Executor vexec = Executors.newSingleThreadExecutor();
+			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+				protected Void doInBackground() throws Exception {
+					ServerList.getSequenceServerInstance().discoverServer(gServer);
+					return null;
+				}
+			};
+
+			vexec.execute(worker);
+		}
+	}
+
 }

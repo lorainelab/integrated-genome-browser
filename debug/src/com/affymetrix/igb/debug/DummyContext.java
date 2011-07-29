@@ -32,6 +32,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.search.mode.ISearchMode;
 import com.affymetrix.igb.shared.GlyphProcessor;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TrackClickListener;
 
 public class DummyContext implements BundleContext {
@@ -49,6 +50,7 @@ public class DummyContext implements BundleContext {
 	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
 	private static final String TIER_MAINTENANCE_LISTENER_FILTER = "(objectClass=" + TierMaintenanceListener.class.getName() + ")";
 	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
+	private static final String MAP_VIEW_GLYPH_FACTORY_FILTER = "(objectClass=" + MapViewGlyphFactoryI.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -163,6 +165,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (SEARCH_MODE_FILTER.equals(filter)) {
 			return service instanceof ISearchMode;
+		}
+		if (MAP_VIEW_GLYPH_FACTORY_FILTER.equals(filter)) {
+			return service instanceof MapViewGlyphFactoryI;
 		}
 		if (filter == null) {
 			return true;

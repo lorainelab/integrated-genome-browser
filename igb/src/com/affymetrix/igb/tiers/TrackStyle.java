@@ -231,7 +231,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
-		setViewMode(node.get(PREF_VIEW_MODE, this.getViewMode()));
+		view_mode = node.get(PREF_VIEW_MODE, this.getViewMode());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
@@ -759,17 +759,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	
 	public void setViewMode(String s) {
-		if(s != null && MapViewModeHolder.getInstance().getViewFactory(s) == null){
-			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
-			s = null;
-		}
+//		if(s != null && MapViewModeHolder.getInstance().getViewFactory(s) == null){
+//			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
+//			s = null;
+//		}
 		view_mode = s;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
-			}
-			getNode().put(PREF_VIEW_MODE, s);
-		}
+//		if (getNode() != null) {
+//			if (DEBUG_NODE_PUTS) {
+//				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
+//			}
+//			getNode().put(PREF_VIEW_MODE, s);
+//		}
 	}
 
 	public String getViewMode() {

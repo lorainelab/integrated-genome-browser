@@ -278,13 +278,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	  }
   };
   
-  private final Action show_depth_graph_action = new AbstractAction("Show Depth Graph") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-	  JCheckBoxMenuItem checkbox = (JCheckBoxMenuItem)e.getSource();
-      showDepthGraph(handler.getSelectedTierLabels(), checkbox.isSelected());
-    }
-  };
   
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
@@ -325,18 +318,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.setTiersCollapsed(tier_labels, collapsed);
     refreshMap(false,true);
   }
-
-  private void showDepthGraph(List<TierLabelGlyph> tier_labels, boolean show) {
-		if (tier_labels.size() == 1) {
-			TierLabelGlyph tlg = tier_labels.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ITrackStyle style = tg.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				((TrackStyle)style).setShowSummary(show);
-				gviewer.getSeqMap().updateWidget();
-			}
-		}
-	}
   
   private void changeFontSize(List<TierLabelGlyph> tier_labels) {
 	if (tier_labels == null || tier_labels.isEmpty()) {
@@ -886,19 +867,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(new JSeparator());
     popup.add(collapse_action);
     popup.add(expand_action);
-    popup.add(change_expand_max_action);
-	
-	if (num_selections == 1) {
-		TierLabelGlyph label = labels.get(0);
-		final TierGlyph glyph = (TierGlyph) label.getInfo();
-		ITrackStyle style = glyph.getAnnotStyle();
-
-		if (style instanceof TrackStyle && glyph.getSummary() != null) {
-			show_depth_graph_action.putValue(Action.SELECTED_KEY, ((TrackStyle)style).getShowSummary());
-			popup.add(new JCheckBoxMenuItem(show_depth_graph_action));
-		}
-	 }
-	
+    popup.add(change_expand_max_action);	
     popup.add(new JSeparator());
 
     popup.add(save_menu);

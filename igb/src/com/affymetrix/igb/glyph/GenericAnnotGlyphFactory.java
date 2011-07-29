@@ -177,7 +177,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 			graph_glyph.drawHandle(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-			tier.setSummary(graph_glyph);
 		}
 	}
 	

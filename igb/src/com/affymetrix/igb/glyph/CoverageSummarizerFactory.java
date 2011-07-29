@@ -40,6 +40,10 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 	public CoverageSummarizerFactory() {
 	}
 
+	public String getName(){
+		return "coverage";
+	}
+	
 	public void init(Map options) {
 		if (options.get("height") != null) {
 			try {

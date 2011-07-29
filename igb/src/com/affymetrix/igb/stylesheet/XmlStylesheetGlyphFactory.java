@@ -45,6 +45,10 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 	public void init(Map options) {
 	}
 
+	public String getName(){
+		return "XML StyleSheet";
+	}
+	
 	public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
 		// fixing bug encountered when sym doesn't have span on sequence it is annotating --
 		//   currently should only see these as "dummy" placeholder syms that are

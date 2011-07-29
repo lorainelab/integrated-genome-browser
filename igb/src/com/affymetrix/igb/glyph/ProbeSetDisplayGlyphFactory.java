@@ -90,6 +90,10 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	public ProbeSetDisplayGlyphFactory() {
 	}
 
+	public String getName(){
+		return "ProbeSet";
+	}
+	
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);

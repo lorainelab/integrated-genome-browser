@@ -52,6 +52,10 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	public void init(Map options) {
 	}
 
+	public String getName(){
+		return "scored";
+	}
+	
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 				ScoredIntervalParser.default_attach_graphs);

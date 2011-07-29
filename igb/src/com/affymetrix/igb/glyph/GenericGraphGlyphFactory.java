@@ -41,6 +41,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
+	public String getName(){
+		return "Graph";
+	}
+	
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		if (sym instanceof GraphSym) {
 			displayGraph((GraphSym) sym, smv, check_same_seq);

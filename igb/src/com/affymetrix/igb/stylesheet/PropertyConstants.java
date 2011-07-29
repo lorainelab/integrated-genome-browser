@@ -19,6 +19,7 @@ public interface PropertyConstants {
 	static final String PROP_DIRECTION_TYPE = "direction_type";
 	static final String PROP_START_COLOR = "start_color";
 	static final String PROP_END_COLOR = "end_color";
+	static final String PROP_VIEW_MODE = "view_mode";
 	
 	static final String TRUE = "true";
 	static final String FALSE = "false";

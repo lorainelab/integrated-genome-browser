@@ -86,6 +86,10 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		parent_labelled_glyph_class = default_elabelled_parent_class;
 	}
 
+	public String getName(){
+		return "annots";
+	}
+	
 	public void init(Map options) {
 		if (DEBUG) {
 			System.out.println("     @@@@@@@@@@@@@     in GenericAnnotGlyphFactory.init(), props: " + options);
@@ -122,7 +126,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		String meth = BioSeq.determineMethod(sym);
 
 		if (meth != null) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
 			int glyph_depth = style.getShow2Tracks();
 
 			TierGlyph[] tiers = smv.getTiers(false, style);

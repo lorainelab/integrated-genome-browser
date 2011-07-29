@@ -21,4 +21,5 @@ import java.util.*;
 public interface MapViewGlyphFactoryI  {
   public void init(Map options);
   public void createGlyph(SeqSymmetry sym, SeqMapView smv);
+  public String getName();
 }

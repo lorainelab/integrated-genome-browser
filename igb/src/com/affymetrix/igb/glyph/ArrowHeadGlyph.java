@@ -1,8 +1,6 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;

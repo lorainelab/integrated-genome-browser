@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.IGB;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;

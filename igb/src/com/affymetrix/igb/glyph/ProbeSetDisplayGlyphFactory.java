@@ -34,7 +34,6 @@ import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**

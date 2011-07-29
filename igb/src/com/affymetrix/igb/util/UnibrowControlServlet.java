@@ -15,7 +15,6 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;

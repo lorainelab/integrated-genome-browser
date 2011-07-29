@@ -5,13 +5,11 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**

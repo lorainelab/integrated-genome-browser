@@ -190,7 +190,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	public boolean isManuallyResizable()  {
-		return ((getInfo() instanceof TierGlyph) && (((TierGlyph)getInfo()).getChildCount() == 1 && ((TierGlyph)getInfo()).getChild(0) instanceof GraphGlyph));
+		return ((getInfo() instanceof TierGlyph) && (((TierGlyph)getInfo()).getAnnotStyle().isGraphTier()) 
+				&& (((TierGlyph)getInfo()).getChildCount() == 1 && ((TierGlyph)getInfo()).getChild(0) instanceof GraphGlyph));
 	}
 
 	public double getSpacing() {

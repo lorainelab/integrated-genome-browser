@@ -36,7 +36,6 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
-import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;

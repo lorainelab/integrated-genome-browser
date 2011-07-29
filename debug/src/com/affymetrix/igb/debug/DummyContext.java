@@ -31,7 +31,7 @@ import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.search.mode.ISearchMode;
-import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
+import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.TrackClickListener;
 
 public class DummyContext implements BundleContext {

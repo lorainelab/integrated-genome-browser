@@ -52,7 +52,6 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;

@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;

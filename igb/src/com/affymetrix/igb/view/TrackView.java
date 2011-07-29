@@ -20,7 +20,8 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
@@ -224,12 +225,28 @@ public class TrackView {
 		} else if (annotSym instanceof GraphSym) {
 			factory = graph_factory;
 		} else {
-			factory = getAnnotationGlyphFactory();
+			factory = determineFactory(annotSym);
 		}
 
 		factory.createGlyph(annotSym, smv);
 	}
 
+	private static MapViewGlyphFactoryI determineFactory(SymWithProps sym){
+				String meth = BioSeq.determineMethod(sym);
+
+		if (meth != null) {
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			
+			// Use alternate view mode if available
+			MapViewGlyphFactoryI view_mode = MapViewModeHolder.getInstance().getViewFactory(style.getViewMode());
+			if(view_mode != null){
+				return view_mode;
+			}
+		}
+		
+		return getAnnotationGlyphFactory();
+	}
+	
 	private static void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);

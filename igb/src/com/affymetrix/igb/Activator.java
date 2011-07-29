@@ -15,12 +15,14 @@ import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.shared.TrackClickHolder;
 import com.affymetrix.igb.shared.TrackClickListener;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.window.service.IWindowService;
 
 /**
@@ -126,6 +128,18 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					AnnotationOperatorHolder.getInstance().removeAnnotationOperator((AnnotationOperator)o);
+				}
+			}
+		);
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(MapViewGlyphFactoryI.class) {
+				@Override
+				public void addService(Object o) {
+					MapViewModeHolder.getInstance().addViewFactory((MapViewGlyphFactoryI)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					MapViewModeHolder.getInstance().removeViewFactory((MapViewGlyphFactoryI)o);
 				}
 			}
 		);

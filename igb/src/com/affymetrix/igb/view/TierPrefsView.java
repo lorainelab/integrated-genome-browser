@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
@@ -61,6 +62,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private static final int COL_DIRECTION_TYPE = 9;
 	private static final int COL_POS_STRAND_COLOR = 10;
 	private static final int COL_NEG_STRAND_COLOR = 11;
+	private static final int COL_VIEW_MODE = 12;
 	private TierPrefsTableModel model;
 	private ListSelectionModel lsm;
 	private static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
@@ -133,6 +135,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        showStrandButtonGroup = new javax.swing.ButtonGroup();
         refreshButton = new javax.swing.JButton();
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -165,6 +168,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         colorCheckBox = new javax.swing.JCheckBox();
         arrowCheckBox = new javax.swing.JCheckBox();
+        viewModelPanel = new javax.swing.JPanel();
+        viewModeCB = new javax.swing.JComboBox();
 
         refreshButton.setText("Refresh");
         // Add a "refresh map" button, if there is an instance of IGB
@@ -261,7 +266,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(selectAllButton))
         );
@@ -433,7 +438,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                     .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(fgLabel)
                     .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(10, 10, 10)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(trackNameSizeLabel)
                     .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -535,6 +540,28 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
+
+        viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModes()));
+        viewModeCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewModeCBActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout viewModelPanelLayout = new org.jdesktop.layout.GroupLayout(viewModelPanel);
+        viewModelPanel.setLayout(viewModelPanelLayout);
+        viewModelPanelLayout.setHorizontalGroup(
+            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(viewModeCB, 0, 96, Short.MAX_VALUE)
+        );
+        viewModelPanelLayout.setVerticalGroup(
+            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(viewModelPanelLayout.createSequentialGroup()
+                .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -550,7 +577,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                 .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(autoRefreshCheckBox))
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -559,10 +587,12 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                 .addContainerGap()
                 .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(viewModelPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(18, 18, 18)
                         .add(autoRefreshCheckBox)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(refreshButton))
@@ -720,6 +750,15 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			}
 		}
 }//GEN-LAST:event_arrowCheckBoxActionPerformed
+
+	private void viewModeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewModeCBActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(viewModeCB.getSelectedItem(), selectedRows[i], COL_VIEW_MODE);
+			}
+		}
+	}//GEN-LAST:event_viewModeCBActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyToAllButton;
     private javax.swing.JCheckBox arrowCheckBox;
@@ -749,10 +788,13 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
     private javax.swing.JButton selectAllButton;
     private javax.swing.JPanel selectTrackPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
+    private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
     private javax.swing.JComboBox trackNameSizeComboBox;
     private javax.swing.JLabel trackNameSizeLabel;
+    private javax.swing.JComboBox viewModeCB;
+    private javax.swing.JPanel viewModelPanel;
     // End of variables declaration//GEN-END:variables
 
 	/** Whether or not changes to the trackOptionsTable should automatically be
@@ -858,6 +900,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			}
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
+			String view_mode = selectedStyle.getViewMode();
+			if(view_mode == null)
+				viewModeCB.setSelectedIndex(0);
+			else
+				viewModeCB.setSelectedItem(view_mode);
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -1100,6 +1147,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 						case COL_NEG_STRAND_COLOR:
 							style.setReverseColor((Color) value);
 							negativeColorComboBox.setSelectedColor((Color) value);
+							break;
+						case COL_VIEW_MODE:
+							style.setViewMode((String)value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

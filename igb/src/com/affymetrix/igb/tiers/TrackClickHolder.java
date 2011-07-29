@@ -1,9 +1,12 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.tiers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPopupMenu;
+
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackClickListener;
 
 public class TrackClickHolder {
 	private static TrackClickHolder instance = new TrackClickHolder();

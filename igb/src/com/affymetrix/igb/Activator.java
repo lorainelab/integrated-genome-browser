@@ -20,9 +20,9 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
-import com.affymetrix.igb.shared.TrackClickHolder;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.tiers.TrackClickHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 
 /**

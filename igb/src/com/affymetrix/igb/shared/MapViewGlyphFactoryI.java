@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.igb.view.SeqMapView;

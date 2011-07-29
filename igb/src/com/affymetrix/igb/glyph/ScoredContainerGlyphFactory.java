@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import java.awt.geom.Rectangle2D;

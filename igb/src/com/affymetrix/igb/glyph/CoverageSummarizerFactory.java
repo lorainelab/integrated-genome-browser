@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;

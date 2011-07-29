@@ -1,5 +1,6 @@
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;

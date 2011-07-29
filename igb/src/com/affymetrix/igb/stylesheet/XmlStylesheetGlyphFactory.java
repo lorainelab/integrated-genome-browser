@@ -19,7 +19,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -46,7 +46,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	public String getName(){
-		return "XML StyleSheet";
+		return "default";
 	}
 	
 	public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {

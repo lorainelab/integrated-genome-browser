@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

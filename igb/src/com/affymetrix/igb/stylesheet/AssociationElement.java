@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class AssociationElement implements DrawableElement {

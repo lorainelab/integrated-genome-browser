@@ -45,11 +45,10 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  * @version $Id$
  */
 public final class QuickLoad extends SymLoader {
-
 	private final GenericVersion version;
 	private SymLoader symL;	// parser factory
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
-
+	
 	public QuickLoad(GenericVersion version, String featureName, String organism_dir) {
 		super(determineURI(version, featureName, organism_dir), featureName, null);
 		this.version = version;
@@ -79,15 +78,15 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, "No symloader found.");
+		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE,"No symloader found.");
 		return super.getLoadChoices();
 	}
 
-	private static String detemineFriendlyName(URI uri) {
+	private static String detemineFriendlyName(URI uri){
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 		String ext = ParserController.getExtension(unzippedStreamName);
-
+		
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 		String friendlyName = strippedName.substring(0, strippedName.toLowerCase().indexOf(ext));
@@ -110,7 +109,7 @@ public final class QuickLoad extends SymLoader {
 		} else {
 			uri = URI.create(
 					version.gServer.URL
-					+ ((organism_dir != null && !organism_dir.isEmpty()) ? organism_dir + "/" : "")
+					+ ((organism_dir != null && !organism_dir.isEmpty()) ? organism_dir + "/"  : "")
 					+ version.versionID + "/"
 					+ determineFileName(version, featureName));
 		}
@@ -138,13 +137,14 @@ public final class QuickLoad extends SymLoader {
 		return "";
 	}
 
+
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
 
 		if (this.symL != null && this.symL.isResidueLoader) {
 			loadResiduesThread(feature, overlapSpan);
 			return true;
-		} else {
+		}else{
 			return loadSymmetriesThread(feature, overlapSpan);
 		}
 	}
@@ -157,7 +157,7 @@ public final class QuickLoad extends SymLoader {
 			QuickLoad.this.getGenome();
 			return true;
 		}
-
+		
 		//Do not not anything in case of genome. Just refresh.
 		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
 			return false;
@@ -165,14 +165,15 @@ public final class QuickLoad extends SymLoader {
 
 		return loadAndAddSymmetries(feature, overlapSpan);
 	}
+	
 
 	/**
 	 * For unoptimized file formats load symmetries and add them.
 	 * @param feature
 	 * @return
 	 */
-	public void loadAllSymmetriesThread(final GenericFeature feature) {
-
+	public void loadAllSymmetriesThread(final GenericFeature feature){
+		
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
 		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
@@ -202,10 +203,10 @@ public final class QuickLoad extends SymLoader {
 					SeqGroupView.getInstance().refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				}
+				} 
 			}
 		};
-
+		
 		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 
@@ -219,31 +220,31 @@ public final class QuickLoad extends SymLoader {
 	private boolean loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws IOException, OutOfMemoryError {
 
-		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
+		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())){
 			return false;
 		}
 
 		setStyle(feature);
 
 		List<? extends SeqSymmetry> results;
-
+		
 		// short-circuit if there's a failure... which may not even be signaled in the code
 		if (!this.isInitialized) {
 			this.init();
 		}
 
 		results = this.getRegion(span);
-
-		if (Thread.currentThread().isInterrupted()) {
+		
+		if(Thread.currentThread().isInterrupted()){
 			results = null;
 			return false;
 		}
-
+		
 		boolean ret = false;
 		if (results != null) {
 			ret = addSymmtries(span, results, feature, extension);
 		}
-
+				
 		return ret;
 	}
 
@@ -251,7 +252,7 @@ public final class QuickLoad extends SymLoader {
 			throws OutOfMemoryError {
 
 		setStyle(feature);
-
+		
 		// short-circuit if there's a failure... which may not even be signaled in the code
 		if (!this.isInitialized) {
 			this.init();
@@ -259,13 +260,13 @@ public final class QuickLoad extends SymLoader {
 
 		List<? extends SeqSymmetry> results = this.getGenome();
 
-		if (Thread.currentThread().isInterrupted()) {
+		if(Thread.currentThread().isInterrupted()){
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
-			GeneralLoadView.loadedTracksDataTableModel.fireTableDataChanged();
+			GeneralLoadView.feature_model.fireTableDataChanged();
 			results = null;
 			return;
 		}
-
+		
 		//For a file format that adds SeqSymmetries from
 		//within the parser handle them here.
 		if (extension.endsWith("chp")) {
@@ -290,7 +291,14 @@ public final class QuickLoad extends SymLoader {
 	private void setStyle(GenericFeature feature) {
 		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);
+		style.setFeature(feature);
+
+		// TODO - probably not necessary
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, extension, feature.featureProps);
+		style.setFeature(feature);
+		
 	}
+
 
 	private static boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
@@ -305,10 +313,10 @@ public final class QuickLoad extends SymLoader {
 				feature.addMethod(entry.getKey());
 			}
 		}
-
+		
 		return (entries != null && !entries.isEmpty());
 	}
-
+	
 	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) {
 		String results = QuickLoad.this.getRegionResidues(span);
 		if (results != null && !results.isEmpty()) {
@@ -334,6 +342,7 @@ public final class QuickLoad extends SymLoader {
 		}
 		return super.getChromosomeList();
 	}
+
 
 	/**
 	 * Only used for non-symloader files.
@@ -384,7 +393,7 @@ public final class QuickLoad extends SymLoader {
 		return "";
 	}
 
-	public SymLoader getSymLoader() {
+	public SymLoader getSymLoader(){
 		return symL;
 	}
 }

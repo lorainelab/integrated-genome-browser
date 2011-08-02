@@ -22,6 +22,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
@@ -44,25 +45,31 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private static final String FOREGROUND = "Foreground";
 	private static final String BACKGROUND = "Background";
 	private static final String TRACK_NAME_SIZE = "Track Name Size";
+	private static final String FEATURE_NAME = "Feature Name";
+	private static final String FEATURE_ST = "Load Strategy";
 	private final static String[] col_headings = {
 		TRACK_NAME,
 		BACKGROUND, FOREGROUND,
 		TRACK_NAME_SIZE, //    GRAPH_TIER,
+		FEATURE_NAME,
+		FEATURE_ST
 	};
 	//subclass variables
 	private static final int COL_TRACK_NAME = 0;
 	private static final int COL_BACKGROUND = 1;
 	private static final int COL_FOREGROUND = 2;
 	private static final int COL_TRACK_NAME_SIZE = 3;
-	private static final int COL_COLLAPSED = 4;
-	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_CONNECTED = 6;
-	private static final int COL_LABEL_FIELD = 7;
-	private static final int COL_SHOW2TRACKS = 8;
-	private static final int COL_DIRECTION_TYPE = 9;
-	private static final int COL_POS_STRAND_COLOR = 10;
-	private static final int COL_NEG_STRAND_COLOR = 11;
-	private static final int COL_VIEW_MODE = 12;
+	private static final int COL_FEATURE_NAME = 4;
+	private static final int COL_FEATURE_ST = 5;
+	private static final int COL_COLLAPSED = 6;
+	private static final int COL_MAX_DEPTH = 7;
+	private static final int COL_CONNECTED = 8;
+	private static final int COL_LABEL_FIELD = 9;
+	private static final int COL_SHOW2TRACKS = 10;
+	private static final int COL_DIRECTION_TYPE = 11;
+	private static final int COL_POS_STRAND_COLOR = 12;
+	private static final int COL_NEG_STRAND_COLOR = 13;
+	private static final int COL_VIEW_MODE = 14;
 	private TierPrefsTableModel model;
 	private ListSelectionModel lsm;
 	private static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
@@ -122,7 +129,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 			}
 		} else {
-			if (table.getRowCount()>-1)
 			table.setRowSelectionInterval(0, 0);
 		}
 	}
@@ -653,7 +659,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
 		table.setRowSelectionInterval(0, table.getRowCount() - 1);
-		for (int i = 0; i < table.getRowCount(); i++) {
+		for (int i = 0; i < table.getRowCount() - 1; i++) {
 			tempStyle = model.getStyles().get(i);
 			if (tempStyle.getTrackName().equalsIgnoreCase(
 					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
@@ -1068,6 +1074,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		public Object getValueAt(int row, int column) {
 			TrackStyle style;
 			style = tier_styles.get(row);
+			GenericFeature f = style.getFeature();
 			switch (column) {
 				case COL_FOREGROUND:
 					return style.getForeground();
@@ -1077,6 +1084,16 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 					return style.getTrackNameSize();
 				case COL_TRACK_NAME:
 					return style.getTrackName();
+				case COL_FEATURE_NAME:
+					if(f != null){
+						return f.featureName;
+					}
+					return "Null Feature";
+				case COL_FEATURE_ST:
+					if(f != null){
+						return f.getLoadStrategy().toString();
+					}
+					return "No Strategy";
 				default:
 					return null;
 			}

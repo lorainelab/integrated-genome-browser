@@ -14,13 +14,14 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.awt.Color;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,35 +37,30 @@ import java.util.logging.Logger;
  */
 public final class GenericFeature {
 
-	public final String featureName;      // friendly name of the feature
+	public final String featureName;      // friendly name of the feature.
 	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
-	private boolean visible;
-	public boolean autoLoad;
-	// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
+	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	private RefreshStatus lastRefresh;
 	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
-	private HashMap<String, String> methods = new HashMap<String, String>();
+	private final Set<String> methods = new HashSet<String>();
 	private static final List<LoadStrategy> standardLoadChoices = new ArrayList<LoadStrategy>();
-	//Variables for populating LoadedTracksTable columns with tier info
-	public String uniqueName;
-	public String trackName;
-	public Color Background;
-	public Color Foreground;
 
 	static {
 		standardLoadChoices.add(LoadStrategy.NO_LOAD);
 		standardLoadChoices.add(LoadStrategy.VISIBLE);
 		standardLoadChoices.add(LoadStrategy.CHROMOSOME);
 	}
+	
 	// Requests that have been made for this feature (to avoid overlaps)
 	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
+	
 	// Request that are currently going on. (To avoid parsing more than once)
 	private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
-
+	
 	/**
 	 * @param featureName
 	 * @param featureProps
@@ -72,23 +68,22 @@ public final class GenericFeature {
 	 * @param typeObj
 	 */
 	public GenericFeature(
-			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload) {
+			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload){
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
 		this.symL = gsr;
 		this.typeObj = typeObj;
-		this.autoLoad = autoload;
 		if (typeObj instanceof Das2Type) {
-			((Das2Type) typeObj).setFeature(this);
+			((Das2Type)typeObj).setFeature(this);
 		}
 		this.setFriendlyURL();
-		this.setAutoload(autoLoad);
+		this.setAutoload(autoload);
 		this.lastRefresh = RefreshStatus.NOT_REFRESHED;
 		//methods.add(featureName);
 	}
 
-	public void setAutoload(boolean auto) {
+	public void setAutoload(boolean auto){
 		if (shouldAutoLoad(featureProps) && auto) {
 			setLoadStrategy(LoadStrategy.GENOME);
 			this.setVisible();
@@ -97,7 +92,7 @@ public final class GenericFeature {
 			this.visible = false;
 		}
 	}
-
+	
 	public void setVisible() {
 		this.visible = true;
 		if (this.loadStrategy != LoadStrategy.NO_LOAD) {
@@ -121,28 +116,28 @@ public final class GenericFeature {
 		}
 	}
 
-	public void setInvisible() {
+	public void setInvisible(){
 		this.visible = false;
 		setLoadStrategy(LoadStrategy.NO_LOAD);
 	}
-
+	
 	public boolean isVisible() {
 		return this.visible;
 	}
 
-	public LoadStrategy getLoadStrategy() {
+	public LoadStrategy getLoadStrategy(){
 		return loadStrategy;
 	}
-
-	public void setLoadStrategy(LoadStrategy loadStrategy) {
+	
+	public void setLoadStrategy(LoadStrategy loadStrategy){
 		this.loadStrategy = loadStrategy;
 	}
-
-	public boolean setPreferredLoadStrategy(LoadStrategy loadStrategy) {
-		if (getLoadChoices().contains(loadStrategy)) {
+	
+	public boolean setPreferredLoadStrategy(LoadStrategy loadStrategy){
+		if (getLoadChoices().contains(loadStrategy)){
 			setLoadStrategy(loadStrategy);
 			return true;
-		} else {
+		}else{
 			setLoadStrategy(getLoadChoices().get(1));
 			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING,
 					"Given {0} strategy is not permitted instead using {1} "
@@ -150,17 +145,15 @@ public final class GenericFeature {
 		}
 		return false;
 	}
-
 	/**
 	 * @param featureProps feature properties
 	 * @return true if feature should be loaded automatically
 	 */
-	private static boolean shouldAutoLoad(Map<String, String> featureProps) {
-		return (featureProps != null
-				&& featureProps.containsKey("load_hint")
-				&& featureProps.get("load_hint").equals("Whole Sequence"));
+	private static boolean shouldAutoLoad(Map<String,String> featureProps) {
+		return (featureProps != null &&
+				featureProps.containsKey("load_hint") &&
+				featureProps.get("load_hint").equals("Whole Sequence"));
 	}
-
 	private void setFriendlyURL() {
 		if (this.featureProps == null || !this.featureProps.containsKey("url") || this.featureProps.get("url").length() == 0) {
 			return;
@@ -176,7 +169,7 @@ public final class GenericFeature {
 		if (this.featureProps != null) {
 			String summary = featureProps.get("summary");
 			String descrip = featureProps.get("description");
-
+			
 			if (summary != null && summary.length() > 0) {
 				return summary;
 			}
@@ -190,34 +183,34 @@ public final class GenericFeature {
 		return featureName;
 	}
 
-	public HashMap<String, String> getMethods() {
-		return methods;
+	public Set<String> getMethods(){
+		return Collections.<String>unmodifiableSet(methods);
 	}
-
+	
 	/**
 	 * Add all method generated by feature.
 	 * @param method
 	 */
-	public void addMethod(String method) {
-		methods.put(method, method);
+	public void addMethod(String method){
+		methods.add(method);
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), featureProps);
 		style.setFeature(this);
 	}
 
-	public void setLastRefreshStatus(RefreshStatus status) {
+	public void setLastRefreshStatus(RefreshStatus status){
 		lastRefresh = status;
 	}
-
-	public RefreshStatus getLastRefreshStatus() {
+	
+	public RefreshStatus getLastRefreshStatus(){
 		return lastRefresh;
 	}
-
+	
 	/**
 	 * Delete given method on a given bioseq.
 	 * @param method	Method to be deleted.
 	 * @param seq		Bioseq on which method should be deleted;
 	 */
-	public void clear(BioSeq seq) {
+	public void clear(BioSeq seq){
 
 		for (int i = 0; i < requestSym.getChildCount(); i++) {
 			SeqSymmetry sym = requestSym.getChild(i);
@@ -225,24 +218,24 @@ public final class GenericFeature {
 				requestSym.removeChild(sym);
 			}
 		}
-
+		
 	}
-
+	
 	/**
 	 * Remove all methods and set feature invisible.
 	 * @param group
 	 */
-	public void clear() {
+	public void clear(){
 		// Remove all childred from request
 		requestSym.removeChildren();
-		if (currentRequestSym.getChildCount() > 0) {
+		if(currentRequestSym.getChildCount() > 0){
 			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.serverType);
 			currentRequestSym.removeChildren();
 		}
 		this.setInvisible();
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
-
+	
 	/**
 	 * Split the requested span into spans that still need to be loaded.
 	 * Note we can't filter inside spans (in general) until after the data is returned.
@@ -272,33 +265,32 @@ public final class GenericFeature {
 		removeCurrentRequest(span);
 	}
 
-	public final void removeCurrentRequest(SeqSpan span) {
-		for (int i = 0; i < currentRequestSym.getChildCount(); i++) {
+	public final void removeCurrentRequest(SeqSpan span){
+		for(int i=0; i<currentRequestSym.getChildCount(); i++){
 			SeqSymmetry sym = currentRequestSym.getChild(i);
-			if (span == sym.getSpan(span.getBioSeq())) {
+			if(span == sym.getSpan(span.getBioSeq())){
 				currentRequestSym.removeChild(sym);
 			}
 		}
 	}
 
-	public void addLoadingSpanRequest(SeqSpan span) {
+	public void addLoadingSpanRequest(SeqSpan span){
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 		currentRequestSym.addChild(query_sym);
 	}
 
-	public MutableSeqSymmetry getRequestSym() {
+	public MutableSeqSymmetry getRequestSym(){
 		return requestSym;
 	}
 
-	public List<LoadStrategy> getLoadChoices() {
-		if (symL != null) {
+	public List<LoadStrategy> getLoadChoices(){
+		if(symL != null)
 			return symL.getLoadChoices();
-		}
 
 		return standardLoadChoices;
 	}
-
+	
 	@Override
 	public String toString() {
 		// remove all but the last "/", since these will be represented in a friendly tree view.
@@ -307,10 +299,10 @@ public final class GenericFeature {
 		}
 
 		int lastSlash = this.featureName.lastIndexOf("/");
-		return this.featureName.substring(lastSlash + 1, featureName.length());
+		return this.featureName.substring(lastSlash + 1,featureName.length());
 	}
 
-	public URI getURI() {
+	public URI getURI(){
 		if (typeObj instanceof Das2Type) {
 			return ((Das2Type) typeObj).getURI();
 		}
@@ -324,12 +316,10 @@ public final class GenericFeature {
 		return null;
 	}
 
-	private String getExtension() {
+	private String getExtension(){
 		if (typeObj instanceof Das2Type) {
 			String ext = FormatPriorities.getFormat((Das2Type) typeObj);
-			if (ext == null) {
-				ext = "";
-			}
+			if(ext == null) ext = "";
 			return ext;
 		}
 
@@ -339,4 +329,5 @@ public final class GenericFeature {
 
 		return "";
 	}
+
 }

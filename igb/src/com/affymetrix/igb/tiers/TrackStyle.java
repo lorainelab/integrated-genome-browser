@@ -14,11 +14,9 @@ import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.PropertyMap;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 /**
  *
@@ -37,6 +35,7 @@ import java.util.regex.Matcher;
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
+
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
 	// whether to create and use a java Preferences node object for this instance
@@ -54,7 +53,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double height = default_height;
 	private double y = default_y;
 	private Color start_color = default_start;
-	private Color end_color = default_end;
+	private Color end_color = default_end; 
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
@@ -70,8 +69,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private float track_name_size = default_track_name_size;
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
-	private static GenericFeature feature = null;
+	private GenericFeature feature = null;
 
+	
 	public static TrackStyle getInstance(String name, String human_name, String file_type, Map<String, String> props) {
 		return getInstance(name, human_name, file_type, true, true, props);
 	}
@@ -84,9 +84,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return getInstance(unique_name, null, null, persistent, false, null);
 	}
 
-	private static TrackStyle getInstance(String unique_name, String human_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
+	private static TrackStyle getInstance(String unique_name, String human_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props){
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
-
 		if (style == null) {
 			if (DEBUG) {
 				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
@@ -98,15 +97,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			style = new TrackStyle(unique_name, file_type, persistent, template, props);
 			static_map.put(unique_name.toLowerCase(), style);
 
-			if (force_human_name) {
+			if(force_human_name) {
 				style.track_name = human_name;
 			}
-			
-
-		} else if (props != null) {
+		}else if(props != null){
 			style.initFromPropertyMap(props);
 		}
-
+		
 		return style;
 	}
 
@@ -130,13 +127,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	protected TrackStyle() {
 		method_name = null;
 	}
-
-	public TrackStyle(AssociationElement element) {
+	
+	public TrackStyle(AssociationElement element){
 		this();
 		initFromTemplate(getDefaultInstance());
 		initFromPropertyMap(element.getPropertyMap());
 	}
-
+	
 	/** Creates an instance associated with a case-insensitive form of the unique name.
 	 *
 	 *   When setting up an AnnotStyle, want to prioritize:
@@ -154,14 +151,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.file_type = file_type;
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
-
-		if (unique_name.endsWith("/")) {
-			unique_name = unique_name.substring(0, unique_name.length() - 1);
+		
+		if (is_persistent) {
+			if (unique_name.endsWith("/")) {
+				unique_name = unique_name.substring(0, unique_name.length() - 1);
+			}
+			unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
+			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
+			//   is now handled within PreferenceUtils.getSubnod() call
 		}
-		unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
-
-		// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
-		//   is now handled within PreferenceUtils.getSubnod() call
 
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
@@ -174,7 +172,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		// now need to add use of stylesheet settings via AssociationElements, etc.
 		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
 		AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
-		if (assel != null) {
+		if(assel != null){
 			PropertyMap props = assel.getPropertyMap();
 			if (props != null) {
 				initFromPropertyMap(props);
@@ -190,10 +188,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				initFromPropertyMap(props);
 			}
 		}
-		if (properties != null) {
+		if(properties != null){
 			initFromPropertyMap(properties);
 		}
-
+		
 		if (is_persistent) {
 			try {
 				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
@@ -219,8 +217,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (DEBUG) {
 			System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name);
 		}
-
 		track_name = node.get(PREF_TRACK_NAME, this.track_name);
+
 		connected = node.getBoolean(PREF_CONNECTED, this.getSeparate());
 		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
@@ -228,7 +226,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
 		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getForwardColor());
 		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
-
+		
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
@@ -257,12 +255,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (bgcol != null) {
 			background = bgcol;
 		}
-
+		
 		Color stcol = props.getColor(PROP_START_COLOR);
 		if (stcol != null) {
 			start_color = stcol;
 		}
-
+		
 		Color edcol = props.getColor(PROP_END_COLOR);
 		if (edcol != null) {
 			end_color = edcol;
@@ -338,14 +336,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (viewmodestring != null) {
 			setViewMode(viewmodestring);
 		}
-
+		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");
 		}
 		// height???
 	}
 
-	private void initFromPropertyMap(Map<String, String> props) {
+	private void initFromPropertyMap(Map<String,String> props){
 		String labfield = props.get("label_field");
 		if (labfield != null && !"".equals(labfield) && label_field != null) {
 			label_field = labfield;
@@ -413,17 +411,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.track_name;
 	}
 
-	public void setTrackName(String track_name) {
-		this.track_name = track_name;
+	public void setTrackName(String human_name) {
+		this.track_name = human_name;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setHumanName(): " + track_name);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setHumanName(): " + human_name);
 			}
-			getNode().put(PREF_TRACK_NAME, track_name);
-		}
-		if (feature != null && feature.uniqueName.equalsIgnoreCase(this.unique_name) && GeneralLoadView.getLoadView().loadedTracksDataTableModel != null) {
-			feature.trackName = track_name;
-			GeneralLoadView.getLoadView().loadedTracksDataTableModel.fireTableDataChanged();
+			getNode().put(PREF_TRACK_NAME, human_name);
 		}
 	}
 
@@ -511,11 +505,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 			PreferenceUtils.putColor(getNode(), PREF_FOREGROUND, c);
 		}
-		if (feature != null && feature.uniqueName.equalsIgnoreCase(this.unique_name) && GeneralLoadView.getLoadView().loadedTracksDataTableModel != null) {
-			feature.Foreground = c;
-			GeneralLoadView.getLoadView().loadedTracksDataTableModel.fireTableDataChanged();
-
-		}
 	}
 
 	/** The color of the tier Background. */
@@ -534,11 +523,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
 			}
 			PreferenceUtils.putColor(getNode(), PREF_BACKGROUND, c);
-		}
-		if (feature != null && feature.uniqueName.equalsIgnoreCase(this.unique_name) && GeneralLoadView.getLoadView().loadedTracksDataTableModel != null) {
-			feature.Background = c;
-			GeneralLoadView.getLoadView().loadedTracksDataTableModel.fireTableDataChanged();
-
 		}
 	}
 
@@ -571,7 +555,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			PreferenceUtils.putColor(getNode(), PREF_END_COLOR, c);
 		}
 	}
-
+	
 	/** Returns the field name from which the glyph labels should be taken.
 	 *  This will never return null, but will return "" instead.
 	 */
@@ -622,11 +606,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
-	public float getTrackNameSize() {
+	public float getTrackNameSize(){
 		return track_name_size;
 	}
-
-	public void setTrackNameSize(float font_size) {
+	
+	public void setTrackNameSize(float font_size){
 		this.track_name_size = font_size;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
@@ -635,27 +619,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putFloat(PREF_TRACK_SIZE, font_size);
 		}
 	}
-
+	
 	public void setFeature(GenericFeature f) {
-		//Variables for LoadedTrackTable
-		if (f.uniqueName != null) {
-			if (f.getMethods().size() > 1) {
-				GeneralLoadView.getLoadView().loadedTracksDataTableModel.createSubFeatures(f, this);
-			}
-		} else {
-			f.uniqueName = this.getUniqueName();
-			f.trackName = this.getTrackName();
-			f.Background = this.getBackground();
-			f.Foreground = this.getForeground();
-			this.feature = f;
-		}
-		GeneralLoadView.getLoadView().loadedTracksDataTableModel.fireTableDataChanged();
+		this.feature = f;
 	}
 
 	public GenericFeature getFeature() {
 		return this.feature;
 	}
-
+	
 	public String getFileType() {
 		return file_type;
 	}
@@ -669,15 +641,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putInt(PREF_DIRECTION_TYPE, direction_type.ordinal());
 		}
 	}
-
+	
 	public int getDirectionType() {
 		return direction_type.ordinal();
 	}
-
-	public DIRECTION_TYPE getDirectionName() {
+	
+	public DIRECTION_TYPE getDirectionName(){
 		return direction_type;
 	}
-
+	
 	/** could be used to remember tier positions. */
 	public void setY(double y) {
 		this.y = y;
@@ -784,6 +756,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return custom_heatmap;
 	}
 
+	
 	public void setViewMode(String s) {
 //		if(s != null && MapViewModeHolder.getInstance().getViewFactory(s) == null){
 //			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
@@ -801,7 +774,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public String getViewMode() {
 		return view_mode;
 	}
-
+	
 	public void copyPropertiesFrom(ITrackStyle g) {
 		setForeground(g.getForeground());
 		setShow(g.getShow());
@@ -828,7 +801,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());
 	}
-
+	
 	/** Whether this style should be customizable in a preferences panel.
 	 *  Sometimes there are temporary styles created where some of the options
 	 *  simply don't make sense and shouldn't be shown to the user in the
@@ -851,50 +824,40 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return s;
 	}
 
-	public static synchronized boolean autoSaveUserStylesheet() {
+	 public static synchronized boolean autoSaveUserStylesheet() {
 		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
-
-
 		if (stylesheet == null) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "No user stylesheet present.");
-
-
 			return false;
 		}
-
+		
 		java.io.File f = XmlStylesheetParser.getUserStylesheetFile();
 		String filename = f.getAbsolutePath();
 		java.io.FileWriter fw = null;
 		java.io.BufferedWriter bw = null;
-
-
 		try {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.INFO, "Saving user stylesheet to file {0}", filename);
 			File parent_dir = f.getParentFile();
-
-			if (parent_dir
-					!= null) {
+			if (parent_dir != null) {
 				parent_dir.mkdirs();
 			}
 			StringBuffer sb = new StringBuffer(1000);
 			sb = stylesheet.appendXML("\t", sb);
 			fw = new java.io.FileWriter(f);
 			bw = new java.io.BufferedWriter(fw);
-
 			bw.write(sb.toString());
 			bw.flush();
-
-
+			
 			return true;
 		} catch (java.io.FileNotFoundException fnfe) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Could not auto-save user stylesheet to {0}", filename);
 		} catch (java.io.IOException ioe) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Error while saving user stylesheet to {0}", filename);
-		} finally {
+		} finally{
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(fw);
 		}
-
+		
 		return false;
 	}
 }

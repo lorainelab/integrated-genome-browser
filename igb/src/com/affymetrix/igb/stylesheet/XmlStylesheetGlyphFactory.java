@@ -21,8 +21,8 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import java.util.*;
 
@@ -49,7 +49,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 		return "default";
 	}
 	
-	public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewI gviewer) {
 		// fixing bug encountered when sym doesn't have span on sequence it is annotating --
 		//   currently should only see these as "dummy" placeholder syms that are
 		//   children of "empty" Das2FeatureRequestSyms, in which case they have _no_ spans.

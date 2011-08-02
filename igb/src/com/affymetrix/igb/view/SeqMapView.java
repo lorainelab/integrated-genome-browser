@@ -50,6 +50,7 @@ import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -99,7 +100,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
+				implements SeqMapViewI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
 	private static final long serialVersionUID = 1L;
 
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
@@ -1035,6 +1036,7 @@ public class SeqMapView extends JPanel
 
 
 
+	@Override
 	public final BioSeq getAnnotatedSeq() {
 		return aseq;
 	}
@@ -1048,6 +1050,7 @@ public class SeqMapView extends JPanel
 	 *     BioSeq returned by getAnnotatedSeq()
 	 *  @see #getTransformPath()
 	 */
+	@Override
 	public final BioSeq getViewSeq() {
 		return viewseq;
 	}
@@ -1066,6 +1069,7 @@ public class SeqMapView extends JPanel
 	 *  returns the original symmetry.
 	 */
 
+	@Override
 	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
 		if (seq_to_compare != getViewSeq()) {
 			MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
@@ -1075,6 +1079,7 @@ public class SeqMapView extends JPanel
 		return insym;
 	}
 
+	@Override
 	public final AffyTieredMap getSeqMap() {
 		return seqmap;
 	}
@@ -1813,6 +1818,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	@Override
 	public final GlyphI getPixelFloaterGlyph() {
 		PixelFloaterGlyph floater = pixel_floater_glyph;
 		Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
@@ -1835,6 +1841,7 @@ public class SeqMapView extends JPanel
 	 *    The array may instead contain two copies of one mixed-direction tier;
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
+	@Override
 	public TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style) {
 		return TrackView.getTiers(this, next_to_axis, style, true);
 	}
@@ -1874,6 +1881,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Get the span of the symmetry that is on the seq being viewed. */
+	@Override
 	public final SeqSpan getViewSeqSpan(SeqSymmetry sym) {
 		return sym.getSpan(viewseq);
 	}

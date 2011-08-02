@@ -12,8 +12,8 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *
@@ -29,7 +29,7 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public void init(java.util.Map options) { }
 
-	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
 
 		String meth = BioSeq.determineMethod(sym);
 		SeqSpan pspan = smv.getViewSeqSpan(sym);

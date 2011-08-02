@@ -16,9 +16,9 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
-import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +82,7 @@ static String ATT_POSITIONS = "child_positions";
    *   symmetries are drawn as glyphs inside this parent glyph, but that can
    *   change depending on the setting of {@link #childContainer}.
    */
-  void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, 
+  void childSymsToGlyphs(SeqMapViewI gviewer, SeqSymmetry insym, GlyphI gl, 
       Stylesheet stylesheet, PropertyMap context) {
     
     int childCount = insym.getChildCount();
@@ -99,7 +99,7 @@ static String ATT_POSITIONS = "child_positions";
   /** Draws a single child from the <CHILDREN> element.  Generally called
    *  only from inside this class.
    */
-  private GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym,
+  private GlyphI childSymToGlyph(SeqMapViewI gviewer, SeqSymmetry childsym,
       GlyphI container_glyph, Stylesheet stylesheet, PropertyMap context) {
     GlyphI result = null;
 

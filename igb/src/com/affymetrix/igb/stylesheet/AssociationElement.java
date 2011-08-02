@@ -16,7 +16,7 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.shared.SeqMapViewI;
 
 public final class AssociationElement implements DrawableElement {
   /*
@@ -117,7 +117,7 @@ public final class AssociationElement implements DrawableElement {
     return factory;
   }
 
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container,
+  public GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry sym, GlyphI container,
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
 

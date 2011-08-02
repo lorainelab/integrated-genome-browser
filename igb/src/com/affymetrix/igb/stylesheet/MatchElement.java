@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -81,7 +81,7 @@ class MatchElement implements DrawableElement {
    *  If this MatchElement, or one of its children, matcheds the given symmetry,
    *  then a glyph will be created and returned.  Otherwise, will return null.
    */
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl, 
+  public GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry sym, GlyphI gl, 
       Stylesheet stylesheet, PropertyMap context) {
     PropertyMap oldContext = propertyMap.getContext();
     propertyMap.setContext(context);

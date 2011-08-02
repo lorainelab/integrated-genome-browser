@@ -15,9 +15,9 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.shared.SeqMapViewI;
 
 interface DrawableElement extends Cloneable, XmlAppender {
-  GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, 
+  GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry sym, 
     GlyphI container, Stylesheet stylesheet, PropertyMap context);  
 }

@@ -12,18 +12,19 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;
 import java.util.*;
+
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 
@@ -66,7 +67,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		ITrackStyleExtended annot_style = TrackStyle.getInstance(meth, false);
 
@@ -80,7 +81,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 	}
 	
 	public static void createGlyph(SeqSymmetry sym, TierGlyph ftier, ITrackStyleExtended annot_style,
-			int style, int glyph_height, SeqMapView gviewer) {
+			int style, int glyph_height, SeqMapViewI gviewer) {
 
 		Color background_color;
 		Color glyph_color;

@@ -12,7 +12,9 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import java.awt.*;
+import java.util.*;
+
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -20,10 +22,9 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import java.awt.*;
-import java.util.*;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.BioSeq;
+
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
@@ -31,10 +32,12 @@ import com.affymetrix.genoviz.glyph.EfficientOutlineContGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
+
 import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  *  A factory for showing consensus (or exemplar) sequences mapped onto the genome with
@@ -75,7 +78,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	private static final Color ps_color = Color.PINK;
 	private static final Color poly_a_site_color = Color.BLUE;
 	private static final Color poly_a_stack_color = Color.CYAN;
-	private SeqMapView gviewer;
+	private SeqMapViewI gviewer;
 	/**
 	 * Whether to put an outline around the probe glyphs in the same probeset.
 	 */
@@ -94,7 +97,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		return "ProbeSet";
 	}
 	
-	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;

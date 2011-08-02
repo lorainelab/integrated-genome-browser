@@ -23,6 +23,7 @@ import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -81,7 +82,7 @@ public class TrackView {
 	 *  constant_height will be ignored and re-set to false.
 	 */
 	public static TierGlyph[] getTiers(
-			SeqMapView smv, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
+			SeqMapViewI smv, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
 		AffyTieredMap map = smv.getSeqMap();
 		TierGlyph axisTier = smv.getAxisTier();
 

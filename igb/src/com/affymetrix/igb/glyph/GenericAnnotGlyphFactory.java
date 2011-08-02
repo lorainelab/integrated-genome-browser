@@ -52,6 +52,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -73,7 +74,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 	private static final int DEFAULT_THICK_HEIGHT = 25;
 	private static final int DEFAULT_THIN_HEIGHT = 15;
-	private SeqMapView gviewer;
+	private SeqMapViewI gviewer;
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
 	private final Class parent_labelled_glyph_class;
@@ -119,7 +120,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
 		gviewer = smv;
 
 		String meth = BioSeq.determineMethod(sym);
@@ -558,7 +559,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 	
-	private void handleInsertionGlyphs(SeqMapView gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map)
+	private void handleInsertionGlyphs(SeqMapViewI gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map)
 			throws IllegalAccessException, InstantiationException {
 		
 		if (!(sym instanceof BAMSym)) {

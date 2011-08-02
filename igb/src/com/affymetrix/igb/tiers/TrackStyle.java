@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
@@ -53,14 +54,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private double height = default_height;
 	private double y = default_y;
 	private Color start_color = default_start;
-	private Color end_color = default_end; 
+	private Color end_color = default_end;
+	private String view_mode = default_view_mode;
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String track_name;
-	private String view_mode;
 	final private String method_name;
 	private Preferences node;
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
@@ -758,22 +759,21 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	
 	public void setViewMode(String s) {
-//		if(s != null && MapViewModeHolder.getInstance().getViewFactory(s) == null){
-//			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
-//			s = null;
-//		}
+		if(s != null && !default_view_mode.equalsIgnoreCase(s)
+			&& MapViewModeHolder.getInstance().getViewFactory(s) == null){
+			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
+			s = default_view_mode;
+		}
 		view_mode = s;
-//		if (getNode() != null) {
-//			if (DEBUG_NODE_PUTS) {
-//				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
-//			}
-//			getNode().put(PREF_VIEW_MODE, s);
-//		}
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
+			}
+			getNode().put(PREF_VIEW_MODE, s);
+		}
 	}
 
 	public String getViewMode() {
-		if(view_mode == null)
-			return default_view_mode;
 		return view_mode;
 	}
 	

@@ -299,9 +299,9 @@ public final class BookmarkUnibrowControlServlet {
 
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
-		if(!LocalUrlCacher.isValidURL(query_url)){
-			return null;
-		}
+//		if(!LocalUrlCacher.isValidURL(query_url)){
+//			return null;
+//		}
 
 		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(gServer, query_url);
 

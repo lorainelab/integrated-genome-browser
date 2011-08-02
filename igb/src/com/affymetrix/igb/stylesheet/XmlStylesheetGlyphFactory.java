@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.stylesheet;
 
+import java.util.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -23,8 +24,6 @@ import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.view.TrackView;
-import java.util.*;
 
 /**
  *  A very glyph factory that can draw glyphs based on a stylesheet.
@@ -96,7 +95,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			TierGlyph[] tiers = TrackView.getTiers(gviewer, false, style, false);
+			TierGlyph[] tiers = gviewer.getTiers(false, style, false);
 			int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
 			TierGlyph the_tier = tiers[tier_index];
 

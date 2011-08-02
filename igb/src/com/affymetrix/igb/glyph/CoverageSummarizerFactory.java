@@ -73,7 +73,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 
 		if (meth != null) {
 			TierGlyph[] tiers = gviewer.getTiers(false, // next_to_axis = false
-					annot_style);
+					annot_style, true);
 			TierGlyph ftier = tiers[0]; // ignore the reverse tier
 
 			createGlyph(sym, ftier, annot_style, style, glyph_height, gviewer);

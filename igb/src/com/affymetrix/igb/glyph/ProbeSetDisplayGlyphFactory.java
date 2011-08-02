@@ -125,7 +125,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			}
 			label_field = style.getLabelField();
 
-			TierGlyph[] tiers = gviewer.getTiers(false, style);
+			TierGlyph[] tiers = gviewer.getTiers(false, style, true);
 			addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
 		}
 	}

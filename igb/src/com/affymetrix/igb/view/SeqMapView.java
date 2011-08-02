@@ -1843,8 +1843,8 @@ public class SeqMapView extends JPanel
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
 	@Override
-	public TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style) {
-		return TrackView.getTiers(this, next_to_axis, style, true);
+	public TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
+		return TrackView.getTiers(this, next_to_axis, style, constant_heights);
 	}
 
 

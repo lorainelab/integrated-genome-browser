@@ -33,7 +33,7 @@ public interface SeqMapViewI {
 	 * The array may instead contain two copies of one mixed-direction tier;
 	 * in this case place glyphs for both forward and revers items into it.
 	 */
-	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style);
+	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights);
 
 	/**
 	 * Gets the view seq.
@@ -66,5 +66,4 @@ public interface SeqMapViewI {
 	 */
 	SeqSymmetry[] getTransformPath();
 	
-	TierGlyph getAxisTier();
 }

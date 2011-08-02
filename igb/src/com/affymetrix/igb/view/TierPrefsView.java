@@ -122,6 +122,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 			}
 		} else {
+			if (table.getRowCount()>-1)
 			table.setRowSelectionInterval(0, 0);
 		}
 	}
@@ -652,7 +653,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
 		table.setRowSelectionInterval(0, table.getRowCount() - 1);
-		for (int i = 0; i < table.getRowCount() - 1; i++) {
+		for (int i = 0; i < table.getRowCount(); i++) {
 			tempStyle = model.getStyles().get(i);
 			if (tempStyle.getTrackName().equalsIgnoreCase(
 					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {

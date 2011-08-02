@@ -731,7 +731,7 @@ public final class GeneralLoadUtils {
 			protected void finished() {
 				if(isCancelled()){
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
-					GeneralLoadView.feature_model.fireTableDataChanged();
+					GeneralLoadView.loadedTracksDataTableModel.fireTableDataChanged();
 				}
 				
 				BioSeq seq = gmodel.getSelectedSeq();
@@ -863,7 +863,7 @@ public final class GeneralLoadUtils {
 				feature.setLastRefreshStatus(RefreshStatus.NO_NEW_DATA_LOADED);
 			}
 		}
-		GeneralLoadView.feature_model.genericFeatureRefreshed(feature);
+		GeneralLoadView.loadedTracksDataTableModel.genericFeatureRefreshed(feature);
 	}
 		
 	/**

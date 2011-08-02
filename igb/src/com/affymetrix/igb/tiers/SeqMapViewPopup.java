@@ -413,7 +413,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-  void showAllTiers() {
+  public void showAllTiers() {
 	  List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
 	  for (TierLabelGlyph label : tiervec) {
@@ -432,7 +432,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
    *  Does not re-pack the given tier, or any other tiers.
    */
-  private void hideOneTier(final TierGlyph tier) {
+  public void hideOneTier(final TierGlyph tier) {
     final ITrackStyle style = tier.getAnnotStyle();
 	  // if style.getShow() is already false, there is likely a bug somewhere!
 	  if (style == null) {
@@ -464,6 +464,42 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       showMenu.add(show_tier);
     }
 	tier.setVisibility(false);
+  }
+  
+    /** Hides one tier and creates a JMenuItem that can be used to show it again.
+   *  Does not re-pack the given tier, or any other tiers.
+   */
+  public void hideOneTier(final TrackStyle style) {
+	  // if style.getShow() is already false, there is likely a bug somewhere!
+	  if (style == null) {
+		  return;
+	  }
+    if (style.getShow()) {
+      style.setShow(false);
+      final JMenuItem show_tier = new JMenuItem() {
+    	private static final long serialVersionUID = 1L;
+        // override getText() because the HumanName of the style might change
+				@Override
+        public String getText() {
+          String name = style.getTrackName();
+          if (name == null) { name = "<unnamed>"; }
+          if (name.length() > 30) {
+            name = name.substring(0,30) + "...";
+          }
+          return name;
+        }
+      };
+      show_tier.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          style.setShow(true);
+          showMenu.remove(show_tier);
+		  handler.sortTiers();
+		  handler.repackTheTiers(false, true);
+        }
+      });
+      showMenu.add(show_tier);
+    }
+	style.setShow(false);
   }
 
   /** Hides multiple tiers and then repacks.
@@ -944,5 +980,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	SeqMapView getSeqMapView() {
 		return gviewer;
+	}
+	
+	public JMenu getShowMenu(){
+		return showMenu;
 	}
 }

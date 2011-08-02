@@ -35,7 +35,8 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
  * @author jnicol
  */
 public class Das2 {
-    private static final String default_format = "das2feature";
+
+	private static final String default_format = "das2feature";
 
 	/**
 	 * Loads (and displays) DAS/2 annotations.
@@ -53,36 +54,35 @@ public class Das2 {
 		if (dtype == null || region == null) {
 			return false;
 		}
-		
+
 		return loadSpan(feature, span, region, dtype);
 	}
 
+	private static boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 
-    private static boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
-
-        String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
+		String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
 		String format = FormatPriorities.getFormat(type);
 		if (format == null) {
 			format = default_format;
 		}
 
-        Das2VersionedSource versioned_source = region.getVersionedSource();
-        Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
-        String request_root = featcap.getRootURI().toString();
+		Das2VersionedSource versioned_source = region.getVersionedSource();
+		Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
+		String request_root = featcap.getRootURI().toString();
 
-        try {
-            String query_part = DetermineQueryPart(region, overlap_filter, type.getURI(), format);
-            String feature_query = request_root + "?" + query_part;
+		try {
+			String query_part = DetermineQueryPart(region, overlap_filter, type.getURI(), format);
+			String feature_query = request_root + "?" + query_part;
 			return LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		
-		return false;
-    }
 
-   private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
+		return false;
+	}
+
+	private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append("segment=");
 		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
@@ -100,12 +100,12 @@ public class Das2 {
 		return buf.toString();
 	}
 
- 	/**
-  * Split list of symmetries by track.
-  * @param results - list of symmetries
-  * @return - Map<String trackName,List<SeqSymmetry>>
-  */
- public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
+	/**
+	 * Split list of symmetries by track.
+	 * @param results - list of symmetries
+	 * @return - Map<String trackName,List<SeqSymmetry>>
+	 */
+	public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
 		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
 		List<SeqSymmetry> resultList = null;
 		String method = null;
@@ -120,8 +120,8 @@ public class Das2 {
 			resultList.add(result);
 		}
 
-	  return track2Results;
- }
+		return track2Results;
+	}
 
 	private static void filterAndAddAnnotations(
 			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
@@ -129,13 +129,13 @@ public class Das2 {
 			return;
 		}
 		SeqSymmetry originalRequestSym = feature.getRequestSym();
-		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());	
+		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());
 		if (filteredFeats.isEmpty()) {
 			return;
 		}
 		if (filteredFeats.get(0) instanceof GraphSym) {
 			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-			for(SeqSymmetry feat : filteredFeats) {
+			for (SeqSymmetry feat : filteredFeats) {
 				//grafs.add((GraphSym)feat);
 				if (feat instanceof GraphSym) {
 					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
@@ -150,7 +150,6 @@ public class Das2 {
 			seq.addAnnotation(feat);
 		}
 	}
-
 
 	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
 		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
@@ -178,52 +177,52 @@ public class Das2 {
 		return newSyms;
 	}
 
-    private static boolean LoadFeaturesFromQuery(
-            GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
+	private static boolean LoadFeaturesFromQuery(
+			GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
-        /**
-         *  Need to look at content-type of server response
-         */
-        BufferedInputStream bis = null;
-        InputStream istr = null;
-        String content_subtype = null;
+		/**
+		 *  Need to look at content-type of server response
+		 */
+		BufferedInputStream bis = null;
+		InputStream istr = null;
+		String content_subtype = null;
 
 		Thread thread = Thread.currentThread();
-		
-		if(thread.isInterrupted()){
+
+		if (thread.isInterrupted()) {
 			return false;
 		}
-		
-        try {
-			BioSeq aseq = span.getBioSeq();
-            // if overlap_span is entire length of sequence, then check for caching
-            if ((span.getMin() == 0) && (span.getMax() == aseq.getLength())) {
-                istr = LocalUrlCacher.getInputStream(feature_query);
-                if (istr == null) {
-                    System.out.println("Server couldn't be accessed with query " + feature_query);
-                    return false;
-                }
-                // for now, assume that when caching, content type returned is same as content type requested
-                content_subtype = format;
-            } else {
-                URL query_url = new URL(feature_query);
 
-                // casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
-                HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
+		try {
+			BioSeq aseq = span.getBioSeq();
+			// if overlap_span is entire length of sequence, then check for caching
+			if ((span.getMin() == 0) && (span.getMax() == aseq.getLength())) {
+				istr = LocalUrlCacher.getInputStream(feature_query);
+				if (istr == null) {
+					System.out.println("Server couldn't be accessed with query " + feature_query);
+					return false;
+				}
+				// for now, assume that when caching, content type returned is same as content type requested
+				content_subtype = format;
+			} else {
+				URL query_url = new URL(feature_query);
+
+				// casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
+				HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
 				query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 				query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-                int response_code = query_con.getResponseCode();
-                String response_message = query_con.getResponseMessage();
+				int response_code = query_con.getResponseCode();
+				String response_message = query_con.getResponseMessage();
 
-                if (response_code != 200) {
-                    System.out.println("WARNING, HTTP response code not 200/OK: " + response_code + ", " + response_message);
-                }
+				if (response_code != 200) {
+					System.out.println("WARNING, HTTP response code not 200/OK: " + response_code + ", " + response_message);
+				}
 
-                if (response_code >= 400 && response_code < 600) {
-                    System.out.println("Server returned error code, aborting response parsing!");
-                    return false;
-                }
-                String content_type = query_con.getContentType();
+				if (response_code >= 400 && response_code < 600) {
+					System.out.println("Server returned error code, aborting response parsing!");
+					return false;
+				}
+				String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
 
 				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
@@ -236,61 +235,55 @@ public class Das2 {
 					// if content type is not descriptive enough, go by what was requested
 					content_subtype = format;
 				}
-            }
+			}
 
-            Logger.getLogger(Das2.class.getName()).log(Level.INFO,
+			Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
-					
+
 			List<? extends SeqSymmetry> feats = null;
 			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
 			if (fileTypeHandler == null) {
 				Logger.getLogger(SymLoader.class.getName()).log(
-					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
+						Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
 				return false;
-			}
-			else {
+			} else {
 				// Create an AnnotStyle so that we can automatically set the
 				// human-readable name to the DAS2 name, rather than the ID, which is a URI
+				//No need to set feature again or call this twice.
 				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, format);
-				ts.setFeature(feature);
-
-				//TODO: Probably not necessary.
-				ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, format);
-				ts.setFeature(feature);
+				
 
 				SymLoader symL = fileTypeHandler.createSymLoader(typeURI, typeName, aseq.getSeqGroup());
 				symL.setExtension(content_subtype);
 				if (symL instanceof BAM) {
 					File bamfile = GeneralUtils.convertStreamToFile(istr, typeName);
 					bamfile.deleteOnExit();
-					BAM bam = new BAM(bamfile.toURI(),typeName, aseq.getSeqGroup());
+					BAM bam = new BAM(bamfile.toURI(), typeName, aseq.getSeqGroup());
 					//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
 					if (typeURI.getScheme().equals("http")) {
 						feats = bam.parseAll(span.getBioSeq());
-					}
-					else {
+					} else {
 						feats = bam.getRegion(span);
 					}
-				}
-				else {
+				} else {
 					feats = symL.parse(istr, false);
 				}
 //				feats = SymProcessor.getInstance().parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
 			}
 
 			/*
-			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
-			 //watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
+			TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
+			//watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
 			String name = type.getName();
 			if (format.equals(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
-				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
+			name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
-			if(thread.isInterrupted()){
+			if (thread.isInterrupted()) {
 				feats = null;
 				return false;
 			}
-			
+
 			for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(feats).entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					continue;
@@ -298,19 +291,19 @@ public class Das2 {
 				filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 
 				// Some format do not annotate. So it might not have method name. e.g bgn
-				if(entry.getKey() != null)
+				if (entry.getKey() != null) {
 					feature.addMethod(entry.getKey());
+				}
 			}
-			
-            return (feats != null && !feats.isEmpty());
-			
-        } catch (Exception ex) {
+
+			return (feats != null && !feats.isEmpty());
+
+		} catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		} finally {
-            GeneralUtils.safeClose(bis);
-            GeneralUtils.safeClose(istr);
-        }
-    }
-
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(istr);
+		}
+	}
 }

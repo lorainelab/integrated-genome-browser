@@ -133,40 +133,8 @@ public final class TrackLineParser {
 	 */
 	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name, String file_type) {
 		String name = track_hash.get(NAME);
-		
-		//this will create the correct track name for IGB to display the track correctly
-		if (name != null) {
-			if (((default_track_name.indexOf("/") > -1) || (default_track_name.indexOf("\\\\") > -1)) && !name.equals(default_track_name)) {
-				String separator = "";
-				if (default_track_name.indexOf("/") > -1) {
-					separator = "/";
-				} else {
-					separator = "\\\\";
-				}
-				String[] s = default_track_name.split(separator);
-				//if the filename equals the name of the specific track
-				if (s[s.length - 1].equals(name)) {
-					name = default_track_name;
-				} else {  //if the track name does not equal the filename
-					StringBuilder newTrackName = new StringBuilder();
-					//append path to name
-					for (int i = 0; i < s.length - 1; i++) {
-						newTrackName.append(s[i]).append(separator);
-					}
-					//append track name
-					newTrackName.append(name);
-					name = newTrackName.toString();
-				}
-				track_hash.put(NAME, name);
-			}
-		}
-
-		if (name == null) {
-			track_hash.put(NAME, default_track_name);
-			name = default_track_name;
-		}
 		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, null, file_type);
-		applyTrackProperties(track_hash, style);
+		applyTrackProperties(track_hash, style);		
 		return style;
 	}
 

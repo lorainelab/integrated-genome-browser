@@ -73,7 +73,8 @@ import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 
 public final class GeneralLoadView extends IGBTabPanel
-				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
+		implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
+
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = Integer.MIN_VALUE;
 	private static final boolean DEBUG_EVENTS = false;
@@ -93,14 +94,13 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final JComboBoxToolTipRenderer speciesCBRenderer;
 	private final AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
-	private static JTableX feature_table;
-	public static FeaturesTableModel feature_model;
+	private static JTableX loadedTracksTable;
+	public static LoadModeDataTableModel loadedTracksDataTableModel;
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 	private final JSplitPane jSplitPane;
-
 	private static GeneralLoadView singleton;
 
 	public static void init(IGBService _igbService) {
@@ -113,7 +113,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	private GeneralLoadView(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, TAB_POSITION);
-		gviewer = (SeqMapView)igbService.getMapView();
+		gviewer = (SeqMapView) igbService.getMapView();
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();
@@ -122,7 +122,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
 		speciesCB.addItem(SELECT_SPECIES);
-		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
+		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
 		speciesCB.setToolTipText(CHOOSE + " " + SELECT_SPECIES);
@@ -138,7 +138,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		versionCB = new JRPComboBoxWithSingleListener("DataAccess_version");
 		versionCB.addItem(SELECT_GENOME);
-		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
+		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width * 4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);
 		versionCB.setEditable(false);
 		versionCB.setToolTipText(CHOOSE + " " + SELECT_GENOME);
@@ -154,12 +154,12 @@ public final class GeneralLoadView extends IGBTabPanel
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadSequence.getWholeAction());
-		all_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("nucleotideSequence")));
+		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		buttonPanel.add(all_residuesB);
 		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadSequence.getPartialAction());
-		partial_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
+		partial_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		buttonPanel.add(partial_residuesB);
@@ -171,15 +171,15 @@ public final class GeneralLoadView extends IGBTabPanel
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
-		feature_model = new FeaturesTableModel(this);
-		feature_table = new JTableX(feature_model);
-		feature_table.setModel(feature_model);
-		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+		loadedTracksDataTableModel = new LoadModeDataTableModel(this);
+		loadedTracksTable = new JTableX(loadedTracksDataTableModel);
+		loadedTracksTable.setModel(loadedTracksDataTableModel);
+		loadedTracksTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 		// Handle sizing of the columns
-		feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
+		loadedTracksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 
-		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
-		featuresTableScrollPane.setViewportView(feature_table);
+		featuresTableScrollPane = new JScrollPane(GeneralLoadView.loadedTracksTable);
+		featuresTableScrollPane.setViewportView(loadedTracksTable);
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
@@ -205,7 +205,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		this.setBorder(BorderFactory.createEtchedBorder());
 
 		ServerList.getServerInstance().addServerInitListener(this);
-		
+
 		GeneralLoadUtils.loadServerMapping();
 		populateSpeciesData();
 		addListeners();
@@ -234,6 +234,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
 				protected Void doInBackground() throws Exception {
 					ServerList.getServerInstance().discoverServer(gServer);
 					return null;
@@ -246,9 +247,9 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	public void genericServerInit(GenericServerInitEvent evt) {
 		boolean areAllServersInited = ServerList.getServerInstance().areAllServersInited();	// do this first to avoid race condition
-		GenericServer gServer = (GenericServer)evt.getSource();
+		GenericServer gServer = (GenericServer) evt.getSource();
 
-		if (gServer.getServerStatus() == ServerStatus.NotResponding){
+		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
 			refreshTreeView();
 			return;
 		}
@@ -263,12 +264,12 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
-		String speciesName = (String)this.speciesCB.getSelectedItem();
+		String speciesName = (String) this.speciesCB.getSelectedItem();
 		refreshSpeciesCB();
 
 		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
 			lookForPersistentGenome = false;
-			String versionName = (String)this.versionCB.getSelectedItem();
+			String versionName = (String) this.versionCB.getSelectedItem();
 
 			//refresh version names if a species is selected
 			refreshVersionCB(speciesName);
@@ -359,21 +360,21 @@ public final class GeneralLoadView extends IGBTabPanel
 					}
 				}
 
-			
+
 				// Try/catch may not be needed.
 				try {
 					Persistence.restoreSeqVisibleSpan(gviewer);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				return seq;
 			}
 
 			@Override
 			protected void finished() {
 				try {
-					gmodel.setSelectedSeq((BioSeq)get());
+					gmodel.setSelectedSeq((BioSeq) get());
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -390,7 +391,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private void refreshSpeciesCB() {
 		speciesCB.removeItemListener(this);
 		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
-		if (speciesListLength == speciesCB.getItemCount() -1) {
+		if (speciesListLength == speciesCB.getItemCount() - 1) {
 			// No new species.  Don't bother refreshing.
 			return;
 		}
@@ -402,7 +403,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				String oldSpecies = (String)speciesCB.getSelectedItem();
+				String oldSpecies = (String) speciesCB.getSelectedItem();
 
 				speciesCB.removeAllItems();
 				speciesCB.addItem(SELECT_SPECIES);
@@ -421,10 +422,8 @@ public final class GeneralLoadView extends IGBTabPanel
 					speciesCBChanged();
 				}
 			}
-
 		});
 	}
-
 
 	/**
 	 * Refresh the genome versions.
@@ -478,7 +477,6 @@ public final class GeneralLoadView extends IGBTabPanel
 		});
 	}
 
-
 	public void initVersion(String versionName) {
 		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
 		try {
@@ -495,9 +493,9 @@ public final class GeneralLoadView extends IGBTabPanel
 	public void loadResidues(AbstractAction action) {
 		Object src = null;
 
-		if(action.equals(partial_residuesB.getAction())){
+		if (action.equals(partial_residuesB.getAction())) {
 			src = partial_residuesB;
-		}else if (action.equals(all_residuesB.getAction())){
+		} else if (action.equals(all_residuesB.getAction())) {
 			src = all_residuesB;
 		}
 
@@ -508,7 +506,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 		final BioSeq seq = gmodel.getSelectedSeq();
 		final boolean partial = src == partial_residuesB;
-		
+
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			public Boolean doInBackground() {
@@ -523,7 +521,7 @@ public final class GeneralLoadView extends IGBTabPanel
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
-				} finally{
+				} finally {
 //					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
 				}
 			}
@@ -533,15 +531,15 @@ public final class GeneralLoadView extends IGBTabPanel
 		ThreadUtils.getPrimaryExecutor(src).execute(worker);
 	}
 
-	public boolean loadResiduesInView(boolean tryFull){
+	public boolean loadResiduesInView(boolean tryFull) {
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 		SeqSpan visibleSpan = gviewer.getVisibleSpan();
 		return loadResidues(genomeVersionName, visibleSpan.getBioSeq(), visibleSpan, true, tryFull, false);
 	}
-	
-	public boolean loadResidues(SeqSpan span, boolean tryFull){
+
+	public boolean loadResidues(SeqSpan span, boolean tryFull) {
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
-		if(!span.isForward()){
+		if (!span.isForward()) {
 			span = new SimpleSeqSpan(span.getMin(), span.getMax(), span.getBioSeq());
 		}
 		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);
@@ -553,14 +551,16 @@ public final class GeneralLoadView extends IGBTabPanel
 			if (partial) {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
 					if (!tryFull) {
-						if(show_error_panel)
+						if (show_error_panel) {
 							ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.");
-						Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,"Unable to load partial sequence");
+						}
+						Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING, "Unable to load partial sequence");
 						return false;
 					} else {
 						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-							if(show_error_panel)
+							if (show_error_panel) {
 								ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.");
+							}
 							Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,
 									"Couldn't load partial or full sequence. Couldn't locate the sequence.");
 							return false;
@@ -569,10 +569,11 @@ public final class GeneralLoadView extends IGBTabPanel
 				}
 			} else {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-					if(show_error_panel)
+					if (show_error_panel) {
 						ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.");
+					}
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,
-									"Couldn't load full sequence. Couldn't locate the sequence.");
+							"Couldn't load full sequence. Couldn't locate the sequence.");
 					return false;
 				}
 			}
@@ -619,35 +620,35 @@ public final class GeneralLoadView extends IGBTabPanel
 		loadFeatures(loadStrategies, serverType);
 	}
 
-	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
+	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			loadFeature(loadStrategies, gFeature, serverType);
 		}
 	}
-	
+
 	static void loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerType serverType) {
 		if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
 			return;
 		}
-		
+
 		if (serverType != null && gFeature.gVersion.gServer.serverType != serverType) {
 			return;
 		}
-		
+
 		GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 	}
-		
-	static void AutoloadQuickloadFeature(){
+
+	static void AutoloadQuickloadFeature() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME || 
-					gFeature.gVersion.gServer.serverType != ServerType.QuickLoad) {
+			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
+					|| gFeature.gVersion.gServer.serverType != ServerType.QuickLoad) {
 				continue;
 			}
 
 			GeneralLoadUtils.iterateSeqList(gFeature);
 		}
 	}
-	
+
 	/**
 	 * One of the combo boxes changed state.
 	 * @param evt
@@ -761,8 +762,6 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 	}
 
-
-
 	/**
 	 * This gets called when the genome versionName is changed.
 	 * This occurs via the combo boxes, or by an external event like bookmarks, or LoadFileAction
@@ -811,6 +810,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		if (!speciesName.equals(speciesCB.getSelectedItem())) {
 			// Set the selected species (the combo box is already populated)
 			ThreadUtils.runOnEventQueue(new Runnable() {
+
 				public void run() {
 					speciesCB.removeItemListener(GeneralLoadView.this);
 					speciesCB.setSelectedItem(speciesName);
@@ -831,8 +831,8 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-							// refreshTreeView should only be called if feature table
-							// needs to be cleared.
+		// refreshTreeView should only be called if feature table
+		// needs to be cleared.
 
 		disableAllButtons();
 		AutoloadQuickloadFeature();
@@ -851,8 +851,8 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		if (aseq == null) {
 			refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-								// refreshTreeView should only be called if feature table
-								// needs to be cleared.
+			// refreshTreeView should only be called if feature table
+			// needs to be cleared.
 
 			disableAllButtons();
 			return;
@@ -880,14 +880,13 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		if (!(GeneralLoadUtils.getPreferredVersionName(gVersions).equals(versionName))) {
 			/*System.out.println("ERROR - versions don't match: " + versionName + "," +
-					GeneralLoadUtils.getPreferredVersionName(gVersions));*/
+			GeneralLoadUtils.getPreferredVersionName(gVersions));*/
 			return;
 		}
 
 		createFeaturesTable();
 		loadWholeRangeFeatures(ServerType.DAS2);
 	}
-
 
 	/**
 	 * group has been created independently of the discovery process (probably by loading a file).
@@ -936,7 +935,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			public void run() {
 				final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 				if (features == null || features.isEmpty()) {
-					feature_model.clearFeatures();
+					loadedTracksDataTableModel.clearFeatures();
 				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
@@ -961,32 +960,44 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final List<GenericFeature> visibleFeatures = FeaturesTableModel.getVisibleFeatures(features);
+		final List<GenericFeature> visibleFeatures = LoadModeDataTableModel.getVisibleFeatures(features);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				feature_model.setFeatures(visibleFeatures);
+				loadedTracksDataTableModel.setFeatures(visibleFeatures);
 
-				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
-				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
-				col.setPreferredWidth(finalMaxFeatureNameLength);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(115);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(115);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(115);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMinWidth(160);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.TRACK_NAME_COLUMN).setPreferredWidth(160);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_BACKGROUND).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_BACKGROUND).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_BACKGROUND).setMaxWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_FOREGROUND).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_FOREGROUND).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.COL_FOREGROUND).setMaxWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
 
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
+				loadedTracksTable.getTableHeader().setReorderingAllowed(false);
 
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
-
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.INFO_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
-				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());
+				LoadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 
@@ -999,7 +1010,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	 * Check if it is necessary to disable buttons.
 	 * @return
 	 */
-	public static boolean getIsDisableNecessary(){
+	public static boolean getIsDisableNecessary() {
 		boolean enabled = !IsGenomeSequence();
 		if (enabled) {
 			BioSeq curSeq = gmodel.getSelectedSeq();
@@ -1043,7 +1054,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {
 		if (IsGenomeSequence()) {
 			return;
-		// Currently not enabling this button for the full sequence.
+			// Currently not enabling this button for the full sequence.
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
@@ -1064,27 +1075,27 @@ public final class GeneralLoadView extends IGBTabPanel
 		return (seqID == null || IGBConstants.GENOME_SEQ_ID.equals(seqID));
 	}
 
-	public String getSelectedSpecies(){
+	public String getSelectedSpecies() {
 		return (String) speciesCB.getSelectedItem();
 	}
 
-	public CThreadWorker removeFeature(final GenericFeature feature, final boolean refresh){
-		if(feature == null)
+	public CThreadWorker removeFeature(final GenericFeature feature, final boolean refresh) {
+		if (feature == null) {
 			return null;
+		}
 
-		CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  "+feature.featureName) {
+		CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.featureName) {
 
 			@Override
 			protected Void runInBackground() {
-				for(BioSeq bioseq : feature.gVersion.group.getSeqList()){
-					for(String method : feature.getMethods()){
+				for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
+					for (String method : feature.getMethods().values()) {
 						TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
 						TrackView.deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq);
 					}
 				}
-				
-				feature.clear();
 
+				feature.clear();
 				// If feature is local then remove it from server.
 				GenericVersion version = feature.gVersion;
 				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
@@ -1096,7 +1107,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 			@Override
 			protected void finished() {
-				if(refresh){
+				if (refresh) {
 					// Refresh
 					GeneralLoadView.getLoadView().refreshTreeView();
 					GeneralLoadView.getLoadView().createFeaturesTable();
@@ -1107,10 +1118,10 @@ public final class GeneralLoadView extends IGBTabPanel
 		};
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
-		
+
 		return delete;
 	}
-	
+
 	protected AbstractAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
@@ -1119,5 +1130,8 @@ public final class GeneralLoadView extends IGBTabPanel
 	public boolean isEmbedded() {
 		return true;
 	}
-}
 
+	public JTableX getLoadedTracksTable() {
+		return loadedTracksTable;
+	}
+}

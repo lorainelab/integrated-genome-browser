@@ -237,6 +237,7 @@ public class SeqMapView extends JPanel
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final AutoLoad autoload;
 	public AbstractAction seqviewer;
+	private SeqMapViewPopup popup;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -367,7 +368,7 @@ public class SeqMapView extends JPanel
 		autoload = addAutoLoad();
 		
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
-		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
+		popup = new SeqMapViewPopup(tier_manager,this);
 		MouseShortCut msc = new MouseShortCut(popup);
 
 		tier_manager.setDoGraphSelections(true);
@@ -2168,5 +2169,9 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return props;
+	}
+	
+	public SeqMapViewPopup getPopup(){
+	return popup;
 	}
 }

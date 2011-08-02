@@ -179,7 +179,6 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			// This can easily happen in the Sliced View and is not usually an error
 			return null;
 		}
-		AffyTieredMap map = gviewer.getSeqMap();
 
 		boolean forward = pspan.isForward();
 
@@ -218,7 +217,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		pglyph.setCoords(pspan.getMin(), parent_y, pspan.getLength(), parent_height);
 		//System.out.println("PARENT: "+pglyph.getCoordBox().y+", "+pglyph.getCoordBox().height);
 		pglyph.setColor(consensus_color);
-		map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
+		gviewer.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
 		int childCount = transformed_consensus_sym.getChildCount();
 		java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
@@ -239,11 +238,11 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 				cglyph.setCoords(cspan.getMin(), child_y + child_height / 4, cspan.getLength(), child_height / 2);
 				cglyph.setColor(consensus_color);
 				pglyph.addChild(cglyph);
-				map.setDataModelFromOriginalSym(cglyph, child);
+				gviewer.setDataModelFromOriginalSym(cglyph, child);
 			}
 		}
 		
-		ArrowHeadGlyph.addDirectionGlyphs(map, transformed_consensus_sym, pglyph, coordseq, coordseq, child_y + child_height / 4, child_height/2, true);
+		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, child_y + child_height / 4, child_height/2, true);
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
@@ -395,7 +394,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		polyA_glyph_rect.setColor(color);
 		polyA_glyph_rect.setCoords(span.getMin(), y, span.getLength(), height);
 		consensus_glyph.addChild(polyA_glyph_rect);
-		gviewer.getSeqMap().setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
+		gviewer.setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
 	}
 
 	/**
@@ -436,7 +435,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			probeset_glyph.setColor(probeset_color);
 
 			parent_glyph.addChild(probeset_glyph);
-			gviewer.getSeqMap().setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
+			gviewer.setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
 			addProbesToProbeset(probeset_glyph, transformed_probeset_sym,
 					probe_y, probe_height, probeset_color);
 		} else {
@@ -455,7 +454,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 				continue;
 			}
 			probeset_glyph.addChild(probe_glyph);
-			gviewer.getSeqMap().setDataModelFromOriginalSym(probe_glyph, probe_sym);
+			gviewer.setDataModelFromOriginalSym(probe_glyph, probe_sym);
 		}
 	}
 
@@ -484,7 +483,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 
 				GlyphI probe_part_glyph = drawProbeSegmentGlyph(probe_part_span, probe_y, probe_height, c);
 				probe_glyph.addChild(probe_part_glyph);
-				gviewer.getSeqMap().setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
+				gviewer.setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
 			}
 		} else {
 			probe_glyph = drawProbeSegmentGlyph(probe_sym.getSpan(viewSeq), probe_y, probe_height, c);

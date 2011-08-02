@@ -19,8 +19,8 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.Rectangle;
@@ -48,7 +48,7 @@ public final class GraphGlyphUtils {
 	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static void checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
+	public static void checkPixelBounds(GraphGlyph gl, NeoMap map) {
 		if (gl.getGraphState().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();

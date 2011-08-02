@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -93,8 +92,6 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 			background_color = annot_style.getBackground();
 		}
 
-		AffyTieredMap map = gviewer.getSeqMap();
-
 		BioSeq annotseq = gviewer.getAnnotatedSeq();
 		BioSeq coordseq = gviewer.getViewSeq();
 		SeqSymmetry tsym = sym;
@@ -117,6 +114,6 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 		cov.setCoords(0, 0, coordseq.getLength(), glyph_height);
 		ftier.addChild(cov);
 
-		map.setDataModelFromOriginalSym(cov, tsym);
+		gviewer.setDataModelFromOriginalSym(cov, tsym);
 	}
 }

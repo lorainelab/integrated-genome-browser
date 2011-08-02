@@ -35,13 +35,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.widget.NeoMap;
 
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
@@ -93,12 +92,12 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			displayGraphSym(gis, smv);
 		}
 
-		if (update_map) {
-			AffyTieredMap map = smv.getSeqMap();
-			map.packTiers(false, true, false);
-			map.stretchToFit(false, false);
-			map.updateWidget();
-		}
+//		if (update_map) {
+//			NeoMap map = smv.getSeqMap();
+//			map.packTiers(false, true, false);
+//			map.stretchToFit(false, false);
+//			map.updateWidget();
+//		}
 	}
 
 	private static GraphIntervalSym[] determineGraphSyms(SeqMapViewI smv, BioSeq aseq, ScoredContainerSym original_container) {
@@ -246,10 +245,10 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		ITrackStyle tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());
 
-		AffyTieredMap map = smv.getSeqMap();
+		NeoMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
+		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
@@ -264,7 +263,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 				tier_direction = TierGlyph.Direction.REVERSE;
 			}
-			TierGlyph tglyph = TrackView.getGraphTrack(map, tier_style, tier_direction);
+			TierGlyph tglyph = smv.getGraphTrack(tier_style, tier_direction);
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView());
 		}

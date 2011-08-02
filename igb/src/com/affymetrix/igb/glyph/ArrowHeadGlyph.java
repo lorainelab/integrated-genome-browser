@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.shared.SeqMapViewI;
 
 /**
  * An arrow glyph.
@@ -152,7 +152,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 //		return false;
 //	}
 	
-	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight, boolean useArrow){
+	public static void addDirectionGlyphs(SeqMapViewI gviewer, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight, boolean useArrow){
 		
 		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotSeq);
 		if (intronSym != null) {
@@ -173,7 +173,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 					cglyph.setForward(cspan.isForward());
 					cglyph.setColor(pglyph.getColor());
 					pglyph.addChild(cglyph);
-					map.setDataModelFromOriginalSym(cglyph, child);
+					gviewer.setDataModelFromOriginalSym(cglyph, child);
 				}
 			}
 		}

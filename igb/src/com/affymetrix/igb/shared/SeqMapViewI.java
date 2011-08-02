@@ -3,9 +3,10 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.genoviz.widget.NeoMap;
 
 /**
  *
@@ -17,7 +18,9 @@ public interface SeqMapViewI {
 
 	GlyphI getPixelFloaterGlyph();
 
-	AffyTieredMap getSeqMap();
+	NeoMap getSeqMap();
+	
+	void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym);
 
 	/**
 	 * Returns a forward and reverse tier for the given method, creating them if they don't
@@ -35,6 +38,8 @@ public interface SeqMapViewI {
 	 */
 	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights);
 
+	TierGlyph getGraphTrack(ITrackStyle style, TierGlyph.Direction tier_direction);
+	
 	/**
 	 * Gets the view seq.
 	 * Note: {@link #getViewSeq()} and {@link #getAnnotatedSeq()} may return

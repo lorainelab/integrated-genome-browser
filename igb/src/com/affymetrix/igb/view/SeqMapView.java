@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -1084,6 +1085,10 @@ public class SeqMapView extends JPanel
 		return seqmap;
 	}
 
+	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
+		seqmap.setDataModelFromOriginalSym(g, sym);
+	}
+
 	public final void selectAllGraphs() {
 		List<GlyphI> glyphlist = collectGraphs();
 		// convert graph glyphs to GraphSyms via glyphsToSyms
@@ -1846,7 +1851,10 @@ public class SeqMapView extends JPanel
 		return TrackView.getTiers(this, next_to_axis, style, constant_heights);
 	}
 
-
+	@Override
+	public TierGlyph getGraphTrack(ITrackStyle style, TierGlyph.Direction tier_direction) {
+		return TrackView.getGraphTrack(seqmap, style, tier_direction);
+	}
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup current_group = null;

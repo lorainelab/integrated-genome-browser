@@ -55,9 +55,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *
@@ -214,7 +212,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			TierGlyph reverse_tier,
 			boolean parent_and_child) {
 		try {
-			AffyTieredMap map = gviewer.getSeqMap();
 			BioSeq annotseq = gviewer.getAnnotatedSeq();
 			BioSeq coordseq = gviewer.getViewSeq();
 			SeqSymmetry sym = insym;
@@ -234,7 +231,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended the_style = (ITrackStyleExtended) the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(
-					parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
+					parent_and_child, insym, the_style, the_tier, pspan, sym, annotseq, coordseq));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -243,19 +240,18 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private GlyphI determinePGlyph(
 			boolean parent_and_child, SeqSymmetry insym,
 			ITrackStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
-			AffyTieredMap map, SeqSymmetry sym,
-			BioSeq annotseq, BioSeq coordseq)
+			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph = null;
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
-			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, map, coordseq);
-			handleInsertionGlyphs(gviewer, insym, annotseq, pglyph, map);
+			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
+			handleInsertionGlyphs(insym, annotseq, pglyph);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
 		}
 		return pglyph;
 	}
@@ -263,7 +259,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private static GlyphI determineGlyph(
 			Class glyphClass, Class labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
-			SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym)
+			SeqSpan pspan, SeqSymmetry sym, SeqMapViewI gviewer)
 			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph = null;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
@@ -290,7 +286,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
 		pglyph.setColor(getSymColor(insym, the_style, pspan.isForward(), DIRECTION_TYPE.valueFor(the_style.getDirectionType())));
-		map.setDataModelFromOriginalSym(pglyph, sym);
+		gviewer.setDataModelFromOriginalSym(pglyph, sym);
 		return pglyph;
 	}
 
@@ -325,7 +321,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private void addChildren(
 			SeqSymmetry insym, SeqSymmetry sym, SeqSpan pspan, ITrackStyleExtended the_style, BioSeq annotseq,
-			GlyphI pglyph, AffyTieredMap map, BioSeq coordseq)
+			GlyphI pglyph, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
 		SeqSymmetry cds_sym = null;
@@ -357,11 +353,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
-				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
+				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
-				map.setDataModelFromOriginalSym(cglyph, child);
+				gviewer.setDataModelFromOriginalSym(cglyph, child);
 				
 //				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
 //					addCdsColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
@@ -370,7 +366,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
 				if(alignResidueGlyph != null){
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-					map.setDataModelFromOriginalSym(alignResidueGlyph, child);
+					gviewer.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
 				}
 				
@@ -382,7 +378,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 				
 		
-		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, 
+		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0, 
 			DEFAULT_THIN_HEIGHT, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
@@ -440,7 +436,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private double handleCDSSpan(
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
 			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
-			Color child_color, GlyphI pglyph, AffyTieredMap map)
+			Color child_color, GlyphI pglyph)
 			throws IllegalAccessException, InstantiationException {
 		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)) {
 			return DEFAULT_THICK_HEIGHT;
@@ -461,7 +457,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
-				map.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
+				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
 				GlyphProcessorHolder.getInstance().fireProcessGlyph(cds_glyph);
 			}
 		}
@@ -559,7 +555,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 	
-	private void handleInsertionGlyphs(SeqMapViewI gviewer, SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map)
+	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph)
 			throws IllegalAccessException, InstantiationException {
 		
 		if (!(sym instanceof BAMSym)) {
@@ -602,7 +598,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			isg.setColor(color);
 
 			pglyph.addChild(isg);
-			map.setDataModelFromOriginalSym(isg, childsym);
+			gviewer.setDataModelFromOriginalSym(isg, childsym);
 		}
 	}
 

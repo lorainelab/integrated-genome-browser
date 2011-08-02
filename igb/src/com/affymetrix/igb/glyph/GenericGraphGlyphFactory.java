@@ -10,10 +10,10 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.TrackView;
@@ -137,10 +137,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		tier_style.setTrackName(newgraf.getGraphName());
 		tier_style.setCollapsed(isGenome);
 
-		AffyTieredMap map = smv.getSeqMap();
+		NeoMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
+		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
@@ -157,7 +157,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 				direction = TierGlyph.Direction.FORWARD;
 			}
 			
-			TierGlyph tglyph = TrackView.getGraphTrack(map, tier_style, direction);
+			TierGlyph tglyph = smv.getGraphTrack(tier_style, direction);
 			if (isGenome && !(tglyph.getPacker() instanceof CollapsePacker)) {
 				CollapsePacker cp = new CollapsePacker();
 				cp.setParentSpacer(0); // fill tier to the top and bottom edges

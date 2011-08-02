@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +54,7 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
@@ -106,7 +108,7 @@ public final class GeneralLoadUtils {
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()
 	 */
-	public static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	
 	static {
 		try {
@@ -140,7 +142,7 @@ public final class GeneralLoadUtils {
 		if (gServer == null) {
 			return null;
 		}
-		if (!serverList.discoverServer(gServer)) {
+		if (!discoverServer(gServer)) {
 			gServer.setEnabled(false);
 			//ServerList.removeServer(serverURL);
 			return null;
@@ -171,54 +173,60 @@ public final class GeneralLoadUtils {
 			}
 		}
 		server.setEnabled(false);
+		if (server.serverType == null) {
+			IGBServiceImpl.getInstance().repositoryRemoved(server.URL);
+		}
 	}
 
 	
-	public static boolean discoverServer(ServerList serverList, GenericServer gServer) {
-		Application.getSingleton().addNotLockedUpMsg("Loading " + serverList.getTextName() + " " + gServer + " (" + gServer.serverType.toString() + ")");
+	public static boolean discoverServer(GenericServer gServer) {
+		if (gServer.serverType == null) {
+			Application.getSingleton().addNotLockedUpMsg("Loading repository " + gServer);
+		} else {
+			Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+		}
 
-		boolean result = true;
+		if (gServer.serverType == null) {
+			return IGBServiceImpl.getInstance().repositoryAdded(gServer.URL);
+		}
 		try {
 			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
 				// should never happen
-				result = false;
-			} else if (gServer.serverType == ServerType.QuickLoad) {
-				if (!getQuickLoadSpeciesAndVersions(serverList, gServer)) {
-					serverList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					result = false;
+				return false;
+			}
+			if (gServer.serverType == ServerType.QuickLoad) {
+				if (!getQuickLoadSpeciesAndVersions(gServer)) {
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS) {
-				if (!getDAS1SpeciesAndVersions(serverList, gServer)) {
-					serverList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					result = false;
+				if (!getDAS1SpeciesAndVersions(gServer)) {
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS2) {
-				if (!getDAS2SpeciesAndVersions(serverList, gServer)) {
-					serverList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					result = false;
+				if (!getDAS2SpeciesAndVersions(gServer)) {
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					return false;
 				}
 			}
-			if (result) {
-				serverList.fireServerInitEvent(gServer, ServerStatus.Initialized);
-			}
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			result = false;
+			return false;
 		}
-		Application.getSingleton().removeNotLockedUpMsg("Loading " + serverList.getTextName() + " " + gServer + " (" + gServer.serverType.toString() + ")");
-		return result;
+		return true;
 	}
 
 	/**
 	 * Discover species from DAS
-	 * @param serverList
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private static boolean getDAS1SpeciesAndVersions(ServerList serverList, GenericServer gServer) {
+	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		GenericServer primaryServer = serverList.getPrimaryServer();
-		URL primaryURL = getServerDirectory(serverList, gServer.URL);
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
+		URL primaryURL = getServerDirectory(gServer.URL);
 		Map<String,DasSource> sources = server.getDataSources(primaryURL,primaryServer);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -228,7 +236,7 @@ public final class GeneralLoadUtils {
 			String speciesName = SpeciesLookup.getSpeciesName(source.getID());
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
-			serverList.discoverVersion(versionID, versionName, gServer, source, speciesName);
+			discoverVersion(versionID, versionName, gServer, source, speciesName);
 		}
 		return true;
 	}
@@ -236,14 +244,13 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover genomes from DAS/2
-	 * @param serverList
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private static boolean getDAS2SpeciesAndVersions(ServerList serverList, GenericServer gServer) {
+	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		URL primaryURL = getServerDirectory(serverList, gServer.URL);
-		GenericServer primaryServer = serverList.getPrimaryServer();
+		URL primaryURL = getServerDirectory(gServer.URL);
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		Map<String,Das2Source> sources = server.getSources(primaryURL, primaryServer);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -256,7 +263,7 @@ public final class GeneralLoadUtils {
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
 				String versionID = versionSource.getName();
-				serverList.discoverVersion(versionID, versionName, gServer, versionSource, speciesName);
+				discoverVersion(versionID, versionName, gServer, versionSource, speciesName);
 			}
 		}
 		return true;
@@ -264,12 +271,11 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover genomes from Quickload
-	 * @param serverList
 	 * @param gServer
 	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
 	 */
-	private static boolean getQuickLoadSpeciesAndVersions(ServerList serverList, GenericServer gServer) {
+	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		if(gServer.isPrimary())
 			return true;
 
@@ -280,8 +286,8 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		GenericServer primaryServer = serverList.getPrimaryServer();
-		URL primaryURL = getServerDirectory(serverList, gServer.URL);
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
+		URL primaryURL = getServerDirectory(gServer.URL);
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
 		
 		if (quickloadServer == null) {
@@ -307,7 +313,7 @@ public final class GeneralLoadUtils {
 				versionName = genomeName;
 				speciesName = SpeciesLookup.getSpeciesName(genomeName);
 			}
-			serverList.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
+			discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
 	}
@@ -350,7 +356,7 @@ public final class GeneralLoadUtils {
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 
-	public static synchronized GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
+	private static synchronized GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
 		// Make sure we use the preferred synonym for the genome version.
 		String preferredVersionName = LOOKUP.getPreferredName(versionName);
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
@@ -906,6 +912,10 @@ public final class GeneralLoadUtils {
 			return false;
 		}*/
 
+		// Determine list of servers that might have this chromosome sequence.
+		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
+		versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
+
 		if ((min <= 0) && (max >= aseq.getLength())) {
 			min = 0;
 			max = aseq.getLength();
@@ -917,7 +927,9 @@ public final class GeneralLoadUtils {
 			return true;
 		}
 
-		return ResidueLoading.getResidues(genomeVersionName, aseq, min, max, span);
+		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
+		
+		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}
 
 
@@ -998,12 +1010,11 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get directory url on cached server from servermapping map.
-	 * @param serverList	ServerList.
 	 * @param url	URL of the server.
 	 * @return	Returns a directory if exists else null.
 	 */
-	public static URL getServerDirectory(ServerList serverList, String url){
-		if (serverList.getPrimaryServer() == null) {
+	public static URL getServerDirectory(String url){
+		if (ServerList.getServerInstance().getPrimaryServer() == null) {
 			return null;
 		}
 		

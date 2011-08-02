@@ -4,20 +4,19 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -30,20 +29,16 @@ import java.util.prefs.Preferences;
  *
  * @version $Id$
  */
-public abstract class ServerList {
-	protected final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+public final class ServerList {
+	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
+	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null);
 
-	private static Map<String, ServerList> serverListMap = new HashMap<String, ServerList>();
-	private static ServerList serverInstance = new DataSourceList();
-	private static ServerList repositoryInstance = new RepositoryList();
-	private static ServerList sequenceServerInstance = new SequenceServerList();
-
-	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null,null);
+	private static ServerList serverInstance = new ServerList("server");
+	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
-	protected ServerList(String textName) {
+	private ServerList(String textName) {
 		this.textName = textName;
-		serverListMap.put(textName, this);
 	}
 	public static final ServerList getServerInstance() {
 		return serverInstance;
@@ -51,21 +46,13 @@ public abstract class ServerList {
 	public static final ServerList getRepositoryInstance() {
 		return repositoryInstance;
 	}
-	public static final ServerList getSequenceServerInstance() {
-		return sequenceServerInstance;
-	}
-	public static ServerList getServerList(String name) {
-		return serverListMap.get(name);
-	}
-	public static List<ServerList> getServerLists() {
-		return new ArrayList<ServerList>(serverListMap.values());
-	}
+
 	public String getTextName() {
 		return textName;
 	}
 
 	public boolean hasTypes() {
-		return true;
+		return this == serverInstance;
 	}
 
 	public Set<GenericServer> getEnabledServers() {
@@ -154,7 +141,7 @@ public abstract class ServerList {
 			info = ServerUtils.getServerInfo(serverType, url, name);
 
 			if (info != null) {
-				server = new GenericServer(name, url, serverType, enabled, info, getPreferencesNode().node(GeneralUtils.URLEncode(url)), primary);
+				server = new GenericServer(name, url, serverType, enabled, info, primary);
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -276,7 +263,9 @@ public abstract class ServerList {
 		}
 	}
 
-	protected abstract Preferences getPreferencesNode();
+	private Preferences getPreferencesNode() {
+		return hasTypes() ? PreferenceUtils.getServersNode() : PreferenceUtils.getRepositoriesNode();
+	}
 
 	public void updateServerURLsInPrefs() {
 		Preferences servers = getPreferencesNode();
@@ -331,11 +320,25 @@ public abstract class ServerList {
 		Preferences node = getPreferencesNode().node(GeneralUtils.URLEncode(ServerUtils.formatURL(url, type)));
 
 		node.put("name",  name);
-		if (type != null) {
-			node.put("type", type.toString());
-		}
-		ServerType useType = (type == null) ? null : ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
-		return new GenericServer(node, null, useType);
+		node.put("type", type.toString());
+
+		return new GenericServer(node, null, ServerType.valueOf(node.get("type", ServerType.LocalFiles.name())));
+	}
+
+	/**
+	 * Add or update a repository in the preferences subsystem.  This only modifies
+	 * the preferences nodes, it does not affect any other part of the application.
+	 *
+	 * @param url URL of this server.
+	 * @param name name of this server.
+	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
+	 */
+	private GenericServer addRepositoryToPrefs(String url, String name) {
+		Preferences node = PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(url));
+
+		node.put("name",  name);
+
+		return new GenericServer(node, null, null);
 	}
 
 	/**
@@ -345,7 +348,12 @@ public abstract class ServerList {
 	 * @param server GenericServer object of the server to add or update.
 	 */
 	public void addServerToPrefs(GenericServer server) {
-		addServerToPrefs(server.URL, server.serverName, server.serverType);
+		if (server.serverType == null) {
+			addRepositoryToPrefs(server.URL, server.serverName);
+		}
+		else {
+			addServerToPrefs(server.URL, server.serverName, server.serverType);
+		}
 	}
 
 	/**
@@ -362,9 +370,6 @@ public abstract class ServerList {
 		}
 	}
 
-	public void setServerOrder(String url, int order) {
-		getPreferencesNode().node(GeneralUtils.URLEncode(url)).put("order", "" + order);
-	}
 
 	/**
 	 * Get server from ServerList that matches the URL.
@@ -406,9 +411,18 @@ public abstract class ServerList {
 
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
-			server.setEnabled(false);
-			if (!removedManually) {
+			GeneralLoadUtils.removeServer(server);
+
+			if(!removedManually)
 				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(1) + " " + server.serverName + " is not responding. Disabling it for this session.");
+			
+			if (server.serverType != ServerType.LocalFiles) {
+				if (server.serverType == null) {
+					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
+				}
+				else {
+					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
+				}
 			}
 		}
 
@@ -432,7 +446,4 @@ public abstract class ServerList {
 		}
 		return null;
 	}
-
-	public abstract boolean discoverServer(GenericServer gServer);
-	public abstract GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName);
 }

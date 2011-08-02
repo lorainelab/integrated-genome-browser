@@ -1058,8 +1058,7 @@ public abstract class ServerUtils {
 		} catch (URISyntaxException ex) {
 			String message = "Unable to parse URL: '" + url + "'";
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, message, ex);
-/////			throw new IllegalArgumentException(message, ex);
-			return null;
+			throw new IllegalArgumentException(message, ex);
 		}
 		if (type == null) {
 			return url;

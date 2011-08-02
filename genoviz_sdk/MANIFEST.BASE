@@ -15,7 +15,6 @@ Import-Package: javax.swing.border,
  javax.swing.tree,
  javax.swing,
  toolbarButtonGraphics.general,
- toolbarButtonGraphics.navigation,
  toolbarButtonGraphics.table,
  toolbarButtonGraphics.media
 Export-Package: com.affymetrix.genoviz.awt,

@@ -123,11 +123,10 @@ public final class XmlPrefsParser {
 					processAnnotStyle(el);
 				} else if (name.equalsIgnoreCase("annotation_url")) {
 					processLinkUrl(el);
-				} else {
-					ServerList serverList = ServerList.getServerList(name);
-					if (serverList != null) {
-						processServer(el, serverList, serverList.hasTypes() ? getServerType(el.getAttribute("type")) : null);
-					}
+				} else if (name.equalsIgnoreCase("server")) {
+					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
+				} else if (name.equalsIgnoreCase("repository")) {
+					processServer(el, ServerList.getRepositoryInstance(), null);
 				}
 			}
 		}

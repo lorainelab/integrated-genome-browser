@@ -111,10 +111,6 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		editAuthButton.setEnabled(enable);
 	}
 
-	protected boolean isSortable() {
-		return true;
-	}
-
 	@Override
 	protected Group addServerComponents(Group group1, Group group2) {
 		return group1

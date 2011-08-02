@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.jidesoft.utils.SwingWorker;
 
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 						@Override
 						protected Void doInBackground() throws Exception {
-							serverList.discoverServer(server);
+							GeneralLoadUtils.discoverServer(server);
 							return null;
 						}
 					};
@@ -142,13 +143,4 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		this.init();
 	}
 
-	public void switchRows(int rowIndex) {
-		if (rowIndex < 0 || rowIndex >= servers.size() - 1) {
-			return;
-		}
-		GenericServer firstServer = servers.get(rowIndex);
-		servers.set(rowIndex, servers.get(rowIndex + 1));
-		servers.set(rowIndex + 1, firstServer);
-		this.fireTableDataChanged();
-	}
 }

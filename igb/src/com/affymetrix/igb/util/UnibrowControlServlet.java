@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
@@ -112,7 +113,7 @@ public final class UnibrowControlServlet {
 		} else if (!gServer.isEnabled()) {
 			// enable the server for this session only
 			gServer.enableForSession();
-			ServerList.getServerInstance().discoverServer(gServer);
+			GeneralLoadUtils.discoverServer(gServer);
 		}
 		return gServer;
 	}

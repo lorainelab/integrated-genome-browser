@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.FeatureInfoAction;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -60,6 +61,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final JMenu showMenu = new JMenu("Show...");
   private final JMenu changeMenu = new JMenu("Change...");
   private final JMenu strandsMenu = new JMenu("Strands...");
+  private final JMenu viewModeMenu = new JMenu("View Mode...");
   private final JMenu summaryMenu = new JMenu("Make Annotation Depth Graph");
 
   private final ActionToggler at1;
@@ -413,7 +415,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-  public void showAllTiers() {
+  void showAllTiers() {
 	  List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
 	  for (TierLabelGlyph label : tiervec) {
@@ -432,7 +434,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
    *  Does not re-pack the given tier, or any other tiers.
    */
-  public void hideOneTier(final TierGlyph tier) {
+  private void hideOneTier(final TierGlyph tier) {
     final ITrackStyle style = tier.getAnnotStyle();
 	  // if style.getShow() is already false, there is likely a bug somewhere!
 	  if (style == null) {
@@ -464,42 +466,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       showMenu.add(show_tier);
     }
 	tier.setVisibility(false);
-  }
-  
-    /** Hides one tier and creates a JMenuItem that can be used to show it again.
-   *  Does not re-pack the given tier, or any other tiers.
-   */
-  public void hideOneTier(final TrackStyle style) {
-	  // if style.getShow() is already false, there is likely a bug somewhere!
-	  if (style == null) {
-		  return;
-	  }
-    if (style.getShow()) {
-      style.setShow(false);
-      final JMenuItem show_tier = new JMenuItem() {
-    	private static final long serialVersionUID = 1L;
-        // override getText() because the HumanName of the style might change
-				@Override
-        public String getText() {
-          String name = style.getTrackName();
-          if (name == null) { name = "<unnamed>"; }
-          if (name.length() > 30) {
-            name = name.substring(0,30) + "...";
-          }
-          return name;
-        }
-      };
-      show_tier.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          style.setShow(true);
-          showMenu.remove(show_tier);
-		  handler.sortTiers();
-		  handler.repackTheTiers(false, true);
-        }
-      });
-      showMenu.add(show_tier);
-    }
-	style.setShow(false);
   }
 
   /** Hides multiple tiers and then repacks.
@@ -790,7 +756,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
-    List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
+    final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
     int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
 
@@ -801,6 +767,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     boolean any_are_separate_tiers = false;
     boolean any_are_single_tier = false;
 	boolean add_focus = false;
+	boolean any_view_mode = false;
 	
 	for (TierLabelGlyph label : labels) {
       TierGlyph glyph = label.getReferenceTier();
@@ -811,6 +778,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         any_are_color_off = any_are_color_off || (! astyle.getColorByScore());
         any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
         any_are_single_tier = any_are_single_tier || (! astyle.getSeparate());
+		any_view_mode = any_view_mode || (!style.isGraphTier());
       }
       if (style.getExpandable()) {
         any_are_collapsed = any_are_collapsed || style.getCollapsed();
@@ -881,7 +849,46 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(new JSeparator());
     changeMenu.add(color_by_score_on_action);
     changeMenu.add(color_by_score_off_action);
-	
+
+	viewModeMenu.removeAll();
+	if (any_view_mode) {
+		Map<String, Action> actions = new HashMap<String, Action>();
+		for (final Object mode : MapViewModeHolder.getInstance().getAllViewModes()) {
+			Action action = new AbstractAction(mode.toString()) {
+
+				public void actionPerformed(ActionEvent ae) {
+					  boolean refresh = false;
+					  for (TierLabelGlyph label : labels) {
+						  TierGlyph glyph = label.getReferenceTier();
+						  ITrackStyle style = glyph.getAnnotStyle();
+						  if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
+							  ((ITrackStyleExtended) style).setViewMode(mode.toString());
+							  refresh = true;
+						  }
+					  }
+					  if (refresh) {
+						  refreshMap(false, false);
+					  }
+				  }
+			  };
+			actions.put(mode.toString(), action);
+			viewModeMenu.add(new JCheckBoxMenuItem(action));
+		  }
+		
+		if(labels.size() == 1){
+			TierGlyph glyph = labels.get(0).getReferenceTier();
+			ITrackStyle style = glyph.getAnnotStyle();
+			if (style instanceof ITrackStyleExtended) {
+				String mode = ((ITrackStyleExtended)style).getViewMode();
+				Action action = actions.get(mode);
+				if(action != null){
+					action.putValue(Action.SELECTED_KEY, true);
+				}
+			}
+						
+		}
+	}
+
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
@@ -900,6 +907,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(new JSeparator());
     popup.add(select_all_tiers_action);
     popup.add(changeMenu);
+	popup.add(viewModeMenu);
     popup.add(new JSeparator());
     popup.add(collapse_action);
     popup.add(expand_action);
@@ -980,9 +988,5 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	SeqMapView getSeqMapView() {
 		return gviewer;
-	}
-	
-	public JMenu getShowMenu(){
-		return showMenu;
 	}
 }

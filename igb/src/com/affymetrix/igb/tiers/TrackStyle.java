@@ -772,6 +772,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	public String getViewMode() {
+		if(view_mode == null)
+			return default_view_mode;
 		return view_mode;
 	}
 	

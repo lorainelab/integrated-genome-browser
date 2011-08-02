@@ -2,7 +2,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.view.TrackView;
+import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +20,7 @@ public class MapViewModeHolder {
 	}
 	
 	private MapViewModeHolder(){
-		addViewFactory(TrackView.getAnnotationGlyphFactory());
+		view2Factory.put(TrackConstants.default_view_mode, null);
 		addViewFactory(new DepthGraphGlyphFactory());
 		//addViewFactory(new CoverageSummarizerFactory());
 	}

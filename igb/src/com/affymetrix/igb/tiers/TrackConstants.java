@@ -41,6 +41,7 @@ public interface TrackConstants {
 	static final Color default_start = Color.GREEN;
 	static final Color default_end = Color.RED;
 	static final String default_label_field = "";
+	static final String default_view_mode = "default";
 	static final int default_show2tracks = 2;
 	static final double default_height = 20.0;
 	static final double default_y = 0.0;

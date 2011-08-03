@@ -255,8 +255,8 @@ public class Das2 {
 				ts.setFeature(feature);
 
 				//TODO: Probably not necessary.
-				ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, format);
-				ts.setFeature(feature);
+				//ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, format);
+				//ts.setFeature(feature);
 
 				SymLoader symL = fileTypeHandler.createSymLoader(typeURI, typeName, aseq.getSeqGroup());
 				symL.setExtension(content_subtype);

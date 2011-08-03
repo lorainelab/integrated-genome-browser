@@ -64,8 +64,8 @@ public final class Das {
 		style.setFeature(feature);
 
 		// TODO - probably not necessary
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
-		style.setFeature(feature);
+		//style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
+		//style.setFeature(feature);
 
 		Collection<DASSymmetry> dassyms = parseData(uri);
 		// Special case : When a feature make more than one Track, set feature for each track.

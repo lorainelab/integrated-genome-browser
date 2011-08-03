@@ -22,7 +22,7 @@ public class MapViewModeHolder {
 	private MapViewModeHolder(){
 		view2Factory.put(TrackConstants.default_view_mode, null);
 		addViewFactory(new DepthGraphGlyphFactory());
-		//addViewFactory(new CoverageSummarizerFactory());
+		addViewFactory(new CoverageSummarizerFactory());
 	}
 	
 	public MapViewGlyphFactoryI getViewFactory(String view){

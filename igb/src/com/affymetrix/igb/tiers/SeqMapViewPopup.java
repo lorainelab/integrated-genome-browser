@@ -1,16 +1,15 @@
 /**
-*   Copyright (c) 2005-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
+ *   Copyright (c) 2005-2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -52,235 +51,253 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
-  private static final boolean DEBUG = false;
-  
-  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-  private final SeqMapView gviewer;
-  private final TierLabelManager handler;
-
-  private final JMenu showMenu = new JMenu("Show...");
-  private final JMenu changeMenu = new JMenu("Change...");
-  private final JMenu strandsMenu = new JMenu("Strands...");
-  private final JMenu viewModeMenu = new JMenu("View Mode...");
-  private final JMenu summaryMenu = new JMenu("Make Annotation Depth Graph");
-
-  private final ActionToggler at1;
-  private final ActionToggler at2;
+	private static final boolean DEBUG = false;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private final SeqMapView gviewer;
+	private final TierLabelManager handler;
+	private final JMenu showMenu = new JMenu("Show...");
+	private final JMenu changeMenu = new JMenu("Change...");
+	private final JMenu strandsMenu = new JMenu("Strands...");
+	private final JMenu viewModeMenu = new JMenu("View Mode...");
+	private final JMenu summaryMenu = new JMenu("Make Annotation Depth Graph");
+	private final ActionToggler at1;
+	private final ActionToggler at2;
 //  private final ActionToggler at3;
+	private final Action select_all_tiers_action = new AbstractAction("Select All Tracks") {
 
-  private final Action select_all_tiers_action = new AbstractAction("Select All Tracks") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      handler.selectAllTiers();
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action rename_action = new AbstractAction("Change Display Name") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() != 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      renameTier(current_tier);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			handler.selectAllTiers();
+		}
+	};
+	private final Action rename_action = new AbstractAction("Change Display Name") {
 
-  private final Action customize_action = new AbstractAction("Customize") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      showCustomizer();
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action expand_action = new AbstractAction("Expand") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTiersCollapsed(handler.getSelectedTierLabels(), false);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() != 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			renameTier(current_tier);
+		}
+	};
+	private final Action customize_action = new AbstractAction("Customize") {
 
-  private final Action expand_all_action = new AbstractAction("Expand All") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTiersCollapsed(handler.getAllTierLabels(), false);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action collapse_action = new AbstractAction("Collapse") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTiersCollapsed(handler.getSelectedTierLabels(), true);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			showCustomizer();
+		}
+	};
+	private final Action expand_action = new AbstractAction("Expand") {
 
-  private final Action collapse_all_action = new AbstractAction("Collapse All") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTiersCollapsed(handler.getAllTierLabels(), true);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action hide_action = new AbstractAction("Hide") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      hideTiers(handler.getSelectedTierLabels());
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			setTiersCollapsed(handler.getSelectedTierLabels(), false);
+		}
+	};
+	private final Action expand_all_action = new AbstractAction("Expand All") {
 
-  private final Action show_all_action = new AbstractAction("Show All Types") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      showAllTiers();
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action change_color_action = new AbstractAction("Change FG Color") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      changeColor(handler.getSelectedTierLabels(), true);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			setTiersCollapsed(handler.getAllTierLabels(), false);
+		}
+	};
+	private final Action collapse_action = new AbstractAction("Collapse") {
 
-  private final Action change_bg_color_action = new AbstractAction("Change BG Color") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      changeColor(handler.getSelectedTierLabels(), false);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setColorByScore(handler.getSelectedTierLabels(), true);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			setTiersCollapsed(handler.getSelectedTierLabels(), true);
+		}
+	};
+	private final Action collapse_all_action = new AbstractAction("Collapse All") {
 
-  private final Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setColorByScore(handler.getSelectedTierLabels(), false);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action show_two_tiers = new AbstractAction("Show 2 tracks (+) and (-)") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTwoTiers(handler.getSelectedTierLabels(), true);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			setTiersCollapsed(handler.getAllTierLabels(), true);
+		}
+	};
+	private final Action hide_action = new AbstractAction("Hide") {
 
-  private final Action show_single_tier = new AbstractAction("Show 1 track (+/-)") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      setTwoTiers(handler.getSelectedTierLabels(), false);
-    }
-  };
-  
-  private final Action sym_summarize_single_action = new AbstractAction("") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      addSymSummaryTier(current_tier,false);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action sym_summarize_both_action = new AbstractAction("") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      addSymSummaryTier(current_tier,true);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			hideTiers(handler.getSelectedTierLabels());
+		}
+	};
+	private final Action show_all_action = new AbstractAction("Show All Types") {
 
-  private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      addSymCoverageTier(current_tier);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action mismatch_action = new AbstractAction("Make Mismatch Graph") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      addMisMatchTier(current_tier, "mismatch");
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			showAllTiers();
+		}
+	};
+	private final Action change_color_action = new AbstractAction("Change FG Color") {
 
-  private final Action save_bed_action = new AbstractAction("Save track as BED file") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one track");
-      }
-      TierGlyph current_tier = current_tiers.get(0);
-      saveAsBedFile(current_tier);
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  @SuppressWarnings("serial")
-  private final Action focus_track_action = new AbstractAction("FocusTrack") {
-    public void actionPerformed(ActionEvent e) {
-      TierGlyph current_tier = handler.getSelectedTiers().get(0);
-	  gviewer.focusTrack(current_tier);
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			changeColor(handler.getSelectedTierLabels(), true);
+		}
+	};
+	private final Action change_bg_color_action = new AbstractAction("Change BG Color") {
 
-  private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      changeExpandMax(handler.getSelectedTierLabels());
-    }
-  };
+		private static final long serialVersionUID = 1L;
 
-  private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
-	private static final long serialVersionUID = 1L;
-    public void actionPerformed(ActionEvent e) {
-      changeExpandMax(handler.getAllTierLabels());
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			changeColor(handler.getSelectedTierLabels(), false);
+		}
+	};
+	private final Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
 
-  @SuppressWarnings("serial")
-  private final Action delete_action = new AbstractAction("Delete selected tracks") {
-	
-    public void actionPerformed(ActionEvent e) {
-		BioSeq seq = gmodel.getSelectedSeq();
+		private static final long serialVersionUID = 1L;
 
-      if (IGB.confirmPanel("Really remove selected tracks?\n"+
-          "Data will be removed from "+ seq.getID() +" on this genome.")) {
-        removeTiers(handler.getSelectedTierLabels());
-      }
-    }
-  };
+		public void actionPerformed(ActionEvent e) {
+			setColorByScore(handler.getSelectedTierLabels(), true);
+		}
+	};
+	private final Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
 
-  private final Action change_font_size_action = new AbstractAction("Change Font Size") {
-	  private static final long serialVersionUID = 1L;
-	  public void actionPerformed(ActionEvent ae) {
-		changeFontSize(handler.getSelectedTierLabels());
-	  }
-  };
-  
-  
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			setColorByScore(handler.getSelectedTierLabels(), false);
+		}
+	};
+	private final Action show_two_tiers = new AbstractAction("Show 2 tracks (+) and (-)") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			setTwoTiers(handler.getSelectedTierLabels(), true);
+		}
+	};
+	private final Action show_single_tier = new AbstractAction("Show 1 track (+/-)") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			setTwoTiers(handler.getSelectedTierLabels(), false);
+		}
+	};
+	private final Action sym_summarize_single_action = new AbstractAction("") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			addSymSummaryTier(current_tier, false);
+		}
+	};
+	private final Action sym_summarize_both_action = new AbstractAction("") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			addSymSummaryTier(current_tier, true);
+		}
+	};
+	private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			addSymCoverageTier(current_tier);
+		}
+	};
+	private final Action mismatch_action = new AbstractAction("Make Mismatch Graph") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			addMisMatchTier(current_tier, "mismatch");
+		}
+	};
+	private final Action save_bed_action = new AbstractAction("Save track as BED file") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			saveAsBedFile(current_tier);
+		}
+	};
+	@SuppressWarnings("serial")
+	private final Action focus_track_action = new AbstractAction("FocusTrack") {
+
+		public void actionPerformed(ActionEvent e) {
+			TierGlyph current_tier = handler.getSelectedTiers().get(0);
+			gviewer.focusTrack(current_tier);
+		}
+	};
+	private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			changeExpandMax(handler.getSelectedTierLabels());
+		}
+	};
+	private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			changeExpandMax(handler.getAllTierLabels());
+		}
+	};
+	@SuppressWarnings("serial")
+	private final Action delete_action = new AbstractAction("Delete selected tracks") {
+
+		public void actionPerformed(ActionEvent e) {
+			BioSeq seq = gmodel.getSelectedSeq();
+
+			if (IGB.confirmPanel("Really remove selected tracks?\n"
+					+ "Data will be removed from " + seq.getID() + " on this genome.")) {
+				removeTiers(handler.getSelectedTierLabels());
+			}
+		}
+	};
+	private final Action change_font_size_action = new AbstractAction("Change Font Size") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent ae) {
+			changeFontSize(handler.getSelectedTierLabels());
+		}
+	};
+
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
@@ -289,15 +306,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
 	}
 
-  private void showCustomizer() {
-    PreferencesPanel pv = PreferencesPanel.getSingleton();
-    pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
-	pv.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
-    JFrame f = pv.getFrame();
-    f.setVisible(true);
-  }
+	private void showCustomizer() {
+		PreferencesPanel pv = PreferencesPanel.getSingleton();
+		pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
+		pv.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
+		JFrame f = pv.getFrame();
+		f.setVisible(true);
+	}
 
-  List<ITrackStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
+	List<ITrackStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
 		if (tier_label_glyphs.isEmpty()) {
 			return Collections.<ITrackStyle>emptyList();
 		}
@@ -316,82 +333,84 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		return styles;
 	}
 
-  private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
-    handler.setTiersCollapsed(tier_labels, collapsed);
-    refreshMap(false,true);
-  }
-  
-  private void changeFontSize(List<TierLabelGlyph> tier_labels) {
-	if (tier_labels == null || tier_labels.isEmpty()) {
-      ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-      return;
-    }
-	
-	Object initial_value = TrackStyle.default_track_name_size;
-    if (tier_labels.size() == 1) {
-      TierLabelGlyph tlg = tier_labels.get(0);
-      TierGlyph tg = (TierGlyph) tlg.getInfo();
-      ITrackStyle style = tg.getAnnotStyle();
-      if (style != null && style instanceof TrackStyle) { 
-		  initial_value =  ((TrackStyle)style).getTrackNameSize();
-	  }
-    }
-	
-	Object input = JOptionPane.showInputDialog(null, "Select font size","Change Selected Track Font Size", JOptionPane.PLAIN_MESSAGE, null, 
-			TrackConstants.SUPPORTED_SIZE, initial_value);
-	
-	if(input == null)
-		return;
-	
-	changeFontSize(tier_labels, (Float)input);
-  }
-  
-  private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size){
-	 for (TierLabelGlyph tlg : tier_label_glyphs) {
-		TierGlyph tier = (TierGlyph) tlg.getInfo();
-		ITrackStyle style = tier.getAnnotStyle();
-		if(style != null && style instanceof TrackStyle){
-			((TrackStyle)style).setTrackNameSize(size);
+	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
+		handler.setTiersCollapsed(tier_labels, collapsed);
+		refreshMap(false, true);
+	}
+
+	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
+		if (tier_labels == null || tier_labels.isEmpty()) {
+			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
+			return;
 		}
-	 }
-	 refreshMap(false, true);
-  }
-  
-  public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
-    if (tier_labels == null || tier_labels.isEmpty()) {
-      ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-      return;
-    }
 
-    String initial_value = "0";
-    if (tier_labels.size() == 1) {
-      TierLabelGlyph tlg = tier_labels.get(0);
-      TierGlyph tg = (TierGlyph) tlg.getInfo();
-      ITrackStyle style = tg.getAnnotStyle();
-      if (style != null) { initial_value = "" + style.getMaxDepth(); }
-    }
+		Object initial_value = TrackStyle.default_track_name_size;
+		if (tier_labels.size() == 1) {
+			TierLabelGlyph tlg = tier_labels.get(0);
+			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			ITrackStyle style = tg.getAnnotStyle();
+			if (style != null && style instanceof TrackStyle) {
+				initial_value = ((TrackStyle) style).getTrackNameSize();
+			}
+		}
 
-    String input =
-      (String)JOptionPane.showInputDialog(null,
-					  "Enter new maximum track height, 0 for unlimited",
-					  "Change Selected Tracks Max Height", JOptionPane.PLAIN_MESSAGE,
-					  null, null, initial_value);
+		Object input = JOptionPane.showInputDialog(null, "Select font size", "Change Selected Track Font Size", JOptionPane.PLAIN_MESSAGE, null,
+				TrackConstants.SUPPORTED_SIZE, initial_value);
 
-    if ( input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
-      return;
-    }
+		if (input == null) {
+			return;
+		}
 
-    int newmax;
-    try {
-      newmax = Integer.parseInt(input);
-    }
-    catch (NumberFormatException ex) {
-      ErrorHandler.errorPanel("Couldn't parse new track max '"+input+"'");
-      return;
-    }
+		changeFontSize(tier_labels, (Float) input);
+	}
 
-    changeExpandMax(tier_labels, newmax);
-  }
+	private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
+			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			ITrackStyle style = tier.getAnnotStyle();
+			if (style != null && style instanceof TrackStyle) {
+				((TrackStyle) style).setTrackNameSize(size);
+			}
+		}
+		refreshMap(false, true);
+	}
+
+	public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
+		if (tier_labels == null || tier_labels.isEmpty()) {
+			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
+			return;
+		}
+
+		String initial_value = "0";
+		if (tier_labels.size() == 1) {
+			TierLabelGlyph tlg = tier_labels.get(0);
+			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			ITrackStyle style = tg.getAnnotStyle();
+			if (style != null) {
+				initial_value = "" + style.getMaxDepth();
+			}
+		}
+
+		String input =
+				(String) JOptionPane.showInputDialog(null,
+				"Enter new maximum track height, 0 for unlimited",
+				"Change Selected Tracks Max Height", JOptionPane.PLAIN_MESSAGE,
+				null, null, initial_value);
+
+		if (input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
+			return;
+		}
+
+		int newmax;
+		try {
+			newmax = Integer.parseInt(input);
+		} catch (NumberFormatException ex) {
+			ErrorHandler.errorPanel("Couldn't parse new track max '" + input + "'");
+			return;
+		}
+
+		changeExpandMax(tier_labels, newmax);
+	}
 
 	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
@@ -400,128 +419,174 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
-		refreshMap(false,true);
+		refreshMap(false, true);
 	}
 
-  private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
-    for (TierLabelGlyph tlg : tier_label_glyphs) {
-      TierGlyph tier = (TierGlyph) tlg.getInfo();
-      ITrackStyle style = tier.getAnnotStyle();
-      if (style instanceof ITrackStyleExtended) {
-        ((ITrackStyleExtended) style).setSeparate(b);
-      }
-    }
-    refreshMap(false,true);
-    handler.sortTiers();
-  }
-
-  void showAllTiers() {
-	  List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
-
-	  for (TierLabelGlyph label : tiervec) {
-		  TierGlyph tier = (TierGlyph) label.getInfo();
-		  ITrackStyle style = tier.getAnnotStyle();
-		  if (style != null) {
-			  style.setShow(true);
-			  tier.setVisibility(true);
-		  }
-	  }
-	  showMenu.removeAll();
-	  handler.sortTiers();
-	  refreshMap(false,true); // when re-showing all tier, do strech_to_fit in the y-direction
+	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
+			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			ITrackStyle style = tier.getAnnotStyle();
+			if (style instanceof ITrackStyleExtended) {
+				((ITrackStyleExtended) style).setSeparate(b);
+			}
+		}
+		refreshMap(false, true);
+		handler.sortTiers();
 	}
 
-  /** Hides one tier and creates a JMenuItem that can be used to show it again.
-   *  Does not re-pack the given tier, or any other tiers.
-   */
-  private void hideOneTier(final TierGlyph tier) {
-    final ITrackStyle style = tier.getAnnotStyle();
-	  // if style.getShow() is already false, there is likely a bug somewhere!
-	  if (style == null) {
-		  return;
-	  }
-    if (style.getShow()) {
-      style.setShow(false);
-      final JMenuItem show_tier = new JMenuItem() {
-    	private static final long serialVersionUID = 1L;
-        // override getText() because the HumanName of the style might change
+	public void showAllTiers() {
+		List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
+
+		for (TierLabelGlyph label : tiervec) {
+			TierGlyph tier = (TierGlyph) label.getInfo();
+			ITrackStyle style = tier.getAnnotStyle();
+			if (style != null) {
+				style.setShow(true);
+				tier.setVisibility(true);
+			}
+		}
+		showMenu.removeAll();
+		handler.sortTiers();
+		refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
+	}
+
+	/** Hides one tier and creates a JMenuItem that can be used to show it again.
+	 *  Does not re-pack the given tier, or any other tiers.
+	 */
+	public void hideOneTier(final TierGlyph tier) {
+		final ITrackStyle style = tier.getAnnotStyle();
+		// if style.getShow() is already false, there is likely a bug somewhere!
+		if (style == null) {
+			return;
+		}
+		if (style.getShow()) {
+			style.setShow(false);
+			final JMenuItem show_tier = new JMenuItem() {
+
+				private static final long serialVersionUID = 1L;
+				// override getText() because the HumanName of the style might change
+
 				@Override
-        public String getText() {
-          String name = style.getTrackName();
-          if (name == null) { name = "<unnamed>"; }
-          if (name.length() > 30) {
-            name = name.substring(0,30) + "...";
-          }
-          return name;
-        }
-      };
-      show_tier.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          style.setShow(true);
-          showMenu.remove(show_tier);
-		  handler.sortTiers();
-		  handler.repackTheTiers(false, true);
-        }
-      });
-      showMenu.add(show_tier);
-    }
-	tier.setVisibility(false);
-  }
+				public String getText() {
+					String name = style.getTrackName();
+					if (name == null) {
+						name = "<unnamed>";
+					}
+					if (name.length() > 30) {
+						name = name.substring(0, 30) + "...";
+					}
+					return name;
+				}
+			};
+			show_tier.addActionListener(new ActionListener() {
 
-  /** Hides multiple tiers and then repacks.
-   *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
-   */
-  void hideTiers(List<TierLabelGlyph> tiers) {
-    for (TierLabelGlyph g : tiers) {
-      if (g.getInfo() instanceof TierGlyph) {
-        TierGlyph tier = (TierGlyph) g.getInfo();
-        hideOneTier(tier);
-      }
-    }
+				public void actionPerformed(ActionEvent e) {
+					style.setShow(true);
+					showMenu.remove(show_tier);
+					handler.sortTiers();
+					handler.repackTheTiers(false, true);
+				}
+			});
+			showMenu.add(show_tier);
+		}
+		tier.setVisibility(false);
+	}
 
-	handler.repackTheTiers(false, true);
+	/** Hides one tier and creates a JMenuItem that can be used to show it again.
+	 *  Does not re-pack the given tier, or any other tiers.
+	 */
+	//Called from LodeModeTableModel to hide tracks selectively from the eye icon.
+	public void hideOneTier(final ITrackStyleExtended style) {
+		// if style.getShow() is already false, there is likely a bug somewhere!
+		if (style == null) {
+			return;
+		}
+		if (style.getShow()) {
+			style.setShow(false);
+			final JMenuItem show_tier = new JMenuItem() {
 
-	/** Possible bug : When all strands are hidden.
-	 * tier label and tier do appear at same position.
-	 **/
+				private static final long serialVersionUID = 1L;
+				// override getText() because the HumanName of the style might change
 
-	// NOTE: Below call to stretchToFit is not redundancy. It is there
-	//       to solve above mentioned bug.
-	handler.repackTheTiers(false, true);
-  }
+				@Override
+				public String getText() {
+					String name = style.getTrackName();
+					if (name == null) {
+						name = "<unnamed>";
+					}
+					if (name.length() > 30) {
+						name = name.substring(0, 30) + "...";
+					}
+					return name;
+				}
+			};
+			show_tier.addActionListener(new ActionListener() {
 
-  private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
-    if (tier_label_glyphs.isEmpty()) {
-      return;
-    }
+				public void actionPerformed(ActionEvent e) {
+					style.setShow(true);
+					showMenu.remove(show_tier);
+					handler.sortTiers();
+					handler.repackTheTiers(false, true);
+				}
+			});
+			showMenu.add(show_tier);
+		}
+		style.setShow(false);
+	}
 
-    final JColorChooser chooser = new JColorChooser();
+	/** Hides multiple tiers and then repacks.
+	 *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
+	 */
+	void hideTiers(List<TierLabelGlyph> tiers) {
+		for (TierLabelGlyph g : tiers) {
+			if (g.getInfo() instanceof TierGlyph) {
+				TierGlyph tier = (TierGlyph) g.getInfo();
+				hideOneTier(tier);
+			}
+		}
 
-    TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
-    TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
-    ITrackStyle style_0 = tier_0.getAnnotStyle();
-    if (style_0 != null) {
-      if (fg) {
-        chooser.setColor(style_0.getForeground());
-      } else {
-        chooser.setColor(style_0.getBackground());
-      }
-    }
+		handler.repackTheTiers(false, true);
 
-    ActionListener al = new ActionListener() {
+		/** Possible bug : When all strands are hidden.
+		 * tier label and tier do appear at same position.
+		 **/
+		// NOTE: Below call to stretchToFit is not redundancy. It is there
+		//       to solve above mentioned bug.
+		handler.repackTheTiers(false, true);
+	}
 
-		  public void actionPerformed(ActionEvent e) {
-			  for (TierLabelGlyph tlg : tier_label_glyphs) {
-				  TierGlyph tier = (TierGlyph) tlg.getInfo();
-				  ITrackStyle style = tier.getAnnotStyle();
+	private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
+		if (tier_label_glyphs.isEmpty()) {
+			return;
+		}
 
-				  if (style != null) {
-					  if (fg) {
-						  style.setForeground(chooser.getColor());
-					  } else {
-						  style.setBackground(chooser.getColor());
-					  }
-				  }
+		final JColorChooser chooser = new JColorChooser();
+
+		TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
+		TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
+		ITrackStyle style_0 = tier_0.getAnnotStyle();
+		if (style_0 != null) {
+			if (fg) {
+				chooser.setColor(style_0.getForeground());
+			} else {
+				chooser.setColor(style_0.getBackground());
+			}
+		}
+
+		ActionListener al = new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				for (TierLabelGlyph tlg : tier_label_glyphs) {
+					TierGlyph tier = (TierGlyph) tlg.getInfo();
+					ITrackStyle style = tier.getAnnotStyle();
+
+					if (style != null) {
+						if (fg) {
+							style.setForeground(chooser.getColor());
+						} else {
+							style.setBackground(chooser.getColor());
+						}
+					}
 //				  for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
 //					  if (fg) {
 //						  gg.setColor(chooser.getColor());
@@ -530,55 +595,53 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //						  gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
 //					  }
 //				  }
-			  }
-		  }
-    };
+				}
+			}
+		};
 
-    JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
-                                        "Pick a Color",
-                                        true,  //modal
-                                        chooser,
-                                        al,  //OK button handler
-                                        null); //no CANCEL button handler
-    dialog.setVisible(true);
+		JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
+				"Pick a Color",
+				true, //modal
+				chooser,
+				al, //OK button handler
+				null); //no CANCEL button handler
+		dialog.setVisible(true);
 
-    refreshMap(false,false);
-  }
+		refreshMap(false, false);
+	}
 
-  public void renameTier(final TierGlyph tier) {
-    if (tier == null) {
-      return;
-    }
-    ITrackStyle style = tier.getAnnotStyle();
+	public void renameTier(final TierGlyph tier) {
+		if (tier == null) {
+			return;
+		}
+		ITrackStyle style = tier.getAnnotStyle();
 
-    String new_label = JOptionPane.showInputDialog("Label: ", style.getTrackName());
-    if (new_label != null && new_label.length() > 0) {
-      style.setTrackName(new_label);
-    }
-    refreshMap(false,false);
-  }
+		String new_label = JOptionPane.showInputDialog("Label: ", style.getTrackName());
+		if (new_label != null && new_label.length() > 0) {
+			style.setTrackName(new_label);
+		}
+		refreshMap(false, false);
+	}
 
-  private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
-    for (TierLabelGlyph tlg : tier_labels) {
-      ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
-      if (style instanceof ITrackStyleExtended) {
-        ITrackStyleExtended astyle = (ITrackStyleExtended) style;
-        astyle.setColorByScore(b);
-      }
-    }
+	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
+		for (TierLabelGlyph tlg : tier_labels) {
+			ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+			if (style instanceof ITrackStyleExtended) {
+				ITrackStyleExtended astyle = (ITrackStyleExtended) style;
+				astyle.setColorByScore(b);
+			}
+		}
 
-    refreshMap(false,false);
-  }
+		refreshMap(false, false);
+	}
 
-
-
-  private static void saveAsBedFile(TierGlyph atier) {
+	private static void saveAsBedFile(TierGlyph atier) {
 		int childcount = atier.getChildCount();
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
 		for (int i = 0; i < childcount; i++) {
 			GlyphI child = atier.getChild(i);
 			if (child.getInfo() instanceof SeqSymmetry) {
-				syms.add((SeqSymmetry)child.getInfo());
+				syms.add((SeqSymmetry) child.getInfo());
 			}
 		}
 		System.out.println("Saving symmetries as BED file: " + syms.size());
@@ -603,378 +666,380 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-  public static void addMisMatchTier(TierGlyph atier, String prefix) {
-	BioSeq aseq = gmodel.getSelectedSeq();
-	String human_name = prefix + ": " + atier.getLabel();
-	String unique_name = TrackStyle.getUniqueName(human_name);
-	String method = atier.getAnnotStyle().getMethodName();
-	SeqSymmetry tsym = aseq.getAnnotation(method);
-	if(tsym == null || tsym.getChildCount() == 0){
-		ErrorHandler.errorPanel("Empty Track",
-			"The selected track is empty.  Can not make a coverage track for an empty track.");
-		return;
-	}
-
-	int[] startEnd = DependentData.getStartEnd(tsym, aseq);
-	SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
-
-	//Load Residues
-	if(!aseq.isAvailable(loadSpan)){
-		boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
-							+ " not loaded.  \nDo you want to load residues?");
-		if (!confirm) {
+	public static void addMisMatchTier(TierGlyph atier, String prefix) {
+		BioSeq aseq = gmodel.getSelectedSeq();
+		String human_name = prefix + ": " + atier.getLabel();
+		String unique_name = TrackStyle.getUniqueName(human_name);
+		String method = atier.getAnnotStyle().getMethodName();
+		SeqSymmetry tsym = aseq.getAnnotation(method);
+		if (tsym == null || tsym.getChildCount() == 0) {
+			ErrorHandler.errorPanel("Empty Track",
+					"The selected track is empty.  Can not make a coverage track for an empty track.");
 			return;
 		}
-		
-		if(!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)){
-			ErrorHandler.errorPanel("No Residues Loaded",
-			"Could not load partial or full residues.");
+
+		int[] startEnd = DependentData.getStartEnd(tsym, aseq);
+		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+
+		//Load Residues
+		if (!aseq.isAvailable(loadSpan)) {
+			boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
+					+ " not loaded.  \nDo you want to load residues?");
+			if (!confirm) {
+				return;
+			}
+
+			if (!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)) {
+				ErrorHandler.errorPanel("No Residues Loaded",
+						"Could not load partial or full residues.");
+				return;
+			}
+		}
+
+		DependentData dd = new DependentData(unique_name, DependentType.MISMATCH, method);
+		SymWithProps wrapperSym = TrackView.addToDependentList(dd);
+
+		if (wrapperSym == null) {
+			ErrorHandler.errorPanel("Empty Track",
+					"The selected track is empty.  Can not make a coverage track for an empty track.");
 			return;
 		}
+
+		// Generate a non-persistent style.
+		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
+
+		TrackStyle style = TrackStyle.getInstance(unique_name, false);
+		style.setTrackName(human_name);
+		style.setShow2Tracks(1);
+		style.setSeparate(false); // there are not separate (+) and (-) strands
+		style.setExpandable(false); // cannot expand and collapse
+		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+
+		IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	DependentData dd = new DependentData(unique_name,DependentType.MISMATCH,method);
-	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
-
-	if (wrapperSym == null) {
-		ErrorHandler.errorPanel("Empty Track",
-			"The selected track is empty.  Can not make a coverage track for an empty track.");
-		return;
-    }
-
-    // Generate a non-persistent style.
-    // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
-
-    TrackStyle style = TrackStyle.getInstance(unique_name, false);
-    style.setTrackName(human_name);
-    style.setShow2Tracks(1);
-    style.setSeparate(false); // there are not separate (+) and (-) strands
-    style.setExpandable(false); // cannot expand and collapse
-    style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-
-    IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
-  }
-
-  private void addSymCoverageTier(TierGlyph atier) {
-    BioSeq aseq = gmodel.getSelectedSeq();
-    //int child_count = atier.getChildCount();
-    //List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
-    //collectSyms(atier, syms);
+	private void addSymCoverageTier(TierGlyph atier) {
+		BioSeq aseq = gmodel.getSelectedSeq();
+		//int child_count = atier.getChildCount();
+		//List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
+		//collectSyms(atier, syms);
 
 //	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
-    //if (child_count == 0 || syms.size() == 0) {
-    //  ErrorHandler.errorPanel("Empty Track",
-    //    "The selected track is empty.  Can not make a coverage track for an empty track.");
-    //  return;
-    //}
+		//if (child_count == 0 || syms.size() == 0) {
+		//  ErrorHandler.errorPanel("Empty Track",
+		//    "The selected track is empty.  Can not make a coverage track for an empty track.");
+		//  return;
+		//}
 
-	String human_name = "coverage: " + atier.getLabel();
-	String unique_name = TrackStyle.getUniqueName(human_name);
-	String method = atier.getAnnotStyle().getMethodName();
-	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,method);
-	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
+		String human_name = "coverage: " + atier.getLabel();
+		String unique_name = TrackStyle.getUniqueName(human_name);
+		String method = atier.getAnnotStyle().getMethodName();
+		DependentData dd = new DependentData(unique_name, DependentType.COVERAGE, method);
+		SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 
-	if (wrapperSym == null) {
-		ErrorHandler.errorPanel("Empty Track",
-			"The selected track is empty.  Can not make a coverage track for an empty track.");
-		return;
-    }
-	
-    // Generate a non-persistent style.
-    // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
+		if (wrapperSym == null) {
+			ErrorHandler.errorPanel("Empty Track",
+					"The selected track is empty.  Can not make a coverage track for an empty track.");
+			return;
+		}
 
-    TrackStyle style = TrackStyle.getInstance(unique_name, false);
-    style.setTrackName(human_name);
-    style.setShow2Tracks(1);
-    style.setSeparate(false); // there are not separate (+) and (-) strands
-    style.setExpandable(false); // cannot expand and collapse
-    style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-	style.setForeground(atier.getForegroundColor());
-	
-    gviewer.setAnnotatedSeq(aseq, true, true);
-  }
+		// Generate a non-persistent style.
+		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 
+		TrackStyle style = TrackStyle.getInstance(unique_name, false);
+		style.setTrackName(human_name);
+		style.setShow2Tracks(1);
+		style.setSeparate(false); // there are not separate (+) and (-) strands
+		style.setExpandable(false); // cannot expand and collapse
+		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+		style.setForeground(atier.getForegroundColor());
 
-  private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {
-    // not sure best way to collect syms from tier, but for now,
-    //   just recursively descend through child glyphs of the tier, and if
-    //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
-    //   (don't descend into childA's children)
+		gviewer.setAnnotatedSeq(aseq, true, true);
+	}
+
+	private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {
+		// not sure best way to collect syms from tier, but for now,
+		//   just recursively descend through child glyphs of the tier, and if
+		//   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
+		//   (don't descend into childA's children)
 
 
 //    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 //    collectSyms(atier, syms);
 
 //	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
-    //if (syms.size() == 0) {
-    //ErrorHandler.errorPanel("Nothing to Summarize",
-    //    "The selected track is empty. It contains nothing to summarize");
-    //return;
-    //}
+		//if (syms.size() == 0) {
+		//ErrorHandler.errorPanel("Nothing to Summarize",
+		//    "The selected track is empty. It contains nothing to summarize");
+		//return;
+		//}
 
-    BioSeq aseq = gmodel.getSelectedSeq();
-	String human_name = "depth: " + atier.getLabel();
-	String id = TrackStyle.getUniqueName(human_name);
-	DependentData dd = null;
-	String method = atier.getAnnotStyle().getMethodName();
-	if(bothDirection){
-		human_name += getSymbol(Direction.BOTH);
-		dd = new DependentData(id,DependentType.SUMMARY,method,Direction.BOTH);
-	}else{
-		human_name += getSymbol(atier.getDirection());
-		dd = new DependentData(id,DependentType.SUMMARY,method,atier.getDirection());
-	}
-	
-	GraphSym gsym = (GraphSym) TrackView.addToDependentList(dd);
+		BioSeq aseq = gmodel.getSelectedSeq();
+		String human_name = "depth: " + atier.getLabel();
+		String id = TrackStyle.getUniqueName(human_name);
+		DependentData dd = null;
+		String method = atier.getAnnotStyle().getMethodName();
+		if (bothDirection) {
+			human_name += getSymbol(Direction.BOTH);
+			dd = new DependentData(id, DependentType.SUMMARY, method, Direction.BOTH);
+		} else {
+			human_name += getSymbol(atier.getDirection());
+			dd = new DependentData(id, DependentType.SUMMARY, method, atier.getDirection());
+		}
 
-	if (gsym == null) {
-		ErrorHandler.errorPanel("Nothing to Summarize",
-			"The selected track is empty. It contains nothing to summarize");
-		return;
-    }
+		GraphSym gsym = (GraphSym) TrackView.addToDependentList(dd);
 
-	gsym.setGraphName(human_name);
-	gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-	gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
-    gviewer.setAnnotatedSeq(aseq, true, true);
+		if (gsym == null) {
+			ErrorHandler.errorPanel("Nothing to Summarize",
+					"The selected track is empty. It contains nothing to summarize");
+			return;
+		}
+
+		gsym.setGraphName(human_name);
+		gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+		gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
+		gviewer.setAnnotatedSeq(aseq, true, true);
 //    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
 //    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 //    gl.setColor(atier.getForegroundColor());
-  }
+	}
 
-  void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
-    if (gviewer != null) {
-      // if an AnnotatedSeqViewer is being used, ask it to update itself.
-      // later this can be made more specific to just update the tiers that changed
-      boolean preserve_view_x = ! stretch_vertically;
-	  boolean preserve_view_y = ! stretch_horizonatally;
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view_x, preserve_view_y);
-    } else {
-      // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
-      handler.repackTheTiers(false, stretch_vertically);
-    }
-  }
-
-  public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
-    final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
-    int num_selections = labels.size();
-    boolean not_empty = ! handler.getAllTierLabels().isEmpty();
-
-    boolean any_are_collapsed = false;
-    boolean any_are_expanded = false;
-    boolean any_are_color_on = false; // whether any allow setColorByScore()
-    boolean any_are_color_off = false; // whether any allow setColorByScore()
-    boolean any_are_separate_tiers = false;
-    boolean any_are_single_tier = false;
-	boolean add_focus = false;
-	boolean any_view_mode = false;
-	
-	for (TierLabelGlyph label : labels) {
-      TierGlyph glyph = label.getReferenceTier();
-      ITrackStyle style = glyph.getAnnotStyle();
-      if (style instanceof ITrackStyleExtended) {
-        ITrackStyleExtended astyle = (ITrackStyleExtended) style;
-        any_are_color_on = any_are_color_on || astyle.getColorByScore();
-        any_are_color_off = any_are_color_off || (! astyle.getColorByScore());
-        any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-        any_are_single_tier = any_are_single_tier || (! astyle.getSeparate());
-		any_view_mode = any_view_mode || (!style.isGraphTier());
-      }
-      if (style.getExpandable()) {
-        any_are_collapsed = any_are_collapsed || style.getCollapsed();
-        any_are_expanded = any_are_expanded || ! style.getCollapsed();
-      }
-    }
-
-    select_all_tiers_action.setEnabled(true);
-    customize_action.setEnabled(true);
-
-    hide_action.setEnabled(num_selections > 0);
-	delete_action.setEnabled(num_selections > 0);
-    show_all_action.setEnabled(not_empty);
-
-    change_color_action.setEnabled(num_selections > 0);
-    change_bg_color_action.setEnabled(num_selections > 0);
-	change_font_size_action.setEnabled(num_selections > 0);
-    rename_action.setEnabled(num_selections == 1);
-
-    color_by_score_on_action.setEnabled(any_are_color_off);
-    color_by_score_off_action.setEnabled(any_are_color_on);
-
-    collapse_action.setEnabled(any_are_expanded);
-    expand_action.setEnabled(any_are_collapsed);
-    change_expand_max_action.setEnabled(any_are_expanded);
-	show_single_tier.setEnabled(any_are_separate_tiers);
-    show_two_tiers.setEnabled(any_are_single_tier);
-    collapse_all_action.setEnabled(not_empty);
-    expand_all_action.setEnabled(not_empty);
-    change_expand_max_all_action.setEnabled(not_empty);
-    showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
-
-    JMenu save_menu = new JMenu("Save Annotations");
-
-    if (num_selections == 1) {
-      // Check whether this selection is a graph or an annotation
-      TierLabelGlyph label = labels.get(0);
-      TierGlyph glyph = (TierGlyph) label.getInfo();
-      ITrackStyle style = glyph.getAnnotStyle();
-      boolean is_annotation_type = ! style.isGraphTier();
-	  summaryMenu.setEnabled(is_annotation_type);
-	  sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
-	  sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
-      //sym_summarize_single_action.setEnabled(is_annotation_type);
-      coverage_action.setEnabled(is_annotation_type);
-      save_menu.setEnabled(is_annotation_type);
-      save_bed_action.setEnabled(is_annotation_type);
-	  if (glyph.getDirection() != Direction.AXIS) {
-        add_focus = true;
-      }
-    } else {
-	  summaryMenu.setEnabled(false);
-      //sym_summarize_single_action.setEnabled(false);
-      coverage_action.setEnabled(false);
-      save_menu.setEnabled(false);
-      save_bed_action.setEnabled(false);
-    }
-
-    changeMenu.removeAll();
-    changeMenu.add(change_color_action);
-    changeMenu.add(change_bg_color_action);
-    changeMenu.add(rename_action);
-	changeMenu.add(change_font_size_action);
-    changeMenu.add(change_expand_max_action);
-    changeMenu.add(new JSeparator());
-    changeMenu.add(show_two_tiers);
-    changeMenu.add(show_single_tier);
-    changeMenu.add(new JSeparator());
-    changeMenu.add(color_by_score_on_action);
-    changeMenu.add(color_by_score_off_action);
-
-	viewModeMenu.removeAll();
-	viewModeMenu.setEnabled(any_view_mode);
-	if (any_view_mode) {
-		Map<String, Action> actions = new HashMap<String, Action>();
-		for (final Object mode : MapViewModeHolder.getInstance().getAllViewModes()) {
-			Action action = new AbstractAction(mode.toString()) {
-
-				public void actionPerformed(ActionEvent ae) {
-					  boolean refresh = false;
-					  for (TierLabelGlyph label : labels) {
-						  TierGlyph glyph = label.getReferenceTier();
-						  ITrackStyle style = glyph.getAnnotStyle();
-						  if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
-							  ((ITrackStyleExtended) style).setViewMode(mode.toString());
-							  refresh = true;
-						  }
-					  }
-					  if (refresh) {
-						  refreshMap(false, false);
-					  }
-				  }
-			  };
-			actions.put(mode.toString(), action);
-			viewModeMenu.add(new JCheckBoxMenuItem(action));
-		  }
-		
-		if(labels.size() == 1){
-			TierGlyph glyph = labels.get(0).getReferenceTier();
-			ITrackStyle style = glyph.getAnnotStyle();
-			if (style instanceof ITrackStyleExtended) {
-				String mode = ((ITrackStyleExtended)style).getViewMode();
-				Action action = actions.get(mode);
-				if(action != null){
-					action.putValue(Action.SELECTED_KEY, true);
-				}
-			}
-						
+	void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
+		if (gviewer != null) {
+			// if an AnnotatedSeqViewer is being used, ask it to update itself.
+			// later this can be made more specific to just update the tiers that changed
+			boolean preserve_view_x = !stretch_vertically;
+			boolean preserve_view_y = !stretch_horizonatally;
+			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view_x, preserve_view_y);
+		} else {
+			// if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
+			handler.repackTheTiers(false, stretch_vertically);
 		}
 	}
 
-    popup.add(customize_action);
-    popup.add(new JSeparator());
-    popup.add(hide_action);
-    popup.add(showMenu);
-	if(add_focus){
-		popup.add(focus_track_action);
-	}
-	popup.add(delete_action);
-    popup.add(show_all_action);
+	public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
+		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
+		int num_selections = labels.size();
+		boolean not_empty = !handler.getAllTierLabels().isEmpty();
 
-	strandsMenu.removeAll();
-	strandsMenu.add(at1);
-	strandsMenu.add(at2);
+		boolean any_are_collapsed = false;
+		boolean any_are_expanded = false;
+		boolean any_are_color_on = false; // whether any allow setColorByScore()
+		boolean any_are_color_off = false; // whether any allow setColorByScore()
+		boolean any_are_separate_tiers = false;
+		boolean any_are_single_tier = false;
+		boolean add_focus = false;
+		boolean any_view_mode = false;
+
+		for (TierLabelGlyph label : labels) {
+			TierGlyph glyph = label.getReferenceTier();
+			ITrackStyle style = glyph.getAnnotStyle();
+			if (style instanceof ITrackStyleExtended) {
+				ITrackStyleExtended astyle = (ITrackStyleExtended) style;
+				any_are_color_on = any_are_color_on || astyle.getColorByScore();
+				any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
+				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
+				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate());
+				any_view_mode = any_view_mode || (!style.isGraphTier());
+			}
+			if (style.getExpandable()) {
+				any_are_collapsed = any_are_collapsed || style.getCollapsed();
+				any_are_expanded = any_are_expanded || !style.getCollapsed();
+			}
+		}
+
+		select_all_tiers_action.setEnabled(true);
+		customize_action.setEnabled(true);
+
+		hide_action.setEnabled(num_selections > 0);
+		delete_action.setEnabled(num_selections > 0);
+		show_all_action.setEnabled(not_empty);
+
+		change_color_action.setEnabled(num_selections > 0);
+		change_bg_color_action.setEnabled(num_selections > 0);
+		change_font_size_action.setEnabled(num_selections > 0);
+		rename_action.setEnabled(num_selections == 1);
+
+		color_by_score_on_action.setEnabled(any_are_color_off);
+		color_by_score_off_action.setEnabled(any_are_color_on);
+
+		collapse_action.setEnabled(any_are_expanded);
+		expand_action.setEnabled(any_are_collapsed);
+		change_expand_max_action.setEnabled(any_are_expanded);
+		show_single_tier.setEnabled(any_are_separate_tiers);
+		show_two_tiers.setEnabled(any_are_single_tier);
+		collapse_all_action.setEnabled(not_empty);
+		expand_all_action.setEnabled(not_empty);
+		change_expand_max_all_action.setEnabled(not_empty);
+		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
+
+		JMenu save_menu = new JMenu("Save Annotations");
+
+		if (num_selections == 1) {
+			// Check whether this selection is a graph or an annotation
+			TierLabelGlyph label = labels.get(0);
+			TierGlyph glyph = (TierGlyph) label.getInfo();
+			ITrackStyle style = glyph.getAnnotStyle();
+			boolean is_annotation_type = !style.isGraphTier();
+			summaryMenu.setEnabled(is_annotation_type);
+			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
+			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
+			//sym_summarize_single_action.setEnabled(is_annotation_type);
+			coverage_action.setEnabled(is_annotation_type);
+			save_menu.setEnabled(is_annotation_type);
+			save_bed_action.setEnabled(is_annotation_type);
+			if (glyph.getDirection() != Direction.AXIS) {
+				add_focus = true;
+			}
+		} else {
+			summaryMenu.setEnabled(false);
+			//sym_summarize_single_action.setEnabled(false);
+			coverage_action.setEnabled(false);
+			save_menu.setEnabled(false);
+			save_bed_action.setEnabled(false);
+		}
+
+		changeMenu.removeAll();
+		changeMenu.add(change_color_action);
+		changeMenu.add(change_bg_color_action);
+		changeMenu.add(rename_action);
+		changeMenu.add(change_font_size_action);
+		changeMenu.add(change_expand_max_action);
+		changeMenu.add(new JSeparator());
+		changeMenu.add(show_two_tiers);
+		changeMenu.add(show_single_tier);
+		changeMenu.add(new JSeparator());
+		changeMenu.add(color_by_score_on_action);
+		changeMenu.add(color_by_score_off_action);
+
+		viewModeMenu.removeAll();
+		viewModeMenu.setEnabled(any_view_mode);
+		if (any_view_mode) {
+			Map<String, Action> actions = new HashMap<String, Action>();
+			for (final Object mode : MapViewModeHolder.getInstance().getAllViewModes()) {
+				Action action = new AbstractAction(mode.toString()) {
+
+					public void actionPerformed(ActionEvent ae) {
+						boolean refresh = false;
+						for (TierLabelGlyph label : labels) {
+							TierGlyph glyph = label.getReferenceTier();
+							ITrackStyle style = glyph.getAnnotStyle();
+							if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
+								((ITrackStyleExtended) style).setViewMode(mode.toString());
+								refresh = true;
+							}
+						}
+						if (refresh) {
+							refreshMap(false, false);
+						}
+					}
+				};
+				actions.put(mode.toString(), action);
+				viewModeMenu.add(new JCheckBoxMenuItem(action));
+			}
+
+			if (labels.size() == 1) {
+				TierGlyph glyph = labels.get(0).getReferenceTier();
+				ITrackStyle style = glyph.getAnnotStyle();
+				if (style instanceof ITrackStyleExtended) {
+					String mode = ((ITrackStyleExtended) style).getViewMode();
+					Action action = actions.get(mode);
+					if (action != null) {
+						action.putValue(Action.SELECTED_KEY, true);
+					}
+				}
+
+			}
+		}
+
+		popup.add(customize_action);
+		popup.add(new JSeparator());
+		popup.add(hide_action);
+		popup.add(showMenu);
+		if (add_focus) {
+			popup.add(focus_track_action);
+		}
+		popup.add(delete_action);
+		popup.add(show_all_action);
+
+		strandsMenu.removeAll();
+		strandsMenu.add(at1);
+		strandsMenu.add(at2);
 //	strandsMenu.add(at3);
-	popup.add(strandsMenu);
-    popup.add(new JSeparator());
-    popup.add(select_all_tiers_action);
-    popup.add(changeMenu);
-	popup.add(viewModeMenu);
-    popup.add(new JSeparator());
-    popup.add(collapse_action);
-    popup.add(expand_action);
-    popup.add(change_expand_max_action);	
-    popup.add(new JSeparator());
+		popup.add(strandsMenu);
+		popup.add(new JSeparator());
+		popup.add(select_all_tiers_action);
+		popup.add(changeMenu);
+		popup.add(viewModeMenu);
+		popup.add(new JSeparator());
+		popup.add(collapse_action);
+		popup.add(expand_action);
+		popup.add(change_expand_max_action);
+		popup.add(new JSeparator());
 
-    popup.add(save_menu);
-    save_menu.add(save_bed_action);
+		popup.add(save_menu);
+		save_menu.add(save_bed_action);
 
-    popup.add(new JSeparator());
-	summaryMenu.removeAll();
-	summaryMenu.add(sym_summarize_single_action);
-	if(!show_two_tiers.isEnabled())					// If showing both track then give a option to create
-		summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
-	
-    popup.add(summaryMenu);
-    popup.add(coverage_action);
+		popup.add(new JSeparator());
+		summaryMenu.removeAll();
+		summaryMenu.add(sym_summarize_single_action);
+		if (!show_two_tiers.isEnabled()) // If showing both track then give a option to create
+		{
+			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
+		}
+		popup.add(summaryMenu);
+		popup.add(coverage_action);
 
-	if (num_selections == 1) {
-      // Check whether this selection is a graph or an annotation
-      TierLabelGlyph label = labels.get(0);
-      final TierGlyph glyph = (TierGlyph) label.getInfo();
-      ITrackStyle style = glyph.getAnnotStyle();
-	  GenericFeature feature = style.getFeature();
-	  if(feature != null){
-		  if(style instanceof ITrackStyleExtended){
-			  String file_type = ((ITrackStyleExtended)style).getFileType();
-			if("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)){
-				popup.add(mismatch_action);
-			  }  
-		  }	  
-		  if(feature.friendlyURL != null){
-			popup.add(new JSeparator());
-			popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
-		  }
-	  }
+		if (num_selections == 1) {
+			// Check whether this selection is a graph or an annotation
+			TierLabelGlyph label = labels.get(0);
+			final TierGlyph glyph = (TierGlyph) label.getInfo();
+			ITrackStyle style = glyph.getAnnotStyle();
+			GenericFeature feature = style.getFeature();
+			if (feature != null) {
+				if (style instanceof ITrackStyleExtended) {
+					String file_type = ((ITrackStyleExtended) style).getFileType();
+					if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
+						popup.add(mismatch_action);
+					}
+				}
+				if (feature.friendlyURL != null) {
+					popup.add(new JSeparator());
+					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
+				}
+			}
+		}
+
+		if (DEBUG) {
+			popup.add(new AbstractAction("DEBUG") {
+
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent e) {
+					doDebugAction();
+				}
+			});
+		}
 	}
-	
-    if (DEBUG) {
-      popup.add(new AbstractAction("DEBUG") {
-    	private static final long serialVersionUID = 1L;
-        public void actionPerformed(ActionEvent e) {
-          doDebugAction();
-        }
-      });
-    }
-  }
 
-  private void removeTiers(List<TierLabelGlyph> tiers) {
-	  for (TierLabelGlyph tlg: tiers) {
-		  ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
-		  String method = style.getMethodName();
-		  if(method != null){
-			TrackView.delete(gviewer.getSeqMap(), method, style);
-		  }else{
-			  for(GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)){
-				style = gg.getGraphState().getTierStyle();
-				method = style.getMethodName();
+	private void removeTiers(List<TierLabelGlyph> tiers) {
+		for (TierLabelGlyph tlg : tiers) {
+			ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+			String method = style.getMethodName();
+			if (method != null) {
 				TrackView.delete(gviewer.getSeqMap(), method, style);
-			  }
-		  }
-	  }
-	  gviewer.dataRemoved();	// refresh
-  }
-  
-  // purely for debugging
+			} else {
+				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
+					style = gg.getGraphState().getTierStyle();
+					method = style.getMethodName();
+					TrackView.delete(gviewer.getSeqMap(), method, style);
+				}
+			}
+		}
+		gviewer.dataRemoved();	// refresh
+	}
+
+	// purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {
 			ITrackStyle style = tg.getAnnotStyle();
@@ -983,11 +1048,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	static private String getSymbol(Direction direction){
+	static private String getSymbol(Direction direction) {
 		return TierLabelGlyph.getDirectionSymbol(direction);
 	}
 
 	SeqMapView getSeqMapView() {
 		return gviewer;
+	}
+
+	public JMenu getShowMenu() {
+		return showMenu;
 	}
 }

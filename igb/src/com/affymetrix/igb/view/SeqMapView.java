@@ -96,51 +96,49 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 /**
  *
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-				implements SeqMapViewI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
-	private static final long serialVersionUID = 1L;
+		implements SeqMapViewI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
 
+	private static final long serialVersionUID = 1L;
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
-	static{
+
+	static {
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
 		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
 	}
 
 	public static enum MapMode {
+
 		MapSelectMode(true, false, defaultCursor, defaultCursor),
 		MapScrollMode(false, true, openHandCursor, closedHandCursor),
 		MapZoomMode(false, false, defaultCursor, defaultCursor);
-
 		public final boolean rubber_band, drag_scroll;
 		public final Cursor defCursor, pressedCursor;
 
-		private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor){
+		private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor) {
 			this.rubber_band = rubber_band;
 			this.drag_scroll = drag_scroll;
 			this.defCursor = defaultCursor;
 			this.pressedCursor = pressedCursor;
 		}
 	}
-	
 	private static final boolean DEBUG_TIERS = false;
 	private final static String SEQ_MODE = "SEQ_MODE";
-
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-
 	private boolean show_prop_tooltip = true;
 	private MapMode mapMode;
 	private JToggleButton select_mode_button;
 	private JToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
 	private GraphSelectionManager graph_manager;
-
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
@@ -154,7 +152,6 @@ public class SeqMapView extends JPanel
 	/** boolean for setting map range to min and max bounds of
 	AnnotatedBioSeq's annotations */
 	private boolean shrinkWrapMapBounds = false;
-
 	protected AffyTieredMap seqmap;
 	private UnibrowHairline hairline = null;
 	protected BioSeq aseq;
@@ -188,13 +185,11 @@ public class SeqMapView extends JPanel
 	private static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
 	/** Name of a boolean preference for whether to show properties in tooltip. */
 	public static final String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
-
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
 	private static final boolean default_y_zoomer_left = true;
 	private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
-	
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final GlyphEdgeMatcher edge_matcher;
 	private final JPopupMenu sym_popup = new JPopupMenu();
@@ -227,13 +222,12 @@ public class SeqMapView extends JPanel
 	private SeqSymmetry sym_used_for_title = null;
 	private PropertyHandler propertyHandler;
 	private final AbstractAction refreshDataAction;
-	
+	private SeqMapViewPopup popup;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
-	private final static int[] default_range  = new int[]{0, 100};
+	private final static int[] default_range = new int[]{0, 100};
 	private final static int[] default_offset = new int[]{0, 100};
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
-	
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final AutoLoad autoload;
@@ -310,27 +304,27 @@ public class SeqMapView extends JPanel
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
 		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL) {
-			
+
 			@Override
 			public void paint(Graphics g) {
 				super.paint(g);
 
-				if(autoload != null){
+				if (autoload != null) {
 					drawAutoLoadPoint(g);
 				}
 			}
 
-			private void drawAutoLoadPoint(Graphics g) {		
+			private void drawAutoLoadPoint(Graphics g) {
 				int threshValue = (AutoLoad.threshold * getMaximum() / 100);
 				Color c = g.getColor();
 				g.setColor(this.getBackground().brighter());
 				int xp = xPositionForValue(threshValue);
-				int yp = this.getHeight()/2;
-				int x[] = new int[]{xp, xp-5, xp-5, xp+5, xp+5};
-				int y[] = new int[]{yp, yp/2, 0, 0, yp/2};
-				g.fillPolygon(x,y,5);
+				int yp = this.getHeight() / 2;
+				int x[] = new int[]{xp, xp - 5, xp - 5, xp + 5, xp + 5};
+				int y[] = new int[]{yp, yp / 2, 0, 0, yp / 2};
+				g.fillPolygon(x, y, 5);
 				g.setColor(Color.BLACK);
-				g.drawPolygon(x,y,5);
+				g.drawPolygon(x, y, 5);
 				g.setColor(c);
 			}
 
@@ -345,11 +339,11 @@ public class SeqMapView extends JPanel
 			}
 
 			@Override
-			public String getToolTipText(MouseEvent me){
-				if(me != null && autoload != null){
+			public String getToolTipText(MouseEvent me) {
+				if (me != null && autoload != null) {
 					int threshValue = (AutoLoad.threshold * getMaximum() / 100);
 					int xp = xPositionForValue(threshValue);
-					if(me.getX() > xp-5 && me.getX() < xp+5){
+					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
 						return BUNDLE.getString("autoloadToolTip");
 					}
 					return super.getToolTipText();
@@ -357,18 +351,18 @@ public class SeqMapView extends JPanel
 				return super.getToolTipText();
 			}
 		};
-		
-		((JSlider)xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
+
+		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
 		Adjustable yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-		((JSlider)yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
+		((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
 
 		autoload = addAutoLoad();
-		
+
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
-		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
+		popup = new SeqMapViewPopup(tier_manager, this);
 		MouseShortCut msc = new MouseShortCut(popup);
 
 		tier_manager.setDoGraphSelections(true);
@@ -398,7 +392,7 @@ public class SeqMapView extends JPanel
 		seqmap.addMouseListener(mouse_listener);
 		seqmap.addMouseListener(msc);
 		seqmap.addMouseMotionListener(mouse_listener);
-		((AffyLabelledTierMap)seqmap).getLabelMap().addMouseMotionListener(mouse_listener);
+		((AffyLabelledTierMap) seqmap).getLabelMap().addMouseMotionListener(mouse_listener);
 		//((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
 		tier_manager.setDoGraphSelections(true);
@@ -477,21 +471,21 @@ public class SeqMapView extends JPanel
 		this.addPopupListener(link_control);
 
 		this.addPopupListener(new ReadAlignmentView());
-		
+
 		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
 	}
 
-	protected AutoLoad addAutoLoad(){
+	protected AutoLoad addAutoLoad() {
 		return new AutoLoad(seqmap);
 	}
 
-	public AutoLoad getAutoLoad(){
+	public AutoLoad getAutoLoad() {
 		return autoload;
 	}
-	
+
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
 		// update graphs and annotations when the map is resized.
 
@@ -608,7 +602,7 @@ public class SeqMapView extends JPanel
 			SeqSymmetry annot = mseq.getAnnotation(i);
 			if (annot instanceof GraphSym) {
 				GlyphI glyph = map.getItem(annot);
-				if(glyph != null){
+				if (glyph != null) {
 					map.removeItem(glyph);
 				}
 				mseq.unloadAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
@@ -616,14 +610,14 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void dataRemoved(){
+	public void dataRemoved() {
 		setAnnotatedSeq(aseq);
-		AltSpliceView slice_view = (AltSpliceView)((IGB)IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view != null) {
 			slice_view.getSplicedView().dataRemoved();
 		}
 	}
-	
+
 	/** Sets the sequence; if null, has the same effect as calling clear(). */
 	public final void setAnnotatedSeq(BioSeq seq) {
 		setAnnotatedSeq(seq, false, (seq == this.aseq) && (seq != null));
@@ -713,7 +707,7 @@ public class SeqMapView extends JPanel
 			seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
 			addGlyphs(temp_tiers, axis_index);
 		}
-		
+
 		seqmap.repack();
 
 		if (same_seq && preserve_selection) {
@@ -735,7 +729,7 @@ public class SeqMapView extends JPanel
 			// do selection based on what the genometry model thinks is selected
 			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
-			
+
 			setStatus(getSelectionTitle(seqmap.getSelected()));
 		}
 
@@ -756,25 +750,24 @@ public class SeqMapView extends JPanel
 
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
-			if(clampedRegion != null){
+			if (clampedRegion != null) {
 				seqmap.setMapRange(clampedRegion.getStart(), clampedRegion.getEnd());
 			}
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 
 			/** Possible bug : When all strands are hidden.
 			 * tier label and tiers do appear at same position.
-			**/
+			 **/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve above mentioned bug.
-
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
 			seqmap.stretchToFit(true, true);
 
 			/** Possible bug : Below both ranges are different
-			*	System.out.println("SeqMapRange "+seqmap.getMapRange()[1]);
-			*	System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
-			**/
+			 *	System.out.println("SeqMapRange "+seqmap.getMapRange()[1]);
+			 *	System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
+			 **/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
 			seqmap.stretchToFit(true, true);
@@ -782,24 +775,23 @@ public class SeqMapView extends JPanel
 			postSelections();
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
-			if(clampedRegion != null){
+			if (clampedRegion != null) {
 				clamp(false);
 			}
 		}
 
-		for(SeqMapRefreshed smr : seqmap_refresh_list){
+		for (SeqMapRefreshed smr : seqmap_refresh_list) {
 			smr.mapRefresh();
 		}
-		
+
 		seqmap.updateWidget();
 
 		//A Temporary hack to solve problem when a 'genome' is selected
-		if(IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))){
+		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
-		
-	}
 
+	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers
 	//   (and thus modifying map.getTiers() list -- could probably deal with this
@@ -835,7 +827,6 @@ public class SeqMapView extends JPanel
 		hideEmptyTierGlyphs(seqmap.getTiers());
 	}
 
-
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
 		// add back in previous annotation tiers (with all children removed)
 		if (temp_tiers != null) {
@@ -852,7 +843,6 @@ public class SeqMapView extends JPanel
 			temp_tiers.clear(); // redundant hint to garbage collection
 		}
 	}
-
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
 	private TransformTierGlyph addAxisTier(int tier_index) {
@@ -991,7 +981,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-
 	private void addAnnotationTracks() {
 		TrackView.addTracks(this, aseq);
 
@@ -1034,9 +1023,6 @@ public class SeqMapView extends JPanel
 		transform_path = cached_path;
 	}
 
-
-
-
 	@Override
 	public final BioSeq getAnnotatedSeq() {
 		return aseq;
@@ -1069,7 +1055,6 @@ public class SeqMapView extends JPanel
 	 *  {@link #getTransformPath()}.  If no transform is necessary, simply
 	 *  returns the original symmetry.
 	 */
-
 	@Override
 	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
 		if (seq_to_compare != getViewSeq()) {
@@ -1106,7 +1091,7 @@ public class SeqMapView extends JPanel
 	}
 
 	private void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
-					boolean call_listeners, boolean update_widget) {
+			boolean call_listeners, boolean update_widget) {
 		if (!add_to_previous) {
 			clearSelection();
 		}
@@ -1140,11 +1125,10 @@ public class SeqMapView extends JPanel
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
-		if( seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)){
+		if (seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
 			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
 		}
 	}
-
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
 	public final void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
@@ -1156,18 +1140,19 @@ public class SeqMapView extends JPanel
 			} else {
 				SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
 				// corrected for interbase coords
-				seq_glyph.select(seq_region.getMin(), seq_region.getMax()-1);
+				seq_glyph.select(seq_region.getMin(), seq_region.getMax() - 1);
 				setStatus(SeqUtils.spanToString(seq_region));
 			}
 			if (update_widget) {
 				seqmap.updateWidget();
 			}
 		}
-		if(seqviewer != null){
+		if (seqviewer != null) {
 			seqviewer.setEnabled(seq_selected_sym != null || !seqmap.getSelected().isEmpty());
 		}
 	}
-		/**
+
+	/**
 	 * Copies residues of selection to clipboard
 	 * If a region of sequence is selected, should copy genomic residues
 	 * If an annotation is selected, should the residues of the leaf nodes of the annotation, spliced together
@@ -1192,14 +1177,13 @@ public class SeqMapView extends JPanel
 
 		if (residues_sym == null) {
 			ErrorHandler.errorPanel("Can't copy to clipboard",
-							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
+					"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
-			String residues=null;
-			if(allResidues){
+			String residues = null;
+			if (allResidues) {
 				residues = SeqUtils.selectedAllResidues(residues_sym, aseq);
-			}
-			else{
-			residues = SeqUtils.determineSelectedResidues(residues_sym, aseq);
+			} else {
+				residues = SeqUtils.determineSelectedResidues(residues_sym, aseq);
 			}
 			if (residues != null) {
 				if (SeqUtils.areResiduesComplete(residues)) {
@@ -1234,11 +1218,10 @@ public class SeqMapView extends JPanel
 			// for some reason, can't null out clipboard with [null] or [new StringSelection("")],
 			//   have to put in at least one character -- just putting in a space for now
 			clipboard.setContents(new StringSelection(" "), null);
-			
-		}
-		
-	}
 
+		}
+
+	}
 
 	/**
 	 *  Determines which SeqSymmetry's are selected by looking at which Glyph's
@@ -1258,7 +1241,7 @@ public class SeqMapView extends JPanel
 		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
 			if (gl.getInfo() instanceof SeqSymmetry) {
-				symSet.add((SeqSymmetry)gl.getInfo());
+				symSet.add((SeqSymmetry) gl.getInfo());
 			}
 		}
 		return new ArrayList<SeqSymmetry>(symSet);
@@ -1281,7 +1264,7 @@ public class SeqMapView extends JPanel
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
 		seqmap.updateWidget();
-		if(autoload != null){
+		if (autoload != null) {
 			autoload.mapZoomed();
 		}
 	}
@@ -1316,7 +1299,7 @@ public class SeqMapView extends JPanel
 		this.getSeqMap().updateWidget();
 	}
 
-	public void zoomToGlyphs(List<GlyphI> glyphs){
+	public void zoomToGlyphs(List<GlyphI> glyphs) {
 		zoomToRectangle(getRegionForGlyphs(glyphs));
 	}
 
@@ -1327,13 +1310,13 @@ public class SeqMapView extends JPanel
 		if (glyphs.isEmpty()) {
 			return null;
 		}
-			Rectangle2D.Double rect = new Rectangle2D.Double();
-			GlyphI g0 = glyphs.get(0);
-			rect.setRect(g0.getCoordBox());
-			for (GlyphI g : glyphs) {
-				rect.add(g.getCoordBox());
-			}
-			return rect;
+		Rectangle2D.Double rect = new Rectangle2D.Double();
+		GlyphI g0 = glyphs.get(0);
+		rect.setRect(g0.getCoordBox());
+		for (GlyphI g : glyphs) {
+			rect.add(g.getCoordBox());
+		}
+		return rect;
 	}
 
 	/**
@@ -1343,8 +1326,8 @@ public class SeqMapView extends JPanel
 		if (rect != null) {
 			double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);
 			seqmap.zoom(NeoAbstractWidget.X, Math.min(
-							seqmap.getView().getPixelBox().width / desired_width,
-							seqmap.getMaxZoom(NeoAbstractWidget.X)));
+					seqmap.getView().getPixelBox().width / desired_width,
+					seqmap.getMaxZoom(NeoAbstractWidget.X)));
 			seqmap.scroll(NeoAbstractWidget.X, -(seqmap.getVisibleRange()[0]));
 			seqmap.scroll(NeoAbstractWidget.X, (rect.x - rect.width * 0.05));
 			double map_center = rect.x + rect.width / 2 - seqmap.getViewBounds().width / 2;
@@ -1352,12 +1335,12 @@ public class SeqMapView extends JPanel
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();
-			if(autoload != null){
+			if (autoload != null) {
 				autoload.mapZoomed();
 			}
 		}
 	}
-	
+
 	public final void toggleClamp() {
 		clamp(clampedRegion == null);
 		seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
@@ -1445,8 +1428,8 @@ public class SeqMapView extends JPanel
 	public final SeqSpan getVisibleSpan() {
 		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
 		SeqSpan vspan = new SimpleSeqSpan((int) vbox.x,
-						(int) (vbox.x + vbox.width),
-						viewseq);
+				(int) (vbox.x + vbox.width),
+				viewseq);
 		return vspan;
 	}
 
@@ -1513,7 +1496,7 @@ public class SeqMapView extends JPanel
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
-	public final SeqMapViewMouseListener getMouseListener(){
+	public final SeqMapViewMouseListener getMouseListener() {
 		return mouse_listener;
 	}
 
@@ -1527,12 +1510,12 @@ public class SeqMapView extends JPanel
 	 *  Use null if you don't want that to happen.
 	 */
 	public final JMenuItem setUpMenuItem(Container menu, String action_command,
-					ActionListener al) {
+			ActionListener al) {
 		JMenuItem mi = new JMenuItem(action_command);
 		// Setting accelerator via the MenuUtil.addAccelerator makes it also
 		// work when the pop-up menu isn't visible.
 		KeyStroke ks = MenuUtil.addAccelerator((JComponent) this,
-						al, action_command);
+				al, action_command);
 		if (ks != null) {
 			// Make the accelerator be visible in the menu item.
 			mi.setAccelerator(ks);
@@ -1728,7 +1711,6 @@ public class SeqMapView extends JPanel
 		sym_popup.repaint();
 	}
 
-
 	/** Prepares the given popup menu to be shown.  The popup menu should have
 	 *  items added to it by this method.  Display of the popup menu will be
 	 *  handled by showPopup(), which calls this method.
@@ -1748,7 +1730,7 @@ public class SeqMapView extends JPanel
 			popup.add(selectParentMI);
 			popup.add(new JMenuItem(seqviewer));
 		}
-				
+
 		for (ContextualPopupListener listener : popup_listeners) {
 			listener.popupNotify(popup, selected_syms, sym_used_for_title);
 		}
@@ -1761,16 +1743,16 @@ public class SeqMapView extends JPanel
 				//Check if clicked on axis.
 				if (tglyph instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
-					if(selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())){
+					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
 						popup.add(new JMenuItem(LoadSequence.getPartialAction()));
 					}
-					
-					if(seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))){
+
+					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
 						popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
 						popup.add(new JMenuItem(seqviewer));
-					}			
+					}
 				}
-				
+
 				return;
 			}
 
@@ -1779,7 +1761,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
-
 
 	// sets the text on the JLabel based on the current selection
 	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
@@ -1897,15 +1878,16 @@ public class SeqMapView extends JPanel
 	 * Sets tool tip from given glyphs.
 	 * @param glyphs
 	 */
-	public final void setToolTip(List<GlyphI> glyphs){
-		if(!show_prop_tooltip) {
+	public final void setToolTip(List<GlyphI> glyphs) {
+		if (!show_prop_tooltip) {
 			return;
 		}
 
-		((AffyLabelledTierMap)seqmap).setToolTip(null);
+		((AffyLabelledTierMap) seqmap).setToolTip(null);
 
-		if(glyphs.isEmpty())
+		if (glyphs.isEmpty()) {
 			return;
+		}
 
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
@@ -1915,7 +1897,7 @@ public class SeqMapView extends JPanel
 				String tooltip = convertPropsToString(properties);
 				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
 			}
-		} else if(glyphs.get(0) instanceof TierLabelGlyph){
+		} else if (glyphs.get(0) instanceof TierLabelGlyph) {
 			Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
 			String tooltip = convertPropsToString(properties);
 			((AffyLabelledTierMap) seqmap).getLabelMap().setToolTip(tooltip);
@@ -1926,12 +1908,12 @@ public class SeqMapView extends JPanel
 	 * Sets tool tip from graph glyph.
 	 * @param glyph
 	 */
-	public final void setToolTip(int x, GraphGlyph glyph){
-		if(!show_prop_tooltip) {
+	public final void setToolTip(int x, GraphGlyph glyph) {
+		if (!show_prop_tooltip) {
 			return;
 		}
 
-		((AffyLabelledTierMap)seqmap).setToolTip(null);
+		((AffyLabelledTierMap) seqmap).setToolTip(null);
 
 		List<GlyphI> glyphs = new ArrayList<GlyphI>();
 		glyphs.add(glyph);
@@ -1939,29 +1921,30 @@ public class SeqMapView extends JPanel
 
 		if (!sym.isEmpty()) {
 			if (propertyHandler != null) {
-				String[][] properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym)sym.get(0), x, this);
+				String[][] properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) sym.get(0), x, this);
 				String tooltip = convertPropsToString(properties);
 				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
 			}
 		}
 	}
 
-	private static String convertPropsToString(Map<String, Object> properties){
-		if(properties == null)
+	private static String convertPropsToString(Map<String, Object> properties) {
+		if (properties == null) {
 			return null;
+		}
 
 		StringBuilder props = new StringBuilder();
 		String value = null;
 		props.append("<html>");
-		for(Entry<String, Object> prop : properties.entrySet()){
+		for (Entry<String, Object> prop : properties.entrySet()) {
 			props.append("<b>");
 			props.append(prop.getKey());
 			props.append(" : </b>");
-			if(prop.getValue() != null){
+			if (prop.getValue() != null) {
 				value = prop.getValue().toString();
 				int vallen = value.length();
 				props.append(value.substring(0, Math.min(40, vallen)));
-				if(vallen > 40) {
+				if (vallen > 40) {
 					props.append(" ...");
 				}
 			}
@@ -1977,18 +1960,18 @@ public class SeqMapView extends JPanel
 	 * @param properties
 	 * @return
 	 */
-	private static String convertPropsToString(String[][] properties){
+	private static String convertPropsToString(String[][] properties) {
 		StringBuilder props = new StringBuilder();
 		String value = null;
 		props.append("<html>");
-		for(int i=0; i<properties.length; i++){
+		for (int i = 0; i < properties.length; i++) {
 			props.append("<b>");
 			props.append(properties[i][0]);
 			props.append(" : </b>");
-			if((value = properties[i][1]) != null){
+			if ((value = properties[i][1]) != null) {
 				int vallen = value.length();
 				props.append(value.substring(0, Math.min(25, vallen)));
-				if(vallen > 30) {
+				if (vallen > 30) {
 					props.append(" ...");
 				}
 			}
@@ -1999,35 +1982,35 @@ public class SeqMapView extends JPanel
 		return props.toString();
 	}
 
-	public boolean togglePropertiesTooltip(){
-		show_prop_tooltip =  !show_prop_tooltip;
-		((AffyLabelledTierMap)seqmap).setToolTip(null);
+	public boolean togglePropertiesTooltip() {
+		show_prop_tooltip = !show_prop_tooltip;
+		((AffyLabelledTierMap) seqmap).setToolTip(null);
 		return show_prop_tooltip;
 	}
 
-	public final boolean shouldShowPropTooltip(){
+	public final boolean shouldShowPropTooltip() {
 		return show_prop_tooltip;
 	}
 
-	public final GlyphI getSequnceGlyph(){
+	public final GlyphI getSequnceGlyph() {
 		return seq_glyph;
 	}
 
-	public final AxisGlyph getAxisGlyph(){
+	public final AxisGlyph getAxisGlyph() {
 		AxisGlyph ag = null;
 		for (GlyphI child : axis_tier.getChildren()) {
 			if (child instanceof AxisGlyph) {
-		 		ag = (AxisGlyph) child;
+				ag = (AxisGlyph) child;
 			}
 		}
 		return ag;
 	}
 
-	public final void addToRefreshList(SeqMapRefreshed smr){
+	public final void addToRefreshList(SeqMapRefreshed smr) {
 		seqmap_refresh_list.add(smr);
 	}
-	
-	public SeqSymmetry getSeqSymmetry(){
+
+	public SeqSymmetry getSeqSymmetry() {
 		return seq_selected_sym;
 	}
 
@@ -2069,36 +2052,36 @@ public class SeqMapView extends JPanel
 //		}
 	}
 
-    public void addGraphOperator(GraphOperator graphOperator) {
-    	graph_manager.addGraphOperator(graphOperator);
-    }
+	public void addGraphOperator(GraphOperator graphOperator) {
+		graph_manager.addGraphOperator(graphOperator);
+	}
 
-    public void removeGraphOperator(GraphOperator graphOperator) {
-    	graph_manager.removeGraphOperator(graphOperator);
-    }
+	public void removeGraphOperator(GraphOperator graphOperator) {
+		graph_manager.removeGraphOperator(graphOperator);
+	}
 
-    public void focusTrack(TierGlyph selectedTier) {
-    	// set zoom to height of selected track
-    	double tierCoordHeight = selectedTier.getCoordBox().getHeight();
-    	int totalHeight = seqmap.getView().getPixelBox().height;
-    	double zoom_scale = totalHeight / tierCoordHeight;
-    	seqmap.zoom(NeoMap.Y, zoom_scale);
-    	// set scroll to top of selected track
-    	double coord_value = 0;
-    	// add up height of all tiers up to selected tier
-    	for (TierGlyph tierGlyph : seqmap.getTiers()) {
-    		if (tierGlyph == selectedTier) {
-    			break;
-    		}
-    		coord_value += tierGlyph.getCoordBox().getHeight();
-    	}
-    	coord_value += 1; // fudge factor
-    	seqmap.scroll(NeoMap.Y, coord_value);
+	public void focusTrack(TierGlyph selectedTier) {
+		// set zoom to height of selected track
+		double tierCoordHeight = selectedTier.getCoordBox().getHeight();
+		int totalHeight = seqmap.getView().getPixelBox().height;
+		double zoom_scale = totalHeight / tierCoordHeight;
+		seqmap.zoom(NeoMap.Y, zoom_scale);
+		// set scroll to top of selected track
+		double coord_value = 0;
+		// add up height of all tiers up to selected tier
+		for (TierGlyph tierGlyph : seqmap.getTiers()) {
+			if (tierGlyph == selectedTier) {
+				break;
+			}
+			coord_value += tierGlyph.getCoordBox().getHeight();
+		}
+		coord_value += 1; // fudge factor
+		seqmap.scroll(NeoMap.Y, coord_value);
 		seqmap.updateWidget();
-		if(autoload != null){
+		if (autoload != null) {
 			autoload.mapZoomed();
 		}
-    }
+	}
 
 	public void setRegion(int start, int end, BioSeq seq) {
 		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
@@ -2122,23 +2105,24 @@ public class SeqMapView extends JPanel
 			}
 
 			Map<String, Object> props = null;
-			if(glyph.getInfo() instanceof Map){
-				 props = (Map<String, Object>) glyph.getInfo();
+			if (glyph.getInfo() instanceof Map) {
+				props = (Map<String, Object>) glyph.getInfo();
 			} else {
 				props = new HashMap<String, Object>();
 			}
 
 			boolean direction = true;
-			if(props.containsKey("direction")){
-				if(((String)props.get("direction")).equals("reverse"))
+			if (props.containsKey("direction")) {
+				if (((String) props.get("direction")).equals("reverse")) {
 					direction = false;
+				}
 			}
 
 			Rectangle2D.Double boundary = glyph.getSelectedRegion();
 			int start = (int) boundary.getX();
 			int length = (int) boundary.getWidth();
 			int end = start + length;
-			if(!direction){
+			if (!direction) {
 				int temp = start;
 				start = end;
 				end = temp;
@@ -2160,14 +2144,14 @@ public class SeqMapView extends JPanel
 		if (span != null) {
 			String chromID = span.getBioSeq().getID();
 			props.put("chromosome", chromID);
-				props.put("start",
-						NumberFormat.getIntegerInstance().format(span.getStart()));
-				props.put("end",
-						NumberFormat.getIntegerInstance().format(span.getEnd()));
-				props.put("length",
-						NumberFormat.getIntegerInstance().format(span.getLength()));
-				props.put("strand",
-						span.isForward() ? "+" : "-");
+			props.put("start",
+					NumberFormat.getIntegerInstance().format(span.getStart()));
+			props.put("end",
+					NumberFormat.getIntegerInstance().format(span.getEnd()));
+			props.put("length",
+					NumberFormat.getIntegerInstance().format(span.getLength()));
+			props.put("strand",
+					span.isForward() ? "+" : "-");
 			props.remove("seq id"); // this is redundant if "chromosome" property is set
 			if (props.containsKey("method") && !props.containsKey("type")) {
 				props.put("type", props.get("method"));
@@ -2175,5 +2159,9 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return props;
+	}
+
+	public SeqMapViewPopup getPopup() {
+		return popup;
 	}
 }

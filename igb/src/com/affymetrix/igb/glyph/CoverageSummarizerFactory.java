@@ -73,14 +73,14 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 		if (meth != null) {
 			TierGlyph[] tiers = gviewer.getTiers(false, // next_to_axis = false
 					annot_style, true);
-			TierGlyph ftier = tiers[0]; // ignore the reverse tier
+			//TierGlyph ftier = tiers[0]; // ignore the reverse tier
 
-			createGlyph(sym, ftier, annot_style, style, glyph_height, gviewer);
+			createGlyph(sym, tiers[0], tiers[1], annot_style, style, glyph_height, gviewer);
 		}
 	}
 	
-	public static void createGlyph(SeqSymmetry sym, TierGlyph ftier, ITrackStyleExtended annot_style,
-			int style, int glyph_height, SeqMapViewI gviewer) {
+	public static void createGlyph(SeqSymmetry sym, TierGlyph ftier, TierGlyph rtier, 
+			ITrackStyleExtended annot_style, int style, int glyph_height, SeqMapViewI gviewer) {
 
 		Color background_color;
 		Color glyph_color;
@@ -102,9 +102,27 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 
 		int child_count = tsym.getChildCount();
 		// initializing list internal array length to child count to reduce list expansions...
-		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(child_count);
-		SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
-
+		List<SeqSpan> leaf_spans = null;
+		
+		if(annot_style != null && annot_style.getSeparate()){
+			leaf_spans = new ArrayList<SeqSpan>(child_count/2);
+			SeqUtils.collectLeafSpans(tsym, coordseq, true, leaf_spans);
+			addCoverageGlyph(background_color, leaf_spans, glyph_color, style, coordseq, glyph_height, ftier, gviewer, tsym);
+			
+			leaf_spans = new ArrayList<SeqSpan>(child_count/2);
+			SeqUtils.collectLeafSpans(tsym, coordseq, false, leaf_spans);
+			addCoverageGlyph(background_color, leaf_spans, glyph_color, style, coordseq, glyph_height, rtier, gviewer, tsym);
+			
+		}else{
+			leaf_spans = new ArrayList<SeqSpan>(child_count);
+			SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
+			addCoverageGlyph(background_color, leaf_spans, glyph_color, style, coordseq, glyph_height, ftier, gviewer, tsym);
+		}
+		
+	}
+	
+	private static void addCoverageGlyph(Color background_color, List<SeqSpan> leaf_spans, Color glyph_color, 
+			int style, BioSeq coordseq, int glyph_height, TierGlyph ftier, SeqMapViewI gviewer, SeqSymmetry tsym) {
 		CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
 		cov.setHitable(false);
 		cov.setBackgroundColor(background_color);

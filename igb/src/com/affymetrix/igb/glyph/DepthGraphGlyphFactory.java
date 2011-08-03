@@ -41,16 +41,16 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 		
 		TierGlyph[] tiers = smv.getTiers(false, style, true);
 		if (style.getSeparate()) {
-			addCoverage(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[1]);			
+			addDepthGraph(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[1]);			
 		} else {
 			// use only one tier
-			addCoverage(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[0]);
+			addDepthGraph(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[0]);
 		}
 
 	}
 	
 
-	private void addCoverage(String meth, SeqSymmetry sym, 
+	private void addDepthGraph(String meth, SeqSymmetry sym, 
 			SeqSpan pspan, BioSeq seq, TierGlyph ftier, TierGlyph rtier){
 		
 		java.util.List<SeqSymmetry> syms = new java.util.ArrayList<SeqSymmetry>();

@@ -851,6 +851,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(color_by_score_off_action);
 
 	viewModeMenu.removeAll();
+	viewModeMenu.setEnabled(any_view_mode);
 	if (any_view_mode) {
 		Map<String, Action> actions = new HashMap<String, Action>();
 		for (final Object mode : MapViewModeHolder.getInstance().getAllViewModes()) {

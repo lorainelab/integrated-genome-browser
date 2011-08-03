@@ -261,7 +261,7 @@ public final class QuickLoad extends SymLoader {
 
 		if (Thread.currentThread().isInterrupted()) {
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
-			GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
+			GeneralLoadView.feature_model.fireTableDataChanged();
 			results = null;
 			return;
 		}

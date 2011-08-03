@@ -1824,12 +1824,11 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
-	public final GlyphI getPixelFloaterGlyph() {
+	public final void addToPixelFloaterGlyph(GlyphI glyph) {
 		PixelFloaterGlyph floater = pixel_floater_glyph;
 		Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
-
-		return floater;
+		floater.addChild(glyph);
 	}
 
 	/**

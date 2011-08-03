@@ -16,7 +16,7 @@ public interface SeqMapViewI {
 
 	BioSeq getAnnotatedSeq();
 
-	GlyphI getPixelFloaterGlyph();
+	void addToPixelFloaterGlyph(GlyphI glyph);
 
 	NeoMap getSeqMap();
 	

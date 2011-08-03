@@ -16,7 +16,6 @@ import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.view.TrackView;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -145,7 +144,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
 			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
-			smv.getPixelFloaterGlyph().addChild(graph_glyph);
+			smv.addToPixelFloaterGlyph(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {
 				tier_style = gstate.getComboStyle();

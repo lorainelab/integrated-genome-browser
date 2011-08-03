@@ -60,6 +60,11 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 	}
 
 	@Override
+	protected boolean isSortable() {
+		return true;
+	}
+
+	@Override
 	protected Group addAddSourceComponents(AddSourceGroupCreator addSourceGroupCreator, GroupLayout layout) {
 		return addSourceGroupCreator.createGroup1(layout)
 		.addComponent(messageContainer)

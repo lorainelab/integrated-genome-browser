@@ -14,7 +14,10 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -91,8 +94,22 @@ public final class ServerList {
 		return true;
 	}
 
+	private int getServerOrder(GenericServer server) {
+		String url = GeneralUtils.URLEncode(ServerUtils.formatURL(server.URL, server.serverType));
+		return Integer.parseInt(PreferenceUtils.getServersNode().node(url).get("order", "0"));
+	}
+
 	public synchronized Collection<GenericServer> getAllServers() {
-		return url2server.values();
+		ArrayList<GenericServer> allServers = new ArrayList<GenericServer>(url2server.values());
+		Collections.sort(allServers,
+			new Comparator<GenericServer>() {
+				@Override
+				public int compare(GenericServer o1, GenericServer o2) {
+					return getServerOrder(o1) - getServerOrder(o2);
+				}
+			}
+		);
+		return allServers;
 	}
 
 	public synchronized Collection<GenericServer> getAllServersExceptCached(){
@@ -370,6 +387,9 @@ public final class ServerList {
 		}
 	}
 
+	public void setServerOrder(String url, int order) {
+		getPreferencesNode().node(GeneralUtils.URLEncode(url)).put("order", "" + order);
+	}
 
 	/**
 	 * Get server from ServerList that matches the URL.

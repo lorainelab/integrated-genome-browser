@@ -13,6 +13,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -57,6 +58,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static final JCheckBox autoload = AutoLoadAction.getAction();
 
 	protected JButton editAuthButton;
+	protected JButton rankUpButton;
+	protected JButton rankDownButton;
 	// for add source dialog
 	private JLabel typeLabel;
 	private JButton openDir;
@@ -78,6 +81,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				.addComponent(cachePanel));
 	}
 
+	@Override
 	protected JPanel initSourcePanel(String viewName) {
 		editAuthButton = createButton("Authentication\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -102,13 +106,60 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			}
 		});
 		editAuthButton.setEnabled(false);
+	    ImageIcon up_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Up16.gif");
+		rankUpButton = new JButton(up_icon);
+		rankUpButton.setToolTipText("Move sequence server up");
+		rankUpButton.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int row = sourcesTable.getSelectedRow();
+					if (row >= 1 && row < sourcesTable.getRowCount()) {
+						((SourceTableModel)sourcesTable.getModel()).switchRows(row - 1);
+						sourcesTable.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+						int column = ((SourceTableModel)sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
+						String URL = sourcesTable.getModel().getValueAt(row - 1, column).toString();
+						serverList.setServerOrder(URL, row - 1);
+						URL = sourcesTable.getModel().getValueAt(row, column).toString();
+						serverList.setServerOrder(URL, row);
+					}
+				}
+			}
+		);
+		rankUpButton.setEnabled(false);
+	    ImageIcon down_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Down16.gif");
+		rankDownButton = new JButton(down_icon);
+		rankDownButton.setToolTipText("Move sequence server down");
+		rankDownButton.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int row = sourcesTable.getSelectedRow();
+					if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
+						((SourceTableModel)sourcesTable.getModel()).switchRows(row);
+						sourcesTable.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+						int column = ((SourceTableModel)sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
+						String URL = sourcesTable.getModel().getValueAt(row, column).toString();
+						serverList.setServerOrder(URL, row);
+						URL = sourcesTable.getModel().getValueAt(row + 1, column).toString();
+						serverList.setServerOrder(URL, row + 1);
+					}
+				}
+			}
+		);
+		rankDownButton.setEnabled(false);
 		return super.initSourcePanel(viewName);
 	}
 
 	@Override
 	protected void enableServerButtons(boolean enable) {
 		super.enableServerButtons(enable);
+		rankUpButton.setEnabled(enable && sourcesTable.getSelectedRow() > 0);
+		rankDownButton.setEnabled(enable && sourcesTable.getSelectedRow() < sourcesTable.getRowCount() - 1);
 		editAuthButton.setEnabled(enable);
+	}
+
+	@Override
+	protected boolean isSortable() {
+		return false;
 	}
 
 	@Override
@@ -117,6 +168,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		.addComponent(sourcesScrollPane)
 		.addComponent(autoload)
 		.addGroup(group2
+			.addComponent(rankUpButton)
+			.addComponent(rankDownButton)
 			.addComponent(addServerButton)
 			.addComponent(editAuthButton)
 			.addComponent(removeServerButton));
@@ -124,7 +177,10 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected Group getServerButtons(Group group) {
-		return group.addComponent(addServerButton)
+		return group
+		.addComponent(rankUpButton)
+		.addComponent(rankDownButton)
+		.addComponent(addServerButton)
 		.addComponent(editAuthButton)
 		.addComponent(removeServerButton);
 	}

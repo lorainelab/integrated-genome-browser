@@ -927,7 +927,7 @@ public final class GeneralLoadUtils {
 			return true;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
+//		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
 		
 		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}

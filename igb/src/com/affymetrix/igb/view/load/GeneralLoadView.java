@@ -56,7 +56,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -527,7 +526,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				} finally{
-					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
+//					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
 				}
 			}
 		};
@@ -582,8 +581,6 @@ public final class GeneralLoadView extends IGBTabPanel
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
-		}finally{
-			Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq.getID());
 		}
 
 		return true;

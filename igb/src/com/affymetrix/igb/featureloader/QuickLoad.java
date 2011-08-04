@@ -200,6 +200,9 @@ public final class QuickLoad extends SymLoader {
 					}
 
 					SeqGroupView.getInstance().refreshTable();
+					//Update LoadModeTableModel
+					GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
+					GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -261,7 +264,7 @@ public final class QuickLoad extends SymLoader {
 
 		if (Thread.currentThread().isInterrupted()) {
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
-			GeneralLoadView.feature_model.fireTableDataChanged();
+			GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 			results = null;
 			return;
 		}
@@ -290,7 +293,7 @@ public final class QuickLoad extends SymLoader {
 		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);
 		style.setFeature(feature);
-		
+
 		// TODO - probably not necessary
 		//style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, extension, feature.featureProps);
 		//style.setFeature(feature);

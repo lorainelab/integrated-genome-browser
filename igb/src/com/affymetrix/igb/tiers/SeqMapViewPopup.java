@@ -496,7 +496,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	 *  Does not re-pack the given tier, or any other tiers.
 	 */
 	//Called from LodeModeTableModel to hide tracks selectively from the eye icon.
-	public void hideOneTier(final ITrackStyleExtended style) {
+	public void hideOneTier(final ITrackStyle style) {
 		// if style.getShow() is already false, there is likely a bug somewhere!
 		if (style == null) {
 			return;

@@ -28,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
-import javax.swing.table.TableColumn;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -91,8 +90,8 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final JComboBoxToolTipRenderer speciesCBRenderer;
 	private final AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
-	private static JTableX feature_table;
-	public static FeaturesTableModel feature_model;
+	private static JTableX loadedTracksTable;
+	public static LoadModeDataTableModel loadModeDataTableModel;
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
@@ -169,15 +168,15 @@ public final class GeneralLoadView extends IGBTabPanel
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
-		feature_model = new FeaturesTableModel(this);
-		feature_table = new JTableX(feature_model);
-		feature_table.setModel(feature_model);
-		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+		loadModeDataTableModel = new LoadModeDataTableModel(this);
+		loadedTracksTable = new JTableX(loadModeDataTableModel);
+		loadedTracksTable.setModel(loadModeDataTableModel);
+		loadedTracksTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 		// Handle sizing of the columns
-		feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
+		loadedTracksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 
-		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
-		featuresTableScrollPane.setViewportView(feature_table);
+		featuresTableScrollPane = new JScrollPane(GeneralLoadView.loadedTracksTable);
+		featuresTableScrollPane.setViewportView(loadedTracksTable);
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
@@ -938,7 +937,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			public void run() {
 				final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 				if (features == null || features.isEmpty()) {
-					feature_model.clearFeatures();
+					loadModeDataTableModel.clearFeatures();
 				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
@@ -963,32 +962,42 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final List<GenericFeature> visibleFeatures = FeaturesTableModel.getVisibleFeatures(features);
+		final List<GenericFeature> visibleFeatures = loadModeDataTableModel.getVisibleFeatures(features);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				feature_model.setFeatures(visibleFeatures);
+				loadModeDataTableModel.createVirtualFeatures(visibleFeatures);
 
-				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
-				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
-				col.setPreferredWidth(finalMaxFeatureNameLength);
-
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
-
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
-
-				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.INFO_FEATURE_COLUMN);
-				col.setResizable(false);
-				col.setMaxWidth(10);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(110);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(120);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.TRACK_NAME_COLUMN).setPreferredWidth(160);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
 				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());
+				LoadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 

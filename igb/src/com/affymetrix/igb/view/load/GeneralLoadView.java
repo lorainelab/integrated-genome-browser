@@ -63,6 +63,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadPrefsView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
@@ -110,7 +111,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	private GeneralLoadView(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, TAB_POSITION);
-		gviewer = (SeqMapView)igbService.getMapView();
+		gviewer = Application.getSingleton().getMapView();
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();

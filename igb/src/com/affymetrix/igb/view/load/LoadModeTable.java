@@ -397,7 +397,7 @@ class JTableX extends JTable implements MouseListener {
 				ftm.fireTableDataChanged();
 				break;
 			default:
-				System.out.println("Unknown header selected: " + realIndex);
+				//System.out.println("Unknown header selected: " + realIndex);
 		}
 	}
 

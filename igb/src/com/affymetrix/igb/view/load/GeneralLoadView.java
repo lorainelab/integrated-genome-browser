@@ -995,6 +995,8 @@ public final class GeneralLoadView extends IGBTabPanel
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
 				
+				loadedTracksTable.getTableHeader().setReorderingAllowed(false);
+				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				LoadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());

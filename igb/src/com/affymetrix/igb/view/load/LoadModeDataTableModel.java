@@ -122,7 +122,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			for (GenericFeature gFeature : features) {
 				createPrimaryVirtualFeatures(gFeature);
 			}
-			this.fireTableDataChanged();
+			fireTableDataChanged();
 		}
 	}
 
@@ -228,7 +228,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
 				if (vFeature.getServer() == ServerType.QuickLoad) {
-					return LoadUtils.stripFilenameExtensions(vFeature.getFeature().featureName);
+					return vFeature.getFeature().featureName;
 				} else if (!vFeature.isPrimary) {
 					return "";
 				}

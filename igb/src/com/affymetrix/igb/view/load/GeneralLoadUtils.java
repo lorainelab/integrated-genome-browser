@@ -672,9 +672,6 @@ public final class GeneralLoadUtils {
 
 		//Since Das1 does not have whole genome return if it is not Quickload or LocalFile
 		if (feature.gVersion.gServer.serverType != ServerType.QuickLoad && feature.gVersion.gServer.serverType != ServerType.LocalFiles) {
-			//Update LoadModeTableModel
-			GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
-			GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 			return;
 		}
 
@@ -683,9 +680,6 @@ public final class GeneralLoadUtils {
 			if (optimized_sym != null) {
 				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 			}
-			//Update LoadModeTableModel
-			GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
-			GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 			return;
 		}
 
@@ -732,7 +726,6 @@ public final class GeneralLoadUtils {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
 				GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
-				GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
@@ -812,7 +805,6 @@ public final class GeneralLoadUtils {
 				TierMaintenanceListenerHolder.getInstance().fireTierAdded();
 				//Update LoadModeTableModel
 				GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
-				GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 			}
 		};
 

@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.Fasta;
+import com.affymetrix.genometryImpl.symloader.FastaIdx;
 import com.affymetrix.genometryImpl.symloader.GFF3;
 import com.affymetrix.genometryImpl.symloader.Genbank;
 import com.affymetrix.genometryImpl.symloader.Gr;
@@ -112,7 +113,30 @@ public class FileTypeHolder {
 		addFileTypeHandler("DAS", new String[]{Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, "das2feature", "das2xml", "x-das-feature"}, Das2FeatureSaxParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("DAS", new String[]{"das", "dasxml"}, DASFeatureParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Binary", new String[]{"ead"}, ExonArrayDesignParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("FASTA", new String[]{"fa", "fas", "fasta"}, FastaParser.class, Fasta.class);
+//		addFileTypeHandler("FASTA", new String[]{"fa", "fas", "fasta"}, FastaParser.class, Fasta.class);
+		addFileTypeHandler(
+				new FileTypeHandler() {
+					String[] extensions = new String[]{"fa", "fas", "fasta"};
+					@Override
+					public String getName() { return "FASTA"; }
+					@Override
+					public String[] getExtensions() { return extensions; }
+					@Override
+					public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+						SymLoader symLoader = new FastaIdx(uri, featureName, group);
+						if (!((FastaIdx)symLoader).isValid()) {
+							symLoader = new Fasta(uri, featureName, group);
+						}
+						return symLoader;
+					}
+					@Override
+					public Parser getParser() { return new FastaParser(); }
+					@Override
+					public IndexWriter getIndexWriter(String stream_name) {
+						return null;
+					}
+				}
+			);
 		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FishClonesParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, null, Genbank.class);
 		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);

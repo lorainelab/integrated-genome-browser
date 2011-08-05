@@ -4,18 +4,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,52 +16,18 @@ import java.util.regex.Pattern;
  *
  * @author jnicol
  */
-public class Fasta extends SymLoader {
-	private static final List<String> pref_list = new ArrayList<String>();
-	static {
-		pref_list.add("fa");
-	}
-
+public class Fasta extends FastaCommon {
 	private static final Pattern header_regex = 
 			Pattern.compile("^\\s*>\\s*(.+)");
-	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
-
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	static {
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.VISIBLE);
-		strategyList.add(LoadStrategy.CHROMOSOME);
-	}
 
 	public Fasta(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
-		this.isResidueLoader = true;
-	}
-
-	@Override
-	public void init() throws Exception  {
-		if (this.isInitialized) {
-			return;
-		}
-		if(initChromosomes())
-			super.init();
-	}
-
-	@Override
-	public List<LoadStrategy> getLoadChoices() {
-		return strategyList;
-	}
-
-	@Override
-	public List<BioSeq> getChromosomeList() throws Exception  {
-		init();
-		return new ArrayList<BioSeq>(chrSet);
 	}
 
 	/**
 	 * Get seqids and lengths for all chromosomes.
 	 */
-	private boolean initChromosomes() throws Exception  {
+	protected boolean initChromosomes() throws Exception {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
@@ -221,10 +180,5 @@ public class Fasta extends SymLoader {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bis);
 		}
-	}
-
-	@Override
-	public List<String> getFormatPrefList() {
-		return pref_list;
 	}
 }

@@ -116,7 +116,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 		}
 		g.setColor(fgcolor);
-		g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
+		g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height);
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
 
 		drawLabel(g, view.getPixelBox(), pixelbox);

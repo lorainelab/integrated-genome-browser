@@ -292,12 +292,14 @@ public class TierGlyph extends SolidGlyph {
 		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
 			if (style.getBackground() != null) {
 				g.setColor(style.getBackground());
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				//Hack : Add one to height to resolve black line bug.
+				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height+1);
 			}
 		} else {
 			if (style.getBackground() != null) {
 				g.setColor(style.getBackground());
-				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height);
+				//Hack : Add one to height to resolve black line bug.
+				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height+1);
 			}
 			
 			// cycle through "middleground" glyphs,

@@ -39,7 +39,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private static final String FOREGROUND = "Foreground";
 	private static final String BACKGROUND = "Background";
 	private static final String TRACK_NAME_SIZE = "Track Name Size";
-
 	private final static String[] col_headings = {
 		TRACK_NAME,
 		BACKGROUND, FOREGROUND,
@@ -101,9 +100,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	}
 
 	public void setSelectedRows() {
-		if(table.getRowCount() == 0)
+		if (table.getRowCount() == 0) {
 			return;
-		
+		}
+
 		selectedRows = table.getSelectedRows();
 		if (selectedTiers != null) {
 			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
@@ -681,17 +681,13 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
 		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
-			}
+			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
 		}
 }//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
 		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
-			}
+			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
 		}
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
@@ -699,23 +695,15 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[0], COL_DIRECTION_TYPE);
 				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[0], COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[0], COL_DIRECTION_TYPE);
 				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[0], COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -725,23 +713,15 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[0], COL_DIRECTION_TYPE);
 				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[0], COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[0], COL_DIRECTION_TYPE);
 				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[0], COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -754,7 +734,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			}
 		}
 	}//GEN-LAST:event_viewModeCBActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyToAllButton;
     private javax.swing.JCheckBox arrowCheckBox;
@@ -881,15 +860,14 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			collapsedCheckBox.setSelected(false);
 			colorCheckBox.setSelected(false);
 			arrowCheckBox.setSelected(false);
-			possitiveColorComboBox.setEnabled(false);
-			negativeColorComboBox.setEnabled(false);
+			possitiveColorComboBox.setSelectedColor(null);
+			negativeColorComboBox.setSelectedColor(null);
 		}
 
 		if (selectedRows.length == 1) {
 			selectedStyle = model.getStyles().get(selectedRows[0]);
 
-			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)
-					|| selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				displayNameTextField.setEnabled(false);
 				colorCheckBox.setEnabled(false);
 				arrowCheckBox.setEnabled(false);
@@ -897,10 +875,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			String view_mode = selectedStyle.getViewMode();
-			if(view_mode == null)
+			if (view_mode == null) {
 				viewModeCB.setSelectedIndex(0);
-			else
+			} else {
 				viewModeCB.setSelectedItem(view_mode);
+			}
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -1145,7 +1124,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 							negativeColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_VIEW_MODE:
-							style.setViewMode((String)value);
+							style.setViewMode((String) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

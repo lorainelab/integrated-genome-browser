@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +20,9 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.BAMSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -37,8 +34,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphType;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
@@ -49,13 +44,12 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  *
@@ -76,7 +70,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
 	private final Class parent_labelled_glyph_class;
-	public static boolean show_coverage = true;
 	
 	public GenericAnnotGlyphFactory() {
 		parent_glyph_class = default_eparent_class;
@@ -132,20 +125,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
-				if (show_coverage && style.getFileType() != null
-					&& (style.getFileType().equalsIgnoreCase("bam")
-					|| style.getFileType().equalsIgnoreCase("sam"))) {
-					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
-					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[1]);
-				}
 			} else {
 				// use only one tier
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
-				if (show_coverage && style.getFileType() != null
-					&& (style.getFileType().equalsIgnoreCase("bam")
-					|| style.getFileType().equalsIgnoreCase("sam"))) {
-					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
-				}
 			}
 		} else {  // keep recursing down into child syms if parent sym has no "method" property
 			int childCount = sym.getChildCount();
@@ -155,28 +137,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 	}
-	
-	private static void addCoverage(String meth, SeqSymmetry sym, BioSeq seq, TierGlyph tier) {
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(sym);
-		GraphSym gsym = null;
-		if(tier.getDirection() == Direction.BOTH){
-			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth);
-		}else{
-			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, tier.getDirection() == Direction.FORWARD);
-		}
 		
-		if (gsym != null) {
-			GraphState state = new GraphState(meth, tier.getAnnotStyle());
-			GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(gsym, state);
-			if (graph_glyph == null) {
-				graph_glyph = new GraphGlyph(gsym, state);
-			}
-			graph_glyph.drawHandle(false);
-			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-		}
-	}
-	
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
 		SeqSymmetry current = sym;

@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
@@ -407,31 +408,46 @@ public final class LoadFileAction extends AbstractAction {
 		
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String message = "Retrieving chromosomes for " + fileName;
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			@Override
-			protected Object doInBackground() throws Exception {
+			protected Boolean doInBackground() throws Exception {
 				
 				try {
 					Application.getSingleton().addNotLockedUpMsg(message);
 					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
 						loadGroup.addSeq(seq.getID(), seq.getLength());
 					}
+					return true;
 				} catch (Exception ex) {
 					((QuickLoad)gFeature.symL).logException(ex);
+					if(Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)){
+						gFeature.gVersion.removeFeature(gFeature);
+					}
+					return false;
 				}
-
-				return null;
+				
 			}
 			
 			@Override
 			protected void done() {
+				boolean result = true;
+				try {
+					result = get();
+				} catch (Exception ex) {
+					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
-
-				SeqGroupView.getInstance().refreshTable();
-				if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
-					// select a chromosomes
-					gmodel.setSelectedSeq(loadGroup.getSeq(0));
+				if (result) {
+					SeqGroupView.getInstance().refreshTable();
+					if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
+						// select a chromosomes
+						gmodel.setSelectedSeq(loadGroup.getSeq(0));
+					}
+				} else {
+					//Feature was remove
+					GeneralLoadView.getLoadView().refreshTreeView();
+					GeneralLoadView.getLoadView().createFeaturesTable();
 				}
 				Application.getSingleton().removeNotLockedUpMsg(message);
 			}

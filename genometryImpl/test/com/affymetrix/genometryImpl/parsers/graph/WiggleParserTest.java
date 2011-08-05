@@ -86,7 +86,7 @@ public class WiggleParserTest {
 
 	//Test to see if one file is created.
 	@Test
-	public void testWiggle1() throws IOException {
+	public void testWiggle1() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample.wig";
 		assertTrue(new File(filename).exists());
 
@@ -175,7 +175,7 @@ public class WiggleParserTest {
 
 	//Test to see if multiple files are created.
 	@Test
-	public void testWiggle2() throws IOException{
+	public void testWiggle2() throws Exception{
 		String filename = "test/data/wiggle/wiggleExample2.wig";
 		assertTrue(new File(filename).exists());
 
@@ -232,7 +232,7 @@ public class WiggleParserTest {
 		return true;
 	}
 	
-	public void testWriteBarFormat() throws IOException {
+	public void testWriteBarFormat() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample.wig";
 		assertTrue(new File(filename).exists());
 

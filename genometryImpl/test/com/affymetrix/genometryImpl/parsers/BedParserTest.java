@@ -28,7 +28,7 @@ public class BedParserTest {
 		}
 
 	@Test
-		public void testParseFromFile() throws IOException {
+		public void testParseFromFile() throws IOException, Exception {
 
 			String filename = "test/data/bed/bed_01.bed";
 			assertTrue(new File(filename).exists());
@@ -364,7 +364,7 @@ public class BedParserTest {
 	}
 
 	@Test
-	public void testBEDParseFromFile() throws IOException {
+	public void testBEDParseFromFile() throws Exception {
 		String filename = "test/data/bed/bed_02.bed";
 		assertTrue(new File(filename).exists());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");

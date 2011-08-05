@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class BAMParserTest {
 
 	@Test
-		public void testParseFromFile() throws IOException {
+		public void testParseFromFile() throws Exception {
 
 			String filename = "test/data/bam/combined_mapping_q.sorted.bam";
 			assertTrue(new File(filename).exists());

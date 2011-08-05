@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class SAMParserTest {
 	@Test
-		public void testParseFromFile() throws IOException {
+		public void testParseFromFile() throws Exception {
 
 			String filename = "test/data/bam/combined_mapping_q.sorted.sam";
 			assertTrue(new File(filename).exists());

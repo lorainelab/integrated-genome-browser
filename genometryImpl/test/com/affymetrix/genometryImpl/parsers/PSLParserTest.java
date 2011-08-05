@@ -96,7 +96,7 @@ public class PSLParserTest {
 	}
 
 	@Test
-	public void testFiles() throws FileNotFoundException, IOException {
+	public void testFiles() throws Exception {
 		File file = new File("test/data/psl/test1.psl");
 		testFile(file);
 
@@ -126,7 +126,7 @@ public class PSLParserTest {
 		return results;
 	}
 
-	private void testFile(File file) throws FileNotFoundException, IOException {
+	private void testFile(File file) throws Exception {
 		InputStream istr = GeneralUtils.getInputStream(file, new StringBuffer());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		BioSeq seq = null;

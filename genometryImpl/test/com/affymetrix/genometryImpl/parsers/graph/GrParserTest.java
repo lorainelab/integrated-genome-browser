@@ -65,7 +65,7 @@ public class GrParserTest {
 	}
 
 	@Test
-	public void testGr() throws IOException {
+	public void testGr() throws Exception {
 		String filename = "test/data/gr/test1.gr";
 		assertTrue(new File(filename).exists());
 

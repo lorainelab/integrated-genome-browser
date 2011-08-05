@@ -14,7 +14,7 @@ import java.util.*;
 public class SgrParserTest {
 
 	@Test
-	public void testParseFromFile() throws IOException {
+	public void testParseFromFile() throws Exception {
 
 		String filename = "test/data/sgr/test1.sgr";
 		assertTrue(new File(filename).exists());
@@ -65,7 +65,7 @@ public class SgrParserTest {
 	}
 
 	@Test
-	public void testSgr() throws IOException{
+	public void testSgr() throws Exception{
 		String filename = "test/data/sgr/test4.sgr";
 		assertTrue(new File(filename).exists());
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");

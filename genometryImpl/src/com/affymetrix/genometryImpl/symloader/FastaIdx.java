@@ -6,9 +6,10 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import net.sf.picard.reference.FastaSequenceIndexExt;
 import net.sf.picard.reference.IndexedFastaSequenceFile;
 import net.sf.picard.reference.ReferenceSequence;
 
@@ -31,13 +32,28 @@ public class FastaIdx extends FastaCommon {
 		fastaFile = tempFile;
 	}
 
+	public List<BioSeq> getSequenceList(FastaSequenceIndex fsi) {
+		List<BioSeq> sequenceList = new ArrayList<BioSeq>();
+		Iterator<FastaSequenceIndexEntry> iter = fsi.iterator();
+		while (iter.hasNext()) {
+			FastaSequenceIndexEntry ent = iter.next();
+			BioSeq seq = new BioSeq(ent.getContig(), "", (int)ent.getSize());
+			sequenceList.add(seq);
+		}
+		return sequenceList;
+	}
+
 	/**
 	 * Get seqids and lengths for all chromosomes.
 	 */
 	@Override
 	protected boolean initChromosomes() throws Exception {
-		FastaSequenceIndexExt fsie = new FastaSequenceIndexExt(new File(uri + ".fai"));
-		List<BioSeq> sequenceList = fsie.getSequenceList();
+		String uriString = uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uri.getPath();
+		}
+		FastaSequenceIndex fsi = new FastaSequenceIndex(new File(uriString + ".fai"));
+		List<BioSeq> sequenceList = getSequenceList(fsi);
 		for (BioSeq seqLoop : sequenceList) {
 			String seqid = seqLoop.getID();
 			BioSeq seq = group.getSeq(seqid);

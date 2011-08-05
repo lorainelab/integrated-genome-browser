@@ -38,8 +38,8 @@ public interface TrackConstants {
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.CYAN;
 	static final Color default_background = Color.BLACK;
-	static final Color default_start = Color.GREEN;
-	static final Color default_end = Color.RED;
+	static final Color default_start = new Color(204,255,255);
+	static final Color default_end = new Color(51,255,255);
 	static final String default_label_field = "";
 	static final String default_view_mode = "default";
 	static final int default_show2tracks = 2;

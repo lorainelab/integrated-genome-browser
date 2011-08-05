@@ -47,7 +47,7 @@ public final class LoadModeTable {
 	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
 	static final Icon invisible_icon = IGBUtils.getIcon("invisible.gif");
 	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
-	static final Icon info_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/TipOfTheDay16.gif");
+	static final Icon info_icon = IGBUtils.getIcon("warning.gif");
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int REFRESH_FEATURE_COLUMN = 1;
 	static final int HIDE_FEATURE_COLUMN = 2;

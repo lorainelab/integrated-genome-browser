@@ -45,8 +45,8 @@ public final class LoadModeTable {
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
 	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
-	static final Icon invisible_icon = MenuUtil.getIcon("/toolbarButtonGraphics/general/Stop16.gif");
-	static final Icon visible_icon = MenuUtil.getIcon("/toolbarButtonGraphics/general/Help16.gif");
+	static final Icon invisible_icon = IGBUtils.getIcon("invisible.gif");
+	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
 	static final Icon info_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/TipOfTheDay16.gif");
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int REFRESH_FEATURE_COLUMN = 1;

@@ -51,9 +51,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private static final int COL_TRACK_NAME_SIZE = 3;
 	private static final int COL_COLLAPSED = 4;
 	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_CONNECTED = 6;
+	private static final int COL_SHOW2TRACKS = 6;
 	private static final int COL_LABEL_FIELD = 7;
-	private static final int COL_SHOW2TRACKS = 8;
+	private static final int COL_CONNECTED = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
 	private static final int COL_POS_STRAND_COLOR = 10;
 	private static final int COL_NEG_STRAND_COLOR = 11;
@@ -262,7 +262,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(selectAllButton))
         );
@@ -327,14 +327,12 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
         maxDepthLabel.setText("Max Depth:");
 
-        maxDepthTextField.setText("10");
         maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxDepthTextFieldActionPerformed(evt);
             }
         });
 
-        show2TracksCheckBox.setSelected(true);
         show2TracksCheckBox.setText("Show two tracks (+) and (-)");
         show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -342,7 +340,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
             }
         });
 
-        connectedCheckBox.setSelected(true);
         connectedCheckBox.setText("Connected");
         connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -553,9 +550,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         );
         viewModelPanelLayout.setVerticalGroup(
             viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModelPanelLayout.createSequentialGroup()
-                .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+            .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -568,13 +563,17 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                     .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 387, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(autoRefreshCheckBox))
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(layout.createSequentialGroup()
+                                .add(16, 16, 16)
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(layout.createSequentialGroup()
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(autoRefreshCheckBox))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -588,24 +587,24 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
+                        .add(22, 22, 22)
                         .add(autoRefreshCheckBox)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(refreshButton))
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		if (!settingValueFromTable) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
+			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
 		}
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
     private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
 		if (!settingValueFromTable) {
-			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
+			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
 		}
     }//GEN-LAST:event_connectedCheckBoxActionPerformed
 
@@ -826,9 +825,15 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 	}
 
-	public void applyChanges() {
+	private void applyChanges() {
 		refreshSeqMapView();
 	}
+	
+	public void externalChange(){
+	model.fireTableDataChanged();
+	setSelectedRows();
+	}
+	
 
 	/** Called when the user selects a row of the table.
 	 * @param evt
@@ -886,8 +891,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getShow());
-			connectedCheckBox.setSelected(selectedStyle.getSeparate());
+			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
+			connectedCheckBox.setSelected(selectedStyle.getExpandable());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -1102,10 +1107,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 						case COL_DIRECTION_TYPE:
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
-						case COL_CONNECTED:
+						case COL_SHOW2TRACKS:
 							style.setSeparate(((Boolean) value).booleanValue());
 							break;
-						case COL_SHOW2TRACKS:
+						case COL_CONNECTED:
 							if (Boolean.TRUE.equals(value)) {
 								style.setShow2Tracks(2);
 							} else {

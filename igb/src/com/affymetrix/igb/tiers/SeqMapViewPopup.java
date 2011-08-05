@@ -336,6 +336,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		handler.setTiersCollapsed(tier_labels, collapsed);
 		refreshMap(false, true);
+		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
 	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
@@ -420,6 +421,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			tier.setMaxExpandDepth(max);
 		}
 		refreshMap(false, true);
+		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
 	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -432,6 +434,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		refreshMap(false, true);
 		handler.sortTiers();
+		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
 	public void showAllTiers() {
@@ -707,7 +710,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		// Generate a non-persistent style.
 		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
-
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
 		style.setShow2Tracks(1);

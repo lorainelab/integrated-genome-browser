@@ -44,9 +44,9 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private static final int COL_TRACK_NAME_SIZE = 3;
 	private static final int COL_COLLAPSED = 4;
 	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_CONNECTED = 6;
+	private static final int Col_Show_2_Tracks = 6;
 	private static final int COL_LABEL_FIELD = 7;
-	private static final int COL_SHOW2TRACKS = 8;
+	private static final int COL_CONNECTED = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
 	private static final int COL_POS_STRAND_COLOR = 10;
 	private static final int COL_NEG_STRAND_COLOR = 11;
@@ -72,6 +72,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		initializeFileTypes();
 		initComponents();
+		table.setRowSelectionInterval(0, 0);
 	}
 
 	private void initializeFileTypes() {
@@ -546,7 +547,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
+				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], Col_Show_2_Tracks);
 			}
 		}
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
@@ -554,7 +555,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_SHOW2TRACKS);
+				model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
 			}
 		}
 }//GEN-LAST:event_connectedCheckBoxActionPerformed
@@ -703,8 +704,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			collapsedCheckBox.setSelected(false);
 			colorCheckBox.setSelected(false);
 			arrowCheckBox.setSelected(false);
-			possitiveColorComboBox.setEnabled(false);
-			negativeColorComboBox.setEnabled(false);
+			possitiveColorComboBox.setSelectedColor(null);
+			negativeColorComboBox.setSelectedColor(null);
 		}
 
 		if (selectedRows.length == 1) {
@@ -940,14 +941,14 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 								element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
 							}
 							break;
-						case COL_CONNECTED:
+						case Col_Show_2_Tracks:
 							if (style.equals(default_annot_style)) {
 								style.setSeparate(((Boolean) value).booleanValue());
 							} else {
 								element.propertyMap.put(PROP_SEPARATE, value.toString());
 							}
 							break;
-						case COL_SHOW2TRACKS:
+						case COL_CONNECTED:
 							if (style.equals(default_annot_style)) {
 								if (Boolean.TRUE.equals(value)) {
 									style.setShow2Tracks(2);
@@ -990,7 +991,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 					}
 					fireTableCellUpdated(row, col);
 					setElements(XmlStylesheetParser.getUserFileTypeAssociation());
-
+					table.setRowSelectionInterval(row, row);
 				} catch (Exception e) {
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);

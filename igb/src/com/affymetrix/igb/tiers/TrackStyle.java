@@ -71,7 +71,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
-
+	
 	
 	public static TrackStyle getInstance(String name, String human_name, String file_type, Map<String, String> props) {
 		return getInstance(name, human_name, file_type, true, true, props);
@@ -433,6 +433,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	/** Whether PLUS and MINUS strand should be in separate tiers. */
+	//Show2Tracks
 	public boolean getSeparate() {
 		return connected;
 	}

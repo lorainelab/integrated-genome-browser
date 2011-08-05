@@ -21,7 +21,6 @@ import com.affymetrix.igb.Application;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -215,7 +214,7 @@ public final class ResidueLoading {
 			if (symloader != null) {
 				return symloader.getRegionResidues(span);
 			}
-		} catch (MalformedURLException ex) {
+		} catch (Exception ex) {
 			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return null;

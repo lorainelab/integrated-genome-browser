@@ -693,25 +693,28 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected Void runInBackground() {
-				final BioSeq current_seq = gmodel.getSelectedSeq();
-				Thread thread = Thread.currentThread();
+				try {
+					final BioSeq current_seq = gmodel.getSelectedSeq();
+					Thread thread = Thread.currentThread();
 
-				if (current_seq != null) {
-					loadOnSequence(current_seq);
-					publish(current_seq);
-				}
+					if (current_seq != null) {
+						loadOnSequence(current_seq);
+						publish(current_seq);
+					}
 
 				for (BioSeq seq : feature.symL.getChromosomeList()) {
 					if (seq == current_seq) {
-						continue;
-					}
+							continue;
+						}
 
-					if (thread.isInterrupted()) {
-						break;
+						if (thread.isInterrupted()) {
+							break;
+						}
+						loadOnSequence(seq);
 					}
-					loadOnSequence(seq);
+				} catch (Exception ex) {
+					((QuickLoad)feature.symL).logException(ex);
 				}
-
 				return null;
 			}
 

@@ -87,7 +87,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	}
 
 	@Override
-	public void init() {
+	public void init()  throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -102,7 +102,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	public void init(URI uri) { }
 	
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList()  throws Exception  {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
 		Collections.sort(chromosomeList,new BioSeqComparator());
@@ -110,7 +110,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	}
 
 	@Override
-	public List<UcscPslSym> getGenome() {
+	public List<UcscPslSym> getGenome()  throws Exception  {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<UcscPslSym> retList = new ArrayList<UcscPslSym>();
@@ -122,20 +122,20 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
 
 	@Override
-	public List<UcscPslSym> getChromosome(BioSeq seq) {
+	public List<UcscPslSym> getChromosome(BioSeq seq)  throws Exception  {
 		init();
 		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 
 	@Override
-	public List<UcscPslSym> getRegion(SeqSpan span) {
+	public List<UcscPslSym> getRegion(SeqSpan span)  throws Exception  {
 		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception  {
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -253,11 +253,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 
 			return !thread.isInterrupted();
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Error parsing PSL file\n");
 			sb.append("line count: ").append(line_count).append("\n");
-		} finally {
+			throw new Exception(sb.toString(), e);
+		} 
+		finally {
 			for (BufferedWriter b : chrs.values()) {
 				try {
 					b.flush();
@@ -269,7 +272,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-		return false;
 	}
 
 	private static void addToQueryTarget(Map<String, Set<String>> queryTarget, String query_seq_id, String target_seq_id){
@@ -298,7 +300,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		is_link_psl = b;
 	}
 
-	private List<UcscPslSym> parse(BioSeq seq, int min, int max){
+	private List<UcscPslSym> parse(BioSeq seq, int min, int max) throws Exception  {
 		InputStream istr = null;
 		try {
 			File file = chrList.get(seq);
@@ -308,12 +310,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 			istr = new FileInputStream(file);
 			return parse(istr, uri.toString(), min, max, query_group, target_group, other_group);
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(PSL.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
-		return Collections.<UcscPslSym>emptyList();
 	}
 	
 	public List<UcscPslSym> parse(InputStream istr, String annot_type,
@@ -444,7 +445,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		int total_child_count = 0;
 		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
-		try {
+//		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
@@ -566,16 +567,15 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 					}
 				}
 			}
-		} catch (Exception e) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Error parsing PSL file\n");
-			sb.append("line count: ").append(line_count).append("\n");
-			sb.append("child count: ").append(childcount).append("\n");
-			if (block_size_array != null && block_size_array.length != 0) {
-				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
-			}
-
-		} 
+//		} catch (Exception e) {
+//			StringBuilder sb = new StringBuilder();
+//			sb.append("Error parsing PSL file\n");
+//			sb.append("line count: ").append(line_count).append("\n");
+//			sb.append("child count: ").append(childcount).append("\n");
+//			if (block_size_array != null && block_size_array.length != 0) {
+//				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
+//			}
+//		} 
 		if (DEBUG) {
 			System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 					", child count: " + total_child_count);

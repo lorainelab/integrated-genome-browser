@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -52,7 +50,7 @@ public class USeq extends SymLoader {
 		return strategyList;
 	}
 
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) return;
 		try{			
 			//for getRegion()
@@ -72,17 +70,18 @@ public class USeq extends SymLoader {
 			}
 			Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()),new BioSeqComparator());
 			
-		} catch (Exception ex) {
-			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
+		} catch(Exception ex){
+			throw ex;
+		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(zis);
-		} 
+		}
 		
 		super.init();
 	}
 
 
-	public List<? extends SeqSymmetry> getGenome() {
+	public List<? extends SeqSymmetry> getGenome() throws Exception  {
 		init();
 		try {
 			//is it a graph dataset?
@@ -94,17 +93,16 @@ public class USeq extends SymLoader {
 				USeqRegionParser rp = new USeqRegionParser();
 				return rp.parse(zis, group, uri.toString(), false, archiveInfo);
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
+		} catch(Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(zis);
 		}
-		return Collections.<SeqSymmetry>emptyList();
 	}
 	
 	
-	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		try {
 			init();
 			//fetch region, this may be stranded
@@ -126,15 +124,15 @@ public class USeq extends SymLoader {
 				USeqRegionParser rp = new USeqRegionParser();
 				return rp.parse(useqArchive, useqData, group, uri.toString());
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
+		} catch(Exception ex){
+			throw ex;
+		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(zis);
-		} 
-		return null;
+		}
 	}
 
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		return new ArrayList<BioSeq>(chromosomeList.keySet());
 	}

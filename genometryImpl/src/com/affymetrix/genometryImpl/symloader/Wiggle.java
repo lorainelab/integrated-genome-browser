@@ -43,6 +43,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import java.io.FileNotFoundException;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -84,7 +85,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	public void init(URI uri) {	}
 	
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -94,7 +95,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
 		Collections.sort(chromosomeList,new BioSeqComparator());
@@ -102,7 +103,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	}
 
 	@Override
-	public List<GraphSym> getGenome() {
+	public List<GraphSym> getGenome() throws Exception  {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<GraphSym> retList = new ArrayList<GraphSym>();
@@ -114,14 +115,14 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 
 
 	@Override
-	public List<GraphSym> getChromosome(BioSeq seq) {
+	public List<GraphSym> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		return parse(seq,seq.getMin(),seq.getMax());
 	}
 
 
 	@Override
-	public List<GraphSym> getRegion(SeqSpan span) {
+	public List<GraphSym> getRegion(SeqSpan span) throws Exception  {
 		init();
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
@@ -133,7 +134,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
-	private List<GraphSym> parse(BioSeq seq, int min, int max) {
+	private List<GraphSym> parse(BioSeq seq, int min, int max) throws Exception  {
 		FileInputStream fis = null;
 		InputStream istr = null;
 
@@ -172,14 +173,13 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 
 			return parse(it, seq, min, max);
 
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+		}  catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(fis);
 		}
 
-		return Collections.<GraphSym>emptyList();
 	}
 
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
@@ -208,13 +208,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 				throw new UnsupportedOperationException();
 			}
 		};
-		try {
-			return parse(it, seq, seq.getMin(), seq.getMax());
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		} 
-		
-		return Collections.<SeqSymmetry>emptyList();
+		return parse(it, seq, seq.getMin(), seq.getMax());
 	}
 
 	private List<GraphSym> parse(Iterator<String> it, BioSeq seq, int min, int max) {
@@ -533,7 +527,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	}
 
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -646,9 +640,9 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 			}
 
 			return !thread.isInterrupted();
-		} catch (IOException ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		}finally{
+		} catch (Exception ex) {
+			throw ex;
+		} finally{
 			for (BufferedWriter b : chrs.values()) {
 				try {
 					b.flush();
@@ -660,7 +654,6 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-		return false;
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {

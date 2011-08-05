@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.TwoBitParser;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ public class TwoBit extends SymLoader {
 		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 	
-	public TwoBit(URI uri, AnnotatedSeqGroup group, String seqName){
+	public TwoBit(URI uri, AnnotatedSeqGroup group, String seqName) {
 		super(uri, "", group);
 		this.isResidueLoader = true;
 		try {
@@ -43,10 +45,10 @@ public class TwoBit extends SymLoader {
 				chrMap.put(retseq, retseq.getResiduesProvider());
 				retseq.removeResidueProvider();
 			}
+			super.init();
 		} catch (Exception ex) {
 			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		super.init();
 	}
 	
 	public TwoBit(URI uri, String featureName, AnnotatedSeqGroup group) {
@@ -55,20 +57,16 @@ public class TwoBit extends SymLoader {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception {
 		if (this.isInitialized) {
 			return;
 		}
-		try {
-			List<BioSeq> seqs = TwoBitParser.parse(uri, group);
-			if(seqs != null){
-				for(BioSeq seq : seqs){
-					chrMap.put(seq, seq.getResiduesProvider());
-					seq.removeResidueProvider();
-				}
+		List<BioSeq> seqs = TwoBitParser.parse(uri, group);
+		if (seqs != null) {
+			for (BioSeq seq : seqs) {
+				chrMap.put(seq, seq.getResiduesProvider());
+				seq.removeResidueProvider();
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		super.init();
 	}
@@ -79,13 +77,13 @@ public class TwoBit extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		return new ArrayList<BioSeq>(chrMap.keySet());
 	}
 
 	@Override
-	public String getRegionResidues(SeqSpan span) {
+	public String getRegionResidues(SeqSpan span) throws Exception  {
 		init();
 		BioSeq seq = span.getBioSeq();
 		if(chrMap.containsKey(seq)){

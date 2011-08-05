@@ -35,7 +35,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -50,7 +50,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
 		Collections.sort(chromosomeList,new BioSeqComparator());
@@ -58,7 +58,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public List<GraphSym> getGenome() {
+	public List<GraphSym> getGenome() throws Exception  {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<GraphSym> retList = new ArrayList<GraphSym>();
@@ -69,14 +69,14 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public List<GraphSym> getChromosome(BioSeq seq) {
+	public List<GraphSym> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		return parse(seq, seq.getMin(), seq.getMax() + 1); //interbase format
 	}
 
 
 	@Override
-	public List<GraphSym> getRegion(SeqSpan span) {
+	public List<GraphSym> getRegion(SeqSpan span) throws Exception  {
 		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax() + 1); //interbaseformat
 	}
@@ -86,7 +86,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 
-	private List<GraphSym> parse(BioSeq seq, int min, int max) {
+	private List<GraphSym> parse(BioSeq seq, int min, int max) throws Exception  {
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		IntArrayList xlist = new IntArrayList();
 		FloatArrayList ylist = new FloatArrayList();
@@ -119,14 +119,14 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 
 			file.setReadOnly();
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+			return results;
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(fos);
 		}
 
-		return results;
 	}
 
 	/**
@@ -242,7 +242,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	 * @param chrFiles
 	 */
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles) throws Exception  {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
@@ -274,9 +274,9 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 				bw.write(line + "\n");
 			}
 			return !thread.isInterrupted();
-		} catch (IOException ex) {
-			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-		}finally{
+		} catch (Exception ex){
+			throw ex;
+		} finally{
 			for(BufferedWriter b : chrs.values()){
 				try {
 					b.flush();
@@ -288,7 +288,6 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(br);
 		}
-		return false;
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {

@@ -140,17 +140,21 @@ public final class QuickLoad extends SymLoader {
 
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
-
-		if (this.symL != null && this.symL.isResidueLoader) {
-			loadResiduesThread(feature, overlapSpan);
-			return true;
-		} else {
-			return loadSymmetriesThread(feature, overlapSpan);
+		try {
+			if (this.symL != null && this.symL.isResidueLoader) {
+				loadResiduesThread(feature, overlapSpan);
+				return true;
+			} else {
+				return loadSymmetriesThread(feature, overlapSpan);
+			}
+		} catch (Exception ex) {
+			logException(ex);
 		}
+		return false;
 	}
 
 	private boolean loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
-			throws OutOfMemoryError, IOException {
+			throws OutOfMemoryError, Exception {
 
 		if (QuickLoad.this.extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
@@ -183,7 +187,7 @@ public final class QuickLoad extends SymLoader {
 					loadAndAddAllSymmetries(feature);
 					TrackView.updateDependentData();
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logException(ex);
 				}
 				return null;
 			}
@@ -202,7 +206,6 @@ public final class QuickLoad extends SymLoader {
 					SeqGroupView.getInstance().refreshTable();
 					//Update LoadModeTableModel
 					GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
-					GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -220,7 +223,7 @@ public final class QuickLoad extends SymLoader {
 	 * @throws OutOfMemoryError
 	 */
 	private boolean loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
-			throws IOException, OutOfMemoryError {
+			throws Exception, OutOfMemoryError {
 
 		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
 			return false;
@@ -316,7 +319,7 @@ public final class QuickLoad extends SymLoader {
 		return (entries != null && !entries.isEmpty());
 	}
 
-	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) {
+	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) throws Exception  {
 		String results = QuickLoad.this.getRegionResidues(span);
 		if (results != null && !results.isEmpty()) {
 			// TODO: make this more general.  Since we can't currently optimize all residue requests,
@@ -335,7 +338,8 @@ public final class QuickLoad extends SymLoader {
 	 * @return List of chromosomes
 	 */
 	@Override
-	public List<BioSeq> getChromosomeList() {
+	public List<BioSeq> getChromosomeList() throws Exception  {
+
 		if (this.symL != null) {
 			return this.symL.getChromosomeList();
 		}
@@ -368,13 +372,13 @@ public final class QuickLoad extends SymLoader {
 			}
 			return null;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logException(ex);
 			return null;
 		}
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		if (this.symL != null) {
 			return this.symL.getRegion(span);
 		}
@@ -382,7 +386,7 @@ public final class QuickLoad extends SymLoader {
 	}
 
 	@Override
-	public String getRegionResidues(SeqSpan span) {
+	public String getRegionResidues(SeqSpan span)throws Exception  {
 		if (this.symL != null && this.symL.isResidueLoader) {
 			return this.symL.getRegionResidues(span);
 		}
@@ -393,5 +397,18 @@ public final class QuickLoad extends SymLoader {
 
 	public SymLoader getSymLoader() {
 		return symL;
+	}
+	
+	public void logException(Exception ex){
+		String loggerName = QuickLoad.class.getName();
+		Level level = Level.SEVERE;
+		
+		if (symL != null) 
+			loggerName = symL.getClass().getName();
+		
+		if(ex instanceof RuntimeException) 
+			level = Level.WARNING;
+		
+		Logger.getLogger(loggerName).log(level, ex.getMessage(), ex);
 	}
 }

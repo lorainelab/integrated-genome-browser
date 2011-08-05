@@ -8,6 +8,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class Fasta extends SymLoader {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -58,7 +60,7 @@ public class Fasta extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		return new ArrayList<BioSeq>(chrSet);
 	}
@@ -66,7 +68,7 @@ public class Fasta extends SymLoader {
 	/**
 	 * Get seqids and lengths for all chromosomes.
 	 */
-	private boolean initChromosomes() {
+	private boolean initChromosomes() throws Exception  {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
@@ -119,18 +121,17 @@ public class Fasta extends SymLoader {
 			}
 
 			return !Thread.currentThread().isInterrupted();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bis);
 		}
 
-		return false;
 	}
 
 	@Override
-	public String getRegionResidues(SeqSpan span) {
+	public String getRegionResidues(SeqSpan span) throws Exception  {
 		init();
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
@@ -212,13 +213,14 @@ public class Fasta extends SymLoader {
 				}
 			}
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			return residues;
+		
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bis);
 		}
-		return residues;
 	}
 
 	@Override

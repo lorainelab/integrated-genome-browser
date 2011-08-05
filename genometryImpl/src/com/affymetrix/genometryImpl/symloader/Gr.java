@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -69,7 +70,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		sort();
 	}
 
-	private void sort(){
+	private void sort() throws Exception  {
 		unnamed = group.getSeq(UNNAMED);
 
 		if(unnamed == null)
@@ -84,8 +85,8 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 				tempFile.deleteOnExit();
 				fos = new FileOutputStream(tempFile);
 				writeGrFormat(sym, fos);
-			} catch (IOException ex) {
-				ex.printStackTrace();
+			} catch (Exception ex){
+				throw ex;
 			} finally {
 				GeneralUtils.safeClose(fos);
 			}
@@ -98,7 +99,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 	
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		List<BioSeq> seqs = group.getSeqList();
 		if(!seqs.isEmpty()){
@@ -117,14 +118,14 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 
 	@Override
-	public List<GraphSym> getGenome(){
+	public List<GraphSym> getGenome() throws Exception  {
 		init();
 		BioSeq seq = group.addSeq(this.featureName, Integer.MAX_VALUE - 1);
 		return getChromosome(seq);
 	}
 	
 	@Override
-	public List<GraphSym> getChromosome(BioSeq seq) {
+	public List<GraphSym> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		results.add(parse(seq,seq.getMin(),seq.getMax() + 1));
@@ -133,7 +134,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 
 
 	@Override
-	public List<GraphSym> getRegion(SeqSpan span) {
+	public List<GraphSym> getRegion(SeqSpan span) throws Exception  {
 		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		results.add(parse(span.getBioSeq(),span.getMin(),span.getMax() + 1));
@@ -165,11 +166,11 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		}
 	}
 
-	private GraphSym parse(BioSeq aseq, int min, int max){
+	private GraphSym parse(BioSeq aseq, int min, int max) throws Exception  {
 		return parse(aseq, min, max, true);
 	}
 	
-	private GraphSym parse(BioSeq aseq, int min, int max, boolean ensure_unique_id){
+	private GraphSym parse(BioSeq aseq, int min, int max, boolean ensure_unique_id) throws Exception  {
 		GraphSym graf = null;
 		String line = null;
 		String headerstr = null;
@@ -276,12 +277,14 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 			graf = createResults(name, hasHeader, headerstr, xlist, ylist, sorted, ensure_unique_id, aseq);
 
 			System.out.println("loaded graph data, total points = " + count);
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			return graf;
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(br);
 		}
-		return graf;
+		
 	}
 
 

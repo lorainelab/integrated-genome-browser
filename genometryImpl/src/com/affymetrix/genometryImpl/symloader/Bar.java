@@ -13,8 +13,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class Bar extends SymLoader {
 
@@ -38,7 +36,7 @@ public final class Bar extends SymLoader {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -47,47 +45,44 @@ public final class Bar extends SymLoader {
 	}
 
 	@Override
-	public List<GraphSym> getGenome() {
+	public List<GraphSym> getGenome() throws Exception  {
 		BufferedInputStream bis = null;
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
 			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), true);
-		} catch (Exception ex) {
-			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}
-		return null;
 	}
 
 	@Override
-	public List<GraphSym> getChromosome(BioSeq seq) {
+	public List<GraphSym> getChromosome(BioSeq seq) throws Exception  {
 		BufferedInputStream bis = null;
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
 			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, seq, 0, seq.getMax() + 1, uri.toString(), true);
-		} catch (Exception ex) {
-			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}
-		return null;
 	}
 
 	@Override
-	public List<GraphSym> getRegion(SeqSpan span) {
+	public List<GraphSym> getRegion(SeqSpan span) throws Exception  {
 		BufferedInputStream bis = null;
 		try {
 			init();
 			bis = new BufferedInputStream(new FileInputStream(f));
 			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), true);
-		} catch (Exception ex) {
-			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}
-		return null;
 	}
 }

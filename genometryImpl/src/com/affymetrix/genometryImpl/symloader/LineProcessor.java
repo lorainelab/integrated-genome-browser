@@ -23,12 +23,12 @@ public interface LineProcessor {
 	 * @param lineReader the LineReader from QueryReader
 	 * @return the SeqSymmetry list from the parsing
 	 */
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader);
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception;
 	/**
 	 * perform any initialization here
 	 * @param uri the uri of the data source
 	 */
-	public void init(URI uri);
+	public void init(URI uri) throws Exception;
 	/**
 	 * @return the pref list (file extensions) 
 	 */

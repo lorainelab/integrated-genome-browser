@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,7 +57,7 @@ public class GFF3 extends SymLoader{
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -65,7 +66,7 @@ public class GFF3 extends SymLoader{
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
 		Collections.sort(chromosomeList,new BioSeqComparator());
@@ -73,7 +74,7 @@ public class GFF3 extends SymLoader{
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getGenome() {
+	public List<? extends SeqSymmetry> getGenome() throws Exception  {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
@@ -85,19 +86,19 @@ public class GFF3 extends SymLoader{
 
 
 	@Override
-	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		return parse(seq,seq.getMin(),seq.getMax());
 	}
 
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		init();
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
-	private List<? extends SeqSymmetry> parse(BioSeq seq, int min, int max) {
+	private List<? extends SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception  {
 		GFF3Parser parser = new GFF3Parser();
 		InputStream istr = null;
 		try {
@@ -108,17 +109,17 @@ public class GFF3 extends SymLoader{
 			}
 			istr = new FileInputStream(file);
 			return parser.parse(istr, uri.toString(), group, true);
-		}catch (Exception ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
-		return Collections.<SeqSymmetry>emptyList();
 	}
 
 
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)
+			throws Exception  {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -178,8 +179,8 @@ public class GFF3 extends SymLoader{
 			}
 
 			return !thread.isInterrupted();
-		} catch (IOException ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			for (BufferedWriter b : chrs.values()) {
 				GeneralUtils.safeClose(b);
@@ -187,7 +188,6 @@ public class GFF3 extends SymLoader{
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-		return false;
 	}
 
 

@@ -15,6 +15,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -69,7 +71,7 @@ public class SymLoaderTabix extends SymLoader {
 	}
 
 	@Override
-	public void init(){
+	public void init() throws Exception  {
 		if (!isValid()) {
 			throw new IllegalStateException("tabix file does not exist or was not read");
 		}
@@ -102,13 +104,13 @@ public class SymLoaderTabix extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){		
+	public List<BioSeq> getChromosomeList() throws Exception  {		
 		init();
 		return new ArrayList<BioSeq>(seqs.keySet());
 	}
 
 	@Override
-	 public List<? extends SeqSymmetry> getGenome() {
+	 public List<? extends SeqSymmetry> getGenome() throws Exception  {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
@@ -119,14 +121,14 @@ public class SymLoaderTabix extends SymLoader {
 	 }
 
 	@Override
-	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		String seqID = seqs.get(seq);
 		return lineProcessor.processLines(seq, tabixLineReader.query(seqID, 0, Integer.MAX_VALUE));
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception  {
 		init();
 		String seqID = seqs.get(overlapSpan.getBioSeq());
 		LineReader lineReader = tabixLineReader.query(seqID, (overlapSpan.getStart() + 1), + overlapSpan.getEnd());

@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -66,46 +68,41 @@ public abstract class XAM extends SymLoader {
 	}
 
 	protected boolean initTheSeqs() {
-		try {
-			header = reader.getFileHeader();
-			if (header == null || header.getSequenceDictionary() == null || 
-					header.getSequenceDictionary().getSequences() == null || header.getSequenceDictionary().getSequences().isEmpty()) {
-				Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
-				return false;
-			}
-			Thread thread = Thread.currentThread();
-			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
-				try {
-					if (thread.isInterrupted()) {
-						break;
-					}
-					String seqID = ssr.getSequenceName();
-					int seqLength = ssr.getSequenceLength();
-					BioSeq seq = group.addSeq(seqID, seqLength);
-					if(seq.getVersion() != null){
-						seq.setVersion(group.getID());
-					}
-					seqs.put(seq,seqID);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-
-			return !thread.isInterrupted();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		header = reader.getFileHeader();
+		if (header == null || header.getSequenceDictionary() == null
+				|| header.getSequenceDictionary().getSequences() == null || header.getSequenceDictionary().getSequences().isEmpty()) {
+			Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
+			return false;
 		}
-		return false;
+		Thread thread = Thread.currentThread();
+		for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
+			try {
+				if (thread.isInterrupted()) {
+					break;
+				}
+				String seqID = ssr.getSequenceName();
+				int seqLength = ssr.getSequenceLength();
+				BioSeq seq = group.addSeq(seqID, seqLength);
+				if (seq.getVersion() != null) {
+					seq.setVersion(group.getID());
+				}
+				seqs.put(seq, seqID);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		return !thread.isInterrupted();
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList() {
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		return new ArrayList<BioSeq>(seqs.keySet());
 	}
 
 	@Override
-	public List<SeqSymmetry> getGenome() {
+	public List<SeqSymmetry> getGenome() throws Exception  {
 		init();
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (BioSeq seq : group.getSeqList()) {
@@ -115,14 +112,14 @@ public abstract class XAM extends SymLoader {
 	}
 
 	@Override
-	public List<SeqSymmetry> getChromosome(BioSeq seq) {
+	public List<SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		return parse(seq, seq.getMin(), seq.getMax(), true, false);
 	}
 
 
 	@Override
-	public List<SeqSymmetry> getRegion(SeqSpan span) {
+	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
 		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
@@ -132,7 +129,7 @@ public abstract class XAM extends SymLoader {
 	 * @param seq
 	 * @return
 	 */
-	public abstract List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained);
+	public abstract List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception  ;
 	
 
 	/**

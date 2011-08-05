@@ -204,7 +204,7 @@ public final class Genbank extends SymLoader {
 
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -215,28 +215,28 @@ public final class Genbank extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		init();
 		return seqs;
 	}
 
 	@Override
-	public List<GenbankSym> getGenome() {
+	public List<GenbankSym> getGenome() throws Exception   {
 		return parse(null, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 	@Override
-	public List<GenbankSym> getChromosome(BioSeq seq) {
+	public List<GenbankSym> getChromosome(BioSeq seq) throws Exception   {
 		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 	@Override
-	public List<GenbankSym> getRegion(SeqSpan span) {
+	public List<GenbankSym> getRegion(SeqSpan span) throws Exception   {
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 	
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception   {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		try {
@@ -251,13 +251,12 @@ public final class Genbank extends SymLoader {
 			readFeature(br,vals[1],chrLength);
 					
 			return true;
-		} catch (Exception ex) {
-			Logger.getLogger(Genbank.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(br);
 		}
-		return false;
 	}
 	
 	@Override
@@ -356,7 +355,7 @@ public final class Genbank extends SymLoader {
 	 * @param seq
 	 * @return
 	 */
-	public List<GenbankSym> parse(BioSeq seq, int min, int max) {
+	public List<GenbankSym> parse(BioSeq seq, int min, int max) throws Exception {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		try {
@@ -364,12 +363,11 @@ public final class Genbank extends SymLoader {
 			br = new BufferedReader(new InputStreamReader(bis));
 			return parse(br, seq, min, max);
 		}catch (Exception ex) {
-			Logger.getLogger(Genbank.class.getName()).log(Level.SEVERE, null, ex);
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(br);
 		}
-		return Collections.<GenbankSym>emptyList();
 	}
 
 	public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {

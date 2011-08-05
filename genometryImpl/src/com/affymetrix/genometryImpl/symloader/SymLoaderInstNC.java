@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class SymLoaderInstNC extends SymLoaderInst{
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getGenome() {
+	public List<? extends SeqSymmetry> getGenome() throws Exception  {
 		return super.getGenome();
 	}
 }

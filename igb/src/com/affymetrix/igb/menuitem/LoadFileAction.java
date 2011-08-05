@@ -411,9 +411,14 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			protected Object doInBackground() throws Exception {
-				Application.getSingleton().addNotLockedUpMsg(message);
-				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
-					loadGroup.addSeq(seq.getID(), seq.getLength());
+				
+				try {
+					Application.getSingleton().addNotLockedUpMsg(message);
+					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+						loadGroup.addSeq(seq.getID(), seq.getLength());
+					}
+				} catch (Exception ex) {
+					((QuickLoad)gFeature.symL).logException(ex);
 				}
 
 				return null;

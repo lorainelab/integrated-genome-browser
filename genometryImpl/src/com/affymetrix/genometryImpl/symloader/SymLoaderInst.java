@@ -23,7 +23,7 @@ public class SymLoaderInst extends SymLoader{
 	}
 
 	@Override
-	public void init(){
+	public void init() throws Exception  {
 		if(this.isInitialized){
 			return;
 		}
@@ -36,25 +36,25 @@ public class SymLoaderInst extends SymLoader{
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){		
+	public List<BioSeq> getChromosomeList() throws Exception  {		
 		init();
 		return chromosomeList;
 	}
 
 	@Override
-	 public List<? extends SeqSymmetry> getGenome() {
+	 public List<? extends SeqSymmetry> getGenome() throws Exception  {
 		init();
 		return super.getGenome();
 	 }
 
 	@Override
-	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		return super.getChromosome(seq);
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception  {
 		init();
 		return super.getRegion(overlapSpan);
     }

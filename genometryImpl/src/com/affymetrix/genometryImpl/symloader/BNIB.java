@@ -8,11 +8,11 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.samtools.util.SeekableStream;
 
 /**
@@ -41,7 +41,7 @@ public class BNIB extends SymLoader {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -54,7 +54,7 @@ public class BNIB extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList() {
+	public List<BioSeq> getChromosomeList() throws Exception  {
 		if (this.chrList != null) {
 			return this.chrList;
 		}
@@ -68,16 +68,17 @@ public class BNIB extends SymLoader {
 			if (seq != null) {
 				chrList.add(seq);
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(BNIB.class.getName()).log(Level.SEVERE, null, ex);
+			return chrList;
+		}  catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(sis);
 		}
-		return chrList;
+		
 	}
 
 	@Override
-	public String getRegionResidues(SeqSpan span) {
+	public String getRegionResidues(SeqSpan span) throws Exception  {
 		init();
 
 		SeekableStream sis = null;
@@ -88,9 +89,8 @@ public class BNIB extends SymLoader {
 			NibbleResiduesParser.parse(sis, span.getStart(), span.getEnd(), outStream);
 			byte[] bytes = outStream.toByteArray();
 			return new String(bytes);
-		} catch (Exception ex) {
-			Logger.getLogger(BNIB.class.getName()).log(Level.SEVERE, null, ex);
-			return null;
+		}  catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(outStream);
 			GeneralUtils.safeClose(sis);

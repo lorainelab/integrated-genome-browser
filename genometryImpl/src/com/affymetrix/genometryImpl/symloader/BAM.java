@@ -51,7 +51,7 @@ public final class BAM extends XAM {
 	}
 
 	@Override
-	public void init() {
+	public void init() throws Exception  {
 		if (this.isInitialized) {
 			return;
 		}
@@ -120,7 +120,7 @@ public final class BAM extends XAM {
 	 * @param seq
 	 * @return
 	 */
-	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
+	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) throws Exception  {
 		init();
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		List<Throwable> errList = new ArrayList<Throwable>(10);
@@ -141,6 +141,8 @@ public final class BAM extends XAM {
 					}
 				}
 			}
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			if (iter != null) {
 				iter.close();
@@ -180,7 +182,7 @@ public final class BAM extends XAM {
 	 * @param dos -- output stream
 	 * @param BAMWriter -- write as BAM or as SAM
 	 */
-	public void writeAnnotations(BioSeq seq, int min, int max, DataOutputStream dos, boolean BAMWriter) {
+	public void writeAnnotations(BioSeq seq, int min, int max, DataOutputStream dos, boolean BAMWriter) throws Exception  {
 		init();
 		if (reader == null) {
 			return;
@@ -325,7 +327,7 @@ public final class BAM extends XAM {
 		return "binary/BAM";
 	}
 
-	public static List<? extends SeqSymmetry> parse(URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, SeqSpan overlap_span) {
+	public static List<? extends SeqSymmetry> parse(URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, SeqSpan overlap_span) throws Exception{
 		File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);
 		bamfile.deleteOnExit();
 		BAM bam = new BAM(bamfile.toURI(),featureName, group);
@@ -335,7 +337,7 @@ public final class BAM extends XAM {
 	}
 
 	public List<? extends SeqSymmetry> parse(InputStream is, boolean annotate_seq)
-	throws Exception {
+	throws Exception  {
 		throw new IllegalStateException(); // should not happen
 	}
 }

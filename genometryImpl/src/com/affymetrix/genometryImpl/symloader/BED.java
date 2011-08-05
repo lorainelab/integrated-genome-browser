@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URI;
@@ -77,7 +76,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 	
 	@Override
-	public void init() {
+	public void init() throws Exception   {
 		if (this.isInitialized) {
 			return;
 		}
@@ -90,7 +89,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList(){
+	public List<BioSeq> getChromosomeList() throws Exception   {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
 		Collections.sort(chromosomeList,new BioSeqComparator());
@@ -98,7 +97,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 
 	@Override
-	public List<SeqSymmetry> getGenome() {
+	public List<SeqSymmetry> getGenome() throws Exception   {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
@@ -110,19 +109,19 @@ public class BED extends SymLoader implements LineProcessor{
 
 
 	@Override
-	public List<SeqSymmetry> getChromosome(BioSeq seq) {
+	public List<SeqSymmetry> getChromosome(BioSeq seq) throws Exception   {
 		init();
 		return parse(seq,seq.getMin(),seq.getMax());
 	}
 
 
 	@Override
-	public List<SeqSymmetry> getRegion(SeqSpan span) {
+	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception   {
 		init();
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
-	private List<SeqSymmetry> parse(BioSeq seq, int min, int max){
+	private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception   {
 		InputStream istr = null;
 		try {
 			File file = chrList.get(seq);
@@ -133,12 +132,11 @@ public class BED extends SymLoader implements LineProcessor{
 			}
 			istr = new FileInputStream(file);
 			return parse(istr, isSorted, min, max);
-		}catch (Exception ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
-		return Collections.<SeqSymmetry>emptyList();
 	}
 
 	private List<SeqSymmetry> parse(InputStream istr, boolean isSorted, int min, int max)
@@ -227,17 +225,11 @@ public class BED extends SymLoader implements LineProcessor{
 				throw new UnsupportedOperationException();
 			}
 		};
-		try {
-			parse(it, true, 0, Integer.MAX_VALUE);
-			return symlist;
-		} catch (Exception ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
-		} 
-		
-		return Collections.<SeqSymmetry>emptyList();
+		parse(it, true, 0, Integer.MAX_VALUE);
+		return symlist;
 	}
 
-	private void parse(Iterator<String> it, boolean isSorted, int min, int max) throws NumberFormatException, IOException{
+	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
 		seq2types.clear();
 		symlist.clear();
 		String line;
@@ -275,8 +267,7 @@ public class BED extends SymLoader implements LineProcessor{
 		}
 	}
 	
-	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum)
-			throws NumberFormatException, IOException {
+	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum) {
 		String[] fields = line_regex.split(line);
 		int field_count = fields.length;
 		if (field_count < 3) {
@@ -417,7 +408,7 @@ public class BED extends SymLoader implements LineProcessor{
 			try {
 				c = TrackLineParser.reformatColor(itemRgb);
 			} catch (Exception e) {
-				throw new IOException("Could not parse a color from String '" + itemRgb + "'");
+				Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String '" + itemRgb + "'");
 			}
 			if (c != null) {
 				bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
@@ -703,7 +694,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 	
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception    {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -779,9 +770,9 @@ public class BED extends SymLoader implements LineProcessor{
 
 			return !thread.isInterrupted();
 
-		} catch (IOException ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
-		}finally{
+		} catch (Exception ex){
+			throw ex;
+		} finally{
 			for (BufferedWriter b : chrs.values()) {
 				GeneralUtils.safeClose(b);
 			}
@@ -789,7 +780,6 @@ public class BED extends SymLoader implements LineProcessor{
 			GeneralUtils.safeClose(bw);
 		}
 		
-		return false;
 	}
 
 

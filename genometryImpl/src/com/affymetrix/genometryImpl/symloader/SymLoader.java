@@ -70,7 +70,7 @@ public abstract class SymLoader {
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
     }
 
-	protected void init() {
+	protected void init() throws Exception {
 		this.isInitialized = true;
 	}
 
@@ -82,7 +82,7 @@ public abstract class SymLoader {
 		return featureName;
 	}
 
-	protected boolean buildIndex(){
+	protected boolean buildIndex() throws Exception {
 		BufferedInputStream bis = null;
 		Map<String, Integer> chrLength = new HashMap<String, Integer>();
 		Map<String, File> chrFiles = new HashMap<String, File>();
@@ -94,15 +94,15 @@ public abstract class SymLoader {
 				Logger.getLogger(SymLoader.class.getName()).fine("Indexing successful");
 				return true;
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} catch(Exception ex){
+			throw ex;
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}
 		return false;
 	}
 
-	protected void sortCreatedFiles(){
+	protected void sortCreatedFiles() throws Exception {
 		//Now Sort all files
 		for (Entry<BioSeq, File> file : chrList.entrySet()) {
 			chrSort.put(file.getKey(), SortTabFile.sort(file.getValue()));
@@ -120,40 +120,36 @@ public abstract class SymLoader {
 	 * Especially useful when loading a file into an "unknown" genome
 	 * @return List of chromosomes
 	 */
-	public List<BioSeq> getChromosomeList() {
+	public List<BioSeq> getChromosomeList() throws Exception {
 		return Collections.<BioSeq>emptyList();
 	}
 	
     /**
      * @return List of symmetries in genome
      */
-    public List<? extends SeqSymmetry> getGenome() {
+    public List<? extends SeqSymmetry> getGenome() throws Exception {
+
+		BufferedInputStream bis = null;
 		try {
-			BufferedInputStream bis = null;
-			try {
-				// This will also unzip the stream if necessary
-				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				return parse(bis, false);
-			} catch (FileNotFoundException ex) {
-				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(bis);
-			}
-			return null;
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			// This will also unzip the stream if necessary
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
+			return parse(bis, false);
+		} catch(Exception ex){
+			throw ex;
+		} finally {
+			GeneralUtils.safeClose(bis);
 		}
 
-		Logger.getLogger(this.getClass().getName()).log(
-					Level.SEVERE, "Retrieving genome is not defined");
-        return null;
-    }
+		//Logger.getLogger(this.getClass().getName()).log(
+		//		Level.SEVERE, "Retrieving genome is not defined");
+		//return null;
+	}
 
     /**
      * @param seq - chromosome
      * @return List of symmetries in chromosome
      */
-    public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+    public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception {
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.FINE, "Retrieving chromosome is not optimized");
 		List<? extends SeqSymmetry> genomeResults = this.getGenome();
@@ -199,7 +195,7 @@ public abstract class SymLoader {
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */
-    public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
+    public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
 		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
@@ -211,13 +207,13 @@ public abstract class SymLoader {
      * @param span - span of chromosome
      * @return String of residues
      */
-    public String getRegionResidues(SeqSpan span) {
+    public String getRegionResidues(SeqSpan span) throws Exception {
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Not supported.  Returning empty string.");
 		return "";
     }
 
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.SEVERE, "parseLines is not defined");
 		return false;
@@ -347,7 +343,7 @@ public abstract class SymLoader {
 		return newSyms;
 	}
 
-	public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID){
+	public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID) throws Exception {
 		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup(groupID);
 		SymLoader temp = new SymLoader(uri, featureName, temp_group) {};
 		List<? extends SeqSymmetry> syms = temp.getGenome();

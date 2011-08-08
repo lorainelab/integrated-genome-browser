@@ -728,7 +728,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
-		style.setShow2Tracks(1);
+		style.setGlyphDepth(1);
 		style.setSeparate(false); // there are not separate (+) and (-) strands
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
@@ -766,7 +766,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
-		style.setShow2Tracks(1);
+		style.setGlyphDepth(1);
 		style.setSeparate(false); // there are not separate (+) and (-) strands
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful

@@ -50,7 +50,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Color background = default_background;
 	private String label_field = default_label_field;
 	private DIRECTION_TYPE direction_type = default_direction_type;
-	private int show2tracks = default_show2tracks;
+	private int glyph_depth = default_glyphDepth;
 	private double height = default_height;
 	private double y = default_y;
 	private Color start_color = default_start;
@@ -229,7 +229,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
 		
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
-		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
+		glyph_depth = node.getInt(PREF_SHOW2TRACKS, this.getGlyphDepth());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
 		view_mode = node.get(PREF_VIEW_MODE, this.getViewMode());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
@@ -269,11 +269,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null) {
-			int prev_glyph_depth = show2tracks;
+			int prev_glyph_depth = glyph_depth;
 			try {
-				show2tracks = Integer.parseInt(gdepth_string);
+				glyph_depth = Integer.parseInt(gdepth_string);
 			} catch (Exception ex) {
-				show2tracks = prev_glyph_depth;
+				glyph_depth = prev_glyph_depth;
 			}
 		}
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
@@ -362,7 +362,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		foreground = template.getForeground();
 		background = template.getBackground();
 		label_field = template.getLabelField();
-		show2tracks = template.getShow2Tracks();  // depth of visible glyph tree
+		glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
 		track_name_size = template.getTrackNameSize();
 		start_color = template.getForwardColor();
 		end_color = template.getReverseColor();
@@ -578,13 +578,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
-	public int getShow2Tracks() {
-		return show2tracks;
+	public int getGlyphDepth() {
+		return glyph_depth;
 	}
 
-	public void setShow2Tracks(int i) {
-		if (show2tracks != i) {
-			show2tracks = i;
+	public void setGlyphDepth(int i) {
+		if (glyph_depth != i) {
+			glyph_depth = i;
 			if (getNode() != null) {
 				if (DEBUG_NODE_PUTS) {
 					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + track_name + ", " + i);
@@ -793,7 +793,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (g instanceof ITrackStyleExtended) {
 			ITrackStyleExtended as = (ITrackStyleExtended) g;
 			setColorByScore(as.getColorByScore());
-			setShow2Tracks(as.getShow2Tracks());
+			setGlyphDepth(as.getGlyphDepth());
 			setLabelField(as.getLabelField());
 			setSeparate(as.getSeparate());
 		}

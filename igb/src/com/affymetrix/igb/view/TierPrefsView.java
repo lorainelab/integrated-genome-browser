@@ -828,12 +828,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private void applyChanges() {
 		refreshSeqMapView();
 	}
-	
-	public void externalChange(){
-	model.fireTableDataChanged();
-	setSelectedRows();
+
+	public void externalChange() {
+		model.fireTableDataChanged();
+		setSelectedRows();
 	}
-	
 
 	/** Called when the user selects a row of the table.
 	 * @param evt
@@ -885,6 +884,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			} else {
 				viewModeCB.setSelectedItem(view_mode);
 			}
+			int connected = selectedStyle.getGlyphDepth();
+			boolean isConnected = true;
+			if (connected == 1) {
+				isConnected = false;
+			}
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -892,7 +896,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
 			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-			connectedCheckBox.setSelected(selectedStyle.getExpandable());
+			connectedCheckBox.setSelected(isConnected);
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -1112,9 +1116,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 							break;
 						case COL_CONNECTED:
 							if (Boolean.TRUE.equals(value)) {
-								style.setShow2Tracks(2);
+								style.setGlyphDepth(2);
 							} else {
-								style.setShow2Tracks(1);
+								style.setGlyphDepth(1);
 							}
 							break;
 						case COL_COLLAPSED:

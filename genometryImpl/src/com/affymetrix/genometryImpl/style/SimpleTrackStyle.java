@@ -34,8 +34,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public Color getScoreColor(float f) { return getForeground(); }
 
 	int depth=2;
-	public void setShow2Tracks(int i) {this.depth = i;}
-	public int getShow2Tracks() {return this.depth;}
+	public void setGlyphDepth(int i) {this.depth = i;}
+	public int getGlyphDepth() {return this.depth;}
 
 	boolean separate = true;
 	public void setSeparate(boolean b) { this.separate = b; }
@@ -52,7 +52,7 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 				ITrackStyleExtended as = (ITrackStyleExtended) g;
 				setUrl(as.getUrl());
 				setColorByScore(as.getColorByScore());
-				setShow2Tracks(as.getShow2Tracks());
+				setGlyphDepth(as.getGlyphDepth());
 				setSeparate(as.getSeparate());
 				setLabelField(as.getLabelField());
 			}

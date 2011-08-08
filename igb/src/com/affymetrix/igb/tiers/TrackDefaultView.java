@@ -714,6 +714,11 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 				removeTrackDefaultButton.setEnabled(false);
 			}
+			int connected = selectedStyle.getGlyphDepth();
+			boolean isConnected = true;
+			if (connected == 1) {
+				isConnected = false;
+			}			
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
@@ -722,8 +727,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getShow());
-			connectedCheckBox.setSelected(selectedStyle.getSeparate());
+			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
+			connectedCheckBox.setSelected(isConnected);
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -951,9 +956,9 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 						case COL_CONNECTED:
 							if (style.equals(default_annot_style)) {
 								if (Boolean.TRUE.equals(value)) {
-									style.setShow2Tracks(2);
+									style.setGlyphDepth(2);
 								} else {
-									style.setShow2Tracks(1);
+									style.setGlyphDepth(1);
 								}
 							} else {
 								if (Boolean.TRUE.equals(value)) {

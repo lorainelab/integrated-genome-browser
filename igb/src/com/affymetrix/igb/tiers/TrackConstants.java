@@ -42,7 +42,7 @@ public interface TrackConstants {
 	static final Color default_end = new Color(51,255,255);
 	static final String default_label_field = "";
 	static final String default_view_mode = "default";
-	static final int default_show2tracks = 2;
+	static final int default_glyphDepth = 2;
 	static final double default_height = 20.0;
 	static final double default_y = 0.0;
 	static final float default_track_name_size = 12;

@@ -30,6 +30,9 @@ import com.affymetrix.igb.util.ColorUtils;
 /**
  *
  * @author lorainelab
+ * Please be aware that any changes to the design from the gui builder will
+ * result in two variables being generated which must be manually removed to prevent bugs on windows machines
+ * jProgressBar1 and colorChooserPanel1
  */
 public class OtherOptions extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener  {
 	
@@ -66,8 +69,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jProgressBar1 = new javax.swing.JProgressBar();
-        colorChooserPanel1 = new com.jidesoft.combobox.ColorChooserPanel();
         coordinatePanel = new javax.swing.JPanel();
         backgroundLabel = new javax.swing.JLabel();
         foregroundLabel = new javax.swing.JLabel();
@@ -252,16 +253,21 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(keepZoomStripeCheckBox)
                             .add(showZoomStripLabelCheckBox)
-                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                .add(askBeforeExitCheckBox)
-                                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                                .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(confirmBeforeDeleteCheckBox)
                             .add(confirmBeforeLoadingCheckBox)
-                            .add(confirmBeforeDeleteCheckBox)))
+                            .add(askBeforeExitCheckBox)))
                     .add(layout.createSequentialGroup()
                         .add(65, 65, 65)
-                        .add(clear_prefsB)))
+                        .add(clear_prefsB))
+                    .add(layout.createSequentialGroup()
+                        .add(20, 20, 20)
+                        .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(20, 20, 20)
+                        .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(20, 20, 20)
+                        .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -305,7 +311,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
-    private com.jidesoft.combobox.ColorChooserPanel colorChooserPanel1;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
     private javax.swing.JCheckBox confirmBeforeLoadingCheckBox;
     private javax.swing.JPanel coordinatePanel;
@@ -314,7 +319,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel foregroundLabel;
     private javax.swing.JLabel gLabel;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JCheckBox keepZoomStripeCheckBox;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JPanel orfAnalyzerPanel;

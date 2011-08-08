@@ -85,8 +85,8 @@ public class TierAnnotationOperationAction extends AbstractAction {
 		sym.setProperty("method", unique_name);
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
-		style.setShow2Tracks(1);
-		style.setSeparate(false); // there are not separate (+) and (-) strands
+		style.setConnected(false);
+		style.setShow2Tracks(false); // there are not separate (+) and (-) strands
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		return style;
 	}

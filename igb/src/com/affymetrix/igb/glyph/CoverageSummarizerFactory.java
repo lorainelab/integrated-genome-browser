@@ -104,7 +104,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 		// initializing list internal array length to child count to reduce list expansions...
 		List<SeqSpan> leaf_spans = null;
 		
-		if(annot_style != null && annot_style.getSeparate()){
+		if(annot_style != null && annot_style.getShow2Tracks()){
 			leaf_spans = new ArrayList<SeqSpan>(child_count/2);
 			SeqUtils.collectLeafSpans(tsym, coordseq, true, leaf_spans);
 			addCoverageGlyph(background_color, leaf_spans, glyph_color, style, coordseq, glyph_height, ftier, gviewer, tsym);

@@ -345,7 +345,7 @@ public final class ScoredIntervalParser implements GraphParser {
 			container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 			// Force the AnnotStyle for the container to have glyph depth of 1
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(unique_container_name);
-			style.setShow2Tracks(1);
+			style.setConnected(false);
 			List<SinEntry> entry_list = seq2sinentries.get(aseq);
 			int entry_count = entry_list.size();
 			for (SinEntry entry : entry_list) {

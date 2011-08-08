@@ -302,7 +302,7 @@ public final class ChpParser {
 		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
-		style.setShow2Tracks(1);
+		style.setConnected(false);
 
 		List<LazyChpSym> results = new ArrayList<LazyChpSym>();
 		int scount = group.getSeqCount();
@@ -446,7 +446,7 @@ public final class ChpParser {
 		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
-		style.setShow2Tracks(1);
+		style.setConnected(false);
 
 		// now for each sequence seen, sort the SinEntry list by span min/max
 		ScoreEntryComparator comp = new ScoreEntryComparator();

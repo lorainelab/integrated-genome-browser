@@ -18,7 +18,7 @@ public final class CoordinateStyle {
 		}
 
 		@Override
-		public boolean getSeparate() {
+		public boolean getShow2Tracks() {
 			return false;
 		}
 

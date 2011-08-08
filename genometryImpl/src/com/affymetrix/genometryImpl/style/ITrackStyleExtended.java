@@ -24,13 +24,13 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	Color getScoreColor(float f);
 
 	/** Controls a parameter of the GenericAnnotGlyphFactory. */
-	void setShow2Tracks(int i);
+	void setConnected(boolean b);
 	/** Returns a parameter useb by the GenericAnnotGlyphFactory. */
-	int getShow2Tracks();
+	boolean getConnected();
 
 	/** Controls whether plus and minus strands will be drawn separately. */
-	void setSeparate(boolean b);
-	boolean getSeparate();
+	void setShow2Tracks(boolean b);
+	boolean getShow2Tracks();
 
 	/** Determines which data field in the symmetries will be used to pick the labels. */
 	void setLabelField(String s);

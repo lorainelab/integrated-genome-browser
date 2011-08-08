@@ -70,17 +70,17 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
 	private final Class parent_labelled_glyph_class;
-	
+
 	public GenericAnnotGlyphFactory() {
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
 		parent_labelled_glyph_class = default_elabelled_parent_class;
 	}
 
-	public String getName(){
+	public String getName() {
 		return "annots";
 	}
-	
+
 	public void init(Map options) {
 		if (DEBUG) {
 			System.out.println("     @@@@@@@@@@@@@     in GenericAnnotGlyphFactory.init(), props: " + options);
@@ -108,7 +108,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				child_glyph_class = default_echild_class;
 			}
 		}
-		
+
 	}
 
 	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
@@ -117,13 +117,19 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		String meth = BioSeq.determineMethod(sym);
 
 		if (meth != null) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
-			int glyph_depth = style.getShow2Tracks();
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			boolean connected = style.getConnected();
+			int glyph_depth;
+			if (connected) {
+				glyph_depth = 2;
+			} else {
+				glyph_depth = 1;
+			}
 
 			TierGlyph[] tiers = smv.getTiers(false, style, true);
 			tiers[0].setInfo(sym);
 			tiers[1].setInfo(sym);
-			if (style.getSeparate()) {
+			if (style.getShow2Tracks()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
 			} else {
 				// use only one tier
@@ -137,7 +143,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 	}
-		
+
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
 		SeqSymmetry current = sym;
@@ -260,11 +266,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (original instanceof SymWithProps) {
 			Object ret = ((SymWithProps) original).getProperty(prop);
 
-			if(ret == null || ret.toString().length() == 0){
+			if (ret == null || ret.toString().length() == 0) {
 				ret = ((SymWithProps) original).getProperty(prop.toLowerCase());
 			}
 
-			if(ret == null || ret.toString().length() == 0){
+			if (ret == null || ret.toString().length() == 0) {
 				ret = ((SymWithProps) original).getProperty(prop.toUpperCase());
 			}
 
@@ -319,53 +325,55 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
 				gviewer.setDataModelFromOriginalSym(cglyph, child);
-				
+
 //				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
 //					addCdsColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
 //				}
-				
+
 				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
-				if(alignResidueGlyph != null){
+				if (alignResidueGlyph != null) {
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 					gviewer.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
 				}
-				
-				if(cglyph instanceof DirectedGlyph){
-					((DirectedGlyph)cglyph).setForward(cspan.isForward());
+
+				if (cglyph instanceof DirectedGlyph) {
+					((DirectedGlyph) cglyph).setForward(cspan.isForward());
 				}
 				GlyphProcessorHolder.getInstance().fireProcessGlyph(cglyph);
 			}
 		}
-				
-		
-		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0, 
-			DEFAULT_THIN_HEIGHT, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
-		
+
+
+		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0,
+				DEFAULT_THIN_HEIGHT, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
+
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
 
-	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
-			throws InstantiationException, IllegalAccessException{
-		
-		if (cspan.getLength() == 0) 
+	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type)
+			throws InstantiationException, IllegalAccessException {
+
+		if (cspan.getLength() == 0) {
 			return new DeletionGlyph();
-		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
-				(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH))
+		} else if (((isLast && cspan.isForward()) || (isFirst && !cspan.isForward()))
+				&& (direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH)) {
 			return new PointedGlyph();
-			
+		}
+
 		return (GlyphI) child_glyph_class.newInstance();
 	}
-		
+
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, DIRECTION_TYPE direction_type) {
-		if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
-			if(isForward)
+		if (direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH) {
+			if (isForward) {
 				return style.getForwardColor();
+			}
 			return style.getReverseColor();
 		}
-		
+
 		boolean use_score_colors = style.getColorByScore();
 		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
 
@@ -456,17 +464,17 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				}
 			}
 		}
-		
+
 	}
-	
-	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color){
+
+	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color) {
 		FillRectGlyph gl = new FillRectGlyph();
 		gl.setHitable(false);
 		gl.setColor(color);
 		gl.setCoords(start, 0, length, DEFAULT_THICK_HEIGHT);
 		pglyph.addChild(gl);
 	}
-	
+
 	/**
 	 * Determine and set the appropriate residues for this element.
 	 * @param sym
@@ -482,7 +490,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (!(sym instanceof SymWithResidues)) {
 			return null;
 		}
-		
+
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
 			return null;
@@ -493,7 +501,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (residueStr == null || residueStr.length() == 0) {
 			return null;
 		}
-		
+
 		AlignedResidueGlyph csg = new AlignedResidueGlyph();
 		csg.setResidues(residueStr);
 		String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
@@ -501,9 +509,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			csg.setResidueMask(bioSeqResidue);
 		}
 		csg.setHitable(false);
-		
+
 		return csg;
-		
+
 		// SEQ array has unexpected behavior;  commenting out for now.
 			/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
 		byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
@@ -513,19 +521,20 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		System.out.println();
 		isg.setResidueMask(seqArr);
 		}*/
-		
+
 	}
-	
+
 	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph)
 			throws IllegalAccessException, InstantiationException {
-		
+
 		if (!(sym instanceof BAMSym)) {
 			return;
 		}
 
-		BAMSym inssym = (BAMSym)sym;
-		if(inssym.getInsChildCount() == 0)
+		BAMSym inssym = (BAMSym) sym;
+		if (inssym.getInsChildCount() == 0) {
 			return;
+		}
 
 		BioSeq coordseq = gviewer.getViewSeq();
 		SeqSymmetry psym = inssym;
@@ -533,27 +542,27 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			psym = gviewer.transformForViewSeq(inssym, annotseq);
 		}
 		SeqSpan pspan = gviewer.getViewSeqSpan(psym);
-		
+
 		Color color = Color.RED;
 
 		for (int i = 0; i < inssym.getInsChildCount(); i++) {
 
 			SeqSymmetry childsym = inssym.getInsChild(i);
 			SeqSymmetry dsym = childsym;
-			
+
 			if (annotseq != coordseq) {
 				dsym = gviewer.transformForViewSeq(childsym, annotseq);
 			}
 			SeqSpan dspan = gviewer.getViewSeqSpan(dsym);
 			SeqSpan ispan = childsym.getSpan(annotseq);
 
-			if(ispan == null || dspan == null){
+			if (ispan == null || dspan == null) {
 				continue;
 			}
 
 			InsertionSeqGlyph isg = new InsertionSeqGlyph();
 			isg.setSelectable(true);
-			String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1); 
+			String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
 			isg.setResidues(residues);
 			isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_THICK_HEIGHT);
 			isg.setColor(color);
@@ -562,5 +571,4 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			gviewer.setDataModelFromOriginalSym(isg, childsym);
 		}
 	}
-
 }

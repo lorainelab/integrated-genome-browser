@@ -891,8 +891,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-			connectedCheckBox.setSelected(selectedStyle.getExpandable());
+			show2TracksCheckBox.setSelected(selectedStyle.getShow2Tracks());
+			connectedCheckBox.setSelected(selectedStyle.getConnected());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -1108,14 +1108,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case COL_SHOW2TRACKS:
-							style.setSeparate(((Boolean) value).booleanValue());
+							style.setShow2Tracks(((Boolean) value).booleanValue());
 							break;
 						case COL_CONNECTED:
-							if (Boolean.TRUE.equals(value)) {
-								style.setShow2Tracks(2);
-							} else {
-								style.setShow2Tracks(1);
-							}
+							style.setConnected(((Boolean) value).booleanValue());
 							break;
 						case COL_COLLAPSED:
 							style.setCollapsed(((Boolean) value).booleanValue());

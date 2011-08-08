@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExportSlicedViewAction;
@@ -57,7 +58,6 @@ public class ScriptFileLoader {
 		}
 	};
 
-
 	public static String getScriptFileStr(String[] args) {
 		if (args == null) {
 			return null;
@@ -76,10 +76,54 @@ public class ScriptFileLoader {
 	}
 
 	/**
+	 * @param fileName the name of the file
+	 * @return true if the specified file is a script file, false otherwise
+	 */
+	public static boolean isScript(String fileName) {
+		return fileName.toLowerCase().endsWith(".igb") || fileName.toLowerCase().endsWith(".py");
+	}
+
+	public static boolean runScript(String fileName) {
+		if (!isScript(fileName)) {
+			return false;
+		}
+		else if (fileName.toLowerCase().endsWith(".igb")) {
+			// response file.  Do its actions and return.
+			// Potential for an infinite loop here, of course.
+			doActions(fileName);
+		}
+		else if (fileName.toLowerCase().endsWith(".py")) { // python script
+			doPython(fileName);
+		}
+		return true;
+	}
+
+	/**
 	 * Done in a thread to avoid GUI lockup.
 	 * @param batchFileStr
 	 */
-	public static void doActions(final String batchFileStr) {
+	private static void doPython(String fileName) {
+		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
+		(new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				try {
+					IGB.getSingleton().addNotLockedUpMsg("Executing script: " + scriptFileName);
+					RecordPlaybackHolder.getInstance().runScript(scriptFileName);
+				} finally {
+					IGB.getSingleton().removeNotLockedUpMsg("Executing script: " + scriptFileName);
+				}
+				return null;
+			}
+		}).execute();
+		return;
+	}
+
+	/**
+	 * Done in a thread to avoid GUI lockup.
+	 * @param batchFileStr
+	 */
+	private static void doActions(final String batchFileStr) {
 		Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
@@ -128,7 +172,6 @@ public class ScriptFileLoader {
 			GeneralUtils.safeClose(br);
 		}
 	}
-
 
 	/**
 	 * Read and execute the actions from the stream.

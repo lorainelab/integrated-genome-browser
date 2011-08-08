@@ -326,7 +326,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void doActions(String batchFileStr) {
-		ScriptFileLoader.doActions(batchFileStr);
+		ScriptFileLoader.runScript(batchFileStr);
 	}
 
 	@Override

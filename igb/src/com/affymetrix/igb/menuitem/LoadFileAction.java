@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
@@ -45,9 +44,7 @@ import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -179,26 +176,8 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName) {
-		if (uri.toString().toLowerCase().endsWith(".igb")) {
-			// response file.  Do its actions and return.
-			// Potential for an infinite loop here, of course.
-			ScriptFileLoader.doActions(uri.toString());
-			return;
-		}
-		if (uri.toString().toLowerCase().endsWith(".py")) { // python script
-			final String scriptFileName = uri.toString().startsWith("file:") ? uri.toString().substring("file:".length()) : uri.toString();
-			(new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() throws Exception {
-					try {
-						IGB.getSingleton().addNotLockedUpMsg("Executing script: " + scriptFileName);
-						RecordPlaybackHolder.getInstance().runScript(scriptFileName);
-					} finally {
-						IGB.getSingleton().removeNotLockedUpMsg("Executing script: " + scriptFileName);
-					}
-					return null;
-				}
-			}).execute();
+		if (ScriptFileLoader.isScript(uri.toString())) {
+			ScriptFileLoader.runScript(uri.toString());
 			return;
 		}
 		// If server requires authentication then.

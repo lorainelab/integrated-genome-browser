@@ -302,7 +302,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				igbService.setCommandLineBatchFileStr(null);	// we're not using this again!
 				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
-				ScriptFileLoader.doActions(batchFile);
+				ScriptFileLoader.runScript(batchFile);
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;

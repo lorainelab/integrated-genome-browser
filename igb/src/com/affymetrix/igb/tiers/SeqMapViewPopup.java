@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.FeatureInfoAction;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -240,6 +241,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			addMisMatchTier(current_tier, "mismatch");
 		}
 	};
+	
+	private final Action mismatch_pileup_action = new AbstractAction("Make Mismatch Pileup Graph") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
+		}
+	};
+	
 	private final Action save_bed_action = new AbstractAction("Save track as BED file") {
 
 		private static final long serialVersionUID = 1L;
@@ -1003,6 +1019,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					String file_type = ((ITrackStyleExtended) style).getFileType();
 					if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
 						popup.add(mismatch_action);
+						popup.add(mismatch_pileup_action);
 					}
 				}
 				if (feature.friendlyURL != null) {

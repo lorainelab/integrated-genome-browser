@@ -11,9 +11,12 @@ import com.affymetrix.igb.shared.GraphGlyph;
 
 public class GlyphProcessorHolder {
 	private static GlyphProcessorHolder instance = new GlyphProcessorHolder();
+	
 	private GlyphProcessorHolder() {
 		super();
+		addGlyphProcessor(new MismatchPileupGlyphProcessor());
 	}
+	
 	public static GlyphProcessorHolder getInstance() {
 		return instance;
 	}

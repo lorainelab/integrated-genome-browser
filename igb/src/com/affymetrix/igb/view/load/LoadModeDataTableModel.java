@@ -207,11 +207,14 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			}
 			return "";
 		}
+		
 		VirtualFeature vFeature;
+		ITrackStyle style;
 		if (getFeature(row) == null) {
 			return "";
 		} else {
 			vFeature = getFeature(row);
+			style = vFeature.getStyle();
 		}
 
 		switch (col) {
@@ -234,22 +237,22 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				}
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
-				if (vFeature.getStyle() == null) {
+				if (style == null) {
 					return "Data Not Loaded.";
 				} else if (vFeature.isParent) {
 					return "No Data at this location";
 				}
-				return vFeature.getStyle().getTrackName();
+				return style.getTrackName();
 			case BACKGROUND_COLUMN:
-				if (vFeature.getStyle() == null || vFeature.isParent) {
+				if (style == null || vFeature.isParent) {
 					return Color.WHITE;
 				}
-				return vFeature.getStyle().getBackground();
+				return style.getBackground();
 			case FOREGROUND_COLUMN:
-				if (vFeature.getStyle() == null || vFeature.isParent) {
+				if (style == null || vFeature.isParent) {
 					return Color.WHITE;
 				}
-				return vFeature.getStyle().getForeground();
+				return style.getForeground();
 			case DELETE_FEATURE_COLUMN:
 				return "";
 			case HIDE_FEATURE_COLUMN:
@@ -273,7 +276,8 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		VirtualFeature vFeature = virtualFeatures.get(row);
 		if ((vFeature.getStyle() == null || vFeature.isParent)
 				&& (col == TRACK_NAME_COLUMN
-				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN)) {
+				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN ||
+				col == HIDE_FEATURE_COLUMN)) {
 			return false;
 		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
@@ -343,7 +347,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				}
 				break;
 			case HIDE_FEATURE_COLUMN:
-				setVisibleTracks(vFeature.getStyle());
+				setVisibleTracks(vFeature.getStyle());				
 				break;
 			case BACKGROUND_COLUMN:
 				vFeature.getStyle().setBackground((Color) value);

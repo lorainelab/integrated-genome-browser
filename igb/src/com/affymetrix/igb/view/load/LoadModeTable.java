@@ -82,14 +82,16 @@ public final class LoadModeTable {
 		RowEditorModel color = new RowEditorModel(featureSize);
 
 		// tell the JTableX which RowEditorModel we are using
-		table.setRowEditorModel(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN, choices);
-		table.setRowEditorModel(LoadModeDataTableModel.DELETE_FEATURE_COLUMN, action);
+		table.setRowEditorModel(LoadModeDataTableModel.INFO_FEATURE_COLUMN, action);
 		table.setRowEditorModel(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN, action);
 		table.setRowEditorModel(LoadModeDataTableModel.HIDE_FEATURE_COLUMN, action);
-		table.setRowEditorModel(LoadModeDataTableModel.TRACK_NAME_COLUMN, text);
 		table.setRowEditorModel(LoadModeDataTableModel.BACKGROUND_COLUMN, color);
 		table.setRowEditorModel(LoadModeDataTableModel.FOREGROUND_COLUMN, color);
-		table.setRowEditorModel(LoadModeDataTableModel.INFO_FEATURE_COLUMN, action);
+		table.setRowEditorModel(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN, choices);
+		table.setRowEditorModel(LoadModeDataTableModel.FEATURE_NAME_COLUMN, text);
+		table.setRowEditorModel(LoadModeDataTableModel.TRACK_NAME_COLUMN, text);
+		table.setRowEditorModel(LoadModeDataTableModel.DELETE_FEATURE_COLUMN, action);
+
 
 
 
@@ -140,7 +142,6 @@ public final class LoadModeTable {
 		c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
-		//c.setCellRenderer(new LabelTableCellRenderer(null, false));
 		c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);
@@ -187,14 +188,14 @@ class JTableX extends JTable implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
+		"File Status Information",
 		"Hide All",
 		"Refresh All",
-		"File Status Information",
+		"Background Color",
+		"Foreground Color",
 		"Load Strategy",
 		"Feature Name",
 		"Track Name",
-		"Background Color",
-		"Foreground Color",
 		"Delete All"
 	};
 	private final Map<Integer, RowEditorModel> rmMap;
@@ -221,6 +222,7 @@ class JTableX extends JTable implements MouseListener {
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
 		if (rmMap != null) {
+
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
 				return tmpEditor;
@@ -397,7 +399,7 @@ class JTableX extends JTable implements MouseListener {
 				ftm.fireTableDataChanged();
 				break;
 			default:
-				//System.out.println("Unknown header selected: " + realIndex);
+			//System.out.println("Unknown header selected: " + realIndex);
 		}
 	}
 

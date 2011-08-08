@@ -718,7 +718,9 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			boolean isConnected = true;
 			if (connected == 1) {
 				isConnected = false;
-			}			
+			} else if (connected == 2) {
+				isConnected = true;
+			}
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			trackDefaultTextField.setText(selectedStyle.getTrackName());

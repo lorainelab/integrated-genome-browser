@@ -2358,7 +2358,8 @@ public class GenoPubServlet extends HttpServlet {
 			UnloadAnnotation unload = new UnloadAnnotation();
 			unload.setTypeName(typeName);
 			unload.setIdUser(this.genoPubSecurity.getIdUser());
-			sess.save(unload);
+      unload.setIdGenomeVersion(annotation.getIdGenomeVersion());
+      sess.save(unload);
 
 
 			// Remove the annotation grouping the annotation was in
@@ -3304,12 +3305,6 @@ public class GenoPubServlet extends HttpServlet {
 		while (cIt.hasNext()) collaborators.add((User)cIt.next());
 		dup.setCollaborators(collaborators);
 		
-		//groupings?
-		Set<AnnotationGrouping>  annotationGroupings= new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
-		Iterator<?> aIt = sourceAnnot.getAnnotationGroupings().iterator();
-		while (aIt.hasNext()) annotationGroupings.add((AnnotationGrouping)aIt.next());
-		dup.setAnnotationGroupings(annotationGroupings);
-
 		//is this needed?
 		sess.save(dup);
 		sess.flush();

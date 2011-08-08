@@ -232,6 +232,7 @@ public final class GenericFeature {
 			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.serverType);
 			currentRequestSym.removeChildren();
 		}
+		methods.clear();
 		this.setInvisible();
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}

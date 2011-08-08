@@ -219,12 +219,9 @@ public abstract class BookmarkController {
 						continue;
 					}
 					style.setTrackName(sym_name);
-					if (view_mode != null) {
-						style.setViewMode(view_mode);
-					}
 				}
 
-				applyStyleProperties(style, col, bg_col, ypos, yheight);
+				applyStyleProperties(style, col, bg_col, ypos, yheight, view_mode);
 
 			}
 
@@ -235,11 +232,14 @@ public abstract class BookmarkController {
 		}
 	}
 
- private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight){
+ private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight, String view_mode){
 	tier_style.setForeground(col);
 	tier_style.setBackground(bg_col);
 	tier_style.setY(ypos);
 	tier_style.setHeight(yheight);
+	if (tier_style instanceof ITrackStyleExtended) {
+		((ITrackStyleExtended)tier_style).setViewMode(view_mode);
+	}
  }
 
  private static void applyGraphProperties(IGBService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
@@ -392,6 +392,7 @@ public abstract class BookmarkController {
 		mark_sym.setProperty(SYM.COL.toString() + i, sixDigitHex(style.getForeground()));
 		mark_sym.setProperty(SYM.BG.toString() + i, sixDigitHex(style.getBackground()));
 		mark_sym.setProperty(SYM.NAME.toString() + i, name);
+		mark_sym.setProperty(SYM.VIEW_MODE.toString() + i, style.getViewMode());
 	}
 
   /**

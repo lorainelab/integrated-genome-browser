@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
@@ -551,7 +552,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			leafCheckBox.setText(featureText);
 			leafCheckBox.setToolTipText(gFeature.description());
 			leafCheckBox.setSelected(isChecked);
-			leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
+			//leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
 			if (selected) {
 				leafCheckBox.setForeground(selectionForeground);
 				leafCheckBox.setBackground(selectionBackground);
@@ -625,18 +626,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			ItemListener itemListener = new ItemListener() {
 
 				public void itemStateChanged(ItemEvent itemEvent) {
-					Object nodeData = editedNode.getUserObject();
-					if (nodeData instanceof TreeNodeUserInfo) {
-						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
-					}
-					if (nodeData instanceof GenericFeature) {
-						GenericFeature feature = (GenericFeature)nodeData;
-						feature.setVisible();
-						GeneralLoadView.getLoadView().createFeaturesTable();
-						List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
-						loadStrategies.add(LoadStrategy.GENOME);
-						GeneralLoadView.loadFeature(loadStrategies, feature, null);
-					}
 					tree.repaint();
 					fireEditingStopped();
 				}
@@ -652,7 +641,33 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 			Object nodeData = editedNode.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
+				
 				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
+				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+				if (tn.genericObject instanceof GenericFeature) {
+					GenericFeature feature = (GenericFeature) tn.genericObject;
+					if (checkbox.isSelected()) {
+						feature.setVisible();
+						GeneralLoadView.getLoadView().createFeaturesTable();
+						List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+						loadStrategies.add(LoadStrategy.GENOME);
+						GeneralLoadView.loadFeature(loadStrategies, feature, null);
+					} else {
+						if(feature.getMethods().isEmpty()){
+							feature.clear();
+							GeneralLoadView.getLoadView().createFeaturesTable();
+							return nodeData;
+						}
+						
+						String message = "Unchecking "+ feature.featureName +" will remove all loaded data. \nDo you want to continue? ";
+						if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+								PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+							GeneralLoadView.getLoadView().removeFeature(feature, true);
+						}else{
+							tn.setChecked(true);
+						}
+					}
+				}
 			}
 			return nodeData;
 		}
@@ -678,9 +693,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		}
 
 		public void setChecked(boolean newValue) {
-			if (!checked) {
-				checked = newValue;
-			}
+			checked = newValue;
 		}
 	}
 }

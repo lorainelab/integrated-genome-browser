@@ -181,7 +181,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
-		featuresPanel.add(new JLabel(IGBConstants.BUNDLE.getString("chooseLoadMode")));
+		//featuresPanel.add(new JLabel(IGBConstants.BUNDLE.getString("chooseLoadMode")));
 		featuresPanel.add(featuresTableScrollPane);
 
 

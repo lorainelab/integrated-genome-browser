@@ -17,7 +17,7 @@ public class RefreshAFeature extends AbstractAction {
 	final GenericFeature feature;
 
 	public RefreshAFeature(GenericFeature feature){
-		super("Refresh "+feature.featureName, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+		super("Load "+feature.featureName, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		this.feature = feature;
 		this.enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
 	}

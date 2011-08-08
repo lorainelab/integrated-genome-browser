@@ -96,7 +96,7 @@ public class TrackView {
 			style2forwardTierGlyph.put(style, fortier);
 		}
 
-		if (style.getShow2Tracks()) {
+		if (style.getSeparate()) {
 			fortier.setDirection(TierGlyph.Direction.FORWARD);
 		} else {
 			fortier.setDirection(TierGlyph.Direction.BOTH);
@@ -130,7 +130,7 @@ public class TrackView {
 			}
 		}
 
-		if (style.getShow2Tracks()) {
+		if (style.getSeparate()) {
 			return new TierGlyph[]{fortier, revtier};
 		} else {
 			// put everything in a single tier

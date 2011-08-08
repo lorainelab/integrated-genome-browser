@@ -44,7 +44,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private static final int COL_TRACK_NAME_SIZE = 3;
 	private static final int COL_COLLAPSED = 4;
 	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_SHOW2TRACKS = 6;
+	private static final int Col_Show_2_Tracks = 6;
 	private static final int COL_LABEL_FIELD = 7;
 	private static final int COL_CONNECTED = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
@@ -547,7 +547,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], COL_SHOW2TRACKS);
+				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], Col_Show_2_Tracks);
 			}
 		}
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
@@ -722,8 +722,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getShow2Tracks());
-			connectedCheckBox.setSelected(selectedStyle.getConnected());
+			show2TracksCheckBox.setSelected(selectedStyle.getShow());
+			connectedCheckBox.setSelected(selectedStyle.getSeparate());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
@@ -941,18 +941,26 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 								element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
 							}
 							break;
-						case COL_SHOW2TRACKS:
+						case Col_Show_2_Tracks:
 							if (style.equals(default_annot_style)) {
-								style.setShow2Tracks(((Boolean) value).booleanValue());
+								style.setSeparate(((Boolean) value).booleanValue());
 							} else {
-								element.propertyMap.put(PROP_SHOW_2_TRACKS, value.toString());
+								element.propertyMap.put(PROP_SEPARATE, value.toString());
 							}
 							break;
 						case COL_CONNECTED:
 							if (style.equals(default_annot_style)) {
-								style.setConnected(((Boolean) value).booleanValue());
+								if (Boolean.TRUE.equals(value)) {
+									style.setShow2Tracks(2);
+								} else {
+									style.setShow2Tracks(1);
+								}
 							} else {
-								element.propertyMap.put(PROP_CONNECTED, value.toString());
+								if (Boolean.TRUE.equals(value)) {
+									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(2));
+								} else {
+									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(1));
+								}
 							}
 							break;
 						case COL_COLLAPSED:

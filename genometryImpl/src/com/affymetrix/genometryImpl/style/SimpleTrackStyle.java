@@ -33,13 +33,13 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	/** Default implementation returns the same as {@link #getColor()}. */
 	public Color getScoreColor(float f) { return getForeground(); }
 
-	boolean connected=true;
-	public void setConnected(boolean b) {this.connected = b;}
-	public boolean getConnected() {return this.connected;}
+	int depth=2;
+	public void setShow2Tracks(int i) {this.depth = i;}
+	public int getShow2Tracks() {return this.depth;}
 
-	boolean show2Tracks = true;
-	public void setShow2Tracks(boolean b) { this.show2Tracks = b; }
-	public boolean getShow2Tracks() { return this.show2Tracks; }
+	boolean separate = true;
+	public void setSeparate(boolean b) { this.separate = b; }
+	public boolean getSeparate() { return this.separate; }
 
 	String labelField = "id";
 	public void setLabelField(String s) { this.labelField = s; }
@@ -52,8 +52,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 				ITrackStyleExtended as = (ITrackStyleExtended) g;
 				setUrl(as.getUrl());
 				setColorByScore(as.getColorByScore());
-				setConnected(as.getConnected());
 				setShow2Tracks(as.getShow2Tracks());
+				setSeparate(as.getSeparate());
 				setLabelField(as.getLabelField());
 			}
 		}

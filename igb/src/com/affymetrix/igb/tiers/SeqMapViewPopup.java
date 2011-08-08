@@ -445,7 +445,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyle style = tier.getAnnotStyle();
 			if (style instanceof ITrackStyleExtended) {
-				((ITrackStyleExtended) style).setShow2Tracks(b);
+				((ITrackStyleExtended) style).setSeparate(b);
 			}
 		}
 		refreshMap(false, true);
@@ -728,8 +728,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
-		style.setConnected(false);
-		style.setShow2Tracks(false); // there are not separate (+) and (-) strands
+		style.setShow2Tracks(1);
+		style.setSeparate(false); // there are not separate (+) and (-) strands
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
@@ -766,8 +766,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setTrackName(human_name);
-		style.setConnected(false);
-		style.setShow2Tracks(false); // there are not separate (+) and (-) strands
+		style.setShow2Tracks(1);
+		style.setSeparate(false); // there are not separate (+) and (-) strands
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		style.setForeground(atier.getForegroundColor());
@@ -856,8 +856,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				ITrackStyleExtended astyle = (ITrackStyleExtended) style;
 				any_are_color_on = any_are_color_on || astyle.getColorByScore();
 				any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
-				any_are_separate_tiers = any_are_separate_tiers || astyle.getShow2Tracks();
-				any_are_single_tier = any_are_single_tier || (!astyle.getShow2Tracks());
+				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
+				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate());
 				any_view_mode = any_view_mode || (!style.isGraphTier());
 			}
 			if (style.getExpandable()) {

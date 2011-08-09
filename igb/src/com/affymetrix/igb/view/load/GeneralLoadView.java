@@ -92,7 +92,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
 	private static JTableX loadedTracksTable;
-	public static LoadModeDataTableModel loadModeDataTableModel;
+	private static LoadModeDataTableModel loadModeDataTableModel;
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
@@ -1000,7 +1000,8 @@ public final class GeneralLoadView extends IGBTabPanel
 				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				LoadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
+				LoadModeTable loadModeTable = LoadModeTable.getSingleton();
+				loadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 

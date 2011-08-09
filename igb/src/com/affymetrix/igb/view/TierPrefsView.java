@@ -95,15 +95,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
-		setSelectedRows();
+		keepSelectedRows();
 	}
 
-	public void setSelectedRows() {
-		if (table.getRowCount() == 0) {
-			return;
-		}
+	public void keepSelectedRows() {
 		ITrackStyle style;
-		selectedRows = table.getSelectedRows();
 		if (selectedTiers != null) {
 			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
 			for (TierLabelGlyph tlg : selectedTiers) {
@@ -822,7 +818,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (customizables.size() != table.getRowCount()) {
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
-			setSelectedRows();
+			table.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -832,7 +828,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	public void externalChange() {
 		model.fireTableDataChanged();
-		setSelectedRows();
+		table.setRowSelectionInterval(0, 0);
 	}
 
 	/** Called when the user selects a row of the table.
@@ -1088,7 +1084,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 					switch (col) {
 						case COL_TRACK_NAME:
 							//Test prevents a bug allowing Coordinate track to be renamed when multi-selecting
-							if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) { 
+							if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 								style.setTrackName((String) value);
 								displayNameTextField.setText((String) value);
 							}

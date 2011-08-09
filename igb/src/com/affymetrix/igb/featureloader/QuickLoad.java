@@ -37,7 +37,7 @@ import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.view.load.LoadModeTable;
 
 /**
  *
@@ -205,7 +205,7 @@ public final class QuickLoad extends SymLoader {
 
 					SeqGroupView.getInstance().refreshTable();
 					//Update LoadModeTableModel
-					GeneralLoadView.loadModeDataTableModel.updateVirtualFeatureList();
+					LoadModeTable.updateVirtualFeatureList();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -267,7 +267,7 @@ public final class QuickLoad extends SymLoader {
 
 		if (Thread.currentThread().isInterrupted()) {
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
-			GeneralLoadView.loadModeDataTableModel.fireTableDataChanged();
+			LoadModeTable.updateVirtualFeatureList();
 			results = null;
 			return;
 		}

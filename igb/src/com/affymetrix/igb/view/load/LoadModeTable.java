@@ -34,13 +34,16 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * A table with two customizations:
  * 1.  An always-visible combo box. For a user, this differentiates the field from a text box, and thus indicates they have a choice.
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
-public final class LoadModeTable {
+public final class LoadModeTable implements ListSelectionListener {
 
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
@@ -58,6 +61,22 @@ public final class LoadModeTable {
 	static final int TRACK_NAME_COLUMN = 7;
 	static final int DELETE_FEATURE_COLUMN = 8;
 	public static boolean iconTest;
+	private static int[] selectedRows;
+	private static JTableX jTable;
+	private static ListSelectionModel lsm;
+	static LoadModeTable singleton = null;
+
+	public LoadModeTable() {
+		singleton = this;
+	}
+
+	public static LoadModeTable getSingleton() {
+		if (singleton == null) {
+			singleton = new LoadModeTable();
+		}
+
+		return singleton;
+	}
 
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -65,7 +84,8 @@ public final class LoadModeTable {
 	 * @param column
 	 * @param enabled
 	 */
-	static void setComboBoxEditors(JTableX table, boolean enabled) {
+	public void setComboBoxEditors(JTableX table, boolean enabled) {
+		jTable = table;
 		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.AUTOLOAD.toString(), IGBConstants.BUNDLE.getString("autoLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
@@ -73,7 +93,9 @@ public final class LoadModeTable {
 		comboRenderer.setToolTipEntry(LoadStrategy.GENOME.toString(), IGBConstants.BUNDLE.getString("genomeCBToolTip"));
 		LoadModeDataTableModel ftm = (LoadModeDataTableModel) table.getModel();
 
-
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(this);
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		int featureSize = ftm.getRowCount();
 		RowEditorModel choices = new RowEditorModel(featureSize);
@@ -91,9 +113,6 @@ public final class LoadModeTable {
 		table.setRowEditorModel(LoadModeDataTableModel.FEATURE_NAME_COLUMN, text);
 		table.setRowEditorModel(LoadModeDataTableModel.TRACK_NAME_COLUMN, text);
 		table.setRowEditorModel(LoadModeDataTableModel.DELETE_FEATURE_COLUMN, action);
-
-
-
 
 		ColorCellEditor cellEditor = new ColorCellEditor() {
 
@@ -176,6 +195,44 @@ public final class LoadModeTable {
 				comboBox.removeAllItems();
 				comboBox.addItem(value);
 				return comboBox;
+			}
+		}
+	}
+
+	public static void updateVirtualFeatureList() {
+		LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
+		if (ftm.features != null) {
+			if (ftm.virtualFeatures != null) {
+				ftm.virtualFeatures.clear();
+			}
+			for (GenericFeature gFeature : ftm.features) {
+				ftm.createPrimaryVirtualFeatures(gFeature);
+			}
+			ftm.fireTableDataChanged();
+			keepSelectedRows();
+		}
+	}
+
+	/** Called when the user selects a row of the table.
+	 * @param evt
+	 */
+	public void valueChanged(ListSelectionEvent evt) {
+		selectedRows = jTable.getSelectedRows();
+		LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
+		ftm.setSelectedRows(selectedRows);
+		System.out.println("Here2 " + selectedRows.length);
+	}
+
+	public static void keepSelectedRows() {
+		if (jTable != null
+				&& selectedRows != null) {
+			for (int i = 0; i < jTable.getRowCount(); i++) {
+				for (int j : selectedRows) {
+					if (j == i) {
+						System.out.println("Here1 " + j);
+						jTable.addRowSelectionInterval(j, j);
+					}
+				}
 			}
 		}
 	}
@@ -397,6 +454,7 @@ class JTableX extends JTable implements MouseListener {
 
 				this.getTableHeader().repaint();
 				ftm.fireTableDataChanged();
+				LoadModeTable.keepSelectedRows();
 				break;
 			default:
 			//System.out.println("Unknown header selected: " + realIndex);

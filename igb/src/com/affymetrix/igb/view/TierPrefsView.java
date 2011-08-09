@@ -74,7 +74,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private List<TierGlyph> currentTiers;
 	private List<TrackStyle> currentStyles;
 	private TierGlyph tempTier;
-	private ITrackStyle tempStyle;
+	
 
 	/** Creates new form PrototypeOne */
 	public TierPrefsView() {
@@ -103,16 +103,16 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (table.getRowCount() == 0) {
 			return;
 		}
-
+		ITrackStyle style;
 		selectedRows = table.getSelectedRows();
 		if (selectedTiers != null) {
 			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
 			for (TierLabelGlyph tlg : selectedTiers) {
 				tempTier = (TierGlyph) tlg.getInfo();
-				tempStyle = tempTier.getAnnotStyle();
+				style = tempTier.getAnnotStyle();
 
 				for (int i = 0; i < table.getRowCount(); i++) {
-					if (model.getValueAt(i, 0).equals(tempStyle.getTrackName())) {
+					if (model.getValueAt(i, 0).equals(style.getTrackName())) {
 						table.addRowSelectionInterval(i, i);
 					}
 				}
@@ -647,9 +647,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
 		table.setRowSelectionInterval(0, table.getRowCount() - 1);
-		for (int i = 0; i < table.getRowCount() - 1; i++) {
-			tempStyle = model.getStyles().get(i);
-			if (tempStyle.getTrackName().equalsIgnoreCase(
+		ITrackStyle style;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			style = model.getStyles().get(i);
+			if (style.getTrackName().equalsIgnoreCase(
 					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				table.removeRowSelectionInterval(i, i);
 			}
@@ -658,9 +659,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	private void applyToAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyToAllButtonActionPerformed
 		selectedRow = table.getSelectedRow();
+		ITrackStyle style;
 		for (int i = 0; i < table.getRowCount(); i++) {
-			tempStyle = model.getStyles().get(i);
-			if (!tempStyle.getTrackName().equalsIgnoreCase(
+			style = model.getStyles().get(i);
+			if (!style.getTrackName().equalsIgnoreCase(
 					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				model.setValueAt(model.getStyles().get(selectedRow).getBackground(), i, COL_BACKGROUND, true);
 				model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(), i, COL_TRACK_NAME_SIZE, true);
@@ -1015,8 +1017,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			tempStyle = tier_styles.get(row);
-			if (tempStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			TrackStyle style;
+			style = tier_styles.get(row);
+			if (style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				if (column == COL_TRACK_NAME) {
 					return false;
 				}

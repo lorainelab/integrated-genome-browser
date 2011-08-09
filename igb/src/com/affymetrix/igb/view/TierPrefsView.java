@@ -74,7 +74,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private List<TierGlyph> currentTiers;
 	private List<TrackStyle> currentStyles;
 	private TierGlyph tempTier;
-	
 
 	/** Creates new form PrototypeOne */
 	public TierPrefsView() {
@@ -1088,8 +1087,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 					style = tier_styles.get(row);
 					switch (col) {
 						case COL_TRACK_NAME:
-							style.setTrackName((String) value);
-							displayNameTextField.setText((String) value);
+							//Test prevents a bug allowing Coordinate track to be renamed when multi-selecting
+							if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) { 
+								style.setTrackName((String) value);
+								displayNameTextField.setText((String) value);
+							}
 							break;
 						case COL_FOREGROUND:
 							style.setForeground((Color) value);

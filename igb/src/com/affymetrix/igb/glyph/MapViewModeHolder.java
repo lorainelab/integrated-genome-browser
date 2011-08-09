@@ -23,6 +23,8 @@ public class MapViewModeHolder {
 		view2Factory.put(TrackConstants.default_view_mode, null);
 		addViewFactory(new DepthGraphGlyphFactory());
 		addViewFactory(new CoverageSummarizerFactory());
+		addViewFactory(new MismatchGraphGlyphFactory(false));
+		addViewFactory(new MismatchGraphGlyphFactory(true));
 	}
 	
 	public MapViewGlyphFactoryI getViewFactory(String view){

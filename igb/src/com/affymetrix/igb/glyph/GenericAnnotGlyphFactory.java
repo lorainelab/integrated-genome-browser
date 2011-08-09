@@ -64,8 +64,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
 	private static Class default_echild_class = (new FillRectGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
-	private static final int DEFAULT_THICK_HEIGHT = 25;
-	private static final int DEFAULT_THIN_HEIGHT = 15;
+//	private static final int DEFAULT_THICK_HEIGHT = 25;
+//	private static final int DEFAULT_THIN_HEIGHT = 15;
 	private SeqMapViewI gviewer;
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
@@ -209,7 +209,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
-			handleInsertionGlyphs(insym, annotseq, pglyph);
+			handleInsertionGlyphs(insym, annotseq, pglyph, the_style.getHeight());
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
@@ -227,7 +227,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		// allows the user to select both the parent and the child as separate entities
 		// in order to look at the properties associated with them.  Otherwise, the method
 		// EfficientGlyph.pickTraversal() will only allow one to be chosen.
-		double pheight = DEFAULT_THICK_HEIGHT + 0.0001;
+		double pheight = the_style.getHeight() + 0.0001;
 		String label_field = the_style.getLabelField();
 		boolean use_label = label_field != null && (label_field.trim().length() > 0);
 		if (use_label) {
@@ -303,6 +303,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
+		double thin_height = the_style.getHeight() * 0.6;
 //		Color start_color = the_style.getStartColor();
 //		Color end_color = the_style.getEndColor();
 		for (int i = 0; i < childCount; i++) {
@@ -314,7 +315,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			} else {
 				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				Color child_color = getSymColor(child, the_style, cspan.isForward(), direction_type);
-				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph);
+				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, the_style.getHeight(), thin_height);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
@@ -340,11 +341,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				
 		
 		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0, 
-			DEFAULT_THIN_HEIGHT, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
+			thin_height, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
-		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
+		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, thin_height);
 	}
 
 	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
@@ -397,10 +398,10 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private double handleCDSSpan(
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
 			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
-			Color child_color, GlyphI pglyph)
+			Color child_color, GlyphI pglyph, double thick_height, double thin_height)
 			throws IllegalAccessException, InstantiationException {
 		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)) {
-			return DEFAULT_THICK_HEIGHT;
+			return thick_height;
 		}
 		if (SeqUtils.overlap(cdsSpan, cspan)) {
 			SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
@@ -415,58 +416,16 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				} else {
 					cds_glyph = (GlyphI) child_glyph_class.newInstance();
 				}
-				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
+				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
 				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
 				GlyphProcessorHolder.getInstance().fireProcessGlyph(cds_glyph);
 			}
 		}
-		return DEFAULT_THIN_HEIGHT;
+		return thin_height;
 	}
 
-	private static void addCdsColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
-		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
-				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
-			return;
-		}
-
-		if (cdsSpan.isForward()) {
-			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), start_color);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
-			} else {
-				//First
-				if (cdsSpan.getEnd() >= cspan.getEnd()) {
-					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), start_color);
-				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
-				}
-			}
-		} else {
-			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
-			} else {
-				//First
-				if (cdsSpan.getStart() >= cspan.getStart()) {
-					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
-				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
-				}
-			}
-		}
-		
-	}
-	
-	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color){
-		FillRectGlyph gl = new FillRectGlyph();
-		gl.setHitable(false);
-		gl.setColor(color);
-		gl.setCoords(start, 0, length, DEFAULT_THICK_HEIGHT);
-		pglyph.addChild(gl);
-	}
-	
 	/**
 	 * Determine and set the appropriate residues for this element.
 	 * @param sym
@@ -516,7 +475,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 	
-	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph)
+	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, double height)
 			throws IllegalAccessException, InstantiationException {
 		
 		if (!(sym instanceof BAMSym)) {
@@ -555,7 +514,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			isg.setSelectable(true);
 			String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1); 
 			isg.setResidues(residues);
-			isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_THICK_HEIGHT);
+			isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), height);
 			isg.setColor(color);
 
 			pglyph.addChild(isg);
@@ -563,4 +522,47 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
+	//Note : Use this code to add cds start and end glyph - HV 07/09/11
+	private static void addCdsColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
+		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
+				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
+			return;
+		}
+
+		if (cdsSpan.isForward()) {
+			if (SeqUtils.contains(cspan, cdsSpan)) {
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), start_color);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
+			} else {
+				//First
+				if (cdsSpan.getEnd() >= cspan.getEnd()) {
+					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), start_color);
+				} else {
+					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
+				}
+			}
+		} else {
+			if (SeqUtils.contains(cspan, cdsSpan)) {
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
+			} else {
+				//First
+				if (cdsSpan.getStart() >= cspan.getStart()) {
+					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
+				} else {
+					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
+				}
+			}
+		}
+		
+	}
+	
+	//TODO : Use height from style
+	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color){
+		FillRectGlyph gl = new FillRectGlyph();
+		gl.setHitable(false);
+		gl.setColor(color);
+		gl.setCoords(start, 0, length, 25);
+		pglyph.addChild(gl);
+	}
 }

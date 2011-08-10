@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -88,8 +87,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
 		currentStyles = this.getCurrentStyles();
-		VirtualFeature vFeature;
-		vFeature = new VirtualFeature(gFeature, currentStyles);
+		VirtualFeature vFeature = new VirtualFeature(gFeature, currentStyles);
 		vFeature.isPrimary = true;
 		virtualFeatures.add(vFeature);
 		if (gFeature.getMethods().size() > 1 && vFeature.getStyle() != null) {
@@ -98,12 +96,11 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	}
 
 	void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
-		currentStyles = this.getCurrentStyles();
 		boolean isPrimary = vFeature.isPrimary;
-
+		VirtualFeature subVfeature;
 		for (TrackStyle style : currentStyles) {
 			if (style.getFeature().featureName.equals(vFeature.getFeature().featureName)) {
-				VirtualFeature subVfeature = new VirtualFeature(vFeature.getFeature(), style);
+				subVfeature = new VirtualFeature(vFeature.getFeature(), style);
 				if (isPrimary) {
 					virtualFeatures.remove(vFeature);
 					subVfeature.isPrimary = isPrimary;
@@ -231,7 +228,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			case TRACK_NAME_COLUMN:
 				if (style == null) {
 					return "";
-				} 
+				}
 				return style.getTrackName();
 			case BACKGROUND_COLUMN:
 				if (style == null) {

@@ -890,14 +890,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		expand_all_action.setEnabled(not_empty);
 		change_expand_max_all_action.setEnabled(not_empty);
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
+		viewModeMenu.setEnabled(false);
 
 		JMenu save_menu = new JMenu("Save Annotations");
-
+		
+		viewModeMenu.removeAll();
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
 			TierGlyph glyph = (TierGlyph) label.getInfo();
-			ITrackStyle style = glyph.getAnnotStyle();
+			final ITrackStyle style = glyph.getAnnotStyle();
 			boolean is_annotation_type = !style.isGraphTier();
 			summaryMenu.setEnabled(is_annotation_type);
 			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
@@ -908,6 +910,32 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			save_bed_action.setEnabled(is_annotation_type);
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_focus = true;
+			}
+
+			if (style instanceof ITrackStyleExtended) {
+				String file_format = ((ITrackStyleExtended) style).getFileType();
+
+				Map<String, Action> actions = new HashMap<String, Action>();
+				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
+					Action action = new AbstractAction(mode.toString()) {
+						public void actionPerformed(ActionEvent ae) {
+							((ITrackStyleExtended) style).setViewMode(mode.toString());
+							refreshMap(false, false);
+						}
+					};
+					actions.put(mode.toString(), action);
+					viewModeMenu.add(new JCheckBoxMenuItem(action));
+				}
+
+				if (actions.size() > 0) {
+					String mode = ((ITrackStyleExtended) style).getViewMode();
+					Action action = actions.get(mode);
+					if (action != null) {
+						action.putValue(Action.SELECTED_KEY, true);
+					}
+					viewModeMenu.setEnabled(true);
+				}
+
 			}
 		} else {
 			summaryMenu.setEnabled(false);
@@ -930,46 +958,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 
-		viewModeMenu.removeAll();
-		viewModeMenu.setEnabled(any_view_mode);
-		if (any_view_mode) {
-			Map<String, Action> actions = new HashMap<String, Action>();
-			for (final Object mode : MapViewModeHolder.getInstance().getAllViewModes()) {
-				Action action = new AbstractAction(mode.toString()) {
-
-					public void actionPerformed(ActionEvent ae) {
-						boolean refresh = false;
-						for (TierLabelGlyph label : labels) {
-							TierGlyph glyph = label.getReferenceTier();
-							ITrackStyle style = glyph.getAnnotStyle();
-							if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
-								((ITrackStyleExtended) style).setViewMode(mode.toString());
-								refresh = true;
-							}
-						}
-						if (refresh) {
-							refreshMap(false, false);
-						}
-					}
-				};
-				actions.put(mode.toString(), action);
-				viewModeMenu.add(new JCheckBoxMenuItem(action));
-			}
-
-			if (labels.size() == 1) {
-				TierGlyph glyph = labels.get(0).getReferenceTier();
-				ITrackStyle style = glyph.getAnnotStyle();
-				if (style instanceof ITrackStyleExtended) {
-					String mode = ((ITrackStyleExtended) style).getViewMode();
-					Action action = actions.get(mode);
-					if (action != null) {
-						action.putValue(Action.SELECTED_KEY, true);
-					}
-				}
-
-			}
-		}
-
+		
 		popup.add(customize_action);
 		popup.add(new JSeparator());
 		popup.add(hide_action);

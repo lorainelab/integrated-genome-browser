@@ -530,7 +530,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
         viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
 
-        viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModes()));
         viewModeCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 viewModeCBActionPerformed(evt);
@@ -851,6 +850,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 		if (selectedRows.length > 1) {
 			displayNameTextField.setEnabled(false);
+			viewModeCB.setEnabled(false);
 			bgColorComboBox.setSelectedColor(null);
 			fgColorComboBox.setSelectedColor(null);
 			trackNameSizeComboBox.setSelectedItem("");
@@ -875,6 +875,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			}
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
+			String file_type = selectedStyle.getFileType();
+			viewModeCB.removeAllItems();
+			viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));			
 			String view_mode = selectedStyle.getViewMode();
 			if (view_mode == null) {
 				viewModeCB.setSelectedIndex(0);

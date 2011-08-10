@@ -33,7 +33,7 @@ public class MapViewModeHolder {
 		return view2Factory.get(view);
 	}
 	
-	public void addViewFactory(ExtendedMapViewGlyphFactoryI factory){
+	public final void addViewFactory(ExtendedMapViewGlyphFactoryI factory){
 		if(factory == null){
 			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add null factory");
 			return;
@@ -46,11 +46,25 @@ public class MapViewModeHolder {
 		view2Factory.put(view, factory);
 	}
 	
-	public void removeViewFactory(ExtendedMapViewGlyphFactoryI factory){
+	public final void removeViewFactory(ExtendedMapViewGlyphFactoryI factory){
 		view2Factory.remove(factory.getName());
 	}
 	
-	public Object[] getAllViewModes(){
-		return view2Factory.keySet().toArray();
+	public Object[] getAllViewModesFor(String file_format) {
+		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
+		
+		if (file_format != null) {
+			mode.add(TrackConstants.default_view_mode);
+			for (java.util.Map.Entry<String, ExtendedMapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
+				ExtendedMapViewGlyphFactoryI emv = entry.getValue();
+				if (emv.isFileSupported(file_format)) {
+					mode.add(entry.getKey());
+				}
+				
+			}
+		}
+		
+		return mode.toArray(new Object[0]);
+		
 	}
 }

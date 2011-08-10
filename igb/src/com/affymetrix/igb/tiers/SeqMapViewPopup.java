@@ -912,7 +912,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				add_focus = true;
 			}
 
-			if (style instanceof ITrackStyleExtended) {
+			if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
 				String file_format = ((ITrackStyleExtended) style).getFileType();
 
 				Map<String, Action> actions = new HashMap<String, Action>();

@@ -873,12 +873,14 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			String file_type = selectedStyle.getFileType();
 			viewModeCB.removeAllItems();
-			viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));			
-			String view_mode = selectedStyle.getViewMode();
-			if (view_mode == null) {
-				viewModeCB.setSelectedIndex(0);
-			} else {
-				viewModeCB.setSelectedItem(view_mode);
+			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
+				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));
+				String view_mode = selectedStyle.getViewMode();
+				if (view_mode == null) {
+					viewModeCB.setSelectedIndex(0);
+				} else {
+					viewModeCB.setSelectedItem(view_mode);
+				}
 			}
 			int connected = selectedStyle.getGlyphDepth();
 			boolean isConnected = true;

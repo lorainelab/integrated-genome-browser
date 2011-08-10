@@ -45,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public final class LoadModeTable implements ListSelectionListener {
 
+	public static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
 	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
@@ -61,8 +62,6 @@ public final class LoadModeTable implements ListSelectionListener {
 	static final int TRACK_NAME_COLUMN = 7;
 	static final int DELETE_FEATURE_COLUMN = 8;
 	public static boolean iconTest;
-	private static int[] selectedRows;
-	private static JTableX jTable;
 	private static ListSelectionModel lsm;
 	static LoadModeTable singleton = null;
 
@@ -209,8 +208,9 @@ public final class LoadModeTable implements ListSelectionListener {
 				for (GenericFeature gFeature : ftm.features) {
 					ftm.createPrimaryVirtualFeatures(gFeature);
 				}
+				int[] previousRows = jTable.getSelectedRows();
 				ftm.fireTableDataChanged();
-				keepSelectedRows();
+				keepSelectedRows(previousRows);
 			}
 		}
 	}
@@ -219,16 +219,16 @@ public final class LoadModeTable implements ListSelectionListener {
 	 * @param evt
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
-		selectedRows = jTable.getSelectedRows();
+		int[] selectedRows = jTable.getSelectedRows();
 		LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
 		ftm.setSelectedRows(selectedRows);
 	}
 
-	public static void keepSelectedRows() {
+	public static void keepSelectedRows(int[] rows) {
 		if (jTable != null
-				&& selectedRows != null) {
+				&& rows != null) {
 			for (int i = 0; i < jTable.getRowCount(); i++) {
-				for (int j : selectedRows) {
+				for (int j : rows) {
 					if (j == i) {
 						jTable.addRowSelectionInterval(j, j);
 					}
@@ -453,8 +453,9 @@ class JTableX extends JTable implements MouseListener {
 				}
 
 				this.getTableHeader().repaint();
+				int[] previousRows = this.getSelectedRows();
 				ftm.fireTableDataChanged();
-				LoadModeTable.keepSelectedRows();
+				LoadModeTable.keepSelectedRows(previousRows);
 				break;
 			default:
 			//System.out.println("Unknown header selected: " + realIndex);

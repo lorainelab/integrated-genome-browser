@@ -81,8 +81,11 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		this.fireTableDataChanged();
-		LoadModeTable.keepSelectedRows();
+		if (LoadModeTable.jTable != null) {
+			int[] previousRows = LoadModeTable.jTable.getSelectedRows();
+			this.fireTableDataChanged();
+			LoadModeTable.keepSelectedRows(previousRows);
+		}
 	}
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {

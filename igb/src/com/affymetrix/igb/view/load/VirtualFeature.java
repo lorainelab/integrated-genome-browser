@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.igb.tiers.TrackStyle;
 import java.util.List;
 
 /**
@@ -21,21 +22,19 @@ public class VirtualFeature {
 	private final GenericFeature gFeature;
 	private ITrackStyle style;
 	public boolean isPrimary;
-	public boolean isParent;
 
-	public VirtualFeature(GenericFeature feature) {
+	public VirtualFeature(GenericFeature feature, List<TrackStyle> styleList) {
 		this.gFeature = feature;
-		this.isParent = false;
-		if (gFeature.getMethods().size() > 0) {
-			String uri = gFeature.getURI().toString();
-			this.style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri);
+		for (TrackStyle s : styleList) {
+			if (s.getFeature() == feature) {
+				style = s;
+			}
 		}
 	}
 
 	public VirtualFeature(GenericFeature feature, ITrackStyle tstyle) {
 		this.gFeature = feature;
 		this.style = tstyle;
-		this.isParent = false;
 	}
 
 	public GenericFeature getFeature() {

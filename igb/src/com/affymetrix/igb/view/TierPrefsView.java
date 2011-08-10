@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.view.load.LoadModeTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import javax.swing.table.AbstractTableModel;
@@ -95,25 +96,19 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
-		keepSelectedRows();
-	}
-
-	public void keepSelectedRows() {
+		
+		//set Selected Rows
 		ITrackStyle style;
-		if (selectedTiers != null) {
-			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
-			for (TierLabelGlyph tlg : selectedTiers) {
-				tempTier = (TierGlyph) tlg.getInfo();
-				style = tempTier.getAnnotStyle();
+		table.removeRowSelectionInterval(0, table.getRowCount() - 1);
+		for (TierLabelGlyph tlg : selectedTiers) {
+			tempTier = (TierGlyph) tlg.getInfo();
+			style = tempTier.getAnnotStyle();
 
-				for (int i = 0; i < table.getRowCount(); i++) {
-					if (model.getValueAt(i, 0).equals(style.getTrackName())) {
-						table.addRowSelectionInterval(i, i);
-					}
+			for (int i = 0; i < table.getRowCount(); i++) {
+				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+					table.addRowSelectionInterval(i, i);
 				}
 			}
-		} else {
-			table.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -818,6 +813,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
 			table.setRowSelectionInterval(0, 0);
+			LoadModeTable.updateVirtualFeatureList();
 		}
 	}
 

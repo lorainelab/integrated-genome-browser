@@ -87,12 +87,12 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	}
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
+		currentStyles = this.getCurrentStyles();
 		VirtualFeature vFeature;
-		vFeature = new VirtualFeature(gFeature);
+		vFeature = new VirtualFeature(gFeature, currentStyles);
 		vFeature.isPrimary = true;
 		virtualFeatures.add(vFeature);
 		if (gFeature.getMethods().size() > 1 && vFeature.getStyle() != null) {
-			vFeature.isParent = true;
 			createSecondaryVirtualFeatures(vFeature);
 		}
 	}
@@ -137,8 +137,6 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		// Also sort these features so the features to be loaded are at the top.
 
 		return visibleFeatures;
-
-
 	}
 
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
@@ -232,18 +230,16 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
 				if (style == null) {
-					return "Data Not Loaded.";
-				} else if (vFeature.isParent) {
-					return "No Data at this location";
-				}
+					return "";
+				} 
 				return style.getTrackName();
 			case BACKGROUND_COLUMN:
-				if (style == null || vFeature.isParent) {
+				if (style == null) {
 					return Color.WHITE;
 				}
 				return style.getBackground();
 			case FOREGROUND_COLUMN:
-				if (style == null || vFeature.isParent) {
+				if (style == null) {
 					return Color.WHITE;
 				}
 				return style.getForeground();
@@ -268,7 +264,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		VirtualFeature vFeature = virtualFeatures.get(row);
-		if ((vFeature.getStyle() == null || vFeature.isParent)
+		if ((vFeature.getStyle() == null)
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == HIDE_FEATURE_COLUMN)) {

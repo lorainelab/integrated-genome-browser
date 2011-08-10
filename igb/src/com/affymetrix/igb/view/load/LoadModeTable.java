@@ -200,16 +200,18 @@ public final class LoadModeTable implements ListSelectionListener {
 	}
 
 	public static void updateVirtualFeatureList() {
-		LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
-		if (ftm.features != null) {
-			if (ftm.virtualFeatures != null) {
-				ftm.virtualFeatures.clear();
+		if (jTable != null) {
+			LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
+			if (ftm.features != null) {
+				if (ftm.virtualFeatures != null) {
+					ftm.virtualFeatures.clear();
+				}
+				for (GenericFeature gFeature : ftm.features) {
+					ftm.createPrimaryVirtualFeatures(gFeature);
+				}
+				ftm.fireTableDataChanged();
+				keepSelectedRows();
 			}
-			for (GenericFeature gFeature : ftm.features) {
-				ftm.createPrimaryVirtualFeatures(gFeature);
-			}
-			ftm.fireTableDataChanged();
-			keepSelectedRows();
 		}
 	}
 
@@ -220,7 +222,6 @@ public final class LoadModeTable implements ListSelectionListener {
 		selectedRows = jTable.getSelectedRows();
 		LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
 		ftm.setSelectedRows(selectedRows);
-		System.out.println("Here2 " + selectedRows.length);
 	}
 
 	public static void keepSelectedRows() {
@@ -229,7 +230,6 @@ public final class LoadModeTable implements ListSelectionListener {
 			for (int i = 0; i < jTable.getRowCount(); i++) {
 				for (int j : selectedRows) {
 					if (j == i) {
-						System.out.println("Here1 " + j);
 						jTable.addRowSelectionInterval(j, j);
 					}
 				}

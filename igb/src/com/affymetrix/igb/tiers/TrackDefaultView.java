@@ -810,7 +810,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
 
 		private List<TrackStyle> tier_styles;
-		private TrackStyle style;
 		public AssociationElement element;
 		public Entry[] file2types;
 		public Entry entry;
@@ -833,7 +832,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			tier_styles.add(default_annot_style);
 			for (Entry temp : file2types) {
 				element = (AssociationElement) temp.getValue();
-				style = new TrackStyle(element);
+				TrackStyle style = new TrackStyle(element);
 				style.setTrackName(temp.getKey().toString());
 				tier_styles.add(style);
 			}
@@ -865,7 +864,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 		}
 
 		public Object getValueAt(int row, int column) {
-			style = tier_styles.get(row);
+			TrackStyle style = tier_styles.get(row);
 			switch (column) {
 				case COL_TRACK_DEFAULT:
 					return style.getTrackName();
@@ -895,109 +894,96 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
-					style = tier_styles.get(row);
+					TrackStyle style = tier_styles.get(row);
 					if (!style.equals(default_annot_style)) {
 						entry = file2types[row - 1];
 						element = (AssociationElement) entry.getValue();
 					}
 					switch (col) {
 						case COL_FOREGROUND:
-							if (style.equals(default_annot_style)) {
-								style.setForeground((Color) value);
-							} else {
-								element.propertyMap.put(PROP_COLOR, value);
+							if (!style.equals(default_annot_style)) {
+								element.propertyMap.put(PROP_FOREGROUND, value);
 							}
+							style.setForeground((Color) value);
 							fgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_BACKGROUND:
-							if (style.equals(default_annot_style)) {
-								style.setBackground((Color) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_BACKGROUND, value);
 							}
+							style.setBackground((Color) value);
 							bgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_TRACK_NAME_SIZE:
-							if (style.equals(default_annot_style)) {
-								style.setTrackNameSize((Float) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_FONT_SIZE, value.toString());
+								style.setTrackNameSize((Float) value);
 							}
+							style.setTrackNameSize((Float) value);
 							trackNameSizeComboBox.setSelectedItem((Float) value);
 							break;
 						case COL_LABEL_FIELD:
-							if (style.equals(default_annot_style)) {
-								style.setLabelField((String) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_LABEL_FIELD, value);
 							}
+							style.setLabelField((String) value);
 							break;
 						case COL_MAX_DEPTH: {
 							int i = parseInteger(((String) value), 0, style.getMaxDepth());
-							if (style.equals(default_annot_style)) {
-								style.setMaxDepth(i);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_MAX_DEPTH, value.toString());
 							}
+							style.setMaxDepth(i);
 						}
 						break;
 						case COL_DIRECTION_TYPE:
-							if (style.equals(default_annot_style)) {
-								style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
 							}
+							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case Col_Show_2_Tracks:
-							if (style.equals(default_annot_style)) {
-								style.setSeparate(((Boolean) value).booleanValue());
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_SEPARATE, value.toString());
 							}
+							style.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_CONNECTED:
-							if (style.equals(default_annot_style)) {
-								if (Boolean.TRUE.equals(value)) {
-									style.setGlyphDepth(2);
-								} else {
-									style.setGlyphDepth(1);
-								}
-							} else {
+							if (!style.equals(default_annot_style)) {
 								if (Boolean.TRUE.equals(value)) {
 									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(2));
 								} else {
 									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(1));
 								}
 							}
+							if (Boolean.TRUE.equals(value)) {
+								style.setGlyphDepth(2);
+							} else {
+								style.setGlyphDepth(1);
+							}
 							break;
 						case COL_COLLAPSED:
-							if (style.equals(default_annot_style)) {
-								style.setCollapsed(((Boolean) value).booleanValue());
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_COLLAPSED, value.toString());
 							}
+							style.setCollapsed(((Boolean) value).booleanValue());
 							break;
 						case COL_POS_STRAND_COLOR:
-							if (style.equals(default_annot_style)) {
-								style.setForwardColor((Color) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_START_COLOR, value);
 							}
-							possitiveColorComboBox.setSelectedColor((Color) value);
+							style.setForwardColor((Color) value);
 							break;
 						case COL_NEG_STRAND_COLOR:
-							if (style.equals(default_annot_style)) {
-								style.setReverseColor((Color) value);
-							} else {
+							if (!style.equals(default_annot_style)) {
 								element.propertyMap.put(PROP_END_COLOR, value);
 							}
-							negativeColorComboBox.setSelectedColor((Color) value);
+							style.setReverseColor((Color) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);
 					}
 					fireTableCellUpdated(row, col);
-					setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 					table.setRowSelectionInterval(row, row);
 				} catch (Exception e) {
 					// exceptions should not happen, but must be caught if they do

@@ -23,9 +23,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 
-public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
+public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFactoryI {
 
 	private static final int default_glyph_height = 50;
 	private int glyph_height = default_glyph_height;
@@ -133,5 +133,9 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 		ftier.addChild(cov);
 
 		gviewer.setDataModelFromOriginalSym(cov, tsym);
+	}
+
+	public boolean isFileSupported(String format) {
+		return true;
 	}
 }

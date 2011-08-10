@@ -49,7 +49,6 @@ import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  *
@@ -75,10 +74,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
 		parent_labelled_glyph_class = default_elabelled_parent_class;
-	}
-
-	public String getName(){
-		return "annots";
 	}
 	
 	public void init(Map options) {

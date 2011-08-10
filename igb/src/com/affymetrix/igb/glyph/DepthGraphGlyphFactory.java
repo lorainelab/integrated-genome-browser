@@ -1,6 +1,5 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -11,6 +10,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
+import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -19,7 +19,7 @@ import com.affymetrix.igb.shared.TierGlyph;
  *
  * @author hiralv
  */
-public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
+public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 
 	private static final int DEFAULT_THICK_HEIGHT = 25;
 	
@@ -81,5 +81,9 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 			tier.addChild(graph_glyph);
 			tier.setInfo(gsym);
 		}
+	}
+
+	public boolean isFileSupported(String format) {
+		return true;
 	}
 }

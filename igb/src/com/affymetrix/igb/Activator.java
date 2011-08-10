@@ -19,11 +19,11 @@ import com.affymetrix.igb.glyph.GlyphProcessorHolder;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackClickHolder;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.GlyphProcessor;
+import com.affymetrix.igb.shared.TrackClickListener;
 
 /**
  * OSGi Activator for igb bundle
@@ -132,14 +132,14 @@ public class Activator implements BundleActivator {
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(MapViewGlyphFactoryI.class) {
+			new ExtensionPointHandler(ExtendedMapViewGlyphFactoryI.class) {
 				@Override
 				public void addService(Object o) {
-					MapViewModeHolder.getInstance().addViewFactory((MapViewGlyphFactoryI)o);
+					MapViewModeHolder.getInstance().addViewFactory((ExtendedMapViewGlyphFactoryI)o);
 				}
 				@Override
 				public void removeService(Object o) {
-					MapViewModeHolder.getInstance().removeViewFactory((MapViewGlyphFactoryI)o);
+					MapViewModeHolder.getInstance().removeViewFactory((ExtendedMapViewGlyphFactoryI)o);
 				}
 			}
 		);

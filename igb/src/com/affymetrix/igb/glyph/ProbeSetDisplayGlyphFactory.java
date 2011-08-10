@@ -37,7 +37,6 @@ import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  *  A factory for showing consensus (or exemplar) sequences mapped onto the genome with
@@ -93,10 +92,6 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	public ProbeSetDisplayGlyphFactory() {
 	}
 
-	public String getName(){
-		return "ProbeSet";
-	}
-	
 	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);

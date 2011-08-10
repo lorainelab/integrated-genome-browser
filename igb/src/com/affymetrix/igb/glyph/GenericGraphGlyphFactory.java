@@ -1,6 +1,5 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
@@ -38,10 +37,6 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		if (ccs != null) {
 			check_same_seq = ccs.booleanValue();
 		}
-	}
-
-	public String getName(){
-		return "Graph";
 	}
 	
 	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {

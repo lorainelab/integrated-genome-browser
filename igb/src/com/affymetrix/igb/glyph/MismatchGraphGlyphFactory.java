@@ -10,8 +10,8 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MismatchPileupGlyph;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -21,8 +21,9 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  *
  * @author hiralv
  */
-public class MismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
+public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 
+	private static final String[] supportedFormat = {"bam", "sam"};
 	private static final int DEFAULT_THICK_HEIGHT = 50;
 	private final boolean createPileUp;
 	private final String name;
@@ -50,9 +51,14 @@ public class MismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 		
 		String meth = BioSeq.determineMethod(sym);
 		SeqSpan pspan = smv.getViewSeqSpan(sym);
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		
 		if (meth == null || pspan == null || pspan.getLength() == 0) {
+			return;
+		}
+		
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+		
+		if(!isFileSupported(style.getFileType())){
 			return;
 		}
 		
@@ -78,6 +84,18 @@ public class MismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 	
 	}
 	
+	public boolean isFileSupported(String fileFormat){
+		if(fileFormat == null)
+			return false;
+		
+		for(String format : supportedFormat){
+			if(format.equals(fileFormat)){
+				return true;
+			}
+		}
+		return false;
+	}
+		
 	private void addToParent(String meth, SeqSpan pspan, MisMatchGraphSym gsym, TierGlyph tier){
 		if(gsym != null){
 			GraphState state = new GraphState(meth, tier.getAnnotStyle());

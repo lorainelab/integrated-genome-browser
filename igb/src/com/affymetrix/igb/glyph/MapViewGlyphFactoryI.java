@@ -11,12 +11,12 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.igb.shared.SeqMapViewI;
 
 public interface MapViewGlyphFactoryI  {
   public void init(java.util.Map options);
   public void createGlyph(SeqSymmetry sym, SeqMapViewI smv);
-  public String getName();
 }

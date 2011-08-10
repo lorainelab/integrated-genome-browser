@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.stylesheet;
 
+import com.affymetrix.igb.shared.ViewModeNotSupportedException;
 import java.util.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -20,7 +21,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.shared.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;

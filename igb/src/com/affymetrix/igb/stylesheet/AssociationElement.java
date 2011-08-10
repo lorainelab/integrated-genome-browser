@@ -17,9 +17,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewI;
-import com.affymetrix.igb.shared.ViewModeNotSupportedException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class AssociationElement implements DrawableElement {
   /*

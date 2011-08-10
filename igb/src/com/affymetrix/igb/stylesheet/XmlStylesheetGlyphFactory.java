@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.igb.shared.ViewModeNotSupportedException;
 import java.util.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;

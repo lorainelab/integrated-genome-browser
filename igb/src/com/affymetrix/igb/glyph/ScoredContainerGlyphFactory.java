@@ -14,7 +14,6 @@ package com.affymetrix.igb.glyph;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.igb.shared.ViewModeNotSupportedException;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;

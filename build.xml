@@ -318,7 +318,7 @@
 	<target name="declare_igb_ant" depends="igb_ant">
 		<taskdef name="bndlprops"
 	        classname="com.affymetrix.igb.ant.IncludeJars"
-	        classpath="${igb.ant.dir}/build"/>
+	        classpath="${igb.ant.dir}/build;${lib.dir}/felix.jar"/>
 	</target>
 
 	<target name="bundles_properties" depends="declare_igb_ant" description="Create the bundles.properties file">

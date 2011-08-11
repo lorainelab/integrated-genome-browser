@@ -55,7 +55,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 	}
 
-	private static final int EMBEDDED_TAB_COUNT_TOTAL = 10; // hack - this number MUST be updated if an embedded tab is added
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
 	private final HashMap<TabState, JMenuItem> move_tab_to_window_items;
 	private final HashMap<TabState, JMenuItem> move_tabbed_panel_to_window_items;
@@ -66,7 +65,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<JMenu, Integer> tabMenuPositions;
 	private Container cpane;
 	private boolean tabSeparatorSet = false;
-	private int embeddedTabCount = 0;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -240,19 +238,17 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 			tabs_menu.insert(pluginMenu, menuPosition);
 		}
+	}
+
+	public void showTabs() {
 		// here we keep count of the embedded tabs that are added. When
 		// all the embedded tabs have been added, we initialize the tab panes
 		// this is to prevent the flashing of new tabs added
-		if (tabPanel.isEmbedded()) {
-			embeddedTabCount++;
-		}
-		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
-					frame.setVisible(true);
-				}
-			});
-		}
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				frame.setVisible(true);
+			}
+		});
 	}
 
 	/**

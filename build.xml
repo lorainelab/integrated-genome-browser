@@ -7,12 +7,14 @@
 <!-- be able to be used on a sub-project alone.                      -->
 <!--                                                                 -->
 <project name="IGB" basedir=".">
+	<property name="props" value="${basedir}/build.properties" />
+	<property file="${props}" />
 	<import file="common.xml" />
 
 	<target name="init">
 		<property name="name" value="Integrated Genome Browser" />
 
-		<!-- Locations of subprojets -->
+		<!-- Locations of subprojects -->
 		<property name="main"                value="${basedir}/main" />
 		<property name="common"              value="${basedir}/common" />
 		<property name="genoviz"             value="${basedir}/genoviz_sdk" />
@@ -24,6 +26,8 @@
 		<property name="igb_service"         value="${basedir}/plugins/igb_service" />
 		<property name="window_service"      value="${basedir}/plugins/window_service" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
+
+		<!-- Locations of optional bundle subprojects -->
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
@@ -33,12 +37,13 @@
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 
 		<!-- directory paths -->
-		<property name="lib.dir"    value="${basedir}/ext" />
-		<property name="etc.dir"    value="${basedir}/etc" />
-		<property name="demos.dir"  value="${genoviz}/demo" />
-		<property name="docs.dir"   value="${basedir}/doc/api" />
-		<property name="report.dir" value="${basedir}/reports" />
-		<property name="bundle.dir" value="${basedir}/bundles" />
+		<property name="lib.dir"     value="${basedir}/ext" />
+		<property name="etc.dir"     value="${basedir}/etc" />
+		<property name="demos.dir"   value="${genoviz}/demo" />
+		<property name="docs.dir"    value="${basedir}/doc/api" />
+		<property name="report.dir"  value="${basedir}/reports" />
+		<property name="bundle.dir"  value="${basedir}/bundles" />
+		<property name="igb.ant.dir" value="${basedir}/plugins/ant" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${common}/resources/common.properties"/>
@@ -97,8 +102,6 @@
 	<target name="copy-bundle-if" description="copy a bundle to bundle dir" unless="${jar_name}.present">
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
 			<arg value="wrap"/>
-			<arg value="-properties"/>
-			<arg value="IGB_tier.mf"/>
 			<arg value="${jar_name}.jar"/>
 		</java>
 		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
@@ -158,7 +161,7 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${basedir}/igb_exe.jar" signedjar="${webstart.dir}/igb_exe.jar" />
+		<my.signjar jar="${basedir}/${igb.jar.name}.jar" signedjar="${webstart.dir}/${igb.jar.name}.jar" />
 		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
 
 		<copy file="${igb}/resources/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
@@ -279,10 +282,11 @@
 	</target>
 
 	<target name="clean" depends="common-init">
-		<delete file="igb_exe.jar"/>
+		<delete file="${igb.jar.name}.jar"/>
 		<delete file="protannot_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
 		<delete file="${demos.dir}/genoviz.jar" />
+		<delete file="${etc.dir}/bundles.properties" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
@@ -291,8 +295,8 @@
 		<delete dir="${basedir}/build" />
 		<delete dir="${work.dir}" />
 		<delete dir="${bundle.dir}" />
+		<delete dir="${igb.ant.dir}/build" />
 		<delete dir="gogo" />
-
 		<iterate target="clean" />
 	</target>
 
@@ -306,8 +310,30 @@
 		</my.javadoc>
 	</target>
 
-	<target name="exe" depends="jar" description="Create a single-jar IGB application">
-		<jar jarfile="igb_exe.jar" update="false">
+	<target name="igb_ant" depends="common-init" description="Compile the ant tasks">
+		<mkdir dir="${igb.ant.dir}/build" />
+		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar:${lib.dir}/felix.jar" />
+	</target>
+
+	<target name="declare_igb_ant" depends="igb_ant">
+		<taskdef name="bndlprops"
+	        classname="com.affymetrix.igb.ant.IncludeJars"
+	        classpath="${igb.ant.dir}/build"/>
+	</target>
+
+	<target name="bundles_properties" depends="declare_igb_ant" description="Create the bundles.properties file">
+		<bndlprops propertiesfile="${etc.dir}/bundles.properties">
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</bndlprops>
+	</target>
+
+	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
+		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
@@ -323,6 +349,12 @@
 			</zipgroupfileset>
 			<fileset dir="${bundle.dir}">
 				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${ext.bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${etc.dir}">
+				<include name="bundles.properties"/>
 			</fileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
@@ -435,7 +467,7 @@
 				<include name="RELEASES.txt" />
 				<include name="LICENSE.html" />
 				<include name="run_igb.*" />
-				<include name="igb_exe.jar" />
+				<include name="${igb.jar.name}.jar" />
 			</fileset>
 			<fileset dir="${lib.dir}">
 				<include name="*.txt" />
@@ -593,14 +625,10 @@
 					<include name="igb" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">
-					<include name="plugins_page" />
-					<include name="RestrictionSites" />
-					<include name="ExternalView" />
-					<include name="PropertyView" />
-					<include name="SearchView" />
-					<include name="GraphAdjuster" />
-					<include name="Bookmark" />
 					<include name="window_service_def" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<patternset includes="${include.bundles}"/>
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="protannot" />

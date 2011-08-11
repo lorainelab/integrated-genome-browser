@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +61,7 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
+	private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
 	private static final int TAB_POSITION = 6;
 
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -91,7 +93,16 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private final BundleFilter SYSTEM_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
-			return igbService.getTier(bundle) > 1;
+			if (bundle.getBundleId() == 0) { // system bundle
+				return false;
+			}
+			try {
+				BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
+			}
+			catch (MissingResourceException x) {
+				return true;
+			}
+			return false;
 		}
 	};
 	private BundleContext bundleContext;

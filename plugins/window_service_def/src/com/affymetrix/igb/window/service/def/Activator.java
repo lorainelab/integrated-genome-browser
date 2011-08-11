@@ -1,6 +1,10 @@
 package com.affymetrix.igb.window.service.def;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +20,8 @@ import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
 	private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
-
+	private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
+	private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
 	private static BundleContext bundleContext;
 
 	/**
@@ -27,15 +32,39 @@ public class Activator implements BundleActivator {
 		return bundleContext;
 	}
 
+	private void addTab(ServiceReference serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
+		IGBTabPanel panel = (IGBTabPanel)bundleContext.getService(serviceReference);
+		windowServiceDefaultImpl.addTab(panel);
+		tabPanels.remove(panel.getName());
+		if (tabPanels.isEmpty()) {
+			windowServiceDefaultImpl.showTabs();
+		}
+	}
+
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		Activator.bundleContext = _bundleContext;
+		final List<String> tabPanels = new ArrayList<String>();
+		Enumeration<String> bundleKeys = BUNDLE_PROPERTIES.getKeys();
+		while (bundleKeys.hasMoreElements()) {
+			String key = bundleKeys.nextElement();
+			String value = BUNDLE_PROPERTIES.getString(key);
+			if (value.contains(TAB_PANEL_CATEGORY)) {
+				for (String part : value.split(";")) {
+					if (part.startsWith(TAB_PANEL_CATEGORY)) {
+						for (String className : part.substring(TAB_PANEL_CATEGORY.length()).split(",")) {
+							tabPanels.add(className);
+						}
+					}
+				}
+			}
+		}
 		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, new Properties());
 		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference serviceReference : serviceReferences) {
-				windowServiceDefaultImpl.addTab((IGBTabPanel)bundleContext.getService(serviceReference));
+				addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
 			}
 		}
 		try {
@@ -48,7 +77,7 @@ public class Activator implements BundleActivator {
 							windowServiceDefaultImpl.removeTab((IGBTabPanel)bundleContext.getService(serviceReference));
 						}
 						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							windowServiceDefaultImpl.addTab((IGBTabPanel)bundleContext.getService(serviceReference));
+							addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
 						}
 					}
 				}

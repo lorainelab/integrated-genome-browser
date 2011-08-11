@@ -5,6 +5,9 @@ Bundle-SymbolicName: com.affymetrix.igb.PluginsPage
 Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
 IGB-Tier: 1
+Bundle-ActivationPolicy: lazy
+Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/Plug-ins+Panel
+Bundle-Category: IGBTabPanel-com.affymetrix.igb.plugins.PluginsView
 Import-Package: com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  javax.swing,
@@ -25,6 +28,5 @@ Bundle-ClassPath: .,
  lib/org.apache.felix.bundlerepository-1.6.4.jar,
  lib/org.osgi.service.obr-1.0.2.jar,
  lib/org.apache.felix.log-1.0.0.jar
-Bundle-ActivationPolicy: lazy
 Bundle-Description: IGB plugins page for managing plugins
 

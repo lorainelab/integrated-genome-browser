@@ -4,7 +4,6 @@ Bundle-Name: IGBService
 Bundle-SymbolicName: com.affymetrix.igb.IGBService
 Bundle-Version: @appVersion@
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-IGB-Tier: 1
 Import-Package: javax.swing,
  javax.swing.event,
  javax.swing.table,

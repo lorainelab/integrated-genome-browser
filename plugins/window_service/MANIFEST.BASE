@@ -5,7 +5,6 @@ Bundle-SymbolicName: com.affymetrix.igb.WindowService
 Bundle-Version: @appVersion@
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: IGB window service
-IGB-Tier: 1
 Import-Package: javax.swing,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.igb.osgi.service,

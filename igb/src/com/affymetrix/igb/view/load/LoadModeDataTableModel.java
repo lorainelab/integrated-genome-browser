@@ -31,13 +31,13 @@ import javax.swing.table.AbstractTableModel;
 public final class LoadModeDataTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"Info", "Refresh", "Hide", "BG", "FG", "Choose Load Mode", "Data Set/File Name", "Track Name", "Trash"};
+	private static final String[] columnNames = {"", "B", "", "F", "", "Choose Load Mode", "Data Set/File Name", "Track Name", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int INFO_FEATURE_COLUMN = 0;
-	static final int REFRESH_FEATURE_COLUMN = 1;
-	static final int HIDE_FEATURE_COLUMN = 2;
-	static final int BACKGROUND_COLUMN = 3;
-	static final int FOREGROUND_COLUMN = 4;
+	static final int BACKGROUND_COLUMN = 1;
+	static final int REFRESH_FEATURE_COLUMN = 2;
+	static final int FOREGROUND_COLUMN = 3;
+	static final int HIDE_FEATURE_COLUMN = 4;
 	static final int LOAD_STRATEGY_COLUMN = 5;
 	static final int FEATURE_NAME_COLUMN = 6;
 	static final int TRACK_NAME_COLUMN = 7;
@@ -81,9 +81,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			createPrimaryVirtualFeatures(gFeature);
 		}
 		if (LoadModeTable.jTable != null) {
-			int[] selectedRows = LoadModeTable.jTable.getSelectedRows();
 			this.fireTableDataChanged();
-			LoadModeTable.keepSelectedRows(selectedRows);
 		}
 	}
 
@@ -264,10 +262,12 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == HIDE_FEATURE_COLUMN)) {
 			return false;
-		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
-				&& !vFeature.isPrimary) {
+		} else if (col == FEATURE_NAME_COLUMN) {
 			return false;
-		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
+		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
+				&& !vFeature.isPrimary) {
+			return false;}
+		 else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
 			return true;

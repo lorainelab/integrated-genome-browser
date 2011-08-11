@@ -70,6 +70,7 @@ import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
+import java.awt.Font;
 
 public final class GeneralLoadView extends IGBTabPanel
 				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
@@ -976,9 +977,9 @@ public final class GeneralLoadView extends IGBTabPanel
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(110);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(135);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(120);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(150);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
@@ -986,17 +987,22 @@ public final class GeneralLoadView extends IGBTabPanel
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(28);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(28);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(28);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(28);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(28);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(28);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(15);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
 				
 				loadedTracksTable.getTableHeader().setReorderingAllowed(false);
+				loadedTracksTable.getTableHeader().setAlignmentX(CENTER_ALIGNMENT);
+				Font f = new Font ("Serif", Font.BOLD, 12);
+				loadedTracksTable.getTableHeader().setFont(f);
+				loadedTracksTable.setRowSelectionAllowed(false);
+				loadedTracksTable.setCellSelectionEnabled(true); 
 				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()

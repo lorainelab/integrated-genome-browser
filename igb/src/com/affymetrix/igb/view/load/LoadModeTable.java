@@ -1,8 +1,6 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
@@ -10,7 +8,6 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
@@ -50,15 +47,15 @@ public final class LoadModeTable {
 	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
 	static final Icon info_icon = IGBUtils.getIcon("warning.gif");
 	static final int INFO_FEATURE_COLUMN = 0;
-	static final int REFRESH_FEATURE_COLUMN = 1;
-	static final int HIDE_FEATURE_COLUMN = 2;
-	static final int COL_BACKGROUND = 3;
-	static final int COL_FOREGROUND = 4;
+	static final int BACKGROUND_COLUMN = 1;
+	static final int REFRESH_FEATURE_COLUMN = 2;
+	static final int FOREGROUND_COLUMN = 3;
+	static final int HIDE_FEATURE_COLUMN = 4;
 	static final int LOAD_STRATEGY_COLUMN = 5;
 	static final int FEATURE_NAME_COLUMN = 6;
 	static final int TRACK_NAME_COLUMN = 7;
 	static final int DELETE_FEATURE_COLUMN = 8;
-	public static boolean iconTest;
+	//public static boolean iconTest;
 
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -132,19 +129,19 @@ public final class LoadModeTable {
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(delete_icon, true));
-		c.setHeaderRenderer(new LabelTableCellRenderer(delete_icon, true));
+		//c.setHeaderRenderer(new LabelTableCellRenderer(delete_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
-		c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
+		//c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
-		c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
+		//c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(visible_icon, true));
-		c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
-		iconTest = true;
+		//c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
+		//iconTest = true;
 	}
 
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -183,19 +180,6 @@ public final class LoadModeTable {
 			ftm.createVirtualFeatures(ftm.features);
 		}
 	}
-
-	public static void keepSelectedRows(int[] rows) {
-		if (jTable != null
-				&& rows != null) {
-			for (int i = 0; i < jTable.getRowCount(); i++) {
-				for (int j : rows) {
-					if (j == i) {
-						jTable.addRowSelectionInterval(j, j);
-					}
-				}
-			}
-		}
-	}
 }
 
 /**
@@ -206,14 +190,14 @@ class JTableX extends JTable implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
 		"File Status Information",
-		"Hide All",
-		"Refresh All",
 		"Background Color",
+		"Refresh",
 		"Foreground Color",
+		"Hide/Unhide",
 		"Load Strategy",
 		"Feature Name",
 		"Track Name",
-		"Delete All"
+		"Delete"
 	};
 	private final Map<Integer, RowEditorModel> rmMap;
 	private List<TierGlyph> currentTiers;
@@ -361,65 +345,64 @@ class JTableX extends JTable implements MouseListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		java.awt.Point p = e.getPoint();
-		int index = columnModel.getColumnIndexAtX(p.x);
-
-		int realIndex = columnModel.getColumn(index).getModelIndex();
-		LoadModeDataTableModel ftm = (LoadModeDataTableModel) getModel();
-
-		switch (realIndex) {
-			case LoadModeDataTableModel.REFRESH_FEATURE_COLUMN:
-				if (GeneralLoadView.getIsDisableNecessary()) {
-					GeneralLoadView.getLoadView().getRefreshDataAction().actionPerformed(null);
-				}
-				break;
-			case LoadModeDataTableModel.DELETE_FEATURE_COLUMN:
-				int featureSize = ftm.getRowCount();
-				String message = "Really remove all data sets ?";
-				if (featureSize > 0 && Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-					List<TierGlyph> tierList = smv.getSeqMap().getTiers();
-					for (GenericFeature gFeature : ftm.features) {
-						GeneralLoadView.getLoadView().removeFeature(gFeature, true);
-					}
-					ftm.virtualFeatures.clear();
-				}
-				break;
-			case LoadModeDataTableModel.HIDE_FEATURE_COLUMN:
-				currentTiers = smv.getSeqMap().getTiers();
-				TableColumn c = this.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);//may be wrong
-				if (LoadModeTable.iconTest) {
-					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
-					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
-					LoadModeTable.iconTest = false;
-
-					for (TierGlyph tier : currentTiers) {
-						if (tier.getAnnotStyle().getTrackName() != null) {// need change
-							if (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(
-									TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-								if (tier.isVisible()) {
-									smv.getPopup().hideOneTier(tier);
-								}
-							}
-						}
-					}
-
-					refreshSeqMapView();
-				} else {
-					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
-					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
-					LoadModeTable.iconTest = true;
-					smv.getPopup().showAllTiers();
-				}
-
-				this.getTableHeader().repaint();
-				int[] selectedRows = this.getSelectedRows();
-				ftm.fireTableDataChanged();
-				LoadModeTable.keepSelectedRows(selectedRows);
-				break;
-			default:
-			//System.out.println("Unknown header selected: " + realIndex);
-		}
+		//do nothing - functionality removed but not deleted for now.
+//		java.awt.Point p = e.getPoint();
+//		int index = columnModel.getColumnIndexAtX(p.x);
+//
+//		int realIndex = columnModel.getColumn(index).getModelIndex();
+//		LoadModeDataTableModel ftm = (LoadModeDataTableModel) getModel();
+//
+//		switch (realIndex) {
+//			case LoadModeDataTableModel.REFRESH_FEATURE_COLUMN:
+//				if (GeneralLoadView.getIsDisableNecessary()) {
+//					GeneralLoadView.getLoadView().getRefreshDataAction().actionPerformed(null);
+//				}
+//				break;
+//			case LoadModeDataTableModel.DELETE_FEATURE_COLUMN:
+//				int featureSize = ftm.getRowCount();
+//				String message = "Really remove all data sets ?";
+//				if (featureSize > 0 && Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+//						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+//					List<TierGlyph> tierList = smv.getSeqMap().getTiers();
+//					for (GenericFeature gFeature : ftm.features) {
+//						GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+//					}
+//					ftm.virtualFeatures.clear();
+//				}
+//				break;
+//			case LoadModeDataTableModel.HIDE_FEATURE_COLUMN:
+//				currentTiers = smv.getSeqMap().getTiers();
+//				TableColumn c = this.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);//may be wrong
+//				if (LoadModeTable.iconTest) {
+//					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
+//					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
+//					LoadModeTable.iconTest = false;
+//
+//					for (TierGlyph tier : currentTiers) {
+//						if (tier.getAnnotStyle().getTrackName() != null) {// need change
+//							if (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(
+//									TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+//								if (tier.isVisible()) {
+//									smv.getPopup().hideOneTier(tier);
+//								}
+//							}
+//						}
+//					}
+//
+//					refreshSeqMapView();
+//				} else {
+//					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
+//					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
+//					LoadModeTable.iconTest = true;
+//					smv.getPopup().showAllTiers();
+//				}
+//
+//				this.getTableHeader().repaint();
+//				ftm.fireTableDataChanged();
+//				break;
+//			default:
+//			//System.out.println("Unknown header selected: " + realIndex);
+//		}
 	}
 
 	private void refreshSeqMapView() {

@@ -100,6 +100,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        showStrandButtonGroup = new javax.swing.ButtonGroup();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -273,7 +274,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
             .add(selectTrackDefaultPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                     .add(selectTrackDefaultPanelLayout.createSequentialGroup()
                         .add(addTrackDefaultButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -314,7 +315,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
             }
         });
 
-        trackNameSizeLabel.setText("Track Name Size:");
+        trackNameSizeLabel.setText("Name Size:");
 
         trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
@@ -358,7 +359,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         });
 
         show2TracksCheckBox.setSelected(true);
-        show2TracksCheckBox.setText("Show two tracks (+) and (-)");
+        show2TracksCheckBox.setText("Show (+/-) tracks");
         show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 show2TracksCheckBoxActionPerformed(evt);
@@ -407,18 +408,17 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                                     .add(org.jdesktop.layout.GroupLayout.TRAILING, labelFieldLabel))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(labelFieldComboBox, 0, 82, Short.MAX_VALUE)
+                                    .add(labelFieldComboBox, 0, 77, Short.MAX_VALUE)
                                     .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                         .add(46, 46, 46))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(connectedCheckBox)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(show2TracksCheckBox))))
-                .add(94, 94, 94))
+                        .add(show2TracksCheckBox)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(connectedCheckBox)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -446,12 +446,11 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                     .add(maxDepthLabel)
                     .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(show2TracksCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(show2TracksCheckBox)
                     .add(connectedCheckBox)
                     .add(collapsedCheckBox))
-                .add(116, 116, 116))
+                .add(146, 146, 146))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -463,8 +462,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 392, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
+                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 374, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -475,8 +474,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                 .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 224, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -666,6 +665,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
     private javax.swing.JButton removeTrackDefaultButton;
     private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
+    private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
     private javax.swing.JTextField trackDefaultTextField;

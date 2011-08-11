@@ -12,8 +12,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import org.osgi.framework.Bundle;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -100,14 +98,6 @@ public interface IGBService {
 	 * @param routine the routine to run
 	 */
 	public void addStopRoutine(IStopRoutine routine);
-	/**
-	 * get the tier number of the specified bundle
-	 * tier 1 means embedded - user will not see this
-	 * tier 3 means external - user can install / uninstall
-	 * @param bundle the bundle to check
-	 * @return the tier number
-	 */
-	public int getTier(Bundle bundle);
 	/**
 	 * get the file menu of the application
 	 * @return the file menu of the IGB application

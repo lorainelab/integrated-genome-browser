@@ -102,7 +102,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		boolean isPrimary = vFeature.isPrimary;
 		VirtualFeature subVfeature;
 		for (TrackStyle style : currentStyles) {
-			if (style.getFeature().featureName.equals(vFeature.getFeature().featureName)) {
+			if (style.getFeature().equals(vFeature.getFeature())) {
 				subVfeature = new VirtualFeature(vFeature.getFeature(), style);
 				if (isPrimary) {
 					virtualFeatures.remove(vFeature);
@@ -177,7 +177,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	public void genericFeatureRefreshed(GenericFeature feature) {
 		int row = -1;
 		for (VirtualFeature vFeature : virtualFeatures) {
-			if (vFeature.getFeature().featureName.equalsIgnoreCase(feature.featureName)) {
+			if (vFeature.getFeature().equals(feature)) {
 				row = getRow(vFeature);
 			}
 		}
@@ -318,7 +318,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 					for (GenericFeature gFeature : features) {
-						if (gFeature.featureName.equalsIgnoreCase(vFeature.getFeature().featureName)) {
+						if (gFeature.equals(vFeature.getFeature())) {
 							GeneralLoadView.getLoadView().removeFeature(gFeature, true);
 						}
 					}
@@ -328,7 +328,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				if (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
 						&& vFeature.getLoadStrategy() != LoadStrategy.GENOME) {
 					for (GenericFeature gFeature : features) {
-						if (gFeature.featureName.equalsIgnoreCase(vFeature.getFeature().featureName)) {
+						if (gFeature.equals(vFeature.getFeature())) {
 							GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 						}
 					}
@@ -336,7 +336,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				break;
 			case LOAD_STRATEGY_COLUMN:
 				for (GenericFeature gFeature : features) {
-					if (gFeature.featureName.equalsIgnoreCase(vFeature.getFeature().featureName)) {
+					if (gFeature.equals(vFeature.getFeature())) {
 						if (gFeature.getLoadStrategy() == LoadStrategy.GENOME) {
 							return;	// We can't change strategies once we've loaded the entire genome.
 						}

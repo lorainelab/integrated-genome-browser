@@ -96,7 +96,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
-		
+
 		//set Selected Rows
 		ITrackStyle style;
 		table.removeRowSelectionInterval(0, table.getRowCount() - 1);
@@ -813,8 +813,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
 			table.setRowSelectionInterval(0, 0);
-			LoadModeTable.updateVirtualFeatureList();
 		}
+		LoadModeTable.updateVirtualFeatureList();
 	}
 
 	private void applyChanges() {

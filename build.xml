@@ -312,7 +312,7 @@
 
 	<target name="igb_ant" depends="common-init" description="Compile the ant tasks">
 		<mkdir dir="${igb.ant.dir}/build" />
-		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar:${lib.dir}/felix.jar" />
+		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar;${lib.dir}/felix.jar" />
 	</target>
 
 	<target name="declare_igb_ant" depends="igb_ant">

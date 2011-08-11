@@ -17,6 +17,7 @@ import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -251,6 +252,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
+        Font f = new Font ("Serif", Font.BOLD, 12);
+        table.getTableHeader().setFont(f);
         jScrollPane1.setViewportView(table);
 
         addTrackDefaultButton.setText("Add");

@@ -47,10 +47,10 @@ public final class LoadModeTable {
 	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
 	static final Icon info_icon = IGBUtils.getIcon("warning.gif");
 	static final int INFO_FEATURE_COLUMN = 0;
-	static final int BACKGROUND_COLUMN = 1;
+	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int REFRESH_FEATURE_COLUMN = 2;
 	static final int FOREGROUND_COLUMN = 3;
-	static final int HIDE_FEATURE_COLUMN = 4;
+	static final int BACKGROUND_COLUMN = 4;
 	static final int LOAD_STRATEGY_COLUMN = 5;
 	static final int FEATURE_NAME_COLUMN = 6;
 	static final int TRACK_NAME_COLUMN = 7;
@@ -142,6 +142,7 @@ public final class LoadModeTable {
 		c.setCellRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//iconTest = true;
+		table.getTableHeader().setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
 
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -190,10 +191,10 @@ class JTableX extends JTable implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
 		"File Status Information",
-		"Background Color",
-		"Refresh",
-		"Foreground Color",
 		"Hide/Unhide",
+		"Refresh",
+		"Background Color",
+		"Foreground Color",
 		"Load Strategy",
 		"Feature Name",
 		"Track Name",

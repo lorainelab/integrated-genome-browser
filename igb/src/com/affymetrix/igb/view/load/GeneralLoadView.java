@@ -987,12 +987,12 @@ public final class GeneralLoadView extends IGBTabPanel
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(15);
-				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(15);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(25);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(25);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(25);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(25);
+				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
 				loadedTracksTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);

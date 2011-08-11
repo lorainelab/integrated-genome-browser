@@ -31,13 +31,13 @@ import javax.swing.table.AbstractTableModel;
 public final class LoadModeDataTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"", "B", "", "F", "", "Choose Load Mode", "Data Set/File Name", "Track Name", ""};
+	private static final String[] columnNames = {"", "", "", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int INFO_FEATURE_COLUMN = 0;
-	static final int BACKGROUND_COLUMN = 1;
+	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int REFRESH_FEATURE_COLUMN = 2;
 	static final int FOREGROUND_COLUMN = 3;
-	static final int HIDE_FEATURE_COLUMN = 4;
+	static final int BACKGROUND_COLUMN = 4;
 	static final int LOAD_STRATEGY_COLUMN = 5;
 	static final int FEATURE_NAME_COLUMN = 6;
 	static final int TRACK_NAME_COLUMN = 7;

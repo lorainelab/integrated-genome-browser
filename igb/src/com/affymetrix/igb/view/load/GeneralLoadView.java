@@ -1000,8 +1000,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				LoadModeTable loadModeTable = LoadModeTable.getSingleton();
-				loadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
+				LoadModeTable.setComboBoxEditors(loadedTracksTable, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 

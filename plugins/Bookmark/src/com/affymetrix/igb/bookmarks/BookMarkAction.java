@@ -388,7 +388,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		}
 		Bookmark bookmark = null;
 		try {
-			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, igbService.getVisibleSpan());
+			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, igbService.getSeqMapView().getVisibleSpan());
 		}
 	    catch (MalformedURLException m) {
 	    	ErrorHandler.errorPanel("Couldn't add bookmark", m);

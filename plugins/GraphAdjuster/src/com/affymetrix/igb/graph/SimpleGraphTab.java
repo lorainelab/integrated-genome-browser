@@ -43,6 +43,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -92,7 +93,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
-			igbService.selectAllGraphs();
+			igbService.getSeqMapView().selectAllGraphs();
 		}
 	};
 	private final Action delete_selected_graphs_action = new AbstractAction(BUNDLE.getString("deleteSelectedGraphs")) {
@@ -277,6 +278,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
+	}
+
+	public boolean isTierGlyph(GlyphI glyph) {
+		return glyph instanceof TierGlyph;
 	}
 
 	private void showGraphScoreThreshSetter() {
@@ -567,7 +572,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				igbService.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+				igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 				resetSelectedGraphGlyphs(previous_graph_syms);
 			}
 		});
@@ -615,7 +620,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 				// If a graph is joined with others in a combo tier, repack that tier.
 				GlyphI parentgl = gl.getParent();
-				if (igbService.isTierGlyph(parentgl)) {
+				if (isTierGlyph(parentgl)) {
 					//	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());
 					igbService.packGlyph(parentgl);
 				}
@@ -1053,7 +1058,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		if (gl != null) {
 			igbService.removeItem(gl);
 			// clean-up references to the graph, allowing garbage-collection, etc.
-			igbService.clearSelectGraphs();
+			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
 		}
 		
 		BioSeq aseq = gsym.getGraphSeq();
@@ -1072,7 +1077,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);
 			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
-				if (igbService.isTierGlyph(parentgl)) {
+				if (isTierGlyph(parentgl)) {
 					igbService.deleteGlyph(parentgl);
 					igbService.packMap(false, false);
 				}
@@ -1159,7 +1164,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
 				GlyphI glParent = gl.getParent();
-				if (igbService.isTierGlyph(glParent)) {
+				if (isTierGlyph(glParent)) {
 					glParent.setForegroundColor(col);
 					List<ViewI> views = glParent.getScene().getViews();
 					for (ViewI v : views) {

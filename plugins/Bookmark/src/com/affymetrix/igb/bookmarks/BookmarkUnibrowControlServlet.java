@@ -398,7 +398,7 @@ public final class BookmarkUnibrowControlServlet {
 				gmodel.setSelectedSeq(book_seq);
 			}
 		}
-		igbService.setRegion(start, end, book_seq);
+		igbService.getSeqMapView().setRegion(start, end, book_seq);
 
 		return book_seq;
 	}

@@ -12,7 +12,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		PropertyView propertyView = new PropertyView(igbService);
-        igbService.setPropertyHandler(propertyView);
+        igbService.getSeqMapView().setPropertyHandler(propertyView);
 		return propertyView;
 	}
 
@@ -22,7 +22,7 @@ public class Activator extends WindowActivator implements BundleActivator {
     	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
         if (igbServiceReference != null) {
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-            igbService.setPropertyHandler(null);
+            igbService.getSeqMapView().setPropertyHandler(null);
         }
 		super.stop(_bundleContext);
 	}

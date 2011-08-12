@@ -54,7 +54,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 		if (!query.isEmpty()) {
 			GeneralUtils.browse(UCSC_URL + query);
 		} else {
-			ErrorHandler.errorPanel("Unable to map genome '" + igbService.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
+			ErrorHandler.errorPanel("Unable to map genome '" + igbService.getSeqMapView().getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
 		}
 	}
 
@@ -94,7 +94,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	 * @return query URL for current view. "" on error.
 	 */
 	public String getUCSCQuery(){
-		BioSeq aseq = igbService.getAnnotatedSeq();
+		BioSeq aseq = igbService.getSeqMapView().getAnnotatedSeq();
 
 		if (aseq == null) { return ""; }
 
@@ -112,7 +112,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	 *  @return a String such as "chr22:15916196-31832390", or null.
 	 */
 	private String getRegionString() {
-		SeqSpan span = igbService.getVisibleSpan();
+		SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
 		return span.getBioSeq() + ":" + span.getMin() + "-" + span.getMax();
 	}
 }

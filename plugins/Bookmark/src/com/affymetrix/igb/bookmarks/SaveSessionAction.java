@@ -34,7 +34,7 @@ public class SaveSessionAction extends AbstractAction {
 			try {
 				File f = chooser.getSelectedFile();
 				igbService.saveState();
-				Bookmark bookmark = BookmarkController.getCurrentBookmark(true, igbService.getVisibleSpan());
+				Bookmark bookmark = BookmarkController.getCurrentBookmark(true, igbService.getSeqMapView().getVisibleSpan());
 				PreferenceUtils.getSessionPrefsNode().put("bookmark", URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC));
 				PreferenceUtils.exportPreferences(PreferenceUtils.getTopNode(), f);
 				PreferenceUtils.getSessionPrefsNode().removeNode();

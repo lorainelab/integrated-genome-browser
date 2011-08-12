@@ -88,7 +88,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	public SearchView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
-		igbService.addSeqMapRefreshedListener(this);
+		igbService.getSeqMapView().addToRefreshList(this);
 		
 		group = gmodel.getSelectedSeqGroup();
 
@@ -266,7 +266,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
 			glyphs.clear();
-			igbService.setAnnotatedSeq(igbService.getAnnotatedSeq(), true, true, true);
+			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
 		}
 		
 		clearTable();

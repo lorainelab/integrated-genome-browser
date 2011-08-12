@@ -56,7 +56,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
-		propertyListeners.add((PropertyListener)igbService.getSeqMapViewListener());
+		propertyListeners.add((PropertyListener)igbService.getSeqMapView().getMouseListener());
 	}
 
 	private static List<String> graphToolTipOrder(){
@@ -284,7 +284,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = propertyHolder.determineProps(sym);
-		props.putAll(sym.getLocationProperties(x, igbService.getVisibleSpan()));
+		props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
 		propList.add(props);
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
 	}

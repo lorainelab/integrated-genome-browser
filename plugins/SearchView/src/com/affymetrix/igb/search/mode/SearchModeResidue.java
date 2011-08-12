@@ -165,19 +165,19 @@ public class SearchModeResidue implements ISearchMode {
 		}
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-		if (vseq != igbService.getAnnotatedSeq()){
+		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
 			boolean confirm = igbService.confirmPanel("Sequence " + vseq.getID() +
-					" is not same as selected sequence " + igbService.getAnnotatedSeq().getID() +
+					" is not same as selected sequence " + igbService.getSeqMapView().getAnnotatedSeq().getID() +
 					". \nPlease select the sequence before proceeding." +
 					"\nDo you want to select sequence now ?");
 			if(!confirm)
 				return false;
-			SeqSpan viewspan = igbService.getVisibleSpan();
+			SeqSpan viewspan = igbService.getSeqMapView().getVisibleSpan();
 			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
 			int max = Math.min(viewspan.getMax(), vseq.getMax());
 			SeqSpan newspan = new SimpleSeqSpan(min, max, vseq);
 			gmodel.setSelectedSeq(vseq);
-			igbService.zoomTo(newspan);
+			igbService.getSeqMapView().zoomTo(newspan);
 		}
 
 		boolean isComplete = vseq.isComplete();
@@ -193,7 +193,7 @@ public class SearchModeResidue implements ISearchMode {
 	public void finished(BioSeq vseq) {
 		boolean isComplete = vseq.isComplete();
 		if (!isComplete) {
-			igbService.setAnnotatedSeq(vseq, true, true, true);
+			igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 		}
 	}
 	public SearchResultsTableModel getEmptyTableModel() {
@@ -206,7 +206,7 @@ public class SearchModeResidue implements ISearchMode {
 	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
 		boolean isComplete = chrFilter.isComplete();
 		if (!isComplete) {
-			igbService.loadResidues(igbService.getVisibleSpan(), true);
+			igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
 		}
 		String friendlySearchStr = SearchModeHolder.friendlyString(search_text, chrFilter.getID());
 		Pattern regex = null;
@@ -273,7 +273,7 @@ public class SearchModeResidue implements ISearchMode {
 			int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
 			igbService.select(glyph);
 			igbService.zoomToCoord(((GlyphSearchResultsTableModel)model).seq, start, end);
-			igbService.centerAtHairline();
+			igbService.getSeqMapView().centerAtHairline();
 		}
 	}
 

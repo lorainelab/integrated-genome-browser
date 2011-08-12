@@ -186,14 +186,14 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		clearGlyphs();
 
-		final BioSeq vseq = igbService.getViewSeq();
+		final BioSeq vseq = igbService.getSeqMapView().getViewSeq();
 		if (vseq == null) {
 			ErrorHandler.errorPanel("No Sequence selected. Please select a seqeunce.");
 			return;
 		}
 
 		Executor vexec = igbService.getPrimaryExecutor(this);
-		if(!vseq.isAvailable(igbService.getVisibleSpan())){
+		if(!vseq.isAvailable(igbService.getSeqMapView().getVisibleSpan())){
 			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");
 			if (!confirm) {
@@ -201,8 +201,8 @@ public final class RestrictionControlView extends IGBTabPanel
 			}
 			vexec.execute(new Runnable() {
 				public void run() {
-					igbService.loadResidues(igbService.getVisibleSpan(), true);
-					igbService.setAnnotatedSeq(vseq, true, true, true);
+					igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
+					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 				}
 			});
 		}
@@ -217,8 +217,8 @@ public final class RestrictionControlView extends IGBTabPanel
 		{
 			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
-				BioSeq vseq = igbService.getViewSeq();
-				if (vseq == null || !vseq.isAvailable(igbService.getVisibleSpan())) {
+				BioSeq vseq = igbService.getSeqMapView().getViewSeq();
+				if (vseq == null || !vseq.isAvailable(igbService.getSeqMapView().getVisibleSpan())) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;
 				}

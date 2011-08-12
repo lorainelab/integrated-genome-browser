@@ -11,15 +11,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -161,11 +157,6 @@ public interface IGBService {
 	 * @return the constant value for the AppVersion
 	 */
 	public String getAppVersion();
-	public SeqSpan getVisibleSpan();
-	public void setRegion(int start, int end, BioSeq seq);
-	public BioSeq getAnnotatedSeq();
-	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view);
-	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y);
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
 	public void updateDependentData();
@@ -202,19 +193,14 @@ public interface IGBService {
 	// for RestrictionSites
 	public void updateWidget();
 	public void removeItem(List<GlyphI> vec);
-	public BioSeq getViewSeq();
 	// for SearchView
-	public void zoomTo(SeqSpan span);
 	public void zoomToCoord(String seqID, int start, int end);
-	public void centerAtHairline();
-	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed);
 	public void mapRefresh(List<GlyphI> glyphs);
 	public GlyphI getItem(SeqSymmetry sym);
 	public void removeItem(GlyphI gl);
 	public void select(GlyphI g);
 	public void deselect(GlyphI g);
 	public void clearSelected();
-	public void postSelections();
 	/**
 	 * get the SeqMapViewI, the main window for IGB
 	 * @return the SeqMapViewI
@@ -238,15 +224,6 @@ public interface IGBService {
 	 */
 	public String getGenomeSeqId();
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
-	// for PropertyView
-	/**
-	 * set a PropertyHandler to handle display of the properties of the
-	 * SeqMapView (main view) selection
-	 * @param propertyHandler the implementation of the PropertyHandler
-	 * the will process the property display for the SeqMapView selection
-	 */
-	public void setPropertyHandler(PropertyHandler propertyHandler);
-	public Object getSeqMapViewListener();
 	// for Graph Adjuster
 	/**
 	 * get the main JFrame for the application
@@ -268,14 +245,10 @@ public interface IGBService {
 	 */
 	public void selectTab(IGBTabPanel panel);
 	public NeoAbstractWidget getGraphCurrentSource();
-	public void addSeqMapPopupListener(ContextualPopupListener listener);
-	public boolean isTierGlyph(GlyphI glyph);
 	public void packGlyph(GlyphI glyph);
 	public void deleteGlyph(GlyphI glyph);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
-	public void selectAllGraphs();
-	public void clearSelectGraphs();
 	public List<GlyphI> getItems(GraphSym graf);
 	public boolean isMainSrc(Object src);
 	public void setTrackStyle(String meth, Color col, String description);

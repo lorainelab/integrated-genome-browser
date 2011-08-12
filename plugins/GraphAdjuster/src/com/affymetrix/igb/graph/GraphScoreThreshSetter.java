@@ -753,7 +753,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		System.out.println("Created threshold tier: " + description);
 
-		igbService.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 	}
 
 	/** When a JTextField gains focus, do nothing special. */

@@ -135,7 +135,7 @@ public final class LoadModeTable {
 		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
 
-		c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
+		//c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
 		//c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
 
 		c = table.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);
@@ -192,8 +192,8 @@ class JTableX extends JTable implements MouseListener {
 		"Status update for track loading",
 		"Show or hide tracks.",
 		"Load data for track.",
-		"Set track background color.",
 		"Set annotation color when Color by Strand Preference is not checked.",
+		"Set track background color.",
 		"Load Strategy",
 		"Name of active file or data set",
 		"Set label text (display name) for Track Label.",

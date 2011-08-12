@@ -335,6 +335,7 @@
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
 		<jar jarfile="${bundle.dir}/igb.jar" update="true">
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
+			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
 		</jar>
 		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>

@@ -380,7 +380,7 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="compile, classpath, copy-bundles, bundles_properties" description="run IGB">
+	<target name="run" depends="classpath" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>
@@ -395,7 +395,7 @@
 		</java>
 	</target>
 
-	<target name="classpath">
+	<target name="classpath" depends="compile, copy-bundles, bundles_properties" >
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />
@@ -405,6 +405,10 @@
 				<include name="felix.jar" />
 			</fileset>
 		</path>
+		<jar jarfile="${bundle.dir}/igb.jar" update="true">
+			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
+			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
+		</jar>
 	</target>
 	
 	<target name="run_Protannot" depends="compile" description="run Protannot">

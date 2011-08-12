@@ -142,7 +142,6 @@ public final class LoadModeTable {
 		c.setCellRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//iconTest = true;
-		table.getTableHeader().setAlignmentX(Component.CENTER_ALIGNMENT);
 	}
 
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {

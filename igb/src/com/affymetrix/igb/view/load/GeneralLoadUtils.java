@@ -728,6 +728,8 @@ public final class GeneralLoadUtils {
 				if (isCancelled()) {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
+				
+				LoadModeTable.updateVirtualFeatureList();
 
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
@@ -805,6 +807,8 @@ public final class GeneralLoadUtils {
 				}
 
 				TierMaintenanceListenerHolder.getInstance().fireTierAdded();
+				//Update LoadModeTableModel
+				LoadModeTable.updateVirtualFeatureList();
 			}
 		};
 
@@ -864,6 +868,7 @@ public final class GeneralLoadUtils {
 				feature.setLastRefreshStatus(RefreshStatus.NO_NEW_DATA_LOADED);
 			}
 		}
+		LoadModeTable.updateVirtualFeatureList();
 	}
 
 	/**

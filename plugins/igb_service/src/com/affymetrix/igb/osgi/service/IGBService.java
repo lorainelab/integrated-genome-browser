@@ -31,25 +31,8 @@ public interface IGBService {
 	 * A potential parameter in either the URL of a bookmark, or a command-line option.  This allows a response file to be loaded, instead of anything else.
 	 */
 	public final static String SCRIPTFILETAG = "scriptfile";
-	public static final String IGB_TIER_HEADER = "IGB-Tier";
-	// service extension point names
-	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";
-	public static final String TAB_PANELS = "igb.tab_panels";
-	public static final String SYM_FEATURE_URL = "feature_url_";
 
 	public final static boolean DEBUG_EVENTS = false;
-	/**
-	 * add a menu to the main IGB menu
-	 * @param menu the JMenu to add to the main IGB menu
-	 * @return true if the menu was added, false otherwise
-	 */
-	public boolean addMenu(JRPMenu menu);
-	/**
-	 * remove a menu from the main IGB menu
-	 * @param menuName the name of the JMenu to remove from the main IGB menu
-	 * @return true if the menu was removed, false otherwise
-	 */
-	public boolean removeMenu(String menuName);
 	/**
 	 * Add a lockedUp message to the list of locked messages and display with
 	 * a little progress bar so that the app doesn't look locked up.

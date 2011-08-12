@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -36,7 +34,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
@@ -88,43 +85,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-	}
-
-	@Override
-	public boolean addMenu(JRPMenu new_menu) {
-		String menuName = new_menu.getName();
-		JMenuBar main_menu_bar = MenuUtil.getMainMenuBar();
-		int num_menus = main_menu_bar.getMenuCount();
-	    for (int i=0; i<num_menus; i++) {
-	      JMenu menu_i = main_menu_bar.getMenu(i);
-	      if (menuName.equals(menu_i.getName())) {
-	        menu_i.getName();
-	        return false; // already a menu with this name
-	      }
-	    }
-
-	    // Add the new menu, but keep the "Help" menu in last place
-	    if (num_menus > 0 && "Help".equals(main_menu_bar.getMenu(num_menus-1).getName())) {
-	    	main_menu_bar.add(new_menu, num_menus-1);
-	    } else {
-	    	main_menu_bar.add(new_menu);
-	    }
-	    main_menu_bar.validate();
-	    return true;
-	}
-
-	@Override
-	public boolean removeMenu(String menuName) {
-		JMenuBar main_menu_bar = MenuUtil.getMainMenuBar();
-		int num_menus = main_menu_bar.getMenuCount();
-	    for (int i=0; i<num_menus; i++) {
-	      JMenu menu_i = main_menu_bar.getMenu(i);
-	      if (menuName.equals(menu_i.getName())) {
-	    	main_menu_bar.remove(i);
-	        return true;
-	      }
-	    }
-	    return false; // not found
 	}
 
 	@Override

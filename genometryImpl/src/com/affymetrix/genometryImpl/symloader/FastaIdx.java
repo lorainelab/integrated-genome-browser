@@ -6,12 +6,13 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.sf.picard.reference.IndexedFastaSequenceFile;
 import net.sf.picard.reference.ReferenceSequence;
+import net.sf.picard.reference.ReferenceSequenceFile;
+import net.sf.picard.reference.ReferenceSequenceFileFactory;
+import net.sf.samtools.SAMSequenceDictionary;
+import net.sf.samtools.SAMSequenceRecord;
 
 /**
  * For fasta files with a SamTools .fai index created
@@ -32,17 +33,6 @@ public class FastaIdx extends FastaCommon {
 		fastaFile = tempFile;
 	}
 
-	public List<BioSeq> getSequenceList(FastaSequenceIndex fsi) {
-		List<BioSeq> sequenceList = new ArrayList<BioSeq>();
-		Iterator<FastaSequenceIndexEntry> iter = fsi.iterator();
-		while (iter.hasNext()) {
-			FastaSequenceIndexEntry ent = iter.next();
-			BioSeq seq = new BioSeq(ent.getContig(), "", (int)ent.getSize());
-			sequenceList.add(seq);
-		}
-		return sequenceList;
-	}
-
 	/**
 	 * Get seqids and lengths for all chromosomes.
 	 */
@@ -52,12 +42,12 @@ public class FastaIdx extends FastaCommon {
 		if (uriString.startsWith(FILE_PREFIX)) {
 			uriString = uri.getPath();
 		}
-		FastaSequenceIndex fsi = new FastaSequenceIndex(new File(uriString + ".fai"));
-		List<BioSeq> sequenceList = getSequenceList(fsi);
-		for (BioSeq seqLoop : sequenceList) {
-			String seqid = seqLoop.getID();
+		ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(new File(uriString));
+		SAMSequenceDictionary sequenceDict = refSeq.getSequenceDictionary();
+		for (SAMSequenceRecord rec : sequenceDict.getSequences()) {
+			String seqid = rec.getSequenceName();
 			BioSeq seq = group.getSeq(seqid);
-			int count = seqLoop.getLength();
+			int count = rec.getSequenceLength();
 			if (seq == null) {
 				chrSet.add(new BioSeq(seqid, "", count));
 			} else {

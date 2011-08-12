@@ -13,8 +13,6 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -28,9 +26,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -322,16 +318,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void updateWidget() {
-		getSeqMap().updateWidget();
-	}
-
-	@Override
-	public void removeItem(List<GlyphI> glyphs) {
-		getSeqMap().removeItem(glyphs);
-	}
-
-	@Override
 	public void zoomToCoord(String seqID, int start, int end) {
 		MapRangeBox.zoomToSeqAndSpan(((SeqMapView)getSeqMapView()), seqID, start, end);
 	}
@@ -345,31 +331,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public GlyphI getItem(SeqSymmetry sym) {
-		return getSeqMap().<GlyphI>getItem(sym);
-	}
-
-	@Override
-	public void removeItem(GlyphI gl) {
-		getSeqMap().removeItem(gl);
-	}
-
-	@Override
-	public void select(GlyphI g) {
-		getSeqMap().select(g);
-	}
-
-	@Override
-	public void deselect(GlyphI g) {
-		getSeqMap().deselect(g);
-	}
-
-	@Override
-	public void clearSelected() {
-		getSeqMap().clearSelected();
-	}
-
-	private AffyTieredMap getSeqMap() {
+	public NeoAbstractWidget getSeqMap() {
 		return Application.getSingleton().getMapView().getSeqMap();
 	}
 
@@ -433,13 +395,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public NeoAbstractWidget getGraphCurrentSource() {
-		return getSeqMap();
-	}
-
-	@Override
 	public void packGlyph(GlyphI glyph) {
-		glyph.pack(getSeqMap().getView());
+		glyph.pack(getView());
 	}
 
 	@Override
@@ -449,7 +406,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
-		AffyTieredMap map = getSeqMap();
+		AffyTieredMap map = (AffyTieredMap)getSeqMap();
 		map.packTiers(false, true, false);
 		map.stretchToFit(fitx, fity);
 		map.updateWidget();
@@ -457,12 +414,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public View getView() {
-		return getSeqMap().getView();
-	}
-
-	@Override
-	public List<GlyphI> getItems(GraphSym graf) {
-		return getSeqMap().getItems(graf);
+		return ((AffyTieredMap)getSeqMap()).getView();
 	}
 
 	@Override
@@ -492,16 +444,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			allTierGlyphs.add(labelGlyph.getReferenceTier());
 		}
 		return allTierGlyphs;
-	}
-
-	@Override
-	public void addSeqMapMouseListener(MouseListener mouseListener) {
-		getSeqMap().addMouseListener(mouseListener);
-	}
-
-	@Override
-	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener) {
-		getSeqMap().addMouseMotionListener(mouseMotionListener);
 	}
 
 	@Override

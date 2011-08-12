@@ -289,7 +289,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 		if (src == this.searchCB) {
 			clearResults();
-			igbService.updateWidget();
+			igbService.getSeqMap().updateWidget();
 
 			this.initSequenceCB();
 			this.searchTF.setEnabled(true);

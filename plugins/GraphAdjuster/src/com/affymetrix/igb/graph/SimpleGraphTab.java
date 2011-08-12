@@ -208,7 +208,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
-		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getGraphCurrentSource());
+		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
 		height_slider.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("heightSlider")));
@@ -460,7 +460,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				List<GlyphI> multigl = igbService.getItems(graf);
+				List<GlyphI> multigl = igbService.getSeqMap().getItems(graf);
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (GlyphI g : multigl) {
@@ -558,7 +558,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						heat_mapCB.setEnabled(false);
 					// don't bother to change the displayed heat map name
 					}
-					igbService.updateWidget();
+					igbService.getSeqMap().updateWidget();
 				}
 			};
 
@@ -596,7 +596,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						gl.setGraphStyle(GraphType.HEAT_MAP);
 						gl.setHeatMap(hm);
 					}
-					igbService.updateWidget();
+					igbService.getSeqMap().updateWidget();
 				}
 			}
 		}
@@ -675,7 +675,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					ThreadUtils.runOnEventQueue(new Runnable() {
 	
 						public void run() {
-							igbService.updateWidget();
+							igbService.getSeqMap().updateWidget();
 						}
 					});
 				}
@@ -690,7 +690,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						ThreadUtils.runOnEventQueue(new Runnable() {
 	
 							public void run() {
-								igbService.updateWidget();
+								igbService.getSeqMap().updateWidget();
 							}
 						});
 						A = null;
@@ -950,14 +950,14 @@ public final class SimpleGraphTab extends IGBTabPanel
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
-			igbService.updateWidget();
+			igbService.getSeqMap().updateWidget();
 		}
 
 		private void setShowLabels(boolean b) {
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
-			igbService.updateWidget();
+			igbService.getSeqMap().updateWidget();
 		}
 
 		private void doTransformGraphs() {
@@ -1044,7 +1044,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			deleteGraph(gmodel, graf);
 		}
 		gmodel.clearSelectedSymmetries(SimpleGraphTab.class);
-		igbService.updateWidget();
+		igbService.getSeqMap().updateWidget();
 	}
 
 	/**
@@ -1055,9 +1055,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 	 *  left after deleting the graph, then delete the tier as well.
 	 */
 	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
-		GraphGlyph gl = (GraphGlyph) igbService.getItem(gsym);
+		GraphGlyph gl = (GraphGlyph) igbService.getSeqMap().getItem(gsym);
 		if (gl != null) {
-			igbService.removeItem(gl);
+			igbService.getSeqMap().removeItem(gl);
 			// clean-up references to the graph, allowing garbage-collection, etc.
 			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
 		}
@@ -1158,7 +1158,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private void applyColorChange(List<GraphSym> graf_syms, Color col) {
 		for (GraphSym graf : graf_syms) {
 			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
-			List<GlyphI> glist = igbService.getItems(graf);
+			List<GlyphI> glist = igbService.getSeqMap().getItems(graf);
 			for (GlyphI g : glist) {
 				GraphGlyph gl = (GraphGlyph)g;
 				gl.setColor(col); // this automatically sets the GraphState color
@@ -1185,7 +1185,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		// Set an initial color so that the "reset" button will work.
 		GraphSym graf_0 = graf_syms.get(0);
-		GraphGlyph gl_0 = (GraphGlyph) igbService.getItem(graf_0);
+		GraphGlyph gl_0 = (GraphGlyph) igbService.getSeqMap().getItem(graf_0);
 		Color initial_color = Color.GREEN;
 		if (gl_0 != null) {
 			// gl_0 could be null if there is a selected graph that isn't visible in
@@ -1198,7 +1198,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		if (col != null) {
 			applyColorChange(graf_syms, col);
 		}
-		igbService.updateWidget();
+		igbService.getSeqMap().updateWidget();
 	}
 	@Override
 	public boolean isEmbedded() {

@@ -242,7 +242,7 @@ public class SearchModeResidue implements ISearchMode {
 		}
 
 		statusHolder.setStatus("Found " + ": " + hit_count1 + " forward and " + hit_count2 + " reverse strand hits. Click row to view hit.");
-		igbService.updateWidget();
+		igbService.getSeqMap().updateWidget();
 
 		Collections.sort(glyphs, new Comparator<GlyphI>() {
 			public int compare(GlyphI g1, GlyphI g2) {
@@ -266,12 +266,12 @@ public class SearchModeResidue implements ISearchMode {
 	public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) {
 		GlyphI glyph = ((GlyphSearchResultsTableModel)model).get(srow);
 		for(GlyphI g : glyphs){
-			igbService.deselect(g);
+			igbService.getSeqMap().deselect(g);
 		}
 		if(glyph != null){
 			int start = (int)glyph.getCoordBox().x;
 			int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
-			igbService.select(glyph);
+			igbService.getSeqMap().select(glyph);
 			igbService.zoomToCoord(((GlyphSearchResultsTableModel)model).seq, start, end);
 			igbService.getSeqMapView().centerAtHairline();
 		}

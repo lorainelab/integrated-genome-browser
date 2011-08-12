@@ -1,8 +1,6 @@
 package com.affymetrix.igb.osgi.service;
 
 import java.awt.Color;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -10,9 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -189,17 +185,10 @@ public interface IGBService {
 	 */
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
-	// for RestrictionSites
-	public void updateWidget();
-	public void removeItem(List<GlyphI> vec);
 	// for SearchView
 	public void zoomToCoord(String seqID, int start, int end);
 	public void mapRefresh(List<GlyphI> glyphs);
-	public GlyphI getItem(SeqSymmetry sym);
-	public void removeItem(GlyphI gl);
-	public void select(GlyphI g);
-	public void deselect(GlyphI g);
-	public void clearSelected();
+	public NeoAbstractWidget getSeqMap();
 	/**
 	 * get the SeqMapViewI, the main window for IGB
 	 * @return the SeqMapViewI
@@ -243,19 +232,15 @@ public interface IGBService {
 	 * @param panel the IGBTabPanel
 	 */
 	public void selectTab(IGBTabPanel panel);
-	public NeoAbstractWidget getGraphCurrentSource();
 	public void packGlyph(GlyphI glyph);
 	public void deleteGlyph(GlyphI glyph);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
-	public List<GlyphI> getItems(GraphSym graf);
 	public boolean isMainSrc(Object src);
 	public void setTrackStyle(String meth, Color col, String description);
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
-	public void addSeqMapMouseListener(MouseListener mouseListener);
-	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener);
 
 	// ServerList
 	public boolean areAllServersInited();

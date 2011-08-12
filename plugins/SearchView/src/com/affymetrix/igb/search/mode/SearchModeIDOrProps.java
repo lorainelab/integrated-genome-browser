@@ -334,7 +334,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 				return;
 			}
 
-			if (igbService.getItem(sym) == null) {
+			if (igbService.getSeqMap().getItem(sym) == null) {
 				if (group == null) {
 					return;
 				}

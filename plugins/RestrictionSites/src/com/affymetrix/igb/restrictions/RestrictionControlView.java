@@ -174,14 +174,14 @@ public final class RestrictionControlView extends IGBTabPanel
 	}
 
 	private void clearGlyphs() {
-		igbService.removeItem(glyphs);
+		igbService.getSeqMap().removeItem(glyphs);
 		glyphs.clear();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == clearB) {
 			clearAll();
-			igbService.updateWidget();
+			igbService.getSeqMap().updateWidget();
 			return;
 		}
 
@@ -259,7 +259,7 @@ public final class RestrictionControlView extends IGBTabPanel
 							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
 
 					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
-					igbService.updateWidget();
+					igbService.getSeqMap().updateWidget();
 				}
 			}finally{
 				igbService.removeNotLockedUpMsg("Finding Restriction Sites... ");

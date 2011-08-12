@@ -107,7 +107,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 	public GraphScoreThreshSetter(IGBService igbService, GraphVisibleBoundsSetter bounds_setter) {
 		this.igbService = igbService;
-		this.widg = igbService.getGraphCurrentSource();
+		this.widg = igbService.getSeqMap();
 		per_info_provider = bounds_setter;
 
 		score_val_slider = new JSlider(JSlider.HORIZONTAL);

@@ -189,15 +189,15 @@ class JTableX extends JTable implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
-		"File Status Information",
-		"Hide/Unhide",
-		"Refresh",
-		"Background Color",
-		"Foreground Color",
+		"Status update for track loading",
+		"Show or hide tracks.",
+		"Load data for track.",
+		"Set track background color.",
+		"Set annotation color when Color by Strand Preference is not checked.",
 		"Load Strategy",
-		"Feature Name",
-		"Track Name",
-		"Delete"
+		"Name of active file or data set",
+		"Set label text (display name) for Track Label.",
+		"Remove data set or file."
 	};
 	private final Map<Integer, RowEditorModel> rmMap;
 	private List<TierGlyph> currentTiers;

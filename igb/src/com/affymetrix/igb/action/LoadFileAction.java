@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.util.ParserController;
@@ -53,7 +54,6 @@ import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

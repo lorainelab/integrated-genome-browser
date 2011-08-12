@@ -21,6 +21,7 @@ import javax.swing.event.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -192,7 +193,7 @@ public final class RestrictionControlView extends IGBTabPanel
 			return;
 		}
 
-		Executor vexec = igbService.getPrimaryExecutor(this);
+		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
 		if(!vseq.isAvailable(igbService.getSeqMapView().getVisibleSpan())){
 			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");

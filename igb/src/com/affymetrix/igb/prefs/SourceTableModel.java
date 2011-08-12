@@ -2,8 +2,8 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.jidesoft.utils.SwingWorker;
 

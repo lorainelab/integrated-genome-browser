@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -257,9 +256,6 @@ public interface IGBService {
 	public List<Glyph> getAllTierGlyphs();
 	public void addSeqMapMouseListener(MouseListener mouseListener);
 	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener);
-	// ThreadUtils
-	public Executor getPrimaryExecutor(Object key);
-	public void runOnEventQueue(Runnable r);
 
 	// ServerList
 	public boolean areAllServersInited();

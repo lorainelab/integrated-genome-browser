@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -163,7 +164,7 @@ public final class BookmarkUnibrowControlServlet {
 					final GenericFeature feature = gFeatures[i];
 
 					if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-						igbService.getPrimaryExecutor(feature).execute(new Runnable() {
+						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {
 								BookmarkController.applyProperties(igbService, seq, parameters, feature);

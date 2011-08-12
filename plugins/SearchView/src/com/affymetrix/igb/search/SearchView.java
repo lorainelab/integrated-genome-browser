@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
@@ -165,7 +166,7 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initSequenceCB() {
-		igbService.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 			public void run() {
 				// set up the sequence combo_box
 				sequenceCB.removeAllItems();
@@ -333,7 +334,7 @@ public final class SearchView extends IGBTabPanel implements
 					}
 				};
 				worker.addThreadListener(cancel);
-				igbService.getPrimaryExecutor(this).execute(worker);
+				ThreadUtils.getPrimaryExecutor(this).execute(worker);
 			}
 		}
 		if(src == this.clearButton){
@@ -398,7 +399,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	/** Set the text in the status bar in a thread-safe way. */
 	public void setStatus(final String text) {
-		igbService.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				status_bar.setText(text);

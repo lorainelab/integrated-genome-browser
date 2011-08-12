@@ -1,6 +1,6 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 

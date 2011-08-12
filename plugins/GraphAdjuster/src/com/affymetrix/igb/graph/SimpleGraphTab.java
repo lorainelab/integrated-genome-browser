@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -671,7 +672,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					grafs.get(1).setGraphName("B");
 	
 					comp.setToolTipText(null);
-					igbService.runOnEventQueue(new Runnable() {
+					ThreadUtils.runOnEventQueue(new Runnable() {
 	
 						public void run() {
 							igbService.updateWidget();
@@ -686,7 +687,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						grafs.get(0).setGraphName(A);
 						grafs.get(1).setGraphName(B);
 	
-						igbService.runOnEventQueue(new Runnable() {
+						ThreadUtils.runOnEventQueue(new Runnable() {
 	
 							public void run() {
 								igbService.updateWidget();

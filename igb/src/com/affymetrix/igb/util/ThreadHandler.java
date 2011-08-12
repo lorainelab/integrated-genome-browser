@@ -22,6 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 
 /**

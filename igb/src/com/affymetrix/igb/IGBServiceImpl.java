@@ -17,7 +17,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -37,6 +36,7 @@ import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -60,7 +60,6 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
@@ -144,7 +143,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void setStatus(final String message) {
-		runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 			public void run() {
 				Application.getSingleton().setStatus(message);
 			}
@@ -503,16 +502,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener) {
 		getSeqMap().addMouseMotionListener(mouseMotionListener);
-	}
-
-	@Override
-	public Executor getPrimaryExecutor(Object key) {
-		return ThreadUtils.getPrimaryExecutor(key);
-	}
-
-	@Override
-	public void runOnEventQueue(Runnable r) {
-		ThreadUtils.runOnEventQueue(r);
 	}
 
 	@Override

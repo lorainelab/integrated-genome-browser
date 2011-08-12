@@ -47,6 +47,7 @@ import org.osgi.service.obr.Resource;
 
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -659,7 +660,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				return null;
 			}
 		};
-		igbService.getPrimaryExecutor(this).execute(worker);
+		ThreadUtils.getPrimaryExecutor(this).execute(worker);
 		return true;
 	}
 

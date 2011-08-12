@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MismatchPileupGlyph;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -43,7 +43,7 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		}
 	}
 	
-	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		
 		if (sym == null || sym.getChildCount() == 0) {
 			return;

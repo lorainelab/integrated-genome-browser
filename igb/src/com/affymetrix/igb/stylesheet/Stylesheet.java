@@ -18,7 +18,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -233,7 +233,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
       return se;
     }
         @Override
-    public GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry sym, GlyphI container,
+    public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
         Stylesheet stylesheet, PropertyMap context) {
       StyleElement referredStyle = getReferredStyle(stylesheet);
 

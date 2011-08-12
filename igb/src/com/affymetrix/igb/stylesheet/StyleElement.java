@@ -16,7 +16,7 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 //import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import java.util.*;
 
 
@@ -67,7 +67,7 @@ class StyleElement implements DrawableElement {
     return clone;
   }  
     
-  public GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry sym, GlyphI container,
+  public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
 

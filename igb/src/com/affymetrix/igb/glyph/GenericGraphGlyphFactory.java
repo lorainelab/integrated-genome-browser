@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -39,7 +39,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 	
-	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		if (sym instanceof GraphSym) {
 			displayGraph((GraphSym) sym, smv, check_same_seq);
 		} else {
@@ -58,7 +58,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *     will go into an attached tier, never a floating glyph.
 	 *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
 	 */
-	private static GraphGlyph displayGraph(GraphSym graf, SeqMapViewI smv, boolean check_same_seq) {
+	private static GraphGlyph displayGraph(GraphSym graf, SeqMapViewExtendedI smv, boolean check_same_seq) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
@@ -121,7 +121,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param update_map
 	 * @return graph glyph
 	 */
-	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewI smv, boolean isGenome) {
+	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(newgraf, gstate);
 		if (graph_glyph == null) {

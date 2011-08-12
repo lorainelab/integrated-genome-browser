@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 
@@ -66,7 +66,7 @@ public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFact
 		}
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapViewI gviewer) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		ITrackStyleExtended annot_style = TrackStyle.getInstance(meth, false);
 
@@ -80,7 +80,7 @@ public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFact
 	}
 	
 	public static void createGlyph(SeqSymmetry sym, TierGlyph ftier, TierGlyph rtier, 
-			ITrackStyleExtended annot_style, int style, int glyph_height, SeqMapViewI gviewer) {
+			ITrackStyleExtended annot_style, int style, int glyph_height, SeqMapViewExtendedI gviewer) {
 
 		Color background_color;
 		Color glyph_color;
@@ -122,7 +122,7 @@ public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFact
 	}
 	
 	private static void addCoverageGlyph(Color background_color, List<SeqSpan> leaf_spans, Color glyph_color, 
-			int style, BioSeq coordseq, int glyph_height, TierGlyph ftier, SeqMapViewI gviewer, SeqSymmetry tsym) {
+			int style, BioSeq coordseq, int glyph_height, TierGlyph ftier, SeqMapViewExtendedI gviewer, SeqSymmetry tsym) {
 		CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
 		cov.setHitable(false);
 		cov.setBackgroundColor(background_color);

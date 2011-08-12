@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import java.awt.Color;
@@ -202,7 +202,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     return gl;
   }
   
-	GlyphI symToGlyph(SeqMapViewI gviewer, SeqSymmetry insym, GlyphI parent_glyph,
+	GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry insym, GlyphI parent_glyph,
 			Stylesheet stylesheet, PropertyMap context) {
 
 		if (insym == null) {
@@ -225,7 +225,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
 		return gl;
 	}
 
-	private GlyphI handleKnownGlyph(PropertyMap context, SeqMapViewI gviewer, SeqSymmetry insym, GlyphI parent_glyph, GlyphI gl, Stylesheet stylesheet) {
+	private GlyphI handleKnownGlyph(PropertyMap context, SeqMapViewExtendedI gviewer, SeqSymmetry insym, GlyphI parent_glyph, GlyphI gl, Stylesheet stylesheet) {
 		TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
 		SeqSpan span = transformForViewSeq(gviewer, insym);
 		if (span == null || (span.getLength() == 0 && parent_glyph instanceof TierGlyph)) {
@@ -284,7 +284,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     // inside their parents
   }
 
-  private void packGlyph(SeqMapViewI gviewer, GlyphI container) {
+  private void packGlyph(SeqMapViewExtendedI gviewer, GlyphI container) {
     if (container != null) {
       if (! (container instanceof TierGlyph)) {
         // packing with labeled glyphs doesn't work right, so skip it.
@@ -294,7 +294,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     }
   }
   
-  private void drawEnclosedGlyphs(SeqMapViewI gviewer, GlyphI container, SeqSymmetry insym, Stylesheet stylesheet) {
+  private void drawEnclosedGlyphs(SeqMapViewExtendedI gviewer, GlyphI container, SeqSymmetry insym, Stylesheet stylesheet) {
     if (enclosedGlyphElements != null) {
       // inside the parent, not inside the glyph.
       for (GlyphElement kid : enclosedGlyphElements) {
@@ -354,7 +354,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
 	}
   
   
-  private static void indexGlyph(PropertyMap pm, SeqMapViewI gviewer, GlyphI gl, SeqSymmetry insym) {
+  private static void indexGlyph(PropertyMap pm, SeqMapViewExtendedI gviewer, GlyphI gl, SeqSymmetry insym) {
     if (! "false".equals(pm.getProperty(PROP_KEY_INDEXED))) {
       // This will call GlyphI.setInfo() as a side-effect.
       gviewer.setDataModelFromOriginalSym(gl, insym);
@@ -370,7 +370,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   }
    
   	/** An efficient method to transform a single span. */
-	private SeqSpan transformForViewSeq(SeqMapViewI gviewer, SeqSymmetry insym) {
+	private SeqSpan transformForViewSeq(SeqMapViewExtendedI gviewer, SeqSymmetry insym) {
 		der.clear();
 		// copy the span into derSpan
 		insym.getSpan(gviewer.getAnnotatedSeq(), derSpan);

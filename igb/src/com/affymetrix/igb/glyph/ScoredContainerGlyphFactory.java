@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.TrackView;
@@ -51,7 +51,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	public void init(Map options) {
 	}
 	
-	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 				ScoredIntervalParser.default_attach_graphs);
 		if (sym instanceof ScoredContainerSym) {
@@ -76,7 +76,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
-	private static void displayGraphs(ScoredContainerSym original_container, SeqMapViewI smv, boolean update_map) {
+	private static void displayGraphs(ScoredContainerSym original_container, SeqMapViewExtendedI smv, boolean update_map) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		if (original_container.getSpan(aseq) == null) {
 			return;
@@ -95,7 +95,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 //		}
 	}
 
-	private static GraphIntervalSym[] determineGraphSyms(SeqMapViewI smv, BioSeq aseq, ScoredContainerSym original_container) {
+	private static GraphIntervalSym[] determineGraphSyms(SeqMapViewExtendedI smv, BioSeq aseq, ScoredContainerSym original_container) {
 		BioSeq vseq = smv.getViewSeq();
 		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (aseq != vseq) {
@@ -231,7 +231,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		return gsym;
 	}
 
-	private static void displayGraphSym(GraphIntervalSym graf, SeqMapViewI smv) {
+	private static void displayGraphSym(GraphIntervalSym graf, SeqMapViewExtendedI smv) {
 		GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(graf, graf.getGraphState());
 		if (graph_glyph == null) {
 			graph_glyph = new GraphGlyph(graf, graf.getGraphState());

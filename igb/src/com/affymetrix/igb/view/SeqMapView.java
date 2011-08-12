@@ -51,7 +51,7 @@ import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -102,7 +102,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-		implements SeqMapViewI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
+		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
 
 	private static final long serialVersionUID = 1L;
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;

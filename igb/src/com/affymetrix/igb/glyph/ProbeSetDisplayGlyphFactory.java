@@ -34,7 +34,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.SeqMapViewI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 
@@ -77,7 +77,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	private static final Color ps_color = Color.PINK;
 	private static final Color poly_a_site_color = Color.BLUE;
 	private static final Color poly_a_stack_color = Color.CYAN;
-	private SeqMapViewI gviewer;
+	private SeqMapViewExtendedI gviewer;
 	/**
 	 * Whether to put an outline around the probe glyphs in the same probeset.
 	 */
@@ -92,7 +92,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	public ProbeSetDisplayGlyphFactory() {
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapViewI smv) {
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;

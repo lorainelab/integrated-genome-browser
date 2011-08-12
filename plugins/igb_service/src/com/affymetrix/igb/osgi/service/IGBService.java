@@ -263,25 +263,6 @@ public interface IGBService {
 	 * load the current state of the application
 	 */
 	public void loadState();
-	public File getOutputDirectory();
-	public void setOutputDirectory(File file);
-	/**
-	 * get the load directory, where to find local files to
-	 * be loaded
-	 * @return the load directory
-	 */
-	public File getLoadDirectory();
-	/**
-	 * set the load directory, where to find local files to
-	 * be loaded
-	 * @param file the load directory
-	 */
-	public void setLoadDirectory(File file);
-	/**
-	 * get the IGBTabPanel with the given class name
-	 * @param className
-	 * @return the IGBTabPanel with the given class name
-	 */
 	public IGBTabPanel getView(String className);
 	/**
 	 * select the given tab in the tab panel, bringing it to the front

@@ -15,7 +15,6 @@ package com.affymetrix.igb;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +55,6 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -87,8 +85,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
-	private FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
-	private FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	private List<RepositoryChangeListener> repositoryChangeListeners;
 
 	private IGBServiceImpl() {
@@ -487,26 +483,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
 			panel.loadSession();
 		}
-	}
-
-	@Override
-	public File getOutputDirectory() {
-		return output_file_tracker.getFile();
-	}
-
-	@Override
-	public void setOutputDirectory(File file) {
-		output_file_tracker.setFile(file);
-	}
-
-	@Override
-	public File getLoadDirectory() {
-		return load_dir_tracker.getFile();
-	}
-
-	@Override
-	public void setLoadDirectory(File file) {
-		load_dir_tracker.setFile(file);
 	}
 
 	@Override

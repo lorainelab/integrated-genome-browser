@@ -41,6 +41,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.Color;
@@ -1088,10 +1089,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			GraphSym gsym = grafs.get(0);
 			try {
 				GraphSaverFileChooser chooser = new GraphSaverFileChooser(gsym);
-				chooser.setCurrentDirectory(igbService.getLoadDirectory());
+				chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 				int option = chooser.showSaveDialog(igbService.getFrame());
 				if (option == JFileChooser.APPROVE_OPTION) {
-					igbService.setLoadDirectory(chooser.getCurrentDirectory());
+					FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
 					File fil = chooser.getSelectedFile();
 					GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getAbsolutePath());
 				}

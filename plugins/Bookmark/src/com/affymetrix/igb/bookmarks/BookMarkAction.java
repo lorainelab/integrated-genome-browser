@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.event.MenuListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -305,6 +306,13 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     return jsep;
   }
 
+	public File getLoadDirectory() {
+		return FileTracker.DATA_DIR_TRACKER.getFile();
+	}
+
+	public void setLoadDirectory(File file) {
+		FileTracker.DATA_DIR_TRACKER.setFile(file);
+	}
 
   /**
    *  Tries to import bookmarks into Unibrow.
@@ -312,10 +320,10 @@ public final class BookMarkAction implements ActionListener, MenuListener {
    */
   public void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
     JFileChooser chooser = getJFileChooser();
-    chooser.setCurrentDirectory(igbService.getLoadDirectory());
+    chooser.setCurrentDirectory(getLoadDirectory());
     int option = chooser.showOpenDialog(frame);
     if (option == JFileChooser.APPROVE_OPTION) {
-      igbService.setLoadDirectory(chooser.getCurrentDirectory());
+      setLoadDirectory(chooser.getCurrentDirectory());
       try {
         File fil = chooser.getSelectedFile();
         BookmarksParser.parse(bookmark_list, fil);
@@ -335,7 +343,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   private JFileChooser getJFileChooser() {
     if (static_chooser == null) {
       static_chooser = new JFileChooser();
-      static_chooser.setCurrentDirectory(igbService.getLoadDirectory());
+      static_chooser.setCurrentDirectory(getLoadDirectory());
       UniFileFilter filter = new UniFileFilter(
         new String[] {"html", "htm", "xhtml"}, "HTML Files");
       static_chooser.addChoosableFileFilter(filter);
@@ -350,11 +358,11 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       return;
     }
     JFileChooser chooser = getJFileChooser();
-    chooser.setCurrentDirectory(igbService.getLoadDirectory());
+    chooser.setCurrentDirectory(getLoadDirectory());
     int option = chooser.showSaveDialog(frame);
     if (option == JFileChooser.APPROVE_OPTION) {
       try {
-    	igbService.setLoadDirectory(chooser.getCurrentDirectory());
+    	setLoadDirectory(chooser.getCurrentDirectory());
         File fil = chooser.getSelectedFile();
         String full_path = fil.getCanonicalPath();
 

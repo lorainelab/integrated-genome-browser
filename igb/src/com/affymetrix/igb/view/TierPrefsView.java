@@ -991,12 +991,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		public boolean isCellEditable(int row, int column) {
 			TrackStyle style;
 			style = tier_styles.get(row);
-			if (style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-				if (column == COL_TRACK_NAME) {
-					return false;
-				}
+			if (column == COL_TRACK_NAME) {
+				return false;
 			}
-
 			return true;
 		}
 

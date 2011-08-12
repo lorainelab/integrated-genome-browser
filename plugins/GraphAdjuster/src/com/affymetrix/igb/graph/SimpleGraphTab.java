@@ -319,7 +319,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		// Ignore the splice view as well as events coming from this class itself.
 
 		Object src = evt.getSource();
-		if (!igbService.isMainSrc(src)) {
+		if (!(src == igbService.getSeqMapView() || src == igbService.getSeqMap())) {
 			return;
 		}
 
@@ -623,7 +623,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				GlyphI parentgl = gl.getParent();
 				if (isTierGlyph(parentgl)) {
 					//	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());
-					igbService.packGlyph(parentgl);
+					parentgl.pack(igbService.getView());
 				}
 			}
 			igbService.packMap(false, true);

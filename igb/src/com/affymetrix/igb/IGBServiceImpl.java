@@ -395,13 +395,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void packGlyph(GlyphI glyph) {
-		glyph.pack(getView());
-	}
-
-	@Override
 	public void deleteGlyph(GlyphI glyph) {
-		
+		//TrackView.deleteTrack((TierGlyph) glyph);
+		// see rev 8414 change to com.affymetrix.igb.tiers.SeqMapViewPopup.removeTiers()
 	}
 
 	@Override
@@ -415,11 +411,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public View getView() {
 		return ((AffyTieredMap)getSeqMap()).getView();
-	}
-
-	@Override
-	public boolean isMainSrc(Object src) {
-		return src == getSeqMapView() || src == getSeqMap();
 	}
 
 	@Override

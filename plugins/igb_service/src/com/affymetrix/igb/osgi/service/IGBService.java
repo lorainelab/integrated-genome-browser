@@ -232,11 +232,9 @@ public interface IGBService {
 	 * @param panel the IGBTabPanel
 	 */
 	public void selectTab(IGBTabPanel panel);
-	public void packGlyph(GlyphI glyph);
 	public void deleteGlyph(GlyphI glyph);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
-	public boolean isMainSrc(Object src);
 	public void setTrackStyle(String meth, Color col, String description);
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins

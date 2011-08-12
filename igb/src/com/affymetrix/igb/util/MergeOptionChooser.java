@@ -1,6 +1,6 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;

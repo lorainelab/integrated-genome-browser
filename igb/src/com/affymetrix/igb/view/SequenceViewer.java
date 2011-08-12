@@ -27,7 +27,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
-import com.affymetrix.igb.menuitem.FileTracker;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.BorderLayout;

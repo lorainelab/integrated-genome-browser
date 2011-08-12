@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.view.WebLinkEditorPanel;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;

@@ -10,7 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.freehep.util.export.ExportDialog;
 import org.freehep.util.export.ExportFileType;
-import com.affymetrix.igb.menuitem.FileTracker;
+
+import com.affymetrix.igb.shared.FileTracker;
 
 /**
  * Prints a component to a file.

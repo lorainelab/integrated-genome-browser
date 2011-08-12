@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;

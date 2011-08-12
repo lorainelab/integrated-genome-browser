@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.menuitem;
+package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
@@ -50,6 +50,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
+import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;

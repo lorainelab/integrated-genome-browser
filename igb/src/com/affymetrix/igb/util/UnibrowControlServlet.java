@@ -28,8 +28,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.menuitem;
+package com.affymetrix.igb.shared;
 
 
 import java.io.File;

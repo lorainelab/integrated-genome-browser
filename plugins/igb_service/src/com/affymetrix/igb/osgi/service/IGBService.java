@@ -3,13 +3,11 @@ package com.affymetrix.igb.osgi.service;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -218,10 +216,10 @@ public interface IGBService {
 	public void clearSelected();
 	public void postSelections();
 	/**
-	 * get the SeqMapView, the main window for IGB
-	 * @return the SeqMapView
+	 * get the SeqMapViewI, the main window for IGB
+	 * @return the SeqMapViewI
 	 */
-	public JComponent getMapView();
+	public SeqMapViewI getSeqMapView();
 	// for GeneralLoadView
 	/**
 	 * get the string entered for command line batch file

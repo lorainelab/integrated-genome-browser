@@ -22,7 +22,6 @@ import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -54,6 +53,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -256,27 +256,27 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public SeqSpan getVisibleSpan() {
-		return ((SeqMapView)getMapView()).getVisibleSpan();
+		return ((SeqMapView)getSeqMapView()).getVisibleSpan();
 	}
 
 	@Override
 	public void setRegion(int start, int end, BioSeq seq) {
-		((SeqMapView)getMapView()).setRegion(start, end, seq);
+		((SeqMapView)getSeqMapView()).setRegion(start, end, seq);
 	}
 
 	@Override
 	public final BioSeq getAnnotatedSeq() {
-		return ((SeqMapView)getMapView()).getAnnotatedSeq();
+		return ((SeqMapView)getSeqMapView()).getAnnotatedSeq();
 	}
 
 	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
-		((SeqMapView)getMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view);
+		((SeqMapView)getSeqMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view);
 	}
 
 	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
-		((SeqMapView)getMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view_x, preserve_view_y);
+		((SeqMapView)getSeqMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view_x, preserve_view_y);
 	}
 
 	@Override
@@ -354,43 +354,42 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void updateWidget() {
-		((SeqMapView)getMapView()).getSeqMap().updateWidget();
+		getSeqMap().updateWidget();
 	}
 
 	@Override
 	public void removeItem(List<GlyphI> glyphs) {
-		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
-		map.removeItem(glyphs);
+		getSeqMap().removeItem(glyphs);
 	}
 
 	@Override
 	public BioSeq getViewSeq() {
-		return ((SeqMapView)getMapView()).getViewSeq();
+		return ((SeqMapView)getSeqMapView()).getViewSeq();
 	}
 
 	@Override
 	public void zoomTo(SeqSpan span) {
-		((SeqMapView)getMapView()).zoomTo(span);
+		((SeqMapView)getSeqMapView()).zoomTo(span);
 	}
 
 	@Override
 	public void zoomToCoord(String seqID, int start, int end) {
-		MapRangeBox.zoomToSeqAndSpan(((SeqMapView)getMapView()), seqID, start, end);
+		MapRangeBox.zoomToSeqAndSpan(((SeqMapView)getSeqMapView()), seqID, start, end);
 	}
 
 	@Override
 	public void centerAtHairline() {
-		 ((SeqMapView)getMapView()).centerAtHairline();
+		 ((SeqMapView)getSeqMapView()).centerAtHairline();
 	}
 
 	@Override
 	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed) {
-		((SeqMapView)getMapView()).addToRefreshList(seqMapRefreshed);
+		((SeqMapView)getSeqMapView()).addToRefreshList(seqMapRefreshed);
 	}
 
 	@Override
 	public void mapRefresh(List<GlyphI> glyphs) {
-		TransformTierGlyph axis_tier = ((SeqMapView)getMapView()).getAxisTier();
+		TransformTierGlyph axis_tier = ((SeqMapView)getSeqMapView()).getAxisTier();
 		for(GlyphI glyph : glyphs){
 			axis_tier.addChild(glyph);
 		}
@@ -398,36 +397,40 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public GlyphI getItem(SeqSymmetry sym) {
-		return ((SeqMapView)getMapView()).getSeqMap().<GlyphI>getItem(sym);
+		return getSeqMap().<GlyphI>getItem(sym);
 	}
 
 	@Override
 	public void removeItem(GlyphI gl) {
-		((SeqMapView)getMapView()).getSeqMap().removeItem(gl);
+		getSeqMap().removeItem(gl);
 	}
 
 	@Override
 	public void select(GlyphI g) {
-		((SeqMapView)getMapView()).getSeqMap().select(g);
+		getSeqMap().select(g);
 	}
 
 	@Override
 	public void deselect(GlyphI g) {
-		((SeqMapView)getMapView()).getSeqMap().deselect(g);
+		getSeqMap().deselect(g);
 	}
 
 	@Override
 	public void clearSelected() {
-		((SeqMapView)getMapView()).getSeqMap().clearSelected();
+		getSeqMap().clearSelected();
 	}
 
 	@Override
 	public void postSelections() {
-		((SeqMapView)getMapView()).postSelections();
+		((SeqMapView)getSeqMapView()).postSelections();
+	}
+
+	private AffyTieredMap getSeqMap() {
+		return Application.getSingleton().getMapView().getSeqMap();
 	}
 
 	@Override
-	public JComponent getMapView() {
+	public SeqMapViewI getSeqMapView() {
 		return Application.getSingleton().getMapView();
 	}
 
@@ -453,12 +456,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void setPropertyHandler(PropertyHandler propertyHandler) {
-		((SeqMapView)getMapView()).setPropertyHandler(propertyHandler);
+		((SeqMapView)getSeqMapView()).setPropertyHandler(propertyHandler);
 	}
 
 	@Override
 	public Object getSeqMapViewListener() {
-		return ((SeqMapView)getMapView()).getMouseListener();
+		return ((SeqMapView)getSeqMapView()).getMouseListener();
 	}
 
 	@Override
@@ -469,7 +472,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void saveState() {
 		((IGB)IGB.getSingleton()).getWindowService().saveState();
-		((SeqMapView)getMapView()).saveSession();
+		((SeqMapView)getSeqMapView()).saveSession();
 		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
 			panel.saveSession();
 		}
@@ -497,12 +500,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public NeoAbstractWidget getGraphCurrentSource() {
-		return ((SeqMapView)getMapView()).getSeqMap();
+		return getSeqMap();
 	}
 
 	@Override
 	public void addSeqMapPopupListener(ContextualPopupListener listener) {
-		((SeqMapView)getMapView()).addPopupListener(listener);
+		((SeqMapView)getSeqMapView()).addPopupListener(listener);
 	}
 
 	@Override
@@ -512,8 +515,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void packGlyph(GlyphI glyph) {
-		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
-		glyph.pack(map.getView());
+		glyph.pack(getSeqMap().getView());
 	}
 
 	@Override
@@ -523,7 +525,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
-		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
+		AffyTieredMap map = getSeqMap();
 		map.packTiers(false, true, false);
 		map.stretchToFit(fitx, fity);
 		map.updateWidget();
@@ -531,27 +533,27 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public View getView() {
-		return ((SeqMapView)getMapView()).getSeqMap().getView();
+		return getSeqMap().getView();
 	}
 
 	@Override
 	public void selectAllGraphs() {
-		((SeqMapView)getMapView()).selectAllGraphs();
+		((SeqMapView)getSeqMapView()).selectAllGraphs();
 	}
 
 	@Override
 	public void clearSelectGraphs() {
-		((SeqMapView)getMapView()).select(Collections.<SeqSymmetry>emptyList());
+		((SeqMapView)getSeqMapView()).select(Collections.<SeqSymmetry>emptyList());
 	}
 
 	@Override
 	public List<GlyphI> getItems(GraphSym graf) {
-		return ((SeqMapView)getMapView()).getSeqMap().getItems(graf);
+		return getSeqMap().getItems(graf);
 	}
 
 	@Override
 	public boolean isMainSrc(Object src) {
-		return src == ((SeqMapView)getMapView()) || src == ((SeqMapView)getMapView()).getSeqMap();
+		return src == getSeqMapView() || src == getSeqMap();
 	}
 
 	@Override
@@ -566,13 +568,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
-		return GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs, (SeqMapView)getMapView());
+		return GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs, (SeqMapView)getSeqMapView());
 	}
 
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
 		List<Glyph> allTierGlyphs = new ArrayList<Glyph>();
-		for (TierLabelGlyph labelGlyph : ((SeqMapView)getMapView()).getTierManager().getAllTierLabels()) {
+		for (TierLabelGlyph labelGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getAllTierLabels()) {
 			allTierGlyphs.add(labelGlyph.getReferenceTier());
 		}
 		return allTierGlyphs;
@@ -580,14 +582,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public void addSeqMapMouseListener(MouseListener mouseListener) {
-		AffyTieredMap seqMap = ((SeqMapView)getMapView()).getSeqMap();
-		seqMap.addMouseListener(mouseListener);
+		getSeqMap().addMouseListener(mouseListener);
 	}
 
 	@Override
 	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener) {
-		AffyTieredMap seqMap = ((SeqMapView)getMapView()).getSeqMap();
-		seqMap.addMouseMotionListener(mouseMotionListener);
+		getSeqMap().addMouseMotionListener(mouseMotionListener);
 	}
 
 	@Override

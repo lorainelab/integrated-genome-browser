@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
+import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
@@ -840,11 +841,12 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			for (Entry entry : file2types) {
 				element = (AssociationElement) entry.getValue();
 				if (element.propertyMap != null) {
-					TrackStyle style = new TrackStyle(element);
+					PropertyMap props = default_annot_style.getProperties();
+					props.putAll(element.getPropertyMap());
+					element.getPropertyMap().putAll(props);
+					TrackStyle style = new TrackStyle(props);
 					style.setTrackName(entry.getKey().toString());
 					tier_styles.add(style);
-					element.propertyMap.put(PROP_BACKGROUND, style.getBackground());
-					element.propertyMap.put(PROP_FOREGROUND, style.getForeground());
 				} else {
 					for (TrackStyle style : tier_styles_dup) {
 						if (entry.getKey().toString().equals(style.getTrackName())) {

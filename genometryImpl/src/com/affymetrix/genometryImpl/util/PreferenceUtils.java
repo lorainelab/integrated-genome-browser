@@ -382,15 +382,18 @@ public abstract class PreferenceUtils {
 	 * @param c
 	 */
 	public static void putColor(Preferences node, String key, Color c) {
+		node.put(key, "0x" + getColorString(c));
+	}
+
+	public static String getColorString(Color c){
 		int i = c.getRGB() & 0xFFFFFF;
 		String s = Integer.toHexString(i).toUpperCase();
 		while (s.length() < 6) {
 			s = "0" + s;
 		}
-		s = "0x" + s;
-		node.put(key, s);
+		return s;
 	}
-
+	
 	/**
 	 * Retrieves a color preference that was stored with {@link #putColor(Preferences, String, Color)}.
 	 *

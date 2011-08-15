@@ -129,10 +129,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		method_name = null;
 	}
 	
-	public TrackStyle(AssociationElement element){
+	public TrackStyle(PropertyMap props){
 		this();
-		initFromTemplate(getDefaultInstance());
-		initFromPropertyMap(element.getPropertyMap());
+		initFromPropertyMap(props);
 	}
 	
 	/** Creates an instance associated with a case-insensitive form of the unique name.
@@ -235,6 +234,26 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
+	public PropertyMap getProperties(){
+		PropertyMap props = new PropertyMap();
+		
+		props.put(PROP_FOREGROUND,		PreferenceUtils.getColorString(getForeground()));
+		props.put(PROP_BACKGROUND,		PreferenceUtils.getColorString(getBackground()));
+		props.put(PROP_START_COLOR,		PreferenceUtils.getColorString(getForwardColor()));
+		props.put(PROP_END_COLOR,		PreferenceUtils.getColorString(getReverseColor()));
+		props.put(PROP_GLYPH_DEPTH,		String.valueOf(getGlyphDepth()));
+		props.put(PROP_LABEL_FIELD,		getLabelField());
+		props.put(PROP_MAX_DEPTH,		String.valueOf(getMaxDepth()));
+		props.put(PROP_SEPARATE,		String.valueOf(getSeparate()));
+		props.put(PROP_SHOW,			String.valueOf(getShow()));
+		props.put(PROP_COLLAPSED,		String.valueOf(getCollapsed()));
+		props.put(PROP_FONT_SIZE,		String.valueOf(getTrackNameSize()));
+		props.put(PROP_DIRECTION_TYPE,	String.valueOf(getDirectionName()));
+		props.put(PROP_VIEW_MODE,		getViewMode());
+		
+		return props;
+	}
+	
 	// Copies selected properties from a PropertyMap into this object, but does NOT persist
 	// these copied values -- if values were persisted, then if PropertyMap changed between sessions,
 	//      older values would override newer values since persisted nodes take precedence

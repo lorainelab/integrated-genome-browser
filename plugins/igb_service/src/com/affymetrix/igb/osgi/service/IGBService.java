@@ -121,17 +121,6 @@ public interface IGBService {
 	 * @return the SeqMapViewI
 	 */
 	public SeqMapViewI getSeqMapView();
-	// for GeneralLoadView
-	/**
-	 * get the string entered for command line batch file
-	 * @return the Command Line Batch File String
-	 */
-	public String getCommandLineBatchFileStr();
-	/**
-	 * set the string for the command line batch file
-	 * @param str the String
-	 */
-	public void setCommandLineBatchFileStr(String str);
 	// for SearchView
 	/**
 	 * get the constant value for GenomeSeqId

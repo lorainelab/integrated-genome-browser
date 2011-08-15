@@ -221,16 +221,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public String getCommandLineBatchFileStr() {
-		return IGB.commandLineBatchFileStr;
-	}
-
-	@Override
-	public void setCommandLineBatchFileStr(String str) {
-		IGB.commandLineBatchFileStr = str;
-	}
-
-	@Override
 	public String getGenomeSeqId() {
 		return IGBConstants.GENOME_SEQ_ID;
 	}

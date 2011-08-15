@@ -100,7 +100,7 @@ public final class IGB extends Application
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
-	protected static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
+	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	private IWindowService windowService;
 	private HashSet<IStopRoutine> stopRoutines;
 

@@ -64,6 +64,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.DataLoadPrefsView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
@@ -299,9 +300,9 @@ public final class GeneralLoadView extends IGBTabPanel
 	private void runBatchOrRestore() {
 		try {
 			// Only run batch script or restore persistent genome once all the server responses have come back.
-			String batchFile = igbService.getCommandLineBatchFileStr();
+			String batchFile = IGB.commandLineBatchFileStr;
 			if (batchFile != null) {
-				igbService.setCommandLineBatchFileStr(null);	// we're not using this again!
+				IGB.commandLineBatchFileStr = null;	// we're not using this again!
 				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
 				ScriptFileLoader.runScript(batchFile);

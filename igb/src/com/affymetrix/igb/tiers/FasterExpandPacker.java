@@ -101,7 +101,8 @@ public final class FasterExpandPacker extends ExpandPacker {
 
 	private int max_slots_allowed = 1000;
 	private boolean constant_heights = true;
-
+	private int actual_slots;
+	
 	/**
 	 *  Sets the maximum depth of glyphs to pack in the tier.
 	 *  @param slotnum  a positive integer or zero; zero implies there is no
@@ -236,9 +237,17 @@ public final class FasterExpandPacker extends ExpandPacker {
 
 		packParent(parent);
 
+		slot_maxes.trimToSize();
+		
+		actual_slots = Math.min(slot_maxes.size(), max_slots_allowed);
+		
 		return null;
 	}
 
+	public int getActualSlots(){
+		return actual_slots;
+	}
+	
 	private double getMaxChildHeight(GlyphI parent) {
 		if (constant_heights) {
 			return parent.getChild(0).getCoordBox().height;

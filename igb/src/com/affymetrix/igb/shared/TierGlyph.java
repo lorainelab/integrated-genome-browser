@@ -2,6 +2,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
@@ -522,6 +524,34 @@ public class TierGlyph extends SolidGlyph {
 		expand_packer.setMaxSlots(max);
 	}
 
+	private int getActualSlots(){
+		if(packer == expand_packer)
+			return expand_packer.getActualSlots();
+		return 1;
+	}
+	
+	private double getSpacing() {
+		if(packer instanceof AbstractCoordPacker){
+			return ((AbstractCoordPacker)packer).getSpacing();
+		}
+		return 2;
+	}
+	
+	public void setHeight(double height){
+		float slot_size = getActualSlots();
+		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
+		
+		if(style instanceof ITrackStyleExtended){
+			String label_field = ((ITrackStyleExtended)style).getLabelField();
+			boolean use_label = label_field != null && (label_field.trim().length() > 0);
+			if(!style.isGraphTier() && use_label){
+				height = height / 2;
+			}
+		}
+		
+		style.setHeight(height);
+	}
+	
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override
 	protected void drawSelectedFill(ViewI view) {

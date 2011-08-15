@@ -15,9 +15,11 @@ package com.affymetrix.igb.view;
 
 import java.awt.event.*;
 
+import com.affymetrix.genometryImpl.GenometryModel;
+
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.tiers.AffyTieredMap;
+
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
 /**
@@ -31,7 +33,8 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	boolean force_within_parent = false;
 	NeoAbstractWidget widget;
 	SeqMapView gviewer = null;
-
+	double start;
+	
 	public GlyphResizer(NeoAbstractWidget widg, SeqMapView gviewer) {
 		this.widget = widg;
 		this.gviewer = gviewer;
@@ -48,6 +51,8 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		widget.removeMouseMotionListener(this);
 		widget.addMouseListener(this);
 		widget.addMouseMotionListener(this);
+		
+		start = nevt.getCoordY();
 	}
 
 	public void mouseMoved(MouseEvent evt) { }
@@ -55,21 +60,19 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent evt) {
 		if (!(evt instanceof NeoMouseEvent)) { return; }
 		NeoMouseEvent nevt = (NeoMouseEvent)evt;
-
-		AffyTieredMap map = gviewer.getSeqMap();
-
+		double diff = nevt.getCoordY() - start;
+		
 		if (upperGl != null) {
-			double height = (nevt.getCoordY() - upperGl.getCoordBox().getY()) - upperGl.getSpacing();
-			upperGl.resizeHeight(upperGl.getCoordBox().getY(), height, map.getView());
+			double height = upperGl.getCoordBox().getHeight() + diff;
+			upperGl.resizeHeight(upperGl.getCoordBox().getY(), height);
 		}
 		if (lowerGl != null) {
-			double height = (lowerGl.getCoordBox().getY() + lowerGl.getCoordBox().getHeight() - nevt.getCoordY()) - 3 * lowerGl.getSpacing();
-			lowerGl.resizeHeight(nevt.getCoordY() + lowerGl.getSpacing(), height, map.getView());
+			double height = lowerGl.getCoordBox().getHeight() - diff;
+			lowerGl.resizeHeight(lowerGl.getCoordBox().getY() + diff, height);
 		}
 
-		map.packTiers(false, true, false);
-		map.stretchToFit(false, true);
-		map.updateWidget();
+		start = nevt.getCoordY();
+		gviewer.getSeqMap().updateWidget();
 	}
 
 	public void mousePressed(MouseEvent evt) { }
@@ -81,7 +84,17 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		mouseDragged(evt);
 		widget.removeMouseListener(this);
 		widget.removeMouseMotionListener(this);
-		lowerGl = null; // helps with garbage collection
-		upperGl = null; // helps with garbage collection
+		
+		if(upperGl != null){
+			upperGl.getReferenceTier().setHeight(upperGl.getCoordBox().getHeight());
+			upperGl = null; // helps with garbage collection
+			
+		}
+		if(lowerGl != null){
+			lowerGl.getReferenceTier().setHeight(lowerGl.getCoordBox().getHeight());
+			lowerGl = null; // helps with garbage collection
+		}
+		
+		gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
 	}
 }

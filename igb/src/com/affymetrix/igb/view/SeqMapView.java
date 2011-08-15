@@ -205,6 +205,7 @@ public class SeqMapView extends JPanel
 	JMenuItem seqViewerOptions = empty_menu_item;
 //	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
 //	JMenuItem viewParentinSequenceViewer = empty_menu_item;
+	JMenuItem setThreshold = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewActionListener action_listener;
 	private final SeqMapViewMouseListener mouse_listener;
@@ -315,7 +316,7 @@ public class SeqMapView extends JPanel
 			}
 
 			private void drawAutoLoadPoint(Graphics g) {
-				int threshValue = (AutoLoad.threshold * getMaximum() / 100);
+				int threshValue = (autoload.threshold * getMaximum() / 100);
 				Color c = g.getColor();
 				g.setColor(this.getBackground().brighter());
 				int xp = xPositionForValue(threshValue);
@@ -341,7 +342,7 @@ public class SeqMapView extends JPanel
 			@Override
 			public String getToolTipText(MouseEvent me) {
 				if (me != null && autoload != null) {
-					int threshValue = (AutoLoad.threshold * getMaximum() / 100);
+					int threshValue = (autoload.threshold * getMaximum() / 100);
 					int xp = xPositionForValue(threshValue);
 					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
 						return BUNDLE.getString("autoloadToolTip");
@@ -534,6 +535,7 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
+		setThreshold = setUpMenuItem(sym_popup, "Set AutoLoad Threshold to Current View");
 //		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
 //		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
 //		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
@@ -1759,6 +1761,10 @@ public class SeqMapView extends JPanel
 			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
 				popup.add(new JMenuItem(new RefreshAFeature(feature)));
 			}
+		}
+		if(autoload != null){
+			popup.add(new JSeparator());
+			popup.add(setThreshold);
 		}
 	}
 

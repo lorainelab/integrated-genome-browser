@@ -34,6 +34,7 @@ final class SeqMapViewActionListener implements ActionListener {
 	private final static String SCROLL_LEFT = "SCROLL_LEFT";
 	private final static String SCROLL_RIGHT = "SCROLL_RIGHT";
 	private final static String ZOOM_TO_SELECTED = "Zoom to selected";
+	private final static String SET_THRESHOLD = "Set threshold";
 	private final static String[] commands = {ZOOM_OUT_FULLY,
 		ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
 		SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
@@ -42,6 +43,7 @@ final class SeqMapViewActionListener implements ActionListener {
 	private final Action zoom_in_x_action;
 	private final Action zoom_out_y_action;
 	private final Action zoom_in_y_action;
+	private final Action set_threshold_action;
 	private final AffyTieredMap seqmap;
 	private final SeqMapView gviewer;
 	
@@ -88,7 +90,14 @@ final class SeqMapViewActionListener implements ActionListener {
 				doAction(ZOOM_OUT_FULLY);
 			}
 		};
-
+		
+		set_threshold_action = new AbstractAction(){
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent ae) {
+				//gviewer.getAutoLoad().setThresholdToCurrent();
+				doAction(SET_THRESHOLD);
+			}
+	};
 		Icon icon0 = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
 		new AbstractAction(ZOOM_TO_SELECTED, icon0) {
 			private static final long serialVersionUID = 1L;
@@ -131,6 +140,8 @@ final class SeqMapViewActionListener implements ActionListener {
 
 		} else if (command.equals(gviewer.centerMI.getText())) {
 			gviewer.centerAtHairline();
+		} else if (command.equals(gviewer.setThreshold.getText())) {
+			gviewer.getAutoLoad().setThresholdToCurrent();
 		} else if (command.equals(ZOOM_OUT_FULLY)) {
 			Adjustable adj = seqmap.getZoomer(NeoMap.X);
 			adj.setValue(adj.getMinimum());

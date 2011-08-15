@@ -16,17 +16,19 @@ import java.util.prefs.PreferenceChangeListener;
  */
 public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceChangeListener{
 
+	private static final int default_threshold = 70;
+	public final static String  PREFS_THRESHOLD = "Threshold Value";
 	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
 	public final static boolean default_autoload = true;
 	private final JSlider zoomer;
 	private final JScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
-	public static final int threshold = 70;
+	public int threshold = 70;
 	private boolean autoLoadEnabled;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
-
+	
 	public AutoLoad(NeoMap map){
 		this.map = map;
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
@@ -37,6 +39,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
 		this.zoomer_value = this.zoomer.getValue();
+		threshold = PreferenceUtils.getIntParam(PREFS_THRESHOLD, default_threshold);
 		autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
 		
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -48,6 +51,12 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		}
 		GeneralLoadView.loadAutoLoadFeatures();
 		//GeneralLoadView.getLoadView().loadResiduesInView(false);
+	}
+	
+	public void setThresholdToCurrent(){
+		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());
+		update(zoomer);
+		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

@@ -26,7 +26,6 @@ import org.osgi.framework.BundleContext;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -36,17 +35,16 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -66,17 +64,15 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  * IGB functionality that is not public.
  *
  */
-public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
+public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	private static IGBServiceImpl instance = new IGBServiceImpl();
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
-	private List<RepositoryChangeListener> repositoryChangeListeners;
 
 	private IGBServiceImpl() {
 		super();
-		repositoryChangeListeners = new ArrayList<RepositoryChangeListener>();
 	}
 
 	@Override
@@ -133,62 +129,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getViewMenu();
 	}
-
-	@Override
-	public List<String> getRepositories() {
-		List<String> repositories = new ArrayList<String>();
-		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
-			if (repositoryServer.isEnabled()) {
-				repositories.add(repositoryServer.URL);
-			}
-		}
-		return repositories;
-	}
-
-	@Override
-	public void failRepository(String url) {
-		ServerList.getRepositoryInstance().removeServer(url);
-	}
-
-	@Override
-	public void displayRepositoryPreferences() {
-		if (IGB.TAB_PLUGIN_PREFS != -1) {
-			PreferencesPanel pv = PreferencesPanel.getSingleton();
-			pv.setTab(IGB.TAB_PLUGIN_PREFS);	// Repository preferences tab
-			JFrame f = pv.getFrame();
-			f.setVisible(true);
-		} else {
-			System.out.println("Plugin Repository Preferences not instantiated");
-		}
-	}
-
-	@Override
-	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
-		repositoryChangeListeners.add(repositoryChangeListener);
-	}
-
-	@Override
-	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
-		repositoryChangeListeners.remove(repositoryChangeListener);
-	}
-
-
-	@Override
-	public boolean repositoryAdded(String url) {
-		boolean addedOK = true;
-		for (RepositoryChangeListener repositoryChangeListener : repositoryChangeListeners) {
-			addedOK &= repositoryChangeListener.repositoryAdded(url);
-		}
-		return addedOK;
-	}
-
-	@Override
-	public void repositoryRemoved(String url) {
-		for (RepositoryChangeListener repositoryChangeListener : repositoryChangeListeners) {
-			repositoryChangeListener.repositoryRemoved(url);
-		}
-	}
-
 	@Override
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
@@ -228,11 +168,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
 		return UnibrowControlServlet.getInstance().getFeature(gServer, feature_url);
-	}
-
-	@Override
-	public GenericServer loadServer(String server_url) {
-		return UnibrowControlServlet.getInstance().loadServer(server_url);
 	}
 
 	@Override
@@ -380,6 +315,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			allTierGlyphs.add(labelGlyph.getReferenceTier());
 		}
 		return allTierGlyphs;
+	}
+
+	@Override
+	public RepositoryChangeHolderI getRepositoryChangerHolder() {
+		return RepositoryChangerHolder.getInstance();
+	}
+
+	@Override
+	public GenericServer loadServer(String server_url) {
+		return UnibrowControlServlet.getInstance().loadServer(server_url);
 	}
 
 	@Override

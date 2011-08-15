@@ -166,7 +166,7 @@ public final class GeneralLoadUtils {
 		}
 		server.setEnabled(false);
 		if (server.serverType == null) {
-			IGBServiceImpl.getInstance().repositoryRemoved(server.URL);
+			IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
 		}
 	}
 
@@ -178,7 +178,7 @@ public final class GeneralLoadUtils {
 		}
 
 		if (gServer.serverType == null) {
-			return IGBServiceImpl.getInstance().repositoryAdded(gServer.URL);
+			return IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryAdded(gServer.URL);
 		}
 		try {
 			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {

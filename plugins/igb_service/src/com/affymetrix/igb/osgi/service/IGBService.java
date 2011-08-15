@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -80,37 +79,6 @@ public interface IGBService {
 	 * @return the view menu of the IGB application
 	 */
 	public JRPMenu getViewMenu();
-	// for plugins page
-	/**
-	 * get the list of all repositories from the 
-	 * Bundle Repository Preferences tab
-	 * @return the list of bundle repositories (URLs)
-	 */
-	public List<String> getRepositories();
-	/**
-	 * mark a bundle repository as down / unavailable
-	 * due to an error trying to connect
-	 * @param url the URL to mark
-	 */
-	public void failRepository(String url);
-	/**
-	 * display the Bundle Repository tab of the Preferences page
-	 */
-	public void displayRepositoryPreferences();
-	/**
-	 * add a RepositoryChangeListener, to be called when there
-	 * is a change to the Bundle Repositories on the Bundle
-	 * Repository tab of the Preferences page
-	 * @param repositoryChangeListener the listener
-	 */
-	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
-	/**
-	 * remove a RepositoryChangeListener - so that is is no longer
-	 * called for changes to the Bundle Repository tab of
-	 * the Perferences page
-	 * @param repositoryChangeListener the listener
-	 */
-	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
 
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
@@ -120,7 +88,6 @@ public interface IGBService {
 	public void performSelection(String selectParam);
 	public void loadResidues(int start, int end);
 	public GenericFeature getFeature(GenericServer gServer, String feature_url);
-	public GenericServer loadServer(String server_url);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();
@@ -199,8 +166,10 @@ public interface IGBService {
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
+	public RepositoryChangeHolderI getRepositoryChangerHolder();
 
 	// ServerList
+	public GenericServer loadServer(String server_url);
 	public boolean areAllServersInited();
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);

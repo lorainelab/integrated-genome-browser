@@ -87,7 +87,7 @@ public final class IGB extends Application
 				implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";
-	protected static int TAB_PLUGIN_PREFS = -1;
+	public static int TAB_PLUGIN_PREFS = -1;
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JRPMenu file_menu;

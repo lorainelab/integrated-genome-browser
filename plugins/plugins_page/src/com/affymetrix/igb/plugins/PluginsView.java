@@ -131,7 +131,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, TAB_POSITION);
 		latest = new HashMap<String, Bundle>();
 
-		igbService.addRepositoryChangeListener(this);
+		igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
 		setLayout(new BorderLayout());
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
 		bundleTableModel = new BundleTableModel();
@@ -307,7 +307,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 					if (src == PluginsView.this.repositoryPrefsButton) {
 						// Go to repository prefs tab.
-						igbService.displayRepositoryPreferences();
+						igbService.getRepositoryChangerHolder().displayRepositoryPreferences();
 					}
 				}
 			}
@@ -481,7 +481,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
 		repoAdmin = new RepositoryAdminWrapper((org.apache.felix.bundlerepository.RepositoryAdmin) new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
-		for (String url : igbService.getRepositories()) {
+		for (String url : igbService.getRepositoryChangerHolder().getRepositories()) {
 			repositoryAdded(url);
 		}
 		setRepositoryBundles();
@@ -653,7 +653,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					x.printStackTrace();
 				}
 				catch (Exception x) {
-					igbService.failRepository(url);
+					igbService.getRepositoryChangerHolder().failRepository(url);
 					displayError("error loading repositories");
 					x.printStackTrace();
 				}

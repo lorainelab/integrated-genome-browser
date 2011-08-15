@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.IGBUtils;
@@ -42,7 +43,7 @@ public final class LoadModeTable {
 	public static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
-	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
+	static final Icon delete_icon = IGBUtils.getIcon("delete.gif");
 	static final Icon invisible_icon = IGBUtils.getIcon("invisible.gif");
 	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
 	static final Icon info_icon = IGBUtils.getIcon("warning.gif");

@@ -640,9 +640,11 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
-		selectedStyle = model.tier_styles.get(table.getSelectedRow());
-		XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
-		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+		if (table.getSelectedRow() != -1) {
+			selectedStyle = model.tier_styles.get(table.getSelectedRow());
+			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
+			model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+		}
 }//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
@@ -831,13 +833,25 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 
 		public void setElements(java.util.Map<String, AssociationElement> elements) {
 			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
+			List<TrackStyle> tier_styles_dup;
+			tier_styles_dup = tier_styles;
 			tier_styles.clear();
 			tier_styles.add(default_annot_style);
-			for (Entry temp : file2types) {
-				element = (AssociationElement) temp.getValue();
-				TrackStyle style = new TrackStyle(element);
-				style.setTrackName(temp.getKey().toString());
-				tier_styles.add(style);
+			for (Entry entry : file2types) {
+				element = (AssociationElement) entry.getValue();
+				if (element.propertyMap != null) {
+					TrackStyle style = new TrackStyle(element);
+					style.setTrackName(entry.getKey().toString());
+					tier_styles.add(style);
+					element.propertyMap.put(PROP_BACKGROUND, style.getBackground());
+					element.propertyMap.put(PROP_FOREGROUND, style.getForeground());
+				} else {
+					for (TrackStyle style : tier_styles_dup) {
+						if (entry.getKey().toString().equals(style.getTrackName())) {
+							tier_styles.add(style);
+						}
+					}
+				}
 			}
 			fireTableDataChanged();
 		}

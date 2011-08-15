@@ -250,7 +250,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public IGBTabPanel getView(String viewName) {
+	public IGBTabPanel getTabPanel(String viewName) {
 		return ((IGB)IGB.getSingleton()).getView(viewName);
 	}
 

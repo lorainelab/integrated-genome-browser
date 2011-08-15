@@ -141,7 +141,7 @@ public interface IGBService {
 	 * load the current state of the application
 	 */
 	public void loadState();
-	public IGBTabPanel getView(String className);
+	public IGBTabPanel getTabPanel(String className);
 	/**
 	 * select the given tab in the tab panel, bringing it to the front
 	 * @param panel the IGBTabPanel

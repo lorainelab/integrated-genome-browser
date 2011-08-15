@@ -161,11 +161,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void loadResidues(int start, int end) {
-		UnibrowControlServlet.getInstance().loadResidues(start, end);
-	}
-
-	@Override
 	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
 		return UnibrowControlServlet.getInstance().getFeature(gServer, feature_url);
 	}

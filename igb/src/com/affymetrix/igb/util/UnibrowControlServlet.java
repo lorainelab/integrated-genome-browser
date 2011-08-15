@@ -13,14 +13,11 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -63,12 +60,6 @@ public final class UnibrowControlServlet {
 	}
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-
-	public void loadResidues(int start, int end){
-		BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
-		SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-		GeneralLoadView.getLoadView().loadResidues(span, true);
-	}
 
 	public GenericFeature getFeature(GenericServer gServer, String feature_url){
 		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();

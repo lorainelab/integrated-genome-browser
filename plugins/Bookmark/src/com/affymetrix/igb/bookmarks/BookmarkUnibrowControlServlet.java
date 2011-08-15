@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
 
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -189,7 +190,9 @@ public final class BookmarkUnibrowControlServlet {
 		}
 
 		if(loadResidue){
-			igbService.loadResidues(start, end);
+			BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
+			SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
+			igbService.loadResidues(span, true);
 		}
 
 	}

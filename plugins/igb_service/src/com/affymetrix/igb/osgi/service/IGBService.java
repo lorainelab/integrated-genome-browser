@@ -86,7 +86,6 @@ public interface IGBService {
 	public void doActions(final String batchFileStr);
 	public void doSingleAction(String line);
 	public void performSelection(String selectParam);
-	public void loadResidues(int start, int end);
 	public GenericFeature getFeature(GenericServer gServer, String feature_url);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();

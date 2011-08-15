@@ -14,6 +14,8 @@ public class CommonUtils {
 	private String app_dir = null;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
 
+	private static final String APP_NAME         = BUNDLE.getString("appName");
+	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
 	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
 			BUNDLE.getString("appVersionFull"),
@@ -25,6 +27,14 @@ public class CommonUtils {
 
 	public final static CommonUtils getInstance() {
 		return instance;
+	}
+
+	public String getAppName() {
+		return APP_NAME;
+	}
+
+	public String getAppNameShort() {
+		return APP_NAME_SHORT;
 	}
 
 	/**
@@ -41,6 +51,33 @@ public class CommonUtils {
 	 */
 	public String getAppVersionFull() {
 		return APP_VERSION_FULL;
+	}
+
+	/**
+	 * Returns the value of the argument indicated by label.
+	 * If arguments are
+	 *   "-flag_2 -foo bar", then get_arg("foo", args)
+	 * returns "bar", get_arg("flag_2") returns a non-null string,
+	 * and get_arg("flag_5") returns null.
+	 */
+	public String getArg(String label, String[] args) {
+		String to_return = null;
+		boolean got_it = false;
+		if (label != null && args != null) {
+			for (String item : args) {
+				if (got_it) {
+					to_return = item;
+					break;
+				}
+				if (item.equals(label)) {
+					got_it = true;
+				}
+			}
+		}
+		if (got_it && to_return == null) {
+			to_return = "true";
+		}
+		return to_return;
 	}
 
 	/**

@@ -25,8 +25,8 @@ import java.util.ResourceBundle;
 public interface IGBConstants {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 
-	public static final String APP_NAME         = BUNDLE.getString("appName");
-	public static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
+	public static final String APP_NAME         = CommonUtils.getInstance().getAppName();
+	public static final String APP_NAME_SHORT   = CommonUtils.getInstance().getAppNameShort();
 	public static final String APP_VERSION      = CommonUtils.getInstance().getAppVersion();
 	public static final String APP_VERSION_FULL = CommonUtils.getInstance().getAppVersionFull();
 

@@ -111,30 +111,7 @@ public interface IGBService {
 	 * @param repositoryChangeListener the listener
 	 */
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
-	/**
-	 * Returns the value of the argument indicated by label.
-	 * If arguments are
-	 *   "-flag_2 -foo bar", then get_arg("foo", args)
-	 * returns "bar", get_arg("flag_2") returns a non-null string,
-	 * and get_arg("flag_5") returns null.
-	 * @param label label to search for
-	 * @param args the args to search
-	 * @return the value found, or "true" if found with no value, or
-	 * null if not found
-	 */
-	public String get_arg(String label, String[] args);
 
-	// for BookMark
-	/**
-	 * get the constant value for AppName
-	 * @return the constant value for the AppName
-	 */
-	public String getAppName();
-	/**
-	 * get the constant value for AppVersion
-	 * @return the constant value for the AppVersion
-	 */
-	public String getAppVersion();
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
 	public void updateDependentData();
@@ -228,8 +205,4 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
-
-	//
-	public void addMisMatchTier(GlyphI atier, String prefix);
-
 }

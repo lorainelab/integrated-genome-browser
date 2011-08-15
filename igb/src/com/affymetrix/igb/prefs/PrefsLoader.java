@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -191,7 +192,7 @@ public abstract class PrefsLoader {
 	 * -prefs option.
 	 */
 	private static String[] get_prefs_list(String[] args) {
-		String files = IGB.get_arg("-prefs", args);
+		String files = CommonUtils.getInstance().getArg("-prefs", args);
 		if (files == null) {
 			files = default_user_prefs_files;
 		}
@@ -205,7 +206,7 @@ public abstract class PrefsLoader {
 	}
 
 	private static String get_default_prefs_url(String[] args) {
-		String def_prefs_url = IGB.get_arg("-default_prefs_url", args);
+		String def_prefs_url = CommonUtils.getInstance().getArg("-default_prefs_url", args);
 		return def_prefs_url;
 	}
 

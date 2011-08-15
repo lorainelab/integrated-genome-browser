@@ -190,21 +190,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public String get_arg(String label, String[] args) {
-		return IGB.get_arg(label, args);
-	}
-
-	@Override
-	public String getAppName() {
-		return IGBConstants.APP_NAME;
-	}
-
-	@Override
-	public String getAppVersion() {
-		return IGBConstants.APP_VERSION;
-	}
-
-	@Override
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
 	}
@@ -416,10 +401,4 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
 	}
-
-	@Override
-	public void addMisMatchTier(GlyphI atier, String prefix) {
-		SeqMapViewPopup.addMisMatchTier((TierGlyph)atier, prefix);
-	}
-
 }

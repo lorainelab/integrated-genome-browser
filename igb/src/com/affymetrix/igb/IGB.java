@@ -31,6 +31,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -115,32 +116,6 @@ public final class IGB extends Application
 	public JFrame getFrame() {
 		return frm;
 	}
-	/**
-	 * Returns the value of the argument indicated by label.
-	 * If arguments are
-	 *   "-flag_2 -foo bar", then get_arg("foo", args)
-	 * returns "bar", get_arg("flag_2") returns a non-null string,
-	 * and get_arg("flag_5") returns null.
-	 */
-	public static String get_arg(String label, String[] args) {
-		String to_return = null;
-		boolean got_it = false;
-		if (label != null && args != null) {
-			for (String item : args) {
-				if (got_it) {
-					to_return = item;
-					break;
-				}
-				if (item.equals(label)) {
-					got_it = true;
-				}
-			}
-		}
-		if (got_it && to_return == null) {
-			to_return = "true";
-		}
-		return to_return;
-	}
 	private static void loadSynonyms(String file, SynonymLookup lookup) {
 		InputStream istr = null;
 		try {
@@ -220,7 +195,7 @@ public final class IGB extends Application
 
 		printDetails(args);
 
-		String offline = get_arg("-offline", args);
+		String offline = CommonUtils.getInstance().getArg("-offline", args);
 		if (offline != null) {
 			LocalUrlCacher.setOffLine("true".equals(offline));
 		}

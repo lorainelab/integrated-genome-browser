@@ -27,6 +27,7 @@ import javax.swing.event.MenuListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -131,7 +132,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 				File f2 = new File(filename + "~");
 				try {
 					Logger.getLogger(BookMarkAction.class.getName()).log(Level.INFO, "Creating backup bookmarks file: {0}", f2);
-					BookmarkList.exportAsHTML(main_bookmark_list, f2, igbService.getAppName(), igbService.getAppVersion());
+					BookmarkList.exportAsHTML(main_bookmark_list, f2, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
 				} catch (Exception e) {
 					Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Error while trying to create backup bookmarks file: {0}", f2);
 				}
@@ -162,7 +163,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       if (parent_dir != null) {
         parent_dir.mkdirs();
       }
-      BookmarkList.exportAsHTML(main_bookmark_list, f, igbService.getAppName(), igbService.getAppVersion());
+      BookmarkList.exportAsHTML(main_bookmark_list, f, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
       saved = true;
     } catch (FileNotFoundException fnfe) {
       Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
@@ -373,7 +374,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
         }
 
         if (DEBUG) {System.out.println("bookmark file chosen: " + fil);}
-        BookmarkList.exportAsHTML(main_bookmark_list, fil, igbService.getAppName(), igbService.getAppVersion());
+        BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
       }
       catch (Exception ex) {
         ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);

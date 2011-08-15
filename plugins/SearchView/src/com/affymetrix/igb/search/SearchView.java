@@ -66,7 +66,7 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String REMOTESERVERSEARCH2 = " server)";
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
-
+	
 	private final JRPTextField searchTF = new JRPTextField("SearchView_searchTF", 10);
 	private final JPanel pan1 = new JPanel();
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
@@ -194,14 +194,28 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	public void initSearchCB() {
+		Object saveSearchMode = searchCB.getSelectedItem();
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
-
+		boolean saveFound = false;
 		for (ISearchMode searchMode : SearchModeHolder.getInstance().getSearchModes()) {
 			searchCB.addItem(searchMode.getName());
 			searchModeMap.put(searchMode.getName(), searchMode);
+			if (searchMode == saveSearchMode) {
+				saveFound = true;
+			}
 		}
 		searchCB.setToolTipText(CHOOSESEARCH);
+		if (saveSearchMode == null || !saveFound) {
+			if (searchCB.getItemCount() > 0) {
+				searchCB.setSelectedIndex(0);
+				saveSearchMode = searchCB.getSelectedItem();
+			}
+		}
+		else {
+			searchCB.setSelectedItem(saveSearchMode);
+		}
+		initSequenceCB();
 	}
 
 	private void initComponents() {

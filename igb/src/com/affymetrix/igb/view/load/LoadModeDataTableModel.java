@@ -31,7 +31,7 @@ import javax.swing.table.AbstractTableModel;
 public final class LoadModeDataTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"I", "V", "L", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
+	private static final String[] columnNames = {"", "", "", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
@@ -223,7 +223,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
 				if (style == null) {
-					return "";
+					return "No Data Loaded";
 				}
 				return style.getTrackName();
 			case BACKGROUND_COLUMN:

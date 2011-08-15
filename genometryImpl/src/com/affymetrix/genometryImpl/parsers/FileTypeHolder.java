@@ -125,6 +125,8 @@ public class FileTypeHolder {
 					public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
 						SymLoader symLoader = new FastaIdx(uri, featureName, group);
 						if (!((FastaIdx)symLoader).isValid()) {
+							Logger.getLogger(this.getClass().getName()).log(
+									Level.WARNING, "unable to read index or dict for fasta file, reading full file");
 							symLoader = new Fasta(uri, featureName, group);
 						}
 						return symLoader;

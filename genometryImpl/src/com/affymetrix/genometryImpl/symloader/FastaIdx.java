@@ -16,10 +16,12 @@ import net.sf.samtools.SAMSequenceRecord;
 
 /**
  * For fasta files with a SamTools .fai index created
- * with the "samtools faidx" utility
+ * with the "samtools faidx" utility and a .dict file
+ * created with the CreateSequenceDictionary.jar utility
  */
 public class FastaIdx extends FastaCommon {
 	final IndexedFastaSequenceFile fastaFile;
+	final SAMSequenceDictionary sequenceDict;
 
 	public FastaIdx(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
@@ -31,6 +33,12 @@ public class FastaIdx extends FastaCommon {
 			tempFile = null;
 		}
 		fastaFile = tempFile;
+		String uriString = uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uri.getPath();
+		}
+		ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(new File(uriString));
+		sequenceDict = refSeq.getSequenceDictionary();
 	}
 
 	/**
@@ -38,12 +46,6 @@ public class FastaIdx extends FastaCommon {
 	 */
 	@Override
 	protected boolean initChromosomes() throws Exception {
-		String uriString = uri.toString();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uri.getPath();
-		}
-		ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(new File(uriString));
-		SAMSequenceDictionary sequenceDict = refSeq.getSequenceDictionary();
 		for (SAMSequenceRecord rec : sequenceDict.getSequences()) {
 			String seqid = rec.getSequenceName();
 			BioSeq seq = group.getSeq(seqid);
@@ -69,6 +71,6 @@ public class FastaIdx extends FastaCommon {
 	 * fasta index file for the data source
 	 */
 	public boolean isValid() {
-		return fastaFile != null;
+		return fastaFile != null && sequenceDict != null;
 	}
 }

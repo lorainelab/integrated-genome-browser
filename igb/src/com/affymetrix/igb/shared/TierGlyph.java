@@ -524,7 +524,7 @@ public class TierGlyph extends SolidGlyph {
 		expand_packer.setMaxSlots(max);
 	}
 
-	private int getActualSlots(){
+	public final int getActualSlots(){
 		if(packer == expand_packer)
 			return expand_packer.getActualSlots();
 		return 1;
@@ -537,19 +537,33 @@ public class TierGlyph extends SolidGlyph {
 		return 2;
 	}
 	
-	public void setHeight(double height){
+	public void setPreferredHeight(double height){
 		float slot_size = getActualSlots();
 		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
 		
-		if(style instanceof ITrackStyleExtended){
-			String label_field = ((ITrackStyleExtended)style).getLabelField();
-			boolean use_label = label_field != null && (label_field.trim().length() > 0);
-			if(!style.isGraphTier() && use_label){
-				height = height / 2;
-			}
-		}
+		if(useLabel())
+			height = height / 2;
 		
 		style.setHeight(height);
+	}
+	
+	public double getPreferredHeight() {
+		double height = style.getHeight() * getActualSlots();
+		if (useLabel())
+			height = height * 2;
+			
+		return height;
+	}
+	
+	private boolean useLabel(){
+		if (style instanceof ITrackStyleExtended) {
+			String label_field = ((ITrackStyleExtended) style).getLabelField();
+			boolean use_label = label_field != null && (label_field.trim().length() > 0);
+			if (!style.isGraphTier() && use_label) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */

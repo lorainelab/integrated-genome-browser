@@ -24,7 +24,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 
 	private static final String[] supportedFormat = {"bam", "sam"};
-	private static final int DEFAULT_THICK_HEIGHT = 50;
 	private final boolean createPileUp;
 	private final String name;
 	
@@ -108,7 +107,7 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			}
 			graph_glyph.drawHandle(false);
 			graph_glyph.setSelectable(false);
-			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), DEFAULT_THICK_HEIGHT);
+			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getPreferredHeight());
 			tier.addChild(graph_glyph);
 			tier.setInfo(gsym);
 		}

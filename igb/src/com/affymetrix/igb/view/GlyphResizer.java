@@ -86,12 +86,12 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		widget.removeMouseMotionListener(this);
 		
 		if(upperGl != null){
-			upperGl.getReferenceTier().setHeight(upperGl.getCoordBox().getHeight());
+			upperGl.getReferenceTier().setPreferredHeight(upperGl.getCoordBox().getHeight());
 			upperGl = null; // helps with garbage collection
 			
 		}
 		if(lowerGl != null){
-			lowerGl.getReferenceTier().setHeight(lowerGl.getCoordBox().getHeight());
+			lowerGl.getReferenceTier().setPreferredHeight(lowerGl.getCoordBox().getHeight());
 			lowerGl = null; // helps with garbage collection
 		}
 		

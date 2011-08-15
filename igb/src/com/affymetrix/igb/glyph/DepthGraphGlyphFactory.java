@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
@@ -20,8 +21,6 @@ import com.affymetrix.igb.shared.TierGlyph;
  * @author hiralv
  */
 public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
-
-	private static final int DEFAULT_THICK_HEIGHT = 25;
 	
 	public String getName(){
 		return "depth";
@@ -56,7 +55,7 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		java.util.List<SeqSymmetry> syms = new java.util.ArrayList<SeqSymmetry>();
 		syms.add(sym);
 		GraphSym gsym = null;
-
+		
 		if (ftier == rtier) {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth);
 			addToParent(meth, pspan, gsym, ftier);
@@ -77,7 +76,7 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			graph_glyph.drawHandle(false);
 			graph_glyph.setSelectable(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), DEFAULT_THICK_HEIGHT);
+			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getPreferredHeight());
 			tier.addChild(graph_glyph);
 			tier.setInfo(gsym);
 		}

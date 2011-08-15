@@ -301,6 +301,7 @@ will not work well with these styles.
 
   <FILE_TYPE_ASSOCIATION file_type="bam">
 	  <PROPERTY key="direction_type" value="none"/>
+	  <PROPERTY key='separate' value='false'/>
   </FILE_TYPE_ASSOCIATION>
   
   <FILE_TYPE_ASSOCIATION file_type="bed">

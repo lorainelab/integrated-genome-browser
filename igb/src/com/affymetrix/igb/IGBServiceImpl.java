@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -45,7 +46,9 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -261,8 +264,26 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void deleteGlyph(GlyphI glyph) {
-		//TrackView.deleteTrack((TierGlyph) glyph);
-		// see rev 8414 change to com.affymetrix.igb.tiers.SeqMapViewPopup.removeTiers()
+		List<TierLabelGlyph> tiers = new ArrayList<TierLabelGlyph>();
+		for (TierLabelGlyph tierLabelGlyph : ((AffyLabelledTierMap)getSeqMap()).getTierLabels()) {
+			if (tierLabelGlyph.getInfo() == glyph) {
+				tiers.add(tierLabelGlyph);
+			}
+		}
+		for (TierLabelGlyph tlg : tiers) {
+			ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+			String method = style.getMethodName();
+			if (method != null) {
+				TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+			} else {
+				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
+					style = gg.getGraphState().getTierStyle();
+					method = style.getMethodName();
+					TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+				}
+			}
+		}
+		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
 	}
 
 	@Override

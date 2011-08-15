@@ -169,6 +169,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 					}else{
 						cglyph = new DirectedGlyph(){};
 					}
+					cglyph.setHitable(false);
 					cglyph.setCoords(cspan.getMin(), cy, cspan.getLength(), cheight);
 					cglyph.setForward(cspan.isForward());
 					cglyph.setColor(pglyph.getColor());

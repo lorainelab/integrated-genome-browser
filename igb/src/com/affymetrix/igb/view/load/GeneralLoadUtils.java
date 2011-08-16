@@ -157,6 +157,7 @@ public final class GeneralLoadUtils {
 				version = versionIterator.next();
 
 				if (version.gServer == server) {
+					version.clear();
 					versionIterator.remove();
 				}
 			}

@@ -70,4 +70,8 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 	public int compareTo(GenericVersion other) {
 		return new StringVersionDateComparator().compare(this.versionName, other.versionName);
 	}
+	
+	public void clear(){
+		features.clear();
+	}
 }

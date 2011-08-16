@@ -122,7 +122,7 @@ public class GraphGlyph extends Glyph {
 		return graf.hasWidth();
 	}
 
-	private int getWCoord(int i) {
+	protected int getWCoord(int i) {
 		return graf.getGraphWidthCoord(i);
 	}
 

@@ -98,7 +98,7 @@ public final class GraphState {
 	 *  necessary.
 	 */
 	public GraphState(String id, String extension) {
-		this(id, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, null, extension));
+		this(DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, null, extension));
 		tier_style.setHeight(default_graph_height);
 		tier_style.setGraphTier(true);
 
@@ -106,7 +106,7 @@ public final class GraphState {
 		tier_style.setExpandable(false);
 	}
 
-	public GraphState(String id, ITrackStyle tierStyle) {
+	public GraphState(ITrackStyle tierStyle) {
 		super();
 		tier_style = tierStyle;
 		setFloatGraph(false);

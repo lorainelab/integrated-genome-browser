@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
@@ -58,20 +57,20 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		
 		if (ftier == rtier) {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth);
-			addToParent(meth, pspan, gsym, ftier);
+			addToParent(pspan, gsym, ftier);
 		} else {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, true);
-			addToParent(meth, pspan, gsym, ftier);
+			addToParent(pspan, gsym, ftier);
 			
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, false);
-			addToParent(meth, pspan, gsym, rtier);
+			addToParent(pspan, gsym, rtier);
 		}
 
 	}
 	
-	private void addToParent(String meth, SeqSpan pspan, GraphSym gsym, TierGlyph tier){
+	private void addToParent(SeqSpan pspan, GraphSym gsym, TierGlyph tier){
 		if(gsym != null){
-			GraphState state = new GraphState(meth, tier.getAnnotStyle());
+			GraphState state = new GraphState(tier.getAnnotStyle());
 			GraphGlyph graph_glyph = new GraphGlyph(gsym, state);
 			graph_glyph.drawHandle(false);
 			graph_glyph.setSelectable(false);

@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
@@ -93,11 +94,11 @@ public class AutoScrollAction extends AbstractAction implements SeqSelectionList
 				as_bases_per_pix = 1;
 			}
 
-			final JTextField bases_per_pixTF = new JTextField("" + as_bases_per_pix);
-			final JTextField pix_to_scrollTF = new JTextField("" + as_pix_to_scroll);
-			final JTextField time_intervalTF = new JTextField("" + as_time_interval);
-			final JTextField start_posTF = new JTextField("" + as_start_pos);
-			final JTextField end_posTF = new JTextField("" + as_end_pos);
+			final JRPTextField bases_per_pixTF = new JRPTextField("AutoScrollAction_bases_per_pix", "" + as_bases_per_pix);
+			final JRPTextField pix_to_scrollTF = new JRPTextField("AutoScrollAction_pix_to_scroll", "" + as_pix_to_scroll);
+			final JRPTextField time_intervalTF = new JRPTextField("AutoScrollAction_time_interval", "" + as_time_interval);
+			final JRPTextField start_posTF = new JRPTextField("AutoScrollAction_start_pos", "" + as_start_pos);
+			final JRPTextField end_posTF = new JRPTextField("AutoScrollAction_end_pos", "" + as_end_pos);
 
 			float bases_per_minute = (float) // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
 							(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);

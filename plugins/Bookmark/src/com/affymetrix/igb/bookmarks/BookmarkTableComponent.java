@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.net.MalformedURLException;
@@ -24,7 +25,7 @@ public final class BookmarkTableComponent {
   
   private final BookmarkTableModel data_model;
   private final JTable table;
-  private JTextField url_field = new JTextField(30);
+  private JRPTextField url_field = new JRPTextField("BookmarkTableComponent_url_field", 30);
   private final JLabel url_label = new JLabel("URL:");
   
   public BookmarkTableComponent() {

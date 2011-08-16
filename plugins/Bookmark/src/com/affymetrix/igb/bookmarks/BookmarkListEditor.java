@@ -15,6 +15,8 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -33,7 +35,7 @@ public final class BookmarkListEditor {
   private final JPanel main_box = new JPanel();
   
   private final JLabel name_label = new JLabel("Name:", JLabel.TRAILING);
-  private final JTextField name = new JTextField(30);
+  private final JRPTextField name = new JRPTextField("BookmarkListEditor_name", 30);
 
   private final BookmarkTableComponent ucb_editor = new BookmarkTableComponent();
   

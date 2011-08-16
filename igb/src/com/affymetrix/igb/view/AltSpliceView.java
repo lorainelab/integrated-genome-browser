@@ -22,6 +22,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -43,7 +44,7 @@ public class AltSpliceView extends IGBTabPanel
 
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
-	private final JTextField buffer_sizeTF;
+	private final JRPTextField buffer_sizeTF;
 	private final JCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
 	private BioSeq last_seq_changed = null;
@@ -57,7 +58,7 @@ public class AltSpliceView extends IGBTabPanel
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view);
-		buffer_sizeTF = new JTextField(4);
+		buffer_sizeTF = new JRPTextField("AltSpliceView_buffer_size", 4);
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JCheckBox("Slice By Selection", true);
 

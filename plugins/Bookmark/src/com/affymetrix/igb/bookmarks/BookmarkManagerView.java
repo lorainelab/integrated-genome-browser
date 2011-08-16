@@ -16,6 +16,7 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -192,7 +193,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     JLabel type_label = new JLabel("Type:");
     JLabel type_label_2 = new JLabel("");
     JLabel name_label = new JLabel("Name:");
-    JTextField name_text_field = new JTextField(30);
+    JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_field", 30);
     BookmarkListEditor bl_editor;
     TreePath selected_path = null;
     BookmarkList selected_bl = null;

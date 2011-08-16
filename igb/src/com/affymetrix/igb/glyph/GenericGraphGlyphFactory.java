@@ -159,7 +159,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 				tglyph.setPacker(cp);
 			}
 			tglyph.addChild(graph_glyph);
-			tglyph.pack(map.getView());
+			tglyph.pack(map.getView(), false);
 		}
 		return graph_glyph;
 	}

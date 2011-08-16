@@ -186,7 +186,7 @@ public abstract class AbstractTieredMap
 		if (full_repack) {
 			for (int i=0; i<tiers.size(); i++) {
 				MapTierGlyph mtg = tiers.get(i);
-				mtg.pack(getView());
+				mtg.pack(getView(), false);
 			}
 		}
 

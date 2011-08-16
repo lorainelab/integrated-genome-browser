@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 public final class CollapsePacker extends CollapsedTierPacker {
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view) {
+	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
 		List<GlyphI> children = parent.getChildren();
 
 		if (children != null) {

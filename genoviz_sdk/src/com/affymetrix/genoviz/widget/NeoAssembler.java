@@ -1771,7 +1771,7 @@ public class NeoAssembler extends NeoContainerWidget
 		if (pack_view == null || align_glyphs == null) {
 			return;
 		}
-		cglyph.pack(pack_view);
+		cglyph.pack(pack_view, false);
 
 		Rectangle2D.Double cbox = cglyph.getCoordBox();
 		alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));

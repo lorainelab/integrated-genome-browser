@@ -242,13 +242,13 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
   }
 
   @Override
-  public void pack(ViewI view) {
+  public void pack(ViewI view, boolean manual) {
     if ( isMoveChildren()) {
       this.adjustChildren();
       // Maybe now need to adjust size of total glyph to take into account
       // any expansion of the children ?
     } else {
-      super.pack(view);
+      super.pack(view, manual);
     }
   }
 

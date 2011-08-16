@@ -260,7 +260,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			}
 			TierGlyph tglyph = smv.getGraphTrack(tier_style, tier_direction);
 			tglyph.addChild(graph_glyph);
-			tglyph.pack(map.getView());
+			tglyph.pack(map.getView(), false);
 		}
 	}
 }

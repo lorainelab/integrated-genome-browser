@@ -1320,7 +1320,7 @@ public class NeoMap extends NeoWidget implements
 	public void repack() {
 		scene.maxDamage();
 		RootGlyph rglyph = (RootGlyph) scene.getGlyph();
-		rglyph.pack(getView());
+		rglyph.pack(getView(), false);
 	}
 
 	public void setPacker(PackerI packer) {

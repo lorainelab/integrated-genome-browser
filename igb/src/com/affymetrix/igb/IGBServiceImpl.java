@@ -289,7 +289,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
 		AffyTieredMap map = (AffyTieredMap)getSeqMap();
-		map.packTiers(false, true, false);
+		map.packTiers(false, true, false, false);
 		map.stretchToFit(fitx, fity);
 		map.updateWidget();
 	}

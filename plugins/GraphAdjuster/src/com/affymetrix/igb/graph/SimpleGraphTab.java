@@ -623,7 +623,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				GlyphI parentgl = gl.getParent();
 				if (isTierGlyph(parentgl)) {
 					//	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());
-					parentgl.pack(igbService.getView());
+					parentgl.pack(igbService.getView(), false);
 				}
 			}
 			igbService.packMap(false, true);

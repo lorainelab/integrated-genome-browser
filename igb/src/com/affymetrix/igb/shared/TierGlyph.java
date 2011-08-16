@@ -254,9 +254,9 @@ public class TierGlyph extends SolidGlyph {
 
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
-	public void pack(ViewI view) {
+	public void pack(ViewI view, boolean manual) {
 		initForSearching();
-		super.pack(view);
+		super.pack(view, manual);
 		Rectangle2D.Double mbox = scene.getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
 

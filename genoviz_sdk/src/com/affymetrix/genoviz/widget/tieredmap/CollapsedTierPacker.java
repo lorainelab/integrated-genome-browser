@@ -31,7 +31,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view) {
+	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
 		List<GlyphI> children = parent.getChildren();
 		if (children == null) {
 			return null;

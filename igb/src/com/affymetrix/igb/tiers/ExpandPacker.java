@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D.Double;
 import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
+
 import java.util.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -20,7 +21,7 @@ public class ExpandPacker extends ExpandedTierPacker {
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view) {		
+	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {		
 		Rectangle2D.Double pbox = parent.getCoordBox();
 
 		// resetting height of parent to just spacers
@@ -79,12 +80,18 @@ public class ExpandPacker extends ExpandedTierPacker {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 
-		packParent(parent);
+		packParent(parent, view, manual);
 
 		return null;
 	}
 
-	void packParent(GlyphI parent) {
+	void packParent(GlyphI parent, ViewI view, boolean manual) {
+		long min = Long.MIN_VALUE;
+		long max = Long.MAX_VALUE;
+		if (manual) {
+			min = Math.round(view.getCoordBox().x);
+			max = Math.round(view.getCoordBox().x + view.getCoordBox().width);
+		}
 		List<GlyphI> sibs = parent.getChildren();
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		Rectangle2D.Double newbox = new Rectangle2D.Double();
@@ -95,14 +102,18 @@ public class ExpandPacker extends ExpandedTierPacker {
 		if (this.getStretchHorizontal()) {
 			for (int i = 1; i < sibs_size; i++) {
 				child = sibs.get(i);
-				Rectangle2D.union(newbox, child.getCoordBox(), newbox);
+				if (child.getCoordBox().x < max && (child.getCoordBox().x + child.getCoordBox().width) > min) {
+					Rectangle2D.union(newbox, child.getCoordBox(), newbox);
+				}
 			}
 		} else {
 			for (int i = 1; i < sibs_size; i++) {
 				child = sibs.get(i);
-				Rectangle2D.Double childbox = child.getCoordBox();
-				tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
-				Rectangle2D.union(newbox, tempbox, newbox);
+				if (child.getCoordBox().x < max && (child.getCoordBox().x + child.getCoordBox().width) > min) {
+					Rectangle2D.Double childbox = child.getCoordBox();
+					tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
+					Rectangle2D.union(newbox, tempbox, newbox);
+				}
 			}
 		}
 		newbox.y = newbox.y - parent_spacer;

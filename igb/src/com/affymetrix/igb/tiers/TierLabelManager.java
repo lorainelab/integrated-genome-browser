@@ -474,7 +474,7 @@ public final class TierLabelManager implements PropertyHolder {
 				}
 			}
 			for (ViewI v : tlg.getReferenceTier().getScene().getViews()) {
-				tlg.getReferenceTier().pack(v);
+				tlg.getReferenceTier().pack(v, false);
 			}
 		}
 	}
@@ -503,7 +503,7 @@ public final class TierLabelManager implements PropertyHolder {
 
 		updatePositions();
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
-		tiermap.packTiers(false, true, false);
+		tiermap.packTiers(false, true, false, false);
 		tiermap.updateWidget();
 	}
 
@@ -527,7 +527,7 @@ public final class TierLabelManager implements PropertyHolder {
 		});
 		
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
-		tiermap.packTiers(false, true, false);
+		tiermap.packTiers(false, true, false, false);
 		tiermap.updateWidget();
 	}
 
@@ -536,7 +536,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 *  changing their heights.
 	 */
 	void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
-		tiermap.repackTheTiers(full_repack, stretch_vertically);
+		tiermap.repackTheTiers(full_repack, stretch_vertically, false);
 	}
 
 	public void addPopupListener(PopupListener p) {

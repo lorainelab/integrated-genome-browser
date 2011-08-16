@@ -65,7 +65,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 		this.movetype = movetype;
 	}
 
-	public Rectangle pack(GlyphI parent, ViewI view) {
+	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
 		List<GlyphI> children = parent.getChildren();
 		if (children == null) { return null; }
 		for (GlyphI child : children) {

@@ -72,7 +72,7 @@ public class AffyTieredMap extends NeoMap {
 		public void actionPerformed(ActionEvent e) {
 			show_plus = !show_plus;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
-			repackTheTiers(false, true);
+			repackTheTiers(false, true, false);
 		}
 	};
 	public Action show_minus_action = new AbstractAction("Show (-) tiers") {
@@ -81,7 +81,7 @@ public class AffyTieredMap extends NeoMap {
 		public void actionPerformed(ActionEvent e) {
 			show_minus = !show_minus;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
-			repackTheTiers(false, true);
+			repackTheTiers(false, true, false);
 		}
 	};
 	public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
@@ -90,7 +90,7 @@ public class AffyTieredMap extends NeoMap {
 		public void actionPerformed(ActionEvent e) {
 			show_mixed = !show_mixed;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
-			repackTheTiers(false, true);
+			repackTheTiers(false, true, false);
 		}
 	};
 
@@ -145,14 +145,14 @@ public class AffyTieredMap extends NeoMap {
 		// currently _ONLY_ tiers and glyphs placed in tiers will be repacked --
 		// anything added directly to map other than tiers will need to
 		// be dealt with manually
-		packTiers(true, true, false);
+		packTiers(true, true, false, false);
 	}
 
 	/**
 	 *  @param stretch_includes_nontiers doesn't do _anything_ yet
 	 */
-	public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers) {
-		packTiers(full_repack, stretch_map);
+	public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers, boolean manual) {
+		packTiers(full_repack, stretch_map, manual);
 	}
 	
 	/**
@@ -167,12 +167,12 @@ public class AffyTieredMap extends NeoMap {
 	 * Protected because outside of subclasses of AffyTieredMap, all calls should
 	 *   go through packTiers(boolean, boolean, boolean)
 	 */
-	private void packTiers(boolean full_repack, boolean stretch_map) {
+	private void packTiers(boolean full_repack, boolean stretch_map, boolean manual) {
 		fixed_pixel_height = 0;
 		fixed_coord_height = 0;
 		if (full_repack) {
 			for (TierGlyph mtg : tiers) {
-				mtg.pack(getView());
+				mtg.pack(getView(), manual);
 			}
 		}
 
@@ -293,7 +293,7 @@ public class AffyTieredMap extends NeoMap {
 	private void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
 		super.stretchToFit(fitx, fity);
 		if (packTiers) {
-			packTiers(false, true, false);
+			packTiers(false, true, false, false);
 		}
 
 		if (!fity) {
@@ -433,7 +433,7 @@ public class AffyTieredMap extends NeoMap {
 		trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pix_offset);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
-		packTiers(false, true, false); 
+		packTiers(false, true, false, false); 
 
 		// BEGIN only section that relies on scene coords
 		Rectangle2D.Double scenebox = scene.getCoordBox();
@@ -470,8 +470,8 @@ public class AffyTieredMap extends NeoMap {
 	 *  Repacks tiers.  Should be called after hiding or showing tiers or
 	 *  changing their heights.
 	 */
-	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
-		packTiers(full_repack, true, false);
+	public void repackTheTiers(boolean full_repack, boolean stretch_vertically, boolean manual) {
+		packTiers(full_repack, true, false, manual);
 		stretchToFit(false, stretch_vertically, false);
 		// apply a hack to make sure strechToFit worked
 		if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
@@ -481,7 +481,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// pack them again!  This clears-up problems with the packing of the axis
 		// tier and getting the labelmap lined-up with the main tier map.
-		packTiers(false, true, false);
+		packTiers(false, true, false, false);
 	}
 
 	/** Prints this component with dialogue box. */

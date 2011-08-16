@@ -121,7 +121,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view) {
+	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		// resetting height of parent to just spacers
 		parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
@@ -235,7 +235,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 
-		packParent(parent);
+		packParent(parent, view, manual);
 
 		slot_maxes.trimToSize();
 		

@@ -390,7 +390,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 
 	private void refreshSeqMapView() {
 		if (smv != null) {
-			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, false);
+			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
 	}
 

@@ -270,7 +270,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	@SuppressWarnings("serial")
-	private final Action focus_track_action = new AbstractAction("Focus Track") {
+	private final Action maximize_track_action = new AbstractAction("Maximize Track") {
 
 		public void actionPerformed(ActionEvent e) {
 			TierGlyph current_tier = handler.getSelectedTiers().get(0);
@@ -278,7 +278,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	@SuppressWarnings("serial")
-	private final Action repack_tiers_action = new AbstractAction("Repack Tiers") {
+	private final Action repack_features_action = new AbstractAction("Repack Features") {
 
 		public void actionPerformed(ActionEvent e) {
 			gviewer.getSeqMap().repackTheTiers(true, true, true);
@@ -853,7 +853,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		boolean any_are_color_off = false; // whether any allow setColorByScore()
 		boolean any_are_separate_tiers = false;
 		boolean any_are_single_tier = false;
-		boolean add_focus = false;
+		boolean add_maximize = false;
 		boolean any_view_mode = false;
 
 		for (TierLabelGlyph label : labels) {
@@ -916,7 +916,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			save_menu.setEnabled(is_annotation_type);
 			save_bed_action.setEnabled(is_annotation_type);
 			if (glyph.getDirection() != Direction.AXIS) {
-				add_focus = true;
+				add_maximize = true;
 			}
 
 			if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
@@ -970,10 +970,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 		popup.add(hide_action);
 		popup.add(showMenu);
-		if (add_focus) {
-			popup.add(focus_track_action);
+		if (add_maximize) {
+			popup.add(maximize_track_action);
 		}
-		popup.add(repack_tiers_action);
+		popup.add(repack_features_action);
 		popup.add(delete_action);
 		popup.add(show_all_action);
 

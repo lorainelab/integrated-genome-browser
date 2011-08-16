@@ -12,7 +12,7 @@
 <server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="5" />
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="8" />
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="true" order="9" />
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="9" />
 
 <server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="6" />
 

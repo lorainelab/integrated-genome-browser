@@ -44,14 +44,14 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final String PROPERTY = "property";
 	private static final List<String> prop_order = determineOrder();
 	private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
-	private PropertyViewHelper helper = new PropertyViewHelper(table);
-
+	
 	PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
 		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);
 		new JTableCutPasteAdapter(table, true);
+		new PropertyViewHelper(table);
 		this.setPreferredSize(new java.awt.Dimension(100, 250));
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
@@ -244,7 +244,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			}
 		};
 		table.setModel(model);
-		table.setDefaultRenderer(Object.class, helper);
 
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);

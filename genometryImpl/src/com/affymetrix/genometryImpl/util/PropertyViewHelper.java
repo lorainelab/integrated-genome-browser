@@ -1,20 +1,17 @@
 package com.affymetrix.genometryImpl.util;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
  * @author hiralv
  */
-public class PropertyViewHelper extends DefaultTableCellRenderer implements
-			MouseListener, MouseMotionListener {
+public class PropertyViewHelper implements MouseListener, MouseMotionListener {
 		private static final long serialVersionUID = 1L;
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -27,23 +24,6 @@ public class PropertyViewHelper extends DefaultTableCellRenderer implements
 			table.addMouseMotionListener(this);
 		}
 		
-		@Override
-		public Component getTableCellRendererComponent (JTable table,
-				Object obj, boolean isSelected, boolean hasFocus, int row, int column){
-
-			if(isURLField(row,column)){
-
-				String url = "<html> <a href='" + (String)obj + "'>" +
-						(String)obj + "</a> </html>)";
-
-				return super.getTableCellRendererComponent (table, url,
-						isSelected, hasFocus, row, column);
-			}
-
-			return super.getTableCellRendererComponent (table, obj, isSelected,
-					hasFocus, row, column);
-		}
-
 		@Override
 		public void mouseClicked(MouseEvent e){
 
@@ -85,7 +65,7 @@ public class PropertyViewHelper extends DefaultTableCellRenderer implements
 			if(value.length() <= 0)
 				return false;
 
-			if(value.startsWith("http://") || value.startsWith("https://"))
+			if(value.startsWith("<html>"))
 				return true;
 
 			return false;

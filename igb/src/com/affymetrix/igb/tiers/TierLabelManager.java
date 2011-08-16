@@ -314,7 +314,8 @@ public final class TierLabelManager implements PropertyHolder {
 		props.put("loadmode", feature.getLoadStrategy().toString());
 		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
 		props.put("server", server);
-		props.put("server url", feature.gVersion.gServer.friendlyURL);
+		props.put("server url", "<html> <a href='" + feature.gVersion.gServer.friendlyURL + "'>" +
+						feature.gVersion.gServer.friendlyURL + "</a> </html>)");
 
 		return props;
 	}

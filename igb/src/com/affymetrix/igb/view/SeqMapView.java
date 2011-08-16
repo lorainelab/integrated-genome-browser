@@ -1258,7 +1258,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void zoomTo(double smin, double smax) {
-		double coord_width = smax - smin;
+		double coord_width = Math.min(getAnnotatedSeq().getLengthDouble(), smax) - Math.max(getAnnotatedSeq().getMin(), smin);
 		double pixel_width = seqmap.getView().getPixelBox().width;
 		double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that
 		pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoAbstractWidget.X));

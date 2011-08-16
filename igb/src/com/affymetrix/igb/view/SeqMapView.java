@@ -2159,9 +2159,11 @@ public class SeqMapView extends JPanel
 			props.put("strand",
 					span.isForward() ? "+" : "-");
 			props.remove("seq id"); // this is redundant if "chromosome" property is set
-			if (props.containsKey("method") && !props.containsKey("type")) {
-				props.put("type", props.get("method"));
+			if (props.containsKey("method")) {
 				props.remove("method");
+			}
+			if (props.containsKey("type")) {
+				props.remove("type");
 			}
 		}
 		return props;

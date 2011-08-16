@@ -76,7 +76,7 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			graph_glyph.drawHandle(false);
 			graph_glyph.setSelectable(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getPreferredHeight());
+			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getCoordBox().getHeight());
 			tier.addChild(graph_glyph);
 			tier.setInfo(gsym);
 		}

@@ -620,8 +620,11 @@ public class GraphGlyph extends Glyph {
 	@Override
 	public void moveRelative(double xdelta, double ydelta) {
 		super.moveRelative(xdelta, ydelta);
-		state.getTierStyle().setHeight(coordbox.height);
-		state.getTierStyle().setY(coordbox.y);
+		//Note : for view modes bug
+		if(state.getTierStyle().isGraphTier()){
+			state.getTierStyle().setHeight(coordbox.height);
+			state.getTierStyle().setY(coordbox.y);
+		}
 		if (xdelta != 0.0f) {
 			graf.moveX(xdelta);
 		}
@@ -630,8 +633,11 @@ public class GraphGlyph extends Glyph {
 	@Override
 	public void setCoords(double newx, double newy, double newwidth, double newheight) {
 		super.setCoords(newx, newy, newwidth, newheight);
-		state.getTierStyle().setHeight(newheight);
-		state.getTierStyle().setY(newy);
+		//Note : for view modes bug
+		if(state.getTierStyle().isGraphTier()){
+			state.getTierStyle().setHeight(newheight);
+			state.getTierStyle().setY(newy);
+		}
 	}
 
 	/**

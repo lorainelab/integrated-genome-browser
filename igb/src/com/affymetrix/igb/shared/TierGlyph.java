@@ -538,6 +538,13 @@ public class TierGlyph extends SolidGlyph {
 	}
 	
 	public void setPreferredHeight(double height){
+		if(getChildCount() == 1 && getChild(0) instanceof GraphGlyph){
+			GraphGlyph child = (GraphGlyph)getChild(0);
+			Rectangle2D.Double  coord = child.getCoordBox();
+			child.setCoords(coord.x, coord.y, coord.width, height);
+			return;
+		}
+		
 		float slot_size = getActualSlots();
 		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
 		
@@ -546,15 +553,7 @@ public class TierGlyph extends SolidGlyph {
 		
 		style.setHeight(height);
 	}
-	
-	public double getPreferredHeight() {
-		double height = style.getHeight() * getActualSlots();
-		if (useLabel())
-			height = height * 2;
-			
-		return height;
-	}
-	
+		
 	private boolean useLabel(){
 		if (style instanceof ITrackStyleExtended) {
 			String label_field = ((ITrackStyleExtended) style).getLabelField();

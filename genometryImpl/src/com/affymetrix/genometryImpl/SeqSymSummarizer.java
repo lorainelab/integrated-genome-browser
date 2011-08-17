@@ -78,15 +78,23 @@ public final class SeqSymSummarizer {
 				}
 			}
 
-			for (int j = 0; j < length; j++) {
-				ch = cur_residues[j];
-				if (seq_residues[offset + j] != ch && ch != intron) {
-					y[offset - y_offset + j] += 1;
-				}
+			for (int j = 0; j < length; ) {
+				for(int l = 0; l < BUFFSIZE & j < length; l++, j++){
+					ch = cur_residues[j];
+					if (seq_residues[offset + j] != ch && ch != intron) {
+						y[offset - y_offset + j] += 1;
+					}
 
-				k = ResiduesChars.getValue((char)ch);
-				if(k > -1){
-					yR[k][offset - y_offset + j] += 1;
+					k = ResiduesChars.getValue((char)ch);
+					if(k > -1){
+						yR[k][offset - y_offset + j] += 1;
+					}
+				}
+				
+				if(length > BUFFSIZE){
+					minmax = MisMatchGraphSym.updateY(index, y_offset, BUFFSIZE, y, yR);
+					y = new int[BUFFSIZE];
+					y_offset = offset+BUFFSIZE;
 				}
 			}
 

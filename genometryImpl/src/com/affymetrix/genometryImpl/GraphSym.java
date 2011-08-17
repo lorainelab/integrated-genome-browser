@@ -457,7 +457,7 @@ public class GraphSym extends SimpleSymWithProps {
 			// zero out remainder of buffer, if necessary
 			Arrays.fill(yBuf, maxPoints,BUFSIZE,0.0f);
 			if (this.hasWidth) {
-				Arrays.fill(yBuf, maxPoints, BUFSIZE, 0);
+				Arrays.fill(wBuf, maxPoints, BUFSIZE, 0);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

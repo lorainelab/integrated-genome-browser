@@ -278,7 +278,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	@SuppressWarnings("serial")
-	private final Action repack_features_action = new AbstractAction("Repack Features") {
+	private final Action repack_tracks_action = new AbstractAction("Repack Tracks") {
 
 		public void actionPerformed(ActionEvent e) {
 			gviewer.getSeqMap().repackTheTiers(true, true, true);
@@ -976,7 +976,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (add_maximize) {
 			popup.add(maximize_track_action);
 		}
-		popup.add(repack_features_action);
+		popup.add(repack_tracks_action);
 		popup.add(delete_action);
 		popup.add(show_all_action);
 

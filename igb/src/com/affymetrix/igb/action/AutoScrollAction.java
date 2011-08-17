@@ -21,7 +21,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -166,7 +165,7 @@ public class AutoScrollAction extends AbstractAction implements SeqSelectionList
 
 	// Normalize a text field so that it holds an integer, with a fallback value
 	// if there is a problem, and a minimum and maximum
-	private static int normalizeTF(JTextField tf, int fallback, int min, int max) {
+	private static int normalizeTF(JRPTextField tf, int fallback, int min, int max) {
 		int result = fallback;
 		try {
 			result = Integer.parseInt(tf.getText());

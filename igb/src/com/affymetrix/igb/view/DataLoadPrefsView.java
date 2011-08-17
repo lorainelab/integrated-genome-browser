@@ -14,6 +14,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -189,7 +190,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		final JPanel synonymsPanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
 		final JLabel synonymsLabel= new JLabel("Synonyms File");
-		final JTextField synonymFile = new JTextField(PreferenceUtils.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
+		final JRPTextField synonymFile = new JRPTextField("DataLoadPrefsView_synonymFile", PreferenceUtils.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
 		final JButton openFile = new JButton("\u2026");
 		final ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -293,7 +294,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		return cachePanel;
 	}
 
-	private static boolean loadSynonymFile(JTextField synonymFile) {
+	private static boolean loadSynonymFile(JRPTextField synonymFile) {
 		File file = new File(synonymFile.getText());
 
 		if (!file.isFile() || !file.canRead()) { return false; }
@@ -381,7 +382,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	}
 
 	@Override
-	protected void setSize(GroupLayout layout, JTextField name) {
+	protected void setSize(GroupLayout layout, JRPTextField name) {
 		layout.linkSize(nameLabel, urlLabel, typeLabel);
 		name.setPreferredSize(new Dimension(300, name.getPreferredSize().height));
 		layout.linkSize(name, type);

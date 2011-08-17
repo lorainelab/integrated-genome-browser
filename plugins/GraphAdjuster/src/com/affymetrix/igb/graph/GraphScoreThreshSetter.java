@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -62,13 +63,13 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final MinRunThresholder min_run_thresher;
 	private final JSlider score_val_slider;
 	private final JSlider score_percent_slider;
-	private final JTextField score_valT;
-	private final JTextField score_perT;
+	private final JRPTextField score_valT;
+	private final JRPTextField score_perT;
 	private final JRadioButton thresh_aboveB;
 	private final JRadioButton thresh_belowB;
 	private final JRadioButton thresh_unknownB; // invisible radio button
-	private final JTextField shift_startTF = new JTextField("0", 5);
-	private final JTextField shift_endTF = new JTextField("0", 5);
+	private final JRPTextField shift_startTF = new JRPTextField("GraphScoreThreshSetter_shift_startTF", "0", 5);
+	private final JRPTextField shift_endTF = new JRPTextField("GraphScoreThreshSetter_shift_endTF", "0", 5);
 	private final JRPComboBoxWithSingleListener threshCB = new JRPComboBoxWithSingleListener("thresh");
 	private final JButton tier_threshB = new JButton("Make Track");
 	private static final float sliders_per_percent = 10.0f;
@@ -116,8 +117,8 @@ public final class GraphScoreThreshSetter extends JPanel
 						(int) (abs_max_per * sliders_per_percent),
 						(int) (prev_thresh_per * sliders_per_percent));
 
-		score_valT = new JTextField(10);
-		score_perT = new JTextField(10);
+		score_valT = new JRPTextField("GraphScoreThreshSetter_score_valT", 10);
+		score_perT = new JRPTextField("GraphScoreThreshSetter_score_perT", 10);
 
 		JPanel labP = new JPanel();
 		JPanel textP = new JPanel();

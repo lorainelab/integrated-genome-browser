@@ -15,10 +15,10 @@ package com.affymetrix.igb.view;
 import java.awt.Dimension;
 
 import javax.swing.GroupLayout;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Group;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 
 public class BundleRepositoryPrefsView extends ServerPrefsView {
@@ -82,7 +82,7 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 	}
 
 	@Override
-	protected void setSize(GroupLayout layout, JTextField name) {
+	protected void setSize(GroupLayout layout, JRPTextField name) {
 		layout.linkSize(nameLabel, urlLabel);
 		name.setPreferredSize(new Dimension(300, name.getPreferredSize().height));
 		layout.linkSize(name);

@@ -22,6 +22,7 @@ import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
@@ -61,8 +62,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	// for add source dialog
 	protected JLabel nameLabel;
 	protected JLabel urlLabel;
-	protected JTextField name;
-	protected JTextField url;
+	protected JRPTextField name;
+	protected JRPTextField url;
 	protected JPanel messageContainer = new JPanel();
 
 	public ServerPrefsView(ServerList serverList_) {
@@ -267,8 +268,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		messageContainer = new JPanel();
 		nameLabel = new JLabel("Name");
 		urlLabel = new JLabel("URL");
-		name = new JTextField("Your " + serverList.getTextName() + " name");
-		url = new JTextField("http://");
+		name = new JRPTextField("ServerPrefsView_name", "Your " + serverList.getTextName() + " name");
+		url = new JRPTextField("ServerPrefsView_url", "http://");
 
 		final GroupLayout layout = new GroupLayout(addServerPanel);
 
@@ -310,7 +311,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		return addServerPanel;
 	}
 
-	protected abstract void setSize(GroupLayout layout, JTextField name);
+	protected abstract void setSize(GroupLayout layout, JRPTextField name);
 
 	public void refresh() { }
 

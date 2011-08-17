@@ -21,13 +21,14 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
 
 	private SeqMapView gviewer;
 	private final JSlider tslider;
-	private final JTextField text;
+	private final JRPTextField text;
 	private static final int thresh_min = 0;
 	private static final int thresh_max = 100;
 	private int prev_thresh;
@@ -81,7 +82,7 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 		textP.setLayout((new BoxLayout(textP, BoxLayout.Y_AXIS)));
 		sliderP.setLayout((new BoxLayout(sliderP, BoxLayout.Y_AXIS)));
 //		adjustFuzziness.setLayout((new GridLayout(1, 2)));
-		text = new JTextField(3);
+		text = new JRPTextField("EdgeMatchAdjuster_text", 3);
 		text.setAlignmentY(SwingConstants.CENTER);
 		text.setMinimumSize(new Dimension(min_xpix, min_ypix));
 		text.setMaximumSize(new Dimension(max_xpix, max_ypix));

@@ -101,6 +101,15 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 				continue;
 			}
 			float[] residuesY = mmgs.getAllResiduesY(i);
+			float totalY =
+				((referenceBase == 'A') ? 0 : residuesY[0]) +
+				((referenceBase == 'T') ? 0 : residuesY[1]) +
+				((referenceBase == 'G') ? 0 : residuesY[2]) +
+				((referenceBase == 'C') ? 0 : residuesY[3]) +
+				((referenceBase == 'N') ? 0 : residuesY[4]);
+			if (Math.abs(graf.getGraphYCoord(i) - totalY) > 0.0001) {
+				System.out.println(">>>>>>> discrepancy at " + xtemp + " - Y = " + graf.getGraphYCoord(i) + ", total = " + totalY);
+			}
 			for (int j = 0; j < barOrder.length; j++) {
 				int loopIndex = barOrder[j];
 				float ytemp = residuesY[loopIndex];

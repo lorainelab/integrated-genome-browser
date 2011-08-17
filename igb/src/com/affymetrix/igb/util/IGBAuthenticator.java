@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
@@ -74,7 +74,7 @@ public class IGBAuthenticator extends Authenticator {
 			final JRadioButton anon,
 			final JRadioButton auth,
 			final JLabel server,
-			final JTextField username,
+			final JRPTextField username,
 			final JPasswordField password,
 			final JCheckBox remember,
 			final boolean authOptional) {
@@ -214,7 +214,7 @@ public class IGBAuthenticator extends Authenticator {
 		boolean authOptional = serverObject != null && serverObject.serverType == ServerType.DAS2;
 		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
 		JLabel server = new JLabel();
-		JTextField     username = new JTextField();
+		JRPTextField     username = new JRPTextField("IGBAuthenticator_username");
 		JPasswordField password = new JPasswordField();
 		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
 		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));

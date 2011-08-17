@@ -14,7 +14,12 @@ package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
@@ -73,23 +78,23 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	boolean DEBUG_EVENTS = false;
 	JLabel selected_graphs_label = new JLabel(BUNDLE.getString("selectedGraphsLabel"));
-	JRadioButton mmavgB = new JRadioButton(BUNDLE.getString("minMaxAvgButton"));
-	JRadioButton lineB = new JRadioButton(BUNDLE.getString("lineButton"));
-	JRadioButton barB = new JRadioButton(BUNDLE.getString("barButton"));
-	JRadioButton dotB = new JRadioButton(BUNDLE.getString("dotButton"));
-	JRadioButton sstepB = new JRadioButton(BUNDLE.getString("stairStepButton"));
-	JRadioButton hmapB = new JRadioButton(BUNDLE.getString("heatMapButton"));
-	JRadioButton hidden_styleB = new JRadioButton("No Selection"); // this button will not be displayed
+	JRPRadioButton mmavgB = new JRPRadioButton("SimpleGraphTab_mmavgB", BUNDLE.getString("minMaxAvgButton"));
+	JRPRadioButton lineB = new JRPRadioButton("SimpleGraphTab_lineB", BUNDLE.getString("lineButton"));
+	JRPRadioButton barB = new JRPRadioButton("SimpleGraphTab_barB", BUNDLE.getString("barButton"));
+	JRPRadioButton dotB = new JRPRadioButton("SimpleGraphTab_dotB", BUNDLE.getString("dotButton"));
+	JRPRadioButton sstepB = new JRPRadioButton("SimpleGraphTab_sstepB", BUNDLE.getString("stairStepButton"));
+	JRPRadioButton hmapB = new JRPRadioButton("SimpleGraphTab_hmapB", BUNDLE.getString("heatMapButton"));
+	JRPRadioButton hidden_styleB = new JRPRadioButton("SimpleGraphTab_hidden_styleB", "No Selection"); // this button will not be displayed
 	ButtonGroup stylegroup = new ButtonGroup();
-	JButton colorB = new JButton("Color");
-	JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
+	JRPButton colorB = new JRPButton("SimpleGraphTab_colorB", "Color");
+	JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
 
 	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
-	private final JCheckBox labelCB = new JCheckBox(BUNDLE.getString("labelCheckBox"));
-	private final JCheckBox yaxisCB = new JCheckBox(BUNDLE.getString("yAxisCheckBox"));
-	private final JCheckBox floatCB = new JCheckBox(BUNDLE.getString("floatingCheckBox"));
+	private final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
+	private final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
+	private final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 
 	private final Action select_all_graphs_action = new AbstractAction(BUNDLE.getString("selectAllGraphs")) {
 		private static final long serialVersionUID = 1L;
@@ -120,15 +125,15 @@ public final class SimpleGraphTab extends IGBTabPanel
 			showGraphScoreThreshSetter();
 		}
 	};
-	private final JButton selectAllB = new JButton(select_all_graphs_action);
-	private final JButton saveB = new JButton(save_selected_graphs_action);
-	private final JButton deleteB = new JButton(delete_selected_graphs_action);
-	private final JButton threshB = new JButton(graph_threshold_action);
+	private final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);
+	private final JRPButton saveB = new JRPButton("SimpleGraphTab_saveB", save_selected_graphs_action);
+	private final JRPButton deleteB = new JRPButton("SimpleGraphTab_deleteB", delete_selected_graphs_action);
+	private final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB", graph_threshold_action);
 	private final JLabel param_label = new JLabel();
 	private final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
-	private final JButton combineB = new JButton(BUNDLE.getString("combineButton"));
-	private final JButton splitB = new JButton(BUNDLE.getString("splitButton"));
-	private JComboBox heat_mapCB;
+	private final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
+	private final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
+	private JRPComboBox heat_mapCB;
 	private AdvancedGraphPanel advanced_panel;
 	TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
 		new Comparator<FloatTransformer>() {
@@ -151,7 +156,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 
-		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
+		heat_mapCB = new JRPComboBox("SimpleGraphTab_heat_mapCB", HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());
 
 		// A box to contain the heat-map JComboBox, to help get the alignment right
@@ -705,12 +710,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private final Map<String, FloatTransformer> name2transform;
 		private final Map<String, GraphOperator> name2operator;
-		private final JButton transformationGoB = new JButton(BUNDLE.getString("goButton"));
+		private final JRPButton transformationGoB = new JRPButton("SimpleGraphTab_transformationGoB", BUNDLE.getString("goButton"));
 		private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
 		private final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("transformation");
 		private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
 		private final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("operation");
-		private final JButton operationGoB = new JButton(BUNDLE.getString("goButton"));
+		private final JRPButton operationGoB = new JRPButton("SimpleGraphTab_operationGoB", BUNDLE.getString("goButton"));
 		private final HoverEffect hovereffect;
 		private final ItemListener operationListener = new ItemListener() {
 			@Override

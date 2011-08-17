@@ -301,7 +301,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	@SuppressWarnings("serial")
-	private final Action delete_action = new AbstractAction("Delete selected tracks") {
+	private final Action delete_action = new AbstractAction("Remove Data from Selected Tracks") {
 
 		public void actionPerformed(ActionEvent e) {
 			BioSeq seq = gmodel.getSelectedSeq();
@@ -1057,7 +1057,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		gviewer.dataRemoved();	// refresh
 	}
-
+	
 	// purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {

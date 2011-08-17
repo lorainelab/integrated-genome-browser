@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -341,17 +342,11 @@ public class TrackView {
 		}
 
 		deleteDependentData(map, method, seq);
+		deleteSymsOnSeq(map, method, seq);
 		if(feature != null){
-			deleteSymsOnSeq(map, method, seq);
 			feature.clear(seq);
-		}else{ //This could derived from other sym
-			SeqSymmetry sym = seq.getAnnotation(method);
-			if(sym != null){
-				GlyphI glyph = map.getItem(sym);
-				if(glyph != null){
-					map.removeItem(glyph);
-				}
-				seq.unloadAnnotation(sym);
+			if(feature.getLoadStrategy() == LoadStrategy.GENOME){
+				feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 			}
 		}
 		TierMaintenanceListenerHolder.getInstance().fireTierRemoved();

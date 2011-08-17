@@ -11,42 +11,42 @@ public class JRPRadioButton extends JRadioButton implements JRPWidget {
 	private static final long serialVersionUID = 1L;
 	private final String id;
 
-	JRPRadioButton(String id) {
+	public JRPRadioButton(String id) {
 		super();
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, Action a) {
+	public JRPRadioButton(String id, Action a) {
 		super(a);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, Icon icon) {
+	public JRPRadioButton(String id, Icon icon) {
 		super(icon);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, Icon icon, boolean selected) {
+	public JRPRadioButton(String id, Icon icon, boolean selected) {
 		super(icon, selected);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, String text) {
+	public JRPRadioButton(String id, String text) {
 		super(text);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, String text, boolean selected) {
+	public JRPRadioButton(String id, String text, boolean selected) {
 		super(text, selected);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, String text, Icon icon) {
+	public JRPRadioButton(String id, String text, Icon icon) {
 		super(text, icon);
 		this.id = id;
 		init();
 	}
-	JRPRadioButton(String id, String text, Icon icon, boolean selected) {
+	public JRPRadioButton(String id, String text, Icon icon, boolean selected) {
 		super(text, icon, selected);
 		this.id = id;
 		init();

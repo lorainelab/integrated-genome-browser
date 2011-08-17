@@ -739,7 +739,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		style.setSeparate(false); // there are not separate (+) and (-) strands
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-
+		style.setFeature(atier.getAnnotStyle().getFeature());
+		
 		IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
@@ -778,7 +779,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		style.setForeground(atier.getForegroundColor());
-
+		style.setFeature(atier.getAnnotStyle().getFeature());
+		
 		gviewer.setAnnotatedSeq(aseq, true, true);
 	}
 
@@ -823,6 +825,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gsym.setGraphName(human_name);
 		gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 		gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
+		gsym.getGraphState().getTierStyle().setFeature(atier.getAnnotStyle().getFeature());
 		gviewer.setAnnotatedSeq(aseq, true, true);
 //    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
 //    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);

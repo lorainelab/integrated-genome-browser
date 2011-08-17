@@ -1,8 +1,7 @@
 package com.affymetrix.igb.shared;
 
 /**
- *
- * @author lfrohman
+ * glyph to display the mismatches in their base color vertically on a backdrop of the depth graph 
  */
 import java.awt.Color;
 import java.awt.Graphics;
@@ -22,13 +21,12 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 public final class MismatchPileupGlyph extends GraphGlyph {
-	private static final String BASE_ORDER = "ATGCN";
 	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<Character, int[]>();
 	static {
-		BAR_ORDERS.put('A', new int[]{1,2,3,0});
-		BAR_ORDERS.put('T', new int[]{0,2,3,1});
-		BAR_ORDERS.put('G', new int[]{0,1,3,2});
-		BAR_ORDERS.put('C', new int[]{0,1,2,3});
+		BAR_ORDERS.put('A', new int[]{1,2,3,4});
+		BAR_ORDERS.put('T', new int[]{0,2,3,4});
+		BAR_ORDERS.put('G', new int[]{0,1,3,4});
+		BAR_ORDERS.put('C', new int[]{0,1,2,4});
 		BAR_ORDERS.put('N', new int[]{0,1,2,3});
 	}
 	private static final Color MATCH_COLOR = Color.GRAY;
@@ -59,6 +57,35 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		seq.getResidues(graf.getMinXCoord(), graf.getMaxXCoord()); // so all are loaded, not one by one
 		setVisibleMinY(0);
+		// need to draw coverage first, then mismatches so that the mismatches are not covered up
+
+		g.setColor(MATCH_COLOR);
+		for (int i = draw_beg_index; i <= draw_end_index; i++) {
+			int xtemp = graf.getGraphXCoord(i);
+			coord.x = xtemp;
+			float ytemp = 0;
+			for (float y : mmgs.getAllResiduesY(i)) {
+				ytemp += y;
+			}
+			if (ytemp == 0) {
+				continue;
+			}
+			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
+				return;
+			}			
+			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
+			ytemp = Math.min(ytemp, getVisibleMaxY());
+			ytemp = Math.max(ytemp, getVisibleMinY());
+
+			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
+			view.transformToPixels(coord, curr_point);
+			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
+			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
+			yheight_pixel = Math.max(1, yheight_pixel);
+			g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+		}
+
+		// now draw the mismatches, piled up
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds
@@ -96,12 +123,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 				int ymin_pixel = Math.min(curr_point.y, savey);
 				int yheight_pixel = Math.abs(curr_point.y - savey);
 				yheight_pixel = Math.max(1, yheight_pixel);
-				if (BASE_ORDER.charAt(loopIndex) == referenceBase) {
-					g.setColor(MATCH_COLOR);
-				}
-				else {
-					g.setColor(baseColors[loopIndex]);
-				}
+				g.setColor(baseColors[loopIndex]);
 				g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 				y_accum = ytemp;
 				savey = curr_point.y;

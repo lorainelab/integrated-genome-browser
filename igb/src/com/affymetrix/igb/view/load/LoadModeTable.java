@@ -5,6 +5,7 @@ import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -22,7 +23,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.Icon;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -116,7 +116,7 @@ public final class LoadModeTable {
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
 			action.addEditorForRow(row, buttonEditor);
-			JTextField trackNameFieldEditor = new JTextField();
+			JRPTextField trackNameFieldEditor = new JRPTextField("LoadModeTable_trackNameFieldEditor");
 			DefaultCellEditor textEditor = new DefaultCellEditor(trackNameFieldEditor);
 			text.addEditorForRow(row, textEditor);
 			color.addEditorForRow(row, cellEditor);
@@ -148,14 +148,14 @@ public final class LoadModeTable {
 
 		private static final long serialVersionUID = 1L;
 		private final JComboBox comboBox;
-		private final JTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
+		private final JRPTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
 
 		public ColumnRenderer() {
 			comboBox = new JComboBox();
 			comboBox.setRenderer(comboRenderer);
 			comboBox.setBorder(null);
 
-			textField = new JTextField(LoadStrategy.GENOME.toString());
+			textField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
 			textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
 			textField.setBorder(null);
 		}

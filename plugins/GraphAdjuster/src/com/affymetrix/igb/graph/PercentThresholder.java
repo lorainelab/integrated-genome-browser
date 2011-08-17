@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
 
@@ -34,8 +35,8 @@ public final class PercentThresholder extends JPanel
   private final NeoAbstractWidget widg;
   private final JSlider min_percent_slider;
   private final JSlider max_percent_slider;
-  private final JTextField min_perT;
-  private final JTextField max_perT;
+  private final JRPTextField min_perT;
+  private final JRPTextField max_perT;
   private final JCheckBox syncCB;
   private boolean sync_min_max;
 
@@ -103,8 +104,8 @@ public final class PercentThresholder extends JPanel
     prev_max = current_max_percent;
     prev_min = current_min_percent;
 
-    min_perT = new JTextField(6);
-    max_perT = new JTextField(6);
+    min_perT = new JRPTextField("PercentThresholder_min_perT", 6);
+    max_perT = new JRPTextField("PercentThresholder_max_perT", 6);
     min_perT.setText(Float.toString(current_min_percent));
     max_perT.setText(Float.toString(current_max_percent));
 

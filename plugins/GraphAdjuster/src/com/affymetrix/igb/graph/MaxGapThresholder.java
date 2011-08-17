@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
 
@@ -34,7 +35,7 @@ public final class MaxGapThresholder extends JPanel
   private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   private final NeoAbstractWidget widg;
   private final JSlider tslider;
-  private final JTextField maxgapTF;
+  private final JRPTextField maxgapTF;
   private static final int default_thresh_max = 250;
   private static final int default_thresh_min = 0;
   private int thresh_max = default_thresh_max;
@@ -79,7 +80,7 @@ public final class MaxGapThresholder extends JPanel
     tslider = new JSlider(JSlider.HORIZONTAL);
     tslider.setPreferredSize(new Dimension(400, 15));
 
-    maxgapTF = new JTextField(max_chars);
+    maxgapTF = new JRPTextField("MaxGapThresholder_maxgapTF", max_chars);
     maxgapTF.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     maxgapTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 

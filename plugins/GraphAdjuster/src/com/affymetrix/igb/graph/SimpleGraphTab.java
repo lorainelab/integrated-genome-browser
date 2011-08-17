@@ -15,6 +15,7 @@ package com.affymetrix.igb.graph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -124,7 +125,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final JButton deleteB = new JButton(delete_selected_graphs_action);
 	private final JButton threshB = new JButton(graph_threshold_action);
 	private final JLabel param_label = new JLabel();
-	private final JTextField paramT = new JTextField("", 2);
+	private final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	private final JButton combineB = new JButton(BUNDLE.getString("combineButton"));
 	private final JButton splitB = new JButton(BUNDLE.getString("splitButton"));
 	private JComboBox heat_mapCB;

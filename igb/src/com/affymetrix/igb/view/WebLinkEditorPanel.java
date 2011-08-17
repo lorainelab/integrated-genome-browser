@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,9 +18,9 @@ public final class WebLinkEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private WebLink selected_link = null;
-	private JTextField name_tf = new JTextField("");
-	private JTextField url_tf = new JTextField("");
-	private JTextField regex_tf = new JTextField("");
+	private JRPTextField name_tf = new JRPTextField("WebLinkEditorPanel_name_tf", "");
+	private JRPTextField url_tf = new JRPTextField("WebLinkEditorPanel_url_tf", "");
+	private JRPTextField regex_tf = new JRPTextField("WebLinkEditorPanel_regex_tf", "");
 	private final JRadioButton all_b = new JRadioButton("All Tiers");
 	private final JRadioButton regex_b = new JRadioButton("Match Tier");
 	private final ButtonGroup but_group_1 = new ButtonGroup();

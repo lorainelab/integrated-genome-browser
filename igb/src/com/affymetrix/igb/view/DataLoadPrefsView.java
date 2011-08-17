@@ -14,6 +14,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils;
@@ -58,12 +59,12 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	private static final JCheckBox autoload = AutoLoadAction.getAction();
 
-	protected JButton editAuthButton;
-	protected JButton rankUpButton;
-	protected JButton rankDownButton;
+	protected JRPButton editAuthButton;
+	protected JRPButton rankUpButton;
+	protected JRPButton rankDownButton;
 	// for add source dialog
 	private JLabel typeLabel;
-	private JButton openDir;
+	private JRPButton openDir;
 	private JComboBox type;
 
 	public DataLoadPrefsView() {
@@ -84,7 +85,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected JPanel initSourcePanel(String viewName) {
-		editAuthButton = createButton("Authentication\u2026", new ActionListener() {
+		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authentication\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
@@ -108,7 +109,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		});
 		editAuthButton.setEnabled(false);
 	    ImageIcon up_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Up16.gif");
-		rankUpButton = new JButton(up_icon);
+		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
 		rankUpButton.setToolTipText("Move sequence server up");
 		rankUpButton.addActionListener(
 			new ActionListener() {
@@ -128,7 +129,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		);
 		rankUpButton.setEnabled(false);
 	    ImageIcon down_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Down16.gif");
-		rankDownButton = new JButton(down_icon);
+		rankDownButton = new JRPButton("DataLoadPrefsView_rankDownButton", down_icon);
 		rankDownButton.setToolTipText("Move sequence server down");
 		rankDownButton.addActionListener(
 			new ActionListener() {
@@ -191,7 +192,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
 		final JLabel synonymsLabel= new JLabel("Synonyms File");
 		final JRPTextField synonymFile = new JRPTextField("DataLoadPrefsView_synonymFile", PreferenceUtils.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
-		final JButton openFile = new JButton("\u2026");
+		final JRPButton openFile = new JRPButton("DataLoadPrefsView_openFile", "\u2026");
 		final ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == openFile) {
@@ -248,7 +249,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		final JLabel usageLabel = new JLabel("Cache Behavior");
 		final JLabel emptyLabel = new JLabel();
 		final JComboBox	cacheUsage = new JComboBox(CacheUsage.values());
-		final JButton clearCache = new JButton("Empty Cache");
+		final JRPButton clearCache = new JRPButton("DataLoadPrefsView_clearCache", "Empty Cache");
 		clearCache.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clearCache.setEnabled(false);
@@ -348,7 +349,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			type.removeItem(LoadUtils.ServerType.LocalFiles);
 			type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
 		}
-		openDir = new JButton("\u2026");
+		openDir = new JRPButton("DataLoadPrefsView_openDir", "\u2026");
 
 		openDir.setToolTipText("Open Local Directory");
 		openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);

@@ -40,6 +40,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -443,7 +444,7 @@ public class SeqMapView extends JPanel
 		xzoombox.add((Component) xzoomer);
 
 		refreshDataAction = new RefreshDataAction(this);
-		JButton refresh_button = new JButton(refreshDataAction);
+		JRPButton refresh_button = new JRPButton("SeqMapView_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		xzoombox.add(refresh_button);

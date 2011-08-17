@@ -16,6 +16,7 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -232,10 +233,10 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
       Box button_box = new Box(BoxLayout.X_AXIS);
       button_box.add(Box.createHorizontalGlue());
-      JButton edit_button = new JButton(properties_action);
+      JRPButton edit_button = new JRPButton("BookmarkManagerView_edit_button", properties_action);
       button_box.add(edit_button);
       button_box.add(Box.createHorizontalStrut(5));
-      JButton goto_button = new JButton(goto_action);
+      JRPButton goto_button = new JRPButton("BookmarkManagerView_goto_button", goto_action);
       button_box.add(goto_button);
       button_box.add(Box.createHorizontalGlue());
 

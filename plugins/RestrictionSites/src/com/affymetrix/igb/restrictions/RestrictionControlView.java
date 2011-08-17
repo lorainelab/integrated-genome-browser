@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -54,8 +55,8 @@ public final class RestrictionControlView extends IGBTabPanel
 		Color.gray,
 		Color.pink};//Distinct Colors for View/Print Ease
 	private JLabel labels[];
-	private JButton actionB;
-	private JButton clearB;
+	private JRPButton actionB;
+	private JRPButton clearB;
 
 	/**
 	 *  keep track of added glyphs
@@ -129,8 +130,8 @@ public final class RestrictionControlView extends IGBTabPanel
 			scrollPane.setPreferredSize(new Dimension(100, 100));
 
 			this.add("West", scrollPane);
-			actionB = new JButton(BUNDLE.getString("action"));
-			clearB = new JButton(BUNDLE.getString("clear"));
+			actionB = new JRPButton("RestrictionControlView_actionB", BUNDLE.getString("action"));
+			clearB = new JRPButton("RestrictionControlView_clearB", BUNDLE.getString("clear"));
 			this.add("Center", new JScrollPane(labelP));
 
 			JPanel buttonPanel = new JPanel();

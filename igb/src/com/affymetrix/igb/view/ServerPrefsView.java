@@ -22,6 +22,7 @@ import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
@@ -91,14 +92,14 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		addServerButton = createButton("Add\u2026", new ActionListener() {
+		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showAddSourceDialog();
 				sourceTableModel.init();
 			}
 		});
 
-		removeServerButton = createButton("Remove", new ActionListener() {
+		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
@@ -236,8 +237,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		serverList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node
 	}
 	
-	protected static JButton createButton(String name, ActionListener listener) {
-		final JButton button = new JButton(name);
+	protected static JRPButton createButton(String id, String name, ActionListener listener) {
+		final JRPButton button = new JRPButton(id, name);
 		button.addActionListener(listener);
 		return button;
 	}

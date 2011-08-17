@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -71,7 +72,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final JRPTextField shift_startTF = new JRPTextField("GraphScoreThreshSetter_shift_startTF", "0", 5);
 	private final JRPTextField shift_endTF = new JRPTextField("GraphScoreThreshSetter_shift_endTF", "0", 5);
 	private final JRPComboBoxWithSingleListener threshCB = new JRPComboBoxWithSingleListener("thresh");
-	private final JButton tier_threshB = new JButton("Make Track");
+	private final JRPButton tier_threshB = new JRPButton("GraphScoreThreshSetter_tier_threshB", "Make Track");
 	private static final float sliders_per_percent = 10.0f;
 	private static final float percents_per_slider = 1.0f / sliders_per_percent;
 	private static final int total_val_sliders = 1000;

@@ -15,6 +15,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import java.awt.*;
@@ -39,8 +40,8 @@ public final class BookmarkListEditor {
 
   private final BookmarkTableComponent ucb_editor = new BookmarkTableComponent();
   
-  private final JButton submit_button;
-  private final JButton cancel_button;
+  private final JRPButton submit_button;
+  private final JRPButton cancel_button;
   
   private final JFrame frame = new JFrame(TITLE);
 
@@ -87,8 +88,8 @@ public final class BookmarkListEditor {
         }
       }
     };
-    cancel_button = new JButton(cancel_action);
-    submit_button = new JButton(submit_action);
+    cancel_button = new JRPButton("BookmarkListEditor_cancel_button", cancel_action);
+    submit_button = new JRPButton("BookmarkListEditor_submit_button", submit_action);
     
     Box line3 = new Box(BoxLayout.X_AXIS);
     line3.add(Box.createHorizontalGlue());

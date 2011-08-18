@@ -49,6 +49,8 @@ public class RecordPlaybackHolder {
 	}
 
 	public void recordOperation(Operation operation) {
+// commented out for now
+/*
 		if (!operation.getWidget().consecutiveOK()) {
 			int lastIndex = operations.size() - 1;
 			if (lastIndex >= 0) {
@@ -60,6 +62,7 @@ public class RecordPlaybackHolder {
 			}
 		}
 		operations.add(operation);
+*/
 	}
 	public void runScript(String fileName) {
 		PythonInterpreter interp = new PythonInterpreter();

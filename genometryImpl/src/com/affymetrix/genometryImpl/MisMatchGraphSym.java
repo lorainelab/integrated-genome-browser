@@ -52,7 +52,7 @@ public class MisMatchGraphSym extends GraphSym {
 		locprops.put("x coord", x);
 		float ytot = 0;
 		for(int i=0; i<residuesTot.length; i++){
-			y = residuesTot[i][leftBound];
+			y = residuesTot[i][leftBound - getBufStart()];
 			locprops.put(String.valueOf(ResiduesChars.getCharFor(i)), y);
 			ytot += y;
 		}
@@ -109,6 +109,7 @@ public class MisMatchGraphSym extends GraphSym {
 			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
 			bufVal.deleteOnExit(); // Delete this file when shutting down.
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
+			//write(x, y, y0, y1, y2, y3, y4)
 			for (int i = 0; i < pointCount; i++) {
 				dos.writeInt(start++);
 				dos.writeInt(0);
@@ -137,7 +138,7 @@ public class MisMatchGraphSym extends GraphSym {
 			raf = new RandomAccessFile(index, "rw");
 
 			// skip to proper location
-			int bytesToSkip = (offset*7*4);	// 3 coords (x,y,w) -- 4 bytes each
+			int bytesToSkip = (offset*7*4);	// 7 coords (x,y,y0,y1,y2,y3,y4) -- 4 bytes each
 			raf.seek(bytesToSkip);
 			
 			int y;
@@ -147,7 +148,7 @@ public class MisMatchGraphSym extends GraphSym {
 
 			for(int i=0; i < len; i++){
 				raf.readInt();
-
+					
 				pos = raf.getFilePointer();
 				y = raf.readInt() + tempy[i];
 
@@ -200,7 +201,7 @@ public class MisMatchGraphSym extends GraphSym {
 					yR[j] = dis.readInt();
 				}
 
-				if(yR[0] > 0 || yR[1] > 0 || yR[2] > 0 || yR[3] > 0 || yR[4] > 0){
+				if(yR[0] >= 0 || yR[1] >= 0 || yR[2] >= 0 || yR[3] >= 0 || yR[4] >= 0){
 					xpos.add(x);
 
 					//Write regular index file

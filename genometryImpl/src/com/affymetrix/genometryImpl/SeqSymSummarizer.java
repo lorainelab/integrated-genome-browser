@@ -38,7 +38,7 @@ public final class SeqSymSummarizer {
 		SeqSymmetry sym = syms.get(0);
 		SeqSpan span;
 
-		byte[] seq_residues = seq.getResidues(start, end).getBytes();
+		byte[] seq_residues = seq.getResidues(start, end).toLowerCase().getBytes();
 		byte[] cur_residues;
 		byte ch, intron = "-".getBytes()[0];
 		int k, offset, cur_start, cur_end, length, y_offset = 0;
@@ -68,12 +68,13 @@ public final class SeqSymSummarizer {
 			cur_end = Math.min(end, span.getMax() - 1);
 			length = cur_end - cur_start;
 
-			cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).getBytes();
+			cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).toLowerCase().getBytes();
 
 			if (range > BUFFSIZE) {
-				if ((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)) {
-					minmax = MisMatchGraphSym.updateY(index, y_offset, BUFFSIZE, y, yR);
+				if ((offset + length >= y_offset + BUFFSIZE) || (y_offset > offset)) {
+					minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
 					y = new int[BUFFSIZE];
+					yR = new int[5][BUFFSIZE];
 					y_offset = offset;
 				}
 			}
@@ -92,8 +93,9 @@ public final class SeqSymSummarizer {
 				}
 				
 				if(length > BUFFSIZE){
-					minmax = MisMatchGraphSym.updateY(index, y_offset, BUFFSIZE, y, yR);
+					minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
 					y = new int[BUFFSIZE];
+					yR = new int[5][BUFFSIZE];
 					y_offset = offset+BUFFSIZE;
 				}
 			}
@@ -105,7 +107,7 @@ public final class SeqSymSummarizer {
 		if(range <= BUFFSIZE){
 			summary = createMisMatchGraph(range, yR, start, y, id, seq);
 		}else{
-			summary = createMisMatchGraph(index, y_offset, range, y, yR, id, range, minmax, seq);
+			summary = createMisMatchGraph(index, y_offset, y, yR, id, range, minmax, seq);
 		}
 
 
@@ -113,9 +115,9 @@ public final class SeqSymSummarizer {
 		return summary;
 	}
 
-	private static MisMatchGraphSym createMisMatchGraph(File index, int y_offset, int end, int[] y, int[][] yR, String id, int range, float[] minmax, BioSeq seq) {
+	private static MisMatchGraphSym createMisMatchGraph(File index, int y_offset, int[] y, int[][] yR, String id, int range, float[] minmax, BioSeq seq) {
 		MisMatchGraphSym summary;
-		minmax = MisMatchGraphSym.updateY(index, y_offset, end, y, yR);
+		minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
 		File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
 		File finalHelper = MisMatchGraphSym.createEmptyIndexFile(id + "helper", 0, 0);
 		int[] x = MisMatchGraphSym.getXCoords(index, finalIndex, finalHelper, range);

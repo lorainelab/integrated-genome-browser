@@ -307,7 +307,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			BioSeq seq = gmodel.getSelectedSeq();
 
 			if (IGB.confirmPanel("Really remove selected tracks?\n"
-					+ "Data will be removed from " + seq.getID() + " on this genome.")) {
+					+ "Data and their tracks will be removed from " + seq.getID() + " on this genome.")) {
 				removeTiers(handler.getSelectedTierLabels());
 			}
 		}

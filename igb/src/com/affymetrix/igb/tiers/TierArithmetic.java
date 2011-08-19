@@ -25,7 +25,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		if (handler != this.handler) {
 			throw new RuntimeException("");
 		}
-		JMenu combineMenu = new JMenu("Combine Selected Tracks");
+		JMenu combineMenu = new JMenu("Track Operations");
 		for (AnnotationOperator annotationOperator : AnnotationOperatorHolder.getInstance().getAnnotationOperators()) {
 			String name = annotationOperator.getName();
 			String title = name.substring(0, 1).toUpperCase() + name.substring(1);

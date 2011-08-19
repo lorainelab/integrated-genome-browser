@@ -172,9 +172,7 @@ public final class GeneralLoadUtils {
 	}
 
 	public static boolean discoverServer(GenericServer gServer) {
-		if (gServer.serverType == null) {
-			Application.getSingleton().addNotLockedUpMsg("Loading repository " + gServer);
-		} else {
+		if (gServer.serverType != null) {
 			Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		}
 

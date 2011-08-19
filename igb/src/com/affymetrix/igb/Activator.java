@@ -30,7 +30,7 @@ import com.affymetrix.igb.shared.TrackClickListener;
  */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
-    String[] args;
+    String[] arg;
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {

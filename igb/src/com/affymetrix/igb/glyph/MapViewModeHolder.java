@@ -21,7 +21,6 @@ public class MapViewModeHolder {
 	
 	private MapViewModeHolder(){
 		addViewFactory(new DepthGraphGlyphFactory());
-		addViewFactory(new CoverageSummarizerFactory());
 		addViewFactory(new MismatchGraphGlyphFactory(false));
 		addViewFactory(new MismatchGraphGlyphFactory(true));
 	}

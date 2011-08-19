@@ -1,7 +1,9 @@
 package com.affymetrix.igb.general;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
@@ -66,11 +68,11 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 * Bundle Repository Preferences tab
 	 * @return the list of bundle repositories (URLs)
 	 */
-	public List<String> getRepositories() {
-		List<String> repositories = new ArrayList<String>();
+	public Map<String, String> getRepositories() {
+		Map<String, String> repositories = new HashMap<String, String>();
 		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
 			if (repositoryServer.isEnabled()) {
-				repositories.add(repositoryServer.URL);
+				repositories.put(repositoryServer.serverName, repositoryServer.URL);
 			}
 		}
 		return repositories;

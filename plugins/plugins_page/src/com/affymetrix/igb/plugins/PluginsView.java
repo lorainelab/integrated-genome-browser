@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -481,7 +482,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
 		repoAdmin = new RepositoryAdminWrapper((org.apache.felix.bundlerepository.RepositoryAdmin) new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
-		for (String url : igbService.getRepositoryChangerHolder().getRepositories()) {
+		for (String url : igbService.getRepositoryChangerHolder().getRepositories().values()) {
 			repositoryAdded(url);
 		}
 		setRepositoryBundles();
@@ -677,5 +678,22 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	@Override
 	public boolean isEmbedded() {
 		return true;
+	}
+
+	@Override
+	public String getRepository(Bundle bundle) {
+		String repository = "";
+		if (bundle != null) {
+			String location = bundle.getLocation();
+			if (location != null) {
+				Map<String, String> repositories = igbService.getRepositoryChangerHolder().getRepositories();
+				for (String name : repositories.keySet()) {
+					if (location.startsWith(repositories.get(name))) {
+						repository = name;
+					}
+				}
+			}
+		}
+		return repository;
 	}
 }

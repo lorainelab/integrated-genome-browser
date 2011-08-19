@@ -206,6 +206,13 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public Object getValue(Bundle bundle) { return new VersionInfo(bundle, pluginsHandler);
 		}
 	});
+	columns.add(new BundleColumn() { // repository
+		@Override
+		public String getTitle() { return PluginsView.BUNDLE.getString("repository"); }
+		@Override
+		public Object getValue(Bundle bundle) { return pluginsHandler.getRepository(bundle);
+		}
+	});
 	columns.add(new BundleColumn() { // install
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString("installColumn"); }

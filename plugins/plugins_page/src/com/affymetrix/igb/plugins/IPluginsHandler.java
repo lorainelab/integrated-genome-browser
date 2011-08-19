@@ -59,4 +59,10 @@ public interface IPluginsHandler {
 	 * the repositories
 	 */
 	public Version getLatestVersion(Bundle bundle);
+	/**
+	 * get the repository of the specified bundle
+	 * @param bundle the bundle to check
+	 * @return the repository
+	 */
+	public String getRepository(Bundle bundle);
 }

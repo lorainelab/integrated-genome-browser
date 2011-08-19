@@ -915,7 +915,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
 			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
 			//sym_summarize_single_action.setEnabled(is_annotation_type);
-			coverage_action.setEnabled(is_annotation_type);
+			//coverage_action.setEnabled(is_annotation_type);
 			save_menu.setEnabled(is_annotation_type);
 			save_bed_action.setEnabled(is_annotation_type);
 			if (glyph.getDirection() != Direction.AXIS) {
@@ -950,7 +950,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		} else {
 			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
-			coverage_action.setEnabled(false);
+			//coverage_action.setEnabled(false);
 			save_menu.setEnabled(false);
 			save_bed_action.setEnabled(false);
 		}
@@ -1006,7 +1006,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
 		}
 		popup.add(summaryMenu);
-		popup.add(coverage_action);
+		//popup.add(coverage_action);
 
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation

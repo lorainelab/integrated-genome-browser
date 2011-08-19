@@ -259,9 +259,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		if (gServer.serverType != ServerType.LocalFiles) {
-			if (gServer.serverType == null) {
-				igbService.removeNotLockedUpMsg("Loading repository " + gServer);
-			} else {
+			if (gServer.serverType != null) {
 				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 			}
 		}

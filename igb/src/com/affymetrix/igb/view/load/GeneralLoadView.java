@@ -1099,10 +1099,12 @@ public final class GeneralLoadView extends IGBTabPanel
 
 			@Override
 			protected Void runInBackground() {
-				for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
-					for (String method : feature.getMethods()) {
-						TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
-						TrackView.deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq);
+				if (!feature.getMethods().isEmpty()) {
+					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
+						for (String method : feature.getMethods()) {
+							TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
+							TrackView.deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq);
+						}
 					}
 				}
 

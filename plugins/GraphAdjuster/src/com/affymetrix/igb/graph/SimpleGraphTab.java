@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
@@ -969,8 +970,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			String selection = (String) transformationCB.getSelectedItem();
 			FloatTransformer trans = name2transform.get(selection);
 			if (trans.setParameter(paramT.getText())) {
-				transformGraphs(grafs, trans);
-				updateViewer();
+				List<GraphSym> newgrafs = transformGraphs(grafs, trans.getDisplay(), trans);
+				if (!newgrafs.isEmpty()) {
+					updateViewer();
+				}
 			}
 			else {
 				ErrorHandler.errorPanel(BUNDLE.getString("invalidParam") + " \"" + paramT.getText() + "\" for " + trans.getParamPrompt());
@@ -1111,21 +1114,51 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	}
 
-	private void transformGraphs(List<GraphSym> grafs, FloatTransformer transformer) {
-		String trans_name = transformer.getDisplay();
-		for (GraphGlyph graphGlyph : glyphs) {
-			if (!(transformer instanceof IdentityTransform) && graphGlyph.getInfo() instanceof GraphSym) {
-				GraphSym graf = (GraphSym)graphGlyph.getInfo();
+	private List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
+		List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
+		for (GraphSym graf : grafs) {
+			float[] new_ycoords;
+
+			if (transformer instanceof IdentityTransform && graf instanceof GraphSym) {
+				new_ycoords = (graf).getGraphYCoords();
+			} else {
 				int pcount = graf.getPointCount();
-				float[] yCoords = graf.getGraphYCoords();
+				new_ycoords = new float[pcount];
 				for (int k = 0; k < pcount; k++) {
-					yCoords[k] = transformer.transform(yCoords[k]);
+					new_ycoords[k] = transformer.transform(graf.getGraphYCoord(k));
 				}
-				String newname = trans_name + " (" + graf.getGraphName() + ") ";
-				GraphState newstate = graf.getGraphState();
-				newstate.getTierStyle().setTrackName(newname); // this is redundant
 			}
+			String newname = trans_name + " (" + graf.getGraphName() + ") ";
+
+			// Transforming on this one seq only, not the whole genome
+			String newid = trans_name + " (" + graf.getID() + ") ";
+			newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
+			GraphSym newgraf;
+			if (graf instanceof GraphIntervalSym) {
+				newgraf = new GraphIntervalSym(graf.getGraphXCoords(),
+						((GraphIntervalSym) graf).getGraphWidthCoords(),
+						new_ycoords, newid, graf.getGraphSeq());
+			} else {
+				newgraf = new GraphSym(graf.getGraphXCoords(),
+						new_ycoords, newid, graf.getGraphSeq());
+			}
+
+			newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
+
+
+			GraphState newstate = newgraf.getGraphState();
+			newstate.copyProperties(graf.getGraphState());
+			newstate.getTierStyle().setTrackName(newname); // this is redundant
+			if (!(transformer instanceof IdentityTransform)) {
+				// unless this is an identity transform, do not copy the min-max range
+				newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);
+				newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
+			}
+
+			newgraf.getGraphSeq().addAnnotation(newgraf);
+			newgrafs.add(newgraf);
 		}
+		return newgrafs;
 	}
 
 	private void applyColorChange(List<GraphSym> graf_syms, Color col) {

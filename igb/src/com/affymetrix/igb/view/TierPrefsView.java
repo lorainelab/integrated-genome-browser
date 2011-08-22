@@ -91,8 +91,25 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 
 		initComponents();
-
 		validate();
+		displayNameTextField.setEnabled(false);
+		viewModeCB.setEnabled(false);
+		labelFieldComboBox.setEnabled(false);
+		maxDepthTextField.setEnabled(false);
+		connectedCheckBox.setEnabled(false);
+		collapsedCheckBox.setEnabled(false);
+		colorCheckBox.setEnabled(false);
+		arrowCheckBox.setEnabled(false);
+		possitiveColorComboBox.setEnabled(false);
+		negativeColorComboBox.setEnabled(false);
+		show2TracksCheckBox.setEnabled(false);
+		displayNameTextField.setEnabled(false);
+		bgColorComboBox.setEnabled(false);
+		fgColorComboBox.setEnabled(false);
+		trackNameSizeComboBox.setEnabled(false);
+		applyToAllButton.setEnabled(false);
+		labelFieldComboBox.setEnabled(false);
+		maxDepthTextField.setEnabled(false);
 	}
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
@@ -788,7 +805,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (customizables.size() != table.getRowCount()) {
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
-			table.setRowSelectionInterval(0, 0);
+			if (table.getRowCount() != 0) {
+				table.setRowSelectionInterval(0, 0);
+			}
 		}
 		LoadModeTable.updateVirtualFeatureList();
 	}
@@ -807,18 +826,47 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
 		displayNameTextField.setEnabled(true);
+		viewModeCB.setEnabled(true);
 		labelFieldComboBox.setEnabled(true);
 		maxDepthTextField.setEnabled(true);
-		show2TracksCheckBox.setEnabled(true);
 		connectedCheckBox.setEnabled(true);
 		collapsedCheckBox.setEnabled(true);
 		colorCheckBox.setEnabled(true);
 		arrowCheckBox.setEnabled(true);
 		possitiveColorComboBox.setEnabled(true);
 		negativeColorComboBox.setEnabled(true);
+		show2TracksCheckBox.setEnabled(true);
+		displayNameTextField.setEnabled(true);
+		bgColorComboBox.setEnabled(true);
+		fgColorComboBox.setEnabled(true);
+		trackNameSizeComboBox.setEnabled(true);
+		applyToAllButton.setEnabled(true);
+		labelFieldComboBox.setEnabled(true);
+		maxDepthTextField.setEnabled(true);
 		selectedRows = table.getSelectedRows();
 
 		initializationDetector = true;
+
+		if (table.getRowCount() == 0) {
+			displayNameTextField.setEnabled(false);
+			viewModeCB.setEnabled(false);
+			labelFieldComboBox.setEnabled(false);
+			maxDepthTextField.setEnabled(false);
+			connectedCheckBox.setEnabled(false);
+			collapsedCheckBox.setEnabled(false);
+			colorCheckBox.setEnabled(false);
+			arrowCheckBox.setEnabled(false);
+			possitiveColorComboBox.setEnabled(false);
+			negativeColorComboBox.setEnabled(false);
+			show2TracksCheckBox.setEnabled(false);
+			displayNameTextField.setEnabled(false);
+			bgColorComboBox.setEnabled(false);
+			fgColorComboBox.setEnabled(false);
+			trackNameSizeComboBox.setEnabled(false);
+			applyToAllButton.setEnabled(false);
+			labelFieldComboBox.setEnabled(false);
+			maxDepthTextField.setEnabled(false);
+		}
 
 		if (selectedRows.length > 1) {
 			displayNameTextField.setEnabled(false);

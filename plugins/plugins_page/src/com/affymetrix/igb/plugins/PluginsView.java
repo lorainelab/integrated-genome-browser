@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,8 +145,8 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
 			}
 		};
-		bundleTable.setAutoCreateRowSorter(true);
-		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
+//		bundleTable.setAutoCreateRowSorter(true);
+//		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
 		bundleTable.addMouseListener(
 			new MouseAdapter() {
 				@Override
@@ -487,7 +489,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 		setRepositoryBundles();
 		bundleContext.addBundleListener(bundleListener);
-		reloadBundleTable();
+//		reloadBundleTable();
 		clearError();
 	}
 
@@ -497,8 +499,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private void reloadBundleTable() {
 		filterBundles();
 		bundleTableModel.fireTableDataChanged();
-		bundleTable.invalidate();
-		bundleTable.repaint();
 	}
 
 	/**
@@ -625,6 +625,19 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				filteredBundles.add(bundle);
 			}
 		}
+		Collections.sort(
+			filteredBundles, 
+			new Comparator<Bundle>() {
+				@Override
+				public int compare(Bundle o1, Bundle o2) {
+					int result = o1.getSymbolicName().compareTo(o2.getSymbolicName());
+					if (result == 0) {
+						result = o1.getVersion().compareTo(o2.getVersion());
+					}
+					return result;
+				}
+			}
+		);
 		updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
 	}
 

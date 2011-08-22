@@ -24,7 +24,7 @@ import com.affymetrix.igb.search.SearchView;
 
 public class SearchModeResidue implements ISearchMode {
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
-	private static final Color hitcolor = new Color(150, 150, 255);
+	private static final Color hitcolor = Color.GREEN;
 	private IGBService igbService;
 
 	@SuppressWarnings("serial")

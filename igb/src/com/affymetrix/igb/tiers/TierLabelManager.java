@@ -299,14 +299,22 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	public static Map<String, Object> getTierProperties(TierGlyph glyph) {
-		GenericFeature feature = glyph.getAnnotStyle().getFeature();
+		
+		if(glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0 &&
+				glyph.getChild(0) instanceof GraphGlyph){
+			return null;
+		}
+		
+		return getFeatureProperties(glyph.getAnnotStyle().getFeature());
+	}
 
+	public static Map<String, Object> getFeatureProperties(GenericFeature feature){
 		if (feature == null) {
 			return null;
 		}
-
+		
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put("id", feature.featureName);
+		props.put("feature name", feature.featureName);
 		props.put("description", feature.description());
 		if (feature.friendlyURL != null) {
 			props.put("feature url", feature.friendlyURL);
@@ -319,7 +327,17 @@ public final class TierLabelManager implements PropertyHolder {
 
 		return props;
 	}
+	
+	private Map<String, Object> getTierProperties(ITrackStyle style){
+		for (TierGlyph glyph : getSelectedTiers()) {
+			if(glyph.getAnnotStyle().equals(style)){
+				return getFeatureProperties(style.getFeature());
+			}
+		}
 
+		return null;
+	}
+	
 	/** Returns a list of all TierLabelGlyph items. */
 	public List<TierLabelGlyph> getAllTierLabels() {
 		return tiermap.getTierLabels();
@@ -670,6 +688,12 @@ public final class TierLabelManager implements PropertyHolder {
 			float[] range = ((GraphSym) sym).getVisibleYRange();
 			props.put("min score", range[0]);
 			props.put("max score", range[1]);
+		}
+		if (sym instanceof GraphSym){
+			 Map<String, Object> tierProps = getTierProperties(((GraphSym)sym).getGraphState().getTierStyle());
+			 if(tierProps != null){
+				props.putAll(tierProps);
+			 }
 		}
 		return props;
 	}

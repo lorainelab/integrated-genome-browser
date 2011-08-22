@@ -842,8 +842,16 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				displayNameTextField.setEnabled(false);
+				viewModeCB.setEnabled(false);
+				labelFieldComboBox.setEnabled(false);
+				maxDepthTextField.setEnabled(false);
+				connectedCheckBox.setEnabled(false);
+				collapsedCheckBox.setEnabled(false);
 				colorCheckBox.setEnabled(false);
 				arrowCheckBox.setEnabled(false);
+				possitiveColorComboBox.setEnabled(false);
+				negativeColorComboBox.setEnabled(false);
+				show2TracksCheckBox.setEnabled(false);
 			}
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());

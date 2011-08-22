@@ -653,14 +653,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 						loadStrategies.add(LoadStrategy.GENOME);
 						GeneralLoadView.loadFeature(loadStrategies, feature, null);
 					} else {
-						if(feature.getMethods().isEmpty()){
-							feature.clear();
-							GeneralLoadView.getLoadView().createFeaturesTable();
-							return nodeData;
-						}
 						
 						String message = "Unchecking "+ feature.featureName +" will remove all loaded data. \nDo you want to continue? ";
-						if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+						if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 								PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 							GeneralLoadView.getLoadView().removeFeature(feature, true);
 						}else{

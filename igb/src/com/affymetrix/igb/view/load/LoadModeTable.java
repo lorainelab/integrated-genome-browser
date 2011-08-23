@@ -163,9 +163,14 @@ public final class LoadModeTable {
 		public Component getTableCellRendererComponent(
 				JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column) {
-
-			if (((String) value).equals(textField.getText())) {
-				return textField;
+			if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
+				if (((String) value).equals(textField.getText())) {
+					return textField;
+				} else {
+					comboBox.removeAllItems();
+					comboBox.addItem(value);
+					return comboBox;
+				}
 			} else {
 				comboBox.removeAllItems();
 				comboBox.addItem(value);

@@ -9,6 +9,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -266,8 +267,8 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			return false;
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary) {
-			return false;}
-		 else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
+			return false;
+		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
 			return true;
@@ -320,18 +321,14 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				}
 				break;
 			case LOAD_STRATEGY_COLUMN:
-				for (GenericFeature gFeature : features) {
-					if (gFeature.equals(vFeature.getFeature())) {
-						if (gFeature.getLoadStrategy() == LoadStrategy.GENOME) {
-							return;	// We can't change strategies once we've loaded the entire genome.
-						}
-						String valueString = value.toString();
-						if (!gFeature.getLoadStrategy().toString().equals(valueString)) {
-							// strategy changed.  Update the feature object.
-							gFeature.setLoadStrategy(reverseLoadStrategyMap.get(valueString));
-							updatedStrategy(row, col, gFeature);
-						}
-					}
+				if (vFeature.getFeature().getLoadStrategy() == LoadStrategy.GENOME) {
+					return;	// We can't change strategies once we've loaded the entire genome.
+				}
+				String valueString = value.toString();
+				if (!vFeature.getFeature().getLoadStrategy().toString().equals(valueString)) {
+					// strategy changed.  Update the feature object.
+					vFeature.getFeature().setLoadStrategy(reverseLoadStrategyMap.get(valueString));
+					updatedStrategy(row, col, vFeature.getFeature());
 				}
 				break;
 			case HIDE_FEATURE_COLUMN:
@@ -365,6 +362,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				&& col != REFRESH_FEATURE_COLUMN) {
 			refreshSeqMapView();
 		}
+		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
 	private void setVisibleTracks(ITrackStyle style) {
@@ -420,7 +418,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				customizables.add(the_style);
 			}
 		}
-		
+
 		return customizables;
 	}
 

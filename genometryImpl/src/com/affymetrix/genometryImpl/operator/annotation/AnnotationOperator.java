@@ -10,6 +10,8 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
  */
 public interface AnnotationOperator  {
 	public String getName();
+	// only one operate method should be implemented, the other should return null
+	public SeqSymmetry operate(List<SeqSymmetry> symList);
 	public SeqSymmetry operate(BioSeq seq, List<List<SeqSymmetry>> symList);
 	public int getOperandCountMin();
 	public int getOperandCountMax();

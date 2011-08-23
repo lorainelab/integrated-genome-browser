@@ -21,6 +21,11 @@ public class UnionAnnotationOperator implements AnnotationOperator {
 	}
 
 	@Override
+	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+		return null;
+	}
+
+	@Override
 	public SeqSymmetry operate(BioSeq seq, List<List<SeqSymmetry>> symList) {
 		if (symList.size() < getOperandCountMin() || symList.size() > getOperandCountMax()) {
 			return null;

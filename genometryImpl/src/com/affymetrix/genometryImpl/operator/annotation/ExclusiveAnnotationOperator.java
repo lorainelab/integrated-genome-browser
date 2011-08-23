@@ -15,6 +15,11 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
 public abstract class ExclusiveAnnotationOperator implements AnnotationOperator {
 
+	@Override
+	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+		return null;
+	}
+
 	protected SeqSymmetry operate(BioSeq seq, List<SeqSymmetry> symsA, List<SeqSymmetry> symsB) {
 		SeqSymmetry xorSym = getXor(symsA, symsB, seq);
 		//  if no spans for xor, then won't be any for one-sided xor either, so return null;

@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -46,20 +47,35 @@ public class TierAnnotationOperationAction extends AbstractAction {
 			ErrorHandler.errorPanel(GeneralUtils.getOperandMessage(selected.size(), annotationOperator.getOperandCountMin(), annotationOperator.getOperandCountMax(), "annotation"));
 		}
 		BioSeq aseq = gmodel.getSelectedSeq();
-		List<List<SeqSymmetry>> symList = new ArrayList<List<SeqSymmetry>>();
+		SeqSymmetry result_sym = null;
+		TrackStyle preferredStyle = null;
+		List<SeqSymmetry> seqSymList = new ArrayList<SeqSymmetry>();
 		for (TierGlyph tier : selected) {	
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-			findChildSyms(tier, syms);
-			symList.add(syms);
+			if (tier.getInfo() instanceof SeqSymmetry) {
+				seqSymList.add((SeqSymmetry)tier.getInfo());
+				if (tier.getInfo() instanceof SimpleSymWithProps && preferredStyle == null && ((SimpleSymWithProps)tier.getInfo()).getProperty("method") != null) {
+					preferredStyle = TrackStyle.getInstance(((SimpleSymWithProps)tier.getInfo()).getProperty("method").toString(), false);
+				}
+			}
 		}
-		SeqSymmetry result_sym = annotationOperator.operate(aseq, symList);
+		result_sym = annotationOperator.operate(seqSymList);
+		if (result_sym == null) {
+			preferredStyle = null;
+			List<List<SeqSymmetry>> symList = new ArrayList<List<SeqSymmetry>>();
+			for (TierGlyph tier : selected) {	
+				List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+				findChildSyms(tier, syms);
+				symList.add(syms);
+			}
+			result_sym = annotationOperator.operate(aseq, symList);
+		}
 		if (result_sym != null) {
 			StringBuilder meth = new StringBuilder();
 			meth.append(annotationOperator.getName() + ": ");
 			for (TierGlyph tier : selected) {
 				meth.append(tier.getLabel()).append(", ");
 			}
-			addStyleAndAnnotation(result_sym, meth.toString(), aseq);
+			addStyleAndAnnotation(result_sym, meth.toString(), aseq, preferredStyle);
 		}
 	}
 
@@ -72,22 +88,27 @@ public class TierAnnotationOperationAction extends AbstractAction {
 		}
 	}
 	
-	private void addStyleAndAnnotation(SeqSymmetry sym, String method, BioSeq aseq) {
-		makeNonPersistentStyle((SymWithProps) sym, method);
+	private void addStyleAndAnnotation(SeqSymmetry sym, String method, BioSeq aseq, TrackStyle preferredStyle) {
+		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
 		aseq.addAnnotation(sym);
 		gviewer.setAnnotatedSeq(aseq, true, true);
 	}
 
-	private static TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name) {
+	private static TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, TrackStyle preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);
 		sym.setProperty("method", unique_name);
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
-		style.setTrackName(human_name);
-		style.setGlyphDepth(1);
-		style.setSeparate(false); // there are not separate (+) and (-) strands
-		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+		if (preferredStyle == null) {
+			style.setTrackName(human_name);
+			style.setGlyphDepth(1);
+			style.setSeparate(false); // there are not separate (+) and (-) strands
+			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+		}
+		else {
+			style.copyPropertiesFrom(preferredStyle);
+		}
 		return style;
 	}
 

@@ -72,5 +72,6 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(AnnotationOperator.class.getName(), new NotAnnotationOperator(), new Properties());
 		bundleContext.registerService(AnnotationOperator.class.getName(), new UnionAnnotationOperator(), new Properties());
 		bundleContext.registerService(AnnotationOperator.class.getName(), new XorAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new CopyAnnotationOperator(), new Properties());
 	}
 }

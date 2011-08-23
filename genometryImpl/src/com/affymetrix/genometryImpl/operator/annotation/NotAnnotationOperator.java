@@ -18,6 +18,10 @@ public class NotAnnotationOperator implements AnnotationOperator {
 		return "not";
 	}
 
+	@Override
+	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+		return null;
+	}
 
 	private static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq, boolean include_ends) {
 		SeqSymmetry union = SeqSymSummarizer.getUnion(syms, seq);

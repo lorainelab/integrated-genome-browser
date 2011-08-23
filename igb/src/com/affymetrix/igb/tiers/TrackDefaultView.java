@@ -943,7 +943,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							break;
 						case COL_LABEL_FIELD:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_LABEL_FIELD, value);
+								element.propertyMap.put(PROP_LABEL_FIELD, value.toString());
 							}
 							style.setLabelField((String) value);
 							break;

@@ -400,7 +400,6 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			List<TierGlyph> temp;
 			temp = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
-			LinkedHashMap<TierGlyph, TierGlyph> tierMap = new LinkedHashMap<TierGlyph, TierGlyph>();
 			Iterator<TierGlyph> titer = temp.iterator();
 			int i = 0;
 			while (titer.hasNext()) {
@@ -410,7 +409,6 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 						&& (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
 						&& (tier.getChildCount() > 0)) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
-					tierMap.put((tier), tier);
 				}
 			}
 			currentStyleList.addAll(stylemap.values());
@@ -419,12 +417,10 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		for (int i = 0; i < currentStyleList.size(); i++) {
 			TrackStyle the_style = currentStyleList.get(i);
 			if (the_style.getCustomizable()) {
-				// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
-				//	if ((!the_style.isGraphTier())) {
 				customizables.add(the_style);
-				//	}
 			}
 		}
+		
 		return customizables;
 	}
 

@@ -49,6 +49,7 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.view.load.LoadModeTable;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -83,6 +84,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			renameTier(current_tier);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action customize_action = new AbstractAction("Customize") {
@@ -99,6 +101,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTiersCollapsed(handler.getSelectedTierLabels(), false);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action expand_all_action = new AbstractAction("Expand All") {
@@ -107,6 +110,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTiersCollapsed(handler.getAllTierLabels(), false);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action collapse_action = new AbstractAction("Collapse") {
@@ -115,6 +119,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTiersCollapsed(handler.getSelectedTierLabels(), true);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action collapse_all_action = new AbstractAction("Collapse All") {
@@ -123,6 +128,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTiersCollapsed(handler.getAllTierLabels(), true);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action hide_action = new AbstractAction("Hide") {
@@ -131,6 +137,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			hideTiers(handler.getSelectedTierLabels());
+			LoadModeTable.updateVirtualFeatureList();
 		}
 	};
 	private final Action show_all_action = new AbstractAction("Show All Types") {
@@ -147,6 +154,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			changeColor(handler.getSelectedTierLabels(), true);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action change_bg_color_action = new AbstractAction("Change BG Color") {
@@ -155,6 +163,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			changeColor(handler.getSelectedTierLabels(), false);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
@@ -163,6 +172,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setColorByScore(handler.getSelectedTierLabels(), true);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
@@ -171,6 +181,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setColorByScore(handler.getSelectedTierLabels(), false);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action show_two_tiers = new AbstractAction("Show 2 tracks (+) and (-)") {
@@ -179,6 +190,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTwoTiers(handler.getSelectedTierLabels(), true);
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action show_single_tier = new AbstractAction("Show 1 track (+/-)") {
@@ -187,7 +199,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTwoTiers(handler.getSelectedTierLabels(), false);
+			PreferencesPanel.getSingleton().tpv.externalChange();			
 		}
+		
 	};
 	private final Action sym_summarize_single_action = new AbstractAction("") {
 
@@ -290,6 +304,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			changeExpandMax(handler.getSelectedTierLabels());
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
@@ -298,6 +313,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			changeExpandMax(handler.getAllTierLabels());
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 	@SuppressWarnings("serial")
@@ -318,6 +334,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent ae) {
 			changeFontSize(handler.getSelectedTierLabels());
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
 
@@ -511,6 +528,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					showMenu.remove(show_tier);
 					handler.sortTiers();
 					handler.repackTheTiers(false, true);
+					LoadModeTable.updateVirtualFeatureList();
 				}
 			});
 			showMenu.add(show_tier);

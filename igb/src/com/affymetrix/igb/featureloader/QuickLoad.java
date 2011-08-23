@@ -205,7 +205,7 @@ public final class QuickLoad extends SymLoader {
 
 					SeqGroupView.getInstance().refreshTable();
 					//Update LoadModeTableModel
-					LoadModeTable.updateVirtualFeatureList();
+				//	LoadModeTable.updateVirtualFeatureList();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -267,7 +267,7 @@ public final class QuickLoad extends SymLoader {
 
 		if (Thread.currentThread().isInterrupted()) {
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
-			LoadModeTable.updateVirtualFeatureList();
+			//LoadModeTable.updateVirtualFeatureList();
 			results = null;
 			return;
 		}

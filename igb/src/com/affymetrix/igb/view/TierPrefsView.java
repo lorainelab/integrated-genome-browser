@@ -775,7 +775,12 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	}
 
 	void refreshList() {
-		currentStyles = new ArrayList<TrackStyle>();
+		if (currentStyles == null) {
+			currentStyles = new ArrayList<TrackStyle>();
+		}
+
+		boolean isContained = true;
+
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
@@ -783,12 +788,19 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
+
+				if (!currentStyles.contains(style)) {
+					isContained = false;
+				}
+
 				if ((style instanceof TrackStyle)
 						&& (style.getShow())
 						&& (tier.getChildCount() > 0)) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}
+
+			currentStyles.clear();
 			currentStyles.addAll(stylemap.values());
 		}
 		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyles.size());
@@ -802,14 +814,14 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			}
 		}
 
-		if (customizables.size() != table.getRowCount()) {
+		if (!isContained) {
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
 			if (table.getRowCount() != 0) {
 				table.setRowSelectionInterval(0, 0);
 			}
 		}
-		LoadModeTable.updateVirtualFeatureList();
+	//	LoadModeTable.updateVirtualFeatureList();
 	}
 
 	private void applyChanges() {
@@ -818,7 +830,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	public void externalChange() {
 		model.fireTableDataChanged();
-		table.setRowSelectionInterval(0, 0);
+		if (table.getRowCount() != 0) {
+			table.setRowSelectionInterval(0, 0);
+		}
 	}
 
 	/** Called when the user selects a row of the table.

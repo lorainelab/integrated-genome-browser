@@ -20,6 +20,7 @@ import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -61,6 +62,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private int[] selectedRows;
 	private Object[] temp;
 	private String[] trackDefaults;
+	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
 	ArrayList<String> list = new ArrayList<String>();
 	private String allowedTrackDefaults;
 	private String AddButtonTitle = "Add Track Default";
@@ -703,62 +705,74 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			bgColorComboBox.setSelectedColor(null);
 			fgColorComboBox.setSelectedColor(null);
 			trackNameSizeComboBox.setSelectedItem("");
-			labelFieldComboBox.setSelectedIndex(-1);
-			maxDepthTextField.setText(null);
-			show2TracksCheckBox.setSelected(false);
-			connectedCheckBox.setSelected(false);
-			collapsedCheckBox.setSelected(false);
-			colorCheckBox.setSelected(false);
-			arrowCheckBox.setSelected(false);
-			possitiveColorComboBox.setSelectedColor(null);
-			negativeColorComboBox.setSelectedColor(null);
-		}
-
-		if (selectedRows.length == 1) {
+			labelFieldComboBox.setEnabled(false);
+			maxDepthTextField.setEnabled(false);
+			show2TracksCheckBox.setEnabled(false);
+			connectedCheckBox.setEnabled(false);
+			collapsedCheckBox.setEnabled(false);
+			colorCheckBox.setEnabled(false);
+			arrowCheckBox.setEnabled(false);
+			possitiveColorComboBox.setEnabled(false);
+			negativeColorComboBox.setEnabled(false);
+		} else if (selectedRows.length == 1) {
 			selectedStyle = model.getStyles().get(selectedRows[0]);
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 				removeTrackDefaultButton.setEnabled(false);
 			}
-			int connected = selectedStyle.getGlyphDepth();
-			boolean isConnected = true;
-			if (connected == 1) {
-				isConnected = false;
-			} else if (connected == 2) {
-				isConnected = true;
-			}
-			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
-			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
+
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
-			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
-			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
-			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-			connectedCheckBox.setSelected(isConnected);
-			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
-			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
-				case NONE:
-					colorCheckBox.setSelected(false);
-					arrowCheckBox.setSelected(false);
-					break;
-				case ARROW:
-					colorCheckBox.setSelected(false);
-					arrowCheckBox.setSelected(true);
-					break;
-				case COLOR:
-					colorCheckBox.setSelected(true);
-					arrowCheckBox.setSelected(false);
-					break;
-				case BOTH:
-					colorCheckBox.setSelected(true);
-					arrowCheckBox.setSelected(true);
-					break;
-				default:
-					System.out.println("Unknown enum selected");
-					break;
+			if (Arrays.asList(graphFormats).contains(selectedStyle.getTrackName())) {
+				labelFieldComboBox.setEnabled(false);
+				maxDepthTextField.setEnabled(false);
+				show2TracksCheckBox.setEnabled(false);
+				connectedCheckBox.setEnabled(false);
+				collapsedCheckBox.setEnabled(false);
+				colorCheckBox.setEnabled(false);
+				arrowCheckBox.setEnabled(false);
+				possitiveColorComboBox.setEnabled(false);
+				negativeColorComboBox.setEnabled(false);
+			} else {
+				int connected = selectedStyle.getGlyphDepth();
+				boolean isConnected = true;
+				if (connected == 1) {
+					isConnected = false;
+				} else if (connected == 2) {
+					isConnected = true;
+				}
+				possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
+				negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
+				trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
+				labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
+				maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
+				show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
+				connectedCheckBox.setSelected(isConnected);
+				collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
+
+				switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
+					case NONE:
+						colorCheckBox.setSelected(false);
+						arrowCheckBox.setSelected(false);
+						break;
+					case ARROW:
+						colorCheckBox.setSelected(false);
+						arrowCheckBox.setSelected(true);
+						break;
+					case COLOR:
+						colorCheckBox.setSelected(true);
+						arrowCheckBox.setSelected(false);
+						break;
+					case BOTH:
+						colorCheckBox.setSelected(true);
+						arrowCheckBox.setSelected(true);
+						break;
+					default:
+						System.out.println("Unknown enum selected");
+						break;
+				}
 			}
 		}
 

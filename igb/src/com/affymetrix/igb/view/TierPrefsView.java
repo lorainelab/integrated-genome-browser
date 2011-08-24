@@ -24,7 +24,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.view.load.LoadModeTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;

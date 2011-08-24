@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -223,7 +224,9 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				}
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
-				if (style == null) {
+				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
+					return vFeature.getFeature().featureName;
+				} else if (style == null) {
 					return "No Data Loaded";
 				}
 				return style.getTrackName();
@@ -265,11 +268,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			return false;
 		} else if (col == FEATURE_NAME_COLUMN) {
 			return false;
-		} 
-//		else if (vFeature.getFeature().getLoadStrategy() == LoadStrategy.GENOME && col == LOAD_STRATEGY_COLUMN) {
-//			return false;
-//		} 
-		else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
+		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary) {
 			return false;
 		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN

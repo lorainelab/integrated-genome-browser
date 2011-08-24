@@ -47,6 +47,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -67,6 +68,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadSequence;
+import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
@@ -647,7 +649,12 @@ public final class GeneralLoadView extends IGBTabPanel
 				continue;
 			}
 
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+			//If Loading whole genome for unoptimized file then load everything at once.
+			if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInst) {
+				((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+			} else {
+				GeneralLoadUtils.iterateSeqList(gFeature);
+			}
 		}
 	}
 

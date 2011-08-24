@@ -32,7 +32,7 @@ public final class WiggleData {
 	 *  Creates a GraphSym from the stored data, or returns null if no data
 	 *  has been stored yet.
 	 */
-	public GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id) {
+	public GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id, String uri) {
 		if (xData.isEmpty()) {
 			return null;
 		}
@@ -50,7 +50,7 @@ public final class WiggleData {
 		sortXYZDataOnX(xList, yList, wList);
 
 		int largest_x = xList[dataSize-1] + wList[dataSize-1];
-		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
+		BioSeq seq = seq_group.addSeq(seq_id, largest_x, uri);
 
 		return new GraphIntervalSym(xList, wList, yList, graph_id, seq);
 	}

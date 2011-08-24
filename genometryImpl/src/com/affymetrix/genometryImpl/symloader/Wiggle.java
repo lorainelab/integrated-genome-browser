@@ -43,7 +43,6 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import java.io.FileNotFoundException;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -457,7 +456,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();
 		while (wiggleDataIterator.hasNext()) {
-			GraphSym gsym = wiggleDataIterator.next().createGraph(seq_group, graph_id);
+			GraphSym gsym = wiggleDataIterator.next().createGraph(seq_group, graph_id, stream_name);
 
 			if (gsym != null) {
 				grafs.add(gsym);

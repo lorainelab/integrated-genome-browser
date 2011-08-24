@@ -312,7 +312,7 @@ public final class WiggleParser implements GraphParser {
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();
 		while (wiggleDataIterator.hasNext()) {
-			GraphSym gsym = wiggleDataIterator.next().createGraph(seq_group, graph_id);
+			GraphSym gsym = wiggleDataIterator.next().createGraph(seq_group, graph_id, stream_name);
 
 			if (gsym != null) {
 				grafs.add(gsym);

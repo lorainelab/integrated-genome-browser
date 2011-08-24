@@ -577,7 +577,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 	private void setVisibleMinValue(float val) {
 		int gcount = graphs.size();
-		if (gcount > 0 && (val != prev_min_val)) {
+		if (gcount > 0 /*&& (val != prev_min_val)*/) {
 			turnOffListening();
 
 			float min_of_mins = Float.POSITIVE_INFINITY;
@@ -621,7 +621,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 	private void setVisibleMaxValue(float val) {
 		int gcount = graphs.size();
-		if (gcount > 0 && (val != prev_max_val)) {
+		if (gcount > 0 /* && (val != prev_max_val)*/) {
 			turnOffListening();
 
 			float min_of_maxes = Float.POSITIVE_INFINITY;

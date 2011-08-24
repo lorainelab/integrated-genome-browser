@@ -25,12 +25,19 @@ public class FastaIdx extends FastaCommon {
 
 	public FastaIdx(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
+		if (!uri.toString().startsWith(FILE_PREFIX)) {
+			fastaFile = null;
+			sequenceDict = null;
+			return;
+		}
 		IndexedFastaSequenceFile tempFile;
 		try {
 			tempFile = new IndexedFastaSequenceFile(new File(uri));
 		}
 		catch (FileNotFoundException x) {
-			tempFile = null;
+			fastaFile = null;
+			sequenceDict = null;
+			return;
 		}
 		fastaFile = tempFile;
 		String uriString = uri.toString();

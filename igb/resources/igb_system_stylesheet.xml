@@ -306,6 +306,7 @@ will not work well with these styles.
   
   <FILE_TYPE_ASSOCIATION file_type="bed">
 	  <PROPERTY key="direction_type" value="arrow"/>
+	  <PROPERTY key="label_field" value="id"/>	  
   </FILE_TYPE_ASSOCIATION>
   
 <!-- putting this ".*" regex assocation element before any other regex association elements 

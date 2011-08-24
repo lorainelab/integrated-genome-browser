@@ -153,7 +153,7 @@ public final class ScoredIntervalParser implements GraphParser {
 					strand = fields[3];
 					BioSeq aseq = seq_group.getSeq(seqid);
 					if (aseq == null) {
-						aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
+						aseq = seq_group.addSeq(seqid, 0, stream_name); // hmm, should a default size be set?
 					}
 					IndexedSingletonSym child;
 					if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }

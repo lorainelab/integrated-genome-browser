@@ -238,7 +238,7 @@ public abstract class SymLoader {
 	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
 		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
 			String key = bioseq.getKey();
-			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
+			chrList.put(group.addSeq(key, bioseq.getValue(), uri.toString()), chrFiles.get(key));
 		}
 	}
 

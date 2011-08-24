@@ -120,7 +120,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	@Override
 	public List<GraphSym> getGenome() throws Exception  {
 		init();
-		BioSeq seq = group.addSeq(this.featureName, Integer.MAX_VALUE - 1);
+		BioSeq seq = group.addSeq(this.featureName, Integer.MAX_VALUE - 1, uri.toString());
 		return getChromosome(seq);
 	}
 	

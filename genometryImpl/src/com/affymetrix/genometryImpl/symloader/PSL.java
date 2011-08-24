@@ -605,7 +605,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return findex;
 	}
 
-	private static BioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
+	private BioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
 		BioSeq qseq = query_group.getSeq(qname);
 		if (qseq == null) {
 			// Doing a new String() here gives a > 4X reduction in
@@ -613,7 +613,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			//    an array of Strings may use same underlying character array, so essentially
 			//    end up holding a pointer to a character array containing the whole input file ???
 			//
-			qseq = query_group.addSeq(new String(qname), qsize);
+			qseq = query_group.addSeq(new String(qname), qsize, uri.toString());
 		}
 		if (qseq.getLength() < qsize) {
 			qseq.setLength(qsize);

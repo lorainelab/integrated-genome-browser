@@ -74,7 +74,7 @@ public class Fasta extends FastaCommon {
 				if (seq == null) {
 					chrSet.add(new BioSeq(seqid, "", count));
 				} else {
-					group.addSeq(seqid, count);
+					group.addSeq(seqid, count, uri.toString());
 					chrSet.add(seq);
 				}
 			}

@@ -43,8 +43,9 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 		features.add(f);
 	}
 
-	public void removeFeature(GenericFeature f){
+	public boolean removeFeature(GenericFeature f){
 		features.remove(f);
+		return group.removeSeqsForUri(f.symL.uri.toString());
 	}
 
 	public void setInitialized() {

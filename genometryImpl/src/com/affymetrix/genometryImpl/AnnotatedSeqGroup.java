@@ -27,6 +27,7 @@ public class AnnotatedSeqGroup {
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
+	private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
 	
 	private final static SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
 	private final static SynonymLookup groupLookup = SynonymLookup.getDefaultLookup();
@@ -207,11 +208,54 @@ public class AnnotatedSeqGroup {
 		return id.equals(synonym) || groupLookup.isSynonym(id, synonym);
 	}
 
+	private boolean findSeqid(String searchSeqid) {
+		if (searchSeqid == null) {
+			return false;
+		}
+		boolean found = false;
+		for (Set<String> seqids : uri2Seqs.values()) {
+			for (String seqid : seqids) {
+				if (searchSeqid.toLowerCase().equals(seqid.toLowerCase())) {
+					found = true;
+				}
+			}
+		}
+		return found;
+	}
+
+	public boolean removeSeqsForUri(String uri) {
+		Set<String> seqids = uri2Seqs.get(uri);
+		uri2Seqs.remove(uri);
+		boolean removed = false;
+		if (seqids != null) {
+			for (String seqid : seqids) {
+				if (!findSeqid(seqid)) {
+					id2seq.remove(seqid.toLowerCase());
+					removed = true;
+				}
+			}
+		}
+		return removed;
+	}
+
+	private void addUri2Seqs(String uri, String seqid) {
+		Set<String> seqids = uri2Seqs.get(uri);
+		if (seqids == null) {
+			seqids = new HashSet<String>();
+			uri2Seqs.put(uri, seqids);
+		}
+		seqids.add(seqid);
+	}
+
+	public final BioSeq addSeq(String seqid, int length) {
+		return addSeq(seqid, length, "");
+	}
 	/**
 	 *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
 	 *  and increasing its length to the given sym if necessary.
 	 */
-	public final BioSeq addSeq(String seqid, int length) {
+	public final BioSeq addSeq(String seqid, int length, String uri) {
+		addUri2Seqs(uri, seqid);
 		if (seqid == null) {
 			throw new NullPointerException();
 		}

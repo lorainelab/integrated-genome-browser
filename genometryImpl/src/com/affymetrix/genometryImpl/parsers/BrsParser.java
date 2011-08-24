@@ -153,7 +153,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 
 					BioSeq chromseq = seq_group.getSeq(chrom_name);
 					if (chromseq == null) {
-						chromseq = seq_group.addSeq(chrom_name, tmax);
+						chromseq = seq_group.addSeq(chrom_name, tmax, annot_type);
 					}
 
 					if(name.length() == 0 && geneName.length() == 0){

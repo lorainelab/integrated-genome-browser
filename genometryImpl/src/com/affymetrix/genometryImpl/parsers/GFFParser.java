@@ -365,7 +365,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 
 					BioSeq seq = seq_group.getSeq(seq_name);
 					if (seq == null) {       	  
-						seq = seq_group.addSeq(seq_name, 0);
+						seq = seq_group.addSeq(seq_name, 0, default_source);
 					}
 
 					if (gff_version == GFF3) {

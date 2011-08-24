@@ -396,13 +396,15 @@ public final class LoadFileAction extends AbstractAction {
 				try {
 					Application.getSingleton().addNotLockedUpMsg(message);
 					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
-						loadGroup.addSeq(seq.getID(), seq.getLength());
+						loadGroup.addSeq(seq.getID(), seq.getLength(), gFeature.symL.uri.toString());
 					}
 					return true;
 				} catch (Exception ex) {
 					((QuickLoad)gFeature.symL).logException(ex);
-					if(Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)){
-						gFeature.gVersion.removeFeature(gFeature);
+					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)){
+						if (gFeature.gVersion.removeFeature(gFeature)) {
+							SeqGroupView.getInstance().refreshTable();
+						}
 					}
 					return false;
 				}

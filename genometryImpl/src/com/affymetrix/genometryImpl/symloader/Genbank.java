@@ -265,7 +265,7 @@ public final class Genbank extends SymLoader {
 			String seq_name = bioseq.getKey();
 			BioSeq seq = group.getSeq(seq_name);
 			if (seq == null) {
-				seq = group.addSeq(seq_name, bioseq.getValue());
+				seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
 			}
 			seqs.add(seq);
 		}

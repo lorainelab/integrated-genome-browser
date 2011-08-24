@@ -66,7 +66,7 @@ public class USeq extends SymLoader {
 			HashMap<String,Integer> chromBase = useqArchive.fetchChromosomesAndLastBase();
 			for (String chrom : chromBase.keySet()){
 				//fetch the BioSeq from the AnnotationGroup if it exists
-				chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom)),chrom);
+				chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom), uri.toString()),chrom);
 			}
 			Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()),new BioSeqComparator());
 			

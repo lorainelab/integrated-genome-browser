@@ -9,8 +9,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -82,7 +80,7 @@ public abstract class XAM extends SymLoader {
 				}
 				String seqID = ssr.getSequenceName();
 				int seqLength = ssr.getSequenceLength();
-				BioSeq seq = group.addSeq(seqID, seqLength);
+				BioSeq seq = group.addSeq(seqID, seqLength, uri.toString());
 				if (seq.getVersion() != null) {
 					seq.setVersion(group.getID());
 				}
@@ -295,6 +293,7 @@ public abstract class XAM extends SymLoader {
 	 * @param insResidues
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private static String interpretCigar(Cigar cigar, String residues, int spanLength, StringBuffer insResidues) {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return residues;

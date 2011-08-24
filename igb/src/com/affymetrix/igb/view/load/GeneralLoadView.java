@@ -63,6 +63,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.DataLoadPrefsView;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -969,7 +970,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final List<GenericFeature> visibleFeatures = loadModeDataTableModel.getVisibleFeatures(features);
+		final List<GenericFeature> visibleFeatures = LoadModeDataTableModel.getVisibleFeatures(features);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
@@ -1097,7 +1098,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		return (String) speciesCB.getSelectedItem();
 	}
 
-	public CThreadWorker removeFeature(final GenericFeature feature, final boolean refresh) {
+	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
 		if (feature == null) {
 			return null;
 		}
@@ -1120,7 +1121,9 @@ public final class GeneralLoadView extends IGBTabPanel
 				// If feature is local then remove it from server.
 				GenericVersion version = feature.gVersion;
 				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
-					version.removeFeature(feature);
+					if (version.removeFeature(feature)) {
+						SeqGroupView.getInstance().refreshTable();
+					}
 				}
 
 				return null;

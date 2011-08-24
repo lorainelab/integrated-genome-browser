@@ -346,7 +346,7 @@ public class BED extends SymLoader implements LineProcessor{
 		}
 		if (seq == null) {
 			//System.out.println("seq not recognized, creating new seq: " + seq_name);
-			seq = group.addSeq(seq_name, 0);
+			seq = group.addSeq(seq_name, 0, uri.toString());
 		}
 
 		
@@ -814,7 +814,7 @@ public class BED extends SymLoader implements LineProcessor{
 			}
 			if (seq == null) {
 				//System.out.println("seq not recognized, creating new seq: " + seq_name);
-				seq = group.addSeq(seq_name, bioseq.getValue());
+				seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
 			}
 			
 			chrList.put(seq, chrFiles.get(seq_name));

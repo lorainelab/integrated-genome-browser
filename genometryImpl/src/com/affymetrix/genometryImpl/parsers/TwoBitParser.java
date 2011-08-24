@@ -236,7 +236,7 @@ public final class TwoBitParser implements Parser {
 			throw new IOException("IGB can not handle sequences larger than " + Integer.MAX_VALUE + ".  Offending sequence length: " + size);
 		}
 
-		BioSeq seq = seq_group.addSeq(name, (int) size);
+		BioSeq seq = seq_group.addSeq(name, (int) size, uri.toString());
 
 		seq.setResiduesProvider(new TwoBitIterator(uri,size,residueOffset,buffer.order()));
 

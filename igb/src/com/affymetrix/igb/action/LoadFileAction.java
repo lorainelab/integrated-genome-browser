@@ -313,7 +313,7 @@ public final class LoadFileAction extends AbstractAction {
 		InputStream istr = null;
 		try {
 			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			List<AnnotatedSeqGroup> groups = BarParser.getSeqGroups(istr, group, gmodel);
+			List<AnnotatedSeqGroup> groups = BarParser.getSeqGroups(uri.toString(), istr, group, gmodel);
 			if(groups.isEmpty())
 				return group;
 

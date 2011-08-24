@@ -163,7 +163,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		try {
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(file_name))));
 			BarFileHeader bar_header = parseBarHeader(dis);
-			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, bar_header);
+			BarSeqHeader seq_header = parseSeqHeader(file_name, dis, gmodel, seq_group, bar_header);
 			int bytes_per_point = bar_header.bytes_per_point;
 			int points_per_index = points_per_chunk;
 			int points_to_skip = min_index * points_per_index;
@@ -280,7 +280,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(file_name))));
 			BarFileHeader file_header = parseBarHeader(dis);
 			int bytes_per_point = file_header.bytes_per_point;
-			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, file_header);
+			BarSeqHeader seq_header = parseSeqHeader(file_name, dis, gmodel, seq_group, file_header);
 			int total_points = seq_header.data_point_count;
 
 			int point_count = 0;
@@ -371,7 +371,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	}
 
 	/** Parse a file in BAR format. */
-	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
+	public static List<GraphSym> parse(String uri, InputStream istr, GenometryModel gmodel,
 			AnnotatedSeqGroup default_seq_group, BioSeq chrFilter, int min, int max, String stream_name,
 			boolean ensure_unique_id)
 			throws IOException {
@@ -404,7 +404,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 				graph_id += ":" + file_tagvals.get("file_type");
 			}
 			for (int k = 0; k < total_seqs; k++) {
-				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
+				BarSeqHeader seq_header = parseSeqHeader(uri, dis, gmodel, default_seq_group, bar_header);
 				int total_points = seq_header.data_point_count;
 				Map<String, String> seq_tagvals = seq_header.tagvals;
 				BioSeq seq = seq_header.aseq;
@@ -441,7 +441,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		return graphs;
 	}
 
-	public static List<AnnotatedSeqGroup> getSeqGroups(InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
+	public static List<AnnotatedSeqGroup> getSeqGroups(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
 			throws IOException {
 
 		BufferedInputStream bis = null;
@@ -461,7 +461,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			int vals_per_point = bar_header.vals_per_point;
 			
 			for (int k = 0; k < total_seqs; k++) {
-				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
+				BarSeqHeader seq_header = parseSeqHeader(uri, dis, gmodel, default_seq_group, bar_header);
 				AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
 				if(!groups.contains(group))
 					groups.add(group);
@@ -486,6 +486,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		skipBytes(total_points * vals_per_point * 4, dis);
 	}
 
+	@SuppressWarnings("unused")
 	private static void handle2ValPerPoint(
 			int total_points, DataInputStream dis, BioSeq seq, int min, int max, String graph_id, boolean ensure_unique_id,
 			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
@@ -534,6 +535,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static void handle3ValPerPoint(
 			int total_points, DataInputStream dis, BioSeq seq, int min, int max, String graph_id, boolean ensure_unique_id,
 			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
@@ -655,7 +657,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		}
 	}
 
-	private static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header) throws IOException {
+	private static BarSeqHeader parseSeqHeader(String uri, DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header) throws IOException {
 		int namelength = dis.readInt();
 		byte[] barray = new byte[namelength];
 		dis.readFully(barray);
@@ -713,11 +715,11 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 		}
 
 		AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
-		BioSeq seq = determineSeq(seq_group, seqname, orig_seqname, seqversion, groupname, bar2);
+		BioSeq seq = determineSeq(uri, seq_group, seqname, orig_seqname, seqversion, groupname, bar2);
 		return new BarSeqHeader(seq, total_points, seq_tagvals);
 	}
 
-	private static BioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, String orig_seqname, String seqversion, String groupname, boolean bar2) {
+	private static BioSeq determineSeq(String uri, AnnotatedSeqGroup seq_group, String seqname, String orig_seqname, String seqversion, String groupname, boolean bar2) {
 		// trying standard AnnotatedSeqGroup seq id resolution first
 		BioSeq seq = seq_group.getSeq(seqname);
 		if (seq == null) {
@@ -754,7 +756,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			}
 		}
 		if (seq == null) {
-			seq = seq_group.addSeq(seqname, 1);
+			seq = seq_group.addSeq(seqname, 1, uri);
 		}
 		return seq;
 	}
@@ -920,7 +922,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup group, String nameType, String uri,
 			boolean annotate_seq) throws Exception {
 		// only annotate_seq = false processed here
-		return parse(is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri, false);
+		return parse(uri, is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri, false);
 	}
 
 	@Override
@@ -928,7 +930,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
-		return parse(newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
+		return parse(stream_name, newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
 	}
 
 	@Override

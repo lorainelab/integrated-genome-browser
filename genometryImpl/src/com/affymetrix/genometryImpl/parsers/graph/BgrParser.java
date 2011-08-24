@@ -55,10 +55,10 @@ public final class BgrParser implements GraphParser {
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
 		DataOutputStream dos = new DataOutputStream(bos);
 
-		Map headers = graf.getProperties();
+		Map<String, Object> headers = graf.getProperties();
 
 		if (headers == null) {
-			headers = new HashMap(); // use an empty map
+			headers = new HashMap<String, Object>(); // use an empty map
 		}		           
 			if (headers.get("seq_name") == null) {
 				if (graf.getGraphSeq() == null) {
@@ -137,7 +137,7 @@ public final class BgrParser implements GraphParser {
 		BioSeq seq = seq_group.getSeq(seq_name);
 		if (seq == null) {
 			//System.out.println("seq not found, creating new seq: '"+seq_name+"'");
-			seq = seq_group.addSeq(seq_name, largest_x);
+			seq = seq_group.addSeq(seq_name, largest_x, stream_name);
 		}
 
 		StringBuffer sb = new StringBuffer();

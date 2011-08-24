@@ -34,7 +34,6 @@ public final class CntParser implements Parser {
 	private static final Pattern section_regex = Pattern.compile("\\[.*\\]");
 	private static final String SECTION_HEADER = "[Header]";
 	private static final String SECTION_COL_NAME = "[ColumnName]";
-	private static final String SECTION_DATA = "[Data]";
 	// index of the first column containing data
 	private static final int FIRST_DATA_COLUMN = 3;
 	private final Map<String, FloatArrayList[]> seq2Floats = new HashMap<String, FloatArrayList[]>();

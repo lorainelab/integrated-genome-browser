@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -9,12 +10,15 @@ import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.AbstractAction;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv
  */
-public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceChangeListener{
+public class AutoLoad extends AbstractAction 
+		implements MouseListener, MouseMotionListener, PreferenceChangeListener{
 
 	private static final int default_threshold = 70;
 	public final static String  PREFS_THRESHOLD = "Threshold Value";
@@ -30,6 +34,8 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 	
 	public AutoLoad(NeoMap map){
+		//"Set AutoLoad Threshold to Current View"
+		super(BUNDLE.getString("setThreshold"));
 		this.map = map;
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
@@ -52,13 +58,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		GeneralLoadView.loadAutoLoadFeatures();
 		//GeneralLoadView.getLoadView().loadResiduesInView(false);
 	}
-	
-	public void setThresholdToCurrent(){
-		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());
-		update(zoomer);
-		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
-	}
-	
+		
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
@@ -123,5 +123,12 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		if(pce.getKey().equals(PREFS_AUTOLOAD)){
 			autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
 		}
+	}
+
+	public void actionPerformed(ActionEvent ae) {
+		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());
+		update(zoomer);
+		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
+		zoomer.repaint();
 	}
 }

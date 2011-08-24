@@ -647,7 +647,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				continue;
 			}
 
-			GeneralLoadUtils.iterateSeqList(gFeature);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 	}
 

@@ -225,7 +225,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
-					return vFeature.getFeature().featureName;
+					return "Uneditable Track";
 				} else if (style == null) {
 					return "No Data Loaded";
 				}
@@ -372,6 +372,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		String trackName = style.getTrackName();
 		if (style.getShow()) {
 			smv.getPopup().hideOneTier(style);
+			System.out.println("Here");
 		} else {
 			for (int i = 0; i < smv.getPopup().getShowMenu().getItemCount(); i++) {
 				String text = smv.getPopup().getShowMenu().getItem(i).getText();
@@ -384,6 +385,8 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				if (text.equalsIgnoreCase(trackName)) {
 					style.setShow(true);
 					smv.getPopup().getShowMenu().remove(smv.getPopup().getShowMenu().getItem(i));
+					smv.getPopup().getHandler().sortTiers();
+					smv.getPopup().getHandler().repackTheTiers(false, true);
 				}
 			}
 		}

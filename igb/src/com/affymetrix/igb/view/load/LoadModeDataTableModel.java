@@ -372,7 +372,6 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		String trackName = style.getTrackName();
 		if (style.getShow()) {
 			smv.getPopup().hideOneTier(style);
-			System.out.println("Here");
 		} else {
 			for (int i = 0; i < smv.getPopup().getShowMenu().getItemCount(); i++) {
 				String text = smv.getPopup().getShowMenu().getItem(i).getText();

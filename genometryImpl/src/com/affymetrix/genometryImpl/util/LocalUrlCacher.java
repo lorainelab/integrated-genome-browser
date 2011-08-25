@@ -47,8 +47,6 @@ public final class LocalUrlCacher {
 	public static final int CONNECT_TIMEOUT = 20000;	// If you can't connect in 20 seconds, fail.
 	public static final int READ_TIMEOUT = 60000;		// If you can't read any data in 1 minute, fail.
 
-	private static enum CacheType { FILE, CACHED, STALE_CACHE, NOT_CACHED, UNREACHABLE};
-
 	private static boolean offline = false;
 
 	/** Sets the cacher to off-line mode, in which case only cached data will
@@ -744,7 +742,11 @@ public final class LocalUrlCacher {
 				GeneralUtils.safeClose(istr);
 			}
 		}
-		
+
+		if (scheme.startsWith("igb")) { // special case - programatical url processing
+			return true;
+		}
+
 		return false;
 	}
 }

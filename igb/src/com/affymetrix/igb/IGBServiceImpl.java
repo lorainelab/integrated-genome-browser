@@ -13,6 +13,7 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,18 +25,22 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -351,5 +356,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
+	}
+
+	@Override
+	public void insertSymLoader(SymLoader symL) {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
+		LoadFileAction.openURI(symL.uri, symL.featureName, true, loadGroup, speciesName);
+		/*
+		version.addFeature(gFeature);
+		gFeature.setVisible(); // this should be automatically checked in the feature tree
+		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
+		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
+		GeneralLoadView.getLoadView().createFeaturesTable();
+*/
 	}
 }

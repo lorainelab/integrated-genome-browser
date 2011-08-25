@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -162,4 +163,7 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
+
+	// external functions - R
+	public void insertSymLoader(SymLoader symL);
 }

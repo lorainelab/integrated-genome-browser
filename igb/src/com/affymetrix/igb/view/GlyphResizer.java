@@ -95,6 +95,6 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			lowerGl = null; // helps with garbage collection
 		}
 		
-		gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
+		gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true, true);
 	}
 }

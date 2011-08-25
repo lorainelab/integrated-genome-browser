@@ -95,6 +95,7 @@ public class CommonUtils {
 		if (filePath != null) {
 			try {
 				bundle = bundleContext.installBundle(filePath);
+				bundle.start();
 			}
 			catch(Exception x) {
 				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error installing bundle", x);

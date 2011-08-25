@@ -536,7 +536,7 @@ public final class TierLabelManager implements PropertyHolder {
 	/**
 	 *  Sorts all tiers and then calls packTiers() and updateWidget().
 	 */
-	void sortTiers() {
+	public void sortTiers() {
 		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
 		Collections.sort(label_glyphs, new Comparator<TierLabelGlyph>(){
 
@@ -554,7 +554,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 *  Repacks tiers.  Should be called after hiding or showing tiers or
 	 *  changing their heights.
 	 */
-	void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+	public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
 		tiermap.repackTheTiers(full_repack, stretch_vertically, false);
 	}
 

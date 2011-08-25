@@ -199,9 +199,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			setTwoTiers(handler.getSelectedTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();			
+			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-		
 	};
 	private final Action sym_summarize_single_action = new AbstractAction("") {
 
@@ -255,7 +254,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			addMisMatchTier(current_tier, "mismatch");
 		}
 	};
-	
 	private final Action mismatch_pileup_action = new AbstractAction("Make Mismatch Pileup Graph") {
 
 		private static final long serialVersionUID = 1L;
@@ -269,7 +267,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
 		}
 	};
-	
 	private final Action save_bed_action = new AbstractAction("Save track as BED file") {
 
 		private static final long serialVersionUID = 1L;
@@ -758,7 +755,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		style.setExpandable(false); // cannot expand and collapse
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		style.setFeature(atier.getAnnotStyle().getFeature());
-		
+
 		IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
@@ -798,7 +795,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		style.setForeground(atier.getForegroundColor());
 		style.setFeature(atier.getAnnotStyle().getFeature());
-		
+
 		gviewer.setAnnotatedSeq(aseq, true, true);
 	}
 
@@ -921,7 +918,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		viewModeMenu.setEnabled(false);
 
 		JMenu save_menu = new JMenu("Save Annotations");
-		
+
 		viewModeMenu.removeAll();
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
@@ -946,6 +943,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				Map<String, Action> actions = new HashMap<String, Action>();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
 					Action action = new AbstractAction(mode.toString()) {
+
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setViewMode(mode.toString());
 							refreshMap(false, false);
@@ -986,7 +984,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 
-		
+
 		popup.add(customize_action);
 		popup.add(new JSeparator());
 		popup.add(hide_action);
@@ -1075,7 +1073,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		gviewer.dataRemoved();	// refresh
 	}
-	
+
 	// purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {
@@ -1095,5 +1093,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	public JMenu getShowMenu() {
 		return showMenu;
+	}
+
+	public TierLabelManager getHandler() {
+		return handler;
 	}
 }

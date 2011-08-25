@@ -542,6 +542,9 @@ public class TierGlyph extends SolidGlyph {
 			GraphGlyph child = (GraphGlyph)getChild(0);
 			Rectangle2D.Double  coord = child.getCoordBox();
 			child.setCoords(coord.x, coord.y, coord.width, height);
+			//Note : Fix to handle height in a view mode. 
+			// But this also causes minor change in height while switching back to default view mode.
+			setCoords(coord.x, coord.y, coord.width, height + 2 * getSpacing());
 			return;
 		}
 		

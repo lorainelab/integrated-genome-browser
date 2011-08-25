@@ -1123,6 +1123,9 @@ public final class GeneralLoadView extends IGBTabPanel
 				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
 					if (version.removeFeature(feature)) {
 						SeqGroupView.getInstance().refreshTable();
+						if (!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
+							gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
+						}
 					}
 				}
 

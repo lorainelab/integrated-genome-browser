@@ -231,6 +231,7 @@ public class AnnotatedSeqGroup {
 			for (String seqid : seqids) {
 				if (!findSeqid(seqid)) {
 					id2seq.remove(seqid.toLowerCase());
+					id2seq_dirty_bit = true;
 					removed = true;
 				}
 			}

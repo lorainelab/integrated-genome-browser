@@ -13,7 +13,6 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -30,7 +29,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -364,12 +362,5 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		LoadFileAction.openURI(symL.uri, symL.featureName, true, loadGroup, speciesName);
-		/*
-		version.addFeature(gFeature);
-		gFeature.setVisible(); // this should be automatically checked in the feature tree
-		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
-		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
-		GeneralLoadView.getLoadView().createFeaturesTable();
-*/
 	}
 }

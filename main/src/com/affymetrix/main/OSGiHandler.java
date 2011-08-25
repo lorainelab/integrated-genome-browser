@@ -135,6 +135,22 @@ public class OSGiHandler {
 	    			}
 	    		}
             }
+    		String uninstall_bundle = CommonUtils.getInstance().getArg("-uninstall_bundle", args);
+    		if (uninstall_bundle != null) {
+    			for (Bundle bundle : bundleContext.getBundles()) {
+    				if (uninstall_bundle.equals(bundle.getSymbolicName())) {
+    					bundle.uninstall();
+    					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
+    				}
+    			}
+    		}
+    		String install_bundle = CommonUtils.getInstance().getArg("-install_bundle", args);
+    		if (install_bundle != null) {
+				Bundle bundle = bundleContext.installBundle(install_bundle);
+				if (bundle != null) {
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", install_bundle);
+				}
+    		}
     		for (Bundle bundle : bundleContext.getBundles()) {
     			bundle.start();
     		}

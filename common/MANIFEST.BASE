@@ -9,5 +9,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
 Import-Package: org.osgi.framework
-Export-Package: com.affymetrix.common
+Export-Package: com.affymetrix.common;version="@appVersion@"
 

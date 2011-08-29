@@ -143,5 +143,9 @@ public final class TransformTierGlyph extends TierGlyph {
     return fixedPixHeight;
   }
 
+  @Override
+  protected boolean shouldDrawToolBar(){
+	return false;
+  }
 }
 

@@ -139,6 +139,12 @@ public class AffyTieredMap extends NeoMap {
 		return tiers;
 	}
 
+	public void setTierStyles(){
+		for (TierGlyph tier : tiers) {
+			tier.setStyle(tier.getAnnotStyle());
+		}
+	}
+	
 	@Override
 	public void repack() {
 		// WARNING
@@ -610,10 +616,8 @@ public class AffyTieredMap extends NeoMap {
 
 		return topgl;
 	}
+
+	
 }
-
-
-
-
 
 

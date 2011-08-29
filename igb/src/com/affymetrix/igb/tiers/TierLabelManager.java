@@ -411,15 +411,14 @@ public final class TierLabelManager implements PropertyHolder {
 	public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
 		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			result.addAll(getContainedGraphs(tlg));
+			result.addAll(getContainedGraphs(tlg.getReferenceTier()));
 		}
 		return result;
 	}
 
 	/** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-	private static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
+	private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
 		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
-		TierGlyph tier = (TierGlyph) tlg.getInfo();
 		int child_count = tier.getChildCount();
 		if (child_count > 0 && tier.getAnnotStyle().isGraphTier() && 
 				tier.getChild(0) instanceof GraphGlyph) {
@@ -469,8 +468,9 @@ public final class TierLabelManager implements PropertyHolder {
 	 */
 	void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		for (TierLabelGlyph tlg : tier_labels) {
-			setTierCollapsed(tlg, collapsed);
+			setTierCollapsed(tlg.getReferenceTier(), collapsed);
 		}
+		tiermap.setTierStyles();
 		repackTheTiers(true, true);
 		tiermap.updateWidget();
 	}
@@ -480,22 +480,22 @@ public final class TierLabelManager implements PropertyHolder {
 	 * @param tlg
 	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
 	 */
-	 void setTierCollapsed(TierLabelGlyph tlg, boolean collapsed) {
-		ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+	 static void setTierCollapsed(TierGlyph tg, boolean collapsed) {
+		ITrackStyle style = tg.getAnnotStyle();
 		if (style.getExpandable()) {
 			style.setCollapsed(collapsed);
-			tlg.getReferenceTier().setStyle(style);
+			tg.setStyle(style);
 			// When collapsing, make them all be the same height as the tier.
 			// (this is for simplicity in figuring out how to draw things.)
 			if (collapsed) {
-				List<GraphGlyph> graphs = getContainedGraphs(tlg);
+				List<GraphGlyph> graphs = getContainedGraphs(tg);
 				double tier_height = style.getHeight();
 				for (GraphGlyph graph : graphs) {
 					graph.getGraphState().getTierStyle().setHeight(tier_height);
 				}
 			}
-			for (ViewI v : tlg.getReferenceTier().getScene().getViews()) {
-				tlg.getReferenceTier().pack(v, false);
+			for (ViewI v : tg.getScene().getViews()) {
+				tg.pack(v, false);
 			}
 		}
 	}
@@ -503,7 +503,7 @@ public final class TierLabelManager implements PropertyHolder {
 	public void toggleTierCollapsed(List<TierLabelGlyph> tier_glyphs){
 		for(TierLabelGlyph glyph : tier_glyphs){
 			ITrackStyle style = glyph.getReferenceTier().getAnnotStyle();
-			setTierCollapsed(glyph, !style.getCollapsed());
+			setTierCollapsed(glyph.getReferenceTier(), !style.getCollapsed());
 		}
 		repackTheTiers(true, true);
 	}

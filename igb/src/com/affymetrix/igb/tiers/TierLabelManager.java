@@ -472,6 +472,7 @@ public final class TierLabelManager implements PropertyHolder {
 			setTierCollapsed(tlg, collapsed);
 		}
 		repackTheTiers(true, true);
+		tiermap.updateWidget();
 	}
 
 	/**
@@ -483,6 +484,7 @@ public final class TierLabelManager implements PropertyHolder {
 		ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
 		if (style.getExpandable()) {
 			style.setCollapsed(collapsed);
+			tlg.getReferenceTier().setStyle(style);
 			// When collapsing, make them all be the same height as the tier.
 			// (this is for simplicity in figuring out how to draw things.)
 			if (collapsed) {

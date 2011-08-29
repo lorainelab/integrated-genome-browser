@@ -372,7 +372,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		handler.setTiersCollapsed(tier_labels, collapsed);
-		refreshMap(false, true);
+		gviewer.getSeqMap().updateWidget();
 		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
@@ -410,7 +410,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				((TrackStyle) style).setTrackNameSize(size);
 			}
 		}
-		refreshMap(false, true);
+		gviewer.getSeqMap().updateWidget();
 	}
 
 	public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
@@ -457,7 +457,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
-		refreshMap(false, true);
+		handler.repackTheTiers(true, true);
+		gviewer.getSeqMap().updateWidget();
 		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 
@@ -487,7 +488,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		showMenu.removeAll();
 		handler.sortTiers();
-		refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
+		gviewer.getSeqMap().updateWidget();
+		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 
 	/** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -660,8 +662,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		String new_label = JOptionPane.showInputDialog("Label: ", style.getTrackName());
 		if (new_label != null && new_label.length() > 0) {
 			style.setTrackName(new_label);
+			tier.setLabel(new_label);
 		}
-		refreshMap(false, false);
+		gviewer.getSeqMap().updateWidget();
 	}
 
 	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {

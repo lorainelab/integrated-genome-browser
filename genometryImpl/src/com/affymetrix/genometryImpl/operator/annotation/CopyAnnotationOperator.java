@@ -38,9 +38,6 @@ public class CopyAnnotationOperator implements AnnotationOperator {
 			}
 			// copy properties
 			result.setProperties(new HashMap<String,Object>(t.getProperties()));
-			if (result.getID() == null) {
-				result.setProperty("id", "");
-			}
 		}
 		return result;
 	}

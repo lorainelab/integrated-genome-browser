@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -13,13 +13,12 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ShrinkWrapAction extends AbstractAction {
+public class ShrinkWrapAction extends IGBAction {
 	private static final long serialVersionUID = 1;
 	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
 
 	private ShrinkWrapAction() {
-		super(BUNDLE.getString("toggleShrinkWrapping"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_S);
+		super();
 		this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
 	}
 
@@ -32,4 +31,13 @@ public class ShrinkWrapAction extends AbstractAction {
 		map_view.setShrinkWrap(!map_view.getShrinkWrap());
 	}
 
+	@Override
+	public String getText() {
+		return BUNDLE.getString("toggleShrinkWrapping");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_S;
+	}
 }

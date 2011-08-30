@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.UnibrowHairline;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -8,13 +9,12 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class ToggleHairlineAction extends javax.swing.AbstractAction implements java.util.prefs.PreferenceChangeListener{
-	
+public class ToggleHairlineAction extends IGBAction implements java.util.prefs.PreferenceChangeListener {
 	private static final long serialVersionUID = 1;
 	private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
 
 	private ToggleHairlineAction() {
-		super(BUNDLE.getString("toggleHairline"));
+		super();
 		//this.putValue(MNEMONIC_KEY, java.awt.event.KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		//this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
@@ -43,5 +43,8 @@ public class ToggleHairlineAction extends javax.swing.AbstractAction implements 
         }
 	}
 
-	
+	@Override
+	public String getText() {
+		return BUNDLE.getString("toggleHairline");
+	}
 }

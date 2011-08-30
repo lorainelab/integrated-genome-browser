@@ -239,7 +239,10 @@ public final class FasterExpandPacker extends ExpandPacker {
 
 		slot_maxes.trimToSize();
 		
-		actual_slots = Math.min(slot_maxes.size(), max_slots_allowed);
+		actual_slots = slot_maxes.size();
+		if(max_slots_allowed > 0){
+			actual_slots = Math.min(slot_maxes.size(), max_slots_allowed);
+		}
 		
 		return null;
 	}

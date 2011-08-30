@@ -406,7 +406,7 @@ public final class BioSeq implements SearchableCharIterator {
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
 	 * GraphSym's and ScoredContainerSym's are added directly, not in containers.
 	 */
-	private static boolean needsContainer(SeqSymmetry sym) {
+	public static boolean needsContainer(SeqSymmetry sym) {
 		if (sym instanceof GraphSym || sym instanceof ScoredContainerSym || sym instanceof TypeContainerAnnot) {
 			return false;
 		} else {

@@ -135,6 +135,9 @@
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="jlfgr-1_0"/>
 		</antcall>
+		<echo message="***** please ignore error message - Your bnd file contains a header called 'Name' - for jlfgr-1_0 *****" />
+		<echo message="***** please ignore error message - Your bnd file contains a header called 'Name' - for jlfgr-1_0 *****" />
+		<echo message="***** please ignore error message - Your bnd file contains a header called 'Name' - for jlfgr-1_0 *****" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="jython"/>
 		</antcall>

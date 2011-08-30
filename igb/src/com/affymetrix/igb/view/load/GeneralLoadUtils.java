@@ -33,7 +33,6 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
@@ -805,7 +804,6 @@ public final class GeneralLoadUtils {
 							Level.SEVERE, null, "Unable to get refresh action result.");
 				}
 
-				TierMaintenanceListenerHolder.getInstance().fireTierAdded();
 				//Update LoadModeTableModel
 				//LoadModeTable.updateVirtualFeatureList();
 			}

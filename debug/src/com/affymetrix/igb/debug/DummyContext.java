@@ -24,7 +24,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
@@ -49,7 +48,6 @@ public class DummyContext implements BundleContext {
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
 	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TrackClickListener.class.getName() + ")";
 	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
-	private static final String TIER_MAINTENANCE_LISTENER_FILTER = "(objectClass=" + TierMaintenanceListener.class.getName() + ")";
 	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
 	private static final String MAP_VIEW_GLYPH_FACTORY_FILTER = "(objectClass=" + ExtendedMapViewGlyphFactoryI.class.getName() + ")";
 	private static final String WINDOW_SERVICE_FILTER = "(objectClass=" + IWindowService.class.getName() + ")";
@@ -161,9 +159,6 @@ public class DummyContext implements BundleContext {
 		}
 		if (GLYPH_PROCESSOR_FILTER.equals(filter)) {
 			return service instanceof GlyphProcessor;
-		}
-		if (TIER_MAINTENANCE_LISTENER_FILTER.equals(filter)) {
-			return service instanceof TierMaintenanceListener;
 		}
 		if (SEARCH_MODE_FILTER.equals(filter)) {
 			return service instanceof ISearchMode;

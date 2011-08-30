@@ -9,8 +9,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -104,18 +102,6 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					GlyphProcessorHolder.getInstance().removeGlyphProcessor((GlyphProcessor)o);
-				}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(TierMaintenanceListener.class) {
-				@Override
-				public void addService(Object o) {
-					TierMaintenanceListenerHolder.getInstance().addTierMaintenanceListener((TierMaintenanceListener)o);
-				}
-				@Override
-				public void removeService(Object o) {
-					TierMaintenanceListenerHolder.getInstance().removeTierMaintenanceListener((TierMaintenanceListener)o);
 				}
 			}
 		);

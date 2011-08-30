@@ -13,7 +13,6 @@ import com.affymetrix.igb.action.IGBActionHolder;
 
 public abstract class IGBAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
 
 	public IGBAction() {
 		super();
@@ -31,7 +30,7 @@ public abstract class IGBAction extends AbstractAction implements ActionListener
 		IGBActionHolder.getInstance().addIGBAction(this);
 	}
 	public String getIconPath() {
-		return DEFAULT_ICON_PATH;
+		return null;
 	}
 	public abstract String getText();
 	public abstract void actionPerformed(ActionEvent e);

@@ -14,6 +14,7 @@ import com.affymetrix.igb.shared.IGBAction;
 
 public class IGBActionHolder {
 	private static IGBActionHolder instance = new IGBActionHolder();
+	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
 	
 	private IGBActionHolder() {
 		super();
@@ -29,7 +30,11 @@ public class IGBActionHolder {
 		igbActions.add(igbAction);
 		boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
 		if (isToolbar) {
-			ImageIcon icon = MenuUtil.getIcon(igbAction.getIconPath());
+			String iconPath = igbAction.getIconPath();
+			if (iconPath == null) {
+				iconPath = DEFAULT_ICON_PATH;
+			}
+			ImageIcon icon = MenuUtil.getIcon(iconPath);
 			JButton button = new JButton(icon);
 			button.addActionListener(igbAction);
 			button.setToolTipText(igbAction.getText());

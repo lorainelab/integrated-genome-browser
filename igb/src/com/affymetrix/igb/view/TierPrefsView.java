@@ -1189,8 +1189,12 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 
 				if (autoApplyChanges() && apply) {
-					if (col == COL_BACKGROUND
-							|| col == COL_TRACK_NAME_SIZE) {
+					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE 
+						|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
+						if(col == COL_TRACK_NAME  || col == COL_COLLAPSED){
+							smv.getSeqMap().setTierStyles();
+							smv.getSeqMap().repackTheTiers(true, true, false);
+						}
 						smv.getSeqMap().updateWidget();
 					} else {
 						applyChanges();

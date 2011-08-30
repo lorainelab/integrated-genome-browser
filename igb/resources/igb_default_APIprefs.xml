@@ -66,6 +66,8 @@
                         </map>
                     </node>
                     <node name="toolbar">
+                        <map>
+                        </map>
                     </node>
                 </node>
             </node>

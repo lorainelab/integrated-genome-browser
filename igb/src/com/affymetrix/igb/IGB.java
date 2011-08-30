@@ -381,12 +381,12 @@ public final class IGB extends Application
 
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem("Main_toolsMenu_webLinks", WebLinksAction.getAction()));
 
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_aboutIGB", new AboutIGBAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_forumHelp", new ForumHelpAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_reportBug", new ReportBugAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_requestFeature", new RequestFeatureAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", new DocumentationAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", new ShowConsoleAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_forumHelp", ForumHelpAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_reportBug", ReportBugAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_requestFeature", RequestFeatureAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", DocumentationAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", ShowConsoleAction.getAction()));
 
 	}
 
@@ -394,17 +394,17 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadFile", new LoadFileAction(frm, load_directory)));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadURL", new LoadURLAction(frm)));
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_print", new PrintAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_printFrame", new PrintFrameAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_print", PrintAction.getAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_printFrame", PrintFrameAction.getAction()));
 		file_menu.add(export_to_file_menu);
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportMainView", new ExportMainViewAction()), export_to_file_menu.getText());
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportLabelledMainView", new ExportLabelledMainViewAction()), export_to_file_menu.getText());
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportWholeFrame", new ExportWholeFrameAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_preferences", new PreferencesAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_preferences", PreferencesAction.getAction()));
 //		MenuUtil.addToMenu(file_menu, new JMenuItem(new SaveScriptAction())); // don't want to record this
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_exit", new ExitAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_exit", ExitAction.getAction()));
 	}
 
 	private void editMenu() {

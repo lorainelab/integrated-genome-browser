@@ -1,11 +1,12 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -14,12 +15,16 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ExitAction extends AbstractAction {
+public class ExitAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
+	private static final ExitAction ACTION = new ExitAction();
 
 	public ExitAction() {
-		super(BUNDLE.getString("exit"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_X);
+		super();
+	}
+
+	public static ExitAction getAction() {
+		return ACTION;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -27,5 +32,15 @@ public class ExitAction extends AbstractAction {
 				new WindowEvent(
 					IGB.getSingleton().getFrame(),
 					WindowEvent.WINDOW_CLOSING));
+	}
+
+	@Override
+	public String getText() {
+		return BUNDLE.getString("exit");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_X;
 	}
 }

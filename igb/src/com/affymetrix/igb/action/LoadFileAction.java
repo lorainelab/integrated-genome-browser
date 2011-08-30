@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
 import java.awt.event.*;
+
 import javax.swing.*;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -44,7 +45,6 @@ import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.Application;
 
 import com.affymetrix.igb.general.ServerList;
@@ -52,6 +52,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -62,7 +63,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @version $Id$
  */
-public final class LoadFileAction extends AbstractAction {
+public final class LoadFileAction extends IGBAction {
 	private static final long serialVersionUID = 1L;
 
 	private final JFrame gviewerFrame;
@@ -92,11 +93,7 @@ public final class LoadFileAction extends AbstractAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	public LoadFileAction(JFrame gviewerFrame, FileTracker ft) {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("openFile")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_O);
+		super();
 
 		this.gviewerFrame = gviewerFrame;
 		load_dir_tracker = ft;
@@ -481,5 +478,22 @@ public final class LoadFileAction extends AbstractAction {
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
 
 		return true;
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("openFile"));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Open16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_O;
 	}
 }

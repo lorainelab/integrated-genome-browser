@@ -42,7 +42,6 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
-import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -1140,7 +1139,6 @@ public final class GeneralLoadView extends IGBTabPanel
 					GeneralLoadView.getLoadView().createFeaturesTable();
 					gviewer.dataRemoved();
 				}
-				TierMaintenanceListenerHolder.getInstance().fireTierRemoved();
 			}
 		};
 

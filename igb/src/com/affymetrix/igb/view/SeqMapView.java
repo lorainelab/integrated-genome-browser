@@ -1819,6 +1819,10 @@ public class SeqMapView extends JPanel
 		floater.addChild(glyph);
 	}
 
+	public PixelFloaterGlyph getPixelFloater(){
+		return pixel_floater_glyph;
+	}
+	
 	/**
 	 *  Returns a forward and reverse tier for the given method, creating them if they don't
 	 *  already exist.

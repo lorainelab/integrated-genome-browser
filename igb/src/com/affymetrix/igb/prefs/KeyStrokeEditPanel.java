@@ -14,6 +14,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -28,6 +29,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   private static final boolean DEBUG = false;
   
   private final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
+  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
   private final JLabel key_label = new JLabel("Type a shortcut: " );
   private final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB" );
   private final JButton apply_button = new JButton("Ok");
@@ -36,7 +38,8 @@ public final class KeyStrokeEditPanel extends JPanel {
   private int key_code;
   private int modifiers;
 
-  private Preferences the_node = null;
+  private Preferences the_keystroke_node = null;
+  private Preferences the_toolbar_node = null;
   private String the_key = null;
   
   /** Creates a new instance of KeyStrokesView */
@@ -51,6 +54,8 @@ public final class KeyStrokeEditPanel extends JPanel {
     Box buttons = new Box(BoxLayout.X_AXIS);
 	buttons.add(Box.createHorizontalGlue());
 	buttons.add(key_field);
+    buttons.add(Box.createHorizontalGlue());
+	buttons.add(toolbar_field);
     buttons.add(Box.createHorizontalGlue());
     buttons.add(apply_button);
     buttons.add(Box.createHorizontalStrut(5));
@@ -84,7 +89,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 					+ "Do you want to proceed?"))
 				return;
 			
-			the_node.put(useCommand, "");
+			the_keystroke_node.put(useCommand, "");
 			key_field.setText(command);
 			applyAction();
 			return;
@@ -121,26 +126,29 @@ public final class KeyStrokeEditPanel extends JPanel {
  private String isCommandInUse(String command) {
 	
 	for (String key : PreferenceUtils.getKeystrokesNodeNames()) {
-		if (command.equalsIgnoreCase(the_node.get(key, "")))
+		if (command.equalsIgnoreCase(the_keystroke_node.get(key, "")))
 			return key;
 	}
 	
 	return null;
  }
  
-  void setPreferenceKey(Preferences node, String key, String def_value) {
-    this.the_node = node;
+  void setPreferenceKey(Preferences keystroke_node, Preferences toolbar_node, String key, String def_value) {
+	this.the_keystroke_node = keystroke_node;
+	this.the_toolbar_node = toolbar_node;
     this.the_key = key;
-    if (this.the_node == null || this.the_key == null) {
+    if (this.the_keystroke_node == null || this.the_key == null) {
       key_label.setText("Make a selection");
       key_field.setText("");
       setEnabled(false);
     } else {
       key_label.setText("Type a shortcut for \""+ this.the_key+ "\":" );
-      String value = this.the_node.get(key, def_value);
+      String value = this.the_keystroke_node.get(key, def_value);
       key_field.setText(value);
       setEnabled(true);
     }
+    boolean isToolbar = this.the_toolbar_node != null && this.the_toolbar_node.getBoolean(key, false);
+    toolbar_field.setSelected(isToolbar);
     key_field.getToolTipText();
   }
   
@@ -149,10 +157,11 @@ public final class KeyStrokeEditPanel extends JPanel {
     apply_button.setEnabled(b);
     clear_button.setEnabled(b);
     key_field.setEnabled(b);
+    toolbar_field.setEnabled(b);
   }
   
   private void applyAction() {
-    if (the_node == null || the_key == null) {
+    if (the_keystroke_node == null || the_key == null) {
       // shouldn't happen
       ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
       setEnabled(false);
@@ -161,7 +170,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     String str = key_field.getText().trim();
     KeyStroke ks = KeyStroke.getKeyStroke(str);
     if (str.length() == 0) {
-      this.the_node.put(this.the_key, "");
+      this.the_keystroke_node.put(this.the_key, "");
     }
     else if (ks == null) {
       ErrorHandler.errorPanel("Unknown Key", "Unknown key code: \""+ str +"\"");
@@ -182,21 +191,32 @@ public final class KeyStrokeEditPanel extends JPanel {
         "Must contain a modifier key (ctrl, alt, ...)");
       key_field.setText("");
     } else {
-      if (DEBUG) System.out.println("Changing pref: "+this.the_node
+      if (DEBUG) System.out.println("Changing keystroke pref: "+this.the_keystroke_node
         +": "+ this.the_key + "  -->  " + str);
-      this.the_node.put(this.the_key, str);      
+      this.the_keystroke_node.put(this.the_key, str);      
+    }
+    if (!this.the_toolbar_node.getBoolean(this.the_key, false) && toolbar_field.isSelected()) {
+        this.the_toolbar_node.putBoolean(this.the_key, true);      
+        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
+                +": "+ this.the_key + "  -->  true");
+    }
+    else if (this.the_toolbar_node.getBoolean(this.the_key, false) && !toolbar_field.isSelected()) {
+        this.the_toolbar_node.remove(this.the_key);      
+        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
+                +": "+ this.the_key + "  -->  false");
     }
   }
   
   private void clearAction() {
-    if (the_node == null || the_key == null) {
+    if (the_keystroke_node == null || the_key == null) {
       // shouldn't happen
       ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
       setEnabled(false);
       return;
     }
     key_field.setText("");
-    this.the_node.put(this.the_key, "");
+    toolbar_field.setSelected(false);
+    this.the_keystroke_node.put(this.the_key, "");
   }
   
   /** Returns true if the primary key code is control, or alt, etc. */

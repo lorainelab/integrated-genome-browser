@@ -65,6 +65,8 @@
 							<entry key="Refresh Data" value="ctrl R"/>
                         </map>
                     </node>
+                    <node name="toolbar">
+                    </node>
                 </node>
             </node>
         </node>

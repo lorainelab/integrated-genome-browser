@@ -1187,10 +1187,14 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
-
+				
 				if (autoApplyChanges() && apply) {
-					if (col == COL_BACKGROUND
-							|| col == COL_TRACK_NAME_SIZE) {
+					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE 
+						|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
+						if(col == COL_TRACK_NAME  || col == COL_COLLAPSED){
+							smv.getSeqMap().setTierStyles();
+							smv.getSeqMap().repackTheTiers(true, true, false);
+						}
 						smv.getSeqMap().updateWidget();
 					} else {
 						applyChanges();

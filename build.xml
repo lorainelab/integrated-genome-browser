@@ -124,6 +124,9 @@
 		</antcall>
 		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${bundle.dir}/commons-codec-1.4.jar" filtering="false" />
 		<antcall target="copy-bundle">
+    			<param name="jar_name" value="commons-net-2.0"/>
+		</antcall>
+		<antcall target="copy-bundle">
     			<param name="jar_name" value="freehep-2.1.1"/>
 		</antcall>
 		<antcall target="copy-bundle">
@@ -133,22 +136,22 @@
     			<param name="jar_name" value="jlfgr-1_0"/>
 		</antcall>
 		<antcall target="copy-bundle">
+    			<param name="jar_name" value="jython"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="log4j-1.2.11"/>
+		</antcall>
+		<antcall target="copy-bundle">
     			<param name="jar_name" value="picard"/>
 		</antcall>
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="sam"/>
 		</antcall>
 		<antcall target="copy-bundle">
-    		<param name="jar_name" value="tribble-0.1"/>
+    			<param name="jar_name" value="swing-layout"/>
 		</antcall>
 		<antcall target="copy-bundle">
-    		<param name="jar_name" value="commons-net-2.0"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    		<param name="jar_name" value="jython"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    		<param name="jar_name" value="swing-layout"/>
+    			<param name="jar_name" value="tribble-0.1"/>
 		</antcall>
 	</target>
 

@@ -1,12 +1,12 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -14,15 +14,16 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class PrintAction extends AbstractAction {
+public class PrintAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
+	private static final PrintAction ACTION = new PrintAction();
 
 	public PrintAction() {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("print")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_P);
+		super();
+	}
+
+	public static PrintAction getAction() {
+		return ACTION;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -31,5 +32,22 @@ public class PrintAction extends AbstractAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("print"));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Print16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_P;
 	}
 }

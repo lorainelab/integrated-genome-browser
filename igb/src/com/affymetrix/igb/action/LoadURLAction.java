@@ -3,14 +3,13 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.net.URI;
 import java.net.URL;
 import java.text.MessageFormat;
-import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -22,7 +21,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author jnicol
  */
-public final class LoadURLAction extends AbstractAction {
+public final class LoadURLAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final MergeOptionChooser chooser = new MergeOptionChooser("loadURL");
 	private final JFrame gviewerFrame;
@@ -30,10 +29,7 @@ public final class LoadURLAction extends AbstractAction {
 	private JDialog dialog = null;
 
 	public LoadURLAction(JFrame gviewerFrame) {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("openURL")),
-					MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
+		super();
 		this.gviewerFrame = gviewerFrame;
 	}
 
@@ -88,5 +84,17 @@ public final class LoadURLAction extends AbstractAction {
 		urlStr = urlStr.substring(urlStr.lastIndexOf('/')+1);
 
 		return urlStr;
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("openURL"));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Open16.gif";
 	}
 }

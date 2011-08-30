@@ -8,7 +8,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.igb.shared.IGBAction;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.text.MessageFormat;
-import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -33,17 +32,16 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * Open a window showing information about Integrated Genome Browser.
  * @author sgblanch
  */
-public class AboutIGBAction extends AbstractAction {
+public class AboutIGBAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
+	private static final AboutIGBAction ACTION = new AboutIGBAction();
 
 	public AboutIGBAction() {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					MessageFormat.format(
-						BUNDLE.getString("about"),
-						APP_NAME)),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_A);
+		super();
+	}
+
+	public static AboutIGBAction getAction() {
+		return ACTION;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -106,5 +104,24 @@ public class AboutIGBAction extends AbstractAction {
 						JOptionPane.DEFAULT_OPTION);
 		final JDialog dialog = pane.createDialog(IGB.getSingleton().getFrame(), MessageFormat.format(BUNDLE.getString("about"), APP_NAME));
 		dialog.setVisible(true);
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				MessageFormat.format(
+					BUNDLE.getString("about"),
+					APP_NAME));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/About16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_A;
 	}
 }

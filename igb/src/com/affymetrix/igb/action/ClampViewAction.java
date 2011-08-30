@@ -1,8 +1,11 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+
 import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -12,13 +15,12 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ClampViewAction extends AbstractAction {
+public class ClampViewAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ClampViewAction ACTION = new ClampViewAction();
 
 	private ClampViewAction() {
-		super(BUNDLE.getString("clampToView"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_V);
+		super();
 		this.putValue(SELECTED_KEY, false);
 	}
 
@@ -30,4 +32,13 @@ public class ClampViewAction extends AbstractAction {
 		IGB.getSingleton().getMapView().toggleClamp();
 	}
 
+	@Override
+	public String getText() {
+		return BUNDLE.getString("clampToView");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_V;
+	}
 }

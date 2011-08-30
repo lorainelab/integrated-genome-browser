@@ -4,10 +4,10 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -17,7 +17,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.MessageFormat;
 import java.util.Collections;
-import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -30,7 +29,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class AutoScrollAction extends AbstractAction implements SeqSelectionListener {
+public class AutoScrollAction extends IGBAction implements SeqSelectionListener {
 	private static final long serialVersionUID = 1l;
 	/*
 	 *  units to scroll are either in pixels or bases
@@ -46,11 +45,7 @@ public class AutoScrollAction extends AbstractAction implements SeqSelectionList
 	private static final AutoScrollAction action = new AutoScrollAction();
 
 	private AutoScrollAction() {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("autoScroll")),
-				MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_A);
+		super();
 
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);
@@ -223,5 +218,22 @@ public class AutoScrollAction extends AbstractAction implements SeqSelectionList
 			swing_timer = null;
 			map_auto_scroller = null;
 		}
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("autoScroll"));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/media/Movie16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_A;
 	}
 }

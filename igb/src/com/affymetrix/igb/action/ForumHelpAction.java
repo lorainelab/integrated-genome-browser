@@ -17,10 +17,6 @@ public class ForumHelpAction extends IGBAction {
 	private static final long serialVersionUID = 1L;
 	private static final ForumHelpAction ACTION = new ForumHelpAction();
 
-	public ForumHelpAction(){
-		super();
-	}
-
 	public static ForumHelpAction getAction() {
 		return ACTION;
 	}

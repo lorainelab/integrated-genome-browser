@@ -18,10 +18,6 @@ public class ReportBugAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ReportBugAction ACTION = new ReportBugAction();
 
-	public ReportBugAction() {
-		super();
-	}
-
 	public static ReportBugAction getAction() {
 		return ACTION;
 	}

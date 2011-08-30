@@ -18,10 +18,6 @@ public class DocumentationAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final DocumentationAction ACTION = new DocumentationAction();
 
-	public DocumentationAction() {
-		super();
-	}
-
 	public static DocumentationAction getAction() {
 		return ACTION;
 	}

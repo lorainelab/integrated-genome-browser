@@ -19,10 +19,6 @@ public class PrintFrameAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final PrintFrameAction ACTION = new PrintFrameAction();
 
-	public PrintFrameAction() {
-		super();
-	}
-
 	public static PrintFrameAction getAction() {
 		return ACTION;
 	}

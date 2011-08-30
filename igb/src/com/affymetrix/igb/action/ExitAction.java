@@ -19,10 +19,6 @@ public class ExitAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ExitAction ACTION = new ExitAction();
 
-	public ExitAction() {
-		super();
-	}
-
 	public static ExitAction getAction() {
 		return ACTION;
 	}

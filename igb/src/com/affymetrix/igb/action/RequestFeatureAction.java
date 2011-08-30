@@ -24,10 +24,6 @@ public class RequestFeatureAction extends IGBAction {
 private static final long serialVersionUID = 1l;
 private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 
-	public RequestFeatureAction() {
-		super();
-	}
-
 	public static RequestFeatureAction getAction() {
 		return ACTION;
 	}

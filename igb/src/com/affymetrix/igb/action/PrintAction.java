@@ -18,10 +18,6 @@ public class PrintAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final PrintAction ACTION = new PrintAction();
 
-	public PrintAction() {
-		super();
-	}
-
 	public static PrintAction getAction() {
 		return ACTION;
 	}

@@ -18,10 +18,6 @@ public class ShowConsoleAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ShowConsoleAction ACTION = new ShowConsoleAction();
 
-	public ShowConsoleAction() {
-		super();
-	}
-
 	public static ShowConsoleAction getAction() {
 		return ACTION;
 	}

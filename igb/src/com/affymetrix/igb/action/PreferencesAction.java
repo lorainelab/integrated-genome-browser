@@ -18,10 +18,6 @@ public class PreferencesAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final PreferencesAction ACTION = new PreferencesAction();
 
-	public PreferencesAction() {
-		super();
-	}
-
 	public static PreferencesAction getAction() {
 		return ACTION;
 	}

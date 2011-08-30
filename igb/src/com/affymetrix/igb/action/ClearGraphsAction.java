@@ -18,10 +18,6 @@ public class ClearGraphsAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ClearGraphsAction ACTION = new ClearGraphsAction();
 
-	public ClearGraphsAction() {
-		super();
-	}
-
 	public static ClearGraphsAction getAction() {
 		return ACTION;
 	}

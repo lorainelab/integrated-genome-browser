@@ -36,10 +36,6 @@ public class AboutIGBAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final AboutIGBAction ACTION = new AboutIGBAction();
 
-	public AboutIGBAction() {
-		super();
-	}
-
 	public static AboutIGBAction getAction() {
 		return ACTION;
 	}

@@ -18,10 +18,6 @@ public class ClearAllAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private static final ClearAllAction ACTION = new ClearAllAction();
 
-	public ClearAllAction() {
-		super();
-	}
-
 	public static ClearAllAction getAction() {
 		return ACTION;
 	}

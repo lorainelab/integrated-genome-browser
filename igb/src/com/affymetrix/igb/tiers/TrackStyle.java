@@ -807,7 +807,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		setHeight(g.getHeight());
 		setY(g.getY());
 		setExpandable(g.getExpandable());
-		setFeature(g.getFeature());
+		//setFeature(g.getFeature());
 
 		if (g instanceof ITrackStyleExtended) {
 			ITrackStyleExtended as = (ITrackStyleExtended) g;

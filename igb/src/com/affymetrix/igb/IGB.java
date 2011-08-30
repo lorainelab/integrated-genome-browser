@@ -90,6 +90,7 @@ public final class IGB extends Application
 	public static int TAB_PLUGIN_PREFS = -1;
 	private JFrame frm;
 	private JMenuBar mbar;
+	private JToolBar tool_bar;
 	private JRPMenu file_menu;
 	private JRPMenu export_to_file_menu;
 	private JRPMenu view_menu;
@@ -337,6 +338,20 @@ public final class IGB extends Application
 
   }
 
+	public IGBTabPanel[] setWindowService(IWindowService windowService) {
+		this.windowService = windowService;
+		windowService.setMainFrame(frm);
+		windowService.setSeqMapView(getMapView());
+		windowService.setStatusBar(status_bar);
+		if (tool_bar == null) {
+			tool_bar = new JToolBar();
+		}
+		windowService.setToolBar(tool_bar);
+		windowService.setViewMenu(view_menu);
+		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", new ExportSlicedViewAction()), export_to_file_menu.getText());
+		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
+	}
+
 	public void loadMenu() {
 		mbar = MenuUtil.getMainMenuBar();
 		frm.setJMenuBar(mbar);
@@ -373,16 +388,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", new ShowConsoleAction()));
 
-	}
-
-	public IGBTabPanel[] setWindowService(IWindowService windowService) {
-		this.windowService = windowService;
-		windowService.setMainFrame(frm);
-		windowService.setSeqMapView(getMapView());
-		windowService.setStatusBar(status_bar);
-		windowService.setViewMenu(view_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", new ExportSlicedViewAction()), export_to_file_menu.getText());
-		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
 	private void fileMenu() {
@@ -423,6 +428,13 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTip.getAction()));
+	}
+
+	public void addToolbarButton(JButton button) {
+		if (tool_bar == null) {
+			tool_bar = new JToolBar();
+		}
+		tool_bar.add(button);
 	}
 
 	/** Returns the icon stored in the jar file.

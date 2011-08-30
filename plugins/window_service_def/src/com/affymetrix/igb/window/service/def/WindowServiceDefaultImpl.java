@@ -23,6 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -109,6 +110,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void setStatusBar(JComponent status_bar) {
 		cpane.add(status_bar, BorderLayout.SOUTH);
+	}
+
+	@Override
+	public void setToolBar(JToolBar tool_bar) {
+		cpane.add(tool_bar, BorderLayout.PAGE_START);
 	}
 
 	@Override

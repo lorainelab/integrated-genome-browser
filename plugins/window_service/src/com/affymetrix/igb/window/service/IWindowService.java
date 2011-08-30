@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
@@ -48,6 +49,12 @@ public interface IWindowService {
 	 * @param status_bar the status bar
 	 */
 	public void setStatusBar(JComponent status_bar);
+	/**
+	 * pass in the tool bar of the application, this is where
+	 * action icons are displayed
+	 * @param tool_bar the tool bar
+	 */
+	public void setToolBar(JToolBar tool_bar);
 	/**
 	 * get all the tab panels that have been added
 	 * @return the set of tab panels added

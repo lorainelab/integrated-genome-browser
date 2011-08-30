@@ -1,0 +1,47 @@
+package com.affymetrix.igb.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.IGBAction;
+
+public class IGBActionHolder {
+	private static IGBActionHolder instance = new IGBActionHolder();
+	
+	private IGBActionHolder() {
+		super();
+	}
+	
+	public static IGBActionHolder getInstance() {
+		return instance;
+	}
+
+	private List<IGBAction> igbActions = new ArrayList<IGBAction>();
+
+	public void addIGBAction(IGBAction igbAction) {
+		igbActions.add(igbAction);
+		boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
+		if (isToolbar) {
+			ImageIcon icon = MenuUtil.getIcon(igbAction.getIconPath());
+			JButton button = new JButton(icon);
+			button.addActionListener(igbAction);
+			button.setToolTipText(igbAction.getText());
+			((IGB)Application.getSingleton()).addToolbarButton(button);
+		}
+	}
+
+	public void removeIGBAction(IGBAction igbAction) {
+		igbActions.remove(igbAction);
+	}
+
+	public List<IGBAction> getIGBActions() {
+		return igbActions;
+	}
+}

@@ -88,6 +88,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("keystrokes");
 	}
 
+	public static Preferences getToolbarNode() {
+		return PreferenceUtils.getTopNode().node("toolbar");
+	}
+
 	public static Preferences getLocationsNode() {
 		return PreferenceUtils.getTopNode().node("locations");
 	}

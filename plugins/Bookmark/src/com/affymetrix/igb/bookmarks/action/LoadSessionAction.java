@@ -1,8 +1,11 @@
-package com.affymetrix.igb.bookmarks;
+package com.affymetrix.igb.bookmarks.action;
 
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
 import java.awt.event.ActionEvent;
@@ -12,19 +15,14 @@ import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.prefs.InvalidPreferencesFormatException;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
-public class LoadSessionAction extends AbstractAction {
+public class LoadSessionAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
 
 	public LoadSessionAction(IGBService igbService) {
-		super(MessageFormat.format(
-				BookmarkManagerView.BUNDLE.getString("menuItemHasDialog"),
-				BookmarkManagerView.BUNDLE.getString("loadSession")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_L);
+		super();
 		this.igbService = igbService;
 	}
 
@@ -50,5 +48,22 @@ public class LoadSessionAction extends AbstractAction {
 				ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
 			}
 		}
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BookmarkManagerView.BUNDLE.getString("menuItemHasDialog"),
+				BookmarkManagerView.BUNDLE.getString("loadSession"));
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Import16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_L;
 	}
 }

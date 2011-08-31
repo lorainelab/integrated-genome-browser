@@ -13,19 +13,24 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.FileTracker;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.logging.Level;
@@ -43,6 +48,8 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
   private static final long serialVersionUID = 1L;
   private static final int TAB_POSITION = 9;
+  private static JFileChooser static_chooser = null;
+
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
   private JTree tree;
   private BottomThing thing;
@@ -56,7 +63,6 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   private final Action add_separator_action;
   private final Action add_folder_action;
   private final Action add_bookmark_action;
-  private final BookMarkAction bmark_action;
   private final Action forward_action;
   private final Action backward_action;
   private List<TreePath> bookmark_history;
@@ -68,9 +74,8 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   protected int last_selected_row = -1;  // used by dragUnderFeedback()
 
   /** Creates a new instance of Class */
-  public BookmarkManagerView(IGBService igbService, BookMarkAction bmark_action) {
+  public BookmarkManagerView(IGBService igbService) {
     super(igbService, BUNDLE.getString("bookmarksTab"), BUNDLE.getString("bookmarksTab"), false, TAB_POSITION);
-    this.bmark_action = bmark_action;
 
     tree = new DragDropTree();
     tree.setModel(tree_model);
@@ -537,12 +542,32 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     return a;
   }
 
+  /**
+   *  Tries to import bookmarks into Unibrow.
+   *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
+   */
+  private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
+    JFileChooser chooser = getJFileChooser();
+    chooser.setCurrentDirectory(getLoadDirectory());
+    int option = chooser.showOpenDialog(frame);
+    if (option == JFileChooser.APPROVE_OPTION) {
+      setLoadDirectory(chooser.getCurrentDirectory());
+      try {
+        File fil = chooser.getSelectedFile();
+        BookmarksParser.parse(bookmark_list, fil);
+      }
+      catch (Exception ex) {
+        ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
+      }
+    }
+  }
+
   Action makeImportAction() {
     Action a = new AbstractAction("Import ...") {
 	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         BookmarkList bl = (BookmarkList) tree_model.getRoot();
-        bmark_action.importBookmarks(bl, null);
+        importBookmarks(bl, null);
         tree_model.reload();
       }
     };
@@ -553,12 +578,40 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     return a;
   }
 
+  private void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
+    if (main_bookmark_list == null || main_bookmark_list.getChildCount()==0) {
+      ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception)null);
+      return;
+    }
+    JFileChooser chooser = getJFileChooser();
+    chooser.setCurrentDirectory(getLoadDirectory());
+    int option = chooser.showSaveDialog(frame);
+    if (option == JFileChooser.APPROVE_OPTION) {
+      try {
+    	setLoadDirectory(chooser.getCurrentDirectory());
+        File fil = chooser.getSelectedFile();
+        String full_path = fil.getCanonicalPath();
+
+        if ((! full_path.endsWith(".html"))
+         && (! full_path.endsWith(".htm"))
+         && (! full_path.endsWith(".xhtml"))) {
+          fil = new File(full_path + ".html");
+        }
+
+        BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+      }
+      catch (Exception ex) {
+        ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
+      }
+    }
+  }
+
   Action makeExportAction() {
     Action a = new AbstractAction("Export ...") {
   	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         BookmarkList bl = (BookmarkList) tree_model.getRoot();
-        bmark_action.exportBookmarks(bl, null); // already contains a null check on bookmark list
+        exportBookmarks(bl, null); // already contains a null check on bookmark list
       }
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
@@ -757,6 +810,28 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     a.putValue(Action.SMALL_ICON, icon);
     a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
     return a;
+  }
+	public File getLoadDirectory() {
+		return FileTracker.DATA_DIR_TRACKER.getFile();
+	}
+
+	public void setLoadDirectory(File file) {
+		FileTracker.DATA_DIR_TRACKER.setFile(file);
+	}
+
+
+
+  /** Gets a static re-usable file chooser that prefers "html" files. */
+  private JFileChooser getJFileChooser() {
+    if (static_chooser == null) {
+      static_chooser = new JFileChooser();
+      static_chooser.setCurrentDirectory(getLoadDirectory());
+      UniFileFilter filter = new UniFileFilter(
+        new String[] {"html", "htm", "xhtml"}, "HTML Files");
+      static_chooser.addChoosableFileFilter(filter);
+    }
+    static_chooser.rescanCurrentDirectory();
+    return static_chooser;
   }
 
   /** Returns true or false to indicate that if an item is inserted at

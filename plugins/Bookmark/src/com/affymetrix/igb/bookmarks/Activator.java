@@ -13,13 +13,16 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
+import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
+import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
-	private BookMarkAction bmark_action;
+	private BookmarkActionManager bmark_action;
 	private IGBService igbService;
 
 	@Override
@@ -55,7 +58,8 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 		JRPMenu bookmark_menu = MenuUtil.getRPMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
-		bmark_action = new BookMarkAction(igbService, bookmark_menu);
+		BookmarkActionManager.init(igbService, bookmark_menu);
+		bmark_action = BookmarkActionManager.getInstance();
 		igbService.addStopRoutine(
 			new IStopRoutine() {
 				@Override
@@ -64,7 +68,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 				}
 			}
 		);
-		BookmarkManagerView bmv = new BookmarkManagerView(igbService, bmark_action);
+		BookmarkManagerView bmv = new BookmarkManagerView(igbService);
 		bmark_action.setBmv(bmv);
 		return bmv;
 	}

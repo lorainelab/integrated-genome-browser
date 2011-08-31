@@ -243,13 +243,13 @@ class JTableX extends JTable implements MouseListener {
 		VirtualFeature vFeature = ftm.getFeature(row);
 
 		if (column == LoadModeDataTableModel.REFRESH_FEATURE_COLUMN) {
-			if (!vFeature.isPrimary) {
+			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
 			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && vFeature.getLoadStrategy() != LoadStrategy.GENOME);
 			return new LabelTableCellRenderer(LoadModeTable.refresh_icon, enabled);
 		} else if (column == LoadModeDataTableModel.LOAD_STRATEGY_COLUMN) {
-			if (!vFeature.isPrimary) {
+			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
 			return new LoadModeTable.ColumnRenderer();
@@ -260,7 +260,7 @@ class JTableX extends JTable implements MouseListener {
 				}
 			}
 		} else if (column == LoadModeDataTableModel.DELETE_FEATURE_COLUMN) {
-			if (!vFeature.isPrimary) {
+			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
 			return new LabelTableCellRenderer(LoadModeTable.delete_icon, true);

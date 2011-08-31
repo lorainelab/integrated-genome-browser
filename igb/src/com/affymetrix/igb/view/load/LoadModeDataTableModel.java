@@ -10,7 +10,9 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -31,7 +33,7 @@ import javax.swing.table.AbstractTableModel;
  * Model for table of features.
  */
 public final class LoadModeDataTableModel extends AbstractTableModel implements ChangeListener {
-
+	
 	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = {"", "", "", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
@@ -50,7 +52,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	private List<TrackStyle> currentStyles;
 	public List<VirtualFeature> virtualFeatures;
 	public List<GenericFeature> features;
-
+	
 	LoadModeDataTableModel(GeneralLoadView glv) {
 		this.glv = glv;
 		this.features = null;
@@ -66,14 +68,14 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			this.reverseLoadStrategyMap.put(strategy.toString(), strategy);
 		}
 	}
-
+	
 	void clearFeatures() {
 		if (this.virtualFeatures != null) {
 			this.virtualFeatures.clear();
 		}
 		this.fireTableDataChanged();
 	}
-
+	
 	void createVirtualFeatures(List<GenericFeature> features) {
 		this.features = features;
 		if (virtualFeatures != null) {
@@ -86,29 +88,33 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			this.fireTableDataChanged();
 		}
 	}
-
+	
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
-		currentStyles = this.getCurrentStyles();
-		VirtualFeature vFeature = new VirtualFeature(gFeature, currentStyles);
-		vFeature.isPrimary = true;
+		VirtualFeature vFeature = new VirtualFeature(gFeature, null);
 		virtualFeatures.add(vFeature);
-		if (gFeature.getMethods().size() > 1 && vFeature.getStyle() != null) {
-			createSecondaryVirtualFeatures(vFeature);
-		}
+		currentStyles = getCurrentStyles();
+		for (ITrackStyle style : currentStyles) {
+			if (style.getFeature() == gFeature) {
+				vFeature.setStyle(style);
+				if (gFeature.getMethods().size() > 1) {
+					createSecondaryVirtualFeatures(vFeature);
+				}
+				break;
+			}
+		}		
 	}
-
+	
 	void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
-		boolean isPrimary = vFeature.isPrimary;
+		boolean isPrimary = vFeature.isPrimary();
 		VirtualFeature subVfeature;
-		for (TrackStyle style : currentStyles) {
-			if (style.getFeature().equals(vFeature.getFeature())) {
+		for (ITrackStyle style : currentStyles) {
+			if (style.getFeature() == vFeature.getFeature()) {
 				subVfeature = new VirtualFeature(vFeature.getFeature(), style);
 				if (isPrimary) {
 					virtualFeatures.remove(vFeature);
-					subVfeature.isPrimary = true;
 					isPrimary = false;
 				} else {
-					subVfeature.isPrimary = false;
+					subVfeature.setPrimary(false);
 				}
 				virtualFeatures.add(subVfeature);
 			}
@@ -130,16 +136,16 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				visibleFeatures.add(gFeature);
 			}
 		}
-
+		
 		Collections.sort(visibleFeatures, visibleFeatureComp);
 
 		// Also sort these features so the features to be loaded are at the top.
 
 		return visibleFeatures;
 	}
-
+	
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
-
+		
 		public int compare(GenericFeature feature1, GenericFeature feature2) {
 			if (feature1.getLoadStrategy() != feature2.getLoadStrategy()) {
 				return (feature1.getLoadStrategy().compareTo(feature2.getLoadStrategy()));
@@ -151,24 +157,24 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 					feature2.gVersion.gServer.serverType);
 		}
 	}
-
+	
 	VirtualFeature getFeature(int row) {
 		return (getRowCount() <= row) ? null : virtualFeatures.get(row);
 	}
-
+	
 	private int getRow(VirtualFeature feature) {
 		return (virtualFeatures == null) ? -1 : virtualFeatures.indexOf(feature);
-
+		
 	}
-
+	
 	public int getColumnCount() {
 		return columnNames.length;
 	}
-
+	
 	public int getRowCount() {
 		return (virtualFeatures == null) ? 0 : virtualFeatures.size();
 	}
-
+	
 	public void genericFeatureRefreshed(GenericFeature feature) {
 		int row = -1;
 		for (VirtualFeature vFeature : virtualFeatures) {
@@ -180,12 +186,12 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			fireTableCellUpdated(row, INFO_FEATURE_COLUMN);
 		}
 	}
-
+	
 	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-
+	
 	public Object getValueAt(int row, int col) {
 		if (virtualFeatures == null || virtualFeatures.isEmpty()) {
 			// Indicate to user that there's no data.
@@ -194,7 +200,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			}
 			return "";
 		}
-
+		
 		VirtualFeature vFeature;
 		ITrackStyle style;
 		if (getFeature(row) == null) {
@@ -203,7 +209,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			vFeature = getFeature(row);
 			style = vFeature.getStyle();
 		}
-
+		
 		switch (col) {
 			case INFO_FEATURE_COLUMN:
 				return "";
@@ -211,7 +217,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				return "";
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
-				if (!vFeature.isPrimary) {
+				if (!vFeature.isPrimary()) {
 					return "";
 				}
 				return vFeature.getLoadStrategy().toString();
@@ -219,7 +225,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				// the friendly feature name removes slashes.  Clip it here.
 				if (vFeature.getServer() == ServerType.QuickLoad) {
 					return vFeature.getFeature().featureName;
-				} else if (!vFeature.isPrimary) {
+				} else if (!vFeature.isPrimary()) {
 					return "";
 				}
 				return vFeature.getFeature().featureName;
@@ -249,7 +255,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				return null;
 		}
 	}
-
+	
 	@Override
 	public Class<?> getColumnClass(int c) {
 		if ((getValueAt(0, c)) == null) {
@@ -257,10 +263,11 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		}
 		return getValueAt(0, c).getClass();
 	}
-
+	
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		VirtualFeature vFeature = virtualFeatures.get(row);
+		
 		if ((vFeature.getStyle() == null)
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
@@ -269,12 +276,17 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		} else if (col == FEATURE_NAME_COLUMN) {
 			return false;
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
-				&& !vFeature.isPrimary) {
+				&& !vFeature.isPrimary()) {
 			return false;
-		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
-				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
-				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
-			return true;
+		} else if (smv.getPixelFloater().getChildren() != null
+				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
+			List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
+			for (GlyphI i : floatingGraphs) {
+				GraphGlyph j = (GraphGlyph) i;
+				if (j.getGraphState().getTierStyle() == vFeature.getStyle()) {
+					return false;
+				}
+			}
 		} else if (col == INFO_FEATURE_COLUMN) {
 			switch (vFeature.getFeature().getLastRefreshStatus()) {
 				case NO_DATA_LOADED:
@@ -282,21 +294,25 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				default:
 					return false;
 			}
+		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
+				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
+				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
+			return true;
 		} else if (getFeature(row) == null) {
 			return false;
 		}
 		// This cell is only editable if the feature isn't already fully loaded.
 		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME);
 	}
-
+	
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 		VirtualFeature vFeature = getFeature(row);
-
+		
 		if (value == null || vFeature == null) {
 			return;
 		}
-
+		
 		switch (col) {
 			case INFO_FEATURE_COLUMN:
 				ErrorHandler.errorPanel(vFeature.getFeature().featureName, vFeature.getLastRefreshStatus().toString());
@@ -357,7 +373,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			default:
 				System.out.println("Unknown column selected: " + col);
 		}
-
+		
 		fireTableCellUpdated(row, col);
 		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
 				&& col != INFO_FEATURE_COLUMN
@@ -367,7 +383,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		}
 		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
-
+	
 	private void setVisibleTracks(ITrackStyle style) {
 		String trackName = style.getTrackName();
 		if (style.getShow()) {
@@ -390,27 +406,25 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			}
 		}
 	}
-
+	
 	private void refreshSeqMapView() {
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
 	}
-
+	
 	private List<TrackStyle> getCurrentStyles() {
 		ArrayList<TrackStyle> currentStyleList = new ArrayList<TrackStyle>();
 		if (smv != null) {
-			List<TierGlyph> temp;
-			temp = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
-			Iterator<TierGlyph> titer = temp.iterator();
+			List<TierGlyph> tiers = smv.getSeqMap().getTiers();
+			Iterator<TierGlyph> titer = tiers.iterator();
 			int i = 0;
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
 				if ((style instanceof TrackStyle)
-						&& (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
-						) {
+						&& (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE))) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}
@@ -423,7 +437,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				customizables.add(the_style);
 			}
 		}
-
+		
 		return customizables;
 	}
 
@@ -435,7 +449,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	 */
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
-
+		
 		if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
@@ -445,7 +459,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 
 		this.glv.changeVisibleDataButtonIfNecessary(features);
 	}
-
+	
 	public void stateChanged(ChangeEvent evt) {//????
 		Object src = evt.getSource();
 		if (src instanceof GenericFeature) {

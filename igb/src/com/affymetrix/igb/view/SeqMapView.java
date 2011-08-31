@@ -1763,7 +1763,7 @@ public class SeqMapView extends JPanel
 				popup.add(new JMenuItem(new RefreshAFeature(feature)));
 			}
 		}
-		if(autoload != null){
+		if (autoload != null) {
 			popup.add(new JSeparator());
 			popup.add(new JMenuItem(autoload));
 		}
@@ -1817,6 +1817,10 @@ public class SeqMapView extends JPanel
 		Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
 		floater.addChild(glyph);
+	}
+
+	public PixelFloaterGlyph getPixelFloater() {
+		return pixel_floater_glyph;
 	}
 
 	/**

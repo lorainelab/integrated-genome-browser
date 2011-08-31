@@ -181,6 +181,7 @@ public final class LoadFileAction extends IGBAction {
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if(!LocalUrlCacher.isValidURI(uri)){
+			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
 

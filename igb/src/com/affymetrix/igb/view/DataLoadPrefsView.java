@@ -71,7 +71,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		super(ServerList.getServerInstance());
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
-	
+
 		layout.setHorizontalGroup(layout.createParallelGroup()
 				.addComponent(sourcePanel)
 				.addComponent(synonymsPanel)
@@ -110,7 +110,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		editAuthButton.setEnabled(false);
 	    ImageIcon up_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Up16.gif");
 		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
-		rankUpButton.setToolTipText("Move sequence server up");
+		rankUpButton.setToolTipText("Increase sequence server priority");
 		rankUpButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -130,7 +130,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		rankUpButton.setEnabled(false);
 	    ImageIcon down_icon = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Down16.gif");
 		rankDownButton = new JRPButton("DataLoadPrefsView_rankDownButton", down_icon);
-		rankDownButton.setToolTipText("Move sequence server down");
+		rankDownButton.setToolTipText("Decrease sequence server priority");
 		rankDownButton.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -220,7 +220,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		openFile.addActionListener(listener);
 		synonymFile.addActionListener(listener);
 
-		
+
 
 		synonymsPanel.setLayout(layout);
 		synonymsPanel.setBorder(new TitledBorder("Personal Synonyms"));
@@ -313,7 +313,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 		return true;
 	}
-	
+
 	@Override
 	protected String getViewName() {
 		return "Data Sources";

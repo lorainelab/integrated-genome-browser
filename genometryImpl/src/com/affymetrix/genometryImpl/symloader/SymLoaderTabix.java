@@ -15,8 +15,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -150,9 +148,13 @@ public class SymLoaderTabix extends SymLoader {
 
         BlockCompressedInputStream is = null;
         try {
-            if (path.startsWith("http:") || path.startsWith("https:") || path.startsWith("ftp:")) {
+            if (path.startsWith("ftp:")) {
+            	return false; // ftp not supported by BlockCompressedInputStream
+            }
+            else if (path.startsWith("http:") || path.startsWith("https:")) {
                 is = new BlockCompressedInputStream(new URL(path + ".tbi"));
-            } else {
+            }
+            else {
                 is = new BlockCompressedInputStream(new File(path + ".tbi"));
             }
 

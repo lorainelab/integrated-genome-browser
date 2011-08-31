@@ -184,6 +184,7 @@ public final class LoadFileAction extends AbstractAction {
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if(!LocalUrlCacher.isValidURI(uri)){
+			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
 
@@ -385,14 +386,14 @@ public final class LoadFileAction extends AbstractAction {
 			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 			return;
 		}
-		
+
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String message = "Retrieving chromosomes for " + fileName;
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
-				
+
 				try {
 					Application.getSingleton().addNotLockedUpMsg(message);
 					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
@@ -406,9 +407,9 @@ public final class LoadFileAction extends AbstractAction {
 					}
 					return false;
 				}
-				
+
 			}
-			
+
 			@Override
 			protected void done() {
 				boolean result = true;
@@ -432,7 +433,7 @@ public final class LoadFileAction extends AbstractAction {
 				Application.getSingleton().removeNotLockedUpMsg(message);
 			}
 
-			
+
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}

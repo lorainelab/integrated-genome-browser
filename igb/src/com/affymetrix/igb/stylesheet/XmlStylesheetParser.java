@@ -79,12 +79,20 @@ public final class XmlStylesheetParser {
 		user_stylesheet = null;
 	}
 
- public static synchronized File getUserStylesheetFile(){
+	public static synchronized File getUserStylesheetFile(){
 		String app_dir = PreferenceUtils.getAppDataDirectory();
 		File f = new File(app_dir, user_stylesheet_resource_name);
 		return f;
 	}
 
+	public static synchronized void removeUserStylesheetFile(){
+		String app_dir = PreferenceUtils.getAppDataDirectory();
+		File f = new File(app_dir, user_stylesheet_resource_name);
+		if(f.exists()){
+			f.delete();
+		}
+	}
+	
 	public static synchronized Stylesheet getUserStylesheet() {
 		if (user_stylesheet == null) {
 			InputStream istr = null;

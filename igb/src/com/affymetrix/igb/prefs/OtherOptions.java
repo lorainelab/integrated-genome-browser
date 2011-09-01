@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
@@ -349,6 +350,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 
 				try {
 					PreferenceUtils.clearPreferences();
+					XmlStylesheetParser.removeUserStylesheetFile();
 					System.exit(0);
 				} catch (Exception e) {
 					ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);

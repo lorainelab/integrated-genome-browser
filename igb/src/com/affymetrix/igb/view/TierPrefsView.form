@@ -147,10 +147,10 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="bgLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="trackNameSizeLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="displayNameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="maxDepthLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="trackNameSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="displayNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="maxDepthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">

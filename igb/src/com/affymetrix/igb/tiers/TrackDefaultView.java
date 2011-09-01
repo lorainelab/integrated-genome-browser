@@ -80,6 +80,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}
 
 	private void initializeFileTypes() {
+		list.clear();
 		temp = FileTypeHolder.getInstance().getNameToExtensionMap().values().toArray();
 		for (int i = 0; i < temp.length; i++) {
 			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
@@ -574,6 +575,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 }//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
 	private void addTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrackDefaultButtonActionPerformed
+		initializeFileTypes();
 		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
 				JOptionPane.PLAIN_MESSAGE, null, trackDefaults, trackDefaults[0]);
 

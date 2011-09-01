@@ -161,14 +161,14 @@ public final class BAM extends XAM {
 	 * @param seq
 	 * @return
 	 */
-	public List<SeqSymmetry> parseAll(BioSeq seq) {		
+	public List<SeqSymmetry> parseAll(BioSeq seq, String method) {		
 		reader = new SAMFileReader(new File(uri));
 		reader.setValidationStringency(ValidationStringency.SILENT);
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
 				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
-				symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, method));
 			}
 		}
 		return symList;
@@ -332,7 +332,7 @@ public final class BAM extends XAM {
 		bamfile.deleteOnExit();
 		BAM bam = new BAM(bamfile.toURI(),featureName, group);
 		//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-		if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq());
+		if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
 		return bam.getRegion(overlap_span);
 	}
 

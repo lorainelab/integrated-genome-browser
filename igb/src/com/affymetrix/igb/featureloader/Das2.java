@@ -242,7 +242,7 @@ public class Das2 {
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
 					
 			List<? extends SeqSymmetry> feats = null;
-			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
+			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype.toLowerCase());
 			if (fileTypeHandler == null) {
 				Logger.getLogger(SymLoader.class.getName()).log(
 					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
@@ -266,7 +266,7 @@ public class Das2 {
 					BAM bam = new BAM(bamfile.toURI(),typeName, aseq.getSeqGroup());
 					//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
 					if (typeURI.getScheme().equals("http")) {
-						feats = bam.parseAll(span.getBioSeq());
+						feats = bam.parseAll(span.getBioSeq(), typeURI.toString());
 					}
 					else {
 						feats = bam.getRegion(span);

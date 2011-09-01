@@ -346,7 +346,7 @@ public final class IGB extends Application
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}
-		windowService.setToolBar(tool_bar);
+//		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(view_menu);
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", new ExportSlicedViewAction()), export_to_file_menu.getText());
 		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};

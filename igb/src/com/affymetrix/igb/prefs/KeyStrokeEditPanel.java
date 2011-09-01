@@ -14,7 +14,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+//import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -29,7 +29,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   private static final boolean DEBUG = false;
   
   private final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
-  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
+//  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
   private final JLabel key_label = new JLabel("Type a shortcut: " );
   private final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB" );
   private final JButton apply_button = new JButton("Ok");
@@ -39,7 +39,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   private int modifiers;
 
   private Preferences the_keystroke_node = null;
-  private Preferences the_toolbar_node = null;
+//  private Preferences the_toolbar_node = null;
   private String the_key = null;
   
   /** Creates a new instance of KeyStrokesView */
@@ -55,8 +55,8 @@ public final class KeyStrokeEditPanel extends JPanel {
 	buttons.add(Box.createHorizontalGlue());
 	buttons.add(key_field);
     buttons.add(Box.createHorizontalGlue());
-	buttons.add(toolbar_field);
-    buttons.add(Box.createHorizontalGlue());
+//	buttons.add(toolbar_field);
+//  buttons.add(Box.createHorizontalGlue());
     buttons.add(apply_button);
     buttons.add(Box.createHorizontalStrut(5));
     buttons.add(clear_button);
@@ -133,9 +133,10 @@ public final class KeyStrokeEditPanel extends JPanel {
 	return null;
  }
  
-  void setPreferenceKey(Preferences keystroke_node, Preferences toolbar_node, String key, String def_value) {
+//  void setPreferenceKey(Preferences keystroke_node, Preferences toolbar_node, String key, String def_value) {
+  void setPreferenceKey(Preferences keystroke_node, String key, String def_value) {
 	this.the_keystroke_node = keystroke_node;
-	this.the_toolbar_node = toolbar_node;
+//	this.the_toolbar_node = toolbar_node;
     this.the_key = key;
     if (this.the_keystroke_node == null || this.the_key == null) {
       key_label.setText("Make a selection");
@@ -147,8 +148,8 @@ public final class KeyStrokeEditPanel extends JPanel {
       key_field.setText(value);
       setEnabled(true);
     }
-    boolean isToolbar = this.the_toolbar_node != null && this.the_toolbar_node.getBoolean(key, false);
-    toolbar_field.setSelected(isToolbar);
+//    boolean isToolbar = this.the_toolbar_node != null && this.the_toolbar_node.getBoolean(key, false);
+//    toolbar_field.setSelected(isToolbar);
     key_field.getToolTipText();
   }
   
@@ -157,7 +158,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     apply_button.setEnabled(b);
     clear_button.setEnabled(b);
     key_field.setEnabled(b);
-    toolbar_field.setEnabled(b);
+//    toolbar_field.setEnabled(b);
   }
   
   private void applyAction() {
@@ -195,16 +196,16 @@ public final class KeyStrokeEditPanel extends JPanel {
         +": "+ this.the_key + "  -->  " + str);
       this.the_keystroke_node.put(this.the_key, str);      
     }
-    if (!this.the_toolbar_node.getBoolean(this.the_key, false) && toolbar_field.isSelected()) {
-        this.the_toolbar_node.putBoolean(this.the_key, true);      
-        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
-                +": "+ this.the_key + "  -->  true");
-    }
-    else if (this.the_toolbar_node.getBoolean(this.the_key, false) && !toolbar_field.isSelected()) {
-        this.the_toolbar_node.remove(this.the_key);      
-        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
-                +": "+ this.the_key + "  -->  false");
-    }
+//    if (!this.the_toolbar_node.getBoolean(this.the_key, false) && toolbar_field.isSelected()) {
+//        this.the_toolbar_node.putBoolean(this.the_key, true);      
+//        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
+//                +": "+ this.the_key + "  -->  true");
+//    }
+//    else if (this.the_toolbar_node.getBoolean(this.the_key, false) && !toolbar_field.isSelected()) {
+//        this.the_toolbar_node.remove(this.the_key);      
+//        if (DEBUG) System.out.println("Changing toolbar pref: "+this.the_toolbar_node
+//                +": "+ this.the_key + "  -->  false");
+//    }
   }
   
   private void clearAction() {
@@ -215,7 +216,7 @@ public final class KeyStrokeEditPanel extends JPanel {
       return;
     }
     key_field.setText("");
-    toolbar_field.setSelected(false);
+//    toolbar_field.setSelected(false);
     this.the_keystroke_node.put(this.the_key, "");
   }
   

@@ -31,7 +31,8 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   private static final long serialVersionUID = 1L;
 
   private final JTable table = new JTable();
-  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
+//  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
+  private final static String[] col_headings = {"Action", "Key Stroke"};
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
   private final TableRowSorter<DefaultTableModel> sorter;
@@ -79,20 +80,22 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
     validate();
   }
 
-  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
+//  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
+  private static Object[][] buildRows(Preferences keystroke_node) {
     Collection<String> keys = PreferenceUtils.getKeystrokesNodeNames();
 	Object[][] rows;
 
 	synchronized (keys) {
 		int num_rows = keys.size();
-		int num_cols = 3;
+//		int num_cols = 3;
+		int num_cols = 2;
 		rows = new Object[num_rows][num_cols];
 		Iterator<String> iter = keys.iterator();
 		for (int i=0; iter.hasNext(); i++) {
 			String key = iter.next();
 			rows[i][0] = key;
 			rows[i][1] = keystroke_node.get(key, "");
-			rows[i][2] = toolbar_node.getBoolean(key, false) ? "x" : "";
+//			rows[i][2] = toolbar_node.getBoolean(key, false) ? "x" : "";
 		}
 	}
     return rows;
@@ -101,7 +104,8 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   /** Re-populates the table with the shortcut data. */
   private void showShortcuts() {
     Object[][] rows = null;
-    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
+//    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
+    rows = buildRows(PreferenceUtils.getKeystrokesNode());
     model.setDataVector(rows, col_headings);
   }
 
@@ -118,13 +122,15 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
         String id = (String) table.getModel().getValueAt(srow, 0);
         editKeystroke(id);
       } else {
-        edit_panel.setPreferenceKey(null, null, null, null);
+//        edit_panel.setPreferenceKey(null, null, null, null);
+        edit_panel.setPreferenceKey(null, null, null);
       }
     }
   }
   
   private void editKeystroke(String id) {
-    edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
+//    edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
+    edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), id, "");
   }
 
   public void preferenceChange(PreferenceChangeEvent evt) {

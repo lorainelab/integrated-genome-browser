@@ -38,8 +38,8 @@ import java.awt.Color;
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
 public final class LoadModeTable {
-
-	public static JTableX jTable;
+	
+	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
 	static final Icon delete_icon = IGBUtils.getIcon("delete.gif");
@@ -184,6 +184,22 @@ public final class LoadModeTable {
 			LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
 			ftm.createVirtualFeatures(ftm.features);
 		}
+	}
+
+	public static JTableX getTable()
+	{
+		if (jTable != null) {
+			return jTable;
+		}
+		return null;
+	}
+
+	public static LoadModeDataTableModel getModel()
+	{
+		if (jTable != null) {
+			return (LoadModeDataTableModel) jTable.getModel();
+		}
+		return null;
 	}
 }
 

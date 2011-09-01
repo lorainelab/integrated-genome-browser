@@ -24,6 +24,8 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.view.load.LoadModeDataTableModel;
+import com.affymetrix.igb.view.load.LoadModeTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
@@ -369,9 +371,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(9, 9, 9)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(displayNameLabel)
                             .add(bgLabel)
                             .add(trackNameSizeLabel)
+                            .add(displayNameLabel)
                             .add(maxDepthLabel))
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(propertiesPanelLayout.createSequentialGroup()
@@ -820,7 +822,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				table.setRowSelectionInterval(0, 0);
 			}
 		}
-	//	LoadModeTable.updateVirtualFeatureList();
 	}
 
 	private void applyChanges() {
@@ -1189,12 +1190,18 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 
 				if (autoApplyChanges() && apply) {
-					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE 
-						|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
-						if(col == COL_TRACK_NAME  || col == COL_COLLAPSED){
+					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
+							|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
+						if (col == COL_TRACK_NAME || col == COL_COLLAPSED) {
 							smv.getSeqMap().setTierStyles();
 							smv.getSeqMap().repackTheTiers(true, true, false);
 						}
+						if (col == COL_TRACK_NAME || col == COL_BACKGROUND) {
+							if (LoadModeTable.getModel() != null) {
+								LoadModeTable.getModel().fireTableDataChanged();
+							}
+						}
+
 						smv.getSeqMap().updateWidget();
 					} else {
 						applyChanges();

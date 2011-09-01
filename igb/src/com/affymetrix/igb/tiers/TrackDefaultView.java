@@ -60,7 +60,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int[] selectedRows;
-	private Object[] temp;
+	private Object[] fileTypes;
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
 	ArrayList<String> list = new ArrayList<String>();
@@ -80,9 +80,10 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}
 
 	private void initializeFileTypes() {
-		temp = FileTypeHolder.getInstance().getNameToExtensionMap().values().toArray();
-		for (int i = 0; i < temp.length; i++) {
-			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
+		list.clear();
+		fileTypes = FileTypeHolder.getInstance().getNameToExtensionMap().values().toArray();
+		for (int i = 0; i < fileTypes.length; i++) {
+			StringTokenizer tokens = new StringTokenizer(fileTypes[i].toString(), ",");
 			while (tokens.hasMoreElements()) {
 				allowedTrackDefaults = tokens.nextToken();
 				allowedTrackDefaults = allowedTrackDefaults.replace("[", "");
@@ -574,6 +575,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 }//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
 	private void addTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrackDefaultButtonActionPerformed
+		initializeFileTypes();
 		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
 				JOptionPane.PLAIN_MESSAGE, null, trackDefaults, trackDefaults[0]);
 

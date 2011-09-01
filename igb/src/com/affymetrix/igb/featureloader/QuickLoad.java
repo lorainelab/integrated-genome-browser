@@ -37,7 +37,6 @@ import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-import com.affymetrix.igb.view.load.LoadModeTable;
 
 /**
  *
@@ -158,7 +157,7 @@ public final class QuickLoad extends SymLoader {
 
 		if (QuickLoad.this.extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
-			QuickLoad.this.getGenome();
+			addMethodsToFeature(feature, QuickLoad.this.getGenome());
 			return true;
 		}
 
@@ -276,6 +275,7 @@ public final class QuickLoad extends SymLoader {
 		//within the parser handle them here.
 		if (extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
+			addMethodsToFeature(feature, results);
 			return;
 		}
 
@@ -292,6 +292,17 @@ public final class QuickLoad extends SymLoader {
 
 	}
 
+	//Only used for "chp"
+	private static void addMethodsToFeature(GenericFeature feature, List<? extends SeqSymmetry> results) {
+		String method;
+		for (SeqSymmetry sym : results) {
+			method = BioSeq.determineMethod(sym);
+			if (method != null) {
+				feature.addMethod(method);
+			}
+		}
+	}
+	
 	private void setStyle(GenericFeature feature) {
 		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);

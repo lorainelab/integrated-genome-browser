@@ -341,16 +341,10 @@ public class TrackView {
 		}
 
 		deleteDependentData(map, method, seq);
-		deleteSymsOnSeq(map, method, seq);
-		if(feature != null){
-			feature.clear(seq);
-			if(feature.getLoadStrategy() == LoadStrategy.GENOME){
-				feature.setLoadStrategy(LoadStrategy.NO_LOAD);
-			}
-		}
+		deleteSymsOnSeq(map, method, seq, feature);
 	}
 	
-	public static void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq){
+	public static void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq, GenericFeature feature){
 		
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(method);
@@ -362,6 +356,13 @@ public class TrackView {
 					}
 				}
 				seq.unloadAnnotation(sym);
+				
+				if(feature != null){
+					feature.clear(seq);
+					if(feature.getLoadStrategy() == LoadStrategy.GENOME){
+						feature.setLoadStrategy(LoadStrategy.NO_LOAD);
+					}
+				}
 			}
 		}
 	}

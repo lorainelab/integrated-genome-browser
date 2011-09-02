@@ -315,6 +315,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 
 		range_box.setEditable(true);
 		range_box.addActionListener(action_listener);
+		range_box.addFocusListener(focus_listener);
 		map.addViewBoxListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 	}
@@ -353,18 +354,22 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 
 		@Override
 		public void focusGained(FocusEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
+			range_box.setSelectionStart(0);
+			range_box.setSelectionEnd(range_box.getText().length());
+	    }
 
 		@Override
 		public void focusLost(FocusEvent e) {}
 	};
 
 	/**
-	 * Set range of view.
+	 * Set range of view. This will go through all the ISearchMode
+	 * instances registered, including plugins. The standard forms
+	 * of region entry are hard coded. This method tries all the
+	 * ISearchModes until the first one that gives a positive result.
 	 * @param gview - the SeqMapView.
-	 * @param range - a string like "chr1: 40000 - 60000", or "40000:60000", or "40,000:60000", etc.
+	 * @param range - any search string like "chr1: 40000 - 60000",
+	 * or "ADAR" (a gene name)
 	 */
 	public static void setRange(SeqMapView gview, String search_text) {
 		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);

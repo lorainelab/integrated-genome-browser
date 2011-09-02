@@ -18,15 +18,28 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResultsTableModel;
+import com.affymetrix.igb.util.SearchModeHolder;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,20 +61,245 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
-	// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
-	// (The chromosome name cannot contain any spaces.)
-	private static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
-	// accepts a pattern like: "chr2 :10000"
-	// (The chromosome name cannot contain any spaces.)
-	private static final Pattern chrom_position_pattern = Pattern.compile("^\\s*(\\S+)\\s*\\:\\s*([0-9,]+)\\s*$");
-	// accepts a pattern like: "chr2 : 3,040,000 + 20000"
-	// (The chromosome name cannot contain any spaces.)
-	private static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
-	// accepts a pattern like: "10000-20000"
-	private static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\-\\s*([0-9,]+)\\s*$");
-	private static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
-	private static final Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
+	private static final List<ISearchMode> BASE_SEARCH_MODES = new ArrayList<ISearchMode>();
+	static {
+		BASE_SEARCH_MODES.add(new ChromStartEndSearch());
+		BASE_SEARCH_MODES.add(new ChromStartWidthSearch());
+		BASE_SEARCH_MODES.add(new ChromPositionSearch());
+		BASE_SEARCH_MODES.add(new StartEndSearch());
+		BASE_SEARCH_MODES.add(new StartWidthSearch());
+		BASE_SEARCH_MODES.add(new CenterSearch());
+	}
 
+	private static abstract class EmptySearch implements ISearchMode {
+		protected abstract Matcher getMatcher(String search_text);
+		@Override public boolean checkInput(String search_text, BioSeq vseq, String seq) {
+			Matcher matcher = getMatcher(search_text);
+			return matcher.matches();
+		}
+		@Override public String getName() { return null; }
+		@Override public String getTooltip() { return null; }
+		@Override public boolean useRemote() { return false; }
+		@Override public boolean useDisplaySelected() { return false; }
+		@Override public boolean useGenomeInSeqList() { return true; }
+		@Override public SearchResultsTableModel getEmptyTableModel() { return null; }
+		@Override public SearchResultsTableModel run(String search_text,
+				BioSeq chrFilter, String seq, boolean remote,
+				IStatus statusHolder, List<GlyphI> glyphs) { return null; }
+		@Override public void finished(BioSeq vseq) { }
+		@Override public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) { }
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
+		@Override public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
+	}
+	private static class ChromStartEndSearch extends EmptySearch {
+		// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+			Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(search_text);
+			return chrom_start_end_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			Matcher chrom_start_end_matcher = getMatcher(search_text);
+			chrom_start_end_matcher.matches();
+			String chrom_text = chrom_start_end_matcher.group(1);
+			String start_text = chrom_start_end_matcher.group(2);
+			String end_or_width_text = chrom_start_end_matcher.group(3);
+			int start = 0;
+			int end = 0;
+			try {
+				start = (int)nformat.parse(start_text).doubleValue();
+				end  = (int)nformat.parse(end_or_width_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			BioSeq seq = group.getSeq(chrom_text);
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+	}
+	private static class ChromStartWidthSearch extends EmptySearch {
+		// accepts a pattern like: "chr2 : 3,040,000 + 20000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
+			Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(search_text);
+			return chrom_start_width_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			Matcher chrom_start_width_matcher = getMatcher(search_text);
+			chrom_start_width_matcher.matches();
+			String chrom_text = chrom_start_width_matcher.group(1);
+			String start_text = chrom_start_width_matcher.group(2);
+			String width_text = chrom_start_width_matcher.group(3);
+			int start = 0;
+			int end = 0;
+			try {
+				start = (int)nformat.parse(start_text).doubleValue();
+				end = start + (int)nformat.parse(width_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			BioSeq seq = group.getSeq(chrom_text);
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+	}
+	private static class ChromPositionSearch extends EmptySearch {
+		// accepts a pattern like: "chr2 :10000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern chrom_position_pattern = Pattern.compile("^\\s*(\\S+)\\s*\\:\\s*([0-9,]+)\\s*$");
+			Matcher chrom_position_matcher = chrom_position_pattern.matcher(search_text);
+			return chrom_position_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			if (visibleSpan == null) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			Matcher chrom_position_matcher = getMatcher(search_text);
+			chrom_position_matcher.matches();
+			String chrom_text = chrom_position_matcher.group(1);
+			String position_text = chrom_position_matcher.group(2);
+			int position = 0;
+			try {
+				position = (int)nformat.parse(position_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			int width = (visibleSpan.getEnd() - visibleSpan.getStart());
+			int start = Math.max(0, position - width / 2);
+			int end = start + width;
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			BioSeq seq = group.getSeq(chrom_text);
+			if (end >= seq.getLength()) {
+				end = seq.getLength() - 1;
+				start = end - width;
+			}
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+		@Override public int getZoomSpot(String search_text) {
+			Matcher chrom_position_matcher = getMatcher(search_text);
+			chrom_position_matcher.matches();
+			String position_text = chrom_position_matcher.group(2);
+			int position = 0;
+			try {
+				position = (int)nformat.parse(position_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.getZoomSpot(search_text);
+			}
+			return position;
+		}
+	}
+	private static class StartEndSearch extends EmptySearch {
+		// accepts a pattern like: "10000-20000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\-\\s*([0-9,]+)\\s*$");
+			Matcher start_end_matcher = start_end_pattern.matcher(search_text);
+			return start_end_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			Matcher start_end_matcher = getMatcher(search_text);
+			start_end_matcher.matches();
+			String start_text = start_end_matcher.group(1);
+			String end_or_width_text = start_end_matcher.group(2);
+			int start = 0;
+			int end = 0;
+			try {
+				start = (int)nformat.parse(start_text).doubleValue();
+				end  = (int)nformat.parse(end_or_width_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+	}
+	private static class StartWidthSearch extends EmptySearch {
+		// accepts a pattern like: "3,040,000 + 20000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
+			Matcher start_width_matcher = start_width_pattern.matcher(search_text);
+			return start_width_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			Matcher start_width_matcher = getMatcher(search_text);
+			start_width_matcher.matches();
+			String start_text = start_width_matcher.group(1);
+			String width_text = start_width_matcher.group(2);
+			int start = 0;
+			int end = 0;
+			try {
+				start = (int)nformat.parse(start_text).doubleValue();
+				end = start + (int)nformat.parse(width_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+	}
+	private static class CenterSearch extends EmptySearch {
+		// accepts a pattern like: "3,040,000 + 20000"
+		// (The chromosome name cannot contain any spaces.)
+		protected Matcher getMatcher(String search_text) {
+			Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
+			Matcher center_matcher = center_pattern.matcher(search_text);
+			return center_matcher;
+		}
+		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+			Matcher center_matcher = getMatcher(search_text);
+			center_matcher.matches();
+			String center_text = center_matcher.group(1);
+			int center = 0;
+			try {
+				center = (int)nformat.parse(center_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.findSpans(search_text, visibleSpan);
+			}
+			int start = visibleSpan.getStart();
+			int end = visibleSpan.getEnd();
+			int width = end - start;
+			start = (center - width / 2);
+			end = (center + width / 2);
+			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			spans.add(new SimpleSeqSpan(start, end, seq));
+			return spans;
+		}
+		@Override public int getZoomSpot(String search_text) { 
+			Matcher chrom_position_matcher = getMatcher(search_text);
+			chrom_position_matcher.matches();
+			String center_text = chrom_position_matcher.group(1);
+			int center = 0;
+			try {
+				center = (int)nformat.parse(center_text).doubleValue();
+			}
+			catch (ParseException x) {
+				return super.getZoomSpot(search_text);
+			}
+			return center;
+		}
+	}
 	public MapRangeBox(SeqMapView gview) {
 		this.gview = gview;
 		this.map = gview.getSeqMap();
@@ -111,111 +349,50 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		}
 	};
 
+	FocusListener focus_listener = new FocusListener() {
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {}
+	};
+
 	/**
 	 * Set range of view.
 	 * @param gview - the SeqMapView.
 	 * @param range - a string like "chr1: 40000 - 60000", or "40000:60000", or "40,000:60000", etc.
 	 */
-	public static void setRange(SeqMapView gview, String range) {
-		double start, end, width;
-		try {
-			Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
-			Matcher chrom_position_matcher = chrom_position_pattern.matcher(range);
-			Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
-			Matcher start_end_matcher = start_end_pattern.matcher(range);
-			Matcher start_width_matcher = start_width_pattern.matcher(range);
-			Matcher center_matcher = center_pattern.matcher(range);
-			if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
-				Matcher matcher;
-				boolean uses_width;
-				if (chrom_start_width_matcher.matches()) {
-					matcher = chrom_start_width_matcher;
-					uses_width = true;
-				} else {
-					matcher = chrom_start_end_matcher;
-					uses_width = false;
+	public static void setRange(SeqMapView gview, String search_text) {
+		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
+		modes.addAll(SearchModeHolder.getInstance().getSearchModes());
+		for (ISearchMode mode : modes) {
+			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null)) {
+				List<SeqSpan> spans = mode.findSpans(search_text, gview.getVisibleSpan());
+				if (spans.size() == 0) {
+					Application.getSingleton().setStatus("unable to find entry");
 				}
-				String chrom_text = matcher.group(1);
-				String start_text = matcher.group(2);
-				String end_or_width_text = matcher.group(3);
-				start = nformat.parse(start_text).doubleValue();
-				double end_or_width = nformat.parse(end_or_width_text).doubleValue();
-				if (uses_width) {
-					end = start + end_or_width;
-				} else {
-					end = end_or_width;
-				}
-				zoomToSeqAndSpan(gview, chrom_text, (int) start, (int) end);
-			} else if (chrom_position_matcher.matches()) {
-				String chrom_text = chrom_position_matcher.group(1);
-				String position_text = chrom_position_matcher.group(2);
-				SeqSpan span = gview.getVisibleSpan();
-				if (span != null) {
-					double position = nformat.parse(position_text).doubleValue();
-					width = (span.getEnd() - span.getStart());
-					start = Math.max(0, position - width / 2.0);
-					end = start + width;
-					BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-					if (end >= seq.getLength()) {
-						end = seq.getLength() - 1;
-						start = end - width;
+				else {
+					zoomToSeqAndSpan(gview, spans.get(0));
+					int zoomSpot = mode.getZoomSpot(search_text);
+					if (zoomSpot != ISearchMode.NO_ZOOM_SPOT) {
+						gview.setZoomSpotX(zoomSpot);
 					}
-					zoomToSeqAndSpan(gview, chrom_text, (int) start, (int) end);
-					gview.setZoomSpotX(position);
+					if (spans.size() > 1) {
+						Application.getSingleton().setStatus("found " + spans.size() + " hits");
+					}
 				}
-			} else if (start_end_matcher.matches()) {
-				String start_text = start_end_matcher.group(1);
-				String end_text = start_end_matcher.group(2);
-				start = nformat.parse(start_text).doubleValue();
-				end = nformat.parse(end_text).doubleValue();
-				gview.zoomTo(start, end);
-			} else if (start_width_matcher.matches()) {
-				String start_text = start_width_matcher.group(1);
-				String width_text = start_width_matcher.group(2);
-				start = nformat.parse(start_text).doubleValue();
-				end = start + nformat.parse(width_text).doubleValue();
-				gview.zoomTo(start, end);
-			} else if (center_matcher.matches()) {
-				String center_text = center_matcher.group(1);
-				double center = nformat.parse(center_text).doubleValue();
-				int[] current = gview.getSeqMap().getVisibleRange();
-				start = current[0];
-				end = current[1];
-				width = end - start;
-				start = center - width / 2;
-				end = center + width / 2;
-				gview.zoomTo(start, end);
-				gview.setZoomSpotX(center);
-			} else {
-				int[] current = gview.getSeqMap().getVisibleRange();
-				start = current[0];
-				end = current[1];
-				gview.zoomTo(start, end);
+				return;
 			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
+		Application.getSingleton().setStatus("unable to match entry");
 	}
 
-	public static String determineChr(String range) {
-		Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
-		Matcher chrom_start_matcher = chrom_position_pattern.matcher(range);
-		Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
-		if (chrom_start_end_matcher.matches() || chrom_start_matcher.matches() || chrom_start_width_matcher.matches()) {
-			Matcher matcher;
-			if (chrom_start_width_matcher.matches()) {
-				matcher = chrom_start_width_matcher;
-			} else if (chrom_start_matcher.matches()) {
-				matcher = chrom_start_matcher;
-			} else {
-				matcher = chrom_start_end_matcher;
-			}
-			String chrom_text = matcher.group(1);
-			return chrom_text;
-		}
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		return seq == null ? "" : seq.getID();
+	public static void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {
+		zoomToSeqAndSpan(gview, span.getBioSeq().getID(), span.getStart(), span.getEnd());
 	}
 
 	public static void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {

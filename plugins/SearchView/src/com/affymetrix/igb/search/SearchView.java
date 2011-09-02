@@ -40,9 +40,9 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.search.mode.ISearchMode;
-import com.affymetrix.igb.search.mode.SearchModeHolder;
-import com.affymetrix.igb.search.mode.SearchResultsTableModel;
+import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public final class SearchView extends IGBTabPanel implements 
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener, IStatus {
@@ -54,6 +54,8 @@ public final class SearchView extends IGBTabPanel implements
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
+
+	private List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
 
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
@@ -156,6 +158,14 @@ public final class SearchView extends IGBTabPanel implements
 		igbService.addServerInitListener(this);
 	}
 
+	public void addSearchMode(ISearchMode searchMode) {
+		searchModes.add(searchMode);
+	}
+
+	public void removeSearchMode(ISearchMode searchMode) {
+		searchModes.remove(searchMode);
+	}
+
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
 		int remoteServerCount = getRemoteServerCount(group);
 		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCH2 : REMOTESERVERSEARCH2PLURAL;
@@ -198,7 +208,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
-		for (ISearchMode searchMode : SearchModeHolder.getInstance().getSearchModes()) {
+		for (ISearchMode searchMode : searchModes) {
 			searchCB.addItem(searchMode.getName());
 			searchModeMap.put(searchMode.getName(), searchMode);
 			if (searchMode == saveSearchMode) {

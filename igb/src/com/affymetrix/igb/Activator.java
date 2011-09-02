@@ -18,9 +18,11 @@ import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TrackClickHolder;
+import com.affymetrix.igb.util.SearchModeHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.TrackClickListener;
 
 /**
@@ -138,6 +140,18 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					igb.getMapView().removeGraphOperator((GraphOperator)o);
+				}
+			}
+		);
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(ISearchMode.class) {
+				@Override
+				public void addService(Object o) {
+					SearchModeHolder.getInstance().addSearchMode((ISearchMode)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					SearchModeHolder.getInstance().removeSearchMode((ISearchMode)o);
 				}
 			}
 		);

@@ -29,9 +29,9 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.search.mode.ISearchMode;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.window.service.IWindowService;
 

@@ -1068,10 +1068,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
 		}
 		
-		BioSeq aseq = gsym.getGraphSeq();
-		if (aseq != null) {
-			aseq.unloadAnnotation(gsym);
-		}
+//		BioSeq aseq = gsym.getGraphSeq();
+//		if (aseq != null) {
+//			aseq.unloadAnnotation(gsym);
+//		}
 
 		if (gl == null) {
 			return;

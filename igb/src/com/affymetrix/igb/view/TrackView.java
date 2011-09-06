@@ -373,11 +373,12 @@ public class TrackView {
 		if(dd_list == null)
 			return;
 		
+		List<DependentData> remove_list = new ArrayList<DependentData>();
 		for (int i = 0; i < dd_list.size(); i++) {
 			dd = dd_list.get(i);
 			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
 					|| method.equals(dd.getID())) {
-				dd_list.remove(dd);
+				remove_list.add(dd);
 //				GlyphI glyph = map.getItem(dd.getSym());
 //				if(glyph != null){
 //					map.removeItem(glyph);
@@ -385,6 +386,12 @@ public class TrackView {
 //				seq.unloadAnnotation(dd.getSym());
 			}
 		}
+		
+		for(DependentData r : remove_list){
+			dd_list.remove(r);
+		}
+		
+		remove_list.clear();
 	}
 
 }

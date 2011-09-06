@@ -2174,6 +2174,10 @@ public class SeqMapView extends JPanel
 		return props;
 	}
 
+	public MapRangeBox getMapRangeBox() {
+		return map_range_box;
+	}
+
 	public SeqMapViewPopup getPopup() {
 		return popup;
 	}

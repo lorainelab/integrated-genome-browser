@@ -28,6 +28,7 @@ public class IGBActionHolder {
 
 	public void addIGBAction(IGBAction igbAction) {
 		igbActions.add(igbAction);
+		PreferenceUtils.getAccelerator(igbAction.getText());
 		boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
 		if (isToolbar) {
 			String iconPath = igbAction.getIconPath();

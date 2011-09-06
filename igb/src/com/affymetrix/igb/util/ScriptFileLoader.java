@@ -16,7 +16,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExportSlicedViewAction;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -357,7 +356,7 @@ public class ScriptFileLoader {
 	}
 
 	private static void goToRegion(String region) {
-		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
+		Application.getSingleton().getMapView().getMapRangeBox().setRange(Application.getSingleton().getMapView(), region);
 	}
 
 	private static void loadData(String serverURIorName, String feature_url) {

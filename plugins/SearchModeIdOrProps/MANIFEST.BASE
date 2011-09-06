@@ -11,6 +11,7 @@ Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Searching#Sea
 Import-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.span,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.igb.osgi.service,

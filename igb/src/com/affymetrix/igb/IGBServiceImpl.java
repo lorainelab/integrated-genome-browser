@@ -200,7 +200,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void zoomToCoord(String seqID, int start, int end) {
-		MapRangeBox.zoomToSeqAndSpan(((SeqMapView)getSeqMapView()), seqID, start, end);
+		((SeqMapView)getSeqMapView()).getMapRangeBox().zoomToSeqAndSpan(((SeqMapView)getSeqMapView()), seqID, start, end);
 	}
 
 	@Override

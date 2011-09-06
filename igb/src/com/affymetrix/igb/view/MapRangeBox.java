@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
@@ -57,6 +58,9 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	private final NeoMap map;
 	private final SeqMapView gview;
 	public final JRPTextField range_box;
+	private List<SeqSpan> spans;
+	private int spanPointer;
+
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
@@ -303,7 +307,6 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	public MapRangeBox(SeqMapView gview) {
 		this.gview = gview;
 		this.map = gview.getSeqMap();
-
 		range_box = new JRPTextField(gview.getClass().getSimpleName() + "_SeqMap_range", "");
 		Dimension d = new Dimension(250, range_box.getPreferredSize().height);
 		range_box.setPreferredSize(d);
@@ -371,14 +374,16 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 * @param range - any search string like "chr1: 40000 - 60000",
 	 * or "ADAR" (a gene name)
 	 */
-	public static void setRange(SeqMapView gview, String search_text) {
+	public void setRange(SeqMapView gview, String search_text) {
 		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
 		modes.addAll(SearchModeHolder.getInstance().getSearchModes());
 		for (ISearchMode mode : modes) {
 			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null)) {
-				List<SeqSpan> spans = mode.findSpans(search_text, gview.getVisibleSpan());
+				spans = mode.findSpans(search_text, gview.getVisibleSpan());
+				spanPointer = 0;
 				if (spans.size() == 0) {
 					Application.getSingleton().setStatus("unable to find entry");
+					NextSearchSpanAction.getAction().setEnabled(false);
 				}
 				else {
 					zoomToSeqAndSpan(gview, spans.get(0));
@@ -387,7 +392,11 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 						gview.setZoomSpotX(zoomSpot);
 					}
 					if (spans.size() > 1) {
-						Application.getSingleton().setStatus("found " + spans.size() + " hits");
+						Application.getSingleton().setStatus("found " + spans.size() + " spans");
+						NextSearchSpanAction.getAction().setEnabled(true);
+					}
+					else {
+						NextSearchSpanAction.getAction().setEnabled(false);
 					}
 				}
 				return;
@@ -396,11 +405,23 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		Application.getSingleton().setStatus("unable to match entry");
 	}
 
-	public static void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {
+	public boolean nextSpan() {
+		if (spanPointer + 1 >= spans.size()) {
+			Application.getSingleton().setStatus("no span to zoom to");
+			return false;
+		}
+		spanPointer++;
+		zoomToSeqAndSpan(gview, spans.get(0));
+		Application.getSingleton().setStatus("zoom to span " + (spanPointer + 1) + " of " + spans.size());
+		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < spans.size());
+		return true;
+	}
+
+	private void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {
 		zoomToSeqAndSpan(gview, span.getBioSeq().getID(), span.getStart(), span.getEnd());
 	}
 
-	public static void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
+	public void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (group == null) {
 			Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");

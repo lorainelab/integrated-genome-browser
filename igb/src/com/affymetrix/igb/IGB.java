@@ -419,6 +419,8 @@ public final class IGB extends Application
 		view_menu.add(strands_menu);
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_autoscroll", AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_viewGenomicSequenceInSeqViewer", map_view.seqviewer));
+		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
+		NextSearchSpanAction.getAction().setEnabled(false);
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_setThreshold", map_view.getAutoLoad()));
 		view_menu.addSeparator();

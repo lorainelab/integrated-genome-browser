@@ -449,6 +449,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                 .addContainerGap())
         );
 
+        applyToAllButton.setToolTipText("Apply background, foreground, and Name Size to all selected tracks");
+
         autoRefreshCheckBox.setText("Auto Refresh");
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));

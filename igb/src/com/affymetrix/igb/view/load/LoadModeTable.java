@@ -38,7 +38,7 @@ import java.awt.Color;
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
 public final class LoadModeTable {
-	
+
 	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
@@ -186,16 +186,14 @@ public final class LoadModeTable {
 		}
 	}
 
-	public static JTableX getTable()
-	{
+	public static JTableX getTable() {
 		if (jTable != null) {
 			return jTable;
 		}
 		return null;
 	}
 
-	public static LoadModeDataTableModel getModel()
-	{
+	public static LoadModeDataTableModel getModel() {
 		if (jTable != null) {
 			return (LoadModeDataTableModel) jTable.getModel();
 		}
@@ -283,17 +281,16 @@ class JTableX extends JTable implements MouseListener {
 		} else if (column == LoadModeDataTableModel.HIDE_FEATURE_COLUMN) {
 			currentTiers = smv.getSeqMap().getTiers(); //improve later
 			for (TierGlyph tier : currentTiers) {
-				if (tier.getAnnotStyle().getUniqueName() != null) {
-					if (vFeature.getStyle() != null) {
-						if (tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
-								vFeature.getStyle().getMethodName()))//need changed
-						{
-							if (tier.getAnnotStyle().getShow()) {
-								return new LabelTableCellRenderer(LoadModeTable.visible_icon, true);
+				if (vFeature.getStyle() != null
+						&& tier.getAnnotStyle().getMethodName() != null) {
+					if (tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
+							vFeature.getStyle().getMethodName()))//need changed
+					{
+						if (tier.getAnnotStyle().getShow()) {
+							return new LabelTableCellRenderer(LoadModeTable.visible_icon, true);
 
-							} else {
-								return new LabelTableCellRenderer(LoadModeTable.invisible_icon, true);
-							}
+						} else {
+							return new LabelTableCellRenderer(LoadModeTable.invisible_icon, true);
 						}
 					}
 				}

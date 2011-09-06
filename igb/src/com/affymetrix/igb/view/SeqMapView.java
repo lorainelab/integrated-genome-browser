@@ -416,8 +416,12 @@ public class SeqMapView extends JPanel
 		setupPopups();
 		this.setLayout(new BorderLayout());
 
-		map_range_box = new MapRangeBox(this);
 		xzoombox = Box.createHorizontalBox();
+		ImageIcon searchIcon = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
+		JLabel searchLabel = new JLabel(searchIcon);
+		xzoombox.add(searchLabel);
+
+		map_range_box = new MapRangeBox(this);
 		xzoombox.add(map_range_box.range_box);
 
 		select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));

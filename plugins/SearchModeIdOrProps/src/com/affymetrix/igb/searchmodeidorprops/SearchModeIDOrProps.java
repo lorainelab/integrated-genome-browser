@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SearchUtils;
@@ -383,10 +382,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		for (SeqSymmetry sym : syms) {
 			for (int i = 0; i < sym.getSpanCount(); i++) {
-				SeqSpan span = new SimpleSeqSpan(sym.getSpan(i).getStart(), sym.getSpan(i).getEnd(), sym.getSpan(i).getBioSeq());
-				if (!spans.contains(span)) {
-					spans.add(span);
-				}
+				spans.add(sym.getSpan(i));
 			}
 		}
 		return spans;

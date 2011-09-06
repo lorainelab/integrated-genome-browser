@@ -18,6 +18,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
@@ -52,13 +54,13 @@ import java.util.regex.Pattern;
  * 
  * @version $Id$
  */
-public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener {
+public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
 
 	private static final long serialVersionUID = 1l;
 	private final NeoMap map;
 	private final SeqMapView gview;
 	public final JRPTextField range_box;
-	private List<SeqSpan> spans;
+	private List<SeqSpan> foundSpans;
 	private int spanPointer;
 
 	// Use the ENGLISH locale here because we want the user to be able to
@@ -321,6 +323,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		range_box.addFocusListener(focus_listener);
 		map.addViewBoxListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
+		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 	}
 
 	public void viewBoxChanged(NeoViewBoxChangeEvent e) {
@@ -328,8 +331,15 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		setRangeText(vbox.x, vbox.width + vbox.x);
 	}
 
+	@Override
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		range_box.setText("");
+		resetSearch();
+	}
+
+	@Override
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		resetSearch();
 	}
 
 	void setRangeText(double start, double end) {
@@ -365,6 +375,27 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		public void focusLost(FocusEvent e) {}
 	};
 
+	private List<SeqSpan> mergeSpans(List<SeqSpan> unmergedSpans) {
+		List<SeqSpan> mergedSpans = new ArrayList<SeqSpan>();
+		for (SeqSpan rawSpan : unmergedSpans) {
+			SeqSpan span = new SimpleSeqSpan(rawSpan.getMin(), rawSpan.getMax(), rawSpan.getBioSeq());
+			boolean overlap = false;
+			for (int i = 0; i < mergedSpans.size() && !overlap; i++) {
+				SeqSpan loopSpan = mergedSpans.get(i);
+				if (span.getBioSeq().equals(loopSpan.getBioSeq()) && span.getEnd() >= loopSpan.getStart() && span.getStart() <= loopSpan.getEnd()) {
+					int start = Math.min(span.getStart(), loopSpan.getStart());
+					int end = Math.max(span.getEnd(), loopSpan.getEnd());
+					mergedSpans.set(i, new SimpleSeqSpan(start, end, span.getBioSeq()));
+					overlap = true;
+				}
+			}
+			if (!overlap) {
+				mergedSpans.add(span);
+			}
+		}
+		return mergedSpans;
+	}
+
 	/**
 	 * Set range of view. This will go through all the ISearchMode
 	 * instances registered, including plugins. The standard forms
@@ -379,20 +410,18 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		modes.addAll(SearchModeHolder.getInstance().getSearchModes());
 		for (ISearchMode mode : modes) {
 			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null)) {
-				spans = mode.findSpans(search_text, gview.getVisibleSpan());
-				spanPointer = 0;
-				if (spans.size() == 0) {
-					Application.getSingleton().setStatus("unable to find entry");
-					NextSearchSpanAction.getAction().setEnabled(false);
-				}
-				else {
-					zoomToSeqAndSpan(gview, spans.get(0));
+				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());
+				if (rawSpans.size() > 0) {
+					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
+					zoomToSeqAndSpan(gview, mergedSpans.get(0));
 					int zoomSpot = mode.getZoomSpot(search_text);
 					if (zoomSpot != ISearchMode.NO_ZOOM_SPOT) {
 						gview.setZoomSpotX(zoomSpot);
 					}
-					if (spans.size() > 1) {
-						Application.getSingleton().setStatus("found " + spans.size() + " spans");
+					foundSpans = mergedSpans;
+					spanPointer = 0;
+					if (foundSpans.size() > 1) {
+						Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
 						NextSearchSpanAction.getAction().setEnabled(true);
 					}
 					else {
@@ -402,19 +431,30 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				return;
 			}
 		}
+		NextSearchSpanAction.getAction().setEnabled(false);
 		Application.getSingleton().setStatus("unable to match entry");
 	}
 
 	public boolean nextSpan() {
-		if (spanPointer + 1 >= spans.size()) {
+		if (spanPointer + 1 >= foundSpans.size()) {
 			Application.getSingleton().setStatus("no span to zoom to");
 			return false;
 		}
 		spanPointer++;
-		zoomToSeqAndSpan(gview, spans.get(0));
-		Application.getSingleton().setStatus("zoom to span " + (spanPointer + 1) + " of " + spans.size());
-		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < spans.size());
+		List<SeqSpan> saveFoundSpans = foundSpans;
+		int saveSpanPointer = spanPointer;
+		zoomToSeqAndSpan(gview, foundSpans.get(spanPointer));
+		foundSpans = saveFoundSpans;
+		spanPointer = saveSpanPointer;
+		Application.getSingleton().setStatus("zoom to span " + (spanPointer + 1) + " of " + foundSpans.size());
+		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < foundSpans.size());
 		return true;
+	}
+
+	private void resetSearch() {
+		foundSpans = null;
+		spanPointer = -1;
+		NextSearchSpanAction.getAction().setEnabled(false);
 	}
 
 	private void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {

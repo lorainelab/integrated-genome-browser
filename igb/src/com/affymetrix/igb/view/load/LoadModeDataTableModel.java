@@ -280,6 +280,13 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary()) {
 			return false;
+		} else if (col == INFO_FEATURE_COLUMN) {
+			switch (vFeature.getFeature().getLastRefreshStatus()) {
+				case NO_DATA_LOADED:
+					return true;
+				default:
+					return false;
+			}
 		} else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
@@ -289,14 +296,9 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 					return false;
 				}
 			}
-		} else if (col == INFO_FEATURE_COLUMN) {
-			switch (vFeature.getFeature().getLastRefreshStatus()) {
-				case NO_DATA_LOADED:
-					return true;
-				default:
-					return false;
-			}
-		} else if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
+		}
+
+		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
 			return true;

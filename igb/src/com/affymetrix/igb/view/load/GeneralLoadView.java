@@ -52,6 +52,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
@@ -173,6 +174,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
+		refresh_dataB.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 

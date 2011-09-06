@@ -98,6 +98,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 				vFeature.setStyle(style);
 				if (gFeature.getMethods().size() > 1) {
 					createSecondaryVirtualFeatures(vFeature);
+					break;
 				}
 				if (!style.isGraphTier()) {
 					break;

@@ -5,13 +5,10 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
 import java.util.List;
 
 /**

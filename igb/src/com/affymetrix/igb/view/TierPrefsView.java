@@ -258,7 +258,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(selectTrackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                 .addContainerGap())
         );
         selectTrackPanelLayout.setVerticalGroup(
@@ -450,7 +450,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                 .add(14, 14, 14))
         );
 
-        applyToAllButton.setToolTipText("Apply background, foreground, and Name Size to all selected tracks");
+        applyToAllButton.setToolTipText("Apply background, foreground, and Name Size to all selected tracks.");
 
         autoRefreshCheckBox.setText("Auto Refresh");
 

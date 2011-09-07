@@ -901,7 +901,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 		 */
 		private void combineGraphs() {
 			int gcount = grafs.size();
-
+			float height = 0;
+			
 			// Note that the combo_style does not implement IFloatableTierStyle
 			// because the glyph factory doesn't support floating combo graphs anyway.
 			ITrackStyle combo_style = null;
@@ -920,15 +921,16 @@ public final class SimpleGraphTab extends IGBTabPanel
 				combo_style.setBackground(igbService.getDefaultBackgroundColor());
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
 			}
-			//combo_style.setHeight(5); // just use the default height
-
+			
 			// Now apply that combo style to all the selected graphs
 			for (GraphSym gsym : grafs) {
 				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(combo_style);
-				gstate.getTierStyle().setHeight(combo_style.getHeight());
 				gstate.setFloatGraph(false); // ignored since combo_style is set
+				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
+			combo_style.setHeight(height); 
+			
 			updateViewer();
 		}
 
@@ -984,10 +986,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			boolean something_changed = false;
 			for (GraphGlyph gl : glyphs) {
 				GraphState gstate = gl.getGraphState();
-				if (gstate.getComboStyle() != null) {
-					gstate.setComboStyle(null);
-					something_changed = true;
-				}
+//				if (gstate.getComboStyle() != null) {
+//					gstate.setComboStyle(null);
+//					something_changed = true;
+//				}
 				boolean is_floating = gstate.getFloatGraph();
 				if (do_float && (!is_floating)) {
 					//GraphGlyphUtils.floatGraph(gl, gviewer);

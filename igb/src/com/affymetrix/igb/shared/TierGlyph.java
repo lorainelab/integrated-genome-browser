@@ -80,6 +80,7 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	private ITrackStyle style;
+	private GlyphI summary;
 	
 	public TierGlyph(ITrackStyle style) {
 		setHitable(false);
@@ -108,7 +109,15 @@ public class TierGlyph extends SolidGlyph {
 	public ITrackStyle getAnnotStyle() {
 		return style;
 	}
+	
+	public void setSummary(GlyphI summary) {
+		this.summary = summary;
+	}
 
+	public GlyphI getSummary() {
+		return summary;
+	} 
+ 			 
 	/**
 	 *  Adds "middleground" glyphs, which are drawn in front of the background but
 	 *    behind all "real" child glyphs.
@@ -253,6 +262,15 @@ public class TierGlyph extends SolidGlyph {
 		return label;
 	}
 
+	public void drawTraversal(ViewI view) {
+		if (summary != null && (view.getTransform().getScaleX() < 0.002)) {
+			summary.setCoordBox(this.getCoordBox());
+			summary.draw(view);
+			return;
+		}
+		super.drawTraversal(view);
+	}
+	
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view, boolean manual) {

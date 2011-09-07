@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -35,6 +36,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
@@ -47,8 +49,10 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 /**
  *
@@ -120,9 +124,20 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+				if (style.getFileType() != null
+						&& (style.getFileType().equalsIgnoreCase("bam")
+						|| style.getFileType().equalsIgnoreCase("sam"))) {
+					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
+					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[1]);
+				}
 			} else {
 				// use only one tier
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
+				if (style.getFileType() != null
+						&& (style.getFileType().equalsIgnoreCase("bam")
+						|| style.getFileType().equalsIgnoreCase("sam"))) {
+					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
+				}
 			}
 		} else {  // keep recursing down into child syms if parent sym has no "method" property
 			int childCount = sym.getChildCount();
@@ -143,6 +158,25 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return depth;
 	}
 
+	private static void addCoverage(String meth, SeqSymmetry sym, BioSeq seq, TierGlyph tier) {
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		syms.add(sym);
+		com.affymetrix.genometryImpl.GraphSym gsym = null;
+		if (tier.getDirection() == Direction.BOTH) {
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth);
+		} else {
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, tier.getDirection() == Direction.FORWARD);
+		}
+
+		if (gsym != null) {
+			GraphState state = new GraphState(tier.getAnnotStyle());
+			GraphGlyph graph_glyph = new GraphGlyph(gsym, state);
+			graph_glyph.drawHandle(false);
+			graph_glyph.setGraphStyle(com.affymetrix.genometryImpl.style.GraphType.STAIRSTEP_GRAPH);
+			tier.setSummary(graph_glyph);
+		}
+	}
+	
 	private void addLeafsToTier(SeqSymmetry sym,
 			TierGlyph ftier, TierGlyph rtier,
 			int desired_leaf_depth) {

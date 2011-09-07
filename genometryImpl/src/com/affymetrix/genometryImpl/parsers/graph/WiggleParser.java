@@ -306,8 +306,7 @@ public final class WiggleParser implements GraphParser {
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, graph_name, "wig");
-		TrackLineParser.applyTrackProperties(track_hash, gstate);
+		TrackLineParser.createGraphStyle(track_hash, graph_id, graph_name, "wig");
 
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();

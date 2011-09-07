@@ -26,7 +26,9 @@
                             <entry key="Open file" value="ctrl O"/>
                             <entry key="Web Links Manager / Export ..." value=""/>
                             <entry key="SCROLL_LEFT" value=""/>
-                            <entry key="Open Current Tab in New Window" value="ctrl N"/>
+                            <entry key="Open Current Left Tab in New Window" value=""/>
+                            <entry key="Open Current Bottom Tab in New Window" value=""/>
+                            <entry key="Open Current Right Tab in New Window" value=""/>
                             <entry key="SCROLL_RIGHT" value=""/>
                             <entry key="ZOOM_IN_Y" value=""/>
                             <entry key="Center at selected" value=""/>
@@ -45,7 +47,9 @@
                             <entry key="Zoom to selected" value="ctrl Z"/>
                             <entry key="Adjust edge match fuzziness" value=""/>
                             <entry key="Unclamp" value=""/>
-                            <entry key="Open Tabbed Panes in New Window" value="ctrl T"/>
+                            <entry key="Open Left Tabbed Panes in New Window" value=""/>
+                            <entry key="Open Bottom Tabbed Panes in New Window" value=""/>
+                            <entry key="Open Right Tabbed Panes in New Window" value=""/>
                             <entry key="Show Console..." value=""/>
                             <entry key="ZOOM_OUT_FULLY" value="ctrl 0"/>
                             <entry key="Web Links Manager / Add..." value=""/>

@@ -26,11 +26,13 @@
                             <entry key="Open file" value="ctrl O"/>
                             <entry key="Web Links Manager / Export ..." value=""/>
                             <entry key="SCROLL_LEFT" value=""/>
-                            <entry key="Open Current Tab in New Window" value="ctrl N"/>
+                            <entry key="Open Right Tab in New Window" value=""/>
+                            <entry key="Open Left Tab in New Window" value=""/>
+                            <entry key="Open Bottom Tab in New Window" value=""/>
                             <entry key="SCROLL_RIGHT" value=""/>
                             <entry key="ZOOM_IN_Y" value=""/>
-							<entry key="Center at selected" value=""/>
-							<entry key="Set AutoLoad Threshold to Current View" value="" />
+                            <entry key="Center at selected" value=""/>
+                            <entry key="Set AutoLoad Threshold to Current View" value="" />
                             <entry key="Select parent" value="ctrl A"/>
                             <entry key="ZOOM_OUT_X" value=""/>
                             <entry key="Web Links Manager / Edit..." value=""/>
@@ -40,12 +42,14 @@
                             <entry key="Clamp To View" value=""/>
                             <entry key="Sliced View (With Labels)" value=""/>
                             <entry key="Exit" value="ctrl Q"/>
-							<entry key="Close Sequence Viewer" value="ctrl W" />
+                            <entry key="Close Sequence Viewer" value="ctrl W" />
                             <entry key="Web Links Manager / Configure Web Links" value=""/>
                             <entry key="Zoom to selected" value="ctrl Z"/>
                             <entry key="Adjust edge match fuzziness" value=""/>
                             <entry key="Unclamp" value=""/>
-                            <entry key="Open Tabbed Panes in New Window" value="ctrl T"/>
+                            <entry key="Open Right Tabbed Panes in New Window" value=""/>
+                            <entry key="Open Left Tabbed Panes in New Window" value=""/>
+                            <entry key="Open Bottom Tabbed Panes in New Window" value=""/>
                             <entry key="Show Console..." value=""/>
                             <entry key="ZOOM_OUT_FULLY" value="ctrl 0"/>
                             <entry key="Web Links Manager / Add..." value=""/>
@@ -62,7 +66,7 @@
                             <entry key="Add Position &amp; Graphs Bookmark" value=""/>
                             <entry key="Clear Graphs" value=""/>
                             <entry key="Preferences Window / Import" value=""/>
-							<entry key="Refresh Data" value="ctrl R"/>
+                            <entry key="Refresh Data" value="ctrl R"/>
                         </map>
                     </node>
                 </node>

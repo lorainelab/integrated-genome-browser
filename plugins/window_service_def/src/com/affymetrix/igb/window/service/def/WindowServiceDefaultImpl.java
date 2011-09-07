@@ -26,6 +26,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -159,7 +160,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 					}
 				);
 				move_tab_to_window_item.setEnabled(false);
-				tabs_menu.add(move_tab_to_window_item);
+				MenuUtil.addToMenu(tabs_menu, move_tab_to_window_item);
 				move_tab_to_window_items.put(tabState, move_tab_to_window_item);
 			}
 		}
@@ -175,7 +176,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 					}
 				);
 				move_tabbed_panel_to_window_item.setEnabled(false);
-				tabs_menu.add(move_tabbed_panel_to_window_item);
+				MenuUtil.addToMenu(tabs_menu, move_tabbed_panel_to_window_item);
 				move_tabbed_panel_to_window_items.put(tabState, move_tabbed_panel_to_window_item);
 				trayStateChanged((JTabbedTrayPane)tabHolders.get(tabState), ((JTabbedTrayPane)tabHolders.get(tabState)).getTrayState());
 			}

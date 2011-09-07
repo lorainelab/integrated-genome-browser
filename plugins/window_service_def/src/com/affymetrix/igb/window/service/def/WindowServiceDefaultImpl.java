@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import com.affymetrix.igb.window.service.def.TabHolder;
@@ -158,9 +159,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabs_menu = new JRPMenu("WindowServiceDefaultImpl_tabs_menu", BUNDLE.getString("showTabs"));
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JRPMenuItem change_tab_state_item = new JRPMenuItem("WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"), MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())));
-				change_tab_state_item.addActionListener(
-					new ActionListener() {
+				JRPMenuItem change_tab_state_item = new JRPMenuItem(
+					"WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"),
+					new IGBAction() {
+						private static final long serialVersionUID = 1L;
+						@Override
+						public String getText() {
+							return MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name()));						}
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							setTabState(((JTabbedTrayPane)tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
@@ -174,9 +179,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem("WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"), MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())));
-				move_tabbed_panel_to_window_item.addActionListener(
-					new ActionListener() {
+				JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem(
+					"WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"),
+					new IGBAction() {
+						private static final long serialVersionUID = 1L;
+						@Override
+						public String getText() {
+							return MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name()));
+						}
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							((JTabbedTrayPane)tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);

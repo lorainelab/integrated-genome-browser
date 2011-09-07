@@ -167,29 +167,31 @@ public final class TrackLineParser {
 			name = default_track_name;
 			human_name = name;
 		}
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, human_name, file_type);
+		
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash,human_name), file_type);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}
 
+	public static String getHumanName(Map<String,String> track_hash, String default_name){
+		String description = track_hash.get(DESCRIPTION);
+		if (description != null) {
+			return description;
+		} else {
+			String name = track_hash.get(NAME);
+			if (name != null) {
+				return name;
+			}
+		}
+		return default_name;
+	}
+	
 	/**
 	 *  Copies the properties, such as color, into a given ITrackStyle.
 	 *  (For a graph, the ITrackStyle will be an instance of DefaultTrackStyle,
 	 *   for a non-graph, it will be an instance of TrackStyle.)
 	 */
 	private static void applyTrackProperties(Map<String,String> track_hash, ITrackStyle style) {
-		String description = track_hash.get(DESCRIPTION);
-		if (description != null) {
-			style.setTrackName(description);
-		} else {
-			// Unless we explicitly set the human name, it will be the lower-case
-			// version of the name used in AnnotStyle.getInstance().
-			// Explicitly setting the name keeps the case intact.
-			String name = track_hash.get(NAME);
-			if (name != null && (style.getTrackName() == null || style.getTrackName().isEmpty())) {
-				style.setTrackName(name);
-			}
-		}
 		String visibility = track_hash.get(VISIBILITY);
 
 		String color_string = track_hash.get(COLOR);
@@ -239,7 +241,8 @@ public final class TrackLineParser {
 	 *  Applies the UCSC track properties that it understands to the GraphState
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
-	public static void applyTrackProperties(Map<String,String> track_hash, GraphState gstate) {
+	public static void createGraphStyle(Map<String,String> track_hash, String graph_id, String graph_name, String extension) {
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_name), extension);
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

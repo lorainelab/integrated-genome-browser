@@ -449,9 +449,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 			graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
-
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, graph_name, extension);
-		TrackLineParser.applyTrackProperties(track_hash, gstate);
+		
+		TrackLineParser.createGraphStyle(track_hash, graph_id, graph_name, extension);
 
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();

@@ -97,8 +97,8 @@ public final class GraphState {
 	 *  an initial IAnnotStyle for the tier_style, but you can replace that style if
 	 *  necessary.
 	 */
-	public GraphState(String id, String extension) {
-		this(DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, null, extension));
+	public GraphState(String id, String human_name, String extension) {
+		this(DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, human_name, extension));
 		tier_style.setHeight(default_graph_height);
 		tier_style.setGraphTier(true);
 

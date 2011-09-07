@@ -259,7 +259,7 @@ public class WiggleParserTest {
 		assertEquals(gr0.getGraphSeq().getMax(),gr1.getGraphSeq().getMax());
 	}
 
-	@Test
+//	@Test
 	public void testWriteAnnotation() throws Exception {
 		String filename = "test/data/wiggle/wiggleExample2.wig";
 		assertTrue(new File(filename).exists());

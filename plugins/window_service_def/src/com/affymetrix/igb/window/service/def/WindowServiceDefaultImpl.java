@@ -22,12 +22,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -36,11 +38,11 @@ import com.affymetrix.igb.window.service.def.TabHolder;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
-	private class TabStateMenuItem extends JRadioButtonMenuItem {
+	private class TabStateMenuItem extends JRPRadioButtonMenuItem {
 		private static final long serialVersionUID = 1L;
 		private final TabState tabState;
-		private TabStateMenuItem(final IGBTabPanel igbTabPanel, TabState _tabState) {
-			super(BUNDLE.getString(_tabState.name()));
+		private TabStateMenuItem(String id, final IGBTabPanel igbTabPanel, TabState _tabState) {
+			super(id, BUNDLE.getString(_tabState.name()));
 			tabState = _tabState;
 		    addActionListener(
 				new ActionListener() {
@@ -58,9 +60,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
-	private final HashMap<TabState, JMenuItem> move_tab_to_window_items;
-	private final HashMap<TabState, JMenuItem> move_tabbed_panel_to_window_items;
-	private JMenu tabs_menu;
+	private final HashMap<TabState, JRPMenuItem> move_tab_to_window_items;
+	private final HashMap<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
+	private JRPMenu tabs_menu;
 	private JFrame frame;
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
@@ -70,8 +72,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	public WindowServiceDefaultImpl() {
 		super();
-		move_tab_to_window_items = new HashMap<TabState, JMenuItem>();
-		move_tabbed_panel_to_window_items = new HashMap<TabState, JMenuItem>();
+		move_tab_to_window_items = new HashMap<TabState, JRPMenuItem>();
+		move_tabbed_panel_to_window_items = new HashMap<TabState, JRPMenuItem>();
 		tabHolders = new HashMap<TabState, TabHolder>();
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
@@ -153,11 +155,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void setViewMenu(JMenu view_menu) {
 		view_menu.addSeparator();
-		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
+		tabs_menu = new JRPMenu("WindowServiceDefaultImpl_tabs_menu", BUNDLE.getString("showTabs"));
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())));
-				move_tab_to_window_item.addActionListener(
+				JRPMenuItem change_tab_state_item = new JRPMenuItem("WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"), MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())));
+				change_tab_state_item.addActionListener(
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -165,14 +167,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 						}
 					}
 				);
-				move_tab_to_window_item.setEnabled(false);
-				MenuUtil.addToMenu(tabs_menu, move_tab_to_window_item);
-				move_tab_to_window_items.put(tabState, move_tab_to_window_item);
+				change_tab_state_item.setEnabled(false);
+				MenuUtil.addToMenu(tabs_menu, change_tab_state_item);
+				move_tab_to_window_items.put(tabState, change_tab_state_item);
 			}
 		}
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JMenuItem move_tabbed_panel_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())));
+				JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem("WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"), MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())));
 				move_tabbed_panel_to_window_item.addActionListener(
 					new ActionListener() {
 						@Override
@@ -218,13 +220,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		catch (Exception x) {}
 		setTabState(tabPanel, tabState);
-		JMenu pluginMenu = new JMenu(tabPanel.getDisplayName());
+		JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_"), tabPanel.getDisplayName());
 		tabMenus.put(tabPanel, pluginMenu);
 		tabMenuPositions.put(pluginMenu, tabPanel.getPosition());
 		ButtonGroup group = new ButtonGroup();
 
 		for (TabState tabStateLoop : tabPanel.getDefaultState().getCompatibleTabStates()) {
-		    JRadioButtonMenuItem menuItem = new TabStateMenuItem(tabPanel, tabStateLoop);
+		    JRPRadioButtonMenuItem menuItem = new TabStateMenuItem("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_") + "_" + tabStateLoop.name().replaceAll(" ", "_"), tabPanel, tabStateLoop);
 		    group.add(menuItem);
 		    pluginMenu.add(menuItem);
 		}
@@ -376,7 +378,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void trayStateChanged(JTabbedTrayPane trayPane, TrayState trayState) {
-		for (JMenuItem menuItem : new JMenuItem[]{move_tab_to_window_items.get(trayPane.getTabState()), move_tabbed_panel_to_window_items.get(trayPane.getTabState())}) {
+		for (JRPMenuItem menuItem : new JRPMenuItem[]{move_tab_to_window_items.get(trayPane.getTabState()), move_tabbed_panel_to_window_items.get(trayPane.getTabState())}) {
 			if (menuItem != null) {
 				menuItem.setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
 			}

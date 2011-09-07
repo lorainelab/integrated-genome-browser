@@ -130,7 +130,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
 		speciesCB.setToolTipText(CHOOSE + " " + SELECT_SPECIES);
-
+		
 		speciesCBRenderer = new JComboBoxToolTipRenderer();
 		speciesCB.setRenderer(speciesCBRenderer);
 		speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, CHOOSE + " " + SELECT_SPECIES);
@@ -156,8 +156,9 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
-
+		Font font = new Font ("Serif", Font.BOLD, 16);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadSequence.getWholeAction());
+		all_residuesB.setFont(font);
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setIcon(IGBUtils.getIcon("dna.gif"));
@@ -168,10 +169,12 @@ public final class GeneralLoadView extends IGBTabPanel
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		partial_residuesB.setIcon(IGBUtils.getIcon("dna.gif"));
+		partial_residuesB.setFont(font);
 		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = gviewer.getRefreshDataAction();
 		JRPButton refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
+		refresh_dataB.setFont(font);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
 		refresh_dataB.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));

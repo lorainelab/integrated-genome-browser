@@ -1,11 +1,10 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.shared;
 
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
-import com.affymetrix.igb.shared.AlignedResidueGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;

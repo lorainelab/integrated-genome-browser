@@ -27,8 +27,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 

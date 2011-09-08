@@ -1,4 +1,4 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.Rectangle;
 import java.util.List;
 import com.affymetrix.genoviz.widget.tieredmap.CollapsedTierPacker;
+
 import java.awt.geom.Rectangle2D;
 
 public final class CollapsePacker extends CollapsedTierPacker {

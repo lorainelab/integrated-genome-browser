@@ -1,4 +1,4 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;

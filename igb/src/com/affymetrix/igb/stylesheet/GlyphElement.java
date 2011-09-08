@@ -33,9 +33,9 @@ import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.ExpandPacker;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.ExpandPacker;
 import java.awt.Color;
 import java.util.*;
 

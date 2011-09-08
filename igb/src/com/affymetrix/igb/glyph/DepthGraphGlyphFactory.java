@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -30,8 +31,8 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 
 		String meth = BioSeq.determineMethod(sym);
-		SeqSpan pspan = smv.getViewSeqSpan(sym);
-		if (meth == null || pspan == null || pspan.getLength() == 0) {
+		
+		if (meth == null) {
 			return;
 		}
 	
@@ -39,18 +40,23 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		
 		TierGlyph[] tiers = smv.getTiers(false, style, true);
 		if (style.getSeparate()) {
-			addDepthGraph(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[1]);			
+			addDepthGraph(meth, sym, tiers[0], tiers[1], smv);			
 		} else {
 			// use only one tier
-			addDepthGraph(meth, sym, pspan, smv.getAnnotatedSeq(), tiers[0], tiers[0]);
+			addDepthGraph(meth, sym, tiers[0], tiers[0], smv);
 		}
 
 	}
 	
-
-	private void addDepthGraph(String meth, SeqSymmetry sym, 
-			SeqSpan pspan, BioSeq seq, TierGlyph ftier, TierGlyph rtier){
+	private void addDepthGraph(String meth, SeqSymmetry sym, TierGlyph ftier, TierGlyph rtier, SeqMapViewExtendedI smv){
 		
+		SeqSpan pspan = smv.getViewSeqSpan(sym);
+		
+		if (pspan == null || pspan.getLength() == 0) {
+			return;
+		}
+		
+		BioSeq seq = smv.getAnnotatedSeq();
 		java.util.List<SeqSymmetry> syms = new java.util.ArrayList<SeqSymmetry>();
 		syms.add(sym);
 		GraphSym gsym = null;
@@ -76,11 +82,15 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			graph_glyph.setSelectable(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getCoordBox().getHeight());
-			tier.addChild(graph_glyph);
-			tier.setInfo(gsym);
+			addToTier(tier, graph_glyph, gsym);
 		}
 	}
 
+	public void addToTier(TierGlyph tier, GlyphI glyph, SeqSymmetry sym) {
+		tier.addChild(glyph);
+		tier.setInfo(sym);
+	}
+	
 	public boolean isFileSupported(String format) {
 		return true;
 	}

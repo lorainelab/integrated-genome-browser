@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TransformTierGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;

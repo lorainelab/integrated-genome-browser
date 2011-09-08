@@ -30,11 +30,13 @@ public interface TrackConstants {
 	static final String PREF_TRACK_SIZE = "Track Name Size";
 	static final String PREF_DIRECTION_TYPE = "Direction Type";
 	static final String PREF_VIEW_MODE = "View Mode";
+	static final String PREF_DRAW_COLLAPSE_ICON = "Draw Collapse Icon";
 	static final boolean default_show = true;
 	static final boolean default_connected = true;
 	static final boolean default_collapsed = false;
 	static final boolean default_expandable = true;
 	static final boolean default_show_summary = false;
+	static final boolean default_draw_collapse_icon = true;
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.CYAN;
 	static final Color default_background = Color.BLACK;

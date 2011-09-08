@@ -83,6 +83,12 @@ public class DefaultTrackStyle implements ITrackStyle {
 	public void setExpandable(boolean b) { this.expandable = b; }
 	public boolean getExpandable() { return expandable; }
 
+	public void setFeature(GenericFeature f) { this.feature = f; }
+	public GenericFeature getFeature() { return this.feature; }
+
+	public String getMethodName() { return null; }
+
+	public boolean drawCollapseControl() { return true; }
 
 	public Map<String,Object> getTransientPropertyMap() {
 		if (transient_properties == null) {
@@ -110,15 +116,4 @@ public class DefaultTrackStyle implements ITrackStyle {
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());
 	}
 
-	public void setFeature(GenericFeature f) {
-		this.feature = f;
-	}
-
-	public GenericFeature getFeature() {
-		return this.feature;
-	}
-
-	public String getMethodName() {
-		return null;
-	}
 }

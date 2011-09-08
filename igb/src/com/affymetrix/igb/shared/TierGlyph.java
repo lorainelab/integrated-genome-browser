@@ -359,7 +359,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 	
 	protected boolean shouldDrawToolBar(){
-		return true;
+		return style.drawCollapseControl();
 	}
 	
 	private boolean shouldDrawLabel() {

@@ -430,6 +430,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTip.getAction()));
+		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_drawCollapseControl", new DrawCollapseControlAction(map_view)));
 	}
 
 	public void addToolbarButton(JButton button) {

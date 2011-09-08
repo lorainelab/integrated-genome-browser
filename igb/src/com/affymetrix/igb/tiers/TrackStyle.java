@@ -36,9 +36,11 @@ import java.util.logging.Logger;
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
-
+	
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
+	private static boolean draw_collapse_icon = getDrawCollapseState();
+	
 	// whether to create and use a java Preferences node object for this instance
 	private boolean is_persistent = true;
 	private boolean show = default_show;
@@ -795,6 +797,21 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public String getViewMode() {
 		return view_mode;
+	}
+	
+	public static void setDrawCollapseControl(boolean b){
+		draw_collapse_icon = b;
+		if(tiers_root_node != null){
+			tiers_root_node.putBoolean(PREF_DRAW_COLLAPSE_ICON, b);
+		}
+	}
+	
+	public static boolean  getDrawCollapseState(){
+		return tiers_root_node.getBoolean(PREF_DRAW_COLLAPSE_ICON, default_draw_collapse_icon);
+	}
+	
+	public boolean drawCollapseControl() {
+		return (draw_collapse_icon && !isGraphTier() && (view_mode == null || view_mode.equals(default_view_mode)));
 	}
 	
 	public void copyPropertiesFrom(ITrackStyle g) {

@@ -66,6 +66,8 @@ public interface ITrackStyle {
 	public void setFeature(GenericFeature f);
 	public GenericFeature getFeature();
 
+	public boolean drawCollapseControl();
+	
 	/**
 	 *  Gets a reference to a Map that can be used to store any arbitrary 
 	 *  extra properties.  This can be used to

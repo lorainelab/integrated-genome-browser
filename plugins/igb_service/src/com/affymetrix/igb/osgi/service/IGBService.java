@@ -23,7 +23,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
- * 
+ *
  */
 public interface IGBService {
 	public static final String UTF8 = "UTF-8";
@@ -163,7 +163,4 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
-
-	// external functions - R
-	public void insertSymLoader(SymLoader symL);
 }

@@ -355,12 +355,4 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
 	}
-
-	@Override
-	public void insertSymLoader(SymLoader symL) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
-		LoadFileAction.openURI(symL.uri, symL.featureName, true, loadGroup, speciesName);
-	}
 }

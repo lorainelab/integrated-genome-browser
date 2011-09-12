@@ -69,18 +69,6 @@ public final class UnibrowControlServlet {
 		GenericFeature feature = null;
 
 		URI uri = URI.create(feature_url);
-		String uriString = uri.toASCIIString().toLowerCase();
-		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		String extension = ParserController.getExtension(unzippedStreamName);
-		extension = extension.substring(extension.indexOf('.') + 1);
-		
-		if(FileTypeHolder.getInstance().getFileTypeHandler(extension) == null){
-			ErrorHandler.errorPanel("File type " + extension + " is not supported");
-			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-				Level.SEVERE, "File type {0} is not supported", extension);
-			return null;
-		}
-		
 		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
 		if (gVersion == null && gServer.serverType != ServerType.LocalFiles) {
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
@@ -92,9 +80,20 @@ public final class UnibrowControlServlet {
 		if(gVersion != null)
 			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
 
-		if(feature == null && gServer.serverType == ServerType.LocalFiles){
-			// For local file check if feature already exists.
+		if (feature == null && gServer.serverType == ServerType.LocalFiles) {
 
+			String uriString = uri.toASCIIString().toLowerCase();
+			String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+			String extension = ParserController.getExtension(unzippedStreamName);
+			extension = extension.substring(extension.indexOf('.') + 1);
+
+			if (FileTypeHolder.getInstance().getFileTypeHandler(extension) == null) {
+				ErrorHandler.errorPanel("File type " + extension + " is not supported");
+				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+						Level.SEVERE, "File type {0} is not supported", extension);
+				return null;
+			}
+			
 			// If feature doesn't not exist then add it.
 			String fileName = feature_url.substring(feature_url.lastIndexOf('/') + 1, feature_url.length());
 			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);

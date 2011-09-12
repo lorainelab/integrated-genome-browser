@@ -25,6 +25,9 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -66,10 +69,22 @@ public final class UnibrowControlServlet {
 		GenericFeature feature = null;
 
 		URI uri = URI.create(feature_url);
+		String uriString = uri.toASCIIString().toLowerCase();
+		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+		String extension = ParserController.getExtension(unzippedStreamName);
+		extension = extension.substring(extension.indexOf('.') + 1);
+		
+		if(FileTypeHolder.getInstance().getFileTypeHandler(extension) == null){
+			ErrorHandler.errorPanel("File type " + extension + " is not supported");
+			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+				Level.SEVERE, "File type {0} is not supported", extension);
+			return null;
+		}
+		
 		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
 		if (gVersion == null && gServer.serverType != ServerType.LocalFiles) {
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-				Level.SEVERE, "Couldn''t find version {0} in server {1}",
+				Level.WARNING, "Couldn''t find version {0} in server {1}",
 				new Object[]{seqGroup.getID(), gServer.serverName});
 			return null;
 		}

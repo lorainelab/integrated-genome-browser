@@ -1,5 +1,6 @@
 package com.affymetrix.igb.osgi.service;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -149,6 +150,7 @@ public interface IGBService {
 	 */
 	public void selectTab(IGBTabPanel panel);
 	public void deleteGlyph(GlyphI glyph);
+	public void deleteGraph(GraphSym gsym);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
 	public void setTrackStyle(String meth, Color col, String description);

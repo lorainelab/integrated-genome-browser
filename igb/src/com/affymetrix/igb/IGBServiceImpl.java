@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +25,18 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -58,7 +56,6 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.UnibrowControlServlet;
-import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -289,6 +286,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
 	}
 
+	public void deleteGraph(GraphSym gsym) {
+		TrackView.delete((AffyTieredMap)getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
+		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
+	}
+	
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
 		AffyTieredMap map = (AffyTieredMap)getSeqMap();

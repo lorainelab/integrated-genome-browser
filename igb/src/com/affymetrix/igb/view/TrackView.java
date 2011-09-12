@@ -341,7 +341,6 @@ public class TrackView {
 		}
 
 		deleteDependentData(map, method, seq);
-		deleteDependentData(map, method, seq);
 		deleteSymsOnSeq(map, method, seq, feature);
 	}
 	

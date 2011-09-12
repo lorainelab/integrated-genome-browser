@@ -24,6 +24,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -286,6 +287,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
 	}
 
+	public void deleteGraph(GraphSym gsym) {
+		TrackView.delete((AffyTieredMap)getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
+		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
+	}
+	
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
 		AffyTieredMap map = (AffyTieredMap)getSeqMap();

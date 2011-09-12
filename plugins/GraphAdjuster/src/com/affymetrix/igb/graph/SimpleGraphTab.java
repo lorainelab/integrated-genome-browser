@@ -1062,12 +1062,13 @@ public final class SimpleGraphTab extends IGBTabPanel
 	 */
 	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
 		GraphGlyph gl = (GraphGlyph) igbService.getSeqMap().getItem(gsym);
-		if (gl != null) {
-			igbService.getSeqMap().removeItem(gl);
-			// clean-up references to the graph, allowing garbage-collection, etc.
-			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
-		}
 		
+//		if (gl != null) {
+//			igbService.getSeqMap().removeItem(gl);
+//			// clean-up references to the graph, allowing garbage-collection, etc.
+//			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
+//		}
+//		
 //		BioSeq aseq = gsym.getGraphSeq();
 //		if (aseq != null) {
 //			aseq.unloadAnnotation(gsym);
@@ -1089,6 +1090,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 					igbService.packMap(false, false);
 				}
 			}
+		} else{
+			igbService.deleteGraph(gsym);
 		}
 	}
 

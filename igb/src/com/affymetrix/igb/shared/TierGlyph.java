@@ -418,6 +418,7 @@ public class TierGlyph extends SolidGlyph {
 		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
 		//     so it is not necessary to call setScene(null) on them.
 		middle_glyphs.clear();
+		summary = null;
 	}
 
 	public final TierState getState() {

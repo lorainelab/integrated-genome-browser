@@ -1,5 +1,9 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,9 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.swing.JOptionPane;
-
-import org.python.util.PythonInterpreter;
 
 public class RecordPlaybackHolder {
 	private static final RecordPlaybackHolder instance = new RecordPlaybackHolder();
@@ -65,9 +70,24 @@ public class RecordPlaybackHolder {
 */
 	}
 	public void runScript(String fileName) {
-		PythonInterpreter interp = new PythonInterpreter();
-		interp.execfile(fileName);
+//		PythonInterpreter interp = new PythonInterpreter();
+//		interp.execfile(fileName);
+		ScriptEngineManager engineMgr = new ScriptEngineManager();
+		int pos = fileName.lastIndexOf('.');
+		if (pos == -1) {
+			return;
+		}
+		String extension = fileName.substring(pos + 1);
+		ScriptEngine engine = engineMgr.getEngineByExtension(extension);
+		try {
+			InputStream is = new FileInputStream(fileName);
+			Reader reader = new InputStreamReader(is);
+			engine.eval(reader);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
+
 	public void pause() {
 		JOptionPane.showMessageDialog(null, "script paused ...");
 	}

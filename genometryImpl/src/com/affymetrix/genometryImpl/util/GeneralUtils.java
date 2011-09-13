@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -435,5 +436,46 @@ public final class GeneralUtils {
 			return MessageFormat.format(selectMinGraphsMessage, minCount, type);
 		}
 		return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount, type);
+	}
+
+	/* from http://stackoverflow.com/questions/4596447/java-check-if-file-exists-on-remote-server-using-its-url */
+	private static boolean httpExists(String URLName) {
+	    try {
+	      HttpURLConnection.setFollowRedirects(false);
+	      // note : you may also need
+	      //        HttpURLConnection.setInstanceFollowRedirects(false)
+	      HttpURLConnection con =
+	         (HttpURLConnection) new URL(URLName).openConnection();
+	      con.setRequestMethod("HEAD");
+	      return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+	    }
+	    catch (Exception e) {
+	       e.printStackTrace();
+	       return false;
+	    }
+	}
+
+	public static String fixFileName(String fileName) {
+		String fixedFileName = fileName;
+		if (fileName.startsWith("file:/")) {
+			fixedFileName = fileName.substring("file:/".length());
+		}
+		else if (fileName.startsWith("file:")) {
+			fixedFileName = fileName.substring("file:".length());
+		}
+		return fixedFileName;
+	}
+
+	public static boolean urlExists(String url) {
+		if (url == null) {
+			return false;
+		}
+		else if (url.startsWith("http:")) {
+			return httpExists(url);
+		}
+		else {
+			File f = new File(fixFileName(url));
+			return f.exists();
+		}
 	}
 }

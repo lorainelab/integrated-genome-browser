@@ -78,7 +78,7 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	private ITrackStyle style;
-	private GlyphI summary;
+	private ZoomDisplayer zoomDisplayer;
 	
 	public TierGlyph(ITrackStyle style) {
 		setHitable(false);
@@ -108,12 +108,12 @@ public class TierGlyph extends SolidGlyph {
 		return style;
 	}
 	
-	public void setSummary(GlyphI summary) {
-		this.summary = summary;
+	public void setZoomDisplayer(ZoomDisplayer zoomDisplayer) {
+		this.zoomDisplayer = zoomDisplayer;
 	}
 
-	public GlyphI getSummary() {
-		return summary;
+	public ZoomDisplayer getZoomDisplayer() {
+		return zoomDisplayer;
 	} 
  			 
 	/**
@@ -261,10 +261,13 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	public void drawTraversal(ViewI view) {
-		if (summary != null && (view.getTransform().getScaleX() < 0.002)) {
-			summary.setCoordBox(this.getCoordBox());
-			summary.draw(view);
-			return;
+		if (zoomDisplayer != null) {
+			GlyphI zoomGlyph = zoomDisplayer.getZoomGlyph(view);
+			if (zoomGlyph != null) {
+				zoomGlyph.setCoordBox(this.getCoordBox());
+				zoomGlyph.draw(view);
+				return;
+			}
 		}
 		super.drawTraversal(view);
 	}
@@ -464,7 +467,7 @@ public class TierGlyph extends SolidGlyph {
 		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
 		//     so it is not necessary to call setScene(null) on them.
 		middle_glyphs.clear();
-		summary = null;
+		zoomDisplayer = null;
 	}
 
 	public final TierState getState() {

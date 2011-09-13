@@ -61,23 +61,36 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
-	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
-	private static Class default_echild_class = (new FillRectGlyph()).getClass();
-	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
+	private static Class<?> default_eparent_class = (new EfficientLineContGlyph()).getClass();
+	private static Class<?> default_echild_class = (new FillRectGlyph()).getClass();
+	private static Class<?> default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 //	private static final int DEFAULT_THICK_HEIGHT = 25;
 //	private static final int DEFAULT_THIN_HEIGHT = 15;
 	private SeqMapViewExtendedI gviewer;
-	private Class parent_glyph_class;
-	private Class child_glyph_class;
-	private final Class parent_labelled_glyph_class;
-	private final ExtendedMapViewGlyphFactoryI low_zoom = new DepthGraphGlyphFactory(){
-		
+	private Class<?> parent_glyph_class;
+	private Class<?> child_glyph_class;
+	private final Class<?> parent_labelled_glyph_class;
+	private ExtendedMapViewGlyphFactoryI low_zoom;
+	private ExtendedMapViewGlyphFactoryI low_zoom_depth = new DepthGraphGlyphFactory(){
 		@Override
-		public void addToTier(TierGlyph tier, GlyphI glyph, SeqSymmetry sym){
-			tier.setSummary(glyph);
+		public void addToTier(TierGlyph tier, final GlyphI glyph, SeqSymmetry sym){
+			tier.setZoomDisplayer(new DepthZoomDisplayer(glyph));
+		}
+		@Override
+		public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
+			String meth = BioSeq.determineMethod(sym);
+
+			if (meth != null) {
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
+				if (style.getFileType() != null
+						&& (style.getFileType().equalsIgnoreCase("bam")
+						|| style.getFileType().equalsIgnoreCase("sam"))) {
+					super.createGlyph(sym, smv);
+				}
+			}
 		}
 	};
-	
+
 	public GenericAnnotGlyphFactory() {
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
@@ -114,9 +127,24 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
+	public void createGlyph(final SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		gviewer = smv;
 
+		if (BigWigZoomDisplayer.hasBigWig(sym)) {
+			low_zoom = new DepthGraphGlyphFactory(){
+				@Override
+				public void addToTier(TierGlyph tier_, final GlyphI glyph_, SeqSymmetry sym_){
+					tier_.setZoomDisplayer(new BigWigZoomDisplayer(sym, tier_));
+				}
+			};
+		}
+		else {
+			low_zoom = low_zoom_depth;
+		}
+		createDepthGlyph(sym, smv);
+	}
+
+	private void createDepthGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		String meth = BioSeq.determineMethod(sym);
 
 		if (meth != null) {
@@ -133,16 +161,12 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
 			}
 			
-			if (style.getFileType() != null
-					&& (style.getFileType().equalsIgnoreCase("bam")
-					|| style.getFileType().equalsIgnoreCase("sam"))) {
-				low_zoom.createGlyph(sym, smv);
-			}
+			low_zoom.createGlyph(sym, smv);
 		} else {  // keep recursing down into child syms if parent sym has no "method" property
 			int childCount = sym.getChildCount();
 			for (int i = 0; i < childCount; i++) {
 				SeqSymmetry childSym = sym.getChild(i);
-				createGlyph(childSym, gviewer);
+				createDepthGlyph(childSym, gviewer);
 			}
 		}
 	}
@@ -227,7 +251,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private static GlyphI determineGlyph(
-			Class glyphClass, Class labelledGlyphClass,
+			Class<?> glyphClass, Class<?> labelledGlyphClass,
 			ITrackStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer)
 			throws IllegalAccessException, InstantiationException {
@@ -532,6 +556,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	//Note : Use this code to add cds start and end glyph - HV 07/09/11
+	@SuppressWarnings("unused")
 	private static void addCdsColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
 		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
 				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {

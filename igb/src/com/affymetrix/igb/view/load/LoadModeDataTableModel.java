@@ -69,7 +69,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		}
 	}
 
-	void clearFeatures() {
+	public void clearFeatures() {
 		if (this.virtualFeatures != null) {
 			this.virtualFeatures.clear();
 		}

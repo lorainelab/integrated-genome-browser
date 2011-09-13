@@ -1,7 +1,10 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -19,6 +22,16 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -27,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
@@ -51,17 +65,19 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.datatransfer.DataFlavor;
+import java.net.URI;
 
 /**
  * View of genome features as a tree.
  */
-public final class FeatureTreeView extends JComponent implements ActionListener {
-	private static final long serialVersionUID = 1L;
+public final class FeatureTreeView extends JComponent implements ActionListener, DragSourceListener {
 
+	private static final long serialVersionUID = 1L;
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
-	private static final String path_separator = "/";
 	private final JRPButton serverPrefsB;
+	private static final String path_separator = "/";
 	private final TreeCellRenderer tcr;
 	private final TreeCellEditor tce;
 
@@ -76,7 +92,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		serverPrefsB = new JRPButton("DataAccess_configure", "Configure...");
 		serverPrefsB.addActionListener(this);
 		serverPrefsB.setToolTipText("Configure Data Sources");
-		serverPrefsB.setMargin(new Insets(0,0,0,0));
+		serverPrefsB.setMargin(new Insets(0, 0, 0, 0));
 		serverPrefsB.setAlignmentY(TOP_ALIGNMENT);
 
 		JPanel tree_panel = new JPanel();
@@ -85,10 +101,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree_panel.setAlignmentY(TOP_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
 
-		tree = new JTree();
+		tree = new FeatureTree();
 		//tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getPreferredSize().height));
 
-		 //Enable tool tips.
+		//Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
 		tcr = new FeatureTreeCellRenderer();
@@ -96,7 +112,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		tce = new FeatureTreeCellEditor();
 		tree.setCellEditor(tce);
-		
+
 		tree.setEditable(true);
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
@@ -109,8 +125,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree_scroller.setAlignmentX(LEFT_ALIGNMENT);
 		tree_scroller.setAlignmentY(TOP_ALIGNMENT);
 		/*tree_scroller.setPreferredSize(new Dimension(
-				tree_scroller.getMinimumSize().width,
-				tree_scroller.getPreferredSize().height));*/
+		tree_scroller.getMinimumSize().width,
+		tree_scroller.getPreferredSize().height));*/
 		initOrRefreshTree(null);
 
 		tree_panel.add(tree_scroller);
@@ -118,34 +134,20 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		GroupLayout layout = new GroupLayout(tree_panel);
 		tree_panel.setLayout(layout);
 		layout.setAutoCreateGaps(false);
-        layout.setAutoCreateContainerGaps(false);
+		layout.setAutoCreateContainerGaps(false);
 
-		layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(tree_scroller)
-				.addGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				  .addComponent(featuresLabel))
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				  .addGap(10))
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				  .addComponent(serverPrefsB))
-		)));
+		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tree_scroller).addGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(featuresLabel)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(10)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(serverPrefsB)))));
 
-		layout.setVerticalGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(featuresLabel)
-                .addComponent(serverPrefsB))
-            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(tree_scroller))
-        );
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(featuresLabel).addComponent(serverPrefsB)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tree_scroller)));
 
 		/*tree_panel.setPreferredSize(new Dimension(
-				tree_panel.getMinimumSize().width,
-				tree_panel.getPreferredSize().height
-				));*/
+		tree_panel.getMinimumSize().width,
+		tree_panel.getPreferredSize().height
+		));*/
 
 		this.add(tree_panel);
+
+
 	}
 
 	/**
@@ -154,7 +156,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		final Object src = evt.getSource();
-		
+
 		if (src == this.serverPrefsB) {
 			// Go to server prefs tab.
 
@@ -169,7 +171,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		}
 	}
 
-
 	/**
 	 * Initialize (or simply refresh) the tree.
 	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
@@ -183,53 +184,60 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			public void run() {
 				tree.setModel(tmodel);
 
-				if(tree.getRowCount() > 0){
-					for(int i=0; i<tree.getRowCount(); i++)
+				if (tree.getRowCount() > 0) {
+					for (int i = 0; i < tree.getRowCount(); i++) {
 						expand(tree, tree.getPathForRow(i));
+					}
 				}
-				
+
 				tree_scroller.invalidate();
 			}
 		});
 	}
 
 	private void expand(JTree tree, TreePath path) {
-		if(path == null)
+		if (path == null) {
 			return;
-		
-        TreeNode node = (TreeNode)path.getLastPathComponent();
+		}
 
-        if (node.getChildCount() > 0) {
-            @SuppressWarnings("unchecked")
+		TreeNode node = (TreeNode) path.getLastPathComponent();
+
+		if (node.getChildCount() > 0) {
+			@SuppressWarnings("unchecked")
 			Enumeration<TreeNode> e = node.children();
-            while(e.hasMoreElements()) {
-                TreeNode n = e.nextElement();
-                expand(tree, path.pathByAddingChild(n));
-            }
-        }
+			while (e.hasMoreElements()) {
+				TreeNode n = e.nextElement();
+				expand(tree, path.pathByAddingChild(n));
+			}
+		}
 
-		if(node == null || !(node instanceof DefaultMutableTreeNode))
+		if (node == null || !(node instanceof DefaultMutableTreeNode)) {
 			return;
+		}
 
-		Object obj = ((DefaultMutableTreeNode)node).getUserObject();
+		Object obj = ((DefaultMutableTreeNode) node).getUserObject();
 
-		if(obj == null || !(obj instanceof TreeNodeUserInfo))
+		if (obj == null || !(obj instanceof TreeNodeUserInfo)) {
 			return;
+		}
 
-		if(!((TreeNodeUserInfo)obj).checked)
+		if (!((TreeNodeUserInfo) obj).checked) {
 			return;
-		
-        expand(path);
-    }
+		}
 
-	private void expand(TreePath path){
+		expand(path);
+	}
+
+	private void expand(TreePath path) {
 		TreePath parentPath = path.getParentPath();
 
-		if(parentPath != null)
+		if (parentPath != null) {
 			expand(parentPath);
+		}
 
 		tree.expandPath(path);
 	}
+
 	/**
 	 * Convert list of features into a tree.
 	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.
@@ -288,7 +296,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		@SuppressWarnings("unchecked")
 		Enumeration<DefaultMutableTreeNode> en = root.children();	// no way to avoid compiler warning in Java 6
-		
+
 		while (en.hasMoreElements()) {
 			DefaultMutableTreeNode candidate = en.nextElement();
 			Object nodeData = candidate.getUserObject();
@@ -305,13 +313,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 				if (candidate.getAllowsChildren()) {
 					addOrFindNode(candidate, feature, featureRight);
 					return;
-					
+
 				}
 			}
 		}
 
 		boolean autoload = PreferenceUtils.getBooleanParam(
-						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		// Couldn't find matching node.  Add new one.
 		// John -- not really sure what the following code is for. ?
 		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null, autoload);
@@ -321,7 +329,22 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		addOrFindNode(newNode, feature, featureRight);
 	}
 
-	private final static class TreeMouseListener implements MouseListener, MouseMotionListener {
+	public void dragEnter(DragSourceDragEvent dsde) {
+	}
+
+	public void dragOver(DragSourceDragEvent dsde) {
+	}
+
+	public void dropActionChanged(DragSourceDragEvent dsde) {
+	}
+
+	public void dragExit(DragSourceEvent dse) {
+	}
+
+	public void dragDropEnd(DragSourceDropEvent dsde) {
+	}
+
+	private class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
@@ -330,7 +353,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 			int x = e.getX();
 			int y = e.getY();
-			URL friendlyURL = getURLAt((JTree)e.getSource(), x, y);
+			URL friendlyURL = getURLAt((JTree) e.getSource(), x, y);
 			if (friendlyURL != null) {
 				GeneralUtils.browse(friendlyURL.toString());
 			}
@@ -367,7 +390,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		public void mouseDragged(MouseEvent e) {
 		}
 	}
-
 
 	/**
 	 * See if there is a hyperlink at this location.
@@ -431,7 +453,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		return null;
 	}
 
-	
 	/**
 	 * Find hyperlink for the server name.
 	 * @param gServer
@@ -459,8 +480,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			}
 		}
 		return null;
-	}
 
+
+	}
 
 	/*
 	 * Some changes to enable checkboxes are from:
@@ -468,11 +490,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 *
 	 */
 	private final static class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
+
 		private static final long serialVersionUID = 1L;
-		private static final Insets insets = new Insets(0,0,0,0);
-		private final JRPCheckBox leafCheckBox = new JRPCheckBox(){
+		private static final Insets insets = new Insets(0, 0, 0, 0);
+		private final JRPCheckBox leafCheckBox = new JRPCheckBox() {
+
 			@Override
-			public Insets getInsets(){
+			public Insets getInsets() {
 				return insets;
 			}
 		};
@@ -487,7 +511,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			}
 
 			setLeafIcon(null);
-			
+
 			selectionBorderColor = UIManager.getColor("Tree.selectionBorderColor");
 			selectionForeground = UIManager.getColor("Tree.selectionForeground");
 			selectionBackground = UIManager.getColor("Tree.selectionBackground");
@@ -496,7 +520,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 			Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
 			leafCheckBox.setFocusPainted((drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue()));
-			
+
 			String osName = System.getProperty("os.name");
 			if (osName != null && osName.indexOf("Windows") != -1) {
 				leafCheckBox.setBorderPaintedFlat(true);
@@ -527,10 +551,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			}
 
 			if (genericData instanceof GenericServer) {
-				return renderServer((GenericServer)genericData, tree, sel, expanded, leaf, row, hasFocus);
+				return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus);
 			}
 			if (leaf && genericData instanceof GenericFeature) {
-				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature)genericData, nodeUObject);
+				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
 			}
 
 			return super.getTreeCellRendererComponent(
@@ -588,8 +612,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	}
 
 	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
-		private static final long serialVersionUID = 1L;
 
+		private static final long serialVersionUID = 1L;
 		FeatureTreeCellRenderer renderer = new FeatureTreeCellRenderer();
 		DefaultMutableTreeNode editedNode;
 
@@ -646,7 +670,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 			Object nodeData = editedNode.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
-				
 				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
 				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 				if (tn.genericObject instanceof GenericFeature) {
@@ -658,12 +681,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 						loadStrategies.add(LoadStrategy.GENOME);
 						GeneralLoadView.loadFeature(loadStrategies, feature, null);
 					} else {
-						
-						String message = "Unchecking "+ feature.featureName +" will remove all loaded data. \nDo you want to continue? ";
+						String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
 						if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 								PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 							GeneralLoadView.getLoadView().removeFeature(feature, true);
-						}else{
+						} else {
 							tn.setChecked(true);
 						}
 					}
@@ -671,6 +693,20 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			}
 			return nodeData;
 		}
+	}
+
+	public JTree getTree() {
+		if (tree != null) {
+			return tree;
+		}
+		return null;
+	}
+
+	public JRPButton getConfigureButton() {
+		if (serverPrefsB != null) {
+			return serverPrefsB;
+		}
+		return null;
 	}
 
 	private final static class TreeNodeUserInfo {
@@ -696,7 +732,138 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			checked = newValue;
 		}
 	}
+
+	private static class TransferableTreeNode implements Transferable {
+
+		private DefaultMutableTreeNode data;
+		private DataFlavor flavors[] = {DataFlavor.stringFlavor};
+
+		public TransferableTreeNode(DefaultMutableTreeNode data) {
+			this.data = data;
+		}
+
+		public Object getTransferData(DataFlavor flavor)
+				throws UnsupportedFlavorException, IOException {
+			Object returnObject = null;
+			if (flavor.equals(DataFlavor.stringFlavor)) {
+				TreeNodeUserInfo nodeData = (TreeNodeUserInfo) data.getUserObject();
+				if (nodeData.genericObject instanceof GenericFeature) {
+					GenericFeature feature = (GenericFeature) nodeData.genericObject;
+					returnObject = feature.getURI().toString();
+				}
+			}
+
+			return returnObject;
+		}
+
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			if (flavor.equals(DataFlavor.stringFlavor)) {
+				return true;
+			}
+			return false;
+		}
+
+		public DataFlavor[] getTransferDataFlavors() {
+			return flavors;
+		}
+	}
+
+	private class FeatureTree extends JTree implements DragSourceListener, DragGestureListener {
+
+		private final DragSource source;
+
+		FeatureTree() {
+			super();
+
+			source = new DragSource();
+			source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
+		}
+
+		public void dragGestureRecognized(DragGestureEvent dge) {
+			TreePath path = getSelectionPath();
+
+			if (path != null) {
+				DefaultMutableTreeNode selection = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+				if (selection.isLeaf()) {
+
+					TransferableTreeNode t = new TransferableTreeNode(selection);
+
+					source.startDrag(dge, DragSource.DefaultMoveDrop, t, this);
+				}
+			}
+		}
+
+		public void dragEnter(DragSourceDragEvent dsde) {
+		}
+
+		public void dragOver(DragSourceDragEvent dsde) {
+		}
+
+		public void dropActionChanged(DragSourceDragEvent dsde) {
+		}
+
+		public void dragExit(DragSourceEvent dse) {
+		}
+
+		public void dragDropEnd(DragSourceDropEvent dsde) {
+		}
+	}
+
+	public void updateTree(URI uri, AnnotatedSeqGroup loadGroup) {
+		boolean isContained = isContained(loadGroup, uri);
+
+		if (!isContained) {
+			return;
+		}
+
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+		DefaultMutableTreeNode node;
+
+		Enumeration nodes = root.breadthFirstEnumeration();
+
+		while (nodes.hasMoreElements()) {
+			node = (DefaultMutableTreeNode) nodes.nextElement();
+			Object nodeData = node.getUserObject();
+			if (nodeData instanceof TreeNodeUserInfo) {
+				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+				if (tn.genericObject instanceof GenericFeature) {
+					GenericFeature feature = (GenericFeature) tn.genericObject;
+					if (!feature.isVisible()) {
+						URI fUri = feature.getURI();
+						if (uri.equals(fUri)) {
+							feature.setVisible();
+						}
+					}
+				}
+			}
+		}
+
+		initOrRefreshTree(GeneralLoadUtils.getSelectedVersionFeatures());
+	}
+
+	public boolean isLoaded(URI uri) {
+		List<GenericFeature> gList = GeneralLoadView.getLoadView().getLoadModeTableModel().features;
+		if (gList == null) {
+			return false;
+		}
+
+		for (GenericFeature gFeature : gList) {
+			if (gFeature.getURI().equals(uri)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isContained(AnnotatedSeqGroup loadGroup, URI uri) {
+		for (GenericVersion version : loadGroup.getAllVersions()) {
+			for (GenericFeature feature : version.getFeatures()) {
+				if (uri.equals(feature.getURI())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
-
-
-

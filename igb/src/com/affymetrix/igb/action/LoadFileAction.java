@@ -64,15 +64,16 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public final class LoadFileAction extends IGBAction {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
 	public static int unknown_group_count = 1;
 	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("unknownSpecies");
 	public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("unknownGenome");
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-	private final TransferHandler fdh = new FileDropHandler(){
+	private final TransferHandler fdh = new FileDropHandler() {
+
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -104,19 +105,18 @@ public final class LoadFileAction extends IGBAction {
 		loadFile(load_dir_tracker, gviewerFrame);
 	}
 
-
 	private static MergeOptionChooser getFileChooser(String id) {
 		chooser = new MergeOptionChooser(id);
 		chooser.setMultiSelectionEnabled(true);
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
 		for (String name : nameToExtensionMap.keySet()) {
 			chooser.addChoosableFileFilter(new UniFileFilter(
-				nameToExtensionMap.get(name).toArray(new String[]{}),
-				name + " Files"));
+					nameToExtensionMap.get(name).toArray(new String[]{}),
+					name + " Files"));
 		}
 		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"igb", "py"},
-						"Script File"));
+				new String[]{"igb", "py"},
+				"Script File"));
 
 		Set<String> all_known_endings = new HashSet<String>();
 		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
@@ -127,8 +127,8 @@ public final class LoadFileAction extends IGBAction {
 			}
 		}
 		UniFileFilter all_known_types = new UniFileFilter(
-						all_known_endings.toArray(new String[all_known_endings.size()]),
-						"Known Types");
+				all_known_endings.toArray(new String[all_known_endings.size()]),
+				"Known Types");
 		all_known_types.setExtensionListInDescription(false);
 		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
 		chooser.addChoosableFileFilter(all_known_types);
@@ -157,18 +157,18 @@ public final class LoadFileAction extends IGBAction {
 
 		final File[] fils = fileChooser.getSelectedFiles();
 
-		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)fileChooser.versionCB.getSelectedItem());
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) fileChooser.versionCB.getSelectedItem());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 
-		for(File file : fils){
+		for (File file : fils) {
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup, (String)fileChooser.speciesCB.getSelectedItem());
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.speciesCB.getSelectedItem());
 		}
 
 	}
 
-	public static void openURI(URI uri, String fileName){
+	public static void openURI(URI uri, String fileName) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
@@ -180,48 +180,54 @@ public final class LoadFileAction extends IGBAction {
 		}
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
-		if(!LocalUrlCacher.isValidURI(uri)){
+		if (!LocalUrlCacher.isValidURI(uri)) {
 			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
-
-		if(gFeature == null)
+		
+		if (gFeature == null) {
 			return;
+		}
+		
+		// Update Feature Tree to ensure checkboxes remain synchronized with loaded features
+		GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri, loadGroup);
 
 		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
 
-		if (gFeature.symL != null){
+		if (gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature);
 		}
 
-		// force a refresh of this server
+		// force a refresh of this server		
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
-		//Annotated Seq Group must be selected before feature table change call.
+		// Annotated Seq Group must be selected before feature table change call.
 		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
-		if(!mergeSelected){
+		if (!mergeSelected) {
 			unknown_group_count++;
 		}
+
 	}
 
-	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup){
-		if (!isUniqueURI(loadGroup, uri)) {
+	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup) {
+		boolean isloaded = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
+		// Test to determine if a feature with this uri is contained in the load mode table
+		if (isloaded) {
 			ErrorHandler.errorPanel("Cannot add same feature",
 					"The feature " + uri + " has already been added.");
 			return null;
 		}
-
+		
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
-
 		version = setVersion(uri, loadGroup, version);
 
-		//In case of BAM
-		if(version == null){
+		// In case of BAM
+		if (version == null) {
 			return null;
 		}
 
@@ -237,29 +243,15 @@ public final class LoadFileAction extends IGBAction {
 		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 
-		version.addFeature(gFeature);
-		gFeature.setVisible(); // this should be automatically checked in the feature tree
-
-		return gFeature;
-	}
-
-	/**
-	 * Make sure this URI is not already used within the selectedGroup.
-	 * Otherwise there could be collisions in BioSeq.addAnnotations(type)
-	 * @param loadGroup
-	 * @param uri
-	 * @return
-	 */
-	private static boolean isUniqueURI(AnnotatedSeqGroup loadGroup, URI uri) {
-		for (GenericVersion version : loadGroup.getAllVersions()) {
-			// See if symloader feature was created with the same uri.
-			for (GenericFeature feature : version.getFeatures()) {
-				if (uri.equals(feature.getURI())) {
-					return false;
-				}
-			}
+		boolean isContained = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
+		// Test to determine if a feature already exist in the feature tree
+		if (!isContained) {
+			version.addFeature(gFeature);
 		}
-		return true;
+
+		gFeature.setVisible(); // this should be automatically checked in the feature tree
+		
+		return gFeature;
 	}
 
 	/**
@@ -269,22 +261,22 @@ public final class LoadFileAction extends IGBAction {
 	 * @param version
 	 * @return
 	 */
-	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version){
+	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version) {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
 		String extension = ParserController.getExtension(unzippedStreamName);
 
-		if(extension.equals(".bam")){
-			if(!handleBam(uri)){
-				ErrorHandler.errorPanel("Cannot open file","Could not find index file");
+		if (extension.equals(".bam")) {
+			if (!handleBam(uri)) {
+				ErrorHandler.errorPanel("Cannot open file", "Could not find index file");
 				version = null;
 			}
-		}else if(extension.equals(".useq")){
+		} else if (extension.equals(".useq")) {
 			loadGroup = handleUseq(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-		}else if(extension.equals(".bar")){
+		} else if (extension.equals(".bar")) {
 			loadGroup = handleBar(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-		}else if(extension.equals(".bp1") || extension.equals(".bp2")){
+		} else if (extension.equals(".bp1") || extension.equals(".bp2")) {
 			loadGroup = handleBp(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
 		}
@@ -292,7 +284,7 @@ public final class LoadFileAction extends IGBAction {
 		return version;
 	}
 
-	private static boolean handleBam(URI uri){
+	private static boolean handleBam(URI uri) {
 		try {
 			return BAM.hasIndex(uri);
 		} catch (IOException ex) {
@@ -307,24 +299,25 @@ public final class LoadFileAction extends IGBAction {
 	 * @param group
 	 * @return
 	 */
-	private static AnnotatedSeqGroup handleBar(URI uri, AnnotatedSeqGroup group){
+	private static AnnotatedSeqGroup handleBar(URI uri, AnnotatedSeqGroup group) {
 		InputStream istr = null;
 		try {
-			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			istr = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			List<AnnotatedSeqGroup> groups = BarParser.getSeqGroups(uri.toString(), istr, group, gmodel);
-			if(groups.isEmpty())
+			if (groups.isEmpty()) {
 				return group;
+			}
 
 			//TODO: What if there are more than one seq group ?
-			if(groups.size() > 1){
+			if (groups.size() > 1) {
 				Logger.getLogger(BarParser.class.getName()).log(
 						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()});
 			}
 
 			return groups.get(0);
-		}catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}finally{
+		} finally {
 			GeneralUtils.safeClose(istr);
 		}
 
@@ -337,7 +330,7 @@ public final class LoadFileAction extends IGBAction {
 	 * @param group
 	 * @return
 	 */
-	private static AnnotatedSeqGroup handleUseq(URI uri, AnnotatedSeqGroup group){
+	private static AnnotatedSeqGroup handleUseq(URI uri, AnnotatedSeqGroup group) {
 		InputStream istr = null;
 		ZipInputStream zis = null;
 		try {
@@ -351,7 +344,7 @@ public final class LoadFileAction extends IGBAction {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}finally{
+		} finally {
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(zis);
 		}
@@ -362,14 +355,14 @@ public final class LoadFileAction extends IGBAction {
 	private static AnnotatedSeqGroup handleBp(URI uri, AnnotatedSeqGroup group) {
 		InputStream istr = null;
 		try {
-			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			istr = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			AnnotatedSeqGroup gr = Bprobe1Parser.getSeqGroup(istr, group, gmodel);
 			if (gr != null) {
 				return gr;
 			}
-		}catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}finally{
+		} finally {
 			GeneralUtils.safeClose(istr);
 		}
 
@@ -377,20 +370,20 @@ public final class LoadFileAction extends IGBAction {
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
-		if(((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+		if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
 			// force a refresh of this server. This forces creation of 'genome' sequence.
 			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 			return;
 		}
-		
+
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String message = "Retrieving chromosomes for " + fileName;
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
-				
+
 				try {
 					Application.getSingleton().addNotLockedUpMsg(message);
 					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
@@ -398,17 +391,17 @@ public final class LoadFileAction extends IGBAction {
 					}
 					return true;
 				} catch (Exception ex) {
-					((QuickLoad)gFeature.symL).logException(ex);
-					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)){
+					((QuickLoad) gFeature.symL).logException(ex);
+					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
 						if (gFeature.gVersion.removeFeature(gFeature)) {
 							SeqGroupView.getInstance().refreshTable();
 						}
 					}
 					return false;
 				}
-				
+
 			}
-			
+
 			@Override
 			protected void done() {
 				boolean result = true;
@@ -431,29 +424,25 @@ public final class LoadFileAction extends IGBAction {
 				}
 				Application.getSingleton().removeNotLockedUpMsg(message);
 			}
-
-			
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 
-
-	private static void openURLAction(String url){
+	private static void openURLAction(String url) {
 		try {
 			URI uri = new URI(url.trim());
-			if(!openURI(uri)){
+			if (!openURI(uri)) {
 				ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
 			}
-		}
-		catch (URISyntaxException ex) {
+		} catch (URISyntaxException ex) {
 			ex.printStackTrace();
 			ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ");
 		}
 	}
 
-	private static void openFileAction(File f){
+	private static void openFileAction(File f) {
 		URI uri = f.toURI();
-		if(!openURI(uri)){
+		if (!openURI(uri)) {
 			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName());
 		}
 	}
@@ -462,18 +451,18 @@ public final class LoadFileAction extends IGBAction {
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 
-		if(!getFileChooser("openURI").accept(new File(friendlyName))){
+		if (!getFileChooser("openURI").accept(new File(friendlyName))) {
 			return false;
 		}
 
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
-		boolean mergeSelected = loadGroup == null ? false :true;
+		boolean mergeSelected = loadGroup == null ? false : true;
 		if (loadGroup == null) {
 			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
 		}
 
 		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-		if(SELECT_SPECIES.equals(speciesName)){
+		if (SELECT_SPECIES.equals(speciesName)) {
 			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);

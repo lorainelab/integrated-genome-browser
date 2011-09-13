@@ -96,6 +96,15 @@ public final class GeneralLoadUtils {
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
 	static final Map<String, String> versionName2species =
 			new HashMap<String, String>();	// the species associated with the given version.
+	
+	public static Map<String, String> getVersionName2Species() {
+		return versionName2species;
+	}
+	public static Map<String, List<GenericVersion>>  getSpecies2Generic() {
+		return species2genericVersionList;
+	}
+	
+
 	/**
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()
@@ -313,7 +322,7 @@ public final class GeneralLoadUtils {
 	 * @param aseq
 	 * @return genome version
 	 */
-	static GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
+	public static GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
@@ -704,8 +713,8 @@ public final class GeneralLoadUtils {
 						publish(current_seq);
 					}
 
-				for (BioSeq seq : feature.symL.getChromosomeList()) {
-					if (seq == current_seq) {
+					for (BioSeq seq : feature.symL.getChromosomeList()) {
+						if (seq == current_seq) {
 							continue;
 						}
 
@@ -715,7 +724,7 @@ public final class GeneralLoadUtils {
 						loadOnSequence(seq);
 					}
 				} catch (Exception ex) {
-					((QuickLoad)feature.symL).logException(ex);
+					((QuickLoad) feature.symL).logException(ex);
 				}
 				return null;
 			}
@@ -730,8 +739,8 @@ public final class GeneralLoadUtils {
 				if (isCancelled()) {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
-				
-			//	LoadModeTable.updateVirtualFeatureList();
+
+				//	LoadModeTable.updateVirtualFeatureList();
 
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
@@ -927,11 +936,11 @@ public final class GeneralLoadUtils {
 		}
 
 //		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
-		
+
 		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}
 
-	static String getPreferredVersionName(Set<GenericVersion> gVersions) {
+	public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
 		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
 	}
 
@@ -940,7 +949,7 @@ public final class GeneralLoadUtils {
 	 * @param versionName - version name
 	 * @return a friendly HTML string of version synonyms (not including versionName).
 	 */
-	static String listSynonyms(String versionName) {
+	public static String listSynonyms(String versionName) {
 		StringBuilder synonymBuilder = new StringBuilder(100);
 		synonymBuilder.append("<html>").append(IGBConstants.BUNDLE.getString("synonymList"));
 		Set<String> synonymSet = LOOKUP.getSynonyms(versionName);

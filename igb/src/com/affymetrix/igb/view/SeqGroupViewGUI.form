@@ -16,17 +16,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-          <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
+          <Component id="speciesPanel" alignment="0" max="32767" attributes="0"/>
+          <Component id="genomeVersionPanel" alignment="0" max="32767" attributes="0"/>
           <Component id="jScrollPane1" alignment="1" pref="194" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <Component id="speciesPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+              <Component id="genomeVersionPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="417" max="32767" attributes="0"/>
           </Group>
@@ -41,14 +41,25 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jTable1">
+        <Component class="javax.swing.JTable" name="currentSequenceTable">
+          <Properties>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+              <Table columnCount="0" rowCount="0"/>
+            </Property>
+            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+              <TableColumnModel selectionModel="0"/>
+            </Property>
+            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+            </Property>
+          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="seqtable"/>
           </AuxValues>
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="speciesPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -72,13 +83,12 @@
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="speciesCB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="speciesCB.addItem(SELECT_SPECIES);&#xa;speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));&#xa;speciesCB.setEnabled(false);&#xa;speciesCB.setEditable(false);&#xa;speciesCB.setToolTipText(&quot;Choose&quot; + &quot; &quot; + SELECT_SPECIES);&#xa;speciesCBRenderer = new JComboBoxToolTipRenderer();&#xa;speciesCB.setRenderer(speciesCBRenderer);&#xa;speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, &quot;Choose&quot; + &quot; &quot; + SELECT_SPECIES);"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPComboBoxWithSingleListener(&quot;DataAccess_species&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="speciesCB = seqGroupModel.getSpeciesCB()"/>
           </AuxValues>
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel2">
+    <Container class="javax.swing.JPanel" name="genomeVersionPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -102,8 +112,7 @@
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="versionCB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="versionCB.addItem(SELECT_GENOME);&#xa;        versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width * 4, versionCB.getPreferredSize().height));&#xa;        versionCB.setEnabled(false);&#xa;        versionCB.setEditable(false);&#xa;        versionCB.setToolTipText(&quot;Choose&quot; + &quot; &quot; + SELECT_GENOME);&#xa;        versionCBRenderer = new JComboBoxToolTipRenderer();&#xa;        versionCB.setRenderer(versionCBRenderer);&#xa;        versionCBRenderer.setToolTipEntry(SELECT_GENOME, &quot;Choose&quot; + &quot; &quot; + SELECT_GENOME);"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPComboBoxWithSingleListener(&quot;DataAccess_version&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="seqGroupModel.getVersionCB()"/>
           </AuxValues>
         </Component>
       </SubComponents>

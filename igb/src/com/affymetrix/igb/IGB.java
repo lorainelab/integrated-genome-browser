@@ -298,7 +298,7 @@ public final class IGB extends Application
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
 		GeneralLoadView.init(IGBServiceImpl.getInstance());
-		SeqGroupView.init(IGBServiceImpl.getInstance());
+		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 	}
 
 	/**
@@ -349,7 +349,7 @@ public final class IGB extends Application
 //		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(view_menu);
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", new ExportSlicedViewAction()), export_to_file_menu.getText());
-		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
+		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupViewGUI.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
 	public void loadMenu() {

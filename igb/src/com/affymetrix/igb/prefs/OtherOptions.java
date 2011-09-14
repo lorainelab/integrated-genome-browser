@@ -142,7 +142,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                         .add(numFormatLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -156,7 +156,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(numFormatLabel)
                     .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         orfAnalyzerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ORF Analyzer (Sliced View tab)"));
@@ -178,7 +178,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(dynamicORFLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -228,7 +228,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(otherLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(OtherColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(6, Short.MAX_VALUE))
         );
         residueColorPanelLayout.setVerticalGroup(
             residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -254,40 +254,33 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(keepZoomStripeCheckBox)
+                    .add(showZoomStripLabelCheckBox)
+                    .add(confirmBeforeDeleteCheckBox)
+                    .add(confirmBeforeLoadingCheckBox)
+                    .add(askBeforeExitCheckBox)
+                    .add(autoChangeView)
                     .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(keepZoomStripeCheckBox)
-                            .add(showZoomStripLabelCheckBox)
-                            .add(confirmBeforeDeleteCheckBox)
-                            .add(confirmBeforeLoadingCheckBox)
-                            .add(askBeforeExitCheckBox)))
+                        .add(45, 45, 45)
+                        .add(clear_prefsB))
                     .add(layout.createSequentialGroup()
-                        .add(20, 20, 20)
-                        .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(20, 20, 20)
-                        .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(20, 20, 20)
-                        .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(autoChangeView))
-                    .add(layout.createSequentialGroup()
-                        .add(62, 62, 62)
-                        .add(clear_prefsB)))
-                .addContainerGap())
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, 321, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(10, 10, 10)
+                .add(9, 9, 9)
+                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
                 .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(13, 13, 13)
+                .add(11, 11, 11)
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(askBeforeExitCheckBox)
@@ -301,8 +294,9 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(autoChangeView)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(clear_prefsB))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(clear_prefsB)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         clear_prefsB.addActionListener(this);

@@ -171,6 +171,12 @@
                     <location>protannot/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>quickload_site_creator/src</label>
+                    <type>java</type>
+                    <location>quickload_site_creator/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -428,6 +434,10 @@
                     <source-folder style="packages">
                         <label>protannot/src</label>
                         <location>protannot/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>quickload_site_creator/src</label>
+                        <location>quickload_site_creator/src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>

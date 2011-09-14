@@ -18,6 +18,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JOptionPane;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ResidueColorHelper;
@@ -54,6 +55,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
+			PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 		} else {
 			smv = null;
 		}
@@ -70,6 +72,8 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jProgressBar1 = new javax.swing.JProgressBar();
+        colorChooserPanel1 = new com.jidesoft.combobox.ColorChooserPanel();
         coordinatePanel = new javax.swing.JPanel();
         backgroundLabel = new javax.swing.JLabel();
         foregroundLabel = new javax.swing.JLabel();
@@ -108,6 +112,8 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
         clear_prefsB = new javax.swing.JButton();
         showZoomStripLabelCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe Label", PreferenceUtils.getTopNode(),
             UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label);
+        autoChangeView = PreferenceUtils.createCheckBox("Auto Change view for BAM/SAM", PreferenceUtils.getTopNode(),
+            SeqMapView.PREF_AUTO_CHANGE_VIEW, SeqMapView.default_auto_change_view);
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
 
@@ -136,7 +142,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                         .add(numFormatLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -172,7 +178,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(dynamicORFLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -258,18 +264,21 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                             .add(confirmBeforeLoadingCheckBox)
                             .add(askBeforeExitCheckBox)))
                     .add(layout.createSequentialGroup()
-                        .add(65, 65, 65)
-                        .add(clear_prefsB))
-                    .add(layout.createSequentialGroup()
                         .add(20, 20, 20)
                         .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(20, 20, 20)
-                        .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+                        .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(20, 20, 20)
-                        .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(autoChangeView))
+                    .add(layout.createSequentialGroup()
+                        .add(62, 62, 62)
+                        .add(clear_prefsB)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -291,8 +300,9 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(clear_prefsB)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(autoChangeView)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(clear_prefsB))
         );
 
         clear_prefsB.addActionListener(this);
@@ -308,10 +318,12 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox TColorComboBox;
     private javax.swing.JLabel aLabel;
     private javax.swing.JCheckBox askBeforeExitCheckBox;
+    private javax.swing.JCheckBox autoChangeView;
     private javax.swing.JLabel backgroundLabel;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
+    private com.jidesoft.combobox.ColorChooserPanel colorChooserPanel1;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
     private javax.swing.JCheckBox confirmBeforeLoadingCheckBox;
     private javax.swing.JPanel coordinatePanel;
@@ -320,6 +332,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel foregroundLabel;
     private javax.swing.JLabel gLabel;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JCheckBox keepZoomStripeCheckBox;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JPanel orfAnalyzerPanel;
@@ -332,9 +345,18 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 
 	
 	public void preferenceChange(PreferenceChangeEvent pce) {
-		if (smv != null) {
-			smv.getSeqMap().updateWidget();
-		}
+		if (!pce.getNode().equals(PreferenceUtils.getTopNode()) || smv == null) {
+			return;
+        }
+		
+        if (pce.getKey().equals(SeqMapView.PREF_AUTO_CHANGE_VIEW)) {
+			ThreadUtils.runOnEventQueue(new Runnable(){
+				public void run() {
+					smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
+				}
+				
+			});
+        }
 	}
 
 	public void actionPerformed(ActionEvent evt) {

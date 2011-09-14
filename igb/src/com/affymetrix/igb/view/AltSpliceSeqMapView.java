@@ -282,4 +282,9 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		stopSlicingThread();
 		super.clear();
 	}
+	
+	@Override
+	public boolean autoChangeView(){
+		return false;
+	}
 }

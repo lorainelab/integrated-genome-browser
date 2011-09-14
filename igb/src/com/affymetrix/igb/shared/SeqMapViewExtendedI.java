@@ -26,4 +26,6 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights);
 
 	TierGlyph getGraphTrack(ITrackStyle style, TierGlyph.Direction tier_direction);
+	
+	boolean autoChangeView();
 }

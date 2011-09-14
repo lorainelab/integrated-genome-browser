@@ -35,23 +35,27 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
-                      <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="20" pref="20" max="20" attributes="0"/>
                       <Component id="orfAnalyzerPanel" max="32767" attributes="1"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="20" pref="20" max="20" attributes="0"/>
-                      <Component id="residueColorPanel" pref="324" max="32767" attributes="1"/>
+                      <Component id="residueColorPanel" pref="329" max="32767" attributes="1"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="20" pref="20" max="20" attributes="0"/>
                       <Component id="coordinatePanel" max="32767" attributes="1"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="autoChangeView" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
+                      <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -75,8 +79,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="keepZoomStripeCheckBox" min="-2" pref="23" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
+              <Component id="autoChangeView" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
+              <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -112,7 +117,7 @@
                           <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="65" max="32767" attributes="0"/>
+                  <EmptySpace pref="70" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -192,7 +197,7 @@
                   <Component id="dynamicORFLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="DynamicORFColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="54" max="32767" attributes="0"/>
+                  <EmptySpace pref="59" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -374,6 +379,11 @@
     <Component class="javax.swing.JCheckBox" name="showZoomStripLabelCheckBox">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Zoom Stripe Label&quot;, PreferenceUtils.getTopNode(),&#xa;    UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="autoChangeView">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Auto Change view for BAM/SAM&quot;, PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_AUTO_CHANGE_VIEW, SeqMapView.default_auto_change_view)"/>
       </AuxValues>
     </Component>
   </SubComponents>

@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.net.URISyntaxException;
@@ -49,6 +48,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.igb.Application;
 
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.shared.FileTracker;

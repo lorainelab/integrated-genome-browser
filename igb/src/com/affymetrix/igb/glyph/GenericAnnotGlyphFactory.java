@@ -133,7 +133,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
 			}
 			
-			if (style.getFileType() != null
+			if (smv.autoChangeView() && style.getFileType() != null
 					&& (style.getFileType().equalsIgnoreCase("bam")
 					|| style.getFileType().equalsIgnoreCase("sam"))) {
 				low_zoom.createGlyph(sym, smv);

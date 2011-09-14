@@ -1,0 +1,6 @@
+Where are the resources ?
+the are in src/quickloadsourcewizard
+
+That is where NetBeans expect them.
+
+This resource place holder is used so generic.xml (from the trunk ant script) does not complain.

@@ -9,7 +9,7 @@ Bundle-Activator: com.affymetrix.igb.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
-Bundle-Category: IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupView,com.affymetrix.igb.view.AltSpliceView
+Bundle-Category: IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView
 Bundle-ClassPath: .,
  resources/,
  lib/jide-common.jar,

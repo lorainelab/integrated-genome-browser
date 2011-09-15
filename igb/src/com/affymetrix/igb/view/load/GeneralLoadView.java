@@ -69,6 +69,7 @@ public final class GeneralLoadView {
 	private static javax.swing.JButton partial_residuesB;
 	private static javax.swing.JButton refresh_dataB;
 	private static javax.swing.JTree tree;
+	private static Font font = new Font ("SansSerif", Font.BOLD, 16);
 
 	public static void init(IGBService _igbService) {
 		singleton = new GeneralLoadView(_igbService);
@@ -89,7 +90,6 @@ public final class GeneralLoadView {
 	}
 
 	private void initComponents() {
-		Font font = new Font("Serif", 1, 14);
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
 		dataManagementTableModel = new LoadModeDataTableModel(this);
@@ -397,7 +397,7 @@ public final class GeneralLoadView {
 				label.setHorizontalAlignment(JLabel.CENTER);
 				dataManagementTable.getTableHeader().setDefaultRenderer(renderer);
 
-				Font f = new Font("Serif", Font.BOLD, 12);
+				Font f = new Font("SansSerif", Font.BOLD, 12);
 				dataManagementTable.getTableHeader().setFont(f);
 				dataManagementTable.setRowSelectionAllowed(false);
 				dataManagementTable.setCellSelectionEnabled(true);

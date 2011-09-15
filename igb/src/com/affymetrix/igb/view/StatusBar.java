@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
 import com.jidesoft.status.MemoryStatusBarItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.util.IGBUtils;
 
@@ -26,7 +27,7 @@ public final class StatusBar extends JPanel{
 		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
-		mainCancel = new JButton(closeIcon);
+		mainCancel = new JRPButton("StatusBar_mainCancel", closeIcon);
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
 

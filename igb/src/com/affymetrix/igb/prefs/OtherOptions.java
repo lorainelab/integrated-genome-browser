@@ -296,7 +296,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(autoChangeView)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(clear_prefsB)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         clear_prefsB.addActionListener(this);

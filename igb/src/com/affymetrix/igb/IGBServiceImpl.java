@@ -132,6 +132,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getViewMenu();
 	}
+
+	@Override
+	public JRPMenu getHelpMenu() {
+		IGB igb = (IGB)IGB.getSingleton();
+		return igb.getHelpMenu();
+	}
+
 	@Override
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);

@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -81,6 +80,11 @@ public interface IGBService {
 	 * @return the view menu of the IGB application
 	 */
 	public JRPMenu getViewMenu();
+	/**
+	 * get the help menu of the application
+	 * @return the help menu of the IGB application
+	 */
+	public JRPMenu getHelpMenu();
 
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();

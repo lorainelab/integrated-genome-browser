@@ -508,6 +508,10 @@ public final class IGB extends Application
 		return view_menu;
 	}
 
+	public JRPMenu getHelpMenu() {
+		return help_menu;
+	}
+
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
 		windowService.setTabStateAndMenu(igbTabPanel, tabState);
 	}

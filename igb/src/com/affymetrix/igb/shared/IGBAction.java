@@ -33,6 +33,8 @@ public abstract class IGBAction extends AbstractAction implements ActionListener
 		return null;
 	}
 	public abstract String getText();
-	public abstract void actionPerformed(ActionEvent e);
+	public void actionPerformed(ActionEvent e) {
+		IGBActionHolder.getInstance().notifyActionPerformed(this);
+	}
 	public int getShortcut() { return KeyEvent.VK_UNDEFINED; }
 }

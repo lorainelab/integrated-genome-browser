@@ -15,6 +15,7 @@ import com.affymetrix.igb.shared.IGBAction;
 public class IGBActionHolder {
 	private static IGBActionHolder instance = new IGBActionHolder();
 	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
+	private final List<IGBActionListener> listeners = new ArrayList<IGBActionListener>();
 	
 	private IGBActionHolder() {
 		super();
@@ -49,5 +50,19 @@ public class IGBActionHolder {
 
 	public List<IGBAction> getIGBActions() {
 		return igbActions;
+	}
+
+	public void addIGBActionListener(IGBActionListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeIGBActionListener(IGBActionListener listener) {
+		listeners.remove(listener);
+	}
+
+	public void notifyActionPerformed(IGBAction action) {
+		for (IGBActionListener listener : listeners) {
+			listener.notifyIGBAction(action.getClass().getName());
+		}
 	}
 }

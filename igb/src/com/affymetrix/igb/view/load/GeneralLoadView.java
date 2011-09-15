@@ -106,6 +106,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 	private final JSplitPane jSplitPane;
 	private static GeneralLoadView singleton;
+	private static Font font = new Font ("SansSerif", Font.BOLD, 16);
 
 	public static void init(IGBService _igbService) {
 		singleton = new GeneralLoadView(_igbService);
@@ -156,7 +157,6 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
-		Font font = new Font ("Serif", Font.BOLD, 16);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadSequence.getWholeAction());
 		all_residuesB.setFont(font);
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
@@ -1015,7 +1015,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				label.setHorizontalAlignment(JLabel.CENTER);
 				loadedTracksTable.getTableHeader().setDefaultRenderer(renderer);
 
-				Font f = new Font("Serif", Font.BOLD, 12);
+				Font f = new Font("SansSerif", Font.BOLD, 12);
 				loadedTracksTable.getTableHeader().setFont(f);
 				loadedTracksTable.setRowSelectionAllowed(false);
 				loadedTracksTable.setCellSelectionEnabled(true);

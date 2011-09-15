@@ -256,7 +256,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
-        Font f = new Font ("Serif", Font.BOLD, 12);
+        Font f = new Font("SansSerif", Font.BOLD, 12);
         table.getTableHeader().setFont(f);
         jScrollPane1.setViewportView(table);
 
@@ -702,6 +702,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 		trackDefaultTextField.setEnabled(false);
 		possitiveColorComboBox.setEnabled(true);
 		negativeColorComboBox.setEnabled(true);
+		arrowCheckBox.setEnabled(true);
+		colorCheckBox.setEnabled(true);
 
 		if (selectedRows.length > 1) {
 			bgColorComboBox.setSelectedColor(null);

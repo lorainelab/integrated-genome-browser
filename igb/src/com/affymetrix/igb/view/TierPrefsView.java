@@ -24,7 +24,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.view.load.LoadModeDataTableModel;
 import com.affymetrix.igb.view.load.LoadModeTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
@@ -247,7 +246,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
 
-        Font f = new Font ("Serif", Font.BOLD, 12);
+        Font f = new Font("SansSerif", Font.BOLD, 12);
         table.getTableHeader().setFont(f);
 
         refreshList();
@@ -376,8 +375,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(connectedCheckBox)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(9, 9, 9)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

@@ -446,8 +446,10 @@ public class SeqMapView extends JPanel
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
+		Font font = new Font ("SansSerif", Font.BOLD, 16);
 		refreshDataAction = new RefreshDataAction(this);
 		JRPButton refresh_button = new JRPButton("SeqMapView_refresh_button", refreshDataAction);
+		refresh_button.setFont(font);
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		xzoombox.add(refresh_button);

@@ -69,7 +69,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Map<JMenu, Integer> tabMenuPositions;
 	private Container cpane;
+	private JPanel topPanel; 
 	private boolean tabSeparatorSet = false;
+	private JComponent topComponent1;
+	private JComponent topComponent2;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -109,6 +112,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 				@Override
 				public void componentHidden(ComponentEvent e) {}
 		});
+		topPanel = new JPanel();
+		topPanel.setLayout(new BorderLayout());
+		cpane.add(topPanel, BorderLayout.NORTH);
 	}
 
 	@Override
@@ -118,7 +124,19 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void setToolBar(JToolBar tool_bar) {
-		cpane.add(tool_bar, BorderLayout.PAGE_START);
+		topPanel.add(tool_bar, BorderLayout.SOUTH);
+	}
+
+	@Override
+	public void setTopComponent1(JComponent topComponent1) {
+		this.topComponent1 = topComponent1;
+		topPanel.add(topComponent1, BorderLayout.NORTH);
+	}
+
+	@Override
+	public void setTopComponent2(JComponent topComponent2) {
+		this.topComponent2 = topComponent2;
+		topPanel.add(topComponent2, BorderLayout.CENTER);
 	}
 
 	@Override

@@ -457,8 +457,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
-		handler.repackTheTiers(true, true);
-		gviewer.getSeqMap().updateWidget();
+		refreshMap(false, true);
 		PreferencesPanel.getSingleton().tpv.externalChange();
 	}
 

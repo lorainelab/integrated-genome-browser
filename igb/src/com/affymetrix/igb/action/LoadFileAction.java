@@ -46,6 +46,7 @@ import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -66,6 +67,11 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public final class LoadFileAction extends IGBAction {
 
 	private static final long serialVersionUID = 1L;
+	private static final LoadFileAction ACTION = new LoadFileAction();
+
+	public static LoadFileAction getAction() {
+		return ACTION;
+	}
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
 	public static int unknown_group_count = 1;
@@ -93,11 +99,11 @@ public final class LoadFileAction extends IGBAction {
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
-	public LoadFileAction(JFrame gviewerFrame, FileTracker ft) {
+	private LoadFileAction() {
 		super();
 
-		this.gviewerFrame = gviewerFrame;
-		load_dir_tracker = ft;
+		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
+		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 		this.gviewerFrame.setTransferHandler(fdh);
 	}
 

@@ -56,14 +56,12 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.view.*;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -99,7 +97,6 @@ public final class IGB extends Application
 	private JRPMenu tools_menu;
 	private JRPMenu help_menu;
 	private SeqMapView map_view;
-	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
@@ -339,7 +336,7 @@ public final class IGB extends Application
 
   }
 
-	public IGBTabPanel[] setWindowService(IWindowService windowService) {
+	public IGBTabPanel[] setWindowService(final IWindowService windowService) {
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
 		windowService.setSeqMapView(getMapView());
@@ -357,46 +354,24 @@ public final class IGB extends Application
 		mbar = MenuUtil.getMainMenuBar();
 		frm.setJMenuBar(mbar);
 
-		file_menu = MenuUtil.getRPMenu("Main_fileMenu", BUNDLE.getString("fileMenu"));
-		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
-
-		edit_menu = MenuUtil.getRPMenu("Main_editMenu", BUNDLE.getString("editMenu"));
-		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
-
-		view_menu = MenuUtil.getRPMenu("Main_viewMenu", BUNDLE.getString("viewMenu"));
-		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-
-		tools_menu = MenuUtil.getRPMenu("Main_toolsMenu", BUNDLE.getString("toolsMenu"));
-		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
-
-		help_menu = MenuUtil.getRPMenu("Main_helpMenu", BUNDLE.getString("helpMenu"));
-		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
-
-		export_to_file_menu = new JRPMenu("Main_fileMenu_export", BUNDLE.getString("export"));
-		export_to_file_menu.setMnemonic('T');
-
 		fileMenu();
-
 		editMenu();
 		viewMenu();
-
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem("Main_toolsMenu_webLinks", WebLinksAction.getAction()));
-
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_forumHelp", ForumHelpAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_reportBug", ReportBugAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_requestFeature", RequestFeatureAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", DocumentationAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", ShowConsoleAction.getAction()));
-
+		toolMenu();
+		helpMenu();
 	}
 
 	private void fileMenu() {
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadFile", new LoadFileAction(frm, load_directory)));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadURL", new LoadURLAction(frm)));
+		file_menu = MenuUtil.getRPMenu("Main_fileMenu", BUNDLE.getString("fileMenu"));
+		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
+
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadFile", LoadFileAction.getAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadURL", LoadURLAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_print", PrintAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_printFrame", PrintFrameAction.getAction()));
+		export_to_file_menu = new JRPMenu("Main_fileMenu_export", BUNDLE.getString("export"));
+		export_to_file_menu.setMnemonic('T');
 		file_menu.add(export_to_file_menu);
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportMainView", new ExportMainViewAction()), export_to_file_menu.getText());
 		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportLabelledMainView", new ExportLabelledMainViewAction()), export_to_file_menu.getText());
@@ -409,10 +384,16 @@ public final class IGB extends Application
 	}
 
 	private void editMenu() {
+		edit_menu = MenuUtil.getRPMenu("Main_editMenu", BUNDLE.getString("editMenu"));
+		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
+
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem("Main_editMenu_copyResidues", new CopyResiduesAction()));
 	}
 
 	private void viewMenu() {
+		view_menu = MenuUtil.getRPMenu("Main_viewMenu", BUNDLE.getString("viewMenu"));
+		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
+
 		JRPMenu strands_menu = new JRPMenu("Main_viewMenu_strands", "Strands");
 		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showPlus", getMapView().getSeqMap().show_plus_action));
 		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMinus", getMapView().getSeqMap().show_minus_action));
@@ -432,6 +413,25 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTip.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_drawCollapseControl", new DrawCollapseControlAction(map_view)));
+	}
+
+	private void toolMenu() {
+		tools_menu = MenuUtil.getRPMenu("Main_toolsMenu", BUNDLE.getString("toolsMenu"));
+		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
+
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem("Main_toolsMenu_webLinks", WebLinksAction.getAction()));
+	}
+
+	private void helpMenu() {
+		help_menu = MenuUtil.getRPMenu("Main_helpMenu", BUNDLE.getString("helpMenu"));
+		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
+
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_forumHelp", ForumHelpAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_reportBug", ReportBugAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_requestFeature", RequestFeatureAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", DocumentationAction.getAction()));
+		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", ShowConsoleAction.getAction()));
 	}
 
 	public void addToolbarButton(JButton button) {

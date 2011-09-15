@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
@@ -23,14 +24,20 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public final class LoadURLAction extends IGBAction {
 	private static final long serialVersionUID = 1l;
+	private static final LoadURLAction ACTION = new LoadURLAction();
+
+	public static LoadURLAction getAction() {
+		return ACTION;
+	}
+
 	private static final MergeOptionChooser chooser = new MergeOptionChooser("loadURL");
 	private final JFrame gviewerFrame;
-	private final Box mergeOptionBox = chooser.box;
+	private static final Box mergeOptionBox = chooser.box;
 	private JDialog dialog = null;
 
-	public LoadURLAction(JFrame gviewerFrame) {
+	private LoadURLAction() {
 		super();
-		this.gviewerFrame = gviewerFrame;
+		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 
 	public void actionPerformed(ActionEvent e) {

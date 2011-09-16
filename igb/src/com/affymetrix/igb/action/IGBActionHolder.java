@@ -29,18 +29,20 @@ public class IGBActionHolder {
 
 	public void addIGBAction(IGBAction igbAction) {
 		igbActions.add(igbAction);
-		PreferenceUtils.getAccelerator(igbAction.getText());
-		boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
-		if (isToolbar) {
-			String iconPath = igbAction.getIconPath();
-			if (iconPath == null) {
-				iconPath = DEFAULT_ICON_PATH;
+		if (igbAction.getText() != null) {
+			PreferenceUtils.getAccelerator(igbAction.getText());
+			boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
+			if (isToolbar) {
+				String iconPath = igbAction.getIconPath();
+				if (iconPath == null) {
+					iconPath = DEFAULT_ICON_PATH;
+				}
+				ImageIcon icon = MenuUtil.getIcon(iconPath);
+				JButton button = new JButton(icon);
+				button.addActionListener(igbAction);
+				button.setToolTipText(igbAction.getText());
+				((IGB)Application.getSingleton()).addToolbarButton(button);
 			}
-			ImageIcon icon = MenuUtil.getIcon(iconPath);
-			JButton button = new JButton(icon);
-			button.addActionListener(igbAction);
-			button.setToolTipText(igbAction.getText());
-			((IGB)Application.getSingleton()).addToolbarButton(button);
 		}
 	}
 

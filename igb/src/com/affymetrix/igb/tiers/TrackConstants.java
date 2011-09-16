@@ -36,8 +36,8 @@ public interface TrackConstants {
 	static final boolean default_expandable = true;
 	static final boolean default_show_summary = false;
 	static final int default_max_depth = 10;
-	static final Color default_foreground = new Color(153,51,102);
-	static final Color default_background = new Color(220,220,220);
+	static final Color default_foreground =  Color.CYAN;
+	static final Color default_background = Color.BLACK;
 	static final Color default_start = new Color(204,255,255);
 	static final Color default_end = new Color(51,255,255);
 	static final String default_label_field = "";

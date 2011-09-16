@@ -288,13 +288,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			gviewer.focusTrack(current_tier);
 		}
 	};
-	@SuppressWarnings("serial")
-	private final Action repack_tracks_action = new AbstractAction("Repack Tracks") {
-
-		public void actionPerformed(ActionEvent e) {
-			gviewer.getSeqMap().repackTheTiers(true, true, true);
-		}
-	};
+//	@SuppressWarnings("serial")
+//	private final Action repack_tracks_action = new AbstractAction("Repack Tracks") {
+//
+//		public void actionPerformed(ActionEvent e) {
+//			gviewer.getSeqMap().repackTheTiers(true, true, true);
+//		}
+//	};
 	private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
 
 		private static final long serialVersionUID = 1L;
@@ -994,14 +994,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (add_maximize) {
 			popup.add(maximize_track_action);
 		}
-		popup.add(repack_tracks_action);
+//		popup.add(repack_tracks_action);
 		popup.add(delete_action);
 		popup.add(show_all_action);
 
 		strandsMenu.removeAll();
 		strandsMenu.add(at1);
 		strandsMenu.add(at2);
-//	strandsMenu.add(at3);
+//		strandsMenu.add(at3);
 		popup.add(strandsMenu);
 		popup.add(new JSeparator());
 		popup.add(select_all_tiers_action);

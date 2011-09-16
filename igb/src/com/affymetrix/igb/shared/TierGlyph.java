@@ -261,11 +261,45 @@ public class TierGlyph extends SolidGlyph {
 
 	public void drawTraversal(ViewI view) {
 		if (summary != null && (view.getTransform().getScaleX() < 0.002)) {
-			summary.setCoordBox(this.getCoordBox());
-			summary.draw(view);
+			drawSummary(view);
 			return;
 		}
 		super.drawTraversal(view);
+	}
+	
+	private void drawSummary(ViewI view) {
+		Graphics g = view.getGraphics();
+		Rectangle vbox = view.getPixelBox();
+		pixelbox = pixelbox.intersection(vbox);
+		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
+			if (style.getBackground() != null) {
+				g.setColor(style.getBackground());
+				//Hack : Add one to height to resolve black line bug.
+				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height + 1);
+			}
+		} else {
+			if (style.getBackground() != null) {
+				g.setColor(style.getBackground());
+				//Hack : Add one to height to resolve black line bug.
+				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height + 1);
+			}
+
+			// cycle through "middleground" glyphs,
+			//   make sure their coord box y and height are set to same as TierGlyph,
+			//   then call mglyph.draw(view)
+			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
+			// See bug 3032785
+			if (other_fill_color != null) {
+				for (GlyphI mglyph : middle_glyphs) {
+					Rectangle2D.Double mbox = mglyph.getCoordBox();
+					mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
+					mglyph.setColor(other_fill_color);
+					mglyph.drawTraversal(view);
+				}
+			}
+		}
+		summary.setCoordBox(this.getCoordBox());
+		summary.draw(view);
 	}
 	
 	// overriding pack to ensure that tier is always the full width of the scene

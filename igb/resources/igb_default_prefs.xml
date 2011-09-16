@@ -26,6 +26,8 @@
 
 <repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" />
 
+<repository name="Genentech development" url="http://research-pub.gene.com/igb_plugins/development" enabled="false" />
+
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)

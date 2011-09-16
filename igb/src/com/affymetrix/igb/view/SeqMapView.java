@@ -107,7 +107,7 @@ public class SeqMapView extends JPanel
 		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
 	
 	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
-	public static final boolean default_auto_change_view = true;
+	public static final boolean default_auto_change_view = false;
 	
 	private static final long serialVersionUID = 1L;
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;

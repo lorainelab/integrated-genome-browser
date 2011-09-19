@@ -66,6 +66,7 @@ public class Annotation implements Serializable, Owned {
 	private String              isLoaded;
 	private Set                 collaborators;
 	private Set                 annotationProperties;
+	private String				ucscHttpURL;
 
 
 	private Map<String, Object> props;  // tag/value representation of annotation properties
@@ -95,6 +96,7 @@ public class Annotation implements Serializable, Owned {
 	public void setCodeVisibility(String codeVisibility) {
 		this.codeVisibility = codeVisibility;
 	}
+	/**This is the name of the directory that contains the annotation files*/
 	public String getFileName() {
 		return fileName;
 	}
@@ -481,9 +483,7 @@ public class Annotation implements Serializable, Owned {
 		boolean isExtension = false;
 		String filePath = getDirectory(data_root);
 		File dir = new File(filePath);
-
 		if (dir.exists()) {
-			// Delete the files in the directory
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
@@ -492,7 +492,6 @@ public class Annotation implements Serializable, Owned {
 						break;
 					}
 				}
-
 			}
 		}
 		return isExtension;
@@ -528,15 +527,27 @@ public class Annotation implements Serializable, Owned {
 				String[] childFileNames = file.list();
 				filePath += "/" + childFileNames[0];
 			}
-			//two file possibly bam
-			else if (files.length == 2){
-				for (int i=0; i< files.length; i++){
-					if (files[i].getName().endsWith("bam")) {
-						filePath += "/" + files[i].getName();
+			//multiple files, might contain a useq file with URL link files (xxx.bw, xxx.bb) that should be skipped or bam and it's associated bai index file
+			else {
+				for (File f: files){
+					String fileName = f.getName();
+					//bam?
+					if (fileName.endsWith("bam")) {
+						filePath += "/" + fileName;
+						break;
+					}
+					//useq?
+					else if (fileName.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) {
+						filePath += "/" + fileName;
 						break;
 					}
 				}
 			}
+			//make sure it's not a ucsc big file xxx.bw, or xxx.bb
+			if (filePath.endsWith(".bb") || filePath.endsWith(".bw")) filePath = "";
+			
+			//bar files should return the directory so don't do anything
+			
 		}
 		return filePath;
 	}
@@ -631,6 +642,12 @@ public class Annotation implements Serializable, Owned {
 	}
 	public void setAnnotationProperties(Set annotationProperties) {
 		this.annotationProperties = annotationProperties;
+	}
+	public String getUcscHttpURL() {
+		return ucscHttpURL;
+	}
+	public void setUcscHttpURL(String ucscHttpURL) {
+		this.ucscHttpURL = ucscHttpURL;
 	}
 
 }

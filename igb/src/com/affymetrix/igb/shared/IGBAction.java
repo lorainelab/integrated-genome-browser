@@ -9,7 +9,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.igb.action.IGBActionHolder;
 
 public abstract class IGBAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 
 public class IGBActionHolder {
 	private static IGBActionHolder instance = new IGBActionHolder();
@@ -63,8 +62,9 @@ public class IGBActionHolder {
 	}
 
 	public void notifyActionPerformed(IGBAction action) {
+		String simpleName = action.getClass().getSimpleName();
 		for (IGBActionListener listener : listeners) {
-			listener.notifyIGBAction(action.getClass().getName());
+			listener.notifyIGBAction(simpleName);
 		}
 	}
 }

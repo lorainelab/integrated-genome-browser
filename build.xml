@@ -264,6 +264,17 @@
 		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build:${common}/build"/>
 	</target>
 
+	<target name="check-igb-exe-exists" unless="igb_exe.exists">
+		<available property="igb_exe.exists" file="${igb.jar.name}.jar"/>
+	</target>
+
+	<target name="clrprf" depends="check-igb-exe-exists" description="clear preferences">
+    		<fail unless="igb_exe.exists">Please run ant exe first</fail>
+		<java fork="true" jar="${igb.jar.name}.jar" >
+			<arg value="-clrprf" />
+		</java>
+	</target>
+
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>

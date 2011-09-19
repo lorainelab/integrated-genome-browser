@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.glyph.GlyphProcessorHolder;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -24,6 +25,7 @@ import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.TrackClickListener;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
 /**
  * OSGi Activator for igb bundle
@@ -38,9 +40,16 @@ public class Activator implements BundleActivator {
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
         	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+        	System.out.println("args[0] = " + args[0]);
 			if ("-convert".equals(args[0])) {
 				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
 				NibbleResiduesParser.main(runArgs);
+				System.exit(0);
+			}
+			else if ("-clrprf".equals(args[0])) {
+				PreferenceUtils.clearPreferences();
+				XmlStylesheetParser.removeUserStylesheetFile();
+				System.out.println("preferences cleared");
 				System.exit(0);
 			}
         }

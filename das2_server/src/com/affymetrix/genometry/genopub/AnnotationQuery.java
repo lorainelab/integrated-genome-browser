@@ -568,7 +568,7 @@ public class AnnotationQuery {
 		return genomeVersionNameMap.get(genomeVersionName);
 	}
 	
-	public Map<String, GenomeVersion> getGenomeVersionNameMap() {
+	public HashMap<String, GenomeVersion> getGenomeVersionNameMap() {
 		return genomeVersionNameMap;
 	}
 	

@@ -40,16 +40,104 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public final class SearchView extends IGBTabPanel implements 
-		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener, IStatus {
+		GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener, IStatus {
 	
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
 	private static final int TAB_POSITION = 2;
+
+	public class SearchModeAction extends IGBAction {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public String getText() { return null; }
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
+			selectedSearchMode = searchModeMap.get(searchMode);
+			if (selectedSearchMode == null) {
+				return;
+			}
+			clearResults();
+			igbService.getSeqMap().updateWidget();
+
+			SearchView.this.initSequenceCB();
+			SearchView.this.searchTF.setEnabled(true);
+
+			boolean remoteEnabled = selectedSearchMode.useRemote();
+			SearchView.this.remoteSearchCheckBox.setEnabled(remoteEnabled);
+			if (!remoteEnabled) {
+				SearchView.this.remoteSearchCheckBox.setSelected(false);
+			}
+
+			setModel(selectedSearchMode.getEmptyTableModel());
+
+			SearchView.this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
+
+			return;
+		}
+	}
+	private SearchModeAction searchModeAction = new SearchModeAction();
+
+	public class SearchAction extends IGBAction {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public String getText() { return null; }
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
+			selectedSearchMode = searchModeMap.get(searchMode);
+			String chrStr = (String) SearchView.this.sequenceCB.getSelectedItem();
+			final BioSeq chrfilter = igbService.getGenomeSeqId().equals(chrStr) ? null : group.getSeq(chrStr);
+			if (selectedSearchMode.checkInput(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString())) {
+				enableComp(false);
+				clearResults();
+				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
+					@Override
+					protected Object runInBackground() {
+						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), remoteSearchCheckBox.isSelected(), SearchView.this, glyphs);
+					}
+					@Override
+					protected void finished() {
+						selectedSearchMode.finished(chrfilter);
+						enableComp(true);
+						try {
+							SearchResultsTableModel model = (SearchResultsTableModel)get();
+							if (model != null) {
+								setModel(model);
+							}
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				worker.addThreadListener(cancel);
+				ThreadUtils.getPrimaryExecutor(this).execute(worker);
+			}
+		}
+	}
+	private SearchAction searchAction = new SearchAction();
+	public class ClearAction extends IGBAction {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public String getText() { return null; }
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			clearResults();
+			searchTF.setText("");
+		}
+	}
+	private ClearAction clearAction = new ClearAction();
 
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -151,10 +239,10 @@ public final class SearchView extends IGBTabPanel implements
 
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
-		searchCB.addActionListener(this);
-		searchTF.addActionListener(this);
-		searchButton.addActionListener(this);
-		clearButton.addActionListener(this);
+		searchCB.addActionListener(searchModeAction);
+		searchTF.addActionListener(searchAction);
+		searchButton.addActionListener(searchAction);
+		clearButton.addActionListener(clearAction);
 		igbService.addServerInitListener(this);
 	}
 
@@ -302,69 +390,6 @@ public final class SearchView extends IGBTabPanel implements
 			((SearchResultsTableModel)table.getModel()).clear();
 		}
 		((AbstractTableModel)table.getModel()).fireTableDataChanged();
-	}
-
-	public void actionPerformed(ActionEvent evt) {
-		Object src = evt.getSource();
-		String searchMode = (String) this.searchCB.getSelectedItem();
-		selectedSearchMode = searchModeMap.get(searchMode);
-		if (selectedSearchMode == null) {
-			return;
-		}
-		if (src == this.searchCB) {
-			clearResults();
-			igbService.getSeqMap().updateWidget();
-
-			this.initSequenceCB();
-			this.searchTF.setEnabled(true);
-
-			boolean remoteEnabled = selectedSearchMode.useRemote();
-			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
-			if (!remoteEnabled) {
-				this.remoteSearchCheckBox.setSelected(false);
-			}
-
-			setModel(selectedSearchMode.getEmptyTableModel());
-
-			this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
-
-			return;
-		}
-		if (src == this.searchTF || src == this.searchButton) {
-			String chrStr = (String) this.sequenceCB.getSelectedItem();
-			final BioSeq chrfilter = igbService.getGenomeSeqId().equals(chrStr) ? null : group.getSeq(chrStr);
-			if (selectedSearchMode.checkInput(this.searchTF.getText().trim(), chrfilter, this.sequenceCB.getSelectedItem().toString())) {
-				enableComp(false);
-				clearResults();
-				worker = new CThreadWorker<Object, Void>(" ") {
-					@Override
-					protected Object runInBackground() {
-						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), remoteSearchCheckBox.isSelected(), SearchView.this, glyphs);
-					}
-					@Override
-					protected void finished() {
-						selectedSearchMode.finished(chrfilter);
-						enableComp(true);
-						try {
-							SearchResultsTableModel model = (SearchResultsTableModel)get();
-							if (model != null) {
-								setModel(model);
-							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						}
-					}
-				};
-				worker.addThreadListener(cancel);
-				ThreadUtils.getPrimaryExecutor(this).execute(worker);
-			}
-		}
-		if(src == this.clearButton){
-			clearResults();
-			searchTF.setText("");
-		}
 	}
 
 	public void enableComp(boolean enabled){

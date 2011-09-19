@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
 public class RecordPlaybackHolder {
@@ -33,6 +32,9 @@ public class RecordPlaybackHolder {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
 		widgets.put(widget.getId(), widget);
+	}
+	public void removeWidget(String id) {
+		widgets.remove(id);
 	}
 	public String getScript() {
 		Set<String> namedIds = new HashSet<String>();
@@ -54,8 +56,6 @@ public class RecordPlaybackHolder {
 	}
 
 	public void recordOperation(Operation operation) {
-// commented out for now
-/*
 		if (!operation.getWidget().consecutiveOK()) {
 			int lastIndex = operations.size() - 1;
 			if (lastIndex >= 0) {
@@ -67,8 +67,8 @@ public class RecordPlaybackHolder {
 			}
 		}
 		operations.add(operation);
-*/
 	}
+
 	public void runScript(String fileName) {
 //		PythonInterpreter interp = new PythonInterpreter();
 //		interp.execfile(fileName);

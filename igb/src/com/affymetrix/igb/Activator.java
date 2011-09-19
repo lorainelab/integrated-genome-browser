@@ -40,7 +40,6 @@ public class Activator implements BundleActivator {
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
         	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
-        	System.out.println("args[0] = " + args[0]);
 			if ("-convert".equals(args[0])) {
 				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
 				NibbleResiduesParser.main(runArgs);

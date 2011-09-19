@@ -1,7 +1,6 @@
 package com.affymetrix.igb.plugins;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -12,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -53,7 +52,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel;
@@ -118,7 +116,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private JRPButton updateAllBundlesButton;
 	private JRPButton updateSelectedBundlesButton;
 	private JRPButton repositoryPrefsButton;
-	private JLabel errors;
 	private boolean isShowInstalledBundles = true;
 	private boolean isShowUninstalledBundles = true;
 	private RepositoryAdmin repoAdmin;
@@ -244,7 +241,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					isShowInstalledBundles = !isShowInstalledBundles;
 					setBundleFilter(getBundleFilter());
 					reloadBundleTable();
-					clearError();
+					igbService.setStatus("");
 				}
 			}
 		);
@@ -259,7 +256,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					isShowUninstalledBundles = !isShowUninstalledBundles;
 					setBundleFilter(getBundleFilter());
 					reloadBundleTable();
-					clearError();
+					igbService.setStatus("");
 				}
 			}
 		);
@@ -273,7 +270,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateAllBundles();
-					clearError();
+					igbService.setStatus("");
 				}
 			}
 		);
@@ -287,17 +284,12 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateSelectedBundles();
-					clearError();
+					igbService.setStatus("");
 				}
 			}
 		);
 		updateSelectedBundlesButton.setEnabled(false);
 		buttonPanel.add(updateSelectedBundlesButton);
-
-		buttonPanel.add(new JLabel("      "));
-		errors = new JLabel(BUNDLE.getString("OSGiNotLoaded"));
-		errors.setForeground(Color.RED);
-		buttonPanel.add(errors);
 
 		buttonPanel.add(Box.createHorizontalGlue());
 
@@ -490,7 +482,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		setRepositoryBundles();
 		bundleContext.addBundleListener(bundleListener);
 //		reloadBundleTable();
-		clearError();
 	}
 
 	/**
@@ -511,13 +502,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		bundleContext = null;
 	}
 
-	private void clearError() {
-		errors.setText("");
-	}
-
-	private void displayError(String errorText) {
-		errors.setText(errorText);
-		Logger.getLogger(PluginsView.class.getName()).log(Level.SEVERE, errorText);
+	private void displayError(String error) {
+	    igbService.setStatus(error);
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, error);
 	}
 
 	@Override
@@ -528,11 +515,12 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		if (resolver.resolve())
 		{
 		    resolver.deploy(true);
-		    clearError();
+		    igbService.setStatus("bundle " + bundle.getSymbolicName() + ";" + bundle.getVersion() + " installed");
 		}
 		else
 		{
-			StringBuffer sb = new StringBuffer(PluginsView.BUNDLE.getString("bundleLoadError"));
+			String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
+			StringBuffer sb = new StringBuffer(msg);
 		    sb.append(" -> ");
 			boolean started = false;
 			for (Requirement req : resolver.getUnsatisfiedRequirements()) {
@@ -542,7 +530,8 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				started = true;
 			    sb.append(req.getComment());
 			}
-			displayError(sb.toString());
+		    igbService.setStatus(msg);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, sb.toString());
 		}
 	}
 
@@ -550,10 +539,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	public void uninstallBundle(Bundle bundle) {
 		try {
 			bundle.uninstall();
-		    clearError();
+		    igbService.setStatus("bundle " + bundle.getSymbolicName() + ";" + bundle.getVersion() + " uninstalled");
 		}
 		catch (BundleException bex) {
-			displayError(bex.getMessage());
+			String msg = PluginsView.BUNDLE.getString("bundleUninstallError");
+			displayError(msg);
 		}
 	}
 
@@ -626,7 +616,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			}
 		}
 		Collections.sort(
-			filteredBundles, 
+			filteredBundles,
 			new Comparator<Bundle>() {
 				@Override
 				public int compare(Bundle o1, Bundle o2) {
@@ -663,12 +653,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					displayError("plugin repository failed: " + url);
 				}
 				catch (MalformedURLException x) {
-					ErrorHandler.errorPanel("Invalid plugin repository URL: " + url);
-					x.printStackTrace();
+					displayError("Invalid plugin repository URL: " + url);
 				}
 				catch (Exception x) {
 					igbService.getRepositoryChangerHolder().failRepository(url);
-					displayError("error loading repositories");
+					displayError("error loading repository: " + url);
 					x.printStackTrace();
 				}
 				return null;

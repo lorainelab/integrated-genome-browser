@@ -86,15 +86,18 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		widget.removeMouseMotionListener(this);
 		
 		if(upperGl != null){
-			upperGl.getReferenceTier().setPreferredHeight(upperGl.getCoordBox().getHeight());
+			upperGl.getReferenceTier().setPreferredHeight(upperGl.getCoordBox().getHeight(), gviewer.getSeqMap().getView());
+			//upperGl.pack(gviewer.getSeqMap().getView(), false);
 			upperGl = null; // helps with garbage collection
 			
 		}
 		if(lowerGl != null){
-			lowerGl.getReferenceTier().setPreferredHeight(lowerGl.getCoordBox().getHeight());
+			lowerGl.getReferenceTier().setPreferredHeight(lowerGl.getCoordBox().getHeight(), gviewer.getSeqMap().getView());
+			//lowerGl.pack(gviewer.getSeqMap().getView(), false);
 			lowerGl = null; // helps with garbage collection
 		}
 		
-		gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true, true);
+		//gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true, true);
+		gviewer.getSeqMap().repackTheTiers(true, true, false);
 	}
 }

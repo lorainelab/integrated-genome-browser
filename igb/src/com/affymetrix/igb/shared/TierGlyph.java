@@ -638,7 +638,7 @@ public class TierGlyph extends SolidGlyph {
 		return 2;
 	}
 	
-	public void setPreferredHeight(double height){
+	public void setPreferredHeight(double height, ViewI view){
 		if(getChildCount() == 1 && getChild(0) instanceof GraphGlyph){
 			GraphGlyph child = (GraphGlyph)getChild(0);
 			Rectangle2D.Double  coord = child.getCoordBox();
@@ -655,9 +655,29 @@ public class TierGlyph extends SolidGlyph {
 		if(useLabel())
 			height = height / 2;
 		
+		double percent = ((height * 100)/style.getHeight() - 100)/100;
 		style.setHeight(height);
-	}
 		
+		setChildHeight(percent, getChildren(), view);
+	}
+	
+	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){	
+		int sibs_size = sibs.size();
+			
+		GlyphI child;
+		Rectangle2D.Double coordbox;	
+		for (int i = 0; i < sibs_size; i++) {
+			child =  sibs.get(i);
+			coordbox = child.getCoordBox();
+			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height + (coordbox.height * percent));
+			if(child.getChildCount() > 0){
+				setChildHeight(percent, child.getChildren(), view);
+			}
+			child.pack(view, false);
+		}
+		
+	}
+	
 	private boolean useLabel(){
 		if (style instanceof ITrackStyleExtended) {
 			String label_field = ((ITrackStyleExtended) style).getLabelField();

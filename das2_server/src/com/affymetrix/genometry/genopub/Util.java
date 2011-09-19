@@ -3,18 +3,80 @@ package com.affymetrix.genometry.genopub;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 public class Util {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
-	
 	private static final double    KB = Math.pow(2, 10);
+	
+	public static final Pattern toStripURL = Pattern.compile("[^a-zA-Z_0-9\\./]");
+	/**Strip out non [a-zA-Z_0-9] chars with the replaceWith.*/
+	public static String stripBadURLChars(String name, String replaceWith){
+		return toStripURL.matcher(name).replaceAll(replaceWith);
+	}
+
+	/** Fast & simple file copy. From GForman http://www.experts-exchange.com/M_500026.html*/
+	public static boolean copy(File source, File dest){
+		FileChannel in = null, out = null;
+		try {
+			in = new FileInputStream(source).getChannel();
+			out = new FileOutputStream(dest).getChannel();
+			long size = in.size();
+			MappedByteBuffer buf = in.map(FileChannel.MapMode.READ_ONLY, 0, size);
+			out.write(buf);
+			if (in != null) in.close();
+			if (out != null) out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	/**Recursively deletes a directory and it's contents that are older than the number of days.*/
+	public static void deleteOldDirectories(File directory, int days){		
+		long cutoff = days*24* 60* 1000*60;
+		long current = System.currentTimeMillis();
+		cutoff = current - cutoff;
+		if (directory.isDirectory() && directory.lastModified() < cutoff){
+			deleteDirectory(directory);
+		}
+	}
+	
+	/**Attempts to delete a directory and it's contents.
+	 * Returns false if all the file cannot be deleted or the directory is null.
+	 * Files contained within scheduled for deletion upon close will cause the return to be false.*/
+	public static void deleteDirectory(File dir){
+		if (dir == null || dir.exists() == false) return;
+		if (dir.isDirectory()) {
+			File[] children = dir.listFiles();
+			for (int i=0; i<children.length; i++) {
+				deleteDirectory(children[i]);
+			}
+			dir.delete();
+		}
+		dir.delete();
+	}
+	
+	/**Makes a soft link between the realFile and the linked File using the linux 'ln -s' command.*/
+	public static boolean makeSoftLinkViaUNIXCommandLine(File realFile, File link){
+		try {
+			String[] cmd = {"ln", "-s", realFile.getCanonicalPath(), link.toString()};
+			Runtime.getRuntime().exec(cmd);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	
 	public static Integer getIntegerParameter(HttpServletRequest req, String parameterName) {
 		if (req.getParameter(parameterName) != null && !req.getParameter(parameterName).equals("")) {

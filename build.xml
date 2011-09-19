@@ -275,6 +275,8 @@
 		</java>
 	</target>
 
+	<target name="rebuild" depends="clean,cbc,exe,clrprf" description="creates a new, pristine igb"/>
+
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>

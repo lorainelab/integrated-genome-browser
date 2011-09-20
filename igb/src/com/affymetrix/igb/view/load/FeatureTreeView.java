@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -41,6 +42,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
@@ -749,7 +751,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				TreeNodeUserInfo nodeData = (TreeNodeUserInfo) data.getUserObject();
 				if (nodeData.genericObject instanceof GenericFeature) {
 					GenericFeature feature = (GenericFeature) nodeData.genericObject;
-					returnObject = feature.getURI().toString();
+					returnObject = "fromTree:" + feature.getURI().toString();
 				}
 			}
 
@@ -810,35 +812,36 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-	public void updateTree(URI uri, AnnotatedSeqGroup loadGroup) {
-		boolean isContained = isContained(loadGroup, uri);
+	public void updateTree(String url) throws URISyntaxException {
+		URI uri = new URI(url);
+		updateTree(uri);
+	}
 
-		if (!isContained) {
-			return;
-		}
-
+	public void updateTree(URI uri) {
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 		DefaultMutableTreeNode node;
-
 		Enumeration nodes = root.breadthFirstEnumeration();
-
+		GenericFeature feature = null;
 		while (nodes.hasMoreElements()) {
 			node = (DefaultMutableTreeNode) nodes.nextElement();
 			Object nodeData = node.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
 				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 				if (tn.genericObject instanceof GenericFeature) {
-					GenericFeature feature = (GenericFeature) tn.genericObject;
+					feature = (GenericFeature) tn.genericObject;
 					if (!feature.isVisible()) {
 						URI fUri = feature.getURI();
 						if (uri.equals(fUri)) {
 							feature.setVisible();
+							GeneralLoadView.getLoadView().createFeaturesTable();
+							List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+							loadStrategies.add(LoadStrategy.GENOME);
+							GeneralLoadView.loadFeature(loadStrategies, feature, null);
 						}
 					}
 				}
 			}
 		}
-
 		initOrRefreshTree(GeneralLoadUtils.getSelectedVersionFeatures());
 	}
 

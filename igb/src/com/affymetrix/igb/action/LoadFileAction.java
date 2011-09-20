@@ -89,7 +89,16 @@ public final class LoadFileAction extends IGBAction {
 
 		@Override
 		public void openURLAction(String url) {
-			LoadFileAction.openURLAction(url);
+			if (url.contains("fromTree:")) {
+				url = url.substring(url.indexOf(":") + 1, url.length());
+				try {
+					GeneralLoadView.getLoadView().getFeatureTree().updateTree(url);
+				} catch (URISyntaxException ex) {
+					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			} else {
+				LoadFileAction.openURLAction(url);
+			}
 		}
 	};
 	private static MergeOptionChooser chooser = null;
@@ -102,7 +111,7 @@ public final class LoadFileAction extends IGBAction {
 	private LoadFileAction() {
 		super();
 
-		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
+		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 		this.gviewerFrame.setTransferHandler(fdh);
 	}
@@ -192,13 +201,10 @@ public final class LoadFileAction extends IGBAction {
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
-		
+
 		if (gFeature == null) {
 			return;
 		}
-		
-		// Update Feature Tree to ensure checkboxes remain synchronized with loaded features
-		GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri, loadGroup);
 
 		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
 
@@ -228,7 +234,13 @@ public final class LoadFileAction extends IGBAction {
 					"The feature " + uri + " has already been added.");
 			return null;
 		}
-		
+		boolean isContained = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
+		// Test to determine if a feature already exist in the feature tree
+		if (isContained) {
+			GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
+			return null;
+		}
+
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
 		version = setVersion(uri, loadGroup, version);
 
@@ -249,14 +261,14 @@ public final class LoadFileAction extends IGBAction {
 		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 
-		boolean isContained = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
-		// Test to determine if a feature already exist in the feature tree
-		if (!isContained) {
-			version.addFeature(gFeature);
-		}
+
+
+
+		version.addFeature(gFeature);
+
 
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
-		
+
 		return gFeature;
 	}
 

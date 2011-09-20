@@ -15,7 +15,6 @@ package com.affymetrix.main;
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  *
- * @version $Id: IGB.java 7344 2011-01-18 21:14:56Z lfrohman $
  */
 public final class Main {
 	/**

@@ -281,7 +281,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	@SuppressWarnings("serial")
-	private final Action maximize_track_action = new AbstractAction("Maximize Track") {
+	private final Action maximize_track_action = new AbstractAction("Focus on Track") {
 
 		public void actionPerformed(ActionEvent e) {
 			TierGlyph current_tier = handler.getSelectedTiers().get(0);

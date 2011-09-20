@@ -82,7 +82,7 @@ public class Das2 {
 		return false;
     }
 
-   private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
+   public static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append("segment=");
 		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
@@ -277,14 +277,6 @@ public class Das2 {
 				}
 //				feats = SymProcessor.getInstance().parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
 			}
-
-			/*
-			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
-			 //watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
-			String name = type.getName();
-			if (format.equals(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
-				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
-			}*/
 
 			if(thread.isInterrupted()){
 				feats = null;

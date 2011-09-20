@@ -1,10 +1,9 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
+import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -22,7 +21,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author jnicol
  */
-public final class LoadURLAction extends IGBAction {
+public final class LoadURLAction extends OpenURIAction {
 	private static final long serialVersionUID = 1l;
 	private static final LoadURLAction ACTION = new LoadURLAction();
 
@@ -45,7 +44,6 @@ public final class LoadURLAction extends IGBAction {
 	}
 
 	private void loadURL() {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION );
 		pane.setWantsInput(true);
 
@@ -77,7 +75,7 @@ public final class LoadURLAction extends IGBAction {
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 
-		LoadFileAction.openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
+		openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
 		
 	}
 

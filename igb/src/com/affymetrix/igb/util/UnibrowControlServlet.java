@@ -95,7 +95,7 @@ public final class UnibrowControlServlet {
 
 			// If feature doesn't not exist then add it.
 			String fileName = feature_url.substring(feature_url.lastIndexOf('/') + 1, feature_url.length());
-			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
+			feature = LoadFileAction.getAction().getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
 
 		}
 

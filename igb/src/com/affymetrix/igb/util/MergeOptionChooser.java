@@ -1,6 +1,6 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.action.LoadFileAction;
+import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -55,7 +55,7 @@ public final class MergeOptionChooser extends JRPFileChooser implements ActionLi
 
 	public void refreshSpeciesList(){
 		speciesCB.removeAllItems();
-		speciesCB.addItem(LoadFileAction.UNKNOWN_SPECIES_PREFIX + " " + LoadFileAction.unknown_group_count);
+		speciesCB.addItem(OpenURIAction.UNKNOWN_SPECIES_PREFIX + " " + OpenURIAction.unknown_group_count);
 		for(String species : GeneralLoadUtils.getSpeciesList()){
 			speciesCB.addItem(species);
 		}
@@ -103,7 +103,7 @@ public final class MergeOptionChooser extends JRPFileChooser implements ActionLi
 	private void populateVersionCB(){
 		String speciesName = (String) speciesCB.getSelectedItem();
 		versionCB.removeAllItems();
-		versionCB.addItem(LoadFileAction.UNKNOWN_GENOME_PREFIX + " " + LoadFileAction.unknown_group_count);
+		versionCB.addItem(OpenURIAction.UNKNOWN_GENOME_PREFIX + " " + OpenURIAction.unknown_group_count);
 		for(String version : GeneralLoadUtils.getGenericVersions(speciesName)){
 			versionCB.addItem(version);
 		}

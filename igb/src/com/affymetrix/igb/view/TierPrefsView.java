@@ -790,9 +790,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 					isContained = false;
 				}
 
-				if ((style instanceof TrackStyle)
-						&& (style.getShow())
-						&& (tier.getChildCount() > 0)) {
+				if (style instanceof TrackStyle
+						&& style.getShow()
+						&& tier.getChildCount() > 0) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}

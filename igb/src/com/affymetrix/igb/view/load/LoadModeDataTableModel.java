@@ -428,8 +428,8 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
-				if ((style instanceof TrackStyle)
-						&& (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE))) {
+				if (style instanceof TrackStyle
+						&& tier.getChildCount() > 0) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}

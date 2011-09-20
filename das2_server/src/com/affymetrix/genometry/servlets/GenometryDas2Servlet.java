@@ -550,16 +550,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					// Load annotations for the genome version
 					for (QualifiedAnnotation qa : qualifiedAnnotations) {
-						
+
 						String fileName = qa.getAnnotation().getQualifiedFileName(genometry_server_dir);    
 						String typePrefix = qa.getTypePrefix(); 
 						
-						File file = new File(fileName);					
+						File file = new File(fileName);		
 						
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
 									Level.FINE, "Annotation type = {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
-
+							
 							if (file.isDirectory() ) {
 								if (isMultiFileAnnotationType(file)) {
 									ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
@@ -595,7 +595,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							
 						} else {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
-									Level.WARNING, "Annotation not loaded. File does not exist: {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
+									Level.WARNING, "Annotation not loaded. File does not exist or is not supported: {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
 						}
 
 					}

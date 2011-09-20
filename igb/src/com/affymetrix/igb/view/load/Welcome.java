@@ -91,9 +91,7 @@ public class Welcome implements ItemListener, ComponentListener{
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&
 				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
-			parent.pack(map.getView(), false);
-			parent.setVisibility(true);
-			map.addItem(parent);
+			initGlyph();
 		}
 		
 		map.updateWidget();

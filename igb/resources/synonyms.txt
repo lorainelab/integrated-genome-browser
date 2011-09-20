@@ -128,6 +128,7 @@ MoGene-1_0-st-Probes	MoGene-1_0-st-v1	MoGene-1_0-st	MoGene-1_0-st-v1-Probes	moge
 MoGene-1_0-st-Transcripts	MoGene-1_0-st-v1-Transcripts	mogene-1_0-st-transcripts	mogene-1_0-st-v1-transcripts	affy/mogene-1_0-st-transcripts	affy/mogene-1_0-st-v1-transcripts
 M_lucifugus_Mar_2006	myoLuc1	Myotis_lucifugus.MICROBAT1.reference
 O_anatinus_Mar_2007	ornAna1
+O_aries_Feb_2010	oviAri1
 O_cuniculus_Apr_2009	oryCun2	Oryctolagus_cuniculus.oryCun2.reference
 O_cuniculus_May_2005	oryCun1
 O_garnetti_Dec_2006	Otolemur_garnetti.BUSHBABY1.reference	Otolemur_garnettii.BUSHBABY1.reference

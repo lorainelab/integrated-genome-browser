@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,6 +53,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -132,6 +134,14 @@ public class GenoPubServlet extends HttpServlet {
 	private String fdt_task_dir;
 	private String fdt_client_codebase;
 	private String fdt_server_name;
+	
+	//fields to support url soft links to big bed/wig bam files
+	private File genoPubWebAppDir;
+	private HashSet<String> urlLinkFileExtensions = null;
+	//html link to the UCSC server to push tracks to, defaults to the main UCSC site
+	private String ucscHttpServerAddress = "http://genome.ucsc.edu/";
+	private static final Pattern HTML_BRACKETS = Pattern.compile("<[^>]+>");
+
 
 	public void init() throws ServletException {
 		if (getGenoPubDir() == false) {
@@ -5016,6 +5026,10 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		
+		//for testing
+		//makeUCSCURLs(request, res);
+		
 		Session sess  = null;
 
 		StringBuffer invalidGenomeVersions = new StringBuffer();
@@ -5122,7 +5136,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
-
+	
 
 	private String getFlexHTMLWrapper(HttpServletRequest request) {
 		StringBuffer buf = new StringBuffer();
@@ -5191,6 +5205,9 @@ public class GenoPubServlet extends HttpServlet {
 		if (genometry_genopub_dir != null && !genometry_genopub_dir.endsWith("/")) {
 			genometry_genopub_dir += "/";			
 		}
+		
+		//set web app dir for UCSC hot links
+		genoPubWebAppDir = new File (context.getRealPath("/"));
 
 
 		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
@@ -5398,6 +5415,291 @@ public class GenoPubServlet extends HttpServlet {
 
 		}
 	}
+	
+	private File checkUCSCLinkDirectory(String xml_base) throws Exception{
+		File urlLinkDir = new File (genoPubWebAppDir, Constants.UCSC_URL_LINK_DIR_NAME);
+		urlLinkDir.mkdirs();
+		if (urlLinkDir.exists() == false) throw new Exception("\nFailed to find and or make a directory to contain url softlinks for UCSC data distribution.\n");
+		
+		//add redirect index.html if not present, send them to genopub
+		File redirect = new File (urlLinkDir, "index.html");
+		if (redirect.exists() == false){
+			String toWrite = "<html> <head> <META HTTP-EQUIV=\"Refresh\" Content=\"0; URL="+xml_base+"/genopub\"> </head> <body>Access denied.</body>";
+			PrintWriter out = new PrintWriter (new FileWriter (redirect));
+			out.println(toWrite);
+			out.close();
+		}
+		
+		//delete old directories
+		for (File f: urlLinkDir.listFiles()) Util.deleteOldDirectories(f, Constants.DAYS_TO_KEEP_URL_LINKS);
+		
+		return urlLinkDir;
+	}
+
+	private void makeUCSCURLs(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		Session sess  = null;
+
+		try {
+			//get http://bioserver.hci.utah.edu:8080/das2genopub/
+			ServletContext context = getServletContext();
+			String xml_base = context.getInitParameter("xml_base").replace("/genome", "/");
+			
+			//look and or make directory to hold softlinks to data
+			File urlLinkDir = checkUCSCLinkDirectory(xml_base);
+			
+			//look for the directory containing the tree menu files needed for the html page
+			File treeDir = new File (genoPubWebAppDir, Constants.UCSC_TREE_FILES_DIR_NAME);
+			if (treeDir.exists() == false || treeDir.list().length < 5) throw new Exception("\nFailed to find the directory containing supporting files for tree menu in the UCSC html link file. Looking for -> "+ treeDir+ "\n");
+			
+			//make random word directory
+			File userDir = new File (urlLinkDir, UUID.randomUUID().toString());
+			userDir.mkdir();
+
+			//load visibile annotations
+			sess  = HibernateUtil.getSessionFactory().openSession();
+			AnnotationQuery annotationQuery = new AnnotationQuery();
+			annotationQuery.runAnnotationQuery(sess, genoPubSecurity, false);
+
+			//create map for making http page
+			LinkedHashMap<String, ArrayList<Annotation>> nestedAnnotations = new LinkedHashMap<String, ArrayList<Annotation>>();
+
+			HashMap<String, GenomeVersion> genomeVersionsMap = annotationQuery.getGenomeVersionNameMap();
+			StringBuilder missingUCSCGenomes = new StringBuilder();
+
+			//recurse through building directory tree of Organism -> Build -> Labs -> Files ....
+			//for each organism
+			for (Organism organism : annotationQuery.getOrganisms()) {
+
+				//instantiate organism directory but don't make it yet!
+				File organismDir = new File(userDir, Util.stripBadURLChars(organism.getBinomialName(),"_"));
+
+				//for each genomeVersion
+				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
+
+					//set up break loop, not good to use these, makes for complex methods but these damn static methods kind of require it.
+					iterate: {
+
+					//fetch ucsc name
+					String ucscGenomeVerisonName = (genomeVersionsMap.get(genomeVersionName)).getUcscName();
+					if (ucscGenomeVerisonName == null || ucscGenomeVerisonName.trim().length() == 0) ucscGenomeVerisonName = null;
+
+					//instantiate genome version directory but don't make it yet!
+					File genomeVersionDir = new File(organismDir, Util.stripBadURLChars(genomeVersionName,"_"));
+
+					//for each annotation, might be copied between several annotation groupings
+					for(Iterator i = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).iterator(); i.hasNext();) {
+						Annotation annotation = ((QualifiedAnnotation)i.next()).getAnnotation();
+
+						//check if annotation has exportable file type (xxx.bam, xxx.bai, xxx.bw, xxx.bb, xxx.useq (will need to be automatically? converted))
+						File[] filesToLink = fetchUCSCLinkFiles(annotation.getFiles(genometry_genopub_dir));
+
+						if (filesToLink!= null) {
+
+							//is there a ucsc name? if not then break out of the loop
+							if (ucscGenomeVerisonName == null){
+								if (missingUCSCGenomes.length() != 0) missingUCSCGenomes.append(", ");
+								missingUCSCGenomes.append(genomeVersionName);
+								break iterate;
+							}
+
+							//what data type (bam, bigBed, bigWig)
+							String type = "type="+fetchUCSCDataType (filesToLink);
+
+							//is there a summary?
+							String summary = annotation.getSummary();
+							if (summary !=null && summary.trim().length() !=0) summary = "description=\"Summary: "+summary;
+							else summary = null;
+
+							//is there a description?
+							String description = annotation.getDescription();
+							if (description !=null && description.trim().length() !=0){
+								//any summary?
+								if (summary != null) {
+									description = summary +", Description: "+description+ "\"";
+								}
+								else description = "description=\""+description+"\"";
+							}
+							else description = null;
+
+							//check if only summary and no description, if so close it.
+							if (description == null && summary != null) description = summary + "\"";
+
+							//clean up description
+							if (description == null ) description = "";
+							else description = HTML_BRACKETS.matcher(description).replaceAll("");
+
+
+							//html link to this annotation
+							String htmlURL = "htmlURL="+  xml_base + "genopub?idAnnotation="+ annotation.getFileName().substring(1);
+
+							//TODO: color indicated? look for property named color, convert to RGB, comma delimited and set 'color='
+
+							//make dirs if they don't exist
+							if (organismDir.exists() == false) organismDir.mkdir();
+							if (genomeVersionDir.exists() == false) genomeVersionDir.mkdir();
+							
+							//System.out.println(organism.getCommonName()+ "\t" + genomeVersionName + "\t"+ annotation.getName() + "\t" +annotation.getFileName());
+
+							//any enclosing directories?
+							Iterator iterator = annotation.getAnnotationGroupings().iterator();
+							while (iterator.hasNext()){
+								AnnotationGrouping ag = (AnnotationGrouping)iterator.next();
+								//make dirs
+								String name = Util.stripBadURLChars(ag.getQualifiedTypeName(), "_") + File.separator + Util.stripBadURLChars(annotation.getName(), "_");
+
+								File annoDir = new File (genomeVersionDir, name);
+								annoDir.mkdirs();
+								String datasetName = "name="+annotation.getName()+" "+annotation.getFileName();
+
+								//for each file
+								for (File f: filesToLink){
+									File annoFile = new File(annoDir, Util.stripBadURLChars(f.getName(), "_"));
+									String annoString = annoFile.toString();
+
+									//make soft link
+									Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
+
+									//is it a bam index xxx.bai? If so then skip!
+									if (annoString.endsWith(".bai")) continue;
+
+									//make bigData URL e.g. bigDataUrl=http://genome.ucsc.edu/goldenPath/help/examples/bigBedExample.bb
+									int index = annoString.indexOf(Constants.UCSC_URL_LINK_DIR_NAME);
+									String annoPartialPath = annoString.substring(index);
+									String bigDataUrl = "bigDataUrl="+ xml_base+ annoPartialPath;
+
+									//make final html link
+									String customHttpLink = ucscHttpServerAddress + "cgi-bin/hgTracks?db=" + ucscGenomeVerisonName + "&hgct_customText=track+visibility=full+";
+									String toEncode = type +" "+ datasetName +" "+ description +" "+ htmlURL +" "+ bigDataUrl;
+
+									//save html link to annotation
+									System.out.println(customHttpLink + toEncode);
+									//System.out.println(customHttpLink+ GeneralUtils.URLEncode(toEncode)+"\n");
+									
+									annotation.setUcscHttpURL(customHttpLink+ GeneralUtils.URLEncode(toEncode));
+
+									//save to map
+									//H_sapiens/H_sapiens_Feb_2009 hg19/xxx/xxx/
+									String key = organism.getBinomialName()+ File.separator+ genomeVersionName +" "+ucscGenomeVerisonName +File.separator+ ag.getQualifiedTypeName();
+									ArrayList<Annotation> annoAL = nestedAnnotations.get(key);
+									if (annoAL == null) {
+										annoAL = new ArrayList<Annotation>();
+										nestedAnnotations.put(key, annoAL);
+									}
+									annoAL.add(annotation);
+								}
+							}
+
+
+						}
+					}
+				}
+				}
+			}
+			
+			File genopubUCSC = UCSCHtmlPageBuilder.buildUCSCTreeDoc(nestedAnnotations, userDir, treeDir);
+			
+			System.out.println("Load -> "+genopubUCSC);
+
+			//any missing UCSC genome versions?
+			StringBuffer message = new StringBuffer();
+			if (missingUCSCGenomes.length() != 0) {
+				message.append("Annotations for the following genome builds were bypassed for lack of a UCSC genome version name.  Correct -> \n" + 
+						missingUCSCGenomes.toString() + "\n\n");			
+				reportError(res, message.toString()); 
+			}
+
+			/*
+
+			StringBuffer confirmMessage = new StringBuffer();
+
+			if (loadCount > 0 || unloadCount > 0) {
+				if (loadCount > 0) {
+					confirmMessage.append(loadCount + " annotation(s) and ready to load to DAS/2.\n\n");
+				}
+				if (unloadCount > 0) {
+					confirmMessage.append(unloadCount + " annotation(s) ready to unload from DAS/2.\n\n");
+				} 
+				confirmMessage.append("Do you wish to continue?\n\n");					
+			} else {
+				confirmMessage.append("No annotations are queued for reload.  Do you wish to continue?\n\n");
+			}
+
+			StringBuffer message = new StringBuffer();
+			if (invalidGenomeVersions.length() > 0 || emptyAnnotations.length() > 0) {
+
+				if (invalidGenomeVersions.length() > 0) {
+					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
+							invalidGenomeVersions.toString() +  
+					".\n\n");			
+				}
+				if (emptyAnnotations.length() > 0) {
+					message.append("The following empty annotations will be bypassed:\n" + 
+							emptyAnnotations.toString() +  
+					".\n\n");			
+				}
+				message.append(confirmMessage.toString());
+				this.reportError(res, message.toString()); 
+
+			} else {				
+				this.reportSuccess(res, confirmMessage.toString());
+			} */
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.reportError(res, e.toString());
+
+		} finally {
+
+			if (sess != null) {
+				sess.close();
+			}
+		}
+	}
+
+
+
+	/**Returns 'bigWig' , 'bigBed', 'bam', or null for xxx.bw, xxx.bb, xxx.bam*/
+	public static String fetchUCSCDataType(File[] filesToLink) {
+		for (File f: filesToLink){
+			String name = f.getName();
+			if (name.endsWith(".bw")) return "bigWig";
+			if (name.endsWith(".bb")) return "bigBed";
+			if (name.endsWith(".bam")) return "bam";
+		}
+		return null;
+	}
+
+	/**Returns null if no appropriate file is found for http linking.*/
+	private File[] fetchUCSCLinkFiles(List<File> files) {
+		if (urlLinkFileExtensions == null){
+			urlLinkFileExtensions = new HashSet<String>();
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+		}
+		File useq = null;
+		ArrayList<File> filesAL = new ArrayList<File>();
+		for (File f: files){
+			int index = f.getName().lastIndexOf(".");
+			if (index > 0) {
+				String ext = f.getName().substring(index);
+				//System.out.println("\nFile Extension "+ ext+" "+f.getName());
+				if (ext.equals(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) useq = f;
+				else if (urlLinkFileExtensions.contains(ext))  filesAL.add(f);
+			}
+		}
+		if (filesAL.size() !=0){
+			File[] toReturn = new File[filesAL.size()];
+			filesAL.toArray(toReturn);
+			return toReturn;
+		}
+		//convert useq archive?  If a xxx.useq file is found and convertUSeqArchives == true, then the file is converted and this is returned.
+		//if (useq !=null && convertUSeqArchives){
+		//TODO:
+		//attempt to convert file
+
+		//}
+		return null;
+	}
+
+
 
 }
 

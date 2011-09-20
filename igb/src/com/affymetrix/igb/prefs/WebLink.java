@@ -152,6 +152,25 @@ public final class WebLink {
 			System.out.println("method is : " + method);
 			System.out.println("ID is : " + sym.getID());
 		}
+
+		List<WebLink> webLinks = getWebLink(sym, method);
+		
+		if(webLinks.isEmpty()){
+			if(style.getFeature() != null){
+				webLinks = getWebLink(sym, style.getFeature().featureName);
+			}
+		}
+		
+		if(!webLinks.isEmpty()){
+			results.addAll(webLinks);
+		}
+		
+		return results;
+	}
+
+	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
+		List<WebLink> results = new ArrayList<WebLink>();
+			
 		for (WebLink link : weblink_list) {
 			if (link.url == null) {
 				continue;
@@ -194,7 +213,7 @@ public final class WebLink {
 
 		return results;
 	}
-
+	
 	/** Returns the list of WebLink items. */
 	public static List<WebLink> getWebList() {
 		return weblink_list;

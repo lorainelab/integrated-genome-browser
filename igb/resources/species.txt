@@ -78,7 +78,7 @@ Oryza sativa	Rice	O_sativa
 Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
 Otolemur garnettii	Nothern greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
-Ovis aries   sheep              O_aries         OAR
+Ovis aries	sheep	O_aries	OAR	oviAri
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Petromyzon marinus	Lamprey	P_marinus	petMar
 Physcomitrella patens	Moss	P_patens

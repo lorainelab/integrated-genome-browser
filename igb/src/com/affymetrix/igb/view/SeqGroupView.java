@@ -585,7 +585,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			String versionName = (String) this.versionCB.getSelectedItem();
 
 			//refresh version names if a species is selected
-			refreshVersionCB(speciesName);
+			//refreshVersionCB(speciesName); //possibly not a permanent fix for bug which causes the genome version combo to be reset
 
 			if (versionName != null && !versionName.equals(SELECT_GENOME)) {
 				// refresh this version

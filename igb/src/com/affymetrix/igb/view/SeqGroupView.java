@@ -34,13 +34,11 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.view.load.LoadModeDataTableModel;
 import com.affymetrix.igb.view.load.Welcome;
 import com.jidesoft.utils.SwingWorker;
 

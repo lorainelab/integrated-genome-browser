@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * Model for table of features.
  */
-public final class LoadModeDataTableModel extends AbstractTableModel implements ChangeListener {
+public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = {"", "", "", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
@@ -53,7 +53,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 	public List<VirtualFeature> virtualFeatures;
 	public List<GenericFeature> features;
 
-	LoadModeDataTableModel(GeneralLoadView glv) {
+	DataManagementTableModel(GeneralLoadView glv) {
 		this.glv = glv;
 		this.features = null;
 		this.virtualFeatures = new ArrayList<VirtualFeature>();
@@ -73,6 +73,9 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		if (this.virtualFeatures != null) {
 			this.virtualFeatures.clear();
 		}
+		if (features != null) {
+			features.clear();
+		}
 		this.fireTableDataChanged();
 	}
 
@@ -84,7 +87,7 @@ public final class LoadModeDataTableModel extends AbstractTableModel implements 
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		if (LoadModeTable.getTable() != null) {
+		if (DataManagementTable.getTable() != null) {
 			this.fireTableDataChanged();
 		}
 	}

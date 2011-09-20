@@ -49,7 +49,7 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.view.load.LoadModeTable;
+import com.affymetrix.igb.view.load.DataManagementTable;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -137,7 +137,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		public void actionPerformed(ActionEvent e) {
 			hideTiers(handler.getSelectedTierLabels());
-			LoadModeTable.updateVirtualFeatureList();
+			DataManagementTable.updateVirtualFeatureList();
 		}
 	};
 	private final Action show_all_action = new AbstractAction("Show All Types") {
@@ -526,7 +526,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					showMenu.remove(show_tier);
 					handler.sortTiers();
 					handler.repackTheTiers(false, true);
-					LoadModeTable.updateVirtualFeatureList();
+					DataManagementTable.updateVirtualFeatureList();
 				}
 			});
 			showMenu.add(show_tier);

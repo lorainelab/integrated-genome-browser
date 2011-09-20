@@ -59,7 +59,7 @@ public final class GeneralLoadView {
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private static AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
-	private static LoadModeDataTableModel dataManagementTableModel;
+	private static DataManagementTableModel dataManagementTableModel;
 	private FeatureTreeView feature_tree_view;
 	private static GeneralLoadView singleton;
 	private static IGBService igbService;
@@ -92,7 +92,7 @@ public final class GeneralLoadView {
 	private void initComponents() {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
-		dataManagementTableModel = new LoadModeDataTableModel(this);
+		dataManagementTableModel = new DataManagementTableModel(this);
 		dataManagementTable = new JTableX(dataManagementTableModel);
 		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadSequence.getPartialAction());
 		this.refreshDataAction = gviewer.getRefreshDataAction();
@@ -125,7 +125,7 @@ public final class GeneralLoadView {
 		return tree;
 	}
 
-	public LoadModeDataTableModel getLoadModeDataTableModel() {
+	public DataManagementTableModel getLoadModeDataTableModel() {
 		return dataManagementTableModel;
 	}
 
@@ -358,38 +358,38 @@ public final class GeneralLoadView {
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final List<GenericFeature> visibleFeatures = LoadModeDataTableModel.getVisibleFeatures(features);
+		final List<GenericFeature> visibleFeatures = DataManagementTableModel.getVisibleFeatures(features);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				dataManagementTableModel.createVirtualFeatures(visibleFeatures);
 
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(135);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(150);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.TRACK_NAME_COLUMN).setPreferredWidth(160);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setPreferredWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMinWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.BACKGROUND_COLUMN).setMaxWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMinWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
-				dataManagementTable.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(135);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(150);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(160);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
 
 				dataManagementTable.getTableHeader().setReorderingAllowed(false);
 				TableCellRenderer renderer = dataManagementTable.getTableHeader().getDefaultRenderer();
@@ -404,7 +404,7 @@ public final class GeneralLoadView {
 
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				LoadModeTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+				DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 
@@ -540,7 +540,7 @@ public final class GeneralLoadView {
 		return refreshDataAction;
 	}
 
-	public static LoadModeDataTableModel getLoadModeTableModel() {
+	public static DataManagementTableModel getLoadModeTableModel() {
 		if (dataManagementTableModel != null) {
 			return dataManagementTableModel;
 		}

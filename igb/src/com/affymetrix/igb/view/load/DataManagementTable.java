@@ -37,7 +37,7 @@ import java.awt.Color;
  * 1.  An always-visible combo box. For a user, this differentiates the field from a text box, and thus indicates they have a choice.
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
-public final class LoadModeTable {
+public final class DataManagementTable {
 
 	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
@@ -70,7 +70,7 @@ public final class LoadModeTable {
 		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.CHROMOSOME.toString(), IGBConstants.BUNDLE.getString("chromosomeCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.GENOME.toString(), IGBConstants.BUNDLE.getString("genomeCBToolTip"));
-		LoadModeDataTableModel ftm = (LoadModeDataTableModel) table.getModel();
+		DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
 
 		int featureSize = ftm.getRowCount();
 		RowEditorModel choices = new RowEditorModel(featureSize);
@@ -79,15 +79,15 @@ public final class LoadModeTable {
 		RowEditorModel color = new RowEditorModel(featureSize);
 
 		// tell the JTableX which RowEditorModel we are using
-		table.setRowEditorModel(LoadModeDataTableModel.INFO_FEATURE_COLUMN, action);
-		table.setRowEditorModel(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN, action);
-		table.setRowEditorModel(LoadModeDataTableModel.HIDE_FEATURE_COLUMN, action);
-		table.setRowEditorModel(LoadModeDataTableModel.BACKGROUND_COLUMN, color);
-		table.setRowEditorModel(LoadModeDataTableModel.FOREGROUND_COLUMN, color);
-		table.setRowEditorModel(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN, choices);
-		table.setRowEditorModel(LoadModeDataTableModel.FEATURE_NAME_COLUMN, text);
-		table.setRowEditorModel(LoadModeDataTableModel.TRACK_NAME_COLUMN, text);
-		table.setRowEditorModel(LoadModeDataTableModel.DELETE_FEATURE_COLUMN, action);
+		table.setRowEditorModel(DataManagementTableModel.INFO_FEATURE_COLUMN, action);
+		table.setRowEditorModel(DataManagementTableModel.REFRESH_FEATURE_COLUMN, action);
+		table.setRowEditorModel(DataManagementTableModel.HIDE_FEATURE_COLUMN, action);
+		table.setRowEditorModel(DataManagementTableModel.BACKGROUND_COLUMN, color);
+		table.setRowEditorModel(DataManagementTableModel.FOREGROUND_COLUMN, color);
+		table.setRowEditorModel(DataManagementTableModel.LOAD_STRATEGY_COLUMN, choices);
+		table.setRowEditorModel(DataManagementTableModel.FEATURE_NAME_COLUMN, text);
+		table.setRowEditorModel(DataManagementTableModel.TRACK_NAME_COLUMN, text);
+		table.setRowEditorModel(DataManagementTableModel.DELETE_FEATURE_COLUMN, action);
 
 		ColorCellEditor cellEditor = new ColorCellEditor() {
 
@@ -123,22 +123,22 @@ public final class LoadModeTable {
 		}
 
 
-		TableColumn c = table.getColumnModel().getColumn(LoadModeDataTableModel.LOAD_STRATEGY_COLUMN);
+		TableColumn c = table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN);
 		c.setCellRenderer(new ColumnRenderer());
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
 
-		c = table.getColumnModel().getColumn(LoadModeDataTableModel.DELETE_FEATURE_COLUMN);
+		c = table.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(delete_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(delete_icon, true));
 
-		c = table.getColumnModel().getColumn(LoadModeDataTableModel.REFRESH_FEATURE_COLUMN);
+		c = table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
 
 		//c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
 		//c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
 
-		c = table.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);
+		c = table.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
 		//iconTest = true;
@@ -181,7 +181,7 @@ public final class LoadModeTable {
 
 	public static void updateVirtualFeatureList() {
 		if (jTable != null) {
-			LoadModeDataTableModel ftm = (LoadModeDataTableModel) jTable.getModel();
+			DataManagementTableModel ftm = (DataManagementTableModel) jTable.getModel();
 			ftm.createVirtualFeatures(ftm.features);
 		}
 	}
@@ -193,9 +193,9 @@ public final class LoadModeTable {
 		return null;
 	}
 
-	public static LoadModeDataTableModel getModel() {
+	public static DataManagementTableModel getModel() {
 		if (jTable != null) {
-			return (LoadModeDataTableModel) jTable.getModel();
+			return (DataManagementTableModel) jTable.getModel();
 		}
 		return null;
 	}
@@ -253,32 +253,32 @@ class JTableX extends JTable implements MouseListener {
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		LoadModeDataTableModel ftm = (LoadModeDataTableModel) getModel();
+		DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 		VirtualFeature vFeature = ftm.getFeature(row);
 
-		if (column == LoadModeDataTableModel.REFRESH_FEATURE_COLUMN) {
+		if (column == DataManagementTableModel.REFRESH_FEATURE_COLUMN) {
 			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
 			boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && vFeature.getLoadStrategy() != LoadStrategy.GENOME);
-			return new LabelTableCellRenderer(LoadModeTable.refresh_icon, enabled);
-		} else if (column == LoadModeDataTableModel.LOAD_STRATEGY_COLUMN) {
+			return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
+		} else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {
 			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
-			return new LoadModeTable.ColumnRenderer();
-		} else if (column == LoadModeDataTableModel.INFO_FEATURE_COLUMN) {
+			return new DataManagementTable.ColumnRenderer();
+		} else if (column == DataManagementTableModel.INFO_FEATURE_COLUMN) {
 			switch (vFeature.getLastRefreshStatus()) {
 				case NO_DATA_LOADED: {
-					return new LabelTableCellRenderer(LoadModeTable.info_icon, true);
+					return new LabelTableCellRenderer(DataManagementTable.info_icon, true);
 				}
 			}
-		} else if (column == LoadModeDataTableModel.DELETE_FEATURE_COLUMN) {
+		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
 			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
 			}
-			return new LabelTableCellRenderer(LoadModeTable.delete_icon, true);
-		} else if (column == LoadModeDataTableModel.HIDE_FEATURE_COLUMN) {
+			return new LabelTableCellRenderer(DataManagementTable.delete_icon, true);
+		} else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
 			currentTiers = smv.getSeqMap().getTiers(); //improve later
 			for (TierGlyph tier : currentTiers) {
 				if (vFeature.getStyle() != null
@@ -287,10 +287,10 @@ class JTableX extends JTable implements MouseListener {
 							vFeature.getStyle().getMethodName()))//need changed
 					{
 						if (tier.getAnnotStyle().getShow()) {
-							return new LabelTableCellRenderer(LoadModeTable.visible_icon, true);
+							return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
 
 						} else {
-							return new LabelTableCellRenderer(LoadModeTable.invisible_icon, true);
+							return new LabelTableCellRenderer(DataManagementTable.invisible_icon, true);
 						}
 					}
 				}
@@ -307,40 +307,40 @@ class JTableX extends JTable implements MouseListener {
 		int rowIndex = rowAtPoint(p);
 		int colIndex = columnAtPoint(p);
 		int realColumnIndex = convertColumnIndexToModel(colIndex);
-		LoadModeDataTableModel ftm = (LoadModeDataTableModel) getModel();
+		DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 		VirtualFeature feature = ftm.getFeature(rowIndex);
 		String featureName = feature.getFeature().featureName;
 		switch (realColumnIndex) {
-			case LoadModeDataTableModel.REFRESH_FEATURE_COLUMN:
+			case DataManagementTableModel.REFRESH_FEATURE_COLUMN:
 				if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD) {
 					tip = "Refresh " + featureName;
 				} else {
 					tip = "Change load strategy to refresh " + featureName;
 				}
 				break;
-			case LoadModeDataTableModel.LOAD_STRATEGY_COLUMN:
+			case DataManagementTableModel.LOAD_STRATEGY_COLUMN:
 				if (feature.getLoadStrategy() != LoadStrategy.GENOME) {
 					tip = "Change load strategy for " + featureName;
 				} else {
 					tip = "Cannot change load strategy for " + featureName;
 				}
 				break;
-			case LoadModeDataTableModel.FEATURE_NAME_COLUMN:
+			case DataManagementTableModel.FEATURE_NAME_COLUMN:
 				tip = "File Name  (" + feature.getServer() + ")" + "\n " + feature.getFeature().featureName;
 				break;
-			case LoadModeDataTableModel.DELETE_FEATURE_COLUMN:
+			case DataManagementTableModel.DELETE_FEATURE_COLUMN:
 				tip = "Delete " + featureName;
 				break;
-			case LoadModeDataTableModel.HIDE_FEATURE_COLUMN:
+			case DataManagementTableModel.HIDE_FEATURE_COLUMN:
 				tip = "Switches track visibility On or OFF";
 				break;
-			case LoadModeDataTableModel.TRACK_NAME_COLUMN:
+			case DataManagementTableModel.TRACK_NAME_COLUMN:
 				tip = "Track Name";
 				break;
-			case LoadModeDataTableModel.BACKGROUND_COLUMN:
+			case DataManagementTableModel.BACKGROUND_COLUMN:
 				tip = "Background";
 				break;
-			case LoadModeDataTableModel.FOREGROUND_COLUMN:
+			case DataManagementTableModel.FOREGROUND_COLUMN:
 				tip = "Foreground";
 				break;
 			default:

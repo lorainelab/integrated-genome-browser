@@ -24,8 +24,8 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.view.load.LoadModeDataTableModel;
-import com.affymetrix.igb.view.load.LoadModeTable;
+import com.affymetrix.igb.view.load.DataManagementTableModel;
+import com.affymetrix.igb.view.load.DataManagementTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
@@ -1193,8 +1193,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 							smv.getSeqMap().repackTheTiers(true, true, false);
 						}
 						if (col == COL_TRACK_NAME || col == COL_BACKGROUND) {
-							if (LoadModeTable.getModel() != null) {
-								LoadModeTable.getModel().fireTableDataChanged();
+							if (DataManagementTable.getModel() != null) {
+								DataManagementTable.getModel().fireTableDataChanged();
 							}
 						}
 

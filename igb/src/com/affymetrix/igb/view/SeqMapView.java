@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.view.load.LoadModeTable;
+import com.affymetrix.igb.view.load.DataManagementTable;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
@@ -800,7 +800,7 @@ public class SeqMapView extends JPanel
 		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
-		LoadModeTable.updateVirtualFeatureList();
+		DataManagementTable.updateVirtualFeatureList();
 	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers

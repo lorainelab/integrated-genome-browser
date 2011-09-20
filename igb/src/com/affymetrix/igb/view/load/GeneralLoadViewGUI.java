@@ -22,7 +22,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = Integer.MIN_VALUE;
-	private static LoadModeDataTableModel dataManagementTableModel;
+	private static DataManagementTableModel dataManagementTableModel;
 	private static GeneralLoadViewGUI singleton;
 
 	public static void init(IGBService _igbService) {
@@ -60,7 +60,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         refresh_dataB = GeneralLoadView.getLoadView().getRefreshDataButton();
         all_residuesB = GeneralLoadView.getLoadView().getAll_ResiduesButton();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose Data Sources and Data Sets"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Sources and Data Sets"));
 
         tree.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jScrollPane1.setViewportView(tree);

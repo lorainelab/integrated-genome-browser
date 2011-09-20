@@ -846,16 +846,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	public boolean isLoaded(URI uri) {
-		List<GenericFeature> gList = GeneralLoadView.getLoadView().getLoadModeTableModel().features;
-		if (gList == null) {
+		List<GenericFeature> gFeatureList = GeneralLoadView.getLoadView().getLoadModeDataTableModel().features;
+		if (gFeatureList == null) {
 			return false;
 		}
-
-		for (GenericFeature gFeature : gList) {
-			if (gFeature.getURI().equals(uri)) {
+		for (GenericFeature gFeature : gFeatureList){
+		if (gFeature.getURI().equals(uri)) {
 				return true;
-			}
-		}
+			}		
+		}		
 		return false;
 	}
 

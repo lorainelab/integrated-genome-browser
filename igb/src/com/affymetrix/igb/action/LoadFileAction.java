@@ -261,11 +261,7 @@ public final class LoadFileAction extends IGBAction {
 		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 
-
-
-
 		version.addFeature(gFeature);
-
 
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
 

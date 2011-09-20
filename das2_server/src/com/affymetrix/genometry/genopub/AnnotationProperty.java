@@ -1,10 +1,9 @@
 package com.affymetrix.genometry.genopub;
 
 import java.util.Set;
+import java.io.Serializable;
 
-import com.affymetrix.genometry.genopub.Owned;
-
-public class AnnotationProperty {
+public class AnnotationProperty implements Serializable{
     
     private Integer      idAnnotationProperty;
     private String       name;

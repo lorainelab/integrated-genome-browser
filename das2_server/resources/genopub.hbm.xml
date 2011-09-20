@@ -109,6 +109,7 @@
             <generator class="native"/>
         </id>
         <property name="name"            column="name"              type="string"/>
+        <property name="ucscName"        column="ucscName"          type="string"/>
         <property name="idOrganism"      column="idOrganism"        type="integer"/>
         <property name="buildDate"       column="buildDate"         type="java.sql.Date"/>
         <property name="coordURI"        column="coordURI"          type="string"/>

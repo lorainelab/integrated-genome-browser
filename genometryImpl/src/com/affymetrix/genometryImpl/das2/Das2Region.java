@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.net.URI;
 
+/**Container for a das2 segment (aka chromosome)*/
 public final class Das2Region {
 
     private final URI region_uri;

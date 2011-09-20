@@ -12,7 +12,6 @@ import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -42,6 +41,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -308,7 +308,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL) {
+		Adjustable xzoomer = new RPAdjustableJSlider("SeqMapView_xzoomer", Adjustable.HORIZONTAL) {
 
 			@Override
 			public void paint(Graphics g) {
@@ -358,7 +358,7 @@ public class SeqMapView extends JPanel
 		};
 
 		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
-		Adjustable yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+		Adjustable yzoomer = new RPAdjustableJSlider("SeqMapView_yzoomer", Adjustable.VERTICAL);
 		((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);

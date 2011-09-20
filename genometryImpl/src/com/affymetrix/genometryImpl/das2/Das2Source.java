@@ -19,7 +19,7 @@ import java.util.*;
 
 /**
  *
- * started with com.affymetrix.igb.das.DasSource and modified
+ * Info related to a Species (e.g. H_sapiens, C_elegans)
  */
 public final class Das2Source {
 

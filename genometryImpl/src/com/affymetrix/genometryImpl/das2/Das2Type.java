@@ -16,6 +16,7 @@ import java.util.*;
 import java.net.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
+/**Container for a das2 type (aka dataset/ data track)*/
 public final class Das2Type {
 
 	private final Das2VersionedSource versioned_source;
@@ -59,7 +60,7 @@ public final class Das2Type {
 		return props;
 	}
 
-	Map<String, String> getFormats() {
+	public Map<String, String> getFormats() {
 		return formats;
 	}
 

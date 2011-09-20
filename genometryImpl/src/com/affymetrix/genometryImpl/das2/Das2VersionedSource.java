@@ -32,6 +32,9 @@ import static com.affymetrix.genometryImpl.util.Constants.UTF8;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
+/**
+ * Info related to a versioned source (e.g. H_sapiens_Feb_2009, C_elegans_May_2008)
+ * */
 public final class Das2VersionedSource {
     private static final boolean URL_ENCODE_QUERY = true;
     public static final String SEGMENTS_CAP_QUERY = "segments";
@@ -204,6 +207,9 @@ public final class Das2VersionedSource {
 	 * Get regions from server.
 	 */
 	private synchronized void initSegments() {
+		//must be on top or one gets an infinite loop
+		regions_initialized = true;
+
 		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
 		String region_request = segcap.getRootURI().toString();
 		try {
@@ -211,7 +217,6 @@ public final class Das2VersionedSource {
 				Level.FINE, "Das2 Segments Request: {0}", region_request);
 			// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
 			InputStream response = getInputStream(SEGMENTS_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), false, null, "Das2 Segments Request");
-
 			Document doc = XMLUtils.getDocument(response);
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
 			getRegionList(regionlist, region_request);
@@ -221,8 +226,6 @@ public final class Das2VersionedSource {
 			// TODO
 			//ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
 		}
-		//TODO should regions_initialized be true if an exception occurred?
-		regions_initialized = true;
 	}
 
 

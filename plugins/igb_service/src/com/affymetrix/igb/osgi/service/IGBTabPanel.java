@@ -10,7 +10,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
+import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+
+public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget {
 	private static final long serialVersionUID = 1L;
 	public static final int DEFAULT_TAB_POSITION = Integer.MAX_VALUE - 1;
 
@@ -70,6 +73,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private final String title;
 	private final boolean focus;
 	private final int position;
+	private String id;
 	private JFrame frame;
 	private Rectangle trayRectangle;
 
@@ -84,6 +88,8 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.title = title;
 		this.focus = focus;
 		this.position = position;
+    	this.id = "IGBTabPanel_" + this.getClass().getSimpleName();
+   		RecordPlaybackHolder.getInstance().addWidget(this);
 	}
 
 	@Override
@@ -205,14 +211,21 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	@Override
 	public int compareTo(IGBTabPanel o) {
 		int ret = Integer.valueOf(position).compareTo(o.position);
-
-		if(ret != 0)
+		if (ret != 0) {
 			return ret;
-
+		}
 		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
 
 	public void saveSession() {}
 
 	public void loadSession() {}
+
+	public String getId() {
+		return id;
+	}
+
+	public boolean consecutiveOK() {
+		return true;
+	}
 }

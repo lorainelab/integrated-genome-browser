@@ -221,11 +221,19 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 	public void loadSession() {}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public boolean consecutiveOK() {
 		return true;
+	}
+
+	public void select() {
+		if (getParent() instanceof TabHolder) {
+			((TabHolder)getParent()).selectTab(this);
+		}
 	}
 }

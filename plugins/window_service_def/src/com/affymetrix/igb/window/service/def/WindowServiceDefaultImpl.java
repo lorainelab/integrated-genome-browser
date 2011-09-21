@@ -31,11 +31,11 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
-import com.affymetrix.igb.window.service.def.TabHolder;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.TabHolder;
 
 /**
  * TabHolder implementation for all tabs that are hidden
@@ -40,4 +41,7 @@ public class HiddenTabs implements TabHolder {
 
 	@Override
 	public void close() {}
+
+	@Override
+	public void selectTab(IGBTabPanel panel) {}
 }

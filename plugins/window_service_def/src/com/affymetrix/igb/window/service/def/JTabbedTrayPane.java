@@ -27,6 +27,7 @@ import javax.swing.event.AncestorListener;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
@@ -391,6 +392,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		return plugins;
 	}
 
+	@Override
 	public void selectTab(IGBTabPanel panel) {
 		tab_pane.setSelectedComponent(panel);
 	}

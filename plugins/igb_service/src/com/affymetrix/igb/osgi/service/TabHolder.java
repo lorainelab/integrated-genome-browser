@@ -1,8 +1,7 @@
-package com.affymetrix.igb.window.service.def;
+package com.affymetrix.igb.osgi.service;
 
 import java.util.Set;
 
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
 /**
  * Abstract holder of tab panes
@@ -35,4 +34,9 @@ public interface TabHolder {
 	 * close the holder (only appropriate for trays)
 	 */
 	public void close();
+	/**
+	 * select a tab pane in this holder (make it visible)
+	 * @param plugin the tab pane to remove
+	 */
+	public void selectTab(IGBTabPanel panel);
 }

@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
@@ -128,4 +129,7 @@ public class WindowTabs implements TabHolder {
 
 	@Override
 	public void close() {}
+
+	@Override
+	public void selectTab(IGBTabPanel panel) {}
 }

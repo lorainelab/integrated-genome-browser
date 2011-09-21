@@ -37,6 +37,7 @@ import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 
 /**
  *  A factory for showing consensus (or exemplar) sequences mapped onto the genome with
@@ -185,8 +186,9 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		int parent_y = 100; // irrelevant because packing will move the glyphs around
 		int child_y = 100; // relevant relative to parent_y
 
-		ITrackStyle the_style = the_tier.getAnnotStyle();
-		Color consensus_color = the_style.getForeground();
+		ITrackStyleExtended the_style = (ITrackStyleExtended) the_tier.getAnnotStyle();
+		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
+		Color consensus_color = getSymColor(consensus_sym, the_style, forward, direction_type);
 
 		boolean use_label = (label_field != null && (label_field.trim().length() > 0)
 				&& (consensus_sym instanceof SymWithProps));
@@ -257,6 +259,16 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		return pglyph;
 	}
 
+	
+	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, DIRECTION_TYPE direction_type) {
+		if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
+			if(isForward)
+				return style.getForwardColor();
+			return style.getReverseColor();
+		}
+		return style.getForeground();
+	}
+	
 	/**
 	 *  If given a SeqSymmetry with exactly two Spans, will return
 	 *  the BioSeq of the Span that is NOT the sequence you specify.

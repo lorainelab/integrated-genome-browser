@@ -269,6 +269,9 @@ public class TierGlyph extends SolidGlyph {
 	}
 	
 	private void drawSummary(ViewI view) {
+		view.transformToPixels(coordbox, pixelbox);
+		pixelbox.width = Math.max(pixelbox.width, min_pixels_width);
+		pixelbox.height = Math.max(pixelbox.height, min_pixels_height);
 		Graphics g = view.getGraphics();
 		Rectangle vbox = view.getPixelBox();
 		pixelbox = pixelbox.intersection(vbox);

@@ -36,11 +36,17 @@ import com.affymetrix.common.CommonUtils;
 public class OSGiHandler {
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
-	private static Felix felix;
+	private Felix felix;
+	private String bundlePathToInstall;
+	private String bundleSymbolicNameToUninstall;
 
 	private static OSGiHandler instance = new OSGiHandler();
 	public static OSGiHandler getInstance() {
 		return instance;
+	}
+
+	private OSGiHandler() {
+		super();
 	}
 
 	/**
@@ -102,7 +108,7 @@ public class OSGiHandler {
 	 * load the embedded bundles, if not cached, and start all bundles
 	 * @param args the command line arguments
 	 */
-	public void startOSGi(String[] args) {
+	public synchronized void startOSGi(String[] args) {
 		setLaf();
 
 		String argArray = Arrays.toString(args);
@@ -144,11 +150,25 @@ public class OSGiHandler {
     				}
     			}
     		}
+    		if (bundleSymbolicNameToUninstall != null) {
+    			for (Bundle bundle : bundleContext.getBundles()) {
+    				if (bundleSymbolicNameToUninstall.equals(bundle.getSymbolicName())) {
+    					bundle.uninstall();
+    					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
+    				}
+    			}
+    		}
     		String install_bundle = CommonUtils.getInstance().getArg("-install_bundle", args);
     		if (install_bundle != null) {
 				Bundle bundle = bundleContext.installBundle(install_bundle);
 				if (bundle != null) {
 					Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", install_bundle);
+				}
+    		}
+    		if (bundlePathToInstall != null) {
+				Bundle bundle = bundleContext.installBundle(bundlePathToInstall);
+				if (bundle != null) {
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
 				}
     		}
     		for (Bundle bundle : bundleContext.getBundles()) {
@@ -287,5 +307,53 @@ public class OSGiHandler {
 				}
 			}
 		}
+	}
+
+	public boolean installBundle(String filePath) {
+		if (felix == null) {
+			bundlePathToInstall = filePath;
+			return true;
+		}
+		Bundle bundle = null;
+		if (filePath != null) {
+			try {
+	            BundleContext bundleContext = felix.getBundleContext();
+				bundle = bundleContext.installBundle(filePath);
+				bundle.start();
+			}
+			catch(Exception x) {
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error installing bundle", x);
+				bundle = null;
+			}
+			if (bundle != null) {
+				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", filePath);
+			}
+		}
+		return bundle != null;
+	}
+
+	public boolean uninstallBundle(String symbolicName) {
+		if (felix == null) {
+			bundleSymbolicNameToUninstall = symbolicName;
+			return true;
+		}
+		boolean found = false;
+		if (symbolicName != null) {
+            BundleContext bundleContext = felix.getBundleContext();
+			for (Bundle bundle : bundleContext.getBundles()) {
+				if (symbolicName.equals(bundle.getSymbolicName())) {
+					try {
+						bundle.uninstall();
+						Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
+						found = true;
+					}
+					catch(Exception x) {
+						Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error uninstalling bundle", x);
+						found = false;
+					}
+				}
+			}
+		}
+		return found;
 	}
 }

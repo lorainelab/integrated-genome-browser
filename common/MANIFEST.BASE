@@ -5,10 +5,8 @@ Bundle-SymbolicName: com.affymetrix.igb.common
 Bundle-Description: common utilities for IGB
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: @appVersion@
-Bundle-Activator: com.affymetrix.common.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-IGB-Tier: 1
 Import-Package: org.osgi.framework
 Export-Package: com.affymetrix.common;version="@appVersion@"
 

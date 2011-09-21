@@ -3,11 +3,6 @@ package com.affymetrix.common;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 /**
  * utilities used by both the main, starting class, and the
@@ -25,7 +20,6 @@ public class CommonUtils {
 	private static final String APP_VERSION_FULL = MessageFormat.format(
 			BUNDLE.getString("appVersionFull"),
 			APP_VERSION);
-	private BundleContext bundleContext;
 
 	private CommonUtils() {
 		super();
@@ -33,10 +27,6 @@ public class CommonUtils {
 
 	public final static CommonUtils getInstance() {
 		return instance;
-	}
-
-	void setBundleContext(BundleContext bundleContext) {
-		this.bundleContext = bundleContext;
 	}
 
 	public String getAppName() {
@@ -88,44 +78,6 @@ public class CommonUtils {
 			to_return = "true";
 		}
 		return to_return;
-	}
-
-	public boolean installBundle(String filePath) {
-		Bundle bundle = null;
-		if (filePath != null) {
-			try {
-				bundle = bundleContext.installBundle(filePath);
-				bundle.start();
-			}
-			catch(Exception x) {
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error installing bundle", x);
-				bundle = null;
-			}
-			if (bundle != null) {
-				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", filePath);
-			}
-		}
-		return bundle != null;
-	}
-
-	public boolean uninstallBundle(String symbolicName) {
-		boolean found = false;
-		if (symbolicName != null) {
-			for (Bundle bundle : bundleContext.getBundles()) {
-				if (symbolicName.equals(bundle.getSymbolicName())) {
-					try {
-						bundle.uninstall();
-						Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
-						found = true;
-					}
-					catch(Exception x) {
-						Logger.getLogger(getClass().getName()).log(Level.SEVERE, "error uninstalling bundle", x);
-						found = false;
-					}
-				}
-			}
-		}
-		return found;
 	}
 
 	/**

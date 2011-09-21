@@ -309,6 +309,13 @@ public class OSGiHandler {
 		}
 	}
 
+	public BundleContext getBundleContext() {
+		if (felix == null) {
+			return null;
+		}
+		return felix.getBundleContext();
+	}
+
 	public boolean installBundle(String filePath) {
 		if (felix == null) {
 			bundlePathToInstall = filePath;

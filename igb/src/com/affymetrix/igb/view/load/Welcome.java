@@ -33,7 +33,8 @@ public class Welcome implements ItemListener, ComponentListener{
 	private static final float FONT_SIZE_1 = 36.0f;
 	private static final float FONT_SIZE_2 = 22.0f;
 	
-	private static final Message MESSAGES[] = new Message[]{new Message("Welcome to", FONT_SIZE_1, COLOR_1), 
+	private static final Message MESSAGES[] = new Message[]{new Message("", FONT_SIZE_1, COLOR_1),
+												new Message("Welcome to", FONT_SIZE_1, COLOR_1), 
 												new Message("Integrated Genome Browser", FONT_SIZE_1, COLOR_2),
 												new Message("To get started, choose a species and genome version.", FONT_SIZE_2, COLOR_1)};
 	

@@ -787,12 +787,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			s = default_view_mode;
 		}
 		view_mode = s;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
-			}
-			getNode().put(PREF_VIEW_MODE, s);
-		}
+//		Making View Mode non persistent.
+//		if (getNode() != null) {
+//			if (DEBUG_NODE_PUTS) {
+//				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
+//			}
+//			getNode().put(PREF_VIEW_MODE, s);
+//		}
 	}
 
 	public String getViewMode() {

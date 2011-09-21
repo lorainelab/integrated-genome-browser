@@ -1084,14 +1084,26 @@ public class SeqMapView extends JPanel
 
 	public final void selectAllGraphs() {
 		List<GlyphI> glyphlist = collectGraphs();
+		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
+		GraphGlyph gg;
+		
+		//Remove hidden Graphs
+		for(GlyphI g : glyphlist){
+			gg = (GraphGlyph)g;
+			if(gg.getGraphState().getTierStyle().getShow()){
+				visibleList.add(g);
+			}
+		}
+		glyphlist.clear();
+		
 		// convert graph glyphs to GraphSyms via glyphsToSyms
-
+		
 		// Bring them all into the visual area
-		for (GlyphI gl : glyphlist) {
+		for (GlyphI gl : visibleList) {
 			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
 		}
 
-		select(glyphsToSyms(glyphlist), false, true, true);
+		select(glyphsToSyms(visibleList), false, true, true);
 	}
 
 	public final void select(List<SeqSymmetry> sym_list) {

@@ -261,7 +261,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	public void drawTraversal(ViewI view) {
-		if (zoomDisplayer != null) {
+		if (zoomDisplayer != null && zoomDisplayer.getZoomGlyph(view) != null) {
 			drawSummary(view);
 			return;
 		}

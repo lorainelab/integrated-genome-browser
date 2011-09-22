@@ -2032,6 +2032,9 @@ public class SeqMapView extends JPanel
 	}
 
 	public final AxisGlyph getAxisGlyph() {
+		if(axis_tier == null)
+			return null;
+		
 		AxisGlyph ag = null;
 		for (GlyphI child : axis_tier.getChildren()) {
 			if (child instanceof AxisGlyph) {

@@ -239,11 +239,6 @@ public final class IGB extends Application
 		// WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
 		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
-		map_view = new SeqMapView(true);
-		gmodel.addSeqSelectionListener(map_view);
-		gmodel.addGroupSelectionListener(map_view);
-		gmodel.addSymSelectionListener(map_view);
-
 		MenuUtil.setAccelerators(
 			new AbstractMap<String, KeyStroke>() {
 				@Override
@@ -256,6 +251,11 @@ public final class IGB extends Application
 				}
 			}
 		);
+		map_view = new SeqMapView(true);
+		gmodel.addSeqSelectionListener(map_view);
+		gmodel.addGroupSelectionListener(map_view);
+		gmodel.addSymSelectionListener(map_view);
+
 		loadMenu();
 
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",

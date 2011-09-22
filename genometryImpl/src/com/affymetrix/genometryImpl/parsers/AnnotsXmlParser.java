@@ -42,9 +42,24 @@ public abstract class AnnotsXmlParser {
 				String serverURL = fileElement.getAttribute("serverURL");
 				String load_hint = fileElement.getAttribute("load_hint");
 				String label_field = fileElement.getAttribute("label_field");
-				
+				String foreground = fileElement.getAttribute("foreground");
+				String background = fileElement.getAttribute("background");
+				String max_depth = fileElement.getAttribute("max_depth");
+				String name_size = fileElement.getAttribute("name_size");
+				String connected = fileElement.getAttribute("connected");
+				String collapsed = fileElement.getAttribute("collapsed");
+				String show2tracks = fileElement.getAttribute("show2tracks");
+				String direction_type = fileElement.getAttribute("direction_type");
+				String positive_strand_color = fileElement.getAttribute("positive_strand_color");
+				String negative_strand_color = fileElement.getAttribute("negative_strand_color");
+				String view_mode =  fileElement.getAttribute("view_mode");
+
 				if (filename != null) {
-					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, friendlyURL, serverURL, load_hint, label_field);
+					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, 
+							friendlyURL, serverURL, load_hint, label_field, foreground,
+							background, max_depth, name_size, connected, collapsed,
+							show2tracks, direction_type, positive_strand_color,
+									negative_strand_color, view_mode);
 					annotList.add(annotMapElt);
 				}
 			}
@@ -54,16 +69,21 @@ public abstract class AnnotsXmlParser {
 	}
 
 	public static class AnnotMapElt {
+
 		public String fileName;
 		public String title;
 		public String serverURL;
-		public Map<String,String> props = new HashMap<String,String>();
+		public Map<String, String> props = new HashMap<String, String>();
 
 		public AnnotMapElt(String fileName, String title) {
-			this(fileName, title, "", "", "", "", "");
+			this(fileName, title, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "","");
 		}
 
-		public AnnotMapElt(String fileName, String title, String description, String URL, String serverURL, String load_hint, String label_field) {
+		public AnnotMapElt(String fileName, String title, String description, 
+				String URL, String serverURL, String load_hint, String label_field, 
+				String foreground, String background, String max_depth, String name_size, 
+				String connected, String collapsed, String show2tracks, String direction_type, 
+				String positive_strand_color, String negative_strand_color, String view_mode) {
 			// filename's case is important, since we may be loading this file locally (in QuickLoad).
 			this.fileName = fileName;
 			this.title = (title == null ? "" : title);
@@ -72,6 +92,17 @@ public abstract class AnnotsXmlParser {
 			this.props.put("url", URL);
 			this.props.put("load_hint", load_hint);
 			this.props.put("label_field", label_field);
+			this.props.put("foreground", foreground);
+			this.props.put("background", background);
+			this.props.put("max_depth", max_depth);
+			this.props.put("name_size", name_size);
+			this.props.put("connected", connected);
+			this.props.put("collapsed", collapsed);
+			this.props.put("show2tracks", show2tracks);
+			this.props.put("direction_type", direction_type);
+			this.props.put("positive_strand_color", positive_strand_color);
+			this.props.put("negative_strand_color", negative_strand_color);
+			this.props.put("view_mode", view_mode);
 		}
 
 		public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {
@@ -82,6 +113,7 @@ public abstract class AnnotsXmlParser {
 			}
 			return null;
 		}
+
 		public static AnnotMapElt findTitleElt(String title, List<AnnotMapElt> annotList) {
 			for (AnnotMapElt annotMapElt : annotList) {
 				if (annotMapElt.title.equalsIgnoreCase(title)) {

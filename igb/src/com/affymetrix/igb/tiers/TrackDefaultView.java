@@ -281,13 +281,16 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
             .add(selectTrackDefaultPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                     .add(selectTrackDefaultPanelLayout.createSequentialGroup()
                         .add(addTrackDefaultButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(removeTrackDefaultButton)))
                 .addContainerGap())
         );
+
+        selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, removeTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         selectTrackDefaultPanelLayout.setVerticalGroup(
             selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackDefaultPanelLayout.createSequentialGroup()
@@ -358,14 +361,12 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 
         maxDepthLabel.setText("Max Depth:");
 
-        maxDepthTextField.setText("10");
         maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxDepthTextFieldActionPerformed(evt);
             }
         });
 
-        show2TracksCheckBox.setSelected(true);
         show2TracksCheckBox.setText("Show (+/-) tracks");
         show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -373,7 +374,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
             }
         });
 
-        connectedCheckBox.setSelected(true);
         connectedCheckBox.setText("Connected");
         connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -393,39 +393,35 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
+                .add(9, 9, 9)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(TrackTypeNameLabel)
+                    .add(bgLabel)
+                    .add(trackNameSizeLabel)
+                    .add(maxDepthLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(9, 9, 9)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(maxDepthLabel)
-                            .add(trackNameSizeLabel)
-                            .add(TrackTypeNameLabel)
-                            .add(bgLabel))
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, maxDepthTextField)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, trackNameSizeComboBox, 0, 59, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                    .add(org.jdesktop.layout.GroupLayout.LEADING, maxDepthTextField)
-                                    .add(org.jdesktop.layout.GroupLayout.LEADING, bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(org.jdesktop.layout.GroupLayout.LEADING, trackNameSizeComboBox, 0, 59, Short.MAX_VALUE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, fgLabel)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, labelFieldLabel))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(labelFieldComboBox, 0, 77, Short.MAX_VALUE)
-                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                        .add(46, 46, 46))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(show2TracksCheckBox)
+                            .add(fgLabel)
+                            .add(labelFieldLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(connectedCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(labelFieldComboBox, 0, 77, Short.MAX_VALUE)
+                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .add(47, 47, 47))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(show2TracksCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(connectedCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -469,8 +465,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 374, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 360, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -481,8 +477,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                 .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 186, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -856,18 +852,18 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			tier_styles_dup = tier_styles;
 			tier_styles.clear();
 			tier_styles.add(default_annot_style);
-			for (Entry entry : file2types) {
-				element = (AssociationElement) entry.getValue();
+			for (Entry entries : file2types) {
+				element = (AssociationElement) entries.getValue();
 				if (element.propertyMap != null) {
 					PropertyMap props = default_annot_style.getProperties();
 					props.putAll(element.getPropertyMap());
 					element.getPropertyMap().putAll(props);
 					TrackStyle style = new TrackStyle(props);
-					style.setTrackName(entry.getKey().toString());
+					style.setTrackName(entries.getKey().toString());
 					tier_styles.add(style);
 				} else {
 					for (TrackStyle style : tier_styles_dup) {
-						if (entry.getKey().toString().equals(style.getTrackName())) {
+						if (entries.getKey().toString().equals(style.getTrackName())) {
 							tier_styles.add(style);
 						}
 					}

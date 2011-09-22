@@ -84,7 +84,9 @@ public abstract class OpenURIAction extends IGBAction {
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		// Annotated Seq Group must be selected before feature table change call.
-		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
+		if(gmodel.getSelectedSeqGroup() != gFeature.gVersion.group){
+			gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
+		}
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 

@@ -1,21 +1,36 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 
-import java.awt.Image;
-import java.util.*;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.prefs.Preferences;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 public abstract class Application {
 
 	public final static boolean DEBUG_EVENTS = false;
-	protected final StatusBar status_bar;
-	private final Set<String> progressStringList = Collections.synchronizedSet(new LinkedHashSet<String>()); // list of progress bar messages.
-	static Application singleton = null;
+	private static final int delay = 2; //delay in seconds
+	
+	private final LinkedList<String> progressStringList = new LinkedList<String>(); // list of progress bar messages.
+	ActionListener update_status_bar = new ActionListener() {
 
+		public void actionPerformed(java.awt.event.ActionEvent ae) {
+			synchronized (progressStringList) {
+				String s = progressStringList.pop();
+				progressStringList.addLast(s);
+				setNotLockedUpStatus(s);
+			}
+		}
+	};
+	Timer timer = new Timer(delay*1000, update_status_bar);
+	
+	static Application singleton = null;
+	protected final StatusBar status_bar;
+	
 	public Application() {
 		singleton = this;
 		status_bar = new StatusBar();
@@ -25,39 +40,32 @@ public abstract class Application {
 		return singleton;
 	}
 
-	abstract public Image getIcon();
+	abstract public java.awt.Image getIcon();
 
-	abstract public JFrame getFrame();
+	abstract public javax.swing.JFrame getFrame();
 
-	abstract public SeqMapView getMapView();
-
+	abstract public com.affymetrix.igb.view.SeqMapView getMapView();
+			
 	public final void addNotLockedUpMsg(final String s) {
-		progressStringList.add(s);
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				if (status_bar.getStatus().trim().length() == 0) {
-					setNotLockedUpStatus(s, true);
-				}
-			}
-		});
+		synchronized (progressStringList) {
+			progressStringList.addFirst(s);
+		}
+		update_status_bar.actionPerformed(null);
+		
+		if(!timer.isRunning()){
+			timer.start();
+		}
 	}
 
 	public final void removeNotLockedUpMsg(final String s) {
-		progressStringList.remove(s);
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				//if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
-					// Time to change status message.
-					if (progressStringList.isEmpty()) {
-						setNotLockedUpStatus(null, false);
-					} else {
-						setNotLockedUpStatus(progressStringList.iterator().next(), true);
-					}
-				//}
+		synchronized (progressStringList) {
+			progressStringList.remove(s);
+			
+			if (progressStringList.isEmpty()) {
+				setNotLockedUpStatus(null);
+				timer.stop();
 			}
-		});
+		}
 	}
 
 	/**
@@ -65,9 +73,9 @@ public abstract class Application {
 	 * @param s text of the message
 	 * @param visible if the progress bar is to be displayed
 	 */
-	private synchronized void setNotLockedUpStatus(String s, boolean visible) {
+	private synchronized void setNotLockedUpStatus(String s) {
 		status_bar.setStatus(s);
-		status_bar.progressBar.setVisible(visible);
+		status_bar.progressBar.setVisible(s!=null);
 	}
 	
 	/** Sets the text in the status bar.
@@ -84,15 +92,10 @@ public abstract class Application {
 	 *  @param echo  Whether to echo a copy to System.out.
 	 */
 	public final void setStatus(final String s, final boolean echo) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				status_bar.setStatus(s);
-				if (echo && s != null && !s.isEmpty()) {
-					System.out.println(s);
-				}
-			}
-		});
+		status_bar.setStatus(s);
+		if (echo && s != null && !s.isEmpty()) {
+			System.out.println(s);
+		}
 	}
 
 	/**

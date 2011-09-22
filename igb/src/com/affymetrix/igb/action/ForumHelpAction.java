@@ -21,7 +21,13 @@ public class ForumHelpAction extends IGBAction {
 		return ACTION;
 	}
 
+	private ForumHelpAction() {
+		super();
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		GeneralUtils.browse("https://sourceforge.net/projects/genoviz/forums/forum/439787");
 	}
 

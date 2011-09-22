@@ -1069,7 +1069,7 @@ public class NeoAssembler extends NeoContainerWidget
 		//-------- Adding label --------
 
 		StringGlyph sglyph = new StringGlyph( name );
-		sglyph.setPlacement(NeoConstants.LEFT);
+		sglyph.setHorizontalPlacement(NeoConstants.LEFT);
 		sglyph.setFont(label_font);
 		sglyph.setForegroundColor(label_color);
 

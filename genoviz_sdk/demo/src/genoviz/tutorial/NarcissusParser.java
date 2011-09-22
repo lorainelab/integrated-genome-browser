@@ -234,7 +234,8 @@ public class NarcissusParser implements ContentParser {
 					String text = parseString(theTokens);
 					if (theLabeledGlyph instanceof StringGlyph) {
 						((StringGlyph)theLabeledGlyph).setString(text);
-						((StringGlyph)theLabeledGlyph).setPlacement( NeoConstants.CENTER );
+						((StringGlyph)theLabeledGlyph).setHorizontalPlacement( NeoConstants.CENTER );
+						((StringGlyph)theLabeledGlyph).setVerticalPlacement( NeoConstants.CENTER );
 						((StringGlyph)theLabeledGlyph).setForegroundColor( Color.red );
 					}
 					else if (theLabeledGlyph instanceof SequenceGlyph) {

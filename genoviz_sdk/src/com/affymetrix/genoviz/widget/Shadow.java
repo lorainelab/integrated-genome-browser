@@ -186,7 +186,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 			label.setBackgroundColor(vGlyph.getBackgroundColor());
 			label.setForegroundColor ( Color.black );
 			label.setShowBackground(true);
-			label.setPlacement(NeoConstants.CENTER);
+			label.setHorizontalPlacement(NeoConstants.CENTER);
+			label.setVerticalPlacement(NeoConstants.CENTER);
 			label.setSelectable(false);
 
 			this.setRange(current_range_st, current_range_en);

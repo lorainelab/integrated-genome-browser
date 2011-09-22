@@ -23,7 +23,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 
 	private String str;
 	private Font fnt = DEFAULT_FONT;
-	private int placement;
+	private int hPlacement, vPlacement;
 	private boolean show_background = false;
 
 
@@ -38,7 +38,8 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 	}
 
 	public StringGlyph () {
-		placement = CENTER;
+		hPlacement = CENTER;
+		vPlacement = CENTER;
 		if (DEBUG_PIXELBOX) {
 			debug_rect = new Rectangle();
 		}
@@ -79,17 +80,18 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 			debug_rect.setBounds(pixelbox.x, pixelbox.y,
 					pixelbox.width, pixelbox.height);
 		}
-		if (placement == LEFT) {
+		if (hPlacement == LEFT) {
 		}
-		else if (placement == RIGHT) {
+		else if (hPlacement == RIGHT) {
 			pixelbox.x += pixelbox.width + blank_width;
 		}
 		else {
 			pixelbox.x += pixelbox.width/2 - text_width/2;
 		}
-		if (placement == ABOVE) {
+		
+		if (vPlacement == ABOVE) {
 		}
-		else if (placement == BELOW) {
+		else if (vPlacement == BELOW) {
 			pixelbox.y += pixelbox.height;
 		}
 		else {
@@ -149,13 +151,22 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		return this.fnt;
 	}
 
-	public void setPlacement(int placement) {
-		this.placement = placement;
+	public void setHorizontalPlacement(int placement){
+		hPlacement = placement;
+	}
+	
+	public int getHorizontalPlacement() {
+		return hPlacement;
+	}
+	
+	public void setVerticalPlacement(int placement) {
+		vPlacement = placement;
 	}
 
-	public int getPlacement() {
-		return placement;
+	public int getVerticalPlacement() {
+		return vPlacement;
 	}
+	
 
 	/**
 	 * @deprecated use {@link #setForegroundColor}.

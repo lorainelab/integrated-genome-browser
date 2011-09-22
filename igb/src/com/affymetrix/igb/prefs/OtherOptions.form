@@ -25,7 +25,7 @@
                               <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="orfAnalyzerPanel" linkSize="1" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="residueColorPanel" linkSize="1" alignment="0" min="0" pref="323" max="32767" attributes="1"/>
+                                  <Component id="residueColorPanel" linkSize="1" alignment="0" min="0" pref="326" max="32767" attributes="1"/>
                                   <Component id="coordinatePanel" linkSize="1" alignment="0" min="-2" max="-2" attributes="1"/>
                               </Group>
                           </Group>
@@ -38,13 +38,13 @@
                                   <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="autoChangeView" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="298" max="-2" attributes="0"/>
+                              <EmptySpace pref="301" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="edgeMatchPanel" linkSize="1" min="-2" pref="323" max="-2" attributes="1"/>
+                      <Component id="edgeMatchPanel" linkSize="1" min="-2" pref="326" max="-2" attributes="1"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
@@ -101,22 +101,21 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="numFormatLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="backgroundLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="backgroundLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="bgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                           <Component id="foregroundLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="fgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="numFormatLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="coordinates_label_format_CB" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="64" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -125,11 +124,11 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="backgroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="foregroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="foregroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="numFormatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coordinates_label_format_CB" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -196,7 +195,7 @@
                   <Component id="dynamicORFLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="DynamicORFColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="53" max="32767" attributes="0"/>
+                  <EmptySpace pref="56" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -268,7 +267,7 @@
                   <Component id="CColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Component id="otherLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="OtherColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -411,7 +410,7 @@
                   <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="edgeMatchColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace pref="225" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

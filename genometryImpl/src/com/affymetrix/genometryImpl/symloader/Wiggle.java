@@ -466,7 +466,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		return grafs;
 	}
 
-	private static void writeGraphPoints(GraphIntervalSym graf, BufferedWriter bw, String seq_id) throws IOException {
+	private static void writeGraphPoints(GraphSym graf, BufferedWriter bw, String seq_id) throws IOException {
 		int total_points = graf.getPointCount();
 		for (int i = 0; i < total_points; i++) {
 			int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
@@ -478,7 +478,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	/** Writes the given GraphIntervalSym in wiggle-BED format.
 	 *  Also writes a track line as a header.
 	 */
-	public static void writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
+	public static void writeBedFormat(GraphSym graf, String genome_version, OutputStream outstream) throws IOException {
 		BioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getTrackName();
@@ -654,12 +654,16 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		}
 	}
 
-	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) throws IOException {
+		return writeAnnotations(syms, seq, outstream);
+	}
+	
+	public static boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, OutputStream ostr) throws IOException {
 		try {
 
 			Iterator<? extends SeqSymmetry> iter = syms.iterator();
-			for(GraphIntervalSym graf; iter.hasNext(); ){
-				graf = (GraphIntervalSym)iter.next();
+			for(GraphSym graf; iter.hasNext(); ){
+				graf = (GraphSym) iter.next();
 				writeBedFormat(graf, graf.getGraphSeq().getID(), ostr);
 			}
 
@@ -670,4 +674,5 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 
 		return false;
 	}
+	
 }

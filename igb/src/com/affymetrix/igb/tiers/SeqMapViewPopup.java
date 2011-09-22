@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -278,6 +279,19 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			saveAsBedFile(current_tier);
+		}
+	};
+	private final Action save_wig_action = new AbstractAction("Save graph as WIG file") {
+
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+			if (current_tiers.size() > 1) {
+				ErrorHandler.errorPanel("Must select only one track");
+			}
+			TierGlyph current_tier = current_tiers.get(0);
+			saveAsWigFile(current_tier);
 		}
 	};
 	@SuppressWarnings("serial")
@@ -709,6 +723,37 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
+	private static void saveAsWigFile(TierGlyph atier) {
+		int childcount = atier.getChildCount();
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
+		for (int i = 0; i < childcount; i++) {
+			GlyphI child = atier.getChild(i);
+			if (child.getInfo() instanceof SeqSymmetry) {
+				syms.add((SeqSymmetry) child.getInfo());
+			}
+		}
+		System.out.println("Saving symmetries as BED file: " + syms.size());
+
+		JFileChooser chooser = UniFileChooser.getFileChooser("Wig file", "wig");
+		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+
+		int option = chooser.showSaveDialog(null);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+			BioSeq aseq = gmodel.getSelectedSeq();
+			DataOutputStream dos = null;
+			try {
+				File fil = chooser.getSelectedFile();
+				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
+				Wiggle.writeAnnotations(syms,aseq,dos);
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel("Problem saving file", ex);
+			} finally {
+				GeneralUtils.safeClose(dos);
+			}
+		}
+	}
+
 	public static void addMisMatchTier(TierGlyph atier, String prefix) {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		String human_name = prefix + ": " + atier.getLabel();
@@ -933,8 +978,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
 			//sym_summarize_single_action.setEnabled(is_annotation_type);
 			//coverage_action.setEnabled(is_annotation_type);
-			save_menu.setEnabled(is_annotation_type);
+			//save_menu.setEnabled(is_annotation_type);
 			save_bed_action.setEnabled(is_annotation_type);
+			save_wig_action.setEnabled(!is_annotation_type);
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_maximize = true;
 			}
@@ -971,6 +1017,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			//coverage_action.setEnabled(false);
 			save_menu.setEnabled(false);
 			save_bed_action.setEnabled(false);
+			save_wig_action.setEnabled(false);
 		}
 
 		changeMenu.removeAll();
@@ -1014,8 +1061,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 
 		popup.add(save_menu);
-		save_menu.add(save_bed_action);
-
+		if(save_bed_action.isEnabled()){
+			save_menu.add(save_bed_action);
+		}else if(save_wig_action.isEnabled()){
+			save_menu.add(save_wig_action);
+		}
+		
 		popup.add(new JSeparator());
 		summaryMenu.removeAll();
 		summaryMenu.add(sym_summarize_single_action);

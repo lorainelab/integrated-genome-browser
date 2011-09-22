@@ -1,7 +1,9 @@
 package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,10 +26,10 @@ public class IGBActionHolder {
 		return instance;
 	}
 
-	private List<IGBAction> igbActions = new ArrayList<IGBAction>();
+	private Map<String, IGBAction> igbActions = new HashMap<String, IGBAction>();
 
 	public void addIGBAction(IGBAction igbAction) {
-		igbActions.add(igbAction);
+		igbActions.put(igbAction.getClass().getSimpleName(), igbAction);
 		if (igbAction.getText() != null) {
 			PreferenceUtils.getAccelerator(igbAction.getText());
 			boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
@@ -49,8 +51,8 @@ public class IGBActionHolder {
 		igbActions.remove(igbAction);
 	}
 
-	public List<IGBAction> getIGBActions() {
-		return igbActions;
+	public IGBAction getIGBAction(String name) {
+		return igbActions.get(name);
 	}
 
 	public void addIGBActionListener(IGBActionListener listener) {

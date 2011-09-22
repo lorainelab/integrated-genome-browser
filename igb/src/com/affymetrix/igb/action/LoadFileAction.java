@@ -203,8 +203,10 @@ public final class LoadFileAction extends AbstractAction {
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		//Annotated Seq Group must be selected before feature table change call.
-		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
-
+		if(gmodel.getSelectedSeqGroup() != gFeature.gVersion.group){
+			gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
+		}
+		
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
 		if(!mergeSelected){

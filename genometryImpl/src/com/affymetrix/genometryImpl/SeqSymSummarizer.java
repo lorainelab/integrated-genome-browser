@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.*;
-import java.io.File;
 
 public final class SeqSymSummarizer {
 
@@ -31,10 +30,8 @@ public final class SeqSymSummarizer {
 			return null;
 
 		int range = end - start;
-		int[] y = null;
-		int[][] yR = null;
-		final int BUFFSIZE = GraphSym.BUFSIZE;
-		float[] minmax = new float[2];
+		int[] y = new int[range];
+		int[][] yR = new int[5][range];
 		SeqSymmetry sym = syms.get(0);
 		SeqSpan span;
 
@@ -42,17 +39,7 @@ public final class SeqSymSummarizer {
 		byte[] cur_residues;
 		byte ch, intron = "-".getBytes()[0];
 		int k, offset, cur_start, cur_end, length, y_offset = 0;
-
-		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
-
-		if(range <= BUFFSIZE){
-			y = new int[range];
-			yR = new int[5][range];
-		}else{
-			y = new int[BUFFSIZE];
-			yR = new int[5][BUFFSIZE];
-		}
-
+		
 		for (int i = 0; i < sym.getChildCount(); i++) {
 			SeqSymmetry childSeqSym = sym.getChild(i);
 
@@ -70,62 +57,29 @@ public final class SeqSymSummarizer {
 
 			cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).toLowerCase().getBytes();
 
-			if (range > BUFFSIZE) {
-				if ((offset + length >= y_offset + BUFFSIZE) || (y_offset > offset)) {
-					minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
-					y = new int[BUFFSIZE];
-					yR = new int[5][BUFFSIZE];
-					y_offset = offset;
+			for (int j = 0; j < length; j++) {
+				ch = cur_residues[j];
+				if (seq_residues[offset + j] != ch && ch != intron) {
+					y[offset - y_offset + j] += 1;
 				}
-			}
 
-			for (int j = 0; j < length; ) {
-				for(int l = 0; l < BUFFSIZE & j < length; l++, j++){
-					ch = cur_residues[j];
-					if (seq_residues[offset + j] != ch && ch != intron) {
-						y[offset - y_offset + j] += 1;
-					}
-
-					k = ResiduesChars.getValue((char)ch);
-					if(k > -1){
-						yR[k][offset - y_offset + j] += 1;
-					}
-				}
-				
-				if(length > BUFFSIZE){
-					minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
-					y = new int[BUFFSIZE];
-					yR = new int[5][BUFFSIZE];
-					y_offset = offset+BUFFSIZE;
+				k = ResiduesChars.getValue((char) ch);
+				if (k > -1) {
+					yR[k][offset - y_offset + j] += 1;
 				}
 			}
 
 		}
 
-		MisMatchGraphSym summary;
-
-		if(range <= BUFFSIZE){
-			summary = createMisMatchGraph(range, yR, start, y, id, seq);
-		}else{
-			summary = createMisMatchGraph(index, y_offset, y, yR, id, range, minmax, seq);
-		}
-
-
+		MisMatchGraphSym summary = createMisMatchGraph(range, yR, start, y, id, seq);
 		summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
+		
+		//Request Garbage Collection
+		System.gc();
+		
 		return summary;
 	}
-
-	private static MisMatchGraphSym createMisMatchGraph(File index, int y_offset, int[] y, int[][] yR, String id, int range, float[] minmax, BioSeq seq) {
-		MisMatchGraphSym summary;
-		minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
-		File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
-		File finalHelper = MisMatchGraphSym.createEmptyIndexFile(id + "helper", 0, 0);
-		int[] x = MisMatchGraphSym.getXCoords(index, finalIndex, finalHelper, range);
-		float yFirst = MisMatchGraphSym.getFirstY(finalIndex);
-		summary = new MisMatchGraphSym(finalIndex, finalHelper, x, yFirst, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
-		return summary;
-	}
-
+	
 	private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq) {
 		MisMatchGraphSym summary;
 		IntArrayList _x = new IntArrayList(range);

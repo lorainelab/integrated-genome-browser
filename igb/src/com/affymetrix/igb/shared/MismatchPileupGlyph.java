@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
 /**
- * glyph to display the mismatches in their base color vertically on a backdrop of the depth graph 
+ * glyph to display the mismatches in their base color vertically on a backdrop of the depth graph
  */
 import java.awt.Color;
 import java.awt.Graphics;
@@ -41,12 +41,13 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		super(graf, gstate);
 	}
 	public GraphType getGraphStyle() {
-		return GraphType.FILL_BAR_GRAPH;
+		return GraphType.STAIRSTEP_GRAPH;
 	}
+
 	protected void bigDrawLoop(
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
-			GraphType graph_style, Graphics g, Point max_x_plus_width) {
-		MisMatchGraphSym mmgs = (MisMatchGraphSym)graf;
+			GraphType graph_style, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+		MisMatchGraphSym mmgs = (MisMatchGraphSym)graphSym;
 		Color saveColor = g.getColor();
 //		Point p = new Point();
 //		view.transformToPixels(new Point2D.Double(1,1), p);
@@ -55,41 +56,19 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		view.transformToPixels(new Rectangle2D.Double(1,1,1,1), r);
 		int width = Math.max(1, (int)Math.round(r.getWidth()));
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		seq.getResidues(graf.getMinXCoord(), graf.getMaxXCoord()); // so all are loaded, not one by one
-		setVisibleMinY(0);
+		seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
+
 		// need to draw coverage first, then mismatches so that the mismatches are not covered up
-
 		g.setColor(MATCH_COLOR);
-		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			int xtemp = graf.getGraphXCoord(i);
-			coord.x = xtemp;
-			float ytemp = 0;
-			for (float y : mmgs.getAllResiduesY(i)) {
-				ytemp += y;
-			}
-			if (ytemp == 0) {
-				continue;
-			}
-			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
-				return;
-			}			
-			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
-			ytemp = Math.min(ytemp, getVisibleMaxY());
-			ytemp = Math.max(ytemp, getVisibleMinY());
-
-			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
-			view.transformToPixels(coord, curr_point);
-			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
-			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
-			yheight_pixel = Math.max(1, yheight_pixel);
-			g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
-		}
+		super.bigDrawLoop(
+				draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width,
+				graph_style, g, max_x_plus_width, getTotalSym(mmgs));
 
 		// now draw the mismatches, piled up
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds
-			int xtemp = graf.getGraphXCoord(i);
+			int xtemp = graphSym.getGraphXCoord(i);
 			coord.x = xtemp;
 			Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 			x_plus_width2D.x = xtemp + 1;
@@ -114,7 +93,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 				// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 				ytemp = Math.min(ytemp, getVisibleMaxY());
 				ytemp = Math.max(ytemp, getVisibleMinY());
-	
+
 				coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 				view.transformToPixels(coord, curr_point);
 				x_plus_width2D.y = coord.y;
@@ -130,6 +109,26 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			}
 		}
 		g.setColor(saveColor);
+		float[] totalYRange = mmgs.getVisibleTotalYRange();
+		setVisibleMinY(0);//setVisibleMinY(totalYRange[0]);
+		setVisibleMaxY(totalYRange[1]);
+	}
+
+	private GraphSym getTotalSym(final MisMatchGraphSym mmgs) {
+		return new GraphSym(null, null, null, mmgs.getGraphSeq()) { // only implement methods needed by bigDrawLoop()
+			public int getGraphXCoord(int i) {
+				return mmgs.getGraphXCoord(i);
+			}
+			public float getGraphYCoord(int i) {
+				return mmgs.getTotalY(i);
+			}
+			public int getGraphWidthCoord(int i) {
+				return mmgs.getGraphWidthCoord(i);
+			}
+			public boolean hasWidth() {
+				return mmgs.hasWidth();
+			}
+		};
 	}
 }
 

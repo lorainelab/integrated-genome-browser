@@ -213,7 +213,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return tempCoords;
 	}
 
-	public final int getGraphXCoord(int i) {
+	public int getGraphXCoord(int i) {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
@@ -248,7 +248,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return Float.toString(getGraphYCoord(i));
 	}
 
-	public final float getGraphYCoord(int i) {
+	public float getGraphYCoord(int i) {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
@@ -298,7 +298,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return tempCoords;
 	}
 	
-	public final int getGraphWidthCoord(int i) {
+	public int getGraphWidthCoord(int i) {
 		if (!this.hasWidth) {
 			return 0;	// no width coords
 		}
@@ -311,7 +311,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return wBuf[i - bufStart];
 	}
 
-	public final boolean hasWidth() {
+	public boolean hasWidth() {
 		return hasWidth;
 	}
 

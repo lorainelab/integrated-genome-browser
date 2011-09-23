@@ -206,6 +206,10 @@ public final class GenometryModel {
 		sym_selection_listeners.add(listener);
 	}
 
+	public void removeSymSelectionListener(SymSelectionListener listener) {
+		sym_selection_listeners.remove(listener);
+	}
+	
 	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
 		if (DEBUG) {
 			System.out.println("Firing event: " + syms.size());

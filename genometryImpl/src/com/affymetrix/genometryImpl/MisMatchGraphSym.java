@@ -26,16 +26,31 @@ public class MisMatchGraphSym extends GraphSym {
 	private float min_totalycoord = Float.POSITIVE_INFINITY;
 	private float max_totalycoord = Float.NEGATIVE_INFINITY;
 
-	public MisMatchGraphSym(int[] x, int[] w, float[] y, String id, BioSeq seq){
+	public MisMatchGraphSym(int[] x, int[] w, float[] y, 
+			int[] a, int[] t, int[] g, int[] c, int[] n, 
+			String id, BioSeq seq){
 		super(x,w,y,id,seq);
-		helperIndex = null;
+		if(a.length != t.length || t.length != g.length || g.length != c.length || c.length != n.length){
+			throw new IllegalArgumentException("All arrays should have same length.");
+		}
+		helperIndex = index(id+"helper",a,t,g,c,n);
 	}
-
-	public MisMatchGraphSym(File index, File helperIndex, int[] x, float yFirst, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
-		super(index, x, yFirst, ymin, ymax, uniqueGraphID, seq);
-		this.helperIndex = helperIndex;
+	
+	private File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {
 		residuesTot = new int[5][BUFSIZE];
-		readIntoBuffers(0);
+		
+		System.arraycopy(a, 0, residuesTot[0], 0, Math.min(BUFSIZE, getPointCount()));
+		System.arraycopy(t, 0, residuesTot[1], 0, Math.min(BUFSIZE, getPointCount()));
+		System.arraycopy(g, 0, residuesTot[2], 0, Math.min(BUFSIZE, getPointCount()));
+		System.arraycopy(c, 0, residuesTot[3], 0, Math.min(BUFSIZE, getPointCount()));
+		System.arraycopy(n, 0, residuesTot[4], 0, Math.min(BUFSIZE, getPointCount()));
+		
+		if (getPointCount() <= BUFSIZE) {
+			// no need to index.  Array is too small.
+			return null;
+		}
+		
+		return createIndexedFile(graphName,a,t,g,c,n);
 	}
 	
 	@Override
@@ -123,6 +138,37 @@ public class MisMatchGraphSym extends GraphSym {
 		return ret;
 	}
 
+	private static File createIndexedFile(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n){
+		File bufVal = null;
+		DataOutputStream dos = null;
+		try {
+			// create indexed file.
+
+			if (graphName.length() < 3) {
+				graphName += "___";
+				// fix for Java error with short names
+			}
+			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
+			bufVal.deleteOnExit(); // Delete this file when shutting down.
+			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
+			//write(y0, y1, y2, y3, y4)
+			for (int i = 0; i < a.length; i++) {
+				//Write other residues.
+				dos.writeInt(a[i]);
+				dos.writeInt(t[i]);
+				dos.writeInt(g[i]);
+				dos.writeInt(c[i]);
+				dos.writeInt(n[i]);
+
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dos);
+		}
+		return bufVal;
+	}
+	
 	public static File createEmptyIndexFile(String graphName, int pointCount, int start) {
 		File bufVal = null;
 		DataOutputStream dos = null;
@@ -286,7 +332,7 @@ public class MisMatchGraphSym extends GraphSym {
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(helperIndex)));
 
 			// skip to proper location
-			int bytesToSkip = (start*6*4);	// 6 coords (x,yA,yT,yG,yC,yN) -- 4 bytes each
+			int bytesToSkip = (start*5*4);	// 6 coords (yA,yT,yG,yC,yN) -- 4 bytes each
 			int bytesSkipped = dis.skipBytes(bytesToSkip);
 			if (bytesSkipped < bytesToSkip) {
 				System.out.println("ERROR: skipped " + bytesSkipped + " out of " + bytesToSkip + " bytes when indexing");
@@ -300,8 +346,6 @@ public class MisMatchGraphSym extends GraphSym {
 			int maxPoints = Math.min(BUFSIZE, getPointCount() - start);
 			// read in bytes
 			for (int i=0;i<maxPoints;i++) {
-				//xBuf[i] = dis.readInt();	// x
-				dis.readInt();	//x
 
 				for(int j=0; j<5; j++){
 					residuesTot[j][i] = dis.readInt();

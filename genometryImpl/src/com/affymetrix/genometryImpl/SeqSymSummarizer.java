@@ -113,8 +113,9 @@ public final class SeqSymSummarizer {
 		_yC.trimToSize();
 		_yN.trimToSize();
 
-		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
-		summary.setAllResidues(_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements());
+		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), 
+				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
+				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
 		return summary;
 	}
 

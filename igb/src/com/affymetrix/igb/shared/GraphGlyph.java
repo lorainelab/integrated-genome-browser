@@ -260,7 +260,6 @@ public class GraphGlyph extends Glyph {
 		
 	}
 
-
 	public GraphState getGraphState() {
 		return state;
 	}
@@ -341,7 +340,7 @@ public class GraphGlyph extends Glyph {
 		}
 
 		Point curr_x_plus_width = new Point(0, 0);
-		bigDrawLoop(draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width, graph_style, g, max_x_plus_width);
+		bigDrawLoop(draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width, graph_style, g, max_x_plus_width, graf);
 
 		g.translate(-xpix_offset, 0);
 		if (g instanceof Graphics2D) {
@@ -355,30 +354,47 @@ public class GraphGlyph extends Glyph {
 
 	protected void bigDrawLoop(
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
-			GraphType graph_style, Graphics g, Point max_x_plus_width) {
+			GraphType graph_style, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+		int nextx = -1;
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds
-			int xtemp = graf.getGraphXCoord(i);
+			if (DEBUG) {
+				System.out.println("i = " + i);
+				System.out.println("prev_point = " + prev_point.x + ":" + prev_point.y);
+			}
+			int xtemp = graphSym.getGraphXCoord(i);
+			if (DEBUG) {
+				System.out.println("xtemp = " + xtemp);
+			}
 			coord.x = xtemp;
-			float ytemp = graf.getGraphYCoord(i);
+			float ytemp = graphSym.getGraphYCoord(i);
 			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
 				return;
 			}			
 			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 			ytemp = Math.min(ytemp, getVisibleMaxY());
 			ytemp = Math.max(ytemp, getVisibleMinY());
+			if (DEBUG) {
+				System.out.println("ytemp = " + ytemp);
+			}
 
 			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
-			if (graf.hasWidth()) {
+			if (DEBUG) {
+				System.out.println("curr_point = " + curr_point.x + ":" + curr_point.y);
+			}
+			if (graphSym.hasWidth()) {
 				Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
-				x_plus_width2D.x = xtemp + this.getWCoord(i);
+				x_plus_width2D.x = xtemp + graphSym.getGraphWidthCoord(i);
 				x_plus_width2D.y = coord.y;
 				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
+				if (DEBUG) {
+					System.out.println("graphSym.getGraphWidthCoord(i) = " + graphSym.getGraphWidthCoord(i));
+				}
 			}
 			if (graph_style == GraphType.LINE_GRAPH) {
-				if (!graf.hasWidth()) {
+				if (!graphSym.hasWidth()) {
 					g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 				} else {
 					// Draw a line representing the width: (x,y) to (x + width,y)
@@ -398,7 +414,7 @@ public class GraphGlyph extends Glyph {
 				int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 				int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 				yheight_pixel = Math.max(1, yheight_pixel);
-				if (!graf.hasWidth()) {
+				if (!graphSym.hasWidth()) {
 					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
 				} else {
 					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
@@ -412,31 +428,46 @@ public class GraphGlyph extends Glyph {
 				int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 				int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 				yheight_pixel = Math.max(1, yheight_pixel);
-				if (!graf.hasWidth()) {
+				if (!graphSym.hasWidth()) {
 					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
 				} else {
 					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
 					g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 				}
 			}else if (graph_style == GraphType.DOT_GRAPH) {
-				if (!graf.hasWidth()) {
+				if (!graphSym.hasWidth()) {
 					g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 				} else {
 					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
 				}
 			} else if (graph_style == GraphType.STAIRSTEP_GRAPH) {
-				int stairwidth = curr_point.x - prev_point.x;
-				if (stairwidth >= 0 && stairwidth <= 10000 && (i == 0 || graf.getGraphYCoord(i - 1) != 0)) {
+				int endx = curr_point.x;
+				// if the previous value (x + width) ends before the next one
+				// starts the graph is not generating the y=0 section in between
+				if (graphSym.hasWidth() && nextx != xtemp && nextx != -1) {
+					Point2D.Double end_coord = new Point2D.Double(nextx, 0);
+					Point end_point = new Point();
+					view.transformToPixels(end_coord, end_point);
+					endx = end_point.x;
+				}
+				int stairwidth = endx - prev_point.x;
+				if (DEBUG) {
+					System.out.println("stairwidth = " + stairwidth);
+				}
+				if (stairwidth >= 0 && stairwidth <= 10000 && (i == 0 || graphSym.getGraphYCoord(i - 1) != 0)) {
 					// skip drawing if width > 10000... (fix for linux problem?)
 					// draw the same regardless of whether wcoords == null
 					drawRectOrLine(g, prev_point.x,
 							Math.min(zero_point.y, prev_point.y),
 							Math.max(1, stairwidth),
 							Math.max(1, Math.abs(prev_point.y - zero_point.y)));
+					if (DEBUG) {
+						System.out.println("drawRectOrLine(" + prev_point.x + "," + Math.min(zero_point.y, prev_point.y) + "," + Math.max(1, stairwidth) + "," + Math.max(1, Math.abs(prev_point.y - zero_point.y)) + ")");
+					}
 				}
 				// If this is the very last point, special rules apply
 				if (i == draw_end_index) {
-					stairwidth = (!graf.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
+					stairwidth = (!graphSym.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
 					drawRectOrLine(g, curr_point.x,
 							Math.min(zero_point.y, curr_point.y),
 							Math.max(1, stairwidth),
@@ -455,6 +486,7 @@ public class GraphGlyph extends Glyph {
 			}
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
+			nextx = xtemp + graphSym.getGraphWidthCoord(i);
 		}
 	}
 

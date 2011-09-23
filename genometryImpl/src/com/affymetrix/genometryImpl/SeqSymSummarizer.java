@@ -65,7 +65,7 @@ public final class SeqSymSummarizer {
 
 			// Boundary Check
 			cur_start = Math.max(start, span.getMin());
-			cur_end = Math.min(end, span.getMax() - 1);
+			cur_end = Math.min(end, span.getMax());
 			length = cur_end - cur_start;
 
 			cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).toLowerCase().getBytes();

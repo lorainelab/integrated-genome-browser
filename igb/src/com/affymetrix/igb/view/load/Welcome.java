@@ -43,7 +43,13 @@ public class Welcome implements ItemListener, ComponentListener{
 	private final NeoMap map;
 	private final TierGlyph parent;
 	
-	public Welcome() {
+	private static final Welcome singleton = new Welcome();
+	
+	public static Welcome getWelcome(){
+		return singleton;
+	}
+	
+	private Welcome() {
 		parent = new TierGlyph(new DefaultTrackStyle()) {
 
 			@Override

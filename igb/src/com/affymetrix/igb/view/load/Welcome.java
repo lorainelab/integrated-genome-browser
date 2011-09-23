@@ -60,7 +60,13 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 	private final TransformTierGlyph parent;
 	private final GenometryModel gmodel;
 	
-	public Welcome() {
+	private static final Welcome singleton = new Welcome();
+	
+	public static Welcome getWelcome(){
+		return singleton;
+	}
+	
+	private Welcome() {
 		parent = new TransformTierGlyph(new DefaultTrackStyle());
 		parent.setHitable(false);
 		FasterExpandPacker packer = new FasterExpandPacker();

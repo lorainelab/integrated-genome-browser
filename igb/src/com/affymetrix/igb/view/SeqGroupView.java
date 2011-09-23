@@ -100,7 +100,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private JComboBox speciesCB;
 	private JComboBox versionCB;
 	private final IGBService igbService;
-
+	
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
 		gmodel = GenometryModel.getGenometryModel();
@@ -154,7 +154,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCBRenderer = new JComboBoxToolTipRenderer();
 		versionCB.setRenderer(versionCBRenderer);
 		versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
-
+		
 		populateSpeciesData();
 		addListeners();
 
@@ -891,7 +891,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCB.setEnabled(true);
 		speciesCB.addItemListener(this);
 		versionCB.addItemListener(this);
-		speciesCB.addItemListener(new Welcome());
+		speciesCB.addItemListener(Welcome.getWelcome());
 	}
 
 	public JTable getTable() {

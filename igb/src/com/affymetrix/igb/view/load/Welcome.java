@@ -8,11 +8,17 @@ import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
@@ -28,7 +34,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *
  * @author hiralv
  */
-public class Welcome implements ItemListener, ComponentListener{
+public class Welcome implements ItemListener, ComponentListener, SymSelectionListener{
 	
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	private static final Color COLOR_1 = Color.WHITE;
@@ -42,16 +48,17 @@ public class Welcome implements ItemListener, ComponentListener{
 												new Message("Integrated Genome Browser", FONT_SIZE_1, COLOR_2),
 												new Message("To get started, choose a species and genome version.", FONT_SIZE_2, COLOR_1)};
 	private static final Message SPECIES[] = new Message[]{
-												new Message("a_lyrata.gif", "A. lyrata", FONT_SIZE_3, COLOR_2),
-												new Message("h_sapiens.gif", "H. Sapiens", FONT_SIZE_3, COLOR_2),
-												new Message("m_musculus.gif", "M. Musculus", FONT_SIZE_3, COLOR_2),
-												new Message("a_thaliana.gif", "A. Thaliana", FONT_SIZE_3, COLOR_2),
-												new Message("d_melnogaster.gif", "D. Melnogaster", FONT_SIZE_3, COLOR_2),};
+												new Message("a_lyrata.gif", "A_lyrata_Apr_2011", "A. lyrata", FONT_SIZE_3, COLOR_2),
+												new Message("h_sapiens.gif","H_sapiens_Feb_2009", "H. Sapiens", FONT_SIZE_3, COLOR_2),
+												new Message("m_musculus.gif", "M_musculus_Jul_2007","M. Musculus", FONT_SIZE_3, COLOR_2),
+												new Message("a_thaliana.gif", "A_thaliana_Jun_2009","A. Thaliana", FONT_SIZE_3, COLOR_2),
+												new Message("d_melnogaster.gif", "D_melanogaster_Apr_2006", "D. Melanogaster", FONT_SIZE_3, COLOR_2),};
 	
 	private static final SeqMapView smv = Application.getSingleton().getMapView();
 	
 	private final NeoMap map;
 	private final TransformTierGlyph parent;
+	private final GenometryModel gmodel;
 	
 	public Welcome() {
 		parent = new TransformTierGlyph(new DefaultTrackStyle());
@@ -62,6 +69,9 @@ public class Welcome implements ItemListener, ComponentListener{
 		
 		map = smv.getSeqMap();
 		map.addComponentListener(this);
+		
+		gmodel = GenometryModel.getGenometryModel();
+		
 		initGlyph();
 	}
 	
@@ -97,7 +107,7 @@ public class Welcome implements ItemListener, ComponentListener{
 			map.prepareImage(image, map);
 			
 			BasicImageGlyph big = new BasicImageGlyph();
-			big.setSelectable(false);
+			big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
 			big.setImage(image, map);
 			big.setCoords(20 * i, 0, 15, 30);
 			sg.addChild(big);
@@ -108,11 +118,13 @@ public class Welcome implements ItemListener, ComponentListener{
 		map.addItem(parent);
 		parent.pack(map.getView(), false);
 		parent.setVisibility(true);
+		gmodel.addSymSelectionListener(this);
 	}
 	
 	public void itemStateChanged(ItemEvent evt) {
 		map.removeItem(parent);
 		parent.setVisibility(false);
+		gmodel.removeSymSelectionListener(this);
 		
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&
@@ -130,6 +142,23 @@ public class Welcome implements ItemListener, ComponentListener{
 		}
 	}
 
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		List<GlyphI> glyphs = map.getSelected();
+		
+		if(glyphs == null || glyphs.isEmpty())
+			return;
+		
+		Object obj = glyphs.get(0).getInfo();
+		
+		if(obj == null)
+			return;
+		
+		AnnotatedSeqGroup group = (AnnotatedSeqGroup)obj;
+
+		GeneralLoadView.getLoadView().initVersion(group.getID());
+		gmodel.setSelectedSeqGroup(group);	
+	}
+	
 	public void componentMoved (ComponentEvent ce){}
 	public void componentShown (ComponentEvent ce){}
 	public void componentHidden(ComponentEvent ce){}
@@ -137,19 +166,22 @@ public class Welcome implements ItemListener, ComponentListener{
 	private static final class Message{
 		
 		final String image_name;
+		final String group;
 		final String str;
 		final float font_size;
 		final Color color;
 		
 		Message(String str, float font_size, Color color){
 			this.image_name = null;
+			this.group = null;
 			this.str = str;
 			this.font_size = font_size;
 			this.color = color;
 		}
 		
-		Message(String image_name, String str, float font_size, Color color){
+		Message(String image_name, String group, String str, float font_size, Color color){
 			this.image_name = image_name;
+			this.group = group;
 			this.str = str;
 			this.font_size = font_size;
 			this.color = color;

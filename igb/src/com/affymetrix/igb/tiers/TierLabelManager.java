@@ -375,8 +375,7 @@ public final class TierLabelManager implements PropertyHolder {
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
-			if (child_count > 0 && tg.getAnnotStyle().isGraphTier() && 
-					tg.getChild(0) instanceof GraphGlyph) {
+			if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
 				// It would be nice if we could assume that a tier contains only
 				// GraphGlyph's or only non-GraphGlyph's, but that is not true.
 				//

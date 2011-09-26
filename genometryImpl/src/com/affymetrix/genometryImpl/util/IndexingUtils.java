@@ -617,8 +617,7 @@ public final class IndexingUtils {
 	 * @param w
 	 * @return File
 	 */
-	public static File createIndexedFile(
-			String graphName, int pointCount, int[] x, float[] y, int[] w) {
+	public static File createIndexedFile(int pointCount, int[] x, float[] y, int[] w) {
 		File bufVal = null;
 		DataOutputStream dos = null;
 		try {

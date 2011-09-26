@@ -172,7 +172,7 @@ public class GraphSym extends SimpleSymWithProps {
 
 		setVisibleYRange(y);
 
-		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
+		bufFile = index(x,y,w);
 	}
 
 	private synchronized void setVisibleYRange(float[] y) {
@@ -389,7 +389,7 @@ public class GraphSym extends SimpleSymWithProps {
 	}
 
 
-	private File index(String graphName, int[] x, float[] y, int[] w) {
+	private File index(int[] x, float[] y, int[] w) {
 		if (pointCount == 0) {
 			return null;	// no need to index.
 		}
@@ -411,7 +411,7 @@ public class GraphSym extends SimpleSymWithProps {
 			// no need to index.  Array is too small.
 			return null;
 		}
-		return IndexingUtils.createIndexedFile(cleanFileName(graphName), this.pointCount, x, y, w);
+		return IndexingUtils.createIndexedFile(this.pointCount, x, y, w);
 	}
 
 	private String cleanFileName(String fileName) {

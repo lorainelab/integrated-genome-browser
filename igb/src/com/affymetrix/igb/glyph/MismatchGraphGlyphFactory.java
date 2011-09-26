@@ -79,7 +79,7 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		
 		TierGlyph[] tiers = smv.getTiers(false, style, true);
 		
-		addToParent(pspan, mgsym, tiers[0]);
+		addToParent(pspan, mgsym, tiers[0], smv);
 	
 	}
 	
@@ -95,7 +95,7 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		return false;
 	}
 		
-	private void addToParent(SeqSpan pspan, MisMatchGraphSym gsym, TierGlyph tier){
+	private void addToParent(SeqSpan pspan, MisMatchGraphSym gsym, TierGlyph tier, SeqMapViewExtendedI smv){
 		if(gsym != null){
 			GraphState state = new GraphState(tier.getAnnotStyle());
 			state.setGraphStyle(GraphType.FILL_BAR_GRAPH);
@@ -105,9 +105,8 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			}else{
 				graph_glyph = new GraphGlyph(gsym, state);
 			}
-			graph_glyph.drawHandle(false);
-			graph_glyph.setSelectable(false);
 			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getCoordBox().getHeight());
+			smv.setDataModelFromOriginalSym(graph_glyph, gsym);
 			tier.addChild(graph_glyph);
 			tier.setInfo(gsym);
 		}

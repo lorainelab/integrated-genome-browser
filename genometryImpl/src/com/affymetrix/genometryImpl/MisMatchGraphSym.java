@@ -50,6 +50,7 @@ public class MisMatchGraphSym extends GraphSym {
 			return null;
 		}
 		
+		setVisibleTotalYRange(residuesTot);
 		return createIndexedFile(graphName,a,t,g,c,n);
 	}
 	
@@ -376,6 +377,9 @@ public class MisMatchGraphSym extends GraphSym {
 
 	public final float[] getVisibleTotalYRange() {
 		float[] result = new float[2];
+		if (min_totalycoord == Float.POSITIVE_INFINITY || max_totalycoord == Float.NEGATIVE_INFINITY) {
+			setVisibleTotalYRange(residuesTot);
+		}
 		result[0] = min_totalycoord;
 		result[1] = max_totalycoord;
 		return result;

@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.*;
-import java.io.File;
 
 public final class SeqSymSummarizer {
 
@@ -81,17 +80,6 @@ public final class SeqSymSummarizer {
 		return summary;
 	}
 
-	private static MisMatchGraphSym createMisMatchGraph(File index, int y_offset, int[] y, int[][] yR, String id, int range, float[] minmax, BioSeq seq) {
-		MisMatchGraphSym summary;
-		minmax = MisMatchGraphSym.updateY(index, y_offset, range, y, yR);
-		File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
-		File finalHelper = MisMatchGraphSym.createEmptyIndexFile(id + "helper", 0, 0);
-		int[] x = MisMatchGraphSym.getXCoords(index, finalIndex, finalHelper, range);
-		float yFirst = MisMatchGraphSym.getFirstY(finalIndex);
-		summary = new MisMatchGraphSym(finalIndex, finalHelper, x, yFirst, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
-		return summary;
-	}
-
 	private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq) {
 		MisMatchGraphSym summary;
 		IntArrayList _x = new IntArrayList(range);
@@ -125,8 +113,9 @@ public final class SeqSymSummarizer {
 		_yC.trimToSize();
 		_yN.trimToSize();
 
-		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
-		summary.setAllResidues(_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements());
+		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), _yA.elements(), 
+				_yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(), 
+				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
 		return summary;
 	}
 

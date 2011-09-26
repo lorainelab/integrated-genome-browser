@@ -63,25 +63,24 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		
 		if (ftier == rtier) {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth);
-			addToParent(pspan, gsym, ftier);
+			addToParent(pspan, gsym, ftier, smv);
 		} else {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, true);
-			addToParent(pspan, gsym, ftier);
+			addToParent(pspan, gsym, ftier, smv);
 			
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, meth, false);
-			addToParent(pspan, gsym, rtier);
+			addToParent(pspan, gsym, rtier, smv);
 		}
 
 	}
 	
-	private void addToParent(SeqSpan pspan, GraphSym gsym, TierGlyph tier){
+	private void addToParent(SeqSpan pspan, GraphSym gsym, TierGlyph tier, SeqMapViewExtendedI smv){
 		if(gsym != null){
 			GraphState state = new GraphState(tier.getAnnotStyle());
 			GraphGlyph graph_glyph = new GraphGlyph(gsym, state);
-			graph_glyph.drawHandle(false);
-			graph_glyph.setSelectable(false);
 			graph_glyph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 			graph_glyph.setCoords(pspan.getMin(), 0, pspan.getLength(), tier.getCoordBox().getHeight());
+			smv.setDataModelFromOriginalSym(graph_glyph, gsym);
 			addToTier(tier, graph_glyph, gsym);
 		}
 	}

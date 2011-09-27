@@ -7,6 +7,11 @@ Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: @appVersion@
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.osgi.framework
+Import-Package: javax.swing,
+ org.osgi.framework,
+ toolbarButtonGraphics.general,
+ toolbarButtonGraphics.navigation,
+ toolbarButtonGraphics.table,
+ toolbarButtonGraphics.media
 Export-Package: com.affymetrix.common;version="@appVersion@"
 

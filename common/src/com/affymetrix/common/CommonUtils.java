@@ -1,8 +1,11 @@
 package com.affymetrix.common;
 
+import java.awt.MediaTracker;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+
+import javax.swing.ImageIcon;
 
 /**
  * utilities used by both the main, starting class, and the
@@ -102,4 +105,38 @@ public class CommonUtils {
 		}
 		return app_dir;
 	}
+
+	/**
+	   *  Loads an ImageIcon from the specified system resource.
+	   *  The system resource should be in the classpath, for example,
+	   *  it could be in the jlfgr-1_0.jar file.  If the resource is
+	   *  absent or can't be found, this routine will not throw an exception,
+	   *  but will return null.
+	   *  For example: "toolbarButtonGraphics/general/About16.gif".
+	   *  @return An ImageIcon or null if the one specified could not be found.
+	   */
+	  public ImageIcon getIcon(String resource_name) {
+	    ImageIcon icon = null;
+	    try {
+	      // Note: MenuUtil.class.getResource(resource_name) does not work;
+	      // ClassLoader.getSystemResource(resource_name) works locally, but not with WebStart;
+	      //
+	      // Both of these work locally and with WebStart:
+	      //  MenuUtil.class.getClassLoader().getResource(resource_name)
+	      //  Thread.currentThread().getContextClassLoader().getResource(resource_name)
+	      java.net.URL url = CommonUtils.class.getClassLoader().getResource(resource_name);
+	      if (url != null) {
+	        icon = new ImageIcon(url);
+	      }
+	    } catch (Exception e) {
+	    	e.printStackTrace(System.out);
+	      // It isn't a big deal if we can't find the icon, just return null
+	    }
+	    if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED ||
+	        icon.getIconHeight() <= 0 || icon.getIconWidth() <= 0) {
+	      icon = null;
+	    }
+	    
+	    return icon;    
+	  }
 }

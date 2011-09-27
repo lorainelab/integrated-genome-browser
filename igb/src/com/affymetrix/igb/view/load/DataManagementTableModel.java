@@ -431,9 +431,19 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
-				if (style instanceof TrackStyle
-						&& tier.getChildCount() > 0) {
-					stylemap.put((TrackStyle) style, (TrackStyle) style);
+				if (style instanceof TrackStyle) {
+					if(tier.getChildCount() > 0)
+					{
+						stylemap.put((TrackStyle) style, (TrackStyle) style);
+					}else if(smv.getPixelFloater().getChildren() != null) {
+						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
+						for (GlyphI g : floatingGraphs) {
+							GraphGlyph j = (GraphGlyph) g;
+							if (j.getGraphState().getTierStyle() == style) {
+								stylemap.put((TrackStyle) style, (TrackStyle) style);
+							}
+						}
+					}
 				}
 			}
 			currentStyleList.addAll(stylemap.values());

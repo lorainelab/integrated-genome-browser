@@ -75,6 +75,9 @@ public class MismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 			}
 		}
 		
+		//Set to use single track
+		style.setSeparate(false);
+		
 		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, meth, startEnd[0], startEnd[1]);
 		
 		TierGlyph[] tiers = smv.getTiers(false, style, true);

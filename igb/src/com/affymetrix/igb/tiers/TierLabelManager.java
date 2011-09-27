@@ -160,7 +160,7 @@ public final class TierLabelManager implements PropertyHolder {
 				}
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
-				doGraphSelections();
+				doGraphSelections(preserve_selections);
 
 				tiermap.updateWidget(); // make sure selections becomes visible
 				if (isOurPopupTrigger(evt)) {
@@ -350,7 +350,7 @@ public final class TierLabelManager implements PropertyHolder {
 				labelmap.select(tierlabel);
 			}
 		}
-		doGraphSelections();
+		doGraphSelections(false);
 		//labelmap.updateWidget();
 		tiermap.updateWidget(); // make sure selections becomes visible
 	}
@@ -363,7 +363,7 @@ public final class TierLabelManager implements PropertyHolder {
 		do_graph_selections = b;
 	}
 
-	private void doGraphSelections() {
+	private void doGraphSelections(boolean preserve_selection) {
 		if (!do_graph_selections) {
 			return;
 		}
@@ -372,6 +372,10 @@ public final class TierLabelManager implements PropertyHolder {
 		Set<SeqSymmetry> symmetries = new LinkedHashSet<SeqSymmetry>();
 		symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
 
+		if(!preserve_selection){
+			symmetries.clear();
+		}
+		
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();

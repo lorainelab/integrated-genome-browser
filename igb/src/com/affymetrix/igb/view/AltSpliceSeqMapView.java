@@ -35,7 +35,7 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	private Thread slice_thread = null;
 
 	AltSpliceSeqMapView(boolean b) {
-		super(b);
+		super(b, "AltSpliceSeqMapView");
 		if (tier_manager != null) {
 			tier_manager.setDoGraphSelections(false);
 		}

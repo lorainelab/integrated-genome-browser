@@ -41,7 +41,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -104,7 +106,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
+		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder, JRPWidget {
 	
 	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
 	public static final boolean default_auto_change_view = false;
@@ -154,6 +156,7 @@ public class SeqMapView extends JPanel
 	 *   [or possibly O(N^2 * M) ???] )
 	 */
 	private static final int max_for_matching = 500;
+	private String id;
 	/** boolean for setting map range to min and max bounds of
 	AnnotatedBioSeq's annotations */
 	private boolean shrinkWrapMapBounds = false;
@@ -285,9 +288,10 @@ public class SeqMapView extends JPanel
 	};
 
 	@SuppressWarnings("serial")
-	public SeqMapView(boolean add_popups) {
+	public SeqMapView(boolean add_popups, String id) {
 		super();
-
+		this.id = id;
+		RecordPlaybackHolder.getInstance().addWidget(this);
 		seqmap = createAffyTieredMap();
 
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
@@ -308,7 +312,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer = new RPAdjustableJSlider("SeqMapView_xzoomer", Adjustable.HORIZONTAL) {
+		Adjustable xzoomer = new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL) {
 
 			@Override
 			public void paint(Graphics g) {
@@ -358,7 +362,7 @@ public class SeqMapView extends JPanel
 		};
 
 		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
-		Adjustable yzoomer = new RPAdjustableJSlider("SeqMapView_yzoomer", Adjustable.VERTICAL);
+		Adjustable yzoomer = new RPAdjustableJSlider(id + "_yzoomer", Adjustable.VERTICAL);
 		((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
@@ -451,7 +455,7 @@ public class SeqMapView extends JPanel
 		xzoombox.add((Component) xzoomer);
 
 		refreshDataAction = new RefreshDataAction(this);
-		JRPButton refresh_button = new JRPButton("SeqMapView_refresh_button", refreshDataAction);
+		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
 		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		xzoombox.add(refresh_button);
@@ -2207,5 +2211,15 @@ public class SeqMapView extends JPanel
 
 	public SeqMapViewPopup getPopup() {
 		return popup;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public boolean consecutiveOK() {
+		return true;
 	}
 }

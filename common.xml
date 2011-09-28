@@ -171,7 +171,7 @@
 	</condition>
   
 	<presetdef name="my.javac">
-		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}">
+		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}" includeantruntime="false">
 			<compilerarg compiler="modern" line="${compiler.args}" />
     		</javac>
 	</presetdef>

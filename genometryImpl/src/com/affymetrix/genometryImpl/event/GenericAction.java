@@ -3,6 +3,8 @@ package com.affymetrix.genometryImpl.event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,9 +14,11 @@ import com.affymetrix.common.CommonUtils;
 
 public abstract class GenericAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	private Set<GenericActionDoneCallback> doneCallbacks;
 
 	public GenericAction() {
 		super();
+		doneCallbacks = new HashSet<GenericActionDoneCallback>();
 		putValue(Action.NAME, getText());
 		if (getIconPath() != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());
@@ -36,4 +40,18 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public int getShortcut() { return KeyEvent.VK_UNDEFINED; }
+	public String getId() {
+		return this.getClass().getSimpleName();
+	}
+	public void addDoneCallback(GenericActionDoneCallback doneCallback) {
+		doneCallbacks.add(doneCallback);
+	}
+	public void removeDoneCallback(GenericActionDoneCallback doneCallback) {
+		doneCallbacks.remove(doneCallback);
+	}
+	protected void actionDone() {
+		for (GenericActionDoneCallback doneCallback : doneCallbacks) {
+			doneCallback.actionDone(this);
+		}
+	}
 }

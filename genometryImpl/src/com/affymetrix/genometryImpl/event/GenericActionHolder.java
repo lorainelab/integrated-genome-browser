@@ -27,7 +27,7 @@ public class GenericActionHolder {
 	private Map<String, GenericAction> igbActions = new HashMap<String, GenericAction>();
 
 	public void addIGBAction(GenericAction igbAction) {
-		igbActions.put(igbAction.getClass().getSimpleName(), igbAction);
+		igbActions.put(igbAction.getId(), igbAction);
 		if (igbAction.getText() != null) {
 			PreferenceUtils.getAccelerator(igbAction.getText());
 			boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(igbAction.getText(), false);
@@ -62,9 +62,9 @@ public class GenericActionHolder {
 	}
 
 	public void notifyActionPerformed(GenericAction action) {
-		String simpleName = action.getClass().getSimpleName();
+		String id = action.getId();
 		for (GenericActionListener listener : listeners) {
-			listener.notifyIGBAction(simpleName);
+			listener.notifyIGBAction(id);
 		}
 	}
 }

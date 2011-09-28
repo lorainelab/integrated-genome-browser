@@ -99,8 +99,6 @@ public final class XmlStylesheetParser {
 			XmlStylesheetParser parser = new XmlStylesheetParser();
 			try {
 				File f = getUserStylesheetFile();
-				// Initialize the user stylesheet with the contents of the system stylesheet
-				parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 
 				if (f.exists()) {
 					istr = new FileInputStream(f);

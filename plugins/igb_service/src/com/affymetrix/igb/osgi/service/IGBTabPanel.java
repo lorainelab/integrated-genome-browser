@@ -1,6 +1,7 @@
 package com.affymetrix.igb.osgi.service;
 
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 
@@ -68,14 +70,34 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		}
 	}
 
+	private class SelectAction extends GenericAction {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			select();
+		}
+
+		@Override
+		public String getText() {
+			return null;
+		}
+
+		@Override
+		public String getId() {
+			return "select_" + IGBTabPanel.this.getClass().getSimpleName() + "_action";
+		}
+	}
 	protected final IGBService igbService;
 	private final String displayName;
 	private final String title;
 	private final boolean focus;
 	private final int position;
-	private String id;
+	private final String id;
 	private JFrame frame;
 	private Rectangle trayRectangle;
+	private final SelectAction selectAction;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
 		this(igbService, displayName, title, main, DEFAULT_TAB_POSITION);
@@ -90,6 +112,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.position = position;
     	this.id = "IGBTabPanel_" + this.getClass().getSimpleName();
    		RecordPlaybackHolder.getInstance().addWidget(this);
+   		selectAction = new SelectAction();
 	}
 
 	@Override
@@ -111,6 +134,10 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	 */
 	public String getTitle() {
 		return title;
+	}
+
+	public SelectAction getSelectAction() {
+		return selectAction;
 	}
 
 	/**
@@ -232,8 +259,8 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	}
 
 	public void select() {
-		if (getParent() instanceof TabHolder) {
-			((TabHolder)getParent()).selectTab(this);
+		if (getParent().getParent() instanceof TabHolder) {
+			((TabHolder)getParent().getParent()).selectTab(this);
 		}
 	}
 }

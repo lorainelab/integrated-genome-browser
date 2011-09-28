@@ -124,6 +124,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/Tutorial/src</label>
+                    <type>java</type>
+                    <location>plugins/Tutorial/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>igb_server/src</label>
                     <type>java</type>
                     <location>igb_server/src</location>
@@ -329,6 +335,11 @@
                 <location>bundles</location>
                 <build-target>compile</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>plugins/Tutorial/build</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -404,6 +415,10 @@
                         <location>plugins/plugins_page/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>plugins/Tutorial/src</label>
+                        <location>plugins/Tutorial/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>igb_server/src</label>
                         <location>igb_server/src</location>
                     </source-folder>
@@ -470,11 +485,24 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
+                <package-root>common/src</package-root>
                 <package-root>genometryImpl/src</package-root>
                 <package-root>genoviz_sdk/src</package-root>
+                <package-root>main/src</package-root>
                 <package-root>igb/src</package-root>
-                <package-root>plugins/plugins_page/src</package-root>
                 <package-root>plugins/igb_service/src</package-root>
+                <package-root>plugins/window_service/src</package-root>
+                <package-root>plugins/window_service_def/src</package-root>
+                <package-root>plugins/Bookmark/src</package-root>
+                <package-root>plugins/PropertyView/src</package-root>
+                <package-root>plugins/SelectionInfo/src</package-root>
+                <package-root>plugins/SearchView/src</package-root>
+                <package-root>plugins/GraphAdjuster/src</package-root>
+                <package-root>plugins/RestrictionsSites/src</package-root>
+                <package-root>plugins/ExternalView/src</package-root>
+                <package-root>plugins/RestrictionSites/src</package-root>
+                <package-root>plugins/plugins_page/src</package-root>
+                <package-root>plugins/Tutorial/src</package-root>
                 <package-root>igb_server/src</package-root>
                 <package-root>igb_server/web</package-root>
                 <package-root>genoviz_sdk/demo/src</package-root>
@@ -483,19 +511,8 @@
                 <package-root>genoviz_sdk/test</package-root>
                 <package-root>igb/test</package-root>
                 <package-root>protannot/src</package-root>
-                <package-root>plugins/RestrictionsSites/src</package-root>
-                <package-root>plugins/ExternalView/src</package-root>
-                <package-root>plugins/window_service/src</package-root>
-                <package-root>plugins/window_service_def/src</package-root>
-                <package-root>main/src</package-root>
-                <package-root>common/src</package-root>
-                <package-root>plugins/PropertyView/src</package-root>
-                <package-root>plugins/SearchView/src</package-root>
-                <package-root>plugins/GraphAdjuster/src</package-root>
-                <package-root>plugins/RestrictionSites/src</package-root>
-                <package-root>plugins/SelectionInfo/src</package-root>
-                <package-root>plugins/Bookmark/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/tribble-0.1.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
+                <package-root>quickload_site_creator/src</package-root>
+                <classpath mode="compile">genometryImpl/src:genoviz_sdk/src:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/tribble-0.1.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>
                 <built-to>genoviz_sdk/build</built-to>
@@ -513,6 +530,7 @@
                 <built-to>plugins/SearchView/build</built-to>
                 <built-to>plugins/GraphAdjuster/build</built-to>
                 <built-to>bundles</built-to>
+                <built-to>plugins/Tutorial/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
@@ -528,6 +546,11 @@
                                 <property name="indent-shift-width" value="4"/>
                                 <property name="tab-size" value="4"/>
                             </node>
+                        </node>
+                    </node>
+                    <node name="x-ant+xml">
+                        <node name="CodeStyle">
+                            <node name="project"/>
                         </node>
                     </node>
                 </node>

@@ -103,4 +103,14 @@ K)   This product includes portions of the antlr software library
 
      The files from this project are bundled together in antlr.jar
 
+L)   This product includes portions of the Jackson JSON Processor
 
+     http://jackson.codehaus.org/
+
+     The files from this project are bundled together in jackson-all-xxx.jar
+
+M)   This product includes portions of the furbelow project of Rabbit Hole
+
+     http://rabbit-hole.blogspot.com/2006/04/decoratingoverpainting-swing.html
+
+     The files from this project are bundled together in furbelow.jar.

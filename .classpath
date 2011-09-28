@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="debug/src"/>
+	<classpathentry kind="src" path="plugins/Tutorial/src"/>
+	<classpathentry kind="src" path="plugins/SearchModeResidue/src"/>
+	<classpathentry kind="src" path="plugins/SearchModeIdOrProps/src"/>
 	<classpathentry kind="src" path="genometryImpl/test"/>
 	<classpathentry kind="src" path="das2_server/src"/>
 	<classpathentry kind="src" path="common/src"/>

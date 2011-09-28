@@ -690,7 +690,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			if (location != null) {
 				Map<String, String> repositories = igbService.getRepositoryChangerHolder().getRepositories();
 				for (String name : repositories.keySet()) {
-					if (location.startsWith(repositories.get(name))) {
+					if (location.startsWith(repositories.get(name)) && ("".equals(repository) || repositories.get(name).length() > repositories.get(repository).length())) {
 						repository = name;
 					}
 				}

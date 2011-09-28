@@ -2,12 +2,12 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -29,7 +29,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class AutoScrollAction extends IGBAction implements SeqSelectionListener {
+public class AutoScrollAction extends GenericAction implements SeqSelectionListener {
 	private static final long serialVersionUID = 1l;
 	/*
 	 *  units to scroll are either in pixels or bases

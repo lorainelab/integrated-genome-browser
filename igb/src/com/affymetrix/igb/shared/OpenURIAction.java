@@ -25,6 +25,7 @@ import java.net.URI;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -45,12 +46,11 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-public abstract class OpenURIAction extends IGBAction {
+public abstract class OpenURIAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 

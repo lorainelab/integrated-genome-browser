@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,7 +15,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ExitAction extends IGBAction {
+public class ExitAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ExitAction ACTION = new ExitAction();
 

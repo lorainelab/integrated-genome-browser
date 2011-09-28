@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -40,7 +41,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
@@ -52,7 +52,7 @@ public final class SearchView extends IGBTabPanel implements
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
 	private static final int TAB_POSITION = 2;
 
-	public class SearchModeAction extends IGBAction {
+	public class SearchModeAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public String getText() { return null; }
@@ -85,7 +85,7 @@ public final class SearchView extends IGBTabPanel implements
 	}
 	private SearchModeAction searchModeAction = new SearchModeAction();
 
-	public class SearchAction extends IGBAction {
+	public class SearchAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public String getText() { return null; }
@@ -126,7 +126,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	private SearchAction searchAction = new SearchAction();
-	public class ClearAction extends IGBAction {
+	public class ClearAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public String getText() { return null; }

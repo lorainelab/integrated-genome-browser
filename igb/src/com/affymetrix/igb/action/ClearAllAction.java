@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -14,7 +14,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ClearAllAction extends IGBAction {
+public class ClearAllAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ClearAllAction ACTION = new ClearAllAction();
 

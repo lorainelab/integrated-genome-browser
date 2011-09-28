@@ -5,10 +5,10 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -32,7 +32,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * Open a window showing information about Integrated Genome Browser.
  * @author sgblanch
  */
-public class AboutIGBAction extends IGBAction {
+public class AboutIGBAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final AboutIGBAction ACTION = new AboutIGBAction();
 

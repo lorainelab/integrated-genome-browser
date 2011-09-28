@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.IGBAction;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ShowConsoleAction extends IGBAction {
+public class ShowConsoleAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ShowConsoleAction ACTION = new ShowConsoleAction();
 

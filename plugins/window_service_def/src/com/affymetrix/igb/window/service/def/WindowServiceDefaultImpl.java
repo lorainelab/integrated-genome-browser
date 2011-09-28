@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -33,7 +34,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 
@@ -179,7 +179,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			if (tabState.isTab()) {
 				JRPMenuItem change_tab_state_item = new JRPMenuItem(
 					"WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"),
-					new IGBAction() {
+					new GenericAction() {
 						private static final long serialVersionUID = 1L;
 						@Override
 						public String getText() {
@@ -199,7 +199,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			if (tabState.isTab()) {
 				JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem(
 					"WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"),
-					new IGBAction() {
+					new GenericAction() {
 						private static final long serialVersionUID = 1L;
 						@Override
 						public String getText() {

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,7 +13,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ShrinkWrapAction extends IGBAction {
+public class ShrinkWrapAction extends GenericAction {
 	private static final long serialVersionUID = 1;
 	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
 

@@ -5,10 +5,10 @@ import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
-import com.affymetrix.igb.shared.IGBAction;
 
-public class ManageBookmarksAction extends IGBAction {
+public class ManageBookmarksAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final ManageBookmarksAction ACTION = new ManageBookmarksAction();
 

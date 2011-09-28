@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.shared.IGBAction;
 
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
@@ -13,7 +13,7 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
  *
  * @author hiralv
  */
-public class ForumHelpAction extends IGBAction {
+public class ForumHelpAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final ForumHelpAction ACTION = new ForumHelpAction();
 

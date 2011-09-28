@@ -1,8 +1,8 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.shared.IGBAction;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
@@ -11,7 +11,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class DrawCollapseControlAction extends IGBAction {
+public class DrawCollapseControlAction extends GenericAction {
 
 	final SeqMapView map_view;
 	

@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 
 import javax.swing.JOptionPane;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -12,9 +13,8 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
-import com.affymetrix.igb.shared.IGBAction;
 
-public abstract class AddBookmarkAction extends IGBAction {
+public abstract class AddBookmarkAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
 

@@ -2,10 +2,10 @@ package com.affymetrix.igb.action;
 
 import java.awt.event.ActionEvent;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.IGBAction;
 
-public class NextSearchSpanAction extends IGBAction {
+public class NextSearchSpanAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final NextSearchSpanAction ACTION = new NextSearchSpanAction();
 

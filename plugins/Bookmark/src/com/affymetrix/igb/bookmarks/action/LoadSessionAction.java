@@ -4,7 +4,7 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.IGBAction;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
@@ -17,7 +17,7 @@ import java.util.prefs.InvalidPreferencesFormatException;
 
 import javax.swing.JFileChooser;
 
-public class LoadSessionAction extends IGBAction {
+public class LoadSessionAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
 

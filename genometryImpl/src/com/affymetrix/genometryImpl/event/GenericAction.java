@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometryImpl.event;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,16 +8,16 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.common.CommonUtils;
 
-public abstract class IGBAction extends AbstractAction implements ActionListener {
+public abstract class GenericAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	public IGBAction() {
+	public GenericAction() {
 		super();
 		putValue(Action.NAME, getText());
 		if (getIconPath() != null) {
-			ImageIcon icon = MenuUtil.getIcon(getIconPath());
+			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());
 			if (icon == null) {
 				System.out.println("icon " + getIconPath() + " returned null");
 			}
@@ -26,14 +26,14 @@ public abstract class IGBAction extends AbstractAction implements ActionListener
 		if (getShortcut() != KeyEvent.VK_UNDEFINED) {
 			this.putValue(MNEMONIC_KEY, getShortcut());
 		}
-		IGBActionHolder.getInstance().addIGBAction(this);
+		GenericActionHolder.getInstance().addIGBAction(this);
 	}
 	public String getIconPath() {
 		return null;
 	}
 	public abstract String getText();
 	public void actionPerformed(ActionEvent e) {
-		IGBActionHolder.getInstance().notifyActionPerformed(this);
+		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public int getShortcut() { return KeyEvent.VK_UNDEFINED; }
 }

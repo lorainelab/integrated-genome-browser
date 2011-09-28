@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometryImpl.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,27 +8,25 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 
-public class IGBActionHolder {
-	private static IGBActionHolder instance = new IGBActionHolder();
+public class GenericActionHolder {
+	private static GenericActionHolder instance = new GenericActionHolder();
 	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
-	private final List<IGBActionListener> listeners = new ArrayList<IGBActionListener>();
+	private final List<GenericActionListener> listeners = new ArrayList<GenericActionListener>();
 	
-	private IGBActionHolder() {
+	private GenericActionHolder() {
 		super();
 	}
 	
-	public static IGBActionHolder getInstance() {
+	public static GenericActionHolder getInstance() {
 		return instance;
 	}
 
-	private Map<String, IGBAction> igbActions = new HashMap<String, IGBAction>();
+	private Map<String, GenericAction> igbActions = new HashMap<String, GenericAction>();
 
-	public void addIGBAction(IGBAction igbAction) {
+	public void addIGBAction(GenericAction igbAction) {
 		igbActions.put(igbAction.getClass().getSimpleName(), igbAction);
 		if (igbAction.getText() != null) {
 			PreferenceUtils.getAccelerator(igbAction.getText());
@@ -38,34 +36,34 @@ public class IGBActionHolder {
 				if (iconPath == null) {
 					iconPath = DEFAULT_ICON_PATH;
 				}
-				ImageIcon icon = MenuUtil.getIcon(iconPath);
+				ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 				JButton button = new JButton(icon);
 				button.addActionListener(igbAction);
 				button.setToolTipText(igbAction.getText());
-				((IGB)Application.getSingleton()).addToolbarButton(button);
+//				((IGB)Application.getSingleton()).addToolbarButton(button);
 			}
 		}
 	}
 
-	public void removeIGBAction(IGBAction igbAction) {
+	public void removeIGBAction(GenericAction igbAction) {
 		igbActions.remove(igbAction);
 	}
 
-	public IGBAction getIGBAction(String name) {
+	public GenericAction getIGBAction(String name) {
 		return igbActions.get(name);
 	}
 
-	public void addIGBActionListener(IGBActionListener listener) {
+	public void addIGBActionListener(GenericActionListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeIGBActionListener(IGBActionListener listener) {
+	public void removeIGBActionListener(GenericActionListener listener) {
 		listeners.remove(listener);
 	}
 
-	public void notifyActionPerformed(IGBAction action) {
+	public void notifyActionPerformed(GenericAction action) {
 		String simpleName = action.getClass().getSimpleName();
-		for (IGBActionListener listener : listeners) {
+		for (GenericActionListener listener : listeners) {
 			listener.notifyIGBAction(simpleName);
 		}
 	}

@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +74,8 @@ public final class ResidueLoading {
 				continue;
 			}
 			String serverDescription = server.serverName + " " + server.serverType;
-			Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq_name+" from "+serverDescription);
+			String msg = "Loading sequence for "+seq_name+" from "+serverDescription;
+			Application.getSingleton().addNotLockedUpMsg(msg);
 			switch (server.serverType) {
 			case DAS2:
 				if (getDAS2Residues(server, versions, genomeVersionName, aseq, min, max, span)) {
@@ -91,9 +93,11 @@ public final class ResidueLoading {
 				}
 				break;
 			}
-			Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq_name+" from "+serverDescription);
+			Application.getSingleton().removeNotLockedUpMsg(msg);
 			if (residuesLoaded) {
-				Application.getSingleton().setStatus("Completed loading residues for "+seq_name+" from "+serverDescription);
+				Application.getSingleton().setStatus(MessageFormat.format(
+						"Completed loading sequence for {0} : {1} - {2} from {3}", 
+						new Object[]{seq_name,min,max,serverDescription}));
 				return true;
 			}
 		}

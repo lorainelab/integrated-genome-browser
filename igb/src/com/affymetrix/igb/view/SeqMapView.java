@@ -485,7 +485,7 @@ public class SeqMapView extends JPanel
 
 		this.addPopupListener(new ReadAlignmentView());
 
-		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
+		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getSystemStylesheet());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 

@@ -101,9 +101,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				style.track_name = human_name;
 			}
 		}
-//		else if (props != null) {
-//			style.initFromPropertyMap(props);
-//		}
 
 		return style;
 	}
@@ -161,17 +158,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			//   is now handled within PreferenceUtils.getSubnod() call
 		}
 
-
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
 			initFromTemplate(template);
 		}
 
-		// GAH eliminated hard-coded default settings for glyph_depth, can now set in stylesheet
-		//    applyHardCodedDefaults();
-
-		// now need to add use of stylesheet settings via AssociationElements, etc.
-		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
+		// Hidden default file type pref. from system stylesheet
+		Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
 		AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
 		if (assel != null) {
 			PropertyMap props = assel.getPropertyMap();
@@ -180,10 +173,22 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		}
 
+		// File defaults panel user stylesheet
+		stylesheet = XmlStylesheetParser.getUserStylesheet();
+		assel = stylesheet.getAssociationForFileType(file_type);
+		if (assel != null) {
+			PropertyMap props = assel.getPropertyMap();
+			if (props != null) {
+				initFromPropertyMap(props);
+			}
+		}
+
+		// From server annots.xml
 		if (properties != null) {
 			initFromPropertyMap(properties);
 		}
 
+		// Saved settings
 		assel = stylesheet.getAssociationForType(name);
 		if (assel == null) {
 			assel = stylesheet.getAssociationForMethod(name);

@@ -46,7 +46,7 @@ public final class XmlStylesheetParser {
 		system_stylesheet = null;
 	}
 
-	private static synchronized Stylesheet getSystemStylesheet() {
+	public static synchronized Stylesheet getSystemStylesheet() {
 		if (system_stylesheet == null) {
 			InputStream istr = null;
 			try {
@@ -107,20 +107,10 @@ public final class XmlStylesheetParser {
 					Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
 							"Loading user stylesheet from resource: " + user_stylesheet_resource_name);
 					user_stylesheet = parser.parse(istr);
-				} else {
-					user_stylesheet = parser.stylesheet;
 				}
-
-			} catch (FileNotFoundException e) {
-				//If error happens due to reading/loading user stylesheet then use system's default stylesheet.
-				user_stylesheet = parser.stylesheet;
-			} catch (IOException e) {
-				//If error happens due to reading/loading user stylesheet then use system's default stylesheet.
-				user_stylesheet = parser.stylesheet;
-			} catch (Exception e) {
+			}catch (Exception e) {
 				System.out.println("ERROR: Couldn't initialize user stylesheet.");
 				e.printStackTrace();
-				user_stylesheet = null;
 			} finally {
 				GeneralUtils.safeClose(istr);
 			}
@@ -129,6 +119,10 @@ public final class XmlStylesheetParser {
 			}
 		}
 		return user_stylesheet;
+	}
+
+	public static java.util.Map<String, AssociationElement> getSystemFileTypeAssociation() {
+		return getSystemStylesheet().filetype2association;
 	}
 
 	public static java.util.Map<String, AssociationElement> getUserFileTypeAssociation() {

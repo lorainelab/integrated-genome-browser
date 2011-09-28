@@ -583,7 +583,15 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			ErrorHandler.errorPanel("Duplicate Entry", "File type " + selectedTrackDefaultType + " exists");
 			return;
 		}
-		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, AssociationElement.getFileTypeAssocation(selectedTrackDefaultType));
+
+		AssociationElement element = AssociationElement.getFileTypeAssocation(selectedTrackDefaultType);
+		AssociationElement sysElement = XmlStylesheetParser.getSystemFileTypeAssociation().get(selectedTrackDefaultType);
+		if (sysElement != null){
+			PropertyMap props = sysElement.getPropertyMap();
+			element.getPropertyMap().putAll(props);
+		}
+		
+		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, element);
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed

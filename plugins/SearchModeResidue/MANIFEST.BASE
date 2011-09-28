@@ -9,6 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: search mode to allow searching on residues
 Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Searching#Searching-FindingSequencePatterns
 Import-Package: com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.util,
  com.affymetrix.genoviz.widget,

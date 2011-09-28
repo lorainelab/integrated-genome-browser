@@ -23,7 +23,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -144,6 +147,15 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				}
 			}
 		);
+		tab_pane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				IGBTabPanel sel = (IGBTabPanel)tab_pane.getSelectedComponent();
+				GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
+
+			}
+		});
+
 		setOneTouchExpandable(false);
 		setDividerSize(0);
 

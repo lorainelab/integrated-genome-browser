@@ -37,6 +37,7 @@
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
 		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
+		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"     value="${basedir}/ext" />

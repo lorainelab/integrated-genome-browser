@@ -225,6 +225,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 
 		if (remote) {
 			if (actualChars < 3) {
+				statusHolder.setStatus("");
 				ErrorHandler.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
 				return null;
 			}

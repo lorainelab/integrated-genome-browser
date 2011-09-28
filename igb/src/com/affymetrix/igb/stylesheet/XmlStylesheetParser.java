@@ -260,7 +260,7 @@ public final class XmlStylesheetParser {
 					Node grand_child = grand_children.item(j);
 					if (grand_child instanceof Element) {
 						if (grand_child.getNodeName().equalsIgnoreCase(PropertyMap.PROP_ELEMENT_NAME)) {
-							processProperty((Element) grand_child, associationElement.propertyMap);
+							processProperty((Element) grand_child, associationElement.getPropertyMap());
 						} else {
 							cantParse(el);
 						}

@@ -33,7 +33,7 @@ public final class AssociationElement implements DrawableElement {
   static final String ATT_STYLE="style";
 
   private String elementName;
-  public PropertyMap propertyMap; //Come back to check this... tmp fix (dcn/nr)
+  private PropertyMap propertyMap; //Come back to check this... tmp fix (dcn/nr)
   private String styleName;
   private String paramName;  // method, type, or regex
   private String paramValue;

@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
@@ -586,14 +587,14 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 
 		AssociationElement element = AssociationElement.getFileTypeAssocation(selectedTrackDefaultType);
 		AssociationElement sysElement = XmlStylesheetParser.getSystemFileTypeAssociation().get(selectedTrackDefaultType);
-		if (sysElement != null){
+		if (sysElement != null) {
 			PropertyMap props = sysElement.getPropertyMap();
 			element.getPropertyMap().putAll(props);
 		}
-		
-		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, element);
-		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 
+		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, element);
+		model.addElement(selectedTrackDefaultType, element);
+		model.fireTableDataChanged();
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
@@ -652,7 +653,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 		if (table.getSelectedRow() != -1) {
 			selectedStyle = model.tier_styles.get(table.getSelectedRow());
 			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
-			model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+			model.removeElement(selectedStyle.getTrackName());
+			model.fireTableDataChanged();
 		}
 }//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -695,7 +697,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	 * @param evt
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
-	labelFieldComboBox.setEnabled(true);
+		labelFieldComboBox.setEnabled(true);
 		maxDepthTextField.setEnabled(true);
 		show2TracksCheckBox.setEnabled(true);
 		connectedCheckBox.setEnabled(true);
@@ -838,9 +840,9 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
 
 		private List<TrackStyle> tier_styles;
-		public AssociationElement element;
-		public Entry[] file2types;
-		public Entry entry;
+		private AssociationElement element;
+		private Entry[] file2types;
+		private Entry entry;
 
 		public TrackDefaultPrefTableModel() {
 			this.tier_styles = new ArrayList<TrackStyle>();
@@ -854,30 +856,49 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			return this.tier_styles;
 		}
 
-		public void setElements(java.util.Map<String, AssociationElement> elements) {
+		private void setElements(java.util.Map<String, AssociationElement> elements) {
 			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
-			List<TrackStyle> tier_styles_dup;
-			tier_styles_dup = tier_styles;
-			tier_styles.clear();
 			tier_styles.add(default_annot_style);
 			for (Entry entries : file2types) {
 				element = (AssociationElement) entries.getValue();
-				if (element.propertyMap != null) {
-					PropertyMap props = default_annot_style.getProperties();
-					props.putAll(element.getPropertyMap());
-					element.getPropertyMap().putAll(props);
-					TrackStyle style = new TrackStyle(props);
-					style.setTrackName(entries.getKey().toString());
-					tier_styles.add(style);
-				} else {
-					for (TrackStyle style : tier_styles_dup) {
-						if (entries.getKey().toString().equals(style.getTrackName())) {
-							tier_styles.add(style);
-						}
-					}
-				}
+
+				addElement(entries.getKey().toString(), element);
 			}
 			fireTableDataChanged();
+		}
+
+		private void addElement(String filetype, AssociationElement element) {
+			if (element.getPropertyMap() != null) {
+				PropertyMap props = default_annot_style.getProperties();
+				props.putAll(element.getPropertyMap());
+				element.getPropertyMap().putAll(props);
+				TrackStyle style = new TrackStyle(props);
+				style.setTrackName(filetype);
+				tier_styles.add(style);
+			}
+		}
+
+		private void removeElement(String filetype) {
+			Iterator<TrackStyle> iterator = tier_styles.iterator();
+			TrackStyle style;
+
+			while(iterator.hasNext())
+			{
+				style = iterator.next();
+				if (style.getTrackName().equals(filetype)) {
+					tier_styles.remove(style);
+				}
+			}
+		}
+
+		private boolean isContained(String filetype) {
+			for (TrackStyle style : tier_styles) {
+				if (style.getTrackName().equals(filetype)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		// Allow editing most fields in normal rows, but don't allow editing some
@@ -943,21 +964,21 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 					switch (col) {
 						case COL_FOREGROUND:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_FOREGROUND, value);
+								element.getPropertyMap().put(PROP_FOREGROUND, value);
 							}
 							style.setForeground((Color) value);
 							fgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_BACKGROUND:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_BACKGROUND, value);
+								element.getPropertyMap().put(PROP_BACKGROUND, value);
 							}
 							style.setBackground((Color) value);
 							bgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_TRACK_NAME_SIZE:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_FONT_SIZE, value.toString());
+								element.getPropertyMap().put(PROP_FONT_SIZE, value.toString());
 								style.setTrackNameSize((Float) value);
 							}
 							style.setTrackNameSize((Float) value);
@@ -965,36 +986,36 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							break;
 						case COL_LABEL_FIELD:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_LABEL_FIELD, value.toString());
+								element.getPropertyMap().put(PROP_LABEL_FIELD, value.toString());
 							}
 							style.setLabelField((String) value);
 							break;
 						case COL_MAX_DEPTH: {
 							int i = parseInteger(((String) value), 0, style.getMaxDepth());
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_MAX_DEPTH, value.toString());
+								element.getPropertyMap().put(PROP_MAX_DEPTH, value.toString());
 							}
 							style.setMaxDepth(i);
 						}
 						break;
 						case COL_DIRECTION_TYPE:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
+								element.getPropertyMap().put(PROP_DIRECTION_TYPE, value.toString());
 							}
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case Col_Show_2_Tracks:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_SEPARATE, value.toString());
+								element.getPropertyMap().put(PROP_SEPARATE, value.toString());
 							}
 							style.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_CONNECTED:
 							if (!style.equals(default_annot_style)) {
 								if (Boolean.TRUE.equals(value)) {
-									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(2));
+									element.getPropertyMap().put(PROP_GLYPH_DEPTH, String.valueOf(2));
 								} else {
-									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(1));
+									element.getPropertyMap().put(PROP_GLYPH_DEPTH, String.valueOf(1));
 								}
 							}
 							if (Boolean.TRUE.equals(value)) {
@@ -1005,19 +1026,19 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							break;
 						case COL_COLLAPSED:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_COLLAPSED, value.toString());
+								element.getPropertyMap().put(PROP_COLLAPSED, value.toString());
 							}
 							style.setCollapsed(((Boolean) value).booleanValue());
 							break;
 						case COL_POS_STRAND_COLOR:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_START_COLOR, value);
+								element.getPropertyMap().put(PROP_START_COLOR, value);
 							}
 							style.setForwardColor((Color) value);
 							break;
 						case COL_NEG_STRAND_COLOR:
 							if (!style.equals(default_annot_style)) {
-								element.propertyMap.put(PROP_END_COLOR, value);
+								element.getPropertyMap().put(PROP_END_COLOR, value);
 							}
 							style.setReverseColor((Color) value);
 							break;

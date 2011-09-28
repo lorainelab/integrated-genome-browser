@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.affymetrix.igb.genoviz
 Bundle-Description: genoviz
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: @appVersion@
+Bundle-Activator: com.affymetrix.genoviz.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
@@ -15,6 +16,7 @@ Import-Package: com.affymetrix.common,
  javax.swing.table,
  javax.swing.tree,
  javax.swing,
+ org.osgi.framework,
  org.python.util
 Export-Package: com.affymetrix.genoviz.awt,
  com.affymetrix.genoviz.bioviews,

@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -50,6 +51,7 @@ public class DummyContext implements BundleContext {
 	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
 	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
 	private static final String MAP_VIEW_GLYPH_FACTORY_FILTER = "(objectClass=" + ExtendedMapViewGlyphFactoryI.class.getName() + ")";
+	private static final String WIDGET_DECORATOR = "(objectClass=" + JRPWidgetDecorator.class.getName() + ")";
 	private static final String WINDOW_SERVICE_FILTER = "(objectClass=" + IWindowService.class.getName() + ")";
 
 	private final Properties properties;
@@ -165,6 +167,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (MAP_VIEW_GLYPH_FACTORY_FILTER.equals(filter)) {
 			return service instanceof ExtendedMapViewGlyphFactoryI;
+		}
+		if (WIDGET_DECORATOR.equals(filter)) {
+			return service instanceof JRPWidgetDecorator;
 		}
 		if (WINDOW_SERVICE_FILTER.equals(filter)) {
 			return service instanceof IWindowService;

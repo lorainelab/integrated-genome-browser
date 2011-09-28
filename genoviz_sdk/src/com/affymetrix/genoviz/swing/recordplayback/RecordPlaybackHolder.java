@@ -20,6 +20,7 @@ public class RecordPlaybackHolder {
 	private static final String IMPORT = "from com.affymetrix.genoviz.swing.recordplayback import RecordPlaybackHolder\n";
 	private static final String ASSIGN = "rph = RecordPlaybackHolder.getInstance()\n";
 	private List<Operation> operations = new ArrayList<Operation>();
+	private List<JRPWidgetDecorator> decorators = new ArrayList<JRPWidgetDecorator>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
 	public static RecordPlaybackHolder getInstance() {
 		return instance;
@@ -32,6 +33,9 @@ public class RecordPlaybackHolder {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
 		widgets.put(widget.getId(), widget);
+		for (JRPWidgetDecorator decorator : decorators) {
+			decorator.widgetAdded(widget);
+		}
 	}
 	public void removeWidget(String id) {
 		widgets.remove(id);
@@ -90,5 +94,16 @@ public class RecordPlaybackHolder {
 
 	public void pause() {
 		JOptionPane.showMessageDialog(null, "script paused ...");
+	}
+
+	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
+		decorators.add(decorator);
+		for (JRPWidget widget : widgets.values()) {
+			decorator.widgetAdded(widget);
+		}
+	}
+
+	public void removeDecorator(JRPWidgetDecorator decorator) {
+		decorators.remove(decorator);
 	}
 }

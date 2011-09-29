@@ -66,10 +66,10 @@ public class Util {
 		dir.delete();
 	}
 	
-	/**Makes a soft link between the realFile and the linked File using the linux 'ln -s' command.*/
-	public static boolean makeSoftLinkViaUNIXCommandLine(File realFile, File link){
+	/**Makes a hard link between the realFile and the linked File using the linux 'ln' command.*/
+	public static boolean makeHardLinkViaUNIXCommandLine(File realFile, File link){
 		try {
-			String[] cmd = {"ln", "-s", realFile.getCanonicalPath(), link.toString()};
+			String[] cmd = {"ln", realFile.getCanonicalPath(), link.toString()};
 			Runtime.getRuntime().exec(cmd);
 			return true;
 		} catch (IOException e) {

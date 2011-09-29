@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGB;
 import java.awt.event.KeyEvent;
@@ -11,14 +12,13 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class ToggleEdgeMatchingAction extends AbstractAction{
+public class ToggleEdgeMatchingAction extends GenericAction {
 	private static final long serialVersionUID = 1;
 	private static final ToggleEdgeMatchingAction ACTION = new ToggleEdgeMatchingAction();
 	private SeqMapView map_view = IGB.getSingleton().getMapView();
 
-	public ToggleEdgeMatchingAction(){
-		super(BUNDLE.getString("toggleEdgeMatching"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_M);
+	private ToggleEdgeMatchingAction(){
+		super();
 		this.putValue(SELECTED_KEY, map_view.getEdgeMatching());
 	}
 
@@ -31,4 +31,13 @@ public class ToggleEdgeMatchingAction extends AbstractAction{
 		ACTION.putValue(AbstractAction.SELECTED_KEY, map_view.getEdgeMatching());
 	}
 
+	@Override
+	public String getText() {
+		return BUNDLE.getString("toggleEdgeMatching");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_M;
+	}
 }

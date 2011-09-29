@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -12,22 +12,24 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-public class SaveScriptAction extends AbstractAction {
+public class SaveScriptAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static final SaveScriptAction ACTION = new SaveScriptAction();
 
+	public static SaveScriptAction getAction() {
+		return ACTION;
+	}
 
-	public SaveScriptAction() {
-		super(BUNDLE.getString("saveScript"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_C);
+	private SaveScriptAction() {
+		super();
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		JFileChooser chooser = new UniFileChooser("Python File", "py");
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.rescanCurrentDirectory();
@@ -44,5 +46,20 @@ public class SaveScriptAction extends AbstractAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving script to file", x);
 			}
 		}
+	}
+
+	@Override
+	public String getText() {
+		return BUNDLE.getString("saveScript");
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Export16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_C;
 	}
 }

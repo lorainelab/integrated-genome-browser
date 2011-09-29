@@ -4,13 +4,12 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -20,7 +19,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 
-public class TierAnnotationOperationAction extends AbstractAction {
+public class TierAnnotationOperationAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final SeqMapView gviewer;
@@ -34,6 +33,7 @@ public class TierAnnotationOperationAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		addTier(annotationOperator);
 	}
 
@@ -120,5 +120,10 @@ public class TierAnnotationOperationAction extends AbstractAction {
 		int num_selected = labels.size();
 		return num_selected >= getAnnotationOperator().getOperandCountMin() &&
 			num_selected <= getAnnotationOperator().getOperandCountMax();
+	}
+
+	@Override
+	public String getText() {
+		return null;
 	}
 }

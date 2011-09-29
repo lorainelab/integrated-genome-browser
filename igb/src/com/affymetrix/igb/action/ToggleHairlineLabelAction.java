@@ -1,7 +1,11 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.UnibrowHairline;
+
+import java.awt.event.KeyEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -10,13 +14,12 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ToggleHairlineLabelAction extends javax.swing.AbstractAction implements java.util.prefs.PreferenceChangeListener{
+public class ToggleHairlineLabelAction extends GenericAction implements PreferenceChangeListener {
 	private static final long serialVersionUID = 1;
 	private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 
 	private ToggleHairlineLabelAction() {
-		super(BUNDLE.getString("toggleHairlineLabel"));
-		this.putValue(MNEMONIC_KEY, java.awt.event.KeyEvent.VK_H);
+		super();
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 
@@ -30,6 +33,7 @@ public class ToggleHairlineLabelAction extends javax.swing.AbstractAction implem
 	}
 
 	public void actionPerformed(java.awt.event.ActionEvent e) {
+		super.actionPerformed(e);
 		PreferenceUtils.getTopNode().putBoolean(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, (Boolean)getValue(SELECTED_KEY));
 	}
@@ -44,4 +48,13 @@ public class ToggleHairlineLabelAction extends javax.swing.AbstractAction implem
         }
 	}
 
+	@Override
+	public String getText() {
+		return BUNDLE.getString("toggleHairlineLabel");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_H;
+	}
 }

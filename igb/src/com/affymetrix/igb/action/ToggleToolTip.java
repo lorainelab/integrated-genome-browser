@@ -1,24 +1,23 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv
  */
-public class ToggleToolTip extends AbstractAction {
+public class ToggleToolTip extends GenericAction {
 	private static final long serialVersionUID = 1;
 	private static final ToggleToolTip ACTION = new ToggleToolTip();
 
 	private ToggleToolTip() {
-		super(BUNDLE.getString("togglePropertiesTooltip"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_H);
+		super();
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 
@@ -40,4 +39,13 @@ public class ToggleToolTip extends AbstractAction {
 				IGB.getSingleton().getMapView().togglePropertiesTooltip());
 	}
 
+	@Override
+	public String getText() {
+		return BUNDLE.getString("togglePropertiesTooltip");
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_H;
+	}
 }

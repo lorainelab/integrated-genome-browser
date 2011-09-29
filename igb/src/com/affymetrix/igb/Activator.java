@@ -3,12 +3,19 @@ package com.affymetrix.igb;
 import java.util.Arrays;
 import java.util.Properties;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -31,6 +38,7 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
  * OSGi Activator for igb bundle
  */
 public class Activator implements BundleActivator {
+	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
 	protected BundleContext bundleContext;
     String[] args;
 
@@ -83,6 +91,29 @@ public class Activator implements BundleActivator {
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
 	private void run(ServiceReference windowServiceReference) {
+    	GenericActionHolder.getInstance().addGenericActionListener(
+    		new GenericActionListener() {
+				@Override
+				public void onCreateGenericAction(GenericAction genericAction) {
+					if (genericAction.getText() != null) {
+						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getText(), false);
+						if (isToolbar) {
+							String iconPath = genericAction.getIconPath();
+							if (iconPath == null) {
+								iconPath = DEFAULT_ICON_PATH;
+							}
+							ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
+							JButton button = new JButton(icon);
+							button.addActionListener(genericAction);
+							button.setToolTipText(genericAction.getText());
+							((IGB)Application.getSingleton()).addToolbarButton(button);
+						}
+					}
+				}
+				@Override
+				public void notifyGenericAction(String actionClassName) {}
+			}
+    	);
         IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
         igb.init(args);

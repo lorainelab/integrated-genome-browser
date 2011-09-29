@@ -26,7 +26,7 @@ public class Activator implements BundleActivator {
 	    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
 	    	final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
-	    	GenericActionHolder.getInstance().addIGBActionListener(tutorialManager);
+	    	GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
 			JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
 			Properties tutorials = new Properties();
 			tutorials.load(new URL(tutorialUri + "tutorials.properties").openStream());

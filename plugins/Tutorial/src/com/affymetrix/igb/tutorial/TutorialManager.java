@@ -90,7 +90,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			}
 		}
 		if (step.getExecute() != null) {
-			GenericAction action = GenericActionHolder.getInstance().getIGBAction(step.getExecute().getName());
+			GenericAction action = GenericActionHolder.getInstance().getGenericAction(step.getExecute().getName());
 			if (action instanceof IAmount) {
 				((IAmount)action).setAmount(step.getExecute().getAmount());
 			}
@@ -197,7 +197,10 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	@Override
-	public void notifyIGBAction(String id) {
+	public void onCreateGenericAction(GenericAction genericAction) {}
+
+	@Override
+	public void notifyGenericAction(String id) {
 		if (id.equals(waitAction)) {
 			advanceStep();
 		}

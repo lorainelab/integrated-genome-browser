@@ -30,7 +30,7 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		if (getShortcut() != KeyEvent.VK_UNDEFINED) {
 			this.putValue(MNEMONIC_KEY, getShortcut());
 		}
-		GenericActionHolder.getInstance().addIGBAction(this);
+		GenericActionHolder.getInstance().addGenericAction(this);
 	}
 	public String getIconPath() {
 		return null;

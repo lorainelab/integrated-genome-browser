@@ -230,8 +230,12 @@ public final class WebLinksView extends JPanel {
 			public int getShortcut() {
 				return KeyEvent.VK_I;
 			}
+
+			@Override
+			public String getTooltip() {
+				return "Import Web Links";
+			}
 		};
-		a.putValue(Action.SHORT_DESCRIPTION, "Import Web Links");
 		setAccelerator(a);
 		return a;
 	}
@@ -260,8 +264,12 @@ public final class WebLinksView extends JPanel {
 			public int getShortcut() {
 				return KeyEvent.VK_E;
 			}
+
+			@Override
+			public String getTooltip() {
+				return "Export Web Links";
+			}
 		};
-		a.putValue(Action.SHORT_DESCRIPTION, "Export Web Links");
 		setAccelerator(a);
 		return a;
 	}
@@ -292,8 +300,12 @@ public final class WebLinksView extends JPanel {
 			public int getShortcut() {
 				return KeyEvent.VK_D;
 			}
+
+			@Override
+			public String getTooltip() {
+				return "Delete Selected Link(s)";
+			}
 		};
-		a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Link(s)");
 		setAccelerator(a);
 		return a;
 	}
@@ -341,8 +353,12 @@ public final class WebLinksView extends JPanel {
 			public int getShortcut() {
 				return KeyEvent.VK_A;
 			}
+
+			@Override
+			public String getTooltip() {
+				return "Add New Web Link";
+			}
 		};
-		a.putValue(Action.SHORT_DESCRIPTION, "Add New Web Link");
 		setAccelerator(a);
 		return a;
 	}
@@ -390,8 +406,12 @@ public final class WebLinksView extends JPanel {
 			public int getShortcut() {
 				return KeyEvent.VK_E;
 			}
+
+			@Override
+			public String getTooltip() {
+				return "Edit Selected Web Link";
+			}
 		};
-		a.putValue(Action.SHORT_DESCRIPTION, "Edit Selected Web Link");
 		setAccelerator(a);
 		return a;
 	}

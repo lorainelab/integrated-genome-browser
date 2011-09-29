@@ -30,6 +30,9 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		if (getShortcut() != KeyEvent.VK_UNDEFINED) {
 			this.putValue(MNEMONIC_KEY, getShortcut());
 		}
+		if (getTooltip() != null) {
+			this.putValue(SHORT_DESCRIPTION, getTooltip());
+		}
 		GenericActionHolder.getInstance().addGenericAction(this);
 	}
 	public String getIconPath() {
@@ -40,6 +43,7 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
 	public int getShortcut() { return KeyEvent.VK_UNDEFINED; }
+	public String getTooltip() { return null; }
 	public String getId() {
 		return this.getClass().getSimpleName();
 	}

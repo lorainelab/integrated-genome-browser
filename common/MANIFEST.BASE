@@ -9,6 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.swing,
  org.osgi.framework,
+ toolbarButtonGraphics.development,
  toolbarButtonGraphics.general,
  toolbarButtonGraphics.navigation,
  toolbarButtonGraphics.table,

@@ -17,17 +17,19 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 	private final int[] iblockMins, iblockMaxs;
 	private final Cigar cigar;
 	private final int min;
-	String residues;
+	private final String residues;
+	
 	//Residues residues;
-	String insResidues;
+	private String insResidues;
 
 	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
-			int iblockMins[], int[] iblockMaxs, Cigar cigar){
+			int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues){
 		super(type,seq,txMin,txMax,name,score,forward,cdsMin,cdsMax,blockMins,blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
 		this.cigar = cigar;
+		this.residues = residues;
 		this.min = Math.min(txMin, txMax);
 	}
 
@@ -71,10 +73,6 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			super(start, end, seq);
 		}
 		
-		public void setResidues(String residues) {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-
 		public String getResidues() {
 			return interpretCigar(this.getMin(), this.getMax(), false);
 		}
@@ -100,10 +98,6 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			this.index = index;
 		}
 
-		public void setResidues(String residues) {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-
 		public String getResidues(int start, int end) {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
@@ -125,10 +119,6 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 			tprops.put("forward", this.isForward());
 			return tprops;
 		}
-	}
-
-	public void setResidues(String residuesStr){
-		this.residues = residuesStr;
 	}
 
 	public String getResidues(){

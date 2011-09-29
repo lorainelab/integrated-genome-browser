@@ -124,15 +124,12 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
 		return residues;
 	}
 	
-	public boolean setProperty(String key, Object val) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void setResidues(String residues) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
 	public String getResidues(int start, int end) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+	
+	public boolean setProperty(String key, Object val) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
 }

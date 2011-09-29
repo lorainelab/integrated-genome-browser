@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class UCSCHtmlPageBuilder {
 	
 	private static final Pattern FILE_SEPARATOR = Pattern.compile(File.separator);
+	public static final String NAME_HTML_DOC = "genopubUCSC.html";
 
 	/**Makes and saves an html doc containing links that load resorces into the UCSC genome browser.
 	 * */
@@ -149,7 +150,7 @@ public class UCSCHtmlPageBuilder {
 			html = sb.toString();
 		}
 		if (debug) System.out.println("\n"+html);
-		File doc = new File (userDir, "genopubUCSC.html");
+		File doc = new File (userDir, NAME_HTML_DOC);
 		try {
 			PrintWriter out = new PrintWriter( new FileWriter (doc));
 			out.println(html);
@@ -225,6 +226,6 @@ public class UCSCHtmlPageBuilder {
 		"</body>\n"+
 		"</html>\n";
 	
-	private static final String ucscNoFilesToLink = "No files to link!";
+	private static final String ucscNoFilesToLink = "No xxx.bw, xxx.bb, or xxx.bam files to link!";
 	
 }

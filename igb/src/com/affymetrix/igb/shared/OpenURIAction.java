@@ -12,6 +12,10 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.IGB;
+import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
+import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.util.*;
@@ -129,7 +133,13 @@ public abstract class OpenURIAction extends GenericAction {
 			uri = URI.create(uriString);
 		}
 		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
-		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
+		
+		SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
+		if(symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")){
+			symL = new ResidueTrackSymLoader(symL);			
+		}
+		
+		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri, symL), File.class, autoload);
 
 		version.addFeature(gFeature);
 

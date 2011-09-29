@@ -17,13 +17,12 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.io.InputStream;
 import com.affymetrix.genometryImpl.util.SortTabFile;
+import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.net.URI;
 import java.util.ArrayList;
@@ -63,11 +62,7 @@ public abstract class SymLoader {
         this.uri = uri;
 		this.featureName = featureName;
 		this.group = group;
-		
-		String uriString = uri.toASCIIString().toLowerCase();
-		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		extension = ParserController.getExtension(unzippedStreamName);
-		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
+		extension = getExtension(uri);
     }
 
 	protected void init() throws Exception {
@@ -167,6 +162,14 @@ public abstract class SymLoader {
 		return extension;
 	}
 
+	public static String getExtension(URI uri){
+		String uriString = uri.toASCIIString().toLowerCase();
+		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+		String extension = ParserController.getExtension(unzippedStreamName);
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
+		return extension;
+	}
+	
 	/**
 	 * Return the symmetries that match the given chromosome.
 	 * @param genomeResults

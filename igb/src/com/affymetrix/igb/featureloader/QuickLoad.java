@@ -46,7 +46,7 @@ import com.affymetrix.igb.view.TrackView;
 public final class QuickLoad extends SymLoader {
 
 	private final GenericVersion version;
-	private SymLoader symL;	// parser factory
+	private final SymLoader symL;	// parser factory
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	public QuickLoad(GenericVersion version, String featureName, String organism_dir) {
@@ -56,13 +56,13 @@ public final class QuickLoad extends SymLoader {
 		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
 
-	public QuickLoad(GenericVersion version, URI uri) {
+	public QuickLoad(GenericVersion version, URI uri, SymLoader symL) {
 		super(uri, detemineFriendlyName(uri), null);
 		this.version = version;
-		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
+		this.symL = symL;
 		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
-
+	
 	@Override
 	protected void init() {
 		this.isInitialized = true;
@@ -81,8 +81,8 @@ public final class QuickLoad extends SymLoader {
 		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, "No symloader found.");
 		return super.getLoadChoices();
 	}
-
-	private static String detemineFriendlyName(URI uri) {
+			
+	public static String detemineFriendlyName(URI uri) {
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 		String ext = ParserController.getExtension(unzippedStreamName);

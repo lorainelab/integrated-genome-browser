@@ -25,6 +25,7 @@ public final class WebLinksAction extends GenericAction {
 	    putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
 	}
 
+	@Override
     public void actionPerformed(ActionEvent evt) {
     	super.actionPerformed(evt);
     	WebLinksView.getInstance().showManager();

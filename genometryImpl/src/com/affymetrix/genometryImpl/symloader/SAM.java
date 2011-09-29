@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,9 +19,8 @@ import net.sf.samtools.util.CloseableIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import java.io.FileNotFoundException;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.AsciiLineReader;
 
@@ -41,8 +39,7 @@ public class SAM extends XAM implements LineProcessor{
 	@Override
 	public void init() throws Exception  {
 		try {
-			File f = new File(uri);
-			reader = new SAMFileReader(f);
+			reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
 			reader.setValidationStringency(ValidationStringency.SILENT);
 
 			if (this.isInitialized) {
@@ -151,8 +148,7 @@ public class SAM extends XAM implements LineProcessor{
 	}
 
 	public void init(URI uri) {
-		File f = new File(uri);
-		reader = new SAMFileReader(f);
+		reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
 		reader.setValidationStringency(ValidationStringency.SILENT);
 		header = reader.getFileHeader();
 	}

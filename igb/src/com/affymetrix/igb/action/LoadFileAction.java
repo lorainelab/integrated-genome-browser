@@ -278,12 +278,7 @@ public final class LoadFileAction extends AbstractAction {
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
 		String extension = ParserController.getExtension(unzippedStreamName);
 
-		if(extension.equals(".sam")){
-			if(!LocalUrlCacher.isFile(uri)){
-				ErrorHandler.errorPanel("Cannot open file","Only local sam file is permitted.");
-				version = null;
-			}
-		}else if(extension.equals(".bam")){
+		if(extension.equals(".bam")){
 			if(!handleBam(uri)){
 				ErrorHandler.errorPanel("Cannot open file","Could not find index file");
 				version = null;

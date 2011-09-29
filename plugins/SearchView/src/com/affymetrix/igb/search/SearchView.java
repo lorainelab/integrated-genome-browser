@@ -37,6 +37,7 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -167,7 +168,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final CancelButton cancel = new CancelButton("SearchView_CancelButton", igbService.getIcon("x_icon.gif"));
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
-	private JTable table = new JTable();
+	private JRPTable table = new JRPTable("SearchView_table");
 	private JLabel status_bar = new JLabel("0 results");
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;

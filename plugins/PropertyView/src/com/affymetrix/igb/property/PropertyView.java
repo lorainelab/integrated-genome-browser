@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -26,7 +27,6 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -38,7 +38,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final int TAB_POSITION = 1;
 
 	// the table showing name-value pairs
-	private static final JTable table = new JTable();
+	private static final JRPTable table = new JRPTable("PropertyView_table");
 	private final JScrollPane scroll_pane = new JScrollPane();
 	private TableRowSorter<TableModel> sorter;
 	private static final String PROPERTY = "property";

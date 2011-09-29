@@ -414,8 +414,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                             .add(org.jdesktop.layout.GroupLayout.LEADING, trackNameSizeComboBox, 0, 59, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, fgLabel)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, labelFieldLabel))
+                            .add(labelFieldLabel)
+                            .add(fgLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(propertiesPanelLayout.createSequentialGroup()
@@ -872,7 +872,23 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			for (Entry entry : file2types) {
 				element = (AssociationElement) entry.getValue();
 				if (element.propertyMap != null) {
-					PropertyMap props = default_annot_style.getProperties();
+
+					PropertyMap props = new PropertyMap();
+
+					props.put(PROP_FOREGROUND, "");
+					props.put(PROP_BACKGROUND, "");
+					props.put(PROP_START_COLOR, "");
+					props.put(PROP_END_COLOR, "");
+					props.put(PROP_GLYPH_DEPTH, "");
+					props.put(PROP_LABEL_FIELD, "");
+					props.put(PROP_MAX_DEPTH, "");
+					props.put(PROP_SEPARATE, "");
+					props.put(PROP_SHOW, "");
+					props.put(PROP_COLLAPSED, "");
+					props.put(PROP_FONT_SIZE, "");
+					props.put(PROP_DIRECTION_TYPE, "");
+					props.put(PROP_VIEW_MODE, "");
+
 					props.putAll(element.getPropertyMap());
 					element.getPropertyMap().putAll(props);
 					TrackStyle style = new TrackStyle(props);

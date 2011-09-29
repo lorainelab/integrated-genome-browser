@@ -25,7 +25,7 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="selectTrackDefaultPanel" alignment="0" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="360" max="-2" attributes="1"/>
+                      <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="showStrandPanel" min="-2" pref="108" max="-2" attributes="0"/>
                   </Group>
@@ -41,7 +41,7 @@
               <Component id="selectTrackDefaultPanel" max="32767" attributes="1"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="propertiesPanel" min="-2" pref="186" max="-2" attributes="0"/>
+                  <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
                   <Component id="showStrandPanel" min="-2" pref="105" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -189,7 +189,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="434" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="457" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="addTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -295,12 +295,14 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldComboBox" alignment="0" pref="77" max="32767" attributes="1"/>
+                              <Component id="labelFieldComboBox" alignment="0" pref="82" max="32767" attributes="1"/>
                               <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                  <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
@@ -314,34 +316,42 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="trackNameSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="trackNameSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="trackNameSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="trackNameSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="62" pref="62" max="62" attributes="0"/>
+                          <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
                       </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
@@ -349,7 +359,6 @@
                       <Component id="connectedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="146" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -486,6 +495,17 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="labelFieldTip">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="IGBUtils.getIcon(&quot;info_icon.gif&quot;)" type="code"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value=" "/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="labelFieldTip.setToolTipText(&quot;Type or choose label field.&quot;);"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

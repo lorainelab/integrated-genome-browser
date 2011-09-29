@@ -125,6 +125,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String INSTITUTES_REQUEST                 = "institutes";
 	public static final String INSTITUTES_SAVE_REQUEST            = "institutesSave";
 	public static final String VERIFY_RELOAD_REQUEST              = "verifyReload";
+	public static final String MAKE_UCSC_LINKS_REQUEST            = "makeUCSCLinks";
 
 	private GenoPubSecurity genoPubSecurity = null;
 
@@ -269,6 +270,8 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleDictionaryDeleteRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.VERIFY_RELOAD_REQUEST)) {
 				this.handleVerifyReloadRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.MAKE_UCSC_LINKS_REQUEST)) {
+				this.handleMakeUCSCLinksRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.INSTITUTES_REQUEST)) {
 				this.handleInstitutesRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.INSTITUTES_SAVE_REQUEST)) {
@@ -791,6 +794,7 @@ public class GenoPubServlet extends HttpServlet {
 			genomeVersion.setIdOrganism(Util.getIntegerParameter(request, "idOrganism"));
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
+			genomeVersion.setUcscName(request.getParameter("ucscName"));
 			genomeVersion.setCoordURI(request.getParameter("coordURI"));
 			genomeVersion.setCoordVersion(request.getParameter("coordVersion"));
 			genomeVersion.setCoordSource(request.getParameter("coordSource"));
@@ -5024,12 +5028,17 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
+	
+	private void handleMakeUCSCLinksRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		//make the link docs
+		String urlToLoad = makeUCSCURLs(request, res);
+
+		//redirect page to the url
+		res.sendRedirect(urlToLoad);
+	}
 
 	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		
-		//for testing
-		//makeUCSCURLs(request, res);
-		
+		 
 		Session sess  = null;
 
 		StringBuffer invalidGenomeVersions = new StringBuffer();
@@ -5436,9 +5445,12 @@ public class GenoPubServlet extends HttpServlet {
 		return urlLinkDir;
 	}
 
-	private void makeUCSCURLs(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	/**Builds an html document contining links formatted for interacting with a UCSC genome browser to inform it of the location of loadable genopub datasets.
+	 * @return a url for opening into a web browser or null if something bad happened.
+	 * @author davidnix*/
+	private String makeUCSCURLs(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess  = null;
-
+		String urlToLoad = null;
 		try {
 			//get http://bioserver.hci.utah.edu:8080/das2genopub/
 			ServletContext context = getServletContext();
@@ -5594,9 +5606,9 @@ public class GenoPubServlet extends HttpServlet {
 				}
 			}
 			
-			File genopubUCSC = UCSCHtmlPageBuilder.buildUCSCTreeDoc(nestedAnnotations, userDir, treeDir);
+			//make the tree doc
+			UCSCHtmlPageBuilder.buildUCSCTreeDoc(nestedAnnotations, userDir, treeDir);
 			
-			System.out.println("Load -> "+xml_base+ Constants.UCSC_URL_LINK_DIR_NAME+ File.separator + userDir.getName()+ File.separator +UCSCHtmlPageBuilder.NAME_HTML_DOC );
 
 			//any missing UCSC genome versions?
 			StringBuffer message = new StringBuffer();
@@ -5641,16 +5653,18 @@ public class GenoPubServlet extends HttpServlet {
 			} else {				
 				this.reportSuccess(res, confirmMessage.toString());
 			} */
+			urlToLoad = xml_base+ Constants.UCSC_URL_LINK_DIR_NAME+ File.separator + userDir.getName()+ File.separator +UCSCHtmlPageBuilder.NAME_HTML_DOC;
+			
 		} catch (Exception e) {
+			if (sess != null) sess.close();
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-
-		} finally {
-
-			if (sess != null) {
-				sess.close();
-			}
-		}
+		} 
+		
+		//close session
+		if (sess != null) sess.close();
+		return urlToLoad;
+		
 	}
 
 

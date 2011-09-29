@@ -29,7 +29,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 
@@ -52,6 +51,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel;
@@ -110,7 +110,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private BundleContext bundleContext;
 	private JScrollPane jScrollPane;
 	private final BundleTableModel bundleTableModel;
-	private final JTable bundleTable;
+	private final JRPTable bundleTable;
 	private JRPCheckBox installedBundlesCheckbox;
 	private JRPCheckBox uninstalledBundlesCheckbox;
 	private JRPButton updateAllBundlesButton;
@@ -135,7 +135,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		setLayout(new BorderLayout());
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
 		bundleTableModel = new BundleTableModel();
-		bundleTable = new JTable(bundleTableModel) {
+		bundleTable = new JRPTable("PluginsView_bundleTable", bundleTableModel) {
 			private static final long serialVersionUID = 1L;
 			public void valueChanged(ListSelectionEvent e) {
 				super.valueChanged(e);

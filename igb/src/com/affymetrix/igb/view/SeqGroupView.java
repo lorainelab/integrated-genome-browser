@@ -27,7 +27,9 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -82,7 +84,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private static final boolean DEBUG_EVENTS = false;
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
 	private final GenometryModel gmodel;
-	private final JTable seqtable;
+	private final JRPTable seqtable;
 	private final ListSelectionModel lsm;
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
@@ -97,22 +99,23 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private AnnotatedSeqGroup curGroup = null;
 	private volatile boolean lookForPersistentGenome = true;
 	private static SeqMapView gviewer;
-	private JComboBox speciesCB;
-	private JComboBox versionCB;
+	private JRPComboBox speciesCB;
+	private JRPComboBox versionCB;
 	private final IGBService igbService;
 	
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
 		gmodel = GenometryModel.getGenometryModel();
 		gviewer = Application.getSingleton().getMapView();
-		seqtable = new JTable() {
+		seqtable = new JRPTable("SeqGroupView_seqtable") {
+			private static final long serialVersionUID = 1L;
 			//Implement table header tool tips.
 
 			protected JTableHeader createDefaultTableHeader() {
 				return new JTableHeader(columnModel) {
+					private static final long serialVersionUID = 1L;
 
 					public String getToolTipText(MouseEvent e) {
-						String tip = null;
 						java.awt.Point p = e.getPoint();
 						int index = columnModel.getColumnIndexAtX(p.x);
 						int realIndex = columnModel.getColumn(index).getModelIndex();
@@ -473,7 +476,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		// needs to be cleared.
 
 		GeneralLoadView.getLoadView().disableAllButtons();
-		GeneralLoadView.getLoadView().AutoloadQuickloadFeature();
+		GeneralLoadView.AutoloadQuickloadFeature();
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -553,7 +556,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
-		GeneralLoadView.getLoadView().loadWholeRangeFeatures(ServerType.DAS2);
+		GeneralLoadView.loadWholeRangeFeatures(ServerType.DAS2);
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
@@ -802,7 +805,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		CThreadWorker worker = new CThreadWorker("Loading previous genome " + versionName + " ...") {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading previous genome " + versionName + " ...") {
 
 			@Override
 			protected Object runInBackground() {
@@ -894,7 +897,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		speciesCB.addItemListener(Welcome.getWelcome());
 	}
 
-	public JTable getTable() {
+	public JRPTable getTable() {
 		return seqtable;
 	}
 

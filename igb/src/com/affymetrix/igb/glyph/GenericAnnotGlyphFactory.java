@@ -246,6 +246,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
+			GlyphI alignResidueGlyph = handleAlignedResidues(insym, annotseq);
+			if(alignResidueGlyph != null){
+				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
+				pglyph.addChild(alignResidueGlyph);
+			}
 		}
 		return pglyph;
 	}

@@ -360,14 +360,12 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 
         maxDepthLabel.setText("Max Depth:");
 
-        maxDepthTextField.setText("10");
         maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxDepthTextFieldActionPerformed(evt);
             }
         });
 
-        show2TracksCheckBox.setSelected(true);
         show2TracksCheckBox.setText("Show (+/-) tracks");
         show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -375,7 +373,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
             }
         });
 
-        connectedCheckBox.setSelected(true);
         connectedCheckBox.setText("Connected");
         connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

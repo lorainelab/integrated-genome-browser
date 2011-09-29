@@ -19,6 +19,8 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
@@ -62,16 +64,16 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final GraphVisibleBoundsSetter per_info_provider;
 	private final MaxGapThresholder max_gap_thresher;
 	private final MinRunThresholder min_run_thresher;
-	private final JSlider score_val_slider;
-	private final JSlider score_percent_slider;
+	private final JRPSlider score_val_slider;
+	private final JRPSlider score_percent_slider;
 	private final JRPTextField score_valT;
 	private final JRPTextField score_perT;
-	private final JRadioButton thresh_aboveB;
-	private final JRadioButton thresh_belowB;
-	private final JRadioButton thresh_unknownB; // invisible radio button
+	private final JRPRadioButton thresh_aboveB;
+	private final JRPRadioButton thresh_belowB;
+	private final JRPRadioButton thresh_unknownB; // invisible radio button
 	private final JRPTextField shift_startTF = new JRPTextField("GraphScoreThreshSetter_shift_startTF", "0", 5);
 	private final JRPTextField shift_endTF = new JRPTextField("GraphScoreThreshSetter_shift_endTF", "0", 5);
-	private final JRPComboBoxWithSingleListener threshCB = new JRPComboBoxWithSingleListener("thresh");
+	private final JRPComboBoxWithSingleListener threshCB = new JRPComboBoxWithSingleListener("GraphScoreThreshSetter_threshCB");
 	private final JRPButton tier_threshB = new JRPButton("GraphScoreThreshSetter_tier_threshB", "Make Track");
 	private static final float sliders_per_percent = 10.0f;
 	private static final float percents_per_slider = 1.0f / sliders_per_percent;
@@ -112,8 +114,8 @@ public final class GraphScoreThreshSetter extends JPanel
 		this.widg = igbService.getSeqMap();
 		per_info_provider = bounds_setter;
 
-		score_val_slider = new JSlider(JSlider.HORIZONTAL);
-		score_percent_slider = new JSlider(JSlider.HORIZONTAL,
+		score_val_slider = new JRPSlider("GraphScoreThreshSetter_score_val_slider", JSlider.HORIZONTAL);
+		score_percent_slider = new JRPSlider("GraphScoreThreshSetter_score_percent_slider", JSlider.HORIZONTAL,
 						(int) (abs_min_per * sliders_per_percent),
 						(int) (abs_max_per * sliders_per_percent),
 						(int) (prev_thresh_per * sliders_per_percent));
@@ -134,9 +136,9 @@ public final class GraphScoreThreshSetter extends JPanel
 		textP.setLayout(new BoxLayout(textP, BoxLayout.Y_AXIS));
 		slideP.setLayout(new BoxLayout(slideP, BoxLayout.Y_AXIS));
 
-		thresh_aboveB = new JRadioButton("> thresh");
-		thresh_belowB = new JRadioButton("<= thresh");
-		thresh_unknownB = new JRadioButton(">?< thresh"); // invisible button
+		thresh_aboveB = new JRPRadioButton("GraphScoreThreshSetter_thresh_aboveB", "> thresh");
+		thresh_belowB = new JRPRadioButton("GraphScoreThreshSetter_thresh_belowB", "<= thresh");
+		thresh_unknownB = new JRPRadioButton("GraphScoreThreshSetter_thresh_unknownB", ">?< thresh"); // invisible button
 		ButtonGroup pgroup = new ButtonGroup();
 		pgroup.add(thresh_aboveB);
 		pgroup.add(thresh_belowB);

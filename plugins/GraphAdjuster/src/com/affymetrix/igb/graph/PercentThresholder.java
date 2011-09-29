@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -33,11 +35,11 @@ public final class PercentThresholder extends JPanel
   private static final long serialVersionUID = 1L;
 
   private final NeoAbstractWidget widg;
-  private final JSlider min_percent_slider;
-  private final JSlider max_percent_slider;
+  private final JRPSlider min_percent_slider;
+  private final JRPSlider max_percent_slider;
   private final JRPTextField min_perT;
   private final JRPTextField max_perT;
-  private final JCheckBox syncCB;
+  private final JRPCheckBox syncCB;
   private boolean sync_min_max;
 
   // info2pscores is a hash of GraphGlyphs' data model
@@ -110,12 +112,12 @@ public final class PercentThresholder extends JPanel
     max_perT.setText(Float.toString(current_max_percent));
 
     min_percent_slider =
-      new JSlider(JSlider.HORIZONTAL,
+      new JRPSlider("PercentThresholder_min_percent_slider", JSlider.HORIZONTAL,
 		  (int)(abs_min_percent * sliders_per_percent),
 		  (int)(abs_max_percent * sliders_per_percent),
 		  (int)(current_min_percent * sliders_per_percent));
     max_percent_slider =
-      new JSlider(JSlider.HORIZONTAL,
+      new JRPSlider("PercentThresholder_max_percent_slider", JSlider.HORIZONTAL,
 		  (int)(abs_min_percent * sliders_per_percent),
 		  (int)(abs_max_percent * sliders_per_percent),
 		  (int)(current_max_percent * sliders_per_percent));
@@ -155,7 +157,7 @@ public final class PercentThresholder extends JPanel
     this.add(textP);
     this.add(slideP);
 
-    syncCB = new JCheckBox("Sync Min/Max");
+    syncCB = new JRPCheckBox("PercentThresholder_syncCB", "Sync Min/Max");
 
     min_perT.addActionListener(this);
     max_perT.addActionListener(this);

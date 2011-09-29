@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -34,7 +35,7 @@ public final class MinRunThresholder extends JPanel
 
   private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   private final NeoAbstractWidget widg;
-  private JSlider tslider;
+  private JRPSlider tslider;
   private JRPTextField minrunTF;
   private static final int default_thresh_min = 0;
   private static final int default_thresh_max = 250;
@@ -76,7 +77,7 @@ public final class MinRunThresholder extends JPanel
   public MinRunThresholder(NeoAbstractWidget w) {
     widg = w;
 
-    tslider = new JSlider(JSlider.HORIZONTAL);
+    tslider = new JRPSlider("MinRunThresholder_tslider", JSlider.HORIZONTAL);
     tslider.setPreferredSize(new Dimension(400, 15));
 
     minrunTF = new JRPTextField("MinRunThresholder_minrunTF", max_chars);

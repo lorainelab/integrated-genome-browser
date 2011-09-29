@@ -27,6 +27,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -38,16 +40,16 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private final static DecimalFormat val_format;
 	private final static DecimalFormat per_format;
 	private NeoAbstractWidget widg;
-	private JSlider min_percent_slider;
-	private JSlider max_percent_slider;
-	private JSlider min_val_slider;
-	private JSlider max_val_slider;
+	private JRPSlider min_percent_slider;
+	private JRPSlider max_percent_slider;
+	private JRPSlider min_val_slider;
+	private JRPSlider max_val_slider;
 	private JRPTextField min_perT;
 	private JRPTextField max_perT;
 	private JRPTextField min_valT;
 	private JRPTextField max_valT;
-	private final JRadioButton by_valRB = new JRadioButton("By Value");
-	private final JRadioButton by_percentileRB = new JRadioButton("By Percentile");
+	private final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", "By Value");
+	private final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", "By Percentile");
 	private final JPanel valP = new JPanel();  // for adjust-by-value controls
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
 	private final static int max_chars = 8;
@@ -160,17 +162,17 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		min_perT.setText(per_format.format(prev_min_per));
 		max_perT.setText(per_format.format(prev_max_per));
 		min_percent_slider =
-						new JSlider(JSlider.HORIZONTAL,
+						new JRPSlider("GraphVisibleBoundsSetter_min_percent_slider", JSlider.HORIZONTAL,
 						(int) (abs_min_percent * sliders_per_percent),
 						(int) (abs_max_percent * sliders_per_percent),
 						(int) (prev_min_per * sliders_per_percent));
 		max_percent_slider =
-						new JSlider(JSlider.HORIZONTAL,
+						new JRPSlider("GraphVisibleBoundsSetter_max_percent_slider", JSlider.HORIZONTAL,
 						(int) (abs_min_percent * sliders_per_percent),
 						(int) (abs_max_percent * sliders_per_percent),
 						(int) (prev_max_per * sliders_per_percent));
-		min_val_slider = new JSlider(JSlider.HORIZONTAL);
-		max_val_slider = new JSlider(JSlider.HORIZONTAL);
+		min_val_slider = new JRPSlider("GraphVisibleBoundsSetter_min_val_slider", JSlider.HORIZONTAL);
+		max_val_slider = new JRPSlider("GraphVisibleBoundsSetter_max_val_slider", JSlider.HORIZONTAL);
 
 		min_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
 		max_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));

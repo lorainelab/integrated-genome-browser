@@ -712,9 +712,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private final Map<String, GraphOperator> name2operator;
 		private final JRPButton transformationGoB = new JRPButton("SimpleGraphTab_transformationGoB", BUNDLE.getString("goButton"));
 		private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
-		private final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("transformation");
+		private final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_transformation");
 		private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
-		private final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("operation");
+		private final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_operation");
 		private final JRPButton operationGoB = new JRPButton("SimpleGraphTab_operationGoB", BUNDLE.getString("goButton"));
 		private final HoverEffect hovereffect;
 		private final ItemListener operationListener = new ItemListener() {

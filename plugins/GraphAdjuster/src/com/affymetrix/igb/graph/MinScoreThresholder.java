@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -37,7 +38,7 @@ public final class MinScoreThresholder extends JPanel
   private static final NumberFormat nformat = new DecimalFormat();
   private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   private final NeoAbstractWidget widg;
-  private final JSlider tslider;
+  private final JRPSlider tslider;
   private final JRPTextField minscoreTF;
   private float thresh_min = -500;
   private float thresh_max = 500;
@@ -71,7 +72,7 @@ public final class MinScoreThresholder extends JPanel
   public MinScoreThresholder(NeoAbstractWidget w) {
     widg = w;
 
-    tslider = new JSlider(JSlider.HORIZONTAL);
+    tslider = new JRPSlider("MinScoreThresholder_tslider", JSlider.HORIZONTAL);
     tslider.setPreferredSize(new Dimension(400, 15));
 
     minscoreTF = new JRPTextField("MinScoreThresholder_minscoreTF", 5);

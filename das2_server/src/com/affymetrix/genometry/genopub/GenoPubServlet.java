@@ -139,7 +139,7 @@ public class GenoPubServlet extends HttpServlet {
 	private File genoPubWebAppDir;
 	private HashSet<String> urlLinkFileExtensions = null;
 	//html link to the UCSC server to push tracks to, defaults to the main UCSC site
-	private String ucscHttpServerAddress = "http://genome.ucsc.edu/";
+	private String ucscHttpServerAddress = "http://genome.ucsc.edu";
 	private static final Pattern HTML_BRACKETS = Pattern.compile("<[^>]+>");
 
 
@@ -5424,7 +5424,7 @@ public class GenoPubServlet extends HttpServlet {
 		//add redirect index.html if not present, send them to genopub
 		File redirect = new File (urlLinkDir, "index.html");
 		if (redirect.exists() == false){
-			String toWrite = "<html> <head> <META HTTP-EQUIV=\"Refresh\" Content=\"0; URL="+xml_base+"/genopub\"> </head> <body>Access denied.</body>";
+			String toWrite = "<html> <head> <META HTTP-EQUIV=\"Refresh\" Content=\"0; URL="+xml_base+"genopub\"> </head> <body>Access denied.</body>";
 			PrintWriter out = new PrintWriter (new FileWriter (redirect));
 			out.println(toWrite);
 			out.close();
@@ -5506,16 +5506,16 @@ public class GenoPubServlet extends HttpServlet {
 							String type = "type="+fetchUCSCDataType (filesToLink);
 
 							//is there a summary?
-							String summary = annotation.getSummary();
+							String summary = HTML_BRACKETS.matcher(annotation.getSummary()).replaceAll("");
 							if (summary !=null && summary.trim().length() !=0) summary = "description=\"Summary: "+summary;
 							else summary = null;
 
 							//is there a description?
-							String description = annotation.getDescription();
+							String description = HTML_BRACKETS.matcher(annotation.getDescription()).replaceAll("");
 							if (description !=null && description.trim().length() !=0){
 								//any summary?
 								if (summary != null) {
-									description = summary +", Description: "+description+ "\"";
+									description = summary +" <br>Description: "+description+ "\"";
 								}
 								else description = "description=\""+description+"\"";
 							}
@@ -5526,10 +5526,8 @@ public class GenoPubServlet extends HttpServlet {
 
 							//clean up description
 							if (description == null ) description = "";
-							else description = HTML_BRACKETS.matcher(description).replaceAll("");
 
-
-							//html link to this annotation
+							//html link to this annotation, this doesn't seem to work in UCSC?
 							String htmlURL = "htmlURL="+  xml_base + "genopub?idAnnotation="+ annotation.getFileName().substring(1);
 
 							//TODO: color indicated? look for property named color, convert to RGB, comma delimited and set 'color='
@@ -5549,7 +5547,7 @@ public class GenoPubServlet extends HttpServlet {
 
 								File annoDir = new File (genomeVersionDir, name);
 								annoDir.mkdirs();
-								String datasetName = "name="+annotation.getName()+" "+annotation.getFileName();
+								String datasetName = "name=\""+annotation.getName()+" "+annotation.getFileName()+"\"";
 
 								//for each file
 								for (File f: filesToLink){
@@ -5557,7 +5555,7 @@ public class GenoPubServlet extends HttpServlet {
 									String annoString = annoFile.toString();
 
 									//make soft link
-									Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
+									Util.makeHardLinkViaUNIXCommandLine(f, annoFile);
 
 									//is it a bam index xxx.bai? If so then skip!
 									if (annoString.endsWith(".bai")) continue;
@@ -5568,7 +5566,7 @@ public class GenoPubServlet extends HttpServlet {
 									String bigDataUrl = "bigDataUrl="+ xml_base+ annoPartialPath;
 
 									//make final html link
-									String customHttpLink = ucscHttpServerAddress + "cgi-bin/hgTracks?db=" + ucscGenomeVerisonName + "&hgct_customText=track+visibility=full+";
+									String customHttpLink = ucscHttpServerAddress + "/cgi-bin/hgTracks?db=" + ucscGenomeVerisonName + "&hgct_customText=track+visibility=full+";
 									String toEncode = type +" "+ datasetName +" "+ description +" "+ htmlURL +" "+ bigDataUrl;
 
 									//save html link to annotation
@@ -5598,7 +5596,7 @@ public class GenoPubServlet extends HttpServlet {
 			
 			File genopubUCSC = UCSCHtmlPageBuilder.buildUCSCTreeDoc(nestedAnnotations, userDir, treeDir);
 			
-			System.out.println("Load -> "+genopubUCSC);
+			System.out.println("Load -> "+xml_base+ Constants.UCSC_URL_LINK_DIR_NAME+ File.separator + userDir.getName()+ File.separator +UCSCHtmlPageBuilder.NAME_HTML_DOC );
 
 			//any missing UCSC genome versions?
 			StringBuffer message = new StringBuffer();

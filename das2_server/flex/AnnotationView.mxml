@@ -2437,12 +2437,12 @@
 			               	click="{addItem('Annotation folder')}" 
 			               	id="linkbutton3" textAlign="left" excludeFrom="GuestState"/>
 			               <mx:VRule height="20" id="vrule5" width="2" excludeFrom="GuestState"/>
-			               <mx:LinkButton  label="New Genome version" 
+			               <mx:LinkButton  label="New Genome" 
 			               	icon="@Embed(source='assets/genome_version_new.png')" 
 			               	enabled="true"
 			               disabledIcon="@Embed(source='assets/genome_version_new_disable.png')" 
 			               styleName="linkMenuButton"   					        	
-			               toolTip="New genome version" 
+			               toolTip="Create a new genome version" 
 			               click="{addItem('Genome version')}" 
 			               leading="0" id="linkbutton2" textAlign="left" enabled.UserState="false" excludeFrom="GuestState"/>
 			               <mx:VRule height="20" id="vrule6" width="2" excludeFrom="GuestState"/>
@@ -2450,7 +2450,7 @@
 			               	    icon="@Embed(source='assets/organism_new.png')" 
 			               	    enabled="true"
   					        	disabledIcon="@Embed(source='assets/organism_new_disable.png')"  
-  					        	toolTip="New organism"
+  					        	toolTip="Create a new species"
 								styleName="linkMenuButton"   					        	
   					        	click="{addItem('Species')}" 
   					        	labelPlacement="right" textAlign="left" id="linkbutton1" enabled.UserState="false" excludeFrom="GuestState"/>

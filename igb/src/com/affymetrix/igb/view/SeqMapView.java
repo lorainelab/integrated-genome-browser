@@ -41,6 +41,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPToggleButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
@@ -142,8 +143,8 @@ public class SeqMapView extends JPanel
 	protected boolean coord_shift = false;
 	private boolean show_prop_tooltip = true;
 	private MapMode mapMode;
-	private JToggleButton select_mode_button;
-	private JToggleButton scroll_mode_button;
+	private JRPToggleButton select_mode_button;
+	private JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
 	private GraphSelectionManager graph_manager;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
@@ -431,12 +432,12 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox.add(map_range_box.range_box);
 
-		select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
+		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		xzoombox.add(select_mode_button);
 
-		scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
+		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
 		xzoombox.add(scroll_mode_button);

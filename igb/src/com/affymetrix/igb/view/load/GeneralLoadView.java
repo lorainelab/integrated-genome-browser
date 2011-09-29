@@ -39,7 +39,8 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.LoadSequence;
+import com.affymetrix.igb.action.LoadPartialSequenceAction;
+import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.view.TrackView;
@@ -94,10 +95,10 @@ public final class GeneralLoadView {
 		tree = feature_tree_view.getTree();
 		dataManagementTableModel = new DataManagementTableModel(this);
 		dataManagementTable = new JTableX(dataManagementTableModel);
-		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadSequence.getPartialAction());
-		this.refreshDataAction = gviewer.getRefreshDataAction();
+		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
-		all_residuesB = new JRPButton("DataAccess_allSequence", LoadSequence.getWholeAction());
+		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
+		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadPartialSequenceAction.getAction());
 
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD, IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());

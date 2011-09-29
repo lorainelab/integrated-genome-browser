@@ -1,12 +1,10 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genometryImpl.event.GenericAction;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Icon;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -15,25 +13,39 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class CopyResiduesAction extends AbstractAction {
+@SuppressWarnings("serial")
+public abstract class CopyResiduesAction extends GenericAction {
+	private static final CopyResiduesAction ACTION = new CopyResiduesAction() {
+		@Override public String getText() { return BUNDLE.getString("copySelectedResiduesToClipboard"); }		
+	};
+	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction() {
+		@Override public String getText() { return "Copy"; }		
+	};
 
-	private static final long serialVersionUID = 1l;
-
-	public CopyResiduesAction() {
-		this(BUNDLE.getString("copySelectedResiduesToClipboard"));
+	public static CopyResiduesAction getAction() {
+		return ACTION;
 	}
 
-	public CopyResiduesAction(String text) {
-		this(text, MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
+	public static CopyResiduesAction getActionShort() {
+		return ACTION_SHORT;
 	}
 
-	public CopyResiduesAction(String text, Icon icon){
-		super(text, icon);
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_C);
+	private CopyResiduesAction() {
+		super();
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().copySelectedResidues(false);
+	}
 
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Copy16.gif";
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_C;
 	}
 }

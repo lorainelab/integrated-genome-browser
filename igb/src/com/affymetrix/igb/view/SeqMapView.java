@@ -70,7 +70,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.CopyResiduesAction;
-import com.affymetrix.igb.action.LoadSequence;
+import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.MapModeAction;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -1771,11 +1771,11 @@ public class SeqMapView extends JPanel
 				if (tglyph instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
-						popup.add(new JMenuItem(LoadSequence.getPartialAction()));
+						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));
 					}
 
 					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
-						popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
+						popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
 						popup.add(new JMenuItem(seqviewer));
 					}
 				}

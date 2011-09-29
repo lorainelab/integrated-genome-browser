@@ -387,7 +387,7 @@ public final class IGB extends Application
 		edit_menu = MenuUtil.getRPMenu("Main_editMenu", BUNDLE.getString("editMenu"));
 		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 
-		MenuUtil.addToMenu(edit_menu, new JRPMenuItem("Main_editMenu_copyResidues", new CopyResiduesAction()));
+		MenuUtil.addToMenu(edit_menu, new JRPMenuItem("Main_editMenu_copyResidues", CopyResiduesAction.getAction()));
 	}
 
 	private void viewMenu() {

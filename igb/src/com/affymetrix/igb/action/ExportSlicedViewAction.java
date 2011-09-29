@@ -1,6 +1,8 @@
 package com.affymetrix.igb.action;
 
 import java.awt.Component;
+
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -9,7 +11,6 @@ import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -17,14 +18,16 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ExportSlicedViewAction extends AbstractAction {
+public class ExportSlicedViewAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static final ExportSlicedViewAction ACTION = new ExportSlicedViewAction();
 
-	public ExportSlicedViewAction() {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("slicedViewWithLabels")));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_S);
+	public static ExportSlicedViewAction getAction() {
+		return ACTION;
+	}
+
+	private ExportSlicedViewAction() {
+		super();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -40,11 +43,23 @@ public class ExportSlicedViewAction extends AbstractAction {
 		}
 	}
 
-	public static Component determineSlicedComponent() {
+	public Component determineSlicedComponent() {
 		AltSpliceView slice_view = (AltSpliceView)((IGB)IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view == null) {
 			return null;
 		}
 		return ((AffyLabelledTierMap)slice_view.getSplicedView().getSeqMap()).getSplitPane();
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("slicedViewWithLabels"));
+	}
+
+	@Override
+	public int getShortcut() {
+		return KeyEvent.VK_S;
 	}
 }

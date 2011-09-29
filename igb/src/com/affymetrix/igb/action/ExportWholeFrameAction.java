@@ -1,11 +1,11 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -13,20 +13,31 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ExportWholeFrameAction extends AbstractAction {
+public class ExportWholeFrameAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static final ExportWholeFrameAction ACTION = new ExportWholeFrameAction();
 
-	public ExportWholeFrameAction() {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("wholeFrame")));
+	public static ExportWholeFrameAction getAction() {
+		return ACTION;
+	}
+
+	private ExportWholeFrameAction() {
+		super();
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		try {
 			ComponentWriter.showExportDialog(IGB.getSingleton().getFrame());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("wholeFrame"));
 	}
 }

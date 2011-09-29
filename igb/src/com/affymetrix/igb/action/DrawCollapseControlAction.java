@@ -12,7 +12,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author hiralv
  */
 public class DrawCollapseControlAction extends GenericAction {
-
+	private static final long serialVersionUID = 1L;
 	final SeqMapView map_view;
 	
 	public DrawCollapseControlAction(SeqMapView map_view){

@@ -323,7 +323,7 @@ public class ScriptFileLoader {
 					c = IGB.getSingleton().getMapView().getSeqMap();
 					break;
 				case SLICEDWITHLABELS:
-					c = ExportSlicedViewAction.determineSlicedComponent();
+					c = ExportSlicedViewAction.getAction().determineSlicedComponent();
 					break;
 			}
 			if (!ComponentWriter.exportComponent(f, c, eft)) {

@@ -346,7 +346,7 @@ public final class IGB extends Application
 		}
 //		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(view_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", new ExportSlicedViewAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", ExportSlicedViewAction.getAction()), export_to_file_menu.getText());
 		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
@@ -373,9 +373,9 @@ public final class IGB extends Application
 		export_to_file_menu = new JRPMenu("Main_fileMenu_export", BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 		file_menu.add(export_to_file_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportMainView", new ExportMainViewAction()), export_to_file_menu.getText());
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportLabelledMainView", new ExportLabelledMainViewAction()), export_to_file_menu.getText());
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportWholeFrame", new ExportWholeFrameAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportMainView", ExportMainViewAction.getAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportLabelledMainView", ExportLabelledMainViewAction.getAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportWholeFrame", ExportWholeFrameAction.getAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_preferences", PreferencesAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new SaveScriptAction())); // don't want to record this

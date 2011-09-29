@@ -860,6 +860,15 @@
 
   		}
   		
+  		
+  		/************************************************************************
+		 * Make UCSC Links 
+		 *
+		 */
+		private function makeUCSCLinks():void {
+			navigateToURL(new URLRequest("genopub/makeUCSCLinks"),"to_blank");	
+		}
+  		
 		
 		/************************************************************************
 		 * Refresh DAS2 Server
@@ -1401,6 +1410,7 @@
         	params.idGenomeVersion   = annotationsTree.selectedItem.@idGenomeVersion;
         	params.name              = this.genomeVersionName.text;
         	params.buildDate         = this.genomeVersionBuildDate.text;
+        	params.ucscName         = this.ucscGenomeName.text;
         	params.idOrganism        = annotationsTree.selectedItem.@idOrganism;
         	params.coordURI          = this.coordURI.text;
         	params.coordVersion      = this.coordVersion.text;
@@ -2522,6 +2532,14 @@
 			            	icon="@Embed(source='assets/database_lightning.png')" 
 			            	click="{refreshDAS2()}" 
 			            	id="reloadDas2ServerButton" textAlign="left" />
+			            	
+			            	
+			            <mx:VRule height="20" id="vrule3a" width="2" />
+			            <mx:LinkButton styleName="linkMenuButton" label="Make UCSC Links" 
+			            	icon="@Embed(source='assets/database_lightning.png')" 
+			            	click="{makeUCSCLinks()}" 
+			            	id="makeUCSCLinkButton" textAlign="left" />
+			            	
 
   					 </mx:HBox>       
 
@@ -2860,6 +2878,10 @@
 							<mx:HBox width="100%">
 								<mx:Label text="Build date:" width="120"/>
 								<mx:DateField id="genomeVersionBuildDate" text="{annotationsTree.selectedItem.@buildDate}" change="dirtyGenomeVersion.setDirty()"/>
+							</mx:HBox>
+							<mx:HBox width="100%" >
+								<mx:Label text="UCSC name:" width="120"/>
+								<mx:TextInput id="ucscGenomeName"  width="100%" text="{annotationsTree.selectedItem.@ucscName}" change="dirtyGenomeVersion.setDirty()" maxChars="200"/>
 							</mx:HBox>
 							<mx:HBox width="100%" >
 								<mx:Label text="Coord URI:" width="120"/>

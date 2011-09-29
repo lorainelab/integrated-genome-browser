@@ -30,6 +30,8 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
 /**
@@ -47,8 +49,8 @@ public final class OrfAnalyzer extends JComponent
 	// GAH 8-23-2004
 	// As IGB is currently configured, smv should be set to the internal SeqMapView of the AltSpliceView...
 	private final SeqMapView smv;
-	private JSlider orf_thresh_slider;
-	private JCheckBox showCB;
+	private JRPSlider orf_thresh_slider;
+	private JRPCheckBox showCB;
 	private JLabel orf_threshL;
 	private JLabel orfL;
 	private TransformTierGlyph fortier;
@@ -71,8 +73,8 @@ public final class OrfAnalyzer extends JComponent
 
 		orfL = new JLabel("Min ORF Length:", SwingConstants.CENTER);
 		orf_threshL = new JLabel(Integer.toString(current_orf_thresh), SwingConstants.CENTER);
-		showCB = new JCheckBox("Analyze ORFs");
-		orf_thresh_slider = new JSlider(JSlider.HORIZONTAL, orf_thresh_min, orf_thresh_max, current_orf_thresh);
+		showCB = new JRPCheckBox("OrfAnalyzer_showCB", "Analyze ORFs");
+		orf_thresh_slider = new JRPSlider("OrfAnalyzer_orf_thresh_slider", JSlider.HORIZONTAL, orf_thresh_min, orf_thresh_max, current_orf_thresh);
 		JPanel pan1 = new JPanel();
 		pan1.setLayout(new FlowLayout());
 		pan1.add(orfL);

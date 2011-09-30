@@ -195,7 +195,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   /** A JPanel that listens for TreeSelectionEvents, displays
    *  the name(s) of the selected item(s), and may allow you to edit them.
    */
-  private class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
+  private class BottomThing extends JPanel implements TreeSelectionListener {
 	private static final long serialVersionUID = 1L;
     JLabel type_label = new JLabel("Type:");
     JLabel type_label_2 = new JLabel("");
@@ -234,8 +234,36 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
       name_box.add(Box.createHorizontalStrut(5));
       name_box.add(name_text_field);
       this.name_text_field.setEnabled(false);
-      name_text_field.addActionListener(this);
-      name_text_field.addFocusListener(this);
+      name_text_field.addActionListener(
+    	new GenericAction() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				super.actionPerformed(e);
+    	        if (e.getID() == ActionEvent.ACTION_PERFORMED) {
+    	          rename(selected_bl, name_text_field.getText());
+    	        }
+    	      }
+
+			@Override
+			public String getText() {
+				return null;
+			}
+    	}
+      );
+      name_text_field.addFocusListener(
+    	new FocusListener() {
+    	    public void focusGained(FocusEvent e) {}
+
+    	    /** Allows renaming the selected BookmarkList when the text field loses
+    	     *  focus due to tabbing.
+    	     */
+    	    public void focusLost(FocusEvent e) {
+     	        //System.out.println("Lost focus! "+name_text_field.getText());
+    	        rename(selected_bl, name_text_field.getText());
+    	    }
+    	}
+      );
 
       Box button_box = new Box(BoxLayout.X_AXIS);
       button_box.add(Box.createHorizontalGlue());
@@ -329,26 +357,6 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
       } else if (user_object instanceof String) {
         selected_bl.setUserObject(name);
         def_tree_model.nodeChanged(bl);
-      }
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
-      if (source == name_text_field && e.getID() == ActionEvent.ACTION_PERFORMED) {
-        rename(selected_bl, name_text_field.getText());
-      }
-    }
-
-    public void focusGained(FocusEvent e) {
-    }
-
-    /** Allows renaming the selected BookmarkList when the text field loses
-     *  focus due to tabbing.
-     */
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() == name_text_field) {
-        //System.out.println("Lost focus! "+name_text_field.getText());
-        rename(selected_bl, name_text_field.getText());
       }
     }
 

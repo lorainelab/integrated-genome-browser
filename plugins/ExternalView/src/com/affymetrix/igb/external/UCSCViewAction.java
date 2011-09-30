@@ -9,12 +9,12 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 
@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 
@@ -31,7 +30,7 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
  * @author sgblanch
  * @version $Id: UCSCViewAction.java 7258 2010-12-17 21:40:02Z lfrohman $
  */
-public class UCSCViewAction extends AbstractAction implements SeqSelectionListener {
+public class UCSCViewAction extends GenericAction implements SeqSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
 	private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
@@ -40,8 +39,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	private final IGBService igbService;
 	
 	public UCSCViewAction(IGBService igbService) {
-		super(BUNDLE.getString("viewRegionInUCSCBrowser"),
-				MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
+		super();
 		this.igbService = igbService;
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);
@@ -49,6 +47,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	}
 
 	public void actionPerformed(ActionEvent ae) {
+		super.actionPerformed(ae);
 		String query = getUCSCQuery();
 
 		if (!query.isEmpty()) {
@@ -114,5 +113,15 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	private String getRegionString() {
 		SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
 		return span.getBioSeq() + ":" + span.getMin() + "-" + span.getMax();
+	}
+
+	@Override
+	public String getText() {
+		return BUNDLE.getString("viewRegionInUCSCBrowser");
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/development/WebComponent16.gif";
 	}
 }

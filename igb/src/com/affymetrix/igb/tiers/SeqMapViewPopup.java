@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -66,19 +67,24 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
-	private final Action select_all_tiers_action = new AbstractAction("Select All Tracks") {
-
+	private final Action select_all_tiers_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			handler.selectAllTiers();
 		}
-	};
-	private final Action rename_action = new AbstractAction("Change Display Name") {
 
+		@Override
+		public String getText() {
+			return "Select All Tracks";
+		}
+	};
+	private final Action rename_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() != 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -87,127 +93,198 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			renameTier(current_tier);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action customize_action = new AbstractAction("Customize") {
 
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			showCustomizer();
+		@Override
+		public String getText() {
+			return "Change Display Name";
 		}
 	};
-	private final Action expand_action = new AbstractAction("Expand") {
-
+	private final Action customize_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			showCustomizer();
+		}
+
+		@Override
+		public String getText() {
+			return "Customize";
+		}
+	};
+	private final Action expand_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), false);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action expand_all_action = new AbstractAction("Expand All") {
 
+		@Override
+		public String getText() {
+			return "Expand";
+		}
+	};
+	private final Action expand_all_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), false);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action collapse_action = new AbstractAction("Collapse") {
 
+		@Override
+		public String getText() {
+			return "Expand All";
+		}
+	};
+	private final Action collapse_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), true);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action collapse_all_action = new AbstractAction("Collapse All") {
 
+		@Override
+		public String getText() {
+			return "Collapse";
+		}
+	};
+	private final Action collapse_all_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), true);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action hide_action = new AbstractAction("Hide") {
 
+		@Override
+		public String getText() {
+			return "Collapse All";
+		}
+	};
+	private final Action hide_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			hideTiers(handler.getSelectedTierLabels());
 			DataManagementTable.updateVirtualFeatureList();
 		}
-	};
-	private final Action show_all_action = new AbstractAction("Show All Types") {
 
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			showAllTiers();
+		@Override
+		public String getText() {
+			return "Hide";
 		}
 	};
-	private final Action change_color_action = new AbstractAction("Change FG Color") {
+	private final Action show_all_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			showAllTiers();
+		}
+
+		@Override
+		public String getText() {
+			return "Show All Types";
+		}
+	};
+	private final Action change_color_action = new GenericAction() {
 
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), true);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action change_bg_color_action = new AbstractAction("Change BG Color") {
 
+		@Override
+		public String getText() {
+			return "Change FG Color";
+		}
+	};
+	private final Action change_bg_color_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), false);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
 
+		@Override
+		public String getText() {
+			return "Change BG Color";
+		}
+	};
+	private final Action color_by_score_on_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), true);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
 
+		@Override
+		public String getText() {
+			return "Color By Score ON";
+		}
+	};
+	private final Action color_by_score_off_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), false);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action show_two_tiers = new AbstractAction("Show 2 tracks (+) and (-)") {
 
+		@Override
+		public String getText() {
+			return "Color By Score OFF";
+		}
+	};
+	private final Action show_two_tiers = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), true);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action show_single_tier = new AbstractAction("Show 1 track (+/-)") {
 
+		@Override
+		public String getText() {
+			return "Show 2 tracks (+) and (-)";
+		}
+	};
+	private final Action show_single_tier = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), false);
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action sym_summarize_single_action = new AbstractAction("") {
 
+		@Override
+		public String getText() {
+			return "Show 1 track (+/-)";
+		}
+	};
+	private final Action sym_summarize_single_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -215,12 +292,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			addSymSummaryTier(current_tier, false);
 		}
-	};
-	private final Action sym_summarize_both_action = new AbstractAction("") {
 
+		@Override
+		public String getText() {
+			return "";
+		}
+	};
+	private final Action sym_summarize_both_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -228,25 +310,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			addSymSummaryTier(current_tier, true);
 		}
-	};
-	private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
 
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			addSymCoverageTier(current_tier);
+		@Override
+		public String getText() {
+			return "";
 		}
 	};
-	private final Action mismatch_action = new AbstractAction("Make Mismatch Graph") {
-
+	private final Action mismatch_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -254,12 +328,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			addMisMatchTier(current_tier, "mismatch");
 		}
-	};
-	private final Action mismatch_pileup_action = new AbstractAction("Make Mismatch Pileup Graph") {
 
+		@Override
+		public String getText() {
+			return "Make Mismatch Graph";
+		}
+	};
+	private final Action mismatch_pileup_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -267,12 +346,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
 		}
-	};
-	private final Action save_bed_action = new AbstractAction("Save track as BED file") {
 
+		@Override
+		public String getText() {
+			return "Make Mismatch Pileup Graph";
+		}
+	};
+	private final Action save_bed_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -280,12 +364,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			saveAsBedFile(current_tier);
 		}
-	};
-	private final Action save_wig_action = new AbstractAction("Save graph as WIG file") {
 
+		@Override
+		public String getText() {
+			return "Save track as BED file";
+		}
+	};
+	private final Action save_wig_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
 				ErrorHandler.errorPanel("Must select only one track");
@@ -293,44 +382,72 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph current_tier = current_tiers.get(0);
 			saveAsWigFile(current_tier);
 		}
+
+		@Override
+		public String getText() {
+			return "Save graph as WIG file";
+		}
 	};
-	@SuppressWarnings("serial")
-	private final Action maximize_track_action = new AbstractAction("Focus on Track") {
+	private final Action maximize_track_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			TierGlyph current_tier = handler.getSelectedTiers().get(0);
 			gviewer.focusTrack(current_tier);
 		}
-	};
-	@SuppressWarnings("serial")
-	private final Action repack_tracks_action = new AbstractAction("Repack Tracks") {
 
-		public void actionPerformed(ActionEvent e) {
-			gviewer.getSeqMap().repackTheTiers(true, true, true);
+		@Override
+		public String getText() {
+			return "Focus on Track";
 		}
 	};
-	private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
-
+	private final Action repack_tracks_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			gviewer.getSeqMap().repackTheTiers(true, true, true);
+		}
+
+		@Override
+		public String getText() {
+			return "Repack Tracks";
+		}
+	};
+	private final Action change_expand_max_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			changeExpandMax(handler.getSelectedTierLabels());
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
-	};
-	private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
 
+		@Override
+		public String getText() {
+			return "Adjust Max Expand";
+		}
+	};
+	private final Action change_expand_max_all_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			changeExpandMax(handler.getAllTierLabels());
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
+
+		@Override
+		public String getText() {
+			return "Adjust Max Expand All";
+		}
 	};
-	@SuppressWarnings("serial")
-	private final Action delete_action = new AbstractAction("Remove Data from Selected Tracks") {
+	private final Action delete_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			BioSeq seq = gmodel.getSelectedSeq();
 
 			if (IGB.confirmPanel("Really remove selected tracks?\n"
@@ -338,14 +455,24 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				removeTiers(handler.getSelectedTierLabels());
 			}
 		}
-	};
-	private final Action change_font_size_action = new AbstractAction("Change Font Size") {
 
+		@Override
+		public String getText() {
+			return "Remove Data from Selected Tracks";
+		}
+	};
+	private final Action change_font_size_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent ae) {
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			changeFontSize(handler.getSelectedTierLabels());
 			PreferencesPanel.getSingleton().tpv.externalChange();
+		}
+
+		@Override
+		public String getText() {
+			return "Change Font Size";
 		}
 	};
 
@@ -806,46 +933,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private void addSymCoverageTier(TierGlyph atier) {
-		BioSeq aseq = gmodel.getSelectedSeq();
-		//int child_count = atier.getChildCount();
-		//List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
-		//collectSyms(atier, syms);
-
-//	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
-		//if (child_count == 0 || syms.size() == 0) {
-		//  ErrorHandler.errorPanel("Empty Track",
-		//    "The selected track is empty.  Can not make a coverage track for an empty track.");
-		//  return;
-		//}
-
-		String human_name = "coverage: " + atier.getLabel();
-		String unique_name = TrackStyle.getUniqueName(human_name);
-		String method = atier.getAnnotStyle().getMethodName();
-		DependentData dd = new DependentData(unique_name, DependentType.COVERAGE, method);
-		SymWithProps wrapperSym = TrackView.addToDependentList(dd);
-
-		if (wrapperSym == null) {
-			ErrorHandler.errorPanel("Empty Track",
-					"The selected track is empty.  Can not make a coverage track for an empty track.");
-			return;
-		}
-
-		// Generate a non-persistent style.
-		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
-
-		TrackStyle style = TrackStyle.getInstance(unique_name, false);
-		style.setTrackName(human_name);
-		style.setGlyphDepth(1);
-		style.setSeparate(false); // there are not separate (+) and (-) strands
-		style.setExpandable(false); // cannot expand and collapse
-		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-		style.setForeground(atier.getForegroundColor());
-		style.setFeature(atier.getAnnotStyle().getFeature());
-
-		gviewer.setAnnotatedSeq(aseq, true, true);
-	}
-
 	private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {
 		// not sure best way to collect syms from tier, but for now,
 		//   just recursively descend through child glyphs of the tier, and if
@@ -991,6 +1078,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				Map<String, Action> actions = new HashMap<String, Action>();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
 					Action action = new AbstractAction(mode.toString()) {
+						private static final long serialVersionUID = 1L;
 
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setViewMode(mode.toString());

@@ -1,12 +1,12 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.SymWithProps;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.igb.view.SeqMapView;
@@ -17,21 +17,27 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class ViewReadAlignmentAction extends AbstractAction {
+public abstract class ViewReadAlignmentAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
 	private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
 	private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");
 
-	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(RESTOREREAD);
-	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(SHOWMISMATCH);
+	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction() {
+		private static final long serialVersionUID = 1L;
+		@Override public String getText() { return RESTOREREAD; }
+	};
+	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction() {
+		private static final long serialVersionUID = 1L;
+		@Override public String getText() { return SHOWMISMATCH; }
+	};
 
 	private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
 	SeqMapView gViewer = IGB.getSingleton().getMapView();
 
-	private ViewReadAlignmentAction(String str){
-		super(str);
+	private ViewReadAlignmentAction(){
+		super();
 	}
 
 	public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms){
@@ -49,6 +55,7 @@ public class ViewReadAlignmentAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 
 		boolean set = true;
 		

@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -34,16 +35,9 @@ final class SeqMapViewActionListener implements ActionListener {
 	private final static String SCROLL_LEFT = "SCROLL_LEFT";
 	private final static String SCROLL_RIGHT = "SCROLL_RIGHT";
 	private final static String ZOOM_TO_SELECTED = "Zoom to selected";
-	private final static String SET_THRESHOLD = "Set threshold";
 	private final static String[] commands = {ZOOM_OUT_FULLY,
 		ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
 		SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
-	private final Action zoom_out_fully_action;
-	private final Action zoom_out_x_action;
-	private final Action zoom_in_x_action;
-	private final Action zoom_out_y_action;
-	private final Action zoom_in_y_action;
-	private final Action set_threshold_action;
 	private final AffyTieredMap seqmap;
 	private final SeqMapView gviewer;
 	
@@ -55,74 +49,101 @@ final class SeqMapViewActionListener implements ActionListener {
 		for (String command : commands) {
 			MenuUtil.addAccelerator((JComponent) gviewer, this, command);
 		}
-		zoom_out_x_action = new AbstractAction() {
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_X);
 			}
+			@Override
+			public String getText() {
+				return "Zoom out horizontally";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/ZoomOut16.gif";
+			}
 		};
-		zoom_in_x_action = new AbstractAction() {
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_X);
 			}
+			@Override
+			public String getText() {
+				return "Zoom in horizontally";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/ZoomIn16.gif";
+			}
 		};
-		zoom_out_y_action = new AbstractAction() {
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_Y);
 			}
+			@Override
+			public String getText() {
+				return "Zoom out vertically";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/ZoomOut16.gif";
+			}
 		};
-		zoom_in_y_action = new AbstractAction() {
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_Y);
 			}
+			@Override
+			public String getText() {
+				return "Zoom in vertically";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/ZoomIn16.gif";
+			}
 		};
-		zoom_out_fully_action = new AbstractAction() {
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_FULLY);
 			}
+
+			@Override
+			public String getText() {
+				return "Home Position";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/Home16.gif";
+			}
+			@Override
+			public String getTooltip() {
+				return "Zoom out fully";
+			}
 		};
 		
-		set_threshold_action = new AbstractAction(){
+		new GenericAction() {
 			private static final long serialVersionUID = 1L;
-			public void actionPerformed(ActionEvent ae) {
-				//gviewer.getAutoLoad().setThresholdToCurrent();
-				doAction(SET_THRESHOLD);
-			}
-	};
-		Icon icon0 = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
-		new AbstractAction(ZOOM_TO_SELECTED, icon0) {
-			private static final long serialVersionUID = 1L;
-
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_TO_SELECTED);
 			}
+			@Override
+			public String getText() {
+				return ZOOM_TO_SELECTED;
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/general/Zoom16.gif";
+			}
 		};
-
-		Icon icon1 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomOut16.gif");
-		zoom_out_y_action.putValue(Action.NAME, "Zoom out vertically");
-		zoom_out_y_action.putValue(Action.SMALL_ICON, icon1);
-		zoom_out_x_action.putValue(Action.NAME, "Zoom out horizontally");
-		zoom_out_x_action.putValue(Action.SMALL_ICON, icon1);
-
-		Icon icon2 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomIn16.gif");
-		zoom_in_y_action.putValue(Action.NAME, "Zoom in vertically");
-		zoom_in_y_action.putValue(Action.SMALL_ICON, icon2);
-		zoom_in_x_action.putValue(Action.NAME, "Zoom in horizontally");
-		zoom_in_x_action.putValue(Action.SMALL_ICON, icon2);
-
-		Icon icon3 = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Home16.gif");
-		zoom_out_fully_action.putValue(Action.SHORT_DESCRIPTION, "Zoom out fully");
-		zoom_out_fully_action.putValue(Action.NAME, "Home Position");
-		zoom_out_fully_action.putValue(Action.SMALL_ICON, icon3);
 	}
 
 	public void actionPerformed(ActionEvent evt) {

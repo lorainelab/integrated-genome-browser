@@ -27,6 +27,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
@@ -233,22 +234,34 @@ public class AltSpliceView extends IGBTabPanel
 			return;
 		}
 
-		Action hide_action = new AbstractAction("Hide Tier") {
+		Action hide_action = new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				super.actionPerformed(e);
 				spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
 				handler.hideTiers(handler.getSelectedTierLabels(), false, true);
 			}
+
+			@Override
+			public String getText() {
+				return "Hide Tier";
+			}
 		};
 
-		Action restore_all_action = new AbstractAction("Show All") {
+		Action restore_all_action = new GenericAction() {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				super.actionPerformed(e);
 				// undo all edge-matching, because packing will behave badly otherwise.
 				spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
 				handler.showTiers(handler.getAllTierLabels(), true, true);
+			}
+
+			@Override
+			public String getText() {
+				return "Show All";
 			}
 		};
 

@@ -73,7 +73,7 @@ import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.MapModeScrollAction;
 import com.affymetrix.igb.action.MapModeSelectAction;
-import com.affymetrix.igb.action.RefreshAFeature;
+import com.affymetrix.igb.action.RefreshAFeatureAction;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
@@ -1785,7 +1785,7 @@ public class SeqMapView extends JPanel
 			}
 
 			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
-				popup.add(new JMenuItem(new RefreshAFeature(feature)));
+				popup.add(new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature)));
 			}
 		}
 		if(autoload != null){

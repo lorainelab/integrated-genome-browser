@@ -67,7 +67,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.tiers.TrackStyle;
 
@@ -411,7 +410,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTip.getAction()));
+		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_drawCollapseControl", new DrawCollapseControlAction(map_view)));
 	}
 

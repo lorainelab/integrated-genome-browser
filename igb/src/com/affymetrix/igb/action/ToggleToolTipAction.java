@@ -12,11 +12,11 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class ToggleToolTip extends GenericAction {
+public class ToggleToolTipAction extends GenericAction {
 	private static final long serialVersionUID = 1;
-	private static final ToggleToolTip ACTION = new ToggleToolTip();
+	private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();
 
-	private ToggleToolTip() {
+	private ToggleToolTipAction() {
 		super();
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
@@ -29,7 +29,7 @@ public class ToggleToolTip extends GenericAction {
 		this.putValue(SELECTED_KEY, show_prop_tooltip);
 	}
 
-	public static ToggleToolTip getAction() {
+	public static ToggleToolTipAction getAction() {
 		return ACTION;
 	}
 

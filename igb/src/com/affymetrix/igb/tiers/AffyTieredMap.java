@@ -14,6 +14,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
@@ -67,31 +68,49 @@ public class AffyTieredMap extends NeoMap {
 	 */
 	public static final String SELECTED_KEY = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
-	public Action show_plus_action = new AbstractAction("Show (+) tiers") {
+	public Action show_plus_action = new GenericAction() {
 	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			show_plus = !show_plus;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
 			repackTheTiers(false, true, false);
 		}
+
+		@Override
+		public String getText() {
+			return "Show (+) tiers";
+		}
 	};
-	public Action show_minus_action = new AbstractAction("Show (-) tiers") {
+	public Action show_minus_action = new GenericAction() {
 	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			show_minus = !show_minus;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
 			repackTheTiers(false, true, false);
 		}
+
+		@Override
+		public String getText() {
+			return "Show (-) tiers";
+		}
 	};
-	public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
+	public Action show_mixed_action = new GenericAction() {
 	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			show_mixed = !show_mixed;
 			putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
 			repackTheTiers(false, true, false);
+		}
+
+		@Override
+		public String getText() {
+			return "Show (+/-) tiers";
 		}
 	};
 

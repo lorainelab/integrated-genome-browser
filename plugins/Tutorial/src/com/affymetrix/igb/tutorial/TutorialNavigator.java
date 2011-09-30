@@ -2,7 +2,6 @@ package com.affymetrix.igb.tutorial;
 
 import java.awt.BorderLayout;
 
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,7 +14,7 @@ public class TutorialNavigator extends JPanel {
 	private final JLabel instructions;
 	private final GenericAction nextAction;
 
-	public TutorialNavigator(GenericAction backAction, GenericAction nextAction, AbstractAction cancelAction) {
+	public TutorialNavigator(GenericAction backAction, GenericAction nextAction, GenericAction cancelAction) {
 		super();
 		this.nextAction = nextAction;
 		setLayout(new BorderLayout());

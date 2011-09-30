@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.property;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -95,14 +96,18 @@ public final class JTableCutPasteAdapter {
     JOptionPane.showMessageDialog(null, msg, msg, JOptionPane.ERROR_MESSAGE);
   }
   
-  public Action copyAction = new AbstractAction("Copy") {
+  public Action copyAction = new GenericAction() {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
       doCopy();
     }
+	@Override
+	public String getText() {
+		return "Copy";
+	}
   };
   
-  public Action pasteAction = new AbstractAction("Paste") {
+  public Action pasteAction = new GenericAction() {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
       try {
@@ -111,6 +116,10 @@ public final class JTableCutPasteAdapter {
         ErrorHandler.errorPanel("ERROR", ex);
       }
     }
+	@Override
+	public String getText() {
+		return "Paste";
+	}
   };
   
   private void doCopy() {

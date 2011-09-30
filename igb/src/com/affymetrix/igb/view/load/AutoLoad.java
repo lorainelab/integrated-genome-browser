@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.event.ActionEvent;
@@ -10,16 +11,15 @@ import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @author hiralv
  */
-public class AutoLoad extends AbstractAction 
+public class AutoLoad extends GenericAction 
 		implements MouseListener, MouseMotionListener, PreferenceChangeListener{
-
+	private static final long serialVersionUID = 1L;
 	private static final int default_threshold = 70;
 	public final static String  PREFS_THRESHOLD = "Threshold Value";
 	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
@@ -35,7 +35,7 @@ public class AutoLoad extends AbstractAction
 	
 	public AutoLoad(NeoMap map){
 		//"Set AutoLoad Threshold to Current View"
-		super(BUNDLE.getString("setThreshold"));
+		super();
 		this.map = map;
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
@@ -126,9 +126,15 @@ public class AutoLoad extends AbstractAction
 	}
 
 	public void actionPerformed(ActionEvent ae) {
+		super.actionPerformed(ae);
 		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());
 		update(zoomer);
 		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
 		zoomer.repaint();
+	}
+
+	@Override
+	public String getText() {
+		return BUNDLE.getString("setThreshold");
 	}
 }

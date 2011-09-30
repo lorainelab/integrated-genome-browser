@@ -1,11 +1,9 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -13,6 +11,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
@@ -103,7 +102,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		tree_panel.setAlignmentY(TOP_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
 
-		tree = new FeatureTree();
+		tree = new FeatureTree("FeatureTreeView_tree");
 		//tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getPreferredSize().height));
 
 		//Enable tool tips.
@@ -496,6 +495,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		private static final long serialVersionUID = 1L;
 		private static final Insets insets = new Insets(0, 0, 0, 0);
 		private final JRPCheckBox leafCheckBox = new JRPCheckBox() {
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public Insets getInsets() {
@@ -770,12 +770,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-	private class FeatureTree extends JTree implements DragSourceListener, DragGestureListener {
-
+	private class FeatureTree extends JRPTree implements DragSourceListener, DragGestureListener {
+		private static final long serialVersionUID = 1L;
 		private final DragSource source;
 
-		FeatureTree() {
-			super();
+		FeatureTree(String id) {
+			super(id);
 
 			source = new DragSource();
 			source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
@@ -820,10 +820,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	public void updateTree(URI uri) {
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 		DefaultMutableTreeNode node;
-		Enumeration nodes = root.breadthFirstEnumeration();
+		@SuppressWarnings("unchecked")
+		Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
 		GenericFeature feature = null;
 		while (nodes.hasMoreElements()) {
-			node = (DefaultMutableTreeNode) nodes.nextElement();
+			node = nodes.nextElement();
 			Object nodeData = node.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
 				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;

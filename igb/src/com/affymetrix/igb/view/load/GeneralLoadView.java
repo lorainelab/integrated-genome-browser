@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
@@ -23,6 +22,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -43,7 +43,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
-import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
@@ -59,7 +58,7 @@ public final class GeneralLoadView {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	public static int TAB_DATALOAD_PREFS = -1;
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
-	private static AbstractAction refreshDataAction;
+	private static GenericAction refreshDataAction;
 	private static SeqMapView gviewer;
 	private static DataManagementTableModel dataManagementTableModel;
 	private FeatureTreeView feature_tree_view;
@@ -147,7 +146,7 @@ public final class GeneralLoadView {
 		return refresh_dataB;
 	}
 
-	public AbstractAction getRefreshAction() {
+	public GenericAction getRefreshAction() {
 		return refreshDataAction;
 	}
 
@@ -164,7 +163,7 @@ public final class GeneralLoadView {
 	 * Handles clicking of partial residue, all residue, and refresh data buttons.
 	 * @param evt
 	 */
-	public void loadResidues(AbstractAction action) {
+	public void loadResidues(GenericAction action) {
 		Object src = null;
 
 		if (action.equals(partial_residuesB.getAction())) {
@@ -538,7 +537,7 @@ public final class GeneralLoadView {
 		return delete;
 	}
 
-	protected AbstractAction getRefreshDataAction() {
+	protected GenericAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
 

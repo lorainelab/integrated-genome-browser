@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.PropertyHolder;
@@ -231,7 +232,7 @@ public class SeqMapView extends JPanel
 	boolean report_status_in_status_bar = true;
 	private SeqSymmetry sym_used_for_title = null;
 	private PropertyHandler propertyHandler;
-	private final AbstractAction refreshDataAction;
+	private final GenericAction refreshDataAction;
 	private SeqMapViewPopup popup;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
@@ -241,7 +242,7 @@ public class SeqMapView extends JPanel
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final AutoLoad autoload;
-	public AbstractAction seqviewer;
+	public GenericAction seqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -2058,7 +2059,7 @@ public class SeqMapView extends JPanel
 		return seq_selected_sym;
 	}
 
-	public AbstractAction getRefreshDataAction() {
+	public GenericAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
 

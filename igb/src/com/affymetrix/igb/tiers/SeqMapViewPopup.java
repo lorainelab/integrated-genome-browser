@@ -1077,12 +1077,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 				Map<String, Action> actions = new HashMap<String, Action>();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
-					Action action = new AbstractAction(mode.toString()) {
+					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setViewMode(mode.toString());
 							refreshMap(false, false);
+						}
+
+						@Override
+						public String getText() {
+							return mode.toString();
 						}
 					};
 					actions.put(mode.toString(), action);

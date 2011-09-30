@@ -16,7 +16,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -38,6 +37,7 @@ public class Activator implements BundleActivator {
 			Preferences tutorialsNode = getTutorialsNode();
 			for (String key : tutorialsNode.keys()) {
 				String tutorialUri = tutorialsNode.get(key, null);
+				tutorials.clear();
 				tutorials.load(new URL(tutorialUri + "/tutorials.properties").openStream());
 				Enumeration<?> tutorialNames = tutorials.propertyNames();
 				while (tutorialNames.hasMoreElements()) {

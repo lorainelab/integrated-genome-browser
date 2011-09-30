@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -107,7 +108,7 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 			font = font.deriveFont(SPECIES[i].font_size);
 			sg.setFont(font);
 			
-			ImageIcon ii = IGBUtils.getIcon(SPECIES[i].image_name);
+			ImageIcon ii = CommonUtils.getInstance().getIcon("images/" + SPECIES[i].image_name);
 			Image image = ii.getImage();
 			image = resizeImage(image, BufferedImage.TYPE_INT_RGB);
 			map.prepareImage(image, map);

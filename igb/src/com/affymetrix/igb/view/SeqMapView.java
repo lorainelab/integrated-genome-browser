@@ -71,7 +71,8 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
-import com.affymetrix.igb.action.MapModeAction;
+import com.affymetrix.igb.action.MapModeScrollAction;
+import com.affymetrix.igb.action.MapModeSelectAction;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
@@ -432,12 +433,12 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox.add(map_range_box.range_box);
 
-		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
+		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeSelectAction(this));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		xzoombox.add(select_mode_button);
 
-		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
+		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeScrollAction(this));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
 		xzoombox.add(scroll_mode_button);

@@ -1,15 +1,14 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
@@ -41,11 +40,11 @@ public final class DataManagementTable {
 
 	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
-	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
-	static final Icon delete_icon = IGBUtils.getIcon("delete.gif");
-	static final Icon invisible_icon = IGBUtils.getIcon("invisible.gif");
-	static final Icon visible_icon = IGBUtils.getIcon("visible.gif");
-	static final Icon info_icon = IGBUtils.getIcon("warning.gif");
+	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("toolbarButtonGraphics/general/Refresh16.gif");
+	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
+	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
+	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
+	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.gif");
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int REFRESH_FEATURE_COLUMN = 2;
@@ -351,6 +350,7 @@ class JTableX extends JTable implements MouseListener {
 
 	protected JTableHeader createDefaultTableHeader() {
 		return new JTableHeader(columnModel) {
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public String getToolTipText(MouseEvent e) {
@@ -423,11 +423,11 @@ class JTableX extends JTable implements MouseListener {
 //		}
 	}
 
-	private void refreshSeqMapView() {
-		if (smv != null) {
-			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, false);
-		}
-	}
+//	private void refreshSeqMapView() {
+//		if (smv != null) {
+//			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, false);
+//		}
+//	}
 
 	public void mouseClicked(MouseEvent e) {
 	}

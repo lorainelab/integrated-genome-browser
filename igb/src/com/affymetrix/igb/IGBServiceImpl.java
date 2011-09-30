@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -53,7 +54,6 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqMapView;
@@ -112,7 +112,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public ImageIcon getIcon(String name) {
-		return IGBUtils.getIcon(name);
+		return CommonUtils.getInstance().getIcon("images/" + name);
 	}
 
 	@Override

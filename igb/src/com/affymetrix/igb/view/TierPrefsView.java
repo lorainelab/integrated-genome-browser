@@ -16,6 +16,7 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -366,11 +367,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         });
 
         labelFieldTip.setToolTipText("Type or choose label field.");
-        labelFieldTip.setIcon(IGBUtils.getIcon("info_icon.gif"));
+        labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
         labelFieldTip.setText(" ");
 
         applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
-        applyToAllTip.setIcon(IGBUtils.getIcon("info_icon.gif"));
+        applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
         applyToAllTip.setText(" ");
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);

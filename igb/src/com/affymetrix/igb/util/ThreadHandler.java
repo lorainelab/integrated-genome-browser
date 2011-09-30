@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JFrame;
 
 import com.affymetrix.igb.Application;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -30,7 +31,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
  * @author hiralv
  */
 public class ThreadHandler implements ActionListener, CThreadListener{
-	private static final ImageIcon closeIcon = IGBUtils.getIcon("x_icon.gif");
+	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/x_icon.gif");
 	
 	private static ThreadHandler singleton;
 	private final Set<CThreadListener> listeners;

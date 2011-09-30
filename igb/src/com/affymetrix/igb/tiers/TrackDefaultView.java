@@ -4,6 +4,7 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -380,7 +381,7 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 		});
 
 		labelFieldTip.setToolTipText("Type or choose label field.");
-		labelFieldTip.setIcon(IGBUtils.getIcon("info_icon.gif"));
+		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
 		labelFieldTip.setText(" ");
 	}
 

@@ -6,14 +6,14 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
 import com.jidesoft.status.MemoryStatusBarItem;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.util.ThreadHandler;
-import com.affymetrix.igb.util.IGBUtils;
 
 public final class StatusBar extends JPanel{
 	private static final long serialVersionUID = 1l;
 	
-	private static final ImageIcon closeIcon = IGBUtils.getIcon("x_icon.gif");
+	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/x_icon.gif");
 	
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;

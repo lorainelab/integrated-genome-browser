@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.BioSeq;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
@@ -96,33 +97,57 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	private final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 
-	private final Action select_all_graphs_action = new AbstractAction(BUNDLE.getString("selectAllGraphs")) {
+	private final Action select_all_graphs_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			igbService.getSeqMapView().selectAllGraphs();
 		}
+
+		@Override
+		public String getText() {
+			return BUNDLE.getString("selectAllGraphs");
+		}
 	};
-	private final Action delete_selected_graphs_action = new AbstractAction(BUNDLE.getString("deleteSelectedGraphs")) {
+	private final Action delete_selected_graphs_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			deleteGraphs(gmodel, grafs);
 		}
-	};
-	private final Action save_selected_graphs_action = new AbstractAction(BUNDLE.getString("saveSelectedGraphs") + "...") {
-		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
-			saveGraphs(gmodel, grafs);
+		@Override
+		public String getText() {
+			return BUNDLE.getString("deleteSelectedGraphs");
 		}
 	};
-	private final Action graph_threshold_action = new AbstractAction(
-			BUNDLE.getString("graphThresholding") + "...") {
+	private final Action save_selected_graphs_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			saveGraphs(gmodel, grafs);
+		}
+
+		@Override
+		public String getText() {
+			return BUNDLE.getString("saveSelectedGraphs") + "...";
+		}
+	};
+	private final Action graph_threshold_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
 			showGraphScoreThreshSetter();
+		}
+
+		@Override
+		public String getText() {
+			return BUNDLE.getString("graphThresholding") + "...";
 		}
 	};
 	private final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);

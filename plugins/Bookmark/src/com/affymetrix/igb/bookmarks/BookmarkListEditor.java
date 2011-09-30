@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -70,22 +71,32 @@ public final class BookmarkListEditor {
     // re-size itself dynamically correctly.
     central_component.setLayout(new BorderLayout());
 
-    Action cancel_action = new AbstractAction("Cancel") {
+    Action cancel_action = new GenericAction() {
 	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent e) {
+    	super.actionPerformed(e);
         frame.setVisible(false);
         saveWindowLocation();
       }
+      @Override
+      public String getText() {
+         return "Cancel";
+      }
     };
 
-    Action submit_action = new AbstractAction("Apply Changes") {
+    Action submit_action = new GenericAction() {
 	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent e) {
+      	super.actionPerformed(e);
         boolean success = BookmarkListEditor.this.applyChanges();
         if (success) {
           frame.setVisible(false);
           saveWindowLocation();
         }
+      }
+      @Override
+      public String getText() {
+         return "Apply Changes";
       }
     };
     cancel_button = new JRPButton("BookmarkListEditor_cancel_button", cancel_action);

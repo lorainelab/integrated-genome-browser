@@ -24,7 +24,7 @@ public class ClampViewAction extends GenericAction {
 		this.putValue(SELECTED_KEY, false);
 	}
 
-	public static AbstractAction getAction(){
+	public static ClampViewAction getAction(){
 		return ACTION;
 	}
 	

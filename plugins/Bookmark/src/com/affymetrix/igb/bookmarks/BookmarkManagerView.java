@@ -14,6 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
@@ -356,9 +357,10 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     }
 
     private Action makePropertiesAction() {
-      Action a = new AbstractAction("Properties ...") {
+      Action a = new GenericAction() {
    	    private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+          super.actionPerformed(ae);
           if (selected_bl == null || selected_bl.getUserObject() instanceof Separator) {
             setEnabled(false);
           } else {
@@ -381,11 +383,23 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
             bl_editor.openDialog(selected_bl);
           }
         }
+		@Override
+		public String getText() {
+			return "Properties ...";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Properties16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_P;
+		}
+		@Override
+		public String getTooltip() {
+			return "Properties";
+		}
       };
-
-      a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif"));
-      a.putValue(Action.SHORT_DESCRIPTION, "Properties");
-      a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_P));
       setAccelerator(a);
       return a;
     }
@@ -395,9 +409,10 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     }
 
     private Action makeGoToAction() {
-      Action a = new AbstractAction("Go To") {
+      Action a = new GenericAction() {
     	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+          super.actionPerformed(ae);
           if (igbService==null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
             setEnabled(false);
           } else {
@@ -406,10 +421,23 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
             BookmarkController.viewBookmark(igbService, bm);
           }
         }
+		@Override
+		public String getText() {
+			return "Go To";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/media/Play16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_G;
+		}
+		@Override
+		public String getTooltip() {
+			return "Go To Bookmark";
+		}
       };
-      a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/media/Play16.gif"));
-      a.putValue(Action.SHORT_DESCRIPTION, "Go To Bookmark");
-      a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_G));
       setAccelerator(a);
       return a;
     }
@@ -529,15 +557,30 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   }
 
   Action makeRefreshAction() {
-    Action a = new AbstractAction("Refresh") {
-  	  private static final long serialVersionUID = 1L;
-      public void actionPerformed(ActionEvent ae) {
-        tree_model.reload();
-      }
+	Action a = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent ae) {
+			super.actionPerformed(ae);
+			tree_model.reload();
+		}
+		@Override
+		public String getText() {
+			return "Refresh";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Refresh16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_R;
+		}
+		@Override
+		public String getTooltip() {
+			return "Refresh";
+		}
     };
-    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
-    a.putValue(Action.SHORT_DESCRIPTION, "Refresh");
-    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_R));
     setAccelerator(a);
     return a;
   }
@@ -563,17 +606,32 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   }
 
   Action makeImportAction() {
-    Action a = new AbstractAction("Import ...") {
-	  private static final long serialVersionUID = 1L;
-      public void actionPerformed(ActionEvent ae) {
-        BookmarkList bl = (BookmarkList) tree_model.getRoot();
-        importBookmarks(bl, null);
-        tree_model.reload();
-      }
+    Action a = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent ae) {
+	        super.actionPerformed(ae);
+			BookmarkList bl = (BookmarkList) tree_model.getRoot();
+			importBookmarks(bl, null);
+			tree_model.reload();
+		}
+		@Override
+		public String getText() {
+			return "Import ...";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Import16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_I;
+		}
+		@Override
+		public String getTooltip() {
+			return "Import Bookmarks";
+		}
     };
-    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
-    a.putValue(Action.SHORT_DESCRIPTION, "Import Bookmarks");
-    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_I));
     setAccelerator(a);
     return a;
   }
@@ -606,48 +664,78 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     }
   }
 
-  Action makeExportAction() {
-    Action a = new AbstractAction("Export ...") {
-  	  private static final long serialVersionUID = 1L;
-      public void actionPerformed(ActionEvent ae) {
-        BookmarkList bl = (BookmarkList) tree_model.getRoot();
-        exportBookmarks(bl, null); // already contains a null check on bookmark list
-      }
+	Action makeExportAction() {
+		Action a = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent ae) {
+	        super.actionPerformed(ae);
+			BookmarkList bl = (BookmarkList) tree_model.getRoot();
+			exportBookmarks(bl, null); // already contains a null check on bookmark list
+		}
+		@Override
+		public String getText() {
+			return "Export ...";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Export16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_E;
+		}
+		@Override
+		public String getTooltip() {
+			return "Export Bookmarks";
+		}
     };
-    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
-    a.putValue(Action.SHORT_DESCRIPTION, "Export Bookmarks");
-    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_E));
     setAccelerator(a);
     return a;
   }
 
   Action makeDeleteAction() {
-    Action a = new AbstractAction("Delete ...") {
-  	  private static final long serialVersionUID = 1L;
-      public void actionPerformed(ActionEvent ae) {
-        TreePath[] paths = tree.getSelectionPaths();
-        if (paths==null) {
-          return;
-        }
-        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-        int yes = JOptionPane.showConfirmDialog(frame,
-          "Delete these "+paths.length+" selected bookmarks?",
-          "Delete?", JOptionPane.YES_NO_OPTION);
-        if (yes == JOptionPane.YES_OPTION) {
-          for (int i=0; i<paths.length; i++) {
-            TreePath path = paths[i];
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node.getParent() != null) {
-              tree_model.removeNodeFromParent(node);
-              removeBookmarkFromHistory(path);
-            }
-          }
-        }
-      }
+		Action a = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent ae) {
+	        super.actionPerformed(ae);
+			TreePath[] paths = tree.getSelectionPaths();
+			if (paths == null) {
+				return;
+			}
+			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
+			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
+					+ paths.length + " selected bookmarks?", "Delete?",
+					JOptionPane.YES_NO_OPTION);
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < paths.length; i++) {
+					TreePath path = paths[i];
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
+							.getLastPathComponent();
+					if (node.getParent() != null) {
+						tree_model.removeNodeFromParent(node);
+						removeBookmarkFromHistory(path);
+					}
+				}
+			}
+		}
+		@Override
+		public String getText() {
+			return "Delete ...";
+		}
+		@Override
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Delete16.gif";
+		}
+		@Override
+		public int getShortcut() {
+			return KeyEvent.VK_D;
+		}
+		@Override
+		public String getTooltip() {
+			return "Delete Selected Bookmark(s)";
+		}
     };
-    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
-    a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Bookmark(s)");
-    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_D));
     setAccelerator(a);
     return a;
   }
@@ -695,122 +783,178 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   }
 
   private Action makeAddAction(final JTree tree, final int type) {
-    String title;
-    ImageIcon icon = null;
-    String tool_tip = null;
-    int mnemonic = 0;
+    final String title;
+    final String iconPath;
+    final String tool_tip;
+    final int mnemonic;
     if (type==0) {
       title = "New Separator";
       // "RowDelete" looks vaguely like a separator...
-      icon = MenuUtil.getIcon("toolbarButtonGraphics/table/RowDelete16.gif");
+      iconPath = "toolbarButtonGraphics/table/RowDelete16.gif";
       tool_tip = "New Separator";
       mnemonic = KeyEvent.VK_S;
     } else if (type==1) {
       title = "New Folder";
       // the "Open" icon looks like a folder...
-      icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif");
+      iconPath = "toolbarButtonGraphics/general/Open16.gif";
       tool_tip = "New Folder";
       mnemonic = KeyEvent.VK_F;
     } else if (type==2) {
       title = "New Bookmark";
-      icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif");
+      iconPath = "toolbarButtonGraphics/general/Bookmarks16.gif";
       tool_tip = "New Bookmark";
       mnemonic = KeyEvent.VK_N;
     } else {
       title = "New ???";
+      iconPath = null;
+      tool_tip = null;
       mnemonic = KeyEvent.VK_EXCLAMATION_MARK;
     }
 
-    Action a = new AbstractAction(title) {
-  	  private static final long serialVersionUID = 1L;
-      public void actionPerformed(ActionEvent ae) {
-        TreePath path = tree.getSelectionModel().getSelectionPath();
-        if (path==null) {
-          Logger.getLogger(BookmarkManagerView.class.getName()).log(Level.SEVERE, "No selection");
-          return;
-        }
-        BookmarkList bl = null;
-        if (type==0) {
-          Separator s = new Separator();
-          bl = new BookmarkList(s);
-        } else if (type==1) {
-          bl = new BookmarkList("Folder");
-        } else if (type==2) {
-          try {
-            Bookmark b = new Bookmark("Bookmark", Bookmark.constructURL(Collections.<String,String[]>emptyMap()));
-            bl = new BookmarkList(b);
-          } catch (MalformedURLException mue) {
-            mue.printStackTrace();
-          }
-        }
-        if (bl != null) {
-          DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
-          insert(tree, path, new DefaultMutableTreeNode[] {node});
-        }
-      }
+    Action a = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent ae) {
+            super.actionPerformed(ae);
+			TreePath path = tree.getSelectionModel().getSelectionPath();
+			if (path == null) {
+				Logger.getLogger(BookmarkManagerView.class.getName()).log(
+						Level.SEVERE, "No selection");
+				return;
+			}
+			BookmarkList bl = null;
+			if (type == 0) {
+				Separator s = new Separator();
+				bl = new BookmarkList(s);
+			} else if (type == 1) {
+				bl = new BookmarkList("Folder");
+			} else if (type == 2) {
+				try {
+					Bookmark b = new Bookmark("Bookmark",
+							Bookmark.constructURL(Collections
+									.<String, String[]> emptyMap()));
+					bl = new BookmarkList(b);
+				} catch (MalformedURLException mue) {
+					mue.printStackTrace();
+				}
+			}
+			if (bl != null) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+				insert(tree, path, new DefaultMutableTreeNode[] { node });
+			}
+		}
+		@Override
+		public String getText() {
+			return title;
+		}
+		@Override
+		public String getIconPath() {
+			return iconPath;
+		}
+		@Override
+		public int getShortcut() {
+			return Integer.valueOf(mnemonic);
+		}
+		@Override
+		public String getTooltip() {
+			return tool_tip;
+		}
     };
-    a.putValue(Action.SMALL_ICON, icon);
-    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
-    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(mnemonic));
     setAccelerator(a);
     return a;
   }
 
-  /**
-   * Action to move forward in the Bookmark History
-   * @return the Action forward
-   */
-  public Action makeForwardAction() {
-     String title = "Forward";
-     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/media/FastForward16.gif");
-     String tool_tip = "Forward";
-	 Action a = new AbstractAction(title) {
-	     private static final long serialVersionUID = 1L;
-	     public void actionPerformed(ActionEvent ae) {
-	    	 if (history_pointer < bookmark_history.size() - 1) {
-	    		 history_pointer++;
-	             TreePath path = bookmark_history.get(history_pointer);
-	             tree.setSelectionPath(path);
-	             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-	             Bookmark bm = (Bookmark)node.getUserObject();
-	             BookmarkController.viewBookmark(igbService, bm);
-	             forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
-	             backward_action.setEnabled(true);
-	    	 }
-	     }
-	 };
-    a.putValue(Action.SMALL_ICON, icon);
-    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
-    return a;
-  }
+	/**
+	 * Action to move forward in the Bookmark History
+	 * 
+	 * @return the Action forward
+	 */
+	public Action makeForwardAction() {
+		Action a = new GenericAction() {
+			private static final long serialVersionUID = 1L;
 
-  /**
-   * Action to move backward in the Bookmark History
-   * @return the Action backward
-   */
-  public Action makeBackwardAction() {
-     String title = "Backward";
-     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/media/Rewind16.gif");
-     String tool_tip = "Backward";
-	 Action a = new AbstractAction(title) {
-	     private static final long serialVersionUID = 1L;
-	     public void actionPerformed(ActionEvent ae) {
-	    	 if (history_pointer > 0) {
-	    		 history_pointer--;
-	             TreePath path = bookmark_history.get(history_pointer);
-	             tree.setSelectionPath(path);
-	             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-	             Bookmark bm = (Bookmark)node.getUserObject();
-	             BookmarkController.viewBookmark(igbService, bm);
-	             forward_action.setEnabled(true);
-	             backward_action.setEnabled(history_pointer > 0);
-	    	 }
-	     }
-	 };
-    a.putValue(Action.SMALL_ICON, icon);
-    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
-    return a;
-  }
+			public void actionPerformed(ActionEvent ae) {
+                super.actionPerformed(ae);
+				if (history_pointer < bookmark_history.size() - 1) {
+					history_pointer++;
+					TreePath path = bookmark_history.get(history_pointer);
+					tree.setSelectionPath(path);
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					Bookmark bm = (Bookmark) node.getUserObject();
+					BookmarkController.viewBookmark(igbService, bm);
+					forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
+					backward_action.setEnabled(true);
+				}
+			}
+
+			@Override
+			public String getText() {
+				return "Forward";
+			}
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/media/FastForward16.gif";
+			}
+			@Override
+			public int getShortcut() {
+				return KeyEvent.VK_F;
+			}
+			@Override
+			public String getTooltip() {
+				return "Forward";
+			}
+		};
+	    setAccelerator(a);
+		return a;
+	}
+
+	/**
+	 * Action to move backward in the Bookmark History
+	 * 
+	 * @return the Action backward
+	 */
+	public Action makeBackwardAction() {
+		Action a = new GenericAction() {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent ae) {
+                super.actionPerformed(ae);
+				if (history_pointer > 0) {
+					history_pointer--;
+					TreePath path = bookmark_history.get(history_pointer);
+					tree.setSelectionPath(path);
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					Bookmark bm = (Bookmark) node.getUserObject();
+					BookmarkController.viewBookmark(igbService, bm);
+					forward_action.setEnabled(true);
+					backward_action.setEnabled(history_pointer > 0);
+				}
+			}
+
+			@Override
+			public String getText() {
+				return "Backward";
+			}
+
+			@Override
+			public String getIconPath() {
+				return "toolbarButtonGraphics/media/Rewind16.gif";
+			}
+
+			@Override
+			public int getShortcut() {
+				return KeyEvent.VK_B;
+			}
+
+			@Override
+			public String getTooltip() {
+				return "Backward";
+			}
+		};
+		setAccelerator(a);
+		return a;
+	}
+
 	public File getLoadDirectory() {
 		return FileTracker.DATA_DIR_TRACKER.getFile();
 	}

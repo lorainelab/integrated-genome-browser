@@ -15,6 +15,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;  
 import com.affymetrix.igb.tiers.TrackDefaultViewGUI;
@@ -207,11 +208,16 @@ public final class PreferencesPanel extends JPanel {
     JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
     final JDialog dialog = new JDialog(frameAncestor, HELP, true);
     dialog.getContentPane().add(scroller, "Center");
-    Action close_action = new AbstractAction("OK") {
+    Action close_action = new GenericAction() {
       private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent e) {
+    	  super.actionPerformed(e);
         dialog.dispose();
       }
+	  @Override
+	  public String getText() {
+		return "OK";
+	  }
     };
     JButton close = new JButton(close_action);
     Box button_box = new Box(BoxLayout.X_AXIS);
@@ -284,9 +290,10 @@ public final class PreferencesPanel extends JPanel {
 
   private Action getExportAction() {
     if (export_action == null) {
-      export_action = new AbstractAction("Export Preferences ...") {
+      export_action = new GenericAction() {
     	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+        	  super.actionPerformed(ae);
 			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showSaveDialog(PreferencesPanel.this);
 			  if (option == JFileChooser.APPROVE_OPTION) {
@@ -299,21 +306,27 @@ public final class PreferencesPanel extends JPanel {
 				  }
 			  }
 		  }
+		@Override
+		public String getText() {
+			return "Export Preferences ...";
+		}
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Export16.gif";
+		}
+		public int getShortcut() { return KeyEvent.VK_E; }
 	  };
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
-      export_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
       export_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(EXPORT_ACTION_COMMAND));
-      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif");
-      export_action.putValue(Action.SMALL_ICON, icon);
     }
     return export_action;
   }
 
   private Action getImportAction() {
     if (import_action == null) {
-      import_action = new AbstractAction("Import Preferences ...") {
+      import_action = new GenericAction() {
     	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+      	      super.actionPerformed(ae);
 			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showOpenDialog(PreferencesPanel.this);
 			  if (option == JFileChooser.APPROVE_OPTION) {
@@ -334,46 +347,63 @@ public final class PreferencesPanel extends JPanel {
 				  components[i].refresh();
 			  }
         }
+		@Override
+		public String getText() {
+			return "Import Preferences ...";
+		}
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Import16.gif";
+		}
+		public int getShortcut() { return KeyEvent.VK_I; }
       };
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
-      import_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
       import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
-      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif");
-      import_action.putValue(Action.SMALL_ICON, icon);
     }
     return import_action;
   }
 
   private Action getHelpAction() {
     if (help_action == null) {
-      help_action = new AbstractAction("General Help") {
+      help_action = new GenericAction() {
     	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+          super.actionPerformed(ae);
           showHelp(getHelpTextHTML());
         }
+		@Override
+		public String getText() {
+			return "General Help";
+		}
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/Help16.gif";
+		}
+		public int getShortcut() { return KeyEvent.VK_G; }
       };
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
-      help_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
       help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
-      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
-      help_action.putValue(Action.SMALL_ICON, icon);
     }
     return help_action;
   }
 
   private Action getHelpTabAction() {
     if (help_for_tab_action == null) {
-      help_for_tab_action = new AbstractAction(BUNDLE.getString("HelpForCurrentTab")) {
+      help_for_tab_action = new GenericAction() {
     	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
+          super.actionPerformed(ae);
           showHelpForTab();
         }
+		@Override
+		public String getText() {
+			return BUNDLE.getString("HelpForCurrentTab");
+		}
+		public String getIconPath() {
+			return "toolbarButtonGraphics/general/ContextualHelp16.gif";
+		}
+		public int getShortcut() { return KeyEvent.VK_C; }
       };
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
-      help_for_tab_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
       help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));
-      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/ContextualHelp16.gif");
-      help_for_tab_action.putValue(Action.SMALL_ICON, icon);
     }
     return help_for_tab_action;
   }

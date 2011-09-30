@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.igb.IGB;
 
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
@@ -94,7 +95,7 @@ public final class LoadFileAction extends OpenURIAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	private LoadFileAction() {
-		super();
+		super(IGBServiceImpl.getInstance());
 
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;

@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.net.URI;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -143,7 +144,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
 	}
-
+	
 	@Override
 	public void updateGeneralLoadView() {
 		GeneralLoadView.getLoadView().refreshTreeView();
@@ -363,5 +364,15 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
+	}
+
+	@Override
+	public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName) {
+		GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName);
+	}
+	
+	@Override
+	public String getSelectedSpecies(){
+		return GeneralLoadView.getLoadView().getSelectedSpecies();
 	}
 }

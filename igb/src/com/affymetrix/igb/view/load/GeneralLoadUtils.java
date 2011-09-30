@@ -1,10 +1,12 @@
 package com.affymetrix.igb.view.load;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.zip.ZipInputStream;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -35,6 +38,10 @@ import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -48,10 +55,19 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.FeatureLoading;
@@ -1079,5 +1095,256 @@ public final class GeneralLoadUtils {
 			Collections.sort(versionNames, new StringVersionDateComparator());
 		}
 		return versionNames;
+	}
+
+	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName) {
+		// If server requires authentication then.
+		// If it cannot be authenticated then don't add the feature.
+		if (!LocalUrlCacher.isValidURI(uri)) {
+			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
+			return;
+		}
+
+		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
+
+		if (gFeature == null) {
+			return;
+		}
+
+		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
+
+		if (gFeature.symL != null) {
+			addChromosomesForUnknownGroup(fileName, gFeature);
+		}
+
+		// force a refresh of this server		
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+
+		// Annotated Seq Group must be selected before feature table change call.
+		if(gmodel.getSelectedSeqGroup() != gFeature.gVersion.group){
+			gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
+		}
+
+		GeneralLoadView.getLoadView().createFeaturesTable();
+	}
+	
+	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
+		if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+			// force a refresh of this server. This forces creation of 'genome' sequence.
+			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+			return;
+		}
+
+		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
+		final String message = "Retrieving chromosomes for " + fileName;
+		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
+
+			@Override
+			protected Boolean runInBackground() {
+				try {
+					for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+						loadGroup.addSeq(seq.getID(), seq.getLength(), gFeature.symL.uri.toString());
+					}
+					return true;
+				} catch (Exception ex) {
+					((QuickLoad) gFeature.symL).logException(ex);
+					if (Application.getSingleton().confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
+						if (gFeature.gVersion.removeFeature(gFeature)) {
+							SeqGroupView.getInstance().refreshTable();
+						}
+					}
+					return false;
+				}
+
+			}
+
+			@Override
+			protected void finished() {
+				boolean result = true;
+				try {
+					result = get();
+				} catch (Exception ex) {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+				if (result) {
+					SeqGroupView.getInstance().refreshTable();
+					if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
+						// select a chromosomes
+						gmodel.setSelectedSeq(loadGroup.getSeq(0));
+					}
+				} else {
+					//Feature was remove
+					GeneralLoadView.getLoadView().refreshTreeView();
+					GeneralLoadView.getLoadView().createFeaturesTable();
+				}
+			}
+
+		};
+		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
+	}
+	
+	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup) {
+		boolean isloaded = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
+		// Test to determine if a feature with this uri is contained in the load mode table
+		if (isloaded) {
+			ErrorHandler.errorPanel("Cannot add same feature",
+					"The feature " + uri + " has already been added.");
+			return null;
+		}
+		boolean isContained = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
+		// Test to determine if a feature already exist in the feature tree
+		if (isContained) {
+			GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
+			return null;
+		}
+
+		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
+		version = setVersion(uri, loadGroup, version);
+
+		// In case of BAM
+		if (version == null) {
+			return null;
+		}
+
+		// handle URL case.
+		String uriString = uri.toString();
+		int httpIndex = uriString.toLowerCase().indexOf("http:");
+		if (httpIndex > -1) {
+			// Strip off initial characters up to and including http:
+			// Sometimes this is necessary, as URLs can start with invalid "http:/"
+			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
+			uri = URI.create(uriString);
+		}
+		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		
+		SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
+		if(symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")){
+			symL = new ResidueTrackSymLoader(symL);			
+		}
+		
+		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri, symL), File.class, autoload);
+
+		version.addFeature(gFeature);
+
+		gFeature.setVisible(); // this should be automatically checked in the feature tree
+
+		return gFeature;
+	}
+
+	/**
+	 * Handle file formats that has SeqGroup info.
+	 * @param uri
+	 * @param loadGroup
+	 * @param version
+	 * @return
+	 */
+	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version) {
+		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
+		String extension = ParserController.getExtension(unzippedStreamName);
+
+		if (extension.equals(".bam")) {
+			if (!handleBam(uri)) {
+				ErrorHandler.errorPanel("Cannot open file", "Could not find index file");
+				version = null;
+			}
+		} else if (extension.equals(".useq")) {
+			loadGroup = handleUseq(uri, loadGroup);
+			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		} else if (extension.equals(".bar")) {
+			loadGroup = handleBar(uri, loadGroup);
+			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		} else if (extension.equals(".bp1") || extension.equals(".bp2")) {
+			loadGroup = handleBp(uri, loadGroup);
+			version = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		}
+
+		return version;
+	}
+
+	private static boolean handleBam(URI uri) {
+		try {
+			return BAM.hasIndex(uri);
+		} catch (IOException ex) {
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return false;
+	}
+
+	/**
+	 * Get AnnotatedSeqGroup for BAR file format.
+	 * @param uri
+	 * @param group
+	 * @return
+	 */
+	private static AnnotatedSeqGroup handleBar(URI uri, AnnotatedSeqGroup group) {
+		InputStream istr = null;
+		try {
+			istr = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			List<AnnotatedSeqGroup> groups = BarParser.getSeqGroups(uri.toString(), istr, group, gmodel);
+			if (groups.isEmpty()) {
+				return group;
+			}
+
+			//TODO: What if there are more than one seq group ?
+			if (groups.size() > 1) {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()});
+			}
+
+			return groups.get(0);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+
+		return group;
+	}
+
+	/**
+	 * Get AnnotatedSeqGroup for USEQ file format.
+	 * @param uri
+	 * @param group
+	 * @return
+	 */
+	private static AnnotatedSeqGroup handleUseq(URI uri, AnnotatedSeqGroup group) {
+		InputStream istr = null;
+		ZipInputStream zis = null;
+		try {
+			istr = LocalUrlCacher.getInputStream(uri.toURL());
+			zis = new ZipInputStream(istr);
+			zis.getNextEntry();
+			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
+			AnnotatedSeqGroup gr = USeqGraphParser.getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
+			if (gr != null) {
+				return gr;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(zis);
+		}
+
+		return group;
+	}
+
+	private static AnnotatedSeqGroup handleBp(URI uri, AnnotatedSeqGroup group) {
+		InputStream istr = null;
+		try {
+			istr = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			AnnotatedSeqGroup gr = Bprobe1Parser.getSeqGroup(istr, group, gmodel);
+			if (gr != null) {
+				return gr;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+
+		return group;
 	}
 }

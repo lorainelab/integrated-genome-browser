@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -35,7 +36,7 @@ public final class LoadURLAction extends OpenURIAction {
 	private JDialog dialog = null;
 
 	private LoadURLAction() {
-		super();
+		super(IGBServiceImpl.getInstance());
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 

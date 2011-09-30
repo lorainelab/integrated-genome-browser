@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -20,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import java.net.URI;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
@@ -169,4 +171,8 @@ public interface IGBService {
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
 	public GenericServer getServer(String URLorName);
+	
+	// Open Uri
+	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName);
+	public String getSelectedSpecies();
 }

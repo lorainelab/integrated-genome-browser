@@ -17,9 +17,9 @@ import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.view.load.AutoLoad;
 
 final class AltSpliceSeqMapView extends SeqMapView {
 	private static final long serialVersionUID = 1l;
@@ -44,7 +44,7 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 
 	@Override
-	protected AutoLoad addAutoLoad(){
+	protected AutoLoadThresholdAction addAutoLoad(){
 		//Do Nothing for alt splice view.
 		return null;
 	}

@@ -1,8 +1,11 @@
-package com.affymetrix.igb.view.load;
+package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,9 +20,15 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class AutoLoad extends GenericAction 
+public class AutoLoadThresholdAction extends GenericAction 
 		implements MouseListener, MouseMotionListener, PreferenceChangeListener{
 	private static final long serialVersionUID = 1L;
+	private static final AutoLoadThresholdAction ACTION = new AutoLoadThresholdAction();
+
+	public static AutoLoadThresholdAction getAction(){
+		return ACTION;
+	}
+
 	private static final int default_threshold = 70;
 	public final static String  PREFS_THRESHOLD = "Threshold Value";
 	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
@@ -33,10 +42,10 @@ public class AutoLoad extends GenericAction
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 	
-	public AutoLoad(NeoMap map){
+	private AutoLoadThresholdAction() {
 		//"Set AutoLoad Threshold to Current View"
 		super();
-		this.map = map;
+		this.map = ((IGB)IGB.getSingleton()).getMapView().getSeqMap();
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
 		
@@ -125,6 +134,7 @@ public class AutoLoad extends GenericAction
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		super.actionPerformed(ae);
 		threshold = (zoomer.getValue() * 100 / zoomer.getMaximum());

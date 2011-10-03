@@ -69,6 +69,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
@@ -78,7 +79,6 @@ import com.affymetrix.igb.action.RefreshAFeatureAction;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
-import com.affymetrix.igb.view.load.AutoLoad;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
@@ -241,7 +241,7 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final AutoLoad autoload;
+	private final AutoLoadThresholdAction autoload;
 	public GenericAction seqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -494,11 +494,11 @@ public class SeqMapView extends JPanel
 
 	}
 
-	protected AutoLoad addAutoLoad() {
-		return new AutoLoad(seqmap);
+	protected AutoLoadThresholdAction addAutoLoad() {
+		return AutoLoadThresholdAction.getAction();
 	}
 
-	public AutoLoad getAutoLoad() {
+	public AutoLoadThresholdAction getAutoLoad() {
 		return autoload;
 	}
 

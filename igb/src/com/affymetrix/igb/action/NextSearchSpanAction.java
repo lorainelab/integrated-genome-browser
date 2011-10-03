@@ -13,6 +13,11 @@ public class NextSearchSpanAction extends GenericAction {
 		return ACTION;
 	}
 
+	private NextSearchSpanAction() {
+		super();
+		setEnabled(false);
+	}
+
 	@Override
 	public String getText() {
 		return "Next Search Span";

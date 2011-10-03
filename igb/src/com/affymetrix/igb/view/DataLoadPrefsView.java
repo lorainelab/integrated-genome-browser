@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.igb.action.AutoLoadAction;
+import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
@@ -57,7 +57,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 
-	private static final JCheckBox autoload = AutoLoadAction.getAction();
+	private static final JCheckBox autoload = AutoLoadFeatureAction.getAction();
 
 	protected JRPButton editAuthButton;
 	protected JRPButton rankUpButton;

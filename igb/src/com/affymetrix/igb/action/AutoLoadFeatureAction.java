@@ -10,13 +10,13 @@ import javax.swing.JCheckBox;
  *
  * @author hiralv
  */
-public class AutoLoadAction extends GenericAction {
+public class AutoLoadFeatureAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 
-	private static final AutoLoadAction singleton = new AutoLoadAction();
+	private static final AutoLoadFeatureAction singleton = new AutoLoadFeatureAction();
 	private final JCheckBox autoload;
 
-	private AutoLoadAction(){
+	private AutoLoadFeatureAction(){
 		super();
 		autoload = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
 				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);

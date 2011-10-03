@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -80,6 +79,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	}
 
 	void createVirtualFeatures(List<GenericFeature> features) {
+		// Sort these features so the features to be loaded are at the top.
+		Collections.sort(features, visibleFeatureComp);
+		
 		this.features = features;
 		if (virtualFeatures != null) {
 			virtualFeatures.clear();
@@ -125,29 +127,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				virtualFeatures.add(subVfeature);
 			}
 		}
-	}
-
-	/**
-	 * Only want to display features with visible attribute set to true.
-	 * @param features
-	 * @return list of visible features
-	 */
-	static List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
-		if (features == null) {
-			return null;
-		}
-		List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
-		for (GenericFeature gFeature : features) {
-			if (gFeature.isVisible()) {
-				visibleFeatures.add(gFeature);
-			}
-		}
-
-		Collections.sort(visibleFeatures, visibleFeatureComp);
-
-		// Also sort these features so the features to be loaded are at the top.
-
-		return visibleFeatures;
 	}
 
 	private final static class featureTableComparator implements Comparator<GenericFeature> {

@@ -418,6 +418,25 @@ public final class GeneralLoadUtils {
 		return featureList;
 	}
 
+	
+	/**
+	* Only want to display features with visible attribute set to true.
+	* @param features
+	* @return list of visible features
+	*/
+	public static List<GenericFeature> getVisibleFeatures() {
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+
+		List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
+		for (GenericFeature gFeature : getFeatures(group)) {
+			if (gFeature.isVisible()) {
+				visibleFeatures.add(gFeature);
+			}
+		}
+
+		return visibleFeatures;
+	}
+	
 	/*
 	 * Returns the list of features for currently selected group.
 	 */

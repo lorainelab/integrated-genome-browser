@@ -346,20 +346,19 @@ public final class GeneralLoadView {
 	 */
 	public List<GenericFeature> createFeaturesTable() {
 		String versionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
-		final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+		
 		if (DEBUG_EVENTS) {
 			BioSeq curSeq = gmodel.getSelectedSeq();
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
-			System.out.println("features for " + versionName + ": " + features.toString());
+			System.out.println("features for " + versionName + ": " + visibleFeatures.toString());
 		}
 
 		int maxFeatureNameLength = 1;
-		for (GenericFeature feature : features) {
+		for (GenericFeature feature : visibleFeatures) {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
-
-		final List<GenericFeature> visibleFeatures = DataManagementTableModel.getVisibleFeatures(features);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
@@ -410,10 +409,10 @@ public final class GeneralLoadView {
 		});
 
 		disableButtonsIfNecessary();
-		changeVisibleDataButtonIfNecessary(features);	// might have been disabled when switching to another chromosome or genome.
-		return features;
+		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
+		return visibleFeatures;
 	}
-
+	
 	/**
 	 * Check if it is necessary to disable buttons.
 	 * @return

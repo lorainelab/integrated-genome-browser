@@ -47,6 +47,9 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 	public String getId() {
 		return this.getClass().getSimpleName();
 	}
+	public boolean usePrefixInMenu() {
+		return false;
+	}
 	public void addDoneCallback(GenericActionDoneCallback doneCallback) {
 		doneCallbacks.add(doneCallback);
 	}

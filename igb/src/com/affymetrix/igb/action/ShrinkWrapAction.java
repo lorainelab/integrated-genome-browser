@@ -40,4 +40,9 @@ public class ShrinkWrapAction extends GenericAction {
 	public int getShortcut() {
 		return KeyEvent.VK_S;
 	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
+	}
 }

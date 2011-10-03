@@ -6,8 +6,6 @@ import com.affymetrix.igb.IGB;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
-
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -40,5 +38,10 @@ public class ClampViewAction extends GenericAction {
 	@Override
 	public int getShortcut() {
 		return KeyEvent.VK_V;
+	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
 	}
 }

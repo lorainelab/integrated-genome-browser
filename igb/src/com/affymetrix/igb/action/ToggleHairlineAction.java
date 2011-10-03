@@ -47,4 +47,9 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 	public String getText() {
 		return BUNDLE.getString("toggleHairline");
 	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
+	}
 }

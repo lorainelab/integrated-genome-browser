@@ -36,5 +36,9 @@ public class DrawCollapseControlAction extends GenericAction {
 		this.putValue(SELECTED_KEY, b);
 		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
 	}
-	
+
+	@Override
+	public boolean isToggle() {
+		return true;
+	}
 }

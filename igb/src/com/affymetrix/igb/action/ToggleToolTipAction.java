@@ -48,4 +48,9 @@ public class ToggleToolTipAction extends GenericAction {
 	public int getShortcut() {
 		return KeyEvent.VK_H;
 	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
+	}
 }

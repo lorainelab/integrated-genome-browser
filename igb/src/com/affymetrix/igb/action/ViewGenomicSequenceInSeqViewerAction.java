@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
-import javax.swing.JComponent;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -18,8 +17,13 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static final ViewGenomicSequenceInSeqViewerAction ACTION = new ViewGenomicSequenceInSeqViewerAction();
 
-	public ViewGenomicSequenceInSeqViewerAction(JComponent comp) {
+	public static ViewGenomicSequenceInSeqViewerAction getAction() {
+		return ACTION;
+	}
+
+	private ViewGenomicSequenceInSeqViewerAction() {
 		super();
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {
@@ -27,6 +31,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 //		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		try {

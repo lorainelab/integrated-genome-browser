@@ -386,7 +386,7 @@ public class SeqMapView extends JPanel
 			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
-			seqviewer = new ViewGenomicSequenceInSeqViewerAction(this);
+			seqviewer = ViewGenomicSequenceInSeqViewerAction.getAction();
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'

@@ -19,6 +19,8 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +31,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
@@ -36,6 +39,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -63,11 +67,9 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.shared.TransformTierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
@@ -89,12 +91,6 @@ public final class IGB extends Application
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JToolBar tool_bar;
-	private JRPMenu file_menu;
-	private JRPMenu export_to_file_menu;
-	private JRPMenu view_menu;
-	private JRPMenu edit_menu;
-	private JRPMenu tools_menu;
-	private JRPMenu help_menu;
 	private SeqMapView map_view;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
@@ -344,93 +340,88 @@ public final class IGB extends Application
 			tool_bar = new JToolBar();
 		}
 //		windowService.setToolBar(tool_bar);
-		windowService.setViewMenu(view_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export.exportSlicedView", ExportSlicedViewAction.getAction()), export_to_file_menu.getText());
+		windowService.setViewMenu(getMenu("view"));
 		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
-	public void loadMenu() {
+	private void loadMenu() {
 		mbar = MenuUtil.getMainMenuBar();
 		frm.setJMenuBar(mbar);
+		// load the menu from the Preferences
 
-		fileMenu();
-		editMenu();
-		viewMenu();
-		toolMenu();
-		helpMenu();
+		Preferences mainMenuPrefs = PreferenceUtils.getTopNode().node("main_menu");
+		try {
+			for (String childMenu : mainMenuPrefs.childrenNames()) {
+				loadTopMenu(mainMenuPrefs.node(childMenu));
+			}
+		}
+		catch (BackingStoreException x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
+		}
 	}
 
-	private void fileMenu() {
-		file_menu = MenuUtil.getRPMenu("Main_fileMenu", BUNDLE.getString("fileMenu"));
-		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
-
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadFile", LoadFileAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_loadURL", LoadURLAction.getAction()));
-		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_print", PrintAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_printFrame", PrintFrameAction.getAction()));
-		export_to_file_menu = new JRPMenu("Main_fileMenu_export", BUNDLE.getString("export"));
-		export_to_file_menu.setMnemonic('T');
-		file_menu.add(export_to_file_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportMainView", ExportMainViewAction.getAction()), export_to_file_menu.getText());
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportLabelledMainView", ExportLabelledMainViewAction.getAction()), export_to_file_menu.getText());
-		MenuUtil.addToMenu(export_to_file_menu, new JRPMenuItem("Main_fileMenu_export_exportWholeFrame", ExportWholeFrameAction.getAction()), export_to_file_menu.getText());
-		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_preferences", PreferencesAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(SaveScriptAction.getAction())); // don't want to record this
-		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem("Main_fileMenu_exit", ExitAction.getAction()));
+	private void loadTopMenu(Preferences menuPrefs) {
+		String key = menuPrefs.get("menu", "???");
+		JRPMenu menu = MenuUtil.getRPMenu("Main_" + key, BUNDLE.getString(key));
+		menu.setMnemonic(BUNDLE.getString(key + "Mnemonic").charAt(0));
+		try {
+			for (String childMenu : menuPrefs.childrenNames()) {
+				loadMenuItem(menu, menuPrefs.node(childMenu));
+			}
+		}
+		catch (BackingStoreException x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
+		}
 	}
 
-	private void editMenu() {
-		edit_menu = MenuUtil.getRPMenu("Main_editMenu", BUNDLE.getString("editMenu"));
-		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
-
-		MenuUtil.addToMenu(edit_menu, new JRPMenuItem("Main_editMenu_copyResidues", CopyResiduesAction.getAction()));
+	private void loadMenuItem(JRPMenu menu, Preferences menuItemPrefs) {
+		if (menuItemPrefs.get("separator", null) != null) {
+			menu.addSeparator();
+		}
+		else if (menuItemPrefs.get("menu", null) != null) {
+			loadSubMenu(menu, menuItemPrefs);
+		}
+		else if (menuItemPrefs.get("item", null) != null) {
+			loadLeafItem(menu, menuItemPrefs);
+		}
+		else {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error in menu preferences definition");
+		}
 	}
 
-	private void viewMenu() {
-		view_menu = MenuUtil.getRPMenu("Main_viewMenu", BUNDLE.getString("viewMenu"));
-		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-
-		JRPMenu strands_menu = new JRPMenu("Main_viewMenu_strands", "Strands");
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMixed", ShowMixedStrandAction.getAction()));
-		view_menu.add(strands_menu);
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_autoscroll", AutoScrollAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
-		NextSearchSpanAction.getAction().setEnabled(false);
-		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
-		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_clampView", ClampViewAction.getAction()));
-		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_shrinkWrap", ShrinkWrapAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_showHairline", ToggleHairlineAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction()));
+	private void loadSubMenu(JRPMenu menu, Preferences menuPrefs) {
+		String key = menuPrefs.get("menu", "???");
+		JRPMenu submenu = new JRPMenu("Main_" + key, BUNDLE.getString(key));
+		menu.add(submenu);
+		try {
+			for (String childMenu : menuPrefs.childrenNames()) {
+				loadMenuItem(submenu, menuPrefs.node(childMenu));
+			}
+		}
+		catch (BackingStoreException x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
+		}
 	}
 
-	private void toolMenu() {
-		tools_menu = MenuUtil.getRPMenu("Main_toolsMenu", BUNDLE.getString("toolsMenu"));
-		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
-
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem("Main_toolsMenu_webLinks", WebLinksAction.getAction()));
-	}
-
-	private void helpMenu() {
-		help_menu = MenuUtil.getRPMenu("Main_helpMenu", BUNDLE.getString("helpMenu"));
-		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
-
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_forumHelp", ForumHelpAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_reportBug", ReportBugAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_requestFeature", RequestFeatureAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_documentation", DocumentationAction.getAction()));
-		MenuUtil.addToMenu(help_menu, new JRPMenuItem("Main_helpMenu_showConsole", ShowConsoleAction.getAction()));
+	private void loadLeafItem(JRPMenu menu, Preferences menuItemPrefs) {
+		String name = menuItemPrefs.get("item", null);
+		String className = "com.affymetrix.igb.action." + name;
+		try {
+			Class<?> clazz = Class.forName(className);
+			Method m = clazz.getDeclaredMethod("getAction");
+			GenericAction action = (GenericAction)m.invoke(null);
+			String id = menu.getId() + "_" + menuItemPrefs.get("item", "???");
+			JMenuItem item = action.isToggle() ? new JRPCheckBoxMenuItem(id, action) : new JRPMenuItem(id, action);
+			if (action.usePrefixInMenu()) {
+				MenuUtil.addToMenu(menu, item, menu.getText());
+			}
+			else {
+				MenuUtil.addToMenu(menu, item);
+			}
+		}
+		catch (Exception x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
+		}
 	}
 
 	public void addToolbarButton(JButton button) {
@@ -499,16 +490,28 @@ public final class IGB extends Application
 		return windowService;
 	}
 
+	public JRPMenu getMenu(String menuId) {
+		String id = "Main_" + menuId + "Menu";
+	    int num_menus = mbar.getMenuCount();
+	    for (int i=0; i<num_menus; i++) {
+	    	JRPMenu menu_i = (JRPMenu)mbar.getMenu(i);
+	    	if (id.equals(menu_i.getId())) {
+	    		return menu_i;
+	    	}
+	    }
+	    return null;
+	}
+
 	public JRPMenu getFileMenu() {
-		return file_menu;
+		return getMenu("file");
 	}
 
 	public JRPMenu getViewMenu() {
-		return view_menu;
+		return getMenu("view");
 	}
 
 	public JRPMenu getHelpMenu() {
-		return help_menu;
+		return getMenu("help");
 	}
 
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {

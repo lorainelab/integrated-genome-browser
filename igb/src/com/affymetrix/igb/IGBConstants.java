@@ -41,6 +41,7 @@ public interface IGBConstants {
 
 	public static final boolean DEBUG = false;
 
+	public static final String DEFAULT_PREFS_MENU_RESOURCE = "/igb_default_menu_prefs.xml";
 	public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
 	public static final String default_prefs_resource = "/igb_default_prefs.xml";
 

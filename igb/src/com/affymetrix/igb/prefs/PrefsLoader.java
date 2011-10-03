@@ -64,6 +64,7 @@ public abstract class PrefsLoader {
 
 		LoadDefaultPrefsFromJar();
 		LoadDefaultAPIPrefsFromJar();
+		LoadDefaultMenuPrefsFromJar();
 		LoadWebPrefs(def_prefs_url);
 		LoadFileOrURLPrefs(prefs_list);
 		ServerList.getServerInstance().loadServerPrefs();
@@ -91,10 +92,10 @@ public abstract class PrefsLoader {
 		}
 	}
 
-	private static void LoadDefaultAPIPrefsFromJar() {
+	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName) {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
-			if ((PreferenceUtils.getTopNode()).nodeExists("keystrokes")) {
+			if ((PreferenceUtils.getTopNode()).nodeExists(aNodeName)) {
 				return;
 			}
 		} catch (BackingStoreException ex) {
@@ -103,16 +104,24 @@ public abstract class PrefsLoader {
 		InputStream default_prefs_stream = null;
 		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
-			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.DEFAULT_PREFS_API_RESOURCE);
-			System.out.println("loading default User preferences from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			default_prefs_stream = IGB.class.getResourceAsStream(fileName);
+			System.out.println("loading default User preferences from: " + fileName);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
-			System.out.println("Problem parsing prefs from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			System.out.println("Problem parsing prefs from: " + fileName);
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
+	}
+
+	private static void LoadDefaultMenuPrefsFromJar() {
+		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_MENU_RESOURCE, "main_menu");
+	}
+
+	private static void LoadDefaultAPIPrefsFromJar() {
+		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_API_RESOURCE, "keystrokes");
 	}
 
 	private static void LoadWebPrefs(String def_prefs_url) {

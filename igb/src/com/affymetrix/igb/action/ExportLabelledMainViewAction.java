@@ -48,4 +48,9 @@ public class ExportLabelledMainViewAction extends GenericAction {
 	public int getShortcut() {
 		return KeyEvent.VK_L;
 	}
+
+	@Override
+	public boolean usePrefixInMenu() {
+		return true;
+	}
 }

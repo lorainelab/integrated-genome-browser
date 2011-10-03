@@ -62,4 +62,9 @@ public class ExportSlicedViewAction extends GenericAction {
 	public int getShortcut() {
 		return KeyEvent.VK_S;
 	}
+
+	@Override
+	public boolean usePrefixInMenu() {
+		return true;
+	}
 }

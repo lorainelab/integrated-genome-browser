@@ -40,4 +40,9 @@ public class ExportWholeFrameAction extends GenericAction {
 				BUNDLE.getString("menuItemHasDialog"),
 				BUNDLE.getString("wholeFrame"));
 	}
+
+	@Override
+	public boolean usePrefixInMenu() {
+		return true;
+	}
 }

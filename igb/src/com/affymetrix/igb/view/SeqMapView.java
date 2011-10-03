@@ -241,7 +241,6 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final AutoLoadThresholdAction autoload;
 	public GenericAction seqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -321,13 +320,13 @@ public class SeqMapView extends JPanel
 			public void paint(Graphics g) {
 				super.paint(g);
 
-				if (autoload != null) {
+				if (getAutoLoad() != null) {
 					drawAutoLoadPoint(g);
 				}
 			}
 
 			private void drawAutoLoadPoint(Graphics g) {
-				int threshValue = (autoload.threshold * getMaximum() / 100);
+				int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
 				Color c = g.getColor();
 				g.setColor(this.getBackground().brighter());
 				int xp = xPositionForValue(threshValue);
@@ -352,8 +351,8 @@ public class SeqMapView extends JPanel
 
 			@Override
 			public String getToolTipText(MouseEvent me) {
-				if (me != null && autoload != null) {
-					int threshValue = (autoload.threshold * getMaximum() / 100);
+				if (me != null && getAutoLoad() != null) {
+					int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
 					int xp = xPositionForValue(threshValue);
 					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
 						return BUNDLE.getString("autoloadToolTip");
@@ -370,8 +369,6 @@ public class SeqMapView extends JPanel
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
-
-		autoload = addAutoLoad();
 
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		popup = new SeqMapViewPopup(tier_manager, this);
@@ -499,7 +496,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public AutoLoadThresholdAction getAutoLoad() {
-		return autoload;
+		return AutoLoadThresholdAction.getAction();
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
@@ -1293,8 +1290,8 @@ public class SeqMapView extends JPanel
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
 		seqmap.updateWidget();
-		if (autoload != null) {
-			autoload.mapZoomed();
+		if (getAutoLoad() != null) {
+			getAutoLoad().mapZoomed();
 		}
 	}
 
@@ -1364,8 +1361,8 @@ public class SeqMapView extends JPanel
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();
-			if (autoload != null) {
-				autoload.mapZoomed();
+			if (getAutoLoad() != null) {
+				getAutoLoad().mapZoomed();
 			}
 		}
 	}
@@ -1789,9 +1786,9 @@ public class SeqMapView extends JPanel
 				popup.add(new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature)));
 			}
 		}
-		if(autoload != null){
+		if(getAutoLoad() != null){
 			popup.add(new JSeparator());
-			popup.add(new JMenuItem(autoload));
+			popup.add(new JMenuItem(getAutoLoad()));
 		}
 	}
 
@@ -2123,8 +2120,8 @@ public class SeqMapView extends JPanel
 		coord_value += 1; // fudge factor
 		seqmap.scroll(NeoMap.Y, coord_value);
 		seqmap.updateWidget();
-		if (autoload != null) {
-			autoload.mapZoomed();
+		if (getAutoLoad() != null) {
+			getAutoLoad().mapZoomed();
 		}
 	}
 

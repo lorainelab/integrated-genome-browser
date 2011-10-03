@@ -394,16 +394,16 @@ public final class IGB extends Application
 		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
 
 		JRPMenu strands_menu = new JRPMenu("Main_viewMenu_strands", "Strands");
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showPlus", getMapView().getSeqMap().show_plus_action));
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMinus", getMapView().getSeqMap().show_minus_action));
-		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMixed", getMapView().getSeqMap().show_mixed_action));
+		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
+		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
+		strands_menu.add(new ActionToggler("Main_viewMenu_strands_showMixed", ShowMixedStrandAction.getAction()));
 		view_menu.add(strands_menu);
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_autoscroll", AutoScrollAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_viewGenomicSequenceInSeqViewer", map_view.seqviewer));
+		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_viewGenomicSequenceInSeqViewer", ViewGenomicSequenceInSeqViewerAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_nextSearchSpanAction", NextSearchSpanAction.getAction()));
 		NextSearchSpanAction.getAction().setEnabled(false);
 		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_setThreshold", map_view.getAutoLoad()));
+		MenuUtil.addToMenu(view_menu, new JRPMenuItem("Main_viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem("Main_viewMenu_clampView", ClampViewAction.getAction()));
 		view_menu.addSeparator();

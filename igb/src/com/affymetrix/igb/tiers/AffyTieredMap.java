@@ -14,7 +14,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
@@ -22,13 +21,15 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.action.ShowMinusStrandAction;
+import com.affymetrix.igb.action.ShowMixedStrandAction;
+import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
@@ -66,64 +67,42 @@ public class AffyTieredMap extends NeoMap {
 	 *  so I have to fake it.
 	 *
 	 */
-	public static final String SELECTED_KEY = "Selected (AffyTieredMap)";
+	public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
-	public Action show_plus_action = new GenericAction() {
-	   	private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			show_plus = !show_plus;
-			putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
-			repackTheTiers(false, true, false);
-		}
-
-		@Override
-		public String getText() {
-			return "Show (+) tiers";
-		}
-	};
-	public Action show_minus_action = new GenericAction() {
-	   	private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			show_minus = !show_minus;
-			putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
-			repackTheTiers(false, true, false);
-		}
-
-		@Override
-		public String getText() {
-			return "Show (-) tiers";
-		}
-	};
-	public Action show_mixed_action = new GenericAction() {
-	   	private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			show_mixed = !show_mixed;
-			putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
-			repackTheTiers(false, true, false);
-		}
-
-		@Override
-		public String getText() {
-			return "Show (+/-) tiers";
-		}
-	};
-
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
-		show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
-		show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
-		show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
+		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
+		ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_minus));
+		ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_mixed));
 	}
 
 	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
 		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 		this.scroller[Y] = vscroller;
+	}
+
+	public static boolean isShowPlus() {
+		return show_plus;
+	}
+
+	public static void setShowPlus(boolean show_plus_) {
+		show_plus = show_plus_;
+	}
+
+	public static boolean isShowMinus() {
+		return show_minus;
+	}
+
+	public static void setShowMinus(boolean show_minus_) {
+		show_minus = show_minus_;
+	}
+
+	public static boolean isShowMixed() {
+		return show_mixed;
+	}
+
+	public static void setShowMixed(boolean show_mixed_) {
+		show_mixed = show_mixed_;
 	}
 
 	/**
@@ -551,12 +530,12 @@ public class AffyTieredMap extends NeoMap {
 
 		public ActionToggler(String id, Action action) {
 			super(id, action);
-			this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY)).booleanValue());
+			this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY_)).booleanValue());
 			action.addPropertyChangeListener(this);
 		}
 
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (AffyTieredMap.SELECTED_KEY.equals(evt.getPropertyName())) {
+			if (AffyTieredMap.SELECTED_KEY_.equals(evt.getPropertyName())) {
 				Boolean b = (Boolean) evt.getNewValue();
 				this.setSelected(b.booleanValue());
 			}

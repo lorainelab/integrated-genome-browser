@@ -38,6 +38,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.FeatureInfoAction;
+import com.affymetrix.igb.action.ShowMinusStrandAction;
+import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -479,8 +481,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
-		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", smv.getSeqMap().show_plus_action);
-		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", smv.getSeqMap().show_minus_action);
+		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
+		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
 	}
 

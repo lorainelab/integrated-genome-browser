@@ -16,12 +16,12 @@ public class ShowMinusStrandAction extends GenericAction {
 
 	private ShowMinusStrandAction() {
 		super();
+		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMinus());
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMinus(!AffyTieredMap.isShowMinus());
-		putValue(AffyTieredMap.SELECTED_KEY_, Boolean.valueOf(AffyTieredMap.isShowMinus()));
 		AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
 		map.repackTheTiers(false, true, false);
 	}
@@ -29,5 +29,10 @@ public class ShowMinusStrandAction extends GenericAction {
 	@Override
 	public String getText() {
 		return "Show (-) tiers";
+	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
 	}
 }

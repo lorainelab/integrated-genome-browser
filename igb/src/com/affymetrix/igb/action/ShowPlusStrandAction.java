@@ -16,12 +16,12 @@ public class ShowPlusStrandAction extends GenericAction {
 
 	private ShowPlusStrandAction() {
 		super();
+		this.putValue(SELECTED_KEY, AffyTieredMap.isShowPlus());
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowPlus(!AffyTieredMap.isShowPlus());
-		putValue(AffyTieredMap.SELECTED_KEY_, Boolean.valueOf(AffyTieredMap.isShowPlus()));
 		AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
 		map.repackTheTiers(false, true, false);
 	}
@@ -29,5 +29,10 @@ public class ShowPlusStrandAction extends GenericAction {
 	@Override
 	public String getText() {
 		return "Show (+) tiers";
+	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
 	}
 }

@@ -16,12 +16,12 @@ public class ShowMixedStrandAction extends GenericAction {
 
 	private ShowMixedStrandAction() {
 		super();
+		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMixed());
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMixed(!AffyTieredMap.isShowMixed());
-		putValue(AffyTieredMap.SELECTED_KEY_, Boolean.valueOf(AffyTieredMap.isShowMixed()));
 		AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
 		map.repackTheTiers(false, true, false);
 	}
@@ -29,5 +29,10 @@ public class ShowMixedStrandAction extends GenericAction {
 	@Override
 	public String getText() {
 		return "Show (+/-) tiers";
+	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
 	}
 }

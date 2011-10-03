@@ -55,7 +55,7 @@ public class ResidueTrackSymLoader extends SymLoader {
 	private List<? extends SeqSymmetry> getResidueTrack(SeqSpan span) throws Exception{
 		List<SeqSymmetry> list = new ArrayList<SeqSymmetry>();
 		list.add(new SimpleSymWithResidues(uri.toString(), span.getBioSeq(), span.getStart(), span.getEnd(), "", 
-				0.0f, span.isForward(), span.getStart(), span.getEnd(), null, null, symL.getRegionResidues(span)));
+				0.0f, span.isForward(), 0, 0, null, null, symL.getRegionResidues(span)));
 		return list;
 	}
 }

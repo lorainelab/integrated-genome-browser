@@ -2,7 +2,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 
@@ -13,12 +13,15 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class DrawCollapseControlAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
-	final SeqMapView map_view;
-	
-	public DrawCollapseControlAction(SeqMapView map_view){
+	private static final DrawCollapseControlAction ACTION = new DrawCollapseControlAction();
+
+	public static DrawCollapseControlAction getAction() {
+		return ACTION;
+	}
+
+	private DrawCollapseControlAction() {
 		super();
 		this.putValue(SELECTED_KEY, TrackStyle.getDrawCollapseState());
-		this.map_view = map_view;
 	}
 	
 	@Override
@@ -31,7 +34,7 @@ public class DrawCollapseControlAction extends GenericAction {
 		boolean b = !TrackStyle.getDrawCollapseState();
 		TrackStyle.setDrawCollapseControl(b);
 		this.putValue(SELECTED_KEY, b);
-		map_view.getSeqMap().updateWidget();
+		((IGB) IGB.getSingleton()).getMapView().getSeqMap().updateWidget();
 	}
 	
 }

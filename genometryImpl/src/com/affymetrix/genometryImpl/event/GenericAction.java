@@ -50,6 +50,9 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 	public boolean usePrefixInMenu() {
 		return false;
 	}
+	public boolean isToggle() {
+		return false;
+	}
 	public void addDoneCallback(GenericActionDoneCallback doneCallback) {
 		doneCallbacks.add(doneCallback);
 	}

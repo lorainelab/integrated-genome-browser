@@ -57,7 +57,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 
-	private static final JCheckBox autoload = AutoLoadFeatureAction.getAction();
+	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
 
 	protected JRPButton editAuthButton;
 	protected JRPButton rankUpButton;

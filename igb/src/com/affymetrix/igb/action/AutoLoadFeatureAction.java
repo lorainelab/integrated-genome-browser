@@ -12,25 +12,29 @@ import javax.swing.JCheckBox;
  */
 public class AutoLoadFeatureAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
+	private static final AutoLoadFeatureAction ACTION = new AutoLoadFeatureAction();
 
-	private static final AutoLoadFeatureAction singleton = new AutoLoadFeatureAction();
-	private final JCheckBox autoload;
+	public static AutoLoadFeatureAction getAction() {
+		return ACTION;
+	}
+
+	private final JCheckBox autoloadCB;
 
 	private AutoLoadFeatureAction(){
 		super();
-		autoload = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
+		autoloadCB = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
 				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
-		autoload.setToolTipText("Automatically load default features when available (e.g., cytoband and refseq)");
-		autoload.addActionListener(this);
+		autoloadCB.setToolTipText("Automatically load default features when available (e.g., cytoband and refseq)");
+		autoloadCB.addActionListener(this);
 	}
 
-	public static JCheckBox getAction(){
-		return singleton.autoload;
+	public static JCheckBox getActionCB(){
+		return ACTION.autoloadCB;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		GeneralLoadUtils.setFeatureAutoLoad(autoload.isSelected());
+		GeneralLoadUtils.setFeatureAutoLoad(autoloadCB.isSelected());
 	}
 
 	@Override

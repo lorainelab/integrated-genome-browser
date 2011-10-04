@@ -13,6 +13,10 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -67,25 +71,25 @@ public class TierPrefsView implements ListSelectionListener {
 	public TrackStyle selectedStyle;
 	public List<TierGlyph> currentTiers;
 	public List<TrackStyle> currentStyles;
-	public javax.swing.JButton applyToAllButton;
-	public javax.swing.JCheckBox arrowCheckBox;
-	public javax.swing.JCheckBox autoRefreshCheckBox;
+	public JRPButton applyToAllButton;
+	public JRPCheckBox arrowCheckBox;
+	public JCheckBox autoRefreshCheckBox;
 	public com.jidesoft.combobox.ColorComboBox bgColorComboBox;
-	public javax.swing.JCheckBox collapsedCheckBox;
-	public javax.swing.JCheckBox colorCheckBox;
-	public javax.swing.JCheckBox connectedCheckBox;
-	public javax.swing.JTextField displayNameTextField;
+	public JRPCheckBox collapsedCheckBox;
+	public JRPCheckBox colorCheckBox;
+	public JRPCheckBox connectedCheckBox;
+	public JRPTextField displayNameTextField;
 	public com.jidesoft.combobox.ColorComboBox fgColorComboBox;
-	public javax.swing.JComboBox labelFieldComboBox;
-	public javax.swing.JTextField maxDepthTextField;
+	public JRPComboBox labelFieldComboBox;
+	public JRPTextField maxDepthTextField;
 	public com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
 	public com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
-	public javax.swing.JButton refreshButton;
-	public javax.swing.JCheckBox show2TracksCheckBox;
+	public JRPButton refreshButton;
+	public JRPCheckBox show2TracksCheckBox;
 	public javax.swing.ButtonGroup showStrandButtonGroup;
 	public javax.swing.JTable table;
-	public javax.swing.JComboBox trackNameSizeComboBox;
-	public javax.swing.JComboBox viewModeCB;
+	public JRPComboBox trackNameSizeComboBox;
+	public JRPComboBox viewModeCB;
 	public javax.swing.JLabel applyToAllTip;
 	public javax.swing.JLabel labelFieldTip;
 
@@ -111,23 +115,23 @@ public class TierPrefsView implements ListSelectionListener {
 
 		initTable();
 
-		displayNameTextField = new javax.swing.JTextField();
+		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		trackNameSizeComboBox = new javax.swing.JComboBox();
-		maxDepthTextField = new javax.swing.JTextField();
-		labelFieldComboBox = new javax.swing.JComboBox();
-		show2TracksCheckBox = new javax.swing.JCheckBox();
-		connectedCheckBox = new javax.swing.JCheckBox();
-		collapsedCheckBox = new javax.swing.JCheckBox();
+		trackNameSizeComboBox = new JRPComboBox("TierPrefsView_trackNameSizeComboBox");
+		maxDepthTextField = new JRPTextField("TierPrefsView_maxDepthTextField");
+		labelFieldComboBox = new JRPComboBox("TierPrefsView_labelFieldComboBox");
+		show2TracksCheckBox = new JRPCheckBox("TierPrefsView_show2TracksCheckBox");
+		connectedCheckBox = new JRPCheckBox("TierPrefsView_connectedCheckBox");
+		collapsedCheckBox = new JRPCheckBox("TierPrefsView_collapsedCheckBox");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
 		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		colorCheckBox = new javax.swing.JCheckBox();
-		arrowCheckBox = new javax.swing.JCheckBox();
-		viewModeCB = new javax.swing.JComboBox();
-		applyToAllButton = new javax.swing.JButton();
-		refreshButton = new javax.swing.JButton();
+		colorCheckBox = new JRPCheckBox("TierPrefsView_colorCheckBox");
+		arrowCheckBox = new JRPCheckBox("TierPrefsView_arrowCheckBox");
+		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
+		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
+		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
 		displayNameTextField.setEnabled(false);
 		bgColorComboBox.setEnabled(false);
@@ -622,7 +626,7 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {
-
+		private static final long serialVersionUID = 1L;
 		List<TrackStyle> tier_styles;
 		private Object tempObject;
 		private int tempInt;

@@ -1,0 +1,39 @@
+<files>
+
+
+  <file name="TAIR10_mRNA.bed.gz" title="TAIR10 mRNA" description="protein-coding gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" load_hint="Whole Sequence" label_field="id"/>  
+
+  <file name="TAIR10.bed.gz" title="TAIR10 ALL GENES" description="All gene annotations - anything with a name like AT1G12345, including transposable element genes" background="0xd04949" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>  
+
+
+	<file name="TAIR10_TE_gene.bed.gz" title="TAIR10 TE gene" description="transposable element gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_tRNA.bed.gz" title="TAIR10 tRNA genes" description="tRNA gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_rRNA.bed.gz" title="TAIR10 rRNA genes" description="rRNA gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_miRNA.bed.gz" title="TAIR10 miRNA genes" description="miRNA gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_snoRNA.bed.gz" title="TAIR10 snoRNA genes" description="small nucleolar RNA gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_ncRNA.bed.gz" title="TAIR10 ncRNA genes" description="small non-coding RNA gene models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_pseudogene.bed.gz" title="TAIR10 pseudogene" description="pseudogenic transcript models" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+	<file name="TAIR10_TE.bed.gz" title="TAIR10 transposable elements" description="transposable elements" url="http://www.arabidopsis.org/doc/news/breaking_news/140#id22" label_field="id"/>
+
+  <file name="nextgen_samples/sample.bam" title="RNA-Seq/Sample BAM file" description="BAM file containing RNA-Seq read alignments" url="http://igbquickload.org/quickload/A_thaliana_Jun_2009/nextgen_samples"/>  
+
+       	<file name="TAIR9.bed.gz" title="TAIR9/TAIR9 ALL" description="all gene models (39,640)" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL" label_field="id"/>  
+	<file name="TAIR9_mRNA.bed.gz" title="TAIR9/TAIR9 mRNA" description="protein-coding gene models (33,410)" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>  
+	<file name="TAIR9_TE_gene.bed.gz" title="TAIR9/TAIR9 TE gene" description="transposable element gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>
+	<file name="TAIR9_tRNA.bed.gz" title="TAIR9/TAIR9 tRNA" description="tRNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>  
+	<file name="TAIR9_rRNA.bed.gz" title="TAIR9/TAIR9 rRNA" description="rRNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>  
+	<file name="TAIR9_miRNA.bed.gz" title="TAIR9/TAIR9 miRNA" description="microRNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>  
+	<file name="TAIR9_snoRNA.bed.gz" title="TAIR9/TAIR9 snoRNA" description="small nucleolar RNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL"/>  
+	<file name="TAIR9_snRNA.bed.gz" title="TAIR9/TAIR9 snRNA" description="small nuclear RNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL" max_depth="2r3" name_size="2d2" />  
+	
+	<file name="TAIR9_ncRNA.bed.gz" title="TAIR9/TAIR9 ncRNA" description="non-coding RNA gene models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL" max_depth="23" name_size="22" negative_strand_color="0x222222tr" connected="true" load_hint="Whole Sequence" />  
+	
+	<file name="TAIR9_pseudogene.bed.gz" title="TAIR9/TAIR9 pseudogene" description="pseudogenic transcript models" url="http://www.bioviz.org/igb/data.shtml#T9_bioviz_QL" positive_strand_color="0xb7b229" />
+</files>

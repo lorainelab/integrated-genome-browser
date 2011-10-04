@@ -99,7 +99,7 @@ public class TierAnnotationOperationAction extends GenericAction {
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);
 		sym.setProperty("method", unique_name);
-		if (!BioSeq.needsContainer(sym) && sym.getProperty("id") == null) {
+		if (sym.getProperty("id") == null) {
 			sym.setProperty("id", unique_name);
 		}
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);

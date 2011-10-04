@@ -24,7 +24,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        showStrandButtonGroup = new javax.swing.ButtonGroup();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -467,7 +466,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private javax.swing.JButton removeTrackDefaultButton;
     private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
-    private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
     private javax.swing.JTextField trackDefaultTextField;

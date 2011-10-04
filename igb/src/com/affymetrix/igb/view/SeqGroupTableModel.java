@@ -9,9 +9,10 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
 
-final class SeqGroupTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1L;
 
+final class SeqGroupTableModel extends AbstractTableModel {
+
+	private static final long serialVersionUID = 1L;
 	private final AnnotatedSeqGroup group;
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
@@ -55,11 +56,10 @@ final class SeqGroupTableModel extends AbstractTableModel {
 
 	@Override
 	public Class<?> getColumnClass(int c) {
-		switch (c) {
-			case 1:
-				return Integer.class;
-			default:
-				return super.getColumnClass(c);
+		if ((getValueAt(0, c)) == null) {
+			System.out.println("Null Reference ERROR: column " + c);
 		}
+		return getValueAt(0, c).getClass();
 	}
+	
 }

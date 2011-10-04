@@ -21,9 +21,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import net.sf.samtools.SAMTextReader;
-import net.sf.samtools.util.AsciiLineReader;
 
+import net.sf.samtools.SAMTextReader;
+import net.sf.samtools.util.BufferedLineReader;
 import org.broad.tribble.readers.LineReader;
 
 /**
@@ -144,7 +144,7 @@ public class SAM extends XAM implements LineProcessor{
 
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
-		return parse(str.getIterator(), seq,seq.getMin(), seq.getMax(), true, false, false);
+		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);
 	}
 
 	public void init(URI uri) {
@@ -153,7 +153,7 @@ public class SAM extends XAM implements LineProcessor{
 		header = reader.getFileHeader();
 	}
 	
-	private class AsciiTabixLineReader extends AsciiLineReader {
+	private class AsciiTabixLineReader extends BufferedLineReader {
 
 		private final LineReader readerImpl;
 		private int lineNumber;

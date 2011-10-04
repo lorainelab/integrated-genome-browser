@@ -166,6 +166,10 @@ public final class GraphSymUtils {
 		return new_graf;
 	}
 
+	public static boolean isAGraphExtension(String ext) {
+		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(ext);
+		return fth.getParser() instanceof GraphParser;
+	}
 
 	/** Detects whether the given filename ends with a recognized ending for
 	 *  a graph filetype. Compression endings like gz and zip are removed

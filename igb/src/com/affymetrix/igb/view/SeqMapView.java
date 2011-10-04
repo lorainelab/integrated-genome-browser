@@ -1,5 +1,7 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.DataManagementTable;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
@@ -13,6 +15,7 @@ import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -37,8 +40,10 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -900,6 +905,91 @@ public class SeqMapView extends JPanel
 		return resultAxisTier;
 	}
 
+	public void addEmtpyTierforVisibleFeature(){
+		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+		
+		int slots = getAverageSlots();
+		for(GenericFeature feature: visibleFeatures){
+			
+			ITrackStyle style; 
+			
+			if(!feature.getMethods().isEmpty()){
+				for(String method : feature.getMethods()){
+					style = getStyle(method, feature);
+					addTierFor((ITrackStyleExtended)style, slots);
+				}
+			}else{
+				style = getStyle(feature.getURI().toString(), feature);
+				addTierFor((ITrackStyleExtended)style, slots);
+				style.setFeature(feature);
+			}
+						
+		}
+		
+		seqmap.packTiers(true, true, false, false);
+		seqmap.stretchToFit(false, true);
+		seqmap.updateWidget();
+	}
+
+	
+	private void addTierFor(ITrackStyleExtended style, int slots) {
+		TierGlyph[] tiers = new TierGlyph[2];
+				
+		double height = style.getHeight();
+		if(!style.isGraphTier()){
+			tiers = getTiers(false, style, true);
+			
+			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
+			height = height * slots;
+		}else {
+			tiers[0] = getGraphTrack(style, TierGlyph.Direction.NONE);
+		}
+
+		if (style.getSeparate()) {
+			addEmptyChild(tiers[0], height);
+			addEmptyChild(tiers[1], height);
+		} else {
+			addEmptyChild(tiers[0], height);
+		}
+
+	}
+	
+	private int getAverageSlots(){
+		int slot = 1;
+		int noOfTiers = 1;
+		for(TierGlyph tier : seqmap.getTiers()){
+			if(!tier.isVisible())
+				continue;
+			
+			slot += tier.getActualSlots();
+			noOfTiers += 1;
+		}
+		
+		return slot/noOfTiers;
+	}
+	
+	private static ITrackStyleExtended getStyle(String method, GenericFeature feature) {
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(
+				method, feature.featureName, feature.getExtension(), feature.featureProps);
+		//Check if it graph file. If it graph file then show only one tier.
+		if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
+			style.setHeight(GraphState.default_graph_height);
+			style.setGraphTier(true);
+			style.setExpandable(false);
+			style.setSeparate(false);
+		}
+
+		return style;
+	}
+	
+	private static void addEmptyChild(TierGlyph tier, double height){
+		if (tier.getChildCount() <= 0) {
+			Glyph glyph = new Glyph() {};
+			glyph.setCoords(0, 0, 0, height);
+			tier.addChild(glyph);
+		}
+	}
+	
 	private void shrinkWrap() {
 		/*
 		 *  Shrink wrapping is a little more complicated than one might expect, but it
@@ -1001,6 +1091,7 @@ public class SeqMapView extends JPanel
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
 		}
+		//addEmtpyTierforVisibleFeature();
 	}
 
 	// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),

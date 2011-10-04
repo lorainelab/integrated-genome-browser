@@ -1,11 +1,13 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
+
 /**
  *
  * @author lorainelab
  */
-public class TrackDefaultViewGUI extends IPrefEditorComponent {
+public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapRefreshed {
 
 	/** Creates new form FileTypeViewNew */
 	public TrackDefaultViewGUI() {
@@ -13,7 +15,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent {
 		TrackDefaultView.init();
 		initComponents();
 	}
-
 
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -441,7 +442,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent {
 		// TODO add your handling code here:
 		TrackDefaultView.getTrackDefaultView().negativeColorComboBoxActionPerformed();
 	}//GEN-LAST:event_negativeColorComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
     private javax.swing.JButton addTrackDefaultButton;
@@ -479,5 +479,26 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent {
 	public void refresh() {
 	}
 
-	
+	public void mapRefresh() {
+		if (isVisible()) {
+			refreshList();
+		}
+	}
+
+	public void refreshList() {
+	}
+
+	private void stopEditing() {
+		if (table != null && table.getCellEditor() != null) {
+			table.getCellEditor().stopCellEditing();
+		}
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (!visible) {
+			stopEditing();
+		}
+	}
 }

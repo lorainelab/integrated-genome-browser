@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.util.IGBUtils;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
@@ -37,7 +36,7 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author dcnorris
  */
-public final class TrackDefaultView extends IPrefEditorComponent implements ListSelectionListener, SeqMapRefreshed {
+public final class TrackDefaultView implements ListSelectionListener {
 
 	private static final String FILE_TYPE = "File Type";
 	private static final String FOREGROUND = "Foreground";
@@ -87,7 +86,6 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 	private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
 	private javax.swing.JButton removeTrackDefaultButton;
 	private javax.swing.JCheckBox show2TracksCheckBox;
-	private javax.swing.ButtonGroup showStrandButtonGroup;
 	private javax.swing.JTable table;
 	private javax.swing.JTextField trackDefaultTextField;
 	private javax.swing.JComboBox trackNameSizeComboBox;
@@ -104,7 +102,6 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 
 	/** Creates new form FileTypeViewNew */
 	public TrackDefaultView() {
-		setName("Track Defaults");
 		model = new TrackDefaultPrefTableModel();
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		initializeFileTypes();
@@ -130,8 +127,6 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 	}
 
 	private void initComponents() {
-		showStrandButtonGroup = new javax.swing.ButtonGroup();
-
 		trackDefaultTextField = new javax.swing.JTextField();
 		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
@@ -529,33 +524,6 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 		}
 	}
 
-	public void refreshList() {
-	}
-
-	public void mapRefresh() {
-		if (isVisible()) {
-			refreshList();
-		}
-	}
-
-	private void stopEditing() {
-		if (table != null && table.getCellEditor() != null) {
-			table.getCellEditor().stopCellEditing();
-		}
-	}
-
-	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (!visible) {
-			stopEditing();
-		}
-	}
-
-	public javax.swing.ButtonGroup getshowStrandButtonGroup() {
-		return showStrandButtonGroup;
-	}
-
 	public com.jidesoft.combobox.ColorComboBox getPossitiveColorCombo() {
 		return possitiveColorComboBox;
 	}
@@ -624,10 +592,6 @@ public final class TrackDefaultView extends IPrefEditorComponent implements List
 		return labelFieldTip;
 	}
 
-	@Override
-	public void refresh() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
 

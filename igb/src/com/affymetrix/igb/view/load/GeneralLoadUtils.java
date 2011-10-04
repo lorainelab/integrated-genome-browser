@@ -1082,7 +1082,9 @@ public final class GeneralLoadUtils {
 		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
 			for (GenericVersion genericVersion : genericVersions) {
 				for (GenericFeature genericFeature : genericVersion.getFeatures()) {
-					genericFeature.setAutoload(autoload);
+					if(autoload){
+						genericFeature.setAutoload(autoload);
+					}
 				}
 			}
 		}
@@ -1090,6 +1092,8 @@ public final class GeneralLoadUtils {
 		//It autoload data is selected then load.
 		if (autoload) {
 			GeneralLoadView.loadWholeRangeFeatures(null);
+			GeneralLoadView.getLoadView().refreshTreeView();
+			GeneralLoadView.getLoadView().createFeaturesTable();
 		}
 	}
 

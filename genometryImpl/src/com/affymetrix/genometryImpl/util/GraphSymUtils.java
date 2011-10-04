@@ -167,7 +167,13 @@ public final class GraphSymUtils {
 	}
 
 	public static boolean isAGraphExtension(String ext) {
+		if(ext == null || ext.isEmpty())
+			return false;
+	
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(ext);
+		if(fth == null)
+			return false;
+		
 		return fth.getParser() instanceof GraphParser;
 	}
 

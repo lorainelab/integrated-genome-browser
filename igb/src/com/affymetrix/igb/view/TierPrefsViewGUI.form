@@ -1,10 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
-  <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="showStrandButtonGroup">
-    </Component>
-  </NonVisualComponents>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -25,15 +21,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="363" max="-2" attributes="1"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="propertiesPanel" min="-2" pref="364" max="-2" attributes="1"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="showStrandPanel" alignment="1" min="-2" pref="108" max="-2" attributes="0"/>
-                              <Component id="viewModelPanel" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="autoRefreshCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="1"/>
+                          <Component id="refreshButton" min="-2" pref="111" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="viewModelPanel" alignment="0" max="32767" attributes="1"/>
+                              <Component id="showStrandPanel" alignment="0" min="0" pref="113" max="32767" attributes="1"/>
                           </Group>
-                          <Component id="refreshButton" alignment="0" min="-2" pref="111" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -47,17 +43,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="selectTrackPanel" max="32767" attributes="1"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" attributes="1">
-                      <Component id="showStrandPanel" min="-2" pref="105" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="showStrandPanel" min="-2" pref="106" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="viewModelPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="propertiesPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                  <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -70,66 +66,9 @@
         <Property name="text" type="java.lang.String" value="Refresh"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="// Add a &quot;refresh map&quot; button, if there is an instance of IGB&#xa;if (smv != null) {&#xa;        refreshButton.addActionListener(new ActionListener() {&#xa;&#xa;                public void actionPerformed(ActionEvent evt) {&#xa;                        refreshSeqMapView();&#xa;                }&#xa;        });&#xa;&#xa;        autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH,&#xa;                        PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH, default_auto_refresh);&#xa;        autoRefreshCheckBox.addActionListener(new ActionListener() {&#xa;&#xa;                public void actionPerformed(ActionEvent evt) {&#xa;                        if (refreshButton != null) {&#xa;                                refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());&#xa;                                if (autoRefreshCheckBox.isSelected()) {&#xa;                                        refreshSeqMapView();&#xa;                                }&#xa;                        }&#xa;                }&#xa;        });&#xa;        refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.refreshButton"/>
       </AuxValues>
     </Component>
-    <Container class="javax.swing.JPanel" name="selectTrackPanel">
-      <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Select Track"/>
-          </Border>
-        </Property>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="435" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="198" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-          <AuxValues>
-            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-          </AuxValues>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-          <SubComponents>
-            <Component class="javax.swing.JTable" name="table">
-              <Properties>
-                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="model" type="code"/>
-                </Property>
-                <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" preCode="table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(72);&#xa;table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(72);&#xa;table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(72);&#xa;table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(72);&#xa;table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(72);&#xa;table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(72);&#xa;table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);&#xa;table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);&#xa;table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);&#xa;&#xa;Font f = new Font(&quot;SansSerif&quot;, Font.BOLD, 12);&#xa;table.getTableHeader().setFont(f);&#xa;&#xa;refreshList();">
-                  <TableColumnModel selectionModel="0"/>
-                </Property>
-                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                </Property>
-              </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable()"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="model = new TierPrefsTableModel();&#xa;model.addTableModelListener(new javax.swing.event.TableModelListener() {&#xa;&#xa;        public void tableChanged(javax.swing.event.TableModelEvent e) {&#xa;                // do nothing.&#xa;        }&#xa;});&#xa;&#xa;lsm = table.getSelectionModel();&#xa;lsm.addListSelectionListener(this);&#xa;lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);&#xa;&#xa;table.setRowSelectionAllowed(true);&#xa;&#xa;ColorCellEditor cellEditor = new ColorCellEditor() {&#xa;          private static final long serialVersionUID = 1L;&#xa;&#xa;          @Override&#xa;          protected ColorComboBox createColorComboBox() {&#xa;                  final ColorComboBox combobox = new ColorComboBox();&#xa;                  combobox.setColorValueVisible(false);&#xa;                  combobox.setCrossBackGroundStyle(false);&#xa;                  combobox.setButtonVisible(false);&#xa;                  combobox.setStretchToFit(true);&#xa;                  return combobox;&#xa;          }&#xa;  };&#xa;table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());&#xa;table.setDefaultEditor(Color.class, cellEditor);&#xa;table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());&#xa;table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));&#xa;table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));"/>
-              </AuxValues>
-            </Component>
-          </SubComponents>
-        </Container>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JPanel" name="propertiesPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -145,67 +84,62 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                          <EmptySpace min="98" pref="98" max="98" attributes="0"/>
+                          <Component id="displayNameTextField" min="-2" pref="238" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="connectedCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="collapsedCheckBox" min="-2" pref="104" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="displayNameLabel" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="bgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="maxDepthLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="maxDepthTextField" min="-2" pref="55" max="-2" attributes="1"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="fgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="labelFieldComboBox" min="-2" pref="83" max="-2" attributes="1"/>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="98" pref="98" max="98" attributes="0"/>
-                          <Component id="displayNameTextField" min="-2" pref="238" max="-2" attributes="1"/>
-                          <EmptySpace pref="26" max="32767" attributes="0"/>
-                      </Group>
                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="9" pref="9" max="9" attributes="0"/>
-                              <Component id="trackNameSizeLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="trackNameSizeComboBox" min="-2" pref="59" max="-2" attributes="1"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="applyToAllButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                              <Component id="applyToAllTip" min="-2" pref="19" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jSeparator1" alignment="0" max="32767" attributes="1"/>
                           <Component id="jSeparator2" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jSeparator1" alignment="0" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="displayNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="trackNameSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="maxDepthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="trackNameSizeComboBox" min="-2" pref="59" max="-2" attributes="1"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="applyToAllButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                      <Component id="applyToAllTip" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="bgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+                                          <Component id="maxDepthTextField" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="fgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="labelFieldComboBox" min="-2" pref="83" max="-2" attributes="1"/>
+                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                              <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -218,9 +152,10 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jSeparator2" min="-2" pref="11" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -231,22 +166,21 @@
                                   <Component id="fgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="2" attributes="0">
                               <Component id="trackNameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                               <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                               <Component id="applyToAllButton" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           <Component id="applyToAllTip" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="11" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="maxDepthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -262,7 +196,6 @@
                       <Component id="connectedCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -277,6 +210,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="displayNameTextFieldActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.displayNameTextField"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">
           <Properties>
@@ -305,6 +241,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgColorComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.bgColorComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="trackNameSizeLabel">
           <Properties>
@@ -314,13 +253,13 @@
         <Component class="javax.swing.JComboBox" name="trackNameSizeComboBox">
           <Properties>
             <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE)" type="code"/>
-            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackNameSizeComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.trackNameSizeComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">
           <Properties>
@@ -354,17 +293,20 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fgColorComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.fgColorComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
           <Properties>
             <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD)" type="code"/>
-            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.labelFieldComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="maxDepthLabel">
           <Properties>
@@ -375,6 +317,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxDepthTextFieldActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.maxDepthTextField"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="show2TracksCheckBox">
           <Properties>
@@ -383,6 +328,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show2TracksCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.show2TracksCheckBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="connectedCheckBox">
           <Properties>
@@ -391,6 +339,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="connectedCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.connectedCheckBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="collapsedCheckBox">
           <Properties>
@@ -399,6 +350,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.collapsedCheckBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="applyToAllButton">
           <Properties>
@@ -409,6 +363,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="applyToAllButton.setToolTipText(&quot;Apply background, foreground, and Name Size to all selected tracks.&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.applyToAllButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
@@ -417,9 +372,6 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldTip">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="IGBUtils.getIcon(&quot;info_icon.gif&quot;)" type="code"/>
-            </Property>
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
           <AuxValues>
@@ -428,15 +380,65 @@
         </Component>
         <Component class="javax.swing.JLabel" name="applyToAllTip">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="IGBUtils.getIcon(&quot;info_icon.gif&quot;)" type="code"/>
-            </Property>
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="applyToAllTip.setToolTipText(&quot;Apply Background, Foreground, and Name Size to all tracks.&quot;);"/>
           </AuxValues>
         </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="selectTrackPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Select Track"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="443" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jScrollPane1" pref="217" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="table">
+              <Properties>
+                <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" preCode="tpv.refreshList();">
+                  <TableColumnModel selectionModel="0"/>
+                </Property>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.table"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JCheckBox" name="autoRefreshCheckBox">
@@ -471,7 +473,7 @@
                           <Component id="negativeColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="8" max="32767" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -488,7 +490,7 @@
                       <Component id="negativeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="negativeColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="9" max="32767" attributes="0"/>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -580,7 +582,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="viewModeCB" alignment="0" pref="96" max="32767" attributes="1"/>
+              <Component id="viewModeCB" alignment="0" pref="101" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -591,14 +593,12 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="viewModeCB">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <SerializedValue value="-84,-19,0,5,115,114,0,78,111,114,103,46,110,101,116,98,101,97,110,115,46,109,111,100,117,108,101,115,46,102,111,114,109,46,82,65,68,67,111,110,110,101,99,116,105,111,110,80,114,111,112,101,114,116,121,69,100,105,116,111,114,36,82,65,68,67,111,110,110,101,99,116,105,111,110,68,101,115,105,103,110,86,97,108,117,101,2,10,-70,90,-35,-97,-57,100,2,0,7,73,0,4,116,121,112,101,76,0,10,109,101,116,104,111,100,78,97,109,101,116,0,18,76,106,97,118,97,47,108,97,110,103,47,83,116,114,105,110,103,59,76,0,12,112,114,111,112,101,114,116,121,78,97,109,101,113,0,126,0,1,76,0,16,114,97,100,67,111,109,112,111,110,101,110,116,78,97,109,101,113,0,126,0,1,76,0,16,114,101,113,117,105,114,101,100,84,121,112,101,78,97,109,101,113,0,126,0,1,76,0,8,117,115,101,114,67,111,100,101,113,0,126,0,1,76,0,5,118,97,108,117,101,113,0,126,0,1,120,112,0,0,0,2,112,112,112,112,116,0,0,112"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="viewModeCBActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.viewModeCB"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

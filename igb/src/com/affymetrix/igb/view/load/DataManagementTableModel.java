@@ -368,7 +368,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				&& col != REFRESH_FEATURE_COLUMN) {
 			refreshSeqMapView();
 		}
-		PreferencesPanel.getSingleton().tpv.externalChange();
+		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
 	private void setVisibleTracks(ITrackStyle style) {

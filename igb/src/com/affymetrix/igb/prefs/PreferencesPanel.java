@@ -18,7 +18,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.TierPrefsView;  
+import com.affymetrix.igb.view.TierPrefsViewGUI;
 import com.affymetrix.igb.tiers.TrackDefaultViewGUI;
 
 import java.awt.*;
@@ -56,7 +56,7 @@ public final class PreferencesPanel extends JPanel {
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / " + HELP;
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
 
-  public TierPrefsView tpv = null;
+  public TierPrefsViewGUI tpvGUI = null;
 
   private PreferencesPanel() {
     this.setLayout(new BorderLayout());
@@ -78,16 +78,16 @@ public final class PreferencesPanel extends JPanel {
 			return singleton;
 		}
 		singleton = new PreferencesPanel();
-		singleton.tpv = new TierPrefsView();
-		singleton.tpv.addComponentListener(new ComponentAdapter() {
+		singleton.tpvGUI = new TierPrefsViewGUI();
+		singleton.tpvGUI.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
-				singleton.tpv.removedFromView();
+				singleton.tpvGUI.tpv.removedFromView();
 			}
 		});
-		singleton.getFrame().addWindowListener(singleton.tpv);
+		singleton.getFrame().addWindowListener(singleton.tpvGUI);
 
-		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
+		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpvGUI);
 		singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
@@ -148,9 +148,9 @@ public final class PreferencesPanel extends JPanel {
           PreferenceUtils.saveWindowLocation(frame, WINDOW_NAME);
           // if the TierPrefsView is being displayed, the apply any changes from it.
           // if it is not being displayed, then its changes have already been applied in componentHidden()
-          if (singleton.tpv != null) {
-            if (singleton.tab_pane.getSelectedComponent() == singleton.tpv) {
-              singleton.tpv.removedFromView();
+          if (singleton.tpvGUI != null) {
+            if (singleton.tab_pane.getSelectedComponent() == singleton.tpvGUI) {
+              singleton.tpvGUI.tpv.removedFromView();
             }
           }
           frame.dispose();
@@ -173,7 +173,7 @@ public final class PreferencesPanel extends JPanel {
 		}
     }    
 
-	singleton.tpv.refresh();	// update component list
+	singleton.tpvGUI.refresh();	// update component list
 
     return frame;
   }

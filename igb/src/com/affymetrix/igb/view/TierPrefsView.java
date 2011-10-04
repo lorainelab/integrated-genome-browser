@@ -1,23 +1,14 @@
-/*
- * PrototypeOne.java
- *
- * Created on May 30, 2011, 10:18:22 AM
- */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.Application;
 import java.awt.Color;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
@@ -25,94 +16,222 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.util.IGBUtils;
-import com.affymetrix.igb.view.load.DataManagementTableModel;
 import com.affymetrix.igb.view.load.DataManagementTable;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author lorainelab
- */
-public class TierPrefsView extends IPrefEditorComponent implements ListSelectionListener, WindowListener, SeqMapRefreshed {
+public class TierPrefsView implements ListSelectionListener {
 
 	public static final long serialVersionUID = 1l;
-	private static final String TRACK_NAME = "Display Name";
-	private static final String FOREGROUND = "Foreground";
-	private static final String BACKGROUND = "Background";
-	private static final String TRACK_NAME_SIZE = "Track Name Size";
-	private final static String[] col_headings = {
+	public static TierPrefsView singleton;
+	public static final String TRACK_NAME = "Display Name";
+	public static final String FOREGROUND = "Foreground";
+	public static final String BACKGROUND = "Background";
+	public static final String TRACK_NAME_SIZE = "Track Name Size";
+	public final static String[] col_headings = {
 		TRACK_NAME,
 		BACKGROUND, FOREGROUND,
 		TRACK_NAME_SIZE //    GRAPH_TIER,
 	};
 	//subclass variables
-	private static final int COL_TRACK_NAME = 0;
-	private static final int COL_BACKGROUND = 1;
-	private static final int COL_FOREGROUND = 2;
-	private static final int COL_TRACK_NAME_SIZE = 3;
-	private static final int COL_COLLAPSED = 4;
-	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_SHOW2TRACKS = 6;
-	private static final int COL_LABEL_FIELD = 7;
-	private static final int COL_CONNECTED = 8;
-	private static final int COL_DIRECTION_TYPE = 9;
-	private static final int COL_POS_STRAND_COLOR = 10;
-	private static final int COL_NEG_STRAND_COLOR = 11;
-	private static final int COL_VIEW_MODE = 12;
-	private TierPrefsTableModel model;
-	private ListSelectionModel lsm;
-	private static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
-	private static final boolean default_auto_refresh = true;
-	private static final String AUTO_REFRESH = "Auto Refresh";
-	private SeqMapView smv;
-	private boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
-	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
-	private float trackNameSize;
-	private int[] selectedRows;
-	private List<TierLabelGlyph> selectedTiers;
-	private int selectedRow;
-	private TrackStyle selectedStyle;
-	private List<TierGlyph> currentTiers;
-	private List<TrackStyle> currentStyles;
-	private TierGlyph tempTier;
+	public static final int COL_TRACK_NAME = 0;
+	public static final int COL_BACKGROUND = 1;
+	public static final int COL_FOREGROUND = 2;
+	public static final int COL_TRACK_NAME_SIZE = 3;
+	public static final int COL_COLLAPSED = 4;
+	public static final int COL_MAX_DEPTH = 5;
+	public static final int COL_SHOW2TRACKS = 6;
+	public static final int COL_LABEL_FIELD = 7;
+	public static final int COL_CONNECTED = 8;
+	public static final int COL_DIRECTION_TYPE = 9;
+	public static final int COL_POS_STRAND_COLOR = 10;
+	public static final int COL_NEG_STRAND_COLOR = 11;
+	public static final int COL_VIEW_MODE = 12;
+	public TierPrefsTableModel model;
+	public ListSelectionModel lsm;
+	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
+	public static final boolean default_auto_refresh = true;
+	public static final String AUTO_REFRESH = "Auto Refresh";
+	public SeqMapView smv;
+	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
+	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
+	public float trackNameSize;
+	public int[] selectedRows;
+	public List<TierLabelGlyph> selectedTiers;
+	public int selectedRow;
+	public TrackStyle selectedStyle;
+	public List<TierGlyph> currentTiers;
+	public List<TrackStyle> currentStyles;
+	public javax.swing.JButton applyToAllButton;
+	public javax.swing.JCheckBox arrowCheckBox;
+	public javax.swing.JCheckBox autoRefreshCheckBox;
+	public com.jidesoft.combobox.ColorComboBox bgColorComboBox;
+	public javax.swing.JCheckBox collapsedCheckBox;
+	public javax.swing.JCheckBox colorCheckBox;
+	public javax.swing.JCheckBox connectedCheckBox;
+	public javax.swing.JTextField displayNameTextField;
+	public com.jidesoft.combobox.ColorComboBox fgColorComboBox;
+	public javax.swing.JComboBox labelFieldComboBox;
+	public javax.swing.JTextField maxDepthTextField;
+	public com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
+	public com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
+	public javax.swing.JButton refreshButton;
+	public javax.swing.JCheckBox show2TracksCheckBox;
+	public javax.swing.ButtonGroup showStrandButtonGroup;
+	public javax.swing.JTable table;
+	public javax.swing.JComboBox trackNameSizeComboBox;
+	public javax.swing.JComboBox viewModeCB;
+	public javax.swing.JLabel applyToAllTip;
+	public javax.swing.JLabel labelFieldTip;
 
-	/** Creates new form PrototypeOne */
+	public static void init() {
+		singleton = new TierPrefsView();
+	}
+
+	public static synchronized TierPrefsView getTierPrefsView() {
+		return singleton;
+	}
+
 	public TierPrefsView() {
-
-		super();
-		this.setName("Tracks");
-		this.setToolTipText("Set Track Properties");
-
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
-			smv.addToRefreshList(this);
 		}
 
 		initComponents();
-		validate();
+	}
+
+	private void initComponents() {
+		model = new TierPrefsTableModel();
+
+		initTable();
+
+		displayNameTextField = new javax.swing.JTextField();
+		fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		trackNameSizeComboBox = new javax.swing.JComboBox();
+		maxDepthTextField = new javax.swing.JTextField();
+		labelFieldComboBox = new javax.swing.JComboBox();
+		show2TracksCheckBox = new javax.swing.JCheckBox();
+		connectedCheckBox = new javax.swing.JCheckBox();
+		collapsedCheckBox = new javax.swing.JCheckBox();
+		showStrandButtonGroup = new javax.swing.ButtonGroup();
+		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		colorCheckBox = new javax.swing.JCheckBox();
+		arrowCheckBox = new javax.swing.JCheckBox();
+		viewModeCB = new javax.swing.JComboBox();
+		applyToAllButton = new javax.swing.JButton();
+		refreshButton = new javax.swing.JButton();
+
 		displayNameTextField.setEnabled(false);
-		viewModeCB.setEnabled(false);
+		bgColorComboBox.setEnabled(false);
+		fgColorComboBox.setEnabled(false);
+		trackNameSizeComboBox.setEnabled(false);
 		labelFieldComboBox.setEnabled(false);
 		maxDepthTextField.setEnabled(false);
+		show2TracksCheckBox.setEnabled(false);
 		connectedCheckBox.setEnabled(false);
 		collapsedCheckBox.setEnabled(false);
 		colorCheckBox.setEnabled(false);
 		arrowCheckBox.setEnabled(false);
 		possitiveColorComboBox.setEnabled(false);
 		negativeColorComboBox.setEnabled(false);
-		show2TracksCheckBox.setEnabled(false);
-		displayNameTextField.setEnabled(false);
-		bgColorComboBox.setEnabled(false);
-		fgColorComboBox.setEnabled(false);
-		trackNameSizeComboBox.setEnabled(false);
+		viewModeCB.setEnabled(false);
 		applyToAllButton.setEnabled(false);
-		labelFieldComboBox.setEnabled(false);
-		maxDepthTextField.setEnabled(false);
+
+		trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
+		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
+		viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.VIEWMODE));
+
+		applyToAllTip = new javax.swing.JLabel();
+		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
+		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("info_icon.gif"));
+
+		labelFieldTip = new javax.swing.JLabel();
+		labelFieldTip.setToolTipText("Type or choose label field.");
+		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("info_icon.gif"));
+
+		// Add a "refresh map" button, if there is an instance of IGB
+		if (smv != null) {
+			refreshButton.addActionListener(new ActionListener() {
+
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					refreshSeqMapView();
+				}
+			});
+
+			autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH,
+					PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH,
+					default_auto_refresh);
+			autoRefreshCheckBox.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent evt) {
+					if (refreshButton != null) {
+						refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
+						if (autoRefreshCheckBox.isSelected()) {
+							refreshSeqMapView();
+						}
+					}
+				}
+			});
+			refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
+		}
+	}
+
+	private void initTable() {
+		table = new javax.swing.JTable();
+		model.addTableModelListener(new javax.swing.event.TableModelListener() {
+
+			public void tableChanged(javax.swing.event.TableModelEvent e) {
+				// do nothing.
+			}
+		});
+
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(this);
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		table.setRowSelectionAllowed(true);
+
+		ColorCellEditor cellEditor = new ColorCellEditor() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected ColorComboBox createColorComboBox() {
+				final ColorComboBox combobox = new ColorComboBox();
+				combobox.setColorValueVisible(false);
+				combobox.setCrossBackGroundStyle(false);
+				combobox.setButtonVisible(false);
+				combobox.setStretchToFit(true);
+				return combobox;
+			}
+		};
+		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
+		table.setDefaultEditor(Color.class, cellEditor);
+		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
+		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
+		table.setModel(model);
+
+		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(72);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(72);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(72);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(72);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(72);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(72);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
+
+		Font f = new Font("SansSerif", Font.BOLD, 12);
+		table.getTableHeader().setFont(f);
 	}
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
@@ -120,10 +239,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 		//set Selected Rows
 		ITrackStyle style;
+		TierGlyph tier;
 		table.removeRowSelectionInterval(0, table.getRowCount() - 1);
 		for (TierLabelGlyph tlg : selectedTiers) {
-			tempTier = (TierGlyph) tlg.getInfo();
-			style = tempTier.getAnnotStyle();
+			tier = (TierGlyph) tlg.getInfo();
+			style = tier.getAnnotStyle();
 
 			for (int i = 0; i < table.getRowCount(); i++) {
 				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
@@ -133,674 +253,21 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 	}
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        showStrandButtonGroup = new javax.swing.ButtonGroup();
-        refreshButton = new javax.swing.JButton();
-        selectTrackPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
-        propertiesPanel = new javax.swing.JPanel();
-        displayNameLabel = new javax.swing.JLabel();
-        displayNameTextField = new javax.swing.JTextField();
-        bgLabel = new javax.swing.JLabel();
-        bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        trackNameSizeLabel = new javax.swing.JLabel();
-        trackNameSizeComboBox = new javax.swing.JComboBox();
-        labelFieldLabel = new javax.swing.JLabel();
-        fgLabel = new javax.swing.JLabel();
-        fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        labelFieldComboBox = new javax.swing.JComboBox();
-        maxDepthLabel = new javax.swing.JLabel();
-        maxDepthTextField = new javax.swing.JTextField();
-        show2TracksCheckBox = new javax.swing.JCheckBox();
-        connectedCheckBox = new javax.swing.JCheckBox();
-        collapsedCheckBox = new javax.swing.JCheckBox();
-        applyToAllButton = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
-        labelFieldTip = new javax.swing.JLabel();
-        applyToAllTip = new javax.swing.JLabel();
-        autoRefreshCheckBox = new javax.swing.JCheckBox();
-        showStrandPanel = new javax.swing.JPanel();
-        possitiveLabel = new javax.swing.JLabel();
-        negativeLabel = new javax.swing.JLabel();
-        possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        colorCheckBox = new javax.swing.JCheckBox();
-        arrowCheckBox = new javax.swing.JCheckBox();
-        viewModelPanel = new javax.swing.JPanel();
-        viewModeCB = new javax.swing.JComboBox();
-
-        refreshButton.setText("Refresh");
-        // Add a "refresh map" button, if there is an instance of IGB
-        if (smv != null) {
-            refreshButton.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent evt) {
-                    refreshSeqMapView();
-                }
-            });
-
-            autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH,
-                PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH, default_auto_refresh);
-            autoRefreshCheckBox.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent evt) {
-                    if (refreshButton != null) {
-                        refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
-                        if (autoRefreshCheckBox.isSelected()) {
-                            refreshSeqMapView();
-                        }
-                    }
-                }
-            });
-            refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
-        }
-
-        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track"));
-
-        model = new TierPrefsTableModel();
-        model.addTableModelListener(new javax.swing.event.TableModelListener() {
-
-            public void tableChanged(javax.swing.event.TableModelEvent e) {
-                // do nothing.
-            }
-        });
-
-        lsm = table.getSelectionModel();
-        lsm.addListSelectionListener(this);
-        lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        table.setRowSelectionAllowed(true);
-
-        ColorCellEditor cellEditor = new ColorCellEditor() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected ColorComboBox createColorComboBox() {
-                final ColorComboBox combobox = new ColorComboBox();
-                combobox.setColorValueVisible(false);
-                combobox.setCrossBackGroundStyle(false);
-                combobox.setButtonVisible(false);
-                combobox.setStretchToFit(true);
-                return combobox;
-            }
-        };
-        table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
-        table.setDefaultEditor(Color.class, cellEditor);
-        table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-        table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-        table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
-        table.setModel(model);
-        jScrollPane1.setViewportView(table);
-        table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(72);
-        table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(72);
-        table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(72);
-        table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(72);
-        table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(72);
-        table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(72);
-        table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);
-        table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
-        table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
-
-        Font f = new Font("SansSerif", Font.BOLD, 12);
-        table.getTableHeader().setFont(f);
-
-        refreshList();
-
-        org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
-        selectTrackPanel.setLayout(selectTrackPanelLayout);
-        selectTrackPanelLayout.setHorizontalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        selectTrackPanelLayout.setVerticalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
-
-        displayNameLabel.setText("Track Name:");
-
-        displayNameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                displayNameTextFieldActionPerformed(evt);
-            }
-        });
-
-        bgLabel.setText("Background:");
-
-        bgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        bgColorComboBox.setButtonVisible(false);
-        bgColorComboBox.setColorValueVisible(false);
-        bgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        bgColorComboBox.setStretchToFit(true);
-        bgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bgColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        trackNameSizeLabel.setText("Name Size:");
-
-        trackNameSizeComboBox.setEditable(true);
-        trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-        trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trackNameSizeComboBoxActionPerformed(evt);
-            }
-        });
-
-        labelFieldLabel.setText("Label Field:");
-
-        fgLabel.setText("Foreground:");
-
-        fgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        fgColorComboBox.setButtonVisible(false);
-        fgColorComboBox.setColorValueVisible(false);
-        fgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        fgColorComboBox.setStretchToFit(true);
-        fgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fgColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        labelFieldComboBox.setEditable(true);
-        labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
-        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelFieldComboBoxActionPerformed(evt);
-            }
-        });
-
-        maxDepthLabel.setText("Max Depth:");
-
-        maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxDepthTextFieldActionPerformed(evt);
-            }
-        });
-
-        show2TracksCheckBox.setText("Show 2 tracks (+/-)");
-        show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                show2TracksCheckBoxActionPerformed(evt);
-            }
-        });
-
-        connectedCheckBox.setText("Connected");
-        connectedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                connectedCheckBoxActionPerformed(evt);
-            }
-        });
-
-        collapsedCheckBox.setText("Collapsed");
-        collapsedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                collapsedCheckBoxActionPerformed(evt);
-            }
-        });
-
-        applyToAllButton.setText("Apply To All Tracks");
-        applyToAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyToAllButtonActionPerformed(evt);
-            }
-        });
-
-        labelFieldTip.setToolTipText("Type or choose label field.");
-        labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
-        labelFieldTip.setText(" ");
-
-        applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
-        applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
-        applyToAllTip.setText(" ");
-
-        org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
-        propertiesPanel.setLayout(propertiesPanelLayout);
-        propertiesPanelLayout.setHorizontalGroup(
-            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(2, 2, 2)
-                        .add(show2TracksCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(connectedCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(7, 7, 7)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(bgLabel)
-                                    .add(displayNameLabel))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(maxDepthLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .add(18, 18, 18)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(labelFieldLabel)
-                            .add(fgLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 83, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(labelFieldTip))
-                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(5, 5, 5))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(98, 98, 98)
-                        .add(displayNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 26, Short.MAX_VALUE))
-                    .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanelLayout.createSequentialGroup()
-                            .add(9, 9, 9)
-                            .add(trackNameSizeLabel)
-                            .add(18, 18, 18)
-                            .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                            .add(applyToAllButton)
-                            .add(1, 1, 1)
-                            .add(applyToAllTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, jSeparator1)
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, jSeparator2)))
-                .addContainerGap())
-        );
-        propertiesPanelLayout.setVerticalGroup(
-            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(displayNameLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(displayNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(4, 4, 4)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(bgLabel)
-                                .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                                .add(fgLabel)
-                                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(trackNameSizeLabel)
-                            .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(applyToAllButton))
-                        .add(1, 1, 1))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(applyToAllTip)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                        .add(maxDepthLabel)
-                        .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(labelFieldLabel)
-                        .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(labelFieldTip))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(show2TracksCheckBox)
-                    .add(connectedCheckBox)
-                    .add(collapsedCheckBox))
-                .add(17, 17, 17))
-        );
-
-        applyToAllButton.setToolTipText("Apply background, foreground, and Name Size to all selected tracks.");
-
-        autoRefreshCheckBox.setText("Auto Refresh");
-
-        showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
-
-        possitiveLabel.setText("+");
-
-        negativeLabel.setText("-");
-
-        possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        possitiveColorComboBox.setButtonVisible(false);
-        possitiveColorComboBox.setColorValueVisible(false);
-        possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        possitiveColorComboBox.setStretchToFit(true);
-        possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                possitiveColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        negativeColorComboBox.setButtonVisible(false);
-        negativeColorComboBox.setColorValueVisible(false);
-        negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        negativeColorComboBox.setStretchToFit(true);
-        negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                negativeColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        colorCheckBox.setText("Color");
-        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorCheckBoxActionPerformed(evt);
-            }
-        });
-
-        arrowCheckBox.setText("Arrow");
-        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                arrowCheckBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout showStrandPanelLayout = new org.jdesktop.layout.GroupLayout(showStrandPanel);
-        showStrandPanel.setLayout(showStrandPanelLayout);
-        showStrandPanelLayout.setHorizontalGroup(
-            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(showStrandPanelLayout.createSequentialGroup()
-                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(colorCheckBox)
-                    .add(arrowCheckBox)
-                    .add(showStrandPanelLayout.createSequentialGroup()
-                        .add(8, 8, 8)
-                        .add(possitiveLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(negativeLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
-        );
-        showStrandPanelLayout.setVerticalGroup(
-            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(showStrandPanelLayout.createSequentialGroup()
-                .add(arrowCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(colorCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(possitiveLabel)
-                    .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(negativeLabel)
-                    .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
-        viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
-
-        viewModeCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                viewModeCBActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout viewModelPanelLayout = new org.jdesktop.layout.GroupLayout(viewModelPanel);
-        viewModelPanel.setLayout(viewModelPanelLayout);
-        viewModelPanelLayout.setHorizontalGroup(
-            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeCB, 0, 96, Short.MAX_VALUE)
-        );
-        viewModelPanelLayout.setVerticalGroup(
-            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        );
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 363, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(autoRefreshCheckBox))
-                            .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(layout.createSequentialGroup()
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(6, 6, 6)
-                        .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(autoRefreshCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(refreshButton))
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
-		}
-}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
-
-    private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
-		}
-    }//GEN-LAST:event_connectedCheckBoxActionPerformed
-
-	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
-		}
-	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
-
-	private void displayNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayNameTextFieldActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
-		}
-	}//GEN-LAST:event_displayNameTextFieldActionPerformed
-
-	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
-		}
-	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
-
-	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
-		if (!settingValueFromTable && !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
-			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
-		}
-}//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
-
-	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
-		}
-}//GEN-LAST:event_fgColorComboBoxActionPerformed
-
-	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
-		}
-}//GEN-LAST:event_bgColorComboBoxActionPerformed
-
-	private void applyToAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyToAllButtonActionPerformed
-		selectedRow = table.getSelectedRow();
-		ITrackStyle style;
-		for (int i = 0; i < table.getRowCount(); i++) {
-			style = model.getStyles().get(i);
-			if (!style.getTrackName().equalsIgnoreCase(
-					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-				model.setValueAt(model.getStyles().get(selectedRow).getBackground(), i, COL_BACKGROUND, true);
-				model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(), i, COL_TRACK_NAME_SIZE, true);
-				model.setValueAt(model.getStyles().get(selectedRow).getForeground(), i, COL_FOREGROUND, false);
-			}
-			if (i == table.getRowCount() - 1) {
-				applyChanges();
-			}
-		}
-	}//GEN-LAST:event_applyToAllButtonActionPerformed
-
-	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
-		}
-}//GEN-LAST:event_labelFieldComboBoxActionPerformed
-
-	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
-		}
-}//GEN-LAST:event_possitiveColorComboBoxActionPerformed
-
-	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
-		}
-}//GEN-LAST:event_negativeColorComboBoxActionPerformed
-
-	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[0], COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[0], COL_DIRECTION_TYPE);
-				}
-			} else {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[0], COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[0], COL_DIRECTION_TYPE);
-				}
-			}
-		}
-}//GEN-LAST:event_colorCheckBoxActionPerformed
-
-	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[0], COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[0], COL_DIRECTION_TYPE);
-				}
-			} else {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[0], COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[0], COL_DIRECTION_TYPE);
-				}
-			}
-		}
-}//GEN-LAST:event_arrowCheckBoxActionPerformed
-
-	private void viewModeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewModeCBActionPerformed
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(viewModeCB.getSelectedItem(), selectedRows[i], COL_VIEW_MODE);
-			}
-		}
-	}//GEN-LAST:event_viewModeCBActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyToAllButton;
-    private javax.swing.JLabel applyToAllTip;
-    private javax.swing.JCheckBox arrowCheckBox;
-    private javax.swing.JCheckBox autoRefreshCheckBox;
-    private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
-    private javax.swing.JLabel bgLabel;
-    private javax.swing.JCheckBox collapsedCheckBox;
-    private javax.swing.JCheckBox colorCheckBox;
-    private javax.swing.JCheckBox connectedCheckBox;
-    private javax.swing.JLabel displayNameLabel;
-    private javax.swing.JTextField displayNameTextField;
-    private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
-    private javax.swing.JLabel fgLabel;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JComboBox labelFieldComboBox;
-    private javax.swing.JLabel labelFieldLabel;
-    private javax.swing.JLabel labelFieldTip;
-    private javax.swing.JLabel maxDepthLabel;
-    private javax.swing.JTextField maxDepthTextField;
-    private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
-    private javax.swing.JLabel negativeLabel;
-    private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
-    private javax.swing.JLabel possitiveLabel;
-    private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JPanel selectTrackPanel;
-    private javax.swing.JCheckBox show2TracksCheckBox;
-    private javax.swing.ButtonGroup showStrandButtonGroup;
-    private javax.swing.JPanel showStrandPanel;
-    private javax.swing.JTable table;
-    private javax.swing.JComboBox trackNameSizeComboBox;
-    private javax.swing.JLabel trackNameSizeLabel;
-    private javax.swing.JComboBox viewModeCB;
-    private javax.swing.JPanel viewModelPanel;
-    // End of variables declaration//GEN-END:variables
-
 	/** Whether or not changes to the trackOptionsTable should automatically be
 	 *  applied to the view.
 	 */
-	boolean autoApplyChanges() {
+	public boolean autoApplyChanges() {
 		return PreferenceUtils.getBooleanParam(PREF_AUTO_REFRESH,
 				default_auto_refresh);
 	}
 
-	private void refreshSeqMapView() {
+	public void refreshSeqMapView() {
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
 	}
 
-	// implementation of IPrefEditorComponent
-	public void refresh() {
-		refreshList();
-	}
-
-	void refreshList() {
+	public void refreshList() {
 		if (currentStyles == null) {
 			currentStyles = new ArrayList<TrackStyle>();
 		}
@@ -849,7 +316,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 	}
 
-	private void applyChanges() {
+	public void applyChanges() {
 		refreshSeqMapView();
 	}
 
@@ -994,13 +461,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		initializationDetector = false;
 	}
 
-	public void destroy() {
-		removeAll();
-		if (lsm != null) {
-			lsm.removeListSelectionListener(this);
-		}
-	}
-
 	/**
 	 *  Call this whenver this component is removed from the view, due to the
 	 *  tab pane closing or the window closing.  It will decide whether it is
@@ -1020,46 +480,145 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 	}
 
-	public void mapRefresh() {
-		if (isVisible()) {
-			refreshList();
+	public void show2TracksCheckBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
 		}
 	}
 
-	private void stopEditing() {
-		if (table != null && table.getCellEditor() != null) {
-			table.getCellEditor().stopCellEditing();
+	public void connectedCheckBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
 		}
 	}
 
-	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (!visible) {
-			stopEditing();
+	public void collapsedCheckBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
 		}
 	}
 
-	public void windowClosed(WindowEvent e) {
-		stopEditing();
+	public void displayNameTextFieldActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
+		}
 	}
 
-	public void windowOpened(WindowEvent e) {
+	public void maxDepthTextFieldActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
+		}
 	}
 
-	public void windowClosing(WindowEvent e) {
+	public void trackNameSizeComboBoxActionPerformed() {
+		if (!settingValueFromTable
+				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
+			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
+			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
+		}
 	}
 
-	public void windowIconified(WindowEvent e) {
+	public void fgColorComboBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
+		}
 	}
 
-	public void windowDeiconified(WindowEvent e) {
+	public void bgColorComboBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
+		}
 	}
 
-	public void windowActivated(WindowEvent e) {
+	public void applyToAllButtonActionPerformed() {
+		selectedRow = table.getSelectedRow();
+		ITrackStyle style;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			style = model.getStyles().get(i);
+			if (!style.getTrackName().equalsIgnoreCase(
+					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+				model.setValueAt(model.getStyles().get(selectedRow).getBackground(),
+						i, COL_BACKGROUND, true);
+				model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(),
+						i, COL_TRACK_NAME_SIZE, true);
+				model.setValueAt(model.getStyles().get(selectedRow).getForeground(),
+						i, COL_FOREGROUND, false);
+			}
+			if (i == table.getRowCount() - 1) {
+				applyChanges();
+			}
+		}
 	}
 
-	public void windowDeactivated(WindowEvent e) {
+	public void labelFieldComboBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
+		}
+	}
+
+	public void possitiveColorComboBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
+		}
+	}
+
+	public void negativeColorComboBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
+		}
+	}
+
+	public void colorCheckBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				}
+			} else {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				}
+			}
+		}
+	}
+
+	public void arrowCheckBoxActionPerformed() {
+		if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				}
+			} else {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
+							selectedRows[0], COL_DIRECTION_TYPE);
+				}
+			}
+		}
+	}
+
+	public void viewModeCBActionPerformed() {
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(viewModeCB.getSelectedItem(),
+						selectedRows[i], COL_VIEW_MODE);
+			}
+		}
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {

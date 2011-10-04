@@ -93,7 +93,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			renameTier(current_tier);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -120,7 +120,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -134,7 +134,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -148,7 +148,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), true);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -162,7 +162,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), true);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -204,7 +204,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), true);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -218,7 +218,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -232,7 +232,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), true);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -246,7 +246,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -260,7 +260,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), true);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -274,7 +274,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), false);
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -423,7 +423,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeExpandMax(handler.getSelectedTierLabels());
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -437,7 +437,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeExpandMax(handler.getAllTierLabels());
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -469,7 +469,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeFontSize(handler.getSelectedTierLabels());
-			PreferencesPanel.getSingleton().tpv.externalChange();
+			PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 		}
 
 		@Override
@@ -489,7 +489,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void showCustomizer() {
 		PreferencesPanel pv = PreferencesPanel.getSingleton();
 		pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
-		pv.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
+		pv.tpvGUI.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
 		JFrame f = pv.getFrame();
 		f.setVisible(true);
 	}
@@ -516,7 +516,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		handler.setTiersCollapsed(tier_labels, collapsed);
 		gviewer.getSeqMap().updateWidget();
-		PreferencesPanel.getSingleton().tpv.externalChange();
+		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
 	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
@@ -601,7 +601,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			tier.setMaxExpandDepth(max);
 		}
 		refreshMap(false, true);
-		PreferencesPanel.getSingleton().tpv.externalChange();
+		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
 	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -614,7 +614,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		refreshMap(false, true);
 		handler.sortTiers();
-		PreferencesPanel.getSingleton().tpv.externalChange();
+		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
 	public void showAllTiers() {

@@ -104,7 +104,6 @@ public class TierAnnotationOperationAction extends GenericAction {
 		}
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		if (preferredStyle == null) {
-			style.setTrackName(human_name);
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands
 			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
@@ -112,6 +111,7 @@ public class TierAnnotationOperationAction extends GenericAction {
 		else {
 			style.copyPropertiesFrom(preferredStyle);
 		}
+		style.setTrackName(human_name);
 		return style;
 	}
 

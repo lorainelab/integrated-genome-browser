@@ -12,11 +12,11 @@ import java.awt.Color;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -73,19 +73,19 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private String AddButtonTitle = "Add Track Default";
 	private String selectedTrackDefaultType;
 	private TrackStyle selectedStyle;
-	private javax.swing.JButton addTrackDefaultButton;
-	private javax.swing.JCheckBox arrowCheckBox;
+	private JRPButton addTrackDefaultButton;
+	private JRPCheckBox arrowCheckBox;
 	private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
-	private javax.swing.JCheckBox collapsedCheckBox;
-	private javax.swing.JCheckBox colorCheckBox;
-	private javax.swing.JCheckBox connectedCheckBox;
+	private JRPCheckBox  collapsedCheckBox;
+	private JRPCheckBox  colorCheckBox;
+	private JRPCheckBox  connectedCheckBox;
 	private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
 	private javax.swing.JComboBox labelFieldComboBox;
 	private javax.swing.JTextField maxDepthTextField;
 	private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
 	private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
-	private javax.swing.JButton removeTrackDefaultButton;
-	private javax.swing.JCheckBox show2TracksCheckBox;
+	private JRPButton removeTrackDefaultButton;
+	private JRPCheckBox  show2TracksCheckBox;
 	private javax.swing.JTable table;
 	private javax.swing.JTextField trackDefaultTextField;
 	private javax.swing.JComboBox trackNameSizeComboBox;
@@ -130,19 +130,19 @@ public final class TrackDefaultView implements ListSelectionListener {
 		trackDefaultTextField = new javax.swing.JTextField();
 		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		colorCheckBox = new javax.swing.JCheckBox();
-		arrowCheckBox = new javax.swing.JCheckBox();
+		colorCheckBox = new JRPCheckBox("TrackDefaultView_colorCheckBox");
+		arrowCheckBox = new JRPCheckBox("TrackDefaultView_arrowCheckBox");
 		table = new javax.swing.JTable();
-		addTrackDefaultButton = new javax.swing.JButton();
-		removeTrackDefaultButton = new javax.swing.JButton();
+		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
+		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		trackNameSizeComboBox = new javax.swing.JComboBox();
 		fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 		labelFieldComboBox = new javax.swing.JComboBox();
 		maxDepthTextField = new javax.swing.JTextField();
-		show2TracksCheckBox = new javax.swing.JCheckBox();
-		connectedCheckBox = new javax.swing.JCheckBox();
-		collapsedCheckBox = new javax.swing.JCheckBox();
+		show2TracksCheckBox = new JRPCheckBox("TrackDefaultView_show2TracksCheckBox");
+		connectedCheckBox = new JRPCheckBox("TrackDefaultView_connectedCheckBox");
+		collapsedCheckBox = new JRPCheckBox("TrackDefaultView_collapsedCheckBox");
 		labelFieldTip = new javax.swing.JLabel();
 
 		possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
@@ -532,11 +532,11 @@ public final class TrackDefaultView implements ListSelectionListener {
 		return negativeColorComboBox;
 	}
 
-	public javax.swing.JCheckBox getColorCheckBox() {
+	public JRPCheckBox getColorCheckBox() {
 		return colorCheckBox;
 	}
 
-	public javax.swing.JCheckBox getArrowCheckBox() {
+	public JRPCheckBox getArrowCheckBox() {
 		return arrowCheckBox;
 	}
 
@@ -544,11 +544,11 @@ public final class TrackDefaultView implements ListSelectionListener {
 		return table;
 	}
 
-	public javax.swing.JButton getAddTrackDefaultButton() {
+	public JRPButton getAddTrackDefaultButton() {
 		return addTrackDefaultButton;
 	}
 
-	public javax.swing.JButton getRemoveTrackDefaultButton() {
+	public JRPButton getRemoveTrackDefaultButton() {
 		return removeTrackDefaultButton;
 	}
 

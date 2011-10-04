@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -21,6 +20,7 @@ import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.glyph.GlyphProcessorHolder;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -103,7 +103,7 @@ public class Activator implements BundleActivator {
 								iconPath = DEFAULT_ICON_PATH;
 							}
 							ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
-							JButton button = new JButton(icon);
+							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), icon);
 							button.addActionListener(genericAction);
 							button.setToolTipText(genericAction.getText());
 							((IGB)Application.getSingleton()).addToolbarButton(button);

@@ -15,6 +15,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 //import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -32,8 +33,8 @@ public final class KeyStrokeEditPanel extends JPanel {
 //  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
   private final JLabel key_label = new JLabel("Type a shortcut: " );
   private final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB" );
-  private final JButton apply_button = new JButton("Ok");
-  private final JButton clear_button = new JButton("Clear");
+  private final JRPButton apply_button = new JRPButton("KeyStrokeEditPanel_apply_button", "Ok");
+  private final JRPButton clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
   
   private int key_code;
   private int modifiers;

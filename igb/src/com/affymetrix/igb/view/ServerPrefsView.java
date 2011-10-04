@@ -58,8 +58,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected ServerList serverList;
 	protected JTable sourcesTable;
 	protected JScrollPane sourcesScrollPane;
-	protected JButton addServerButton;
-	protected JButton removeServerButton;
+	protected JRPButton addServerButton;
+	protected JRPButton removeServerButton;
 	// for add source dialog
 	protected JLabel nameLabel;
 	protected JLabel urlLabel;

@@ -17,7 +17,7 @@ public final class StatusBar extends JPanel{
 	
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;
-	private final JButton mainCancel;
+	private final JRPButton mainCancel;
 	public final JProgressBar progressBar;
 		
 	public StatusBar() {

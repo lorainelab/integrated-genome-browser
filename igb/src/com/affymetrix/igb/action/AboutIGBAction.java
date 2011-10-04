@@ -8,6 +8,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.IGB;
 
 import java.awt.GridLayout;
@@ -73,8 +74,8 @@ public class AboutIGBAction extends GenericAction {
 		}
 
 		message_pane.add(new JScrollPane(about_text));
-		JButton igb_paper = new JButton("View IGB Paper");
-		JButton bioviz_org = new JButton("Visit Bioviz.org");
+		JRPButton igb_paper = new JRPButton("AboutIGBAction_igb_paper", "View IGB Paper");
+		JRPButton bioviz_org = new JRPButton("AboutIGBAction_bioviz_org", "Visit Bioviz.org");
 		// vikram JButton request_feature = new JButton("Request a Feature");
 		// vikram JButton report_bug = new JButton("Report a Bug");
 		igb_paper.addActionListener(new ActionListener() {

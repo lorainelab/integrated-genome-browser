@@ -2,7 +2,6 @@ package com.affymetrix.igb.tutorial;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -18,14 +17,14 @@ public class TutorialNavigator extends JPanel {
 		super();
 		this.nextAction = nextAction;
 		setLayout(new BorderLayout());
-		JButton backButton = new JRPButton("TutorialNavigator_back", backAction);
+		JRPButton backButton = new JRPButton("TutorialNavigator_back", backAction);
 		add(backButton, BorderLayout.WEST);
-		JButton cancelButton = new JRPButton("TutorialNavigator_cancel", cancelAction);
+		JRPButton cancelButton = new JRPButton("TutorialNavigator_cancel", cancelAction);
 		add(cancelButton, BorderLayout.WEST);
 		instructions = new JLabel("", JLabel.CENTER);
 		instructions.setHorizontalTextPosition(JLabel.CENTER);
 		add(instructions, BorderLayout.CENTER);
-		JButton nextButton = new JRPButton("TutorialNavigator_next", nextAction);
+		JRPButton nextButton = new JRPButton("TutorialNavigator_next", nextAction);
 		add(nextButton, BorderLayout.EAST);
 	}
 

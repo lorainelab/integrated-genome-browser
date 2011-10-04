@@ -65,10 +65,10 @@ public final class GeneralLoadView {
 	private static GeneralLoadView singleton;
 	private static IGBService igbService;
 	//gui components 
-	private static javax.swing.JButton all_residuesB;
+	private static JRPButton all_residuesB;
 	private static javax.swing.JTable dataManagementTable;
-	private static javax.swing.JButton partial_residuesB;
-	private static javax.swing.JButton refresh_dataB;
+	private static JRPButton partial_residuesB;
+	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
 	private static Font font = new Font ("SansSerif", Font.BOLD, 16);
 
@@ -134,15 +134,15 @@ public final class GeneralLoadView {
 		return dataManagementTable;
 	}
 
-	public javax.swing.JButton getPartial_residuesButton() {
+	public JRPButton getPartial_residuesButton() {
 		return partial_residuesB;
 	}
 
-	public javax.swing.JButton getAll_ResiduesButton() {
+	public JRPButton getAll_ResiduesButton() {
 		return all_residuesB;
 	}
 
-	public javax.swing.JButton getRefreshDataButton() {
+	public JRPButton getRefreshDataButton() {
 		return refresh_dataB;
 	}
 

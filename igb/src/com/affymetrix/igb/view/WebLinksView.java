@@ -4,6 +4,7 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.view.WebLinkEditorPanel;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
@@ -198,11 +199,11 @@ public final class WebLinksView extends JPanel {
 		JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
 		tool_bar.setFloatable(false);
 
-		tool_bar.add(new JButton(edit_action));
+		tool_bar.add(new JRPButton("WebLinksView_edit_action", edit_action));
 		tool_bar.addSeparator();
-		tool_bar.add(new JButton(add_action));
+		tool_bar.add(new JRPButton("WebLinksView_add_action", add_action));
 		tool_bar.addSeparator();
-		tool_bar.add(new JButton(delete_action));
+		tool_bar.add(new JRPButton("WebLinksView_delete_action", delete_action));
 		this.add(tool_bar, BorderLayout.SOUTH);
 	}
 

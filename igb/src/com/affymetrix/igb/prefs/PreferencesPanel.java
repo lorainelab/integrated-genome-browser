@@ -14,6 +14,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -219,7 +220,7 @@ public final class PreferencesPanel extends JPanel {
 		return "OK";
 	  }
     };
-    JButton close = new JButton(close_action);
+    JRPButton close = new JRPButton("PreferencesPanel_close", close_action);
     Box button_box = new Box(BoxLayout.X_AXIS);
     button_box.add(Box.createHorizontalGlue());
     button_box.add(close);

@@ -51,6 +51,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -424,7 +425,7 @@ public final class IGB extends Application
 		}
 	}
 
-	public void addToolbarButton(JButton button) {
+	public void addToolbarButton(JRPButton button) {
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}

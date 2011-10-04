@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 
 /**
@@ -88,7 +89,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 			//String string = worker.getMessage().substring(0, Math.min(40, worker.getMessage().length()));
 			final JLabel taskName = new JLabel(worker.getMessage());
 
-			final JButton cancelTask = new JButton(closeIcon);
+			final JRPButton cancelTask = new JRPButton("ThreadHandler_cancelTask", closeIcon);
 			cancelTask.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 			cancelTask.addActionListener(new ActionListener() {
 

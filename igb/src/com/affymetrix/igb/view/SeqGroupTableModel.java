@@ -56,10 +56,8 @@ final class SeqGroupTableModel extends AbstractTableModel {
 
 	@Override
 	public Class<?> getColumnClass(int c) {
-		if ((getValueAt(0, c)) == null) {
-			System.out.println("Null Reference ERROR: column " + c);
-		}
-		return getValueAt(0, c).getClass();
+		return getValueAt(0, c) == null ? 
+				String.class : getValueAt(0, c).getClass();
 	}
 	
 }

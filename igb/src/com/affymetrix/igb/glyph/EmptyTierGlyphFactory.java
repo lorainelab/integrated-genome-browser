@@ -9,8 +9,6 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import java.util.List;
 
 /**
  *
@@ -18,44 +16,21 @@ import java.util.List;
  */
 public class EmptyTierGlyphFactory {
 	
-	public static void addEmtpyTierforVisibleFeature(SeqMapView gviewer){
-		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-		
-		int slots = getAverageSlots(gviewer.getSeqMap());
-		for(GenericFeature feature: visibleFeatures){
-			
-			ITrackStyleExtended style; 
-			
-			if(!feature.getMethods().isEmpty()){
-				for(String method : feature.getMethods()){
-					style = getStyle(method, feature);
-					addTierFor(gviewer, style, slots);
-				}
-			}else{
-				style = getStyle(feature.getURI().toString(), feature);
-				addTierFor(gviewer, style, slots);
-				style.setFeature(feature);
-			}
-						
-		}
-		
-		gviewer.getSeqMap().packTiers(true, true, false, false);
-		gviewer.getSeqMap().stretchToFit(false, true);
-		gviewer.getSeqMap().updateWidget();
-	}
+	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer) {
 
-	private static int getAverageSlots(AffyTieredMap seqmap) {
-		int slot = 1;
-		int noOfTiers = 1;
-		for(TierGlyph tier : seqmap.getTiers()){
-			if(!tier.isVisible())
-				continue;
-			
-			slot += tier.getActualSlots();
-			noOfTiers += 1;
+		ITrackStyleExtended style;
+
+		if (!feature.getMethods().isEmpty()) {
+			for (String method : feature.getMethods()) {
+				style = getStyle(method, feature);
+				addTierFor(style, gviewer);
+			}
+		} else {
+			style = getStyle(feature.getURI().toString(), feature);
+			addTierFor(style, gviewer);
+			style.setFeature(feature);
 		}
-		
-		return slot/noOfTiers;
+
 	}
 
 	private static ITrackStyleExtended getStyle(String method, GenericFeature feature) {
@@ -72,7 +47,8 @@ public class EmptyTierGlyphFactory {
 		return style;
 	}
 	
-	private static void addTierFor(SeqMapView gviewer, ITrackStyleExtended style, int slots) {
+	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
+		int slots = getAverageSlots(gviewer.getSeqMap());
 		TierGlyph[] tiers = new TierGlyph[2];
 				
 		double height = style.getHeight();
@@ -94,7 +70,19 @@ public class EmptyTierGlyphFactory {
 
 	}
 		
-	
+	private static int getAverageSlots(AffyTieredMap seqmap) {
+		int slot = 1;
+		int noOfTiers = 1;
+		for(TierGlyph tier : seqmap.getTiers()){
+			if(!tier.isVisible())
+				continue;
+			
+			slot += tier.getActualSlots();
+			noOfTiers += 1;
+		}
+		
+		return slot/noOfTiers;
+	}
 	private static void addEmptyChild(TierGlyph tier, double height){
 		if (tier.getChildCount() <= 0) {
 			Glyph glyph = new Glyph() {};

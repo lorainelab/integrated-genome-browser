@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -677,11 +676,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				if (tn.genericObject instanceof GenericFeature) {
 					GenericFeature feature = (GenericFeature) tn.genericObject;
 					if (checkbox.isSelected()) {
-						feature.setVisible();
-						GeneralLoadView.getLoadView().createFeaturesTable();
-						List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
-						loadStrategies.add(LoadStrategy.GENOME);
-						GeneralLoadView.loadFeature(loadStrategies, feature, null);
+						GeneralLoadView.getLoadView().addFeature(feature);
 					} else {
 						String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
 						if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
@@ -696,7 +691,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			return nodeData;
 		}
 	}
-
+	
 	public JTree getTree() {
 		if (tree != null) {
 			return tree;
@@ -833,11 +828,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					if (!feature.isVisible()) {
 						URI fUri = feature.getURI();
 						if (uri.equals(fUri)) {
-							feature.setVisible();
-							GeneralLoadView.getLoadView().createFeaturesTable();
-							List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
-							loadStrategies.add(LoadStrategy.GENOME);
-							GeneralLoadView.loadFeature(loadStrategies, feature, null);
+							GeneralLoadView.getLoadView().addFeature(feature);
 						}
 					}
 				}

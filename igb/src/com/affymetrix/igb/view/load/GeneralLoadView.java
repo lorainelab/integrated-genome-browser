@@ -43,6 +43,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
+import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
@@ -299,16 +300,18 @@ public final class GeneralLoadView {
 		}
 	}
 
-	static void loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerType serverType) {
+	static boolean loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerType serverType) {
 		if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
-			return;
+			return false;
 		}
 
 		if (serverType != null && gFeature.gVersion.gServer.serverType != serverType) {
-			return;
+			return false;
 		}
 
 		GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+		
+		return true;
 	}
 
 	public static void AutoloadQuickloadFeature() {
@@ -486,6 +489,17 @@ public final class GeneralLoadView {
 		return (String) SeqGroupView.getInstance().getSpeciesCB().getSelectedItem();
 	}
 
+	public void addFeature(final GenericFeature feature) {
+		feature.setVisible();
+		
+		List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.GENOME);
+		loadFeature(loadStrategies, feature, null);
+		
+		createFeaturesTable();
+
+	}
+	
 	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
 		if (feature == null) {
 			return null;

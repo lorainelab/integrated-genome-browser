@@ -36,7 +36,7 @@ import com.affymetrix.igb.util.ColorUtils;
  * result in two variables being generated which must be manually removed to prevent bugs on windows machines
  * jProgressBar1 and colorChooserPanel1
  */
-public class OtherOptions extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener  {
+public class OtherOptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener  {
 	
 	private static final long serialVersionUID = 1L;
     private final SeqMapView smv;
@@ -46,7 +46,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
 
     /** Creates new form OtherOptions */
-    public OtherOptions() {
+    public OtherOptionsView() {
 		super();
 		this.setName("Other Options");
 		//this.setToolTipText("Edit Miscellaneous Options");

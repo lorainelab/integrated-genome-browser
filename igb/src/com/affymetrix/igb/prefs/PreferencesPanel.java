@@ -89,7 +89,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.addPrefEditorComponent(new TrackDefaultView());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
-		singleton.addPrefEditorComponent(new OtherOptions());
+		singleton.addPrefEditorComponent(new OtherOptionsView());
 	
 		return singleton;
 	}

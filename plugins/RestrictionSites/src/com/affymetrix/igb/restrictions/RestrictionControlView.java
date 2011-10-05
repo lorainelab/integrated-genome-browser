@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -57,7 +58,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private JLabel labels[];
 	private JRPButton actionB;
 	private JRPButton clearB;
-
+	
 	/**
 	 *  keep track of added glyphs
 	 */
@@ -194,8 +195,9 @@ public final class RestrictionControlView extends IGBTabPanel
 			return;
 		}
 
+		final SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
-		if(!vseq.isAvailable(igbService.getSeqMapView().getVisibleSpan())){
+		if(!vseq.isAvailable(span)){
 			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");
 			if (!confirm) {
@@ -203,24 +205,30 @@ public final class RestrictionControlView extends IGBTabPanel
 			}
 			vexec.execute(new Runnable() {
 				public void run() {
-					igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
+					igbService.loadResidues(span, true);
 					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 				}
 			});
 		}
 		
-		vexec.execute(new Thread(new GlyphifyMatchesThread()));
+		vexec.execute(new Thread(new GlyphifyMatchesThread(span)));
 	}
 
 	
 	private class GlyphifyMatchesThread implements Runnable
 	{
+		final SeqSpan span;
+		
+		GlyphifyMatchesThread(SeqSpan span){
+			this.span = span;
+		}
+		
 		public void run()
 		{
 			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
 				BioSeq vseq = igbService.getSeqMapView().getViewSeq();
-				if (vseq == null || !vseq.isAvailable(igbService.getSeqMapView().getVisibleSpan())) {
+				if (vseq == null || !vseq.isAvailable(span)) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;
 				}

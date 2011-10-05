@@ -102,6 +102,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private JRPComboBox speciesCB;
 	private JRPComboBox versionCB;
 	private final IGBService igbService;
+	private SeqGroupTableModel model;
 	
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
@@ -128,8 +129,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
 
-		SeqGroupTableModel mod = new SeqGroupTableModel(null);
-		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
+		model = new SeqGroupTableModel(null);
+		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
 
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
@@ -175,10 +176,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Refresh seqtable if more chromosomes are added, for example.
 	 */
 	public void refreshTable() {
-		seqtable.validate();
-		seqtable.updateUI();
-		seqtable.repaint();
-		updateTableHeader();
+		model.fireTableDataChanged();
 	}
 
 	public void updateTableHeader() {

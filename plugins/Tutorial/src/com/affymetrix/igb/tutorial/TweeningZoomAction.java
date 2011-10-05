@@ -35,14 +35,12 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 		return new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-//				System.out.println("doInBackground() - nextValue = " + nextValue);
 				xzoomer.setValue(nextValue);
 				return null;
 			}
 			@Override
 			protected void done() {
 				int newNextValue = nextValue + step;
-//				System.out.println("done() - nextValue = " + nextValue + ", step = " + step + ", newNextValue = " + newNextValue + ", endValue = " + endValue);
 				if (Math.abs(newNextValue - endValue) < Math.abs(2 * step)) {
 					actionDone();
 				}

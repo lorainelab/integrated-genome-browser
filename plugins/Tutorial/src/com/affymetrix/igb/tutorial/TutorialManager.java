@@ -1,16 +1,23 @@
 package com.affymetrix.igb.tutorial;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWrapper;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 
@@ -27,6 +34,22 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private String waitAction = null;
 	private Map<String, TutorialStep[]> triggers = new HashMap<String, TutorialStep[]>();
 	private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<String, AbstractComponentDecorator>();
+	private MenuListener menuListener = new MenuListener() {
+		@Override
+		public void menuSelected(MenuEvent e) {
+			advanceStep();
+			((JRPMenu)e.getSource()).removeMenuListener(this);
+		}
+		@Override public void menuDeselected(MenuEvent e) {}
+		@Override public void menuCanceled(MenuEvent e) {}
+	};
+	private ActionListener menuItemListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			advanceStep();
+			((JRPMenuItem)e.getSource()).removeActionListener(this);
+		}
+	};
 	private int stepIndex = 0;
 
 	public TutorialManager(IGBService igbService, IWindowService windowService) {
@@ -96,6 +119,15 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			}
 			action.addDoneCallback(this);
 			action.actionPerformed(null);
+		}
+		if (step.getWaitMenu() != null) {
+			JRPWidget widget = RecordPlaybackHolder.getInstance().getWidget(step.getWaitMenu());
+			if (widget instanceof JRPMenu) {
+				((JRPMenu)widget).addMenuListener(menuListener);
+			}
+			if (widget instanceof JRPMenuItem) {
+				((JRPMenuItem)widget).addActionListener(menuItemListener);
+			}
 		}
 		if (step.getTrigger() != null) {
 			if (step.getSubTutorial() == null) {

@@ -4,6 +4,7 @@ public class TutorialStep {
 	public static class TutorialExecute {
 		private String name;
 		private float amount;
+		private String param;
 		public String getName() {
 			return name;
 		}
@@ -16,12 +17,19 @@ public class TutorialStep {
 		public void setAmount(float amount) {
 			this.amount = amount;
 		}
+		public String getParam() {
+			return param;
+		}
+		public void setParam(String param) {
+			this.param = param;
+		}
 	}
 	private String text;
 	private String highlight;
 	private int timeout;
 	private String trigger;
 	private String action;
+	private String waitMenu;
 	private TutorialExecute execute;
 	private TutorialStep[] subTutorial;
 	
@@ -54,6 +62,12 @@ public class TutorialStep {
 	}
 	public void setAction(String action) {
 		this.action = action;
+	}
+	public String getWaitMenu() {
+		return waitMenu;
+	}
+	public void setWaitMenu(String waitMenu) {
+		this.waitMenu = waitMenu;
 	}
 	public TutorialExecute getExecute() {
 		return execute;

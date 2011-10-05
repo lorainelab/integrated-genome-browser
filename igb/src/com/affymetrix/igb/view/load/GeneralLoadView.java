@@ -43,7 +43,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
-import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;

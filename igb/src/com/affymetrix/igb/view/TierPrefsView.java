@@ -1,6 +1,10 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.Application;
 import java.awt.Color;
 import java.util.*;
@@ -11,6 +15,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -18,6 +23,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.load.DataManagementTable;
@@ -155,11 +161,11 @@ public class TierPrefsView implements ListSelectionListener {
 
 		applyToAllTip = new javax.swing.JLabel();
 		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
-		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("info_icon.gif"));
+		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
 
 		labelFieldTip = new javax.swing.JLabel();
 		labelFieldTip.setToolTipText("Type or choose label field.");
-		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("info_icon.gif"));
+		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
 
 		// Add a "refresh map" button, if there is an instance of IGB
 		if (smv != null) {
@@ -410,11 +416,25 @@ public class TierPrefsView implements ListSelectionListener {
 				possitiveColorComboBox.setEnabled(false);
 				negativeColorComboBox.setEnabled(false);
 				show2TracksCheckBox.setEnabled(false);
+			} else {
+				SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
+				SeqSymmetry child = sym.getChild(0);
+				SeqSymmetry original = getMostOriginalSymmetry(child);
+				if (original instanceof SymWithProps) {
+					Map<String, Object> props = ((SymWithProps) original).getProperties();
+
+					ArrayList<String> properties = new ArrayList<String>();
+					properties.add((String) TrackConstants.LABELFIELD[0]);
+					properties.addAll(props.keySet());
+					labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+				}
 			}
+
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			String file_type = selectedStyle.getFileType();
 			viewModeCB.removeAllItems();
+
 			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
 				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));
 				String view_mode = selectedStyle.getViewMode();
@@ -463,6 +483,13 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 
 		initializationDetector = false;
+	}
+
+	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
+		if (sym instanceof DerivedSeqSymmetry) {
+			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
+		}
+		return sym;
 	}
 
 	/**
@@ -626,6 +653,7 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {
+
 		private static final long serialVersionUID = 1L;
 		List<TrackStyle> tier_styles;
 		private Object tempObject;

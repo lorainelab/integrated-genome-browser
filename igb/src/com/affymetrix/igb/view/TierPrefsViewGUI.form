@@ -21,14 +21,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="364" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <Component id="propertiesPanel" min="-2" pref="362" max="-2" attributes="1"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="1"/>
                           <Component id="refreshButton" min="-2" pref="111" max="-2" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                               <Component id="viewModelPanel" alignment="0" max="32767" attributes="1"/>
-                              <Component id="showStrandPanel" alignment="0" min="0" pref="113" max="32767" attributes="1"/>
+                              <Component id="showStrandPanel" alignment="0" min="-2" pref="113" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -44,6 +44,7 @@
               <Component id="selectTrackPanel" max="32767" attributes="1"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
                   <Group type="102" attributes="0">
                       <Component id="showStrandPanel" min="-2" pref="106" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
@@ -53,9 +54,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,10 +84,6 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="98" pref="98" max="98" attributes="0"/>
-                          <Component id="displayNameTextField" min="-2" pref="238" max="-2" attributes="1"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -96,6 +92,10 @@
                           <Component id="collapsedCheckBox" min="-2" pref="104" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="1">
+                              <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
+                              <Component id="displayNameTextField" max="32767" attributes="1"/>
+                          </Group>
                           <Component id="jSeparator2" alignment="0" max="32767" attributes="1"/>
                           <Component id="jSeparator1" alignment="0" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
@@ -122,20 +122,17 @@
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="fgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="labelFieldComboBox" min="-2" pref="83" max="-2" attributes="1"/>
-                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                              <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+                                          <Component id="labelFieldComboBox" min="-2" pref="93" max="-2" attributes="1"/>
+                                          <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -181,14 +178,11 @@
                   <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="11" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="maxDepthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="maxDepthTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelFieldLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelFieldComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="maxDepthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxDepthTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -298,9 +292,6 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
-          <Properties>
-            <Property name="editable" type="boolean" value="true"/>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
           </Events>
@@ -370,20 +361,12 @@
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator2">
         </Component>
-        <Component class="javax.swing.JLabel" name="labelFieldTip">
-          <Properties>
-            <Property name="text" type="java.lang.String" value=" "/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="labelFieldTip.setToolTipText(&quot;Type or choose label field.&quot;);"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JLabel" name="applyToAllTip">
           <Properties>
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="applyToAllTip.setToolTipText(&quot;Apply Background, Foreground, and Name Size to all tracks.&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.applyToAllTip"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -402,7 +385,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="443" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="441" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>

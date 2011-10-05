@@ -211,9 +211,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 		addTrackDefaultButton.setText("Add");
 
-
 		removeTrackDefaultButton.setText("Remove");
-
 
 		bgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
 		bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -222,10 +220,8 @@ public final class TrackDefaultView implements ListSelectionListener {
 		bgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
 		bgColorComboBox.setStretchToFit(true);
 
-
 		trackNameSizeComboBox.setEditable(true);
 		trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-
 
 		fgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
 		fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -233,12 +229,9 @@ public final class TrackDefaultView implements ListSelectionListener {
 		fgColorComboBox.setColorValueVisible(false);
 		fgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
 		fgColorComboBox.setStretchToFit(true);
-
-
+		
 		labelFieldComboBox.setEditable(true);
 		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
-
-
 
 		show2TracksCheckBox.setText("Show (+/-) tracks");
 

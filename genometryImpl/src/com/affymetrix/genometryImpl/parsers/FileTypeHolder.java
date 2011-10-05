@@ -265,6 +265,11 @@ public class FileTypeHolder {
 				@Override
 				public Parser getParser() {
 					try {
+						
+						if(parserClass == null){
+							return null;
+						}
+						
 						return parserClass.getConstructor().newInstance();
 					}
 					catch (Exception x) {

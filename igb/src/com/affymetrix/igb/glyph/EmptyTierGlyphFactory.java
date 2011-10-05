@@ -54,18 +54,16 @@ public class EmptyTierGlyphFactory {
 		double height = style.getHeight();
 		if(!style.isGraphTier()){
 			tiers = gviewer.getTiers(false, style, true);
-			
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-			height = height * slots;
 		}else {
 			tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
 		}
 
 		if (style.getSeparate()) {
-			addEmptyChild(tiers[0], height);
-			addEmptyChild(tiers[1], height);
+			addEmptyChild(tiers[0], height, slots);
+			addEmptyChild(tiers[1], height, slots);
 		} else {
-			addEmptyChild(tiers[0], height);
+			addEmptyChild(tiers[0], height, slots);
 		}
 
 	}
@@ -83,11 +81,13 @@ public class EmptyTierGlyphFactory {
 		
 		return slot/noOfTiers;
 	}
-	private static void addEmptyChild(TierGlyph tier, double height){
+	private static void addEmptyChild(TierGlyph tier, double height, int slots){
 		if (tier.getChildCount() <= 0) {
-			Glyph glyph = new Glyph() {};
-			glyph.setCoords(0, 0, 0, height);
-			tier.addChild(glyph);
+			for(int i=0; i<slots; i++){
+				Glyph glyph = new Glyph() {};
+				glyph.setCoords(0, 0, 0, height);
+				tier.addChild(glyph);
+			}
 		}
 	}
 

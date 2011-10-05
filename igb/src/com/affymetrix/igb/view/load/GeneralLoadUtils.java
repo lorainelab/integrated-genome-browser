@@ -1242,12 +1242,16 @@ public final class GeneralLoadUtils {
 		}
 		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		
+		Map<String, String> featureProps = null;
 		SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
 		if(symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")){
-			symL = new ResidueTrackSymLoader(symL);			
+			symL = new ResidueTrackSymLoader(symL);		
+			featureProps = new HashMap<String, String>();
+			featureProps.put("collapsed", "true");
+			featureProps.put("show2tracks", "false");
 		}
 		
-		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri, symL), File.class, autoload);
+		GenericFeature gFeature = new GenericFeature(fileName, featureProps, version, new QuickLoad(version, uri, symL), File.class, autoload);
 
 		version.addFeature(gFeature);
 

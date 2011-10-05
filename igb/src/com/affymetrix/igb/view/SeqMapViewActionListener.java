@@ -122,7 +122,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Home16.gif";
+				return "toolbarButtonGraphics/navigation/Home16.gif";
 			}
 			@Override
 			public String getTooltip() {

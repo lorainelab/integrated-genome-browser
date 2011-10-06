@@ -39,6 +39,11 @@ public class PositionTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedPositionTexts[sortedPositionTexts.length-1].position);
 		sliceInfo.setNumberRecords(sortedPositionTexts.length);
 	}
+	
+	/**Returns the position of the last position in the sortedPositionTexts array.*/
+	public int fetchLastBase(){
+		return sortedPositionTexts[sortedPositionTexts.length-1].position;
+	}
 	/**Writes 6 or 12 column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
@@ -51,6 +56,36 @@ public class PositionTextData extends USeqData{
 			else out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
 		}
 	}
+	
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tPosition\tText(s)");
+			for (int i=0; i< sortedPositionTexts.length; i++) out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text);
+		}
+		else {
+			out.println("#Chr\tPosition\tText(s)\tStrand");
+			for (int i=0; i< sortedPositionTexts.length; i++){
+				//chrom start stop name score strand
+				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text+"\t"+strand);
+			}
+		}
+	}
+	
+	/**Writes position score format to the PrintWriter, 1bp coor*/
+	public void writePositionScore (PrintWriter out){
+		int prior = -1;
+		for (int i=0; i< sortedPositionTexts.length; i++){
+				if (prior != sortedPositionTexts[i].position) {
+					out.println((sortedPositionTexts[i].position +1) +"\t0");
+					prior = sortedPositionTexts[i].position;
+				}
+		}
+	}
+	
+	
 	/**Writes the PositionText[] to a binary file.
 	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
 	 * @param attemptToSaveAsShort, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed

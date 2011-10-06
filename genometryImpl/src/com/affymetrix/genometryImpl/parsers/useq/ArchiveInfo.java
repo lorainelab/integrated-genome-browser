@@ -66,8 +66,6 @@ public class ArchiveInfo {
 	private LinkedHashMap<String,String> keyValues = null;
 	public static final Pattern KEY_VALUE_SPLITTER = Pattern.compile("\\s*([^=\\s]+)\\s*=\\s*(.+)\\s*");
 
-
-
 	//constructors
 	public ArchiveInfo(String versionedGenome, String dataType){
 		//instantiate keyValues Hash and add required fields
@@ -132,6 +130,7 @@ public class ArchiveInfo {
 		}
 		return ai;
 	}
+
 
 	/**Writes the comment lines and 'key = value' to file, one per line. Will overwrite.
 	 * Returns the archiveReadMe.txt File object*/
@@ -281,5 +280,13 @@ public class ArchiveInfo {
 	}
 	public String getDataType(){
 		return keyValues.get(DATA_TYPE_KEY);
+	}
+	public boolean isGraphData(){
+		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_GRAPH)) return true;
+		return false;
+	}
+	public boolean isRegionData(){
+		if (keyValues.get(DATA_TYPE_KEY).equals(DATA_TYPE_VALUE_REGION)) return true;
+		return false;
 	}
 }

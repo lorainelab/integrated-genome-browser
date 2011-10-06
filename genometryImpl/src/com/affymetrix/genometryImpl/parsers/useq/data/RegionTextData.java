@@ -38,6 +38,15 @@ public class RegionTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegionTexts[sortedRegionTexts.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegionTexts.length);
 	}
+	/**Returns the bp of the last end position in the array.*/
+	public int fetchLastBase(){
+		int lastBase = -1;
+		for (RegionText r : sortedRegionTexts){
+			int end = r.getStop();
+			if (end > lastBase) lastBase = end;
+		}
+		return lastBase;
+	}
 	/**Writes 6 or 12 column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
@@ -49,6 +58,22 @@ public class RegionTextData extends USeqData{
 			else out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ sortedRegionTexts[i].text +"\t0\t"+strand);
 		}
 	}
+	
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tStart\tStop\tText(s)");
+			for (int i=0; i< sortedRegionTexts.length; i++) out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+sortedRegionTexts[i].text);
+		}
+		else {
+			out.println("#Chr\tStart\tStop\tText(s)\tStrand");
+			for (int i=0; i< sortedRegionTexts.length; i++) out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+sortedRegionTexts[i].text+"\t"+strand);
+		}
+	}
+
+	
 	/**Writes the RegionText[] to a binary file.  Each region's start/stop is converted to a running offset/length which are written as either ints or shorts.
 	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
 	 * @param attemptToSaveAsShort, scans to see if the offsets and region lengths exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed

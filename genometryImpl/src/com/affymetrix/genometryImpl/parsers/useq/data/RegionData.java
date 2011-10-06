@@ -38,6 +38,15 @@ public class RegionData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegions[sortedRegions.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegions.length);
 	}
+	/**Returns the bp of the last end position in the array.*/
+	public int fetchLastBase(){
+		int lastBase = -1;
+		for (Region r : sortedRegions){
+			int end = r.getStop();
+			if (end > lastBase) lastBase = end;
+		}
+		return lastBase;
+	}
 
 	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
@@ -46,6 +55,20 @@ public class RegionData extends USeqData{
 		for (int i=0; i< sortedRegions.length; i++){
 			//chrom start stop name score strand
 			out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+".\t0\t"+strand);
+		}
+	}
+	
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tStart\tStop");
+			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+		}
+		else {
+			out.println("#Chr\tStart\tStop\tStrand");
+			for (int i=0; i< sortedRegions.length; i++) out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
 		}
 	}
 

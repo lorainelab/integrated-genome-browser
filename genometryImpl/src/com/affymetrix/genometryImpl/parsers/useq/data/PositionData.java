@@ -69,7 +69,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		//return new PositionData
 		return new PositionData(concatinate, sliceInfo);
 	}
-	
+
 	public static PositionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
@@ -92,6 +92,39 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		for (int i=0; i< sortedPositions.length; i++){
 			//chrom start stop name score strand
 			out.println(chrom+"\t"+sortedPositions[i].position+"\t"+(sortedPositions[i].position + 1)+"\t"+".\t0\t"+strand);
+		}
+	}
+	
+	/**Returns the position of the last position in the sortedPositions array.*/
+	public int fetchLastBase(){
+		return sortedPositions[sortedPositions.length-1].position;
+	}
+
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tPosition");
+			for (int i=0; i< sortedPositions.length; i++) out.println(chrom+"\t"+sortedPositions[i].position);
+		}
+		else {
+			out.println("#Chr\tPosition\tStrand");
+			for (int i=0; i< sortedPositions.length; i++){
+				//chrom start stop name score strand
+				out.println(chrom+"\t"+sortedPositions[i].position+"\t"+strand);
+			}
+		}
+	}
+	
+	/**Writes native format to the PrintWriter, 1 based, skips dups*/
+	public void writePositionScore (PrintWriter out){
+		int priorPosition = -1;
+		for (int i=0; i< sortedPositions.length; i++){
+				if (priorPosition != sortedPositions[i].position){
+					out.println((sortedPositions[i].position +1)+"\t0");
+					priorPosition = sortedPositions[i].position;
+				}
 		}
 	}
 

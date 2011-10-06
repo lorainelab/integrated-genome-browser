@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
 
 /**Container for a sorted RegionScore[].
@@ -39,16 +38,45 @@ public class RegionScoreData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegionScores[sortedRegionScores.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegionScores.length);
 	}
+	
+	/**Returns the bp of the last end position in the array.*/
+	public int fetchLastBase(){
+		int lastBase = -1;
+		for (RegionScore r : sortedRegionScores){
+			int end = r.getStop();
+			if (end > lastBase) lastBase = end;
+		}
+		return lastBase;
+	}
 
 	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
-	public void writeBed (PrintWriter out){
+	public void writeBed (PrintWriter out, boolean fixScore){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedRegionScores.length; i++){
 			//chrom start stop name score strand
-			out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ sortedRegionScores[i].score +"\t"+strand);
+			if (fixScore){
+				int score = USeqUtilities.fixBedScore(sortedRegionScores[i].score);
+				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ score +"\t"+strand);
+			}
+			else out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ sortedRegionScores[i].score +"\t"+strand);
 		}
 	}
+	
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tStart\tStop\tScore");
+			for (int i=0; i< sortedRegionScores.length; i++) out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score);
+		}
+		else {
+			out.println("#Chr\tStart\tStop\tScore\tStrand");
+			for (int i=0; i< sortedRegionScores.length; i++) out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score+"\t"+strand);
+		}
+	}
+	
 	/**Writes the RegionScore[] to a binary file.  Each region's start/stop is converted to a running offset/length which are written as either ints or shorts.
 	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
 	 * @param attemptToSaveAsShort, scans to see if the offsets and region lengths exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed

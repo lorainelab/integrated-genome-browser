@@ -1,6 +1,9 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
+
 import java.util.*;
 import java.io.*;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+
 
 /**
  * Simple start stop object. Assumes interbase coordinates. 
@@ -107,5 +110,71 @@ public class Region implements Comparable<Region>, Serializable {
 	public boolean isContainedBy(int beginningBP, int endingBP) {
 		if (start >= beginningBP && stop < endingBP) return true;
 		return false;
+	}
+	/**Parses a tab delimited file (chr, start, stop, ...), zip/ gz OK. 
+	 * @param bed file, skips empty lines and those starting with '#'
+	 * @param subStart and subEnd are the number to subtract from the ends of each region
+	 * @return a HashMap<Chr,sorted Region[]> or null in none are found
+	 * */
+	public static HashMap<String,Region[]> parseStartStops (File bedFile, int subStart, int subEnd, int minSize){
+		HashMap<String,ArrayList<Region>> ss = new HashMap<String,ArrayList<Region>>();
+		try{
+			BufferedReader in = USeqUtilities.fetchBufferedReader(bedFile);
+			String line;
+			String[] tokens;
+			ArrayList<Region> al = new ArrayList<Region>();
+			//chrom, start, stop
+			while ((line = in.readLine()) !=null) {
+				line = line.trim();
+				if (line.length() ==0 || line.startsWith("#")) continue;
+				tokens = line.split("\\s+");
+				if (tokens.length < 3) continue;
+				//does chrom already exist?
+				if (ss.containsKey(tokens[0])) al = ss.get(tokens[0]);
+				else {
+					al = new ArrayList<Region>();
+					ss.put(tokens[0], al);
+				}
+				int start = Integer.parseInt(tokens[1]);
+				int stop = Integer.parseInt(tokens[2]);
+				if (start > stop) throw new Exception("\nFound a start that is greater than stop!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
+				if (start < 0) throw new Exception("\nFound a start with a negative value!  Cannot parse file "+bedFile+", bad line->\n\t"+line);
+				int length = stop-start;
+				if (length < minSize) continue;
+				al.add(new Region(start-subStart, stop- subEnd));
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		if (ss.size() == 0) return null;
+		//make hashmap
+		HashMap<String,Region[]> ssReal = new HashMap<String,Region[]>();
+		Iterator<String> it = ss.keySet().iterator();
+		while (it.hasNext()){
+			String chrom = it.next();
+			ArrayList<Region> al = ss.get(chrom);
+			Region[] array = new Region[al.size()];
+			al.toArray(array);
+			Arrays.sort(array);
+			ssReal.put(chrom, array);
+		}
+		return ssReal;
+	}
+	
+	
+	public int getMiddle(){
+		if (start == stop) return start;
+		double length = stop - start;
+		double halfLength = length/2.0;
+		return (int)Math.round(halfLength) + start;
+	}
+	
+	public static int findLastBase(Region[] r){
+		int lastBase = -1;
+		for (int i=0; i< r.length; i++){
+			if (r[i].stop> lastBase) lastBase = r[i].stop;
+		}
+		return lastBase;
 	}
 }

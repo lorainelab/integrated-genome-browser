@@ -6,8 +6,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
-/**Splits a tab delimited text file by chromosome (and optionally strand), sort on position, then divides it by the number of rows.
- * Writes to a directory named after the input file, minus the extension, capitalized first letter using a chrStrndStartBP-StopBP.useries extension. (e.g. chr5_Random+294383948-294393948.us1) */
+/**Converts text files to binary useq.*/
 public class Text2USeq {
 	//fields
 	//user defined
@@ -777,10 +776,13 @@ public class Text2USeq {
 			int counter = 0;
 			while ((line = in.readLine()) !=null){
 				try {
+					line = line.trim();
+					if (line.length()==0) continue;
 					if (line.startsWith("#")) continue;
 					if (line.contains("chrAdapter")) continue;
 					tokens = tab.split(line);
-
+					trim(tokens);
+					
 					//parse chromosome
 					String chromosome = tokens[chromosomeColumnIndex];
 					//check for splice junction
@@ -803,11 +805,11 @@ public class Text2USeq {
 					//save data
 					out.println(line);
 				} catch (Exception e){
-					System.out.println("\nProblem parsing line -> "+line +" Skipping!\n");
-					e.printStackTrace();
-					if (counter++ == 100) {
+					System.out.println("\nProblem parsing line -> "+line +" Skipping!");
+					//e.printStackTrace();
+					if (counter++ == 1000) {
 						System.out.println("Too many malformed lines.  Aborting.");
-						break;
+						return null;
 					}
 				}
 			}
@@ -883,8 +885,8 @@ public class Text2USeq {
 		if (strandColumnIndex > maxIndex) maxIndex = strandColumnIndex;
 		if (chromosomeColumnIndex > maxIndex) maxIndex = chromosomeColumnIndex;
 		if (beginningColumnIndex > maxIndex) maxIndex = beginningColumnIndex;
-		//flip make graph boolean? if text or end position are provided
-		if (textColumnIndexs != null || endingColumnIndex != -1) makeGraph = false;
+		//flip make graph boolean? if end position are provided
+		if (endingColumnIndex != -1) makeGraph = false;
 
 		//check color
 		if (color !=null){
@@ -894,6 +896,11 @@ public class Text2USeq {
 		}
 
 	}	
+	
+	/**Trims all the strings in the array String.trim()*/
+	public static void trim(String[] s){
+		for (int i=0; i< s.length; i++) s[i] = s[i].trim();
+	}
 
 	public static void printDocs(){
 		StringBuilder sb = new StringBuilder();
@@ -902,7 +909,7 @@ public class Text2USeq {
 		}
 		System.out.println("\n" +
 				"**************************************************************************************\n" +
-				"**                               Text 2 USeq: Jan 2009                              **\n" +
+				"**                              Text 2 USeq: April 2011                             **\n" +
 				"**************************************************************************************\n" +
 				"Converts text genomic data files (e.g. xxx.bed, xxx.gff, xxx.sgr, etc.) to\n" +
 				"binary USeq archives (xxx.useq).  Assumes interbase coordinates. Only select\n" +
@@ -921,18 +928,25 @@ public class Text2USeq {
 				"-e (Optional) End column index\n"+
 				"-v (Optional) Value column index\n"+
 				"-t (Optional) Text column index(s), comma delimited, no spaces, defines which columns\n" +
-				"      to join using a tab. For a bed-12 format use '-t 3,6,7,8,9,10,11'\n"+
-				"-i (Optional) Index size for slicing split chromosome data (e.g. # rows per file),\n" +
+				"      to join using a tab.\n"+
+				"-i (Optional) Index size for slicing split chromosome data (e.g. # rows per slice),\n" +
 				"      defaults to 10000.\n"+
 				"-r (Optional) For graphs, select a style, defaults to 0\n"+ sb+
-				"-h (Optional) Color, hexadecimal (e.g. #6633FF), enclose in quotations!\n"+
-				"-d (Optional) Description, enclose in quotations! \n"+
-
-
-				"\nExample: java -Xmx4G -jar pathTo/USeq/Apps/GenomicDataSlicer -f\n" +
+				"-h (Optional) Color, hexadecimal (e.g. #6633FF), enclose in quotations\n"+
+				"-d (Optional) Description, enclose in quotations \n"+
+				
+				"\nExample: java -Xmx4G -jar pathTo/USeq/Apps/Text2USeq -f\n" +
 				"      /AnalysisResults/BedFiles/ -c 0 -b 1 -e 2 -i 5000 -h '#6633FF'\n" +
 				"      -d 'Final processed chIP-Seq results for Bcd and Hunchback, 30M reads'\n" +
-				"      -g H_sapiens_2009 \n\n" +
+				"      -g H_sapiens_Feb_2009 \n\n" +
+				
+				"Indexes for common formats:\n"+
+				"       bed3 -c 0 -b 1 -e 2\n"+
+				"       bed5 -c 0 -b 1 -e 2 -t 3 -v 4 -s 5\n"+
+				"       bed12 -c 0 -b 1 -e 2 -t 3,6,7,8,9,10,11 -v 4 -s 5\n"+
+				"       gff w/scr,stnd,name -c 0 -b 3 -e 4 -v 5 -s 6 -t 8\n"+
+				
+				"\n"+
 
 		"**************************************************************************************\n");
 

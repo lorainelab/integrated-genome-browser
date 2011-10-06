@@ -13,6 +13,8 @@ public class PositionScoreTextData extends USeqData{
 
 	//fields
 	private PositionScoreText[] sortedPositionScoreTexts;
+	private int[] basePositions;
+	private float[] scores;
 
 	//constructors
 	public PositionScoreTextData(){}
@@ -38,16 +40,55 @@ public class PositionScoreTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedPositionScoreTexts[sortedPositionScoreTexts.length-1].position);
 		sliceInfo.setNumberRecords(sortedPositionScoreTexts.length);
 	}
+	/**Returns the position of the last position in the sortedPositionScoreTexts array.*/
+	public int fetchLastBase(){
+		return sortedPositionScoreTexts[sortedPositionScoreTexts.length-1].position;
+	}
 	/**Writes 6 or 12 column xxx.bed formatted lines to the PrintWriter.*/
-	public void writeBed (PrintWriter out){
+	public void writeBed (PrintWriter out, boolean fixScore){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedPositionScoreTexts.length; i++){
 			//chrom start stop name score strand
 			//bed12?
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionScoreTexts[i].text);
-			if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-			else out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand);
+			if (fixScore){
+				int score = USeqUtilities.fixBedScore(sortedPositionScoreTexts[i].score);
+				if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				else out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+score+"\t"+strand);
+			}
+			else {
+				if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ tokens[0] +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				else out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+(sortedPositionScoreTexts[i].position + 1)+"\t"+ sortedPositionScoreTexts[i].text +"\t"+sortedPositionScoreTexts[i].score+"\t"+strand);
+			}
+		}
+	}
+
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tPosition\tScore\tText(s)");
+			for (int i=0; i< sortedPositionScoreTexts.length; i++) out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text);
+		}
+		else {
+			out.println("#Chr\tPosition\tScore\tText(s)\tStrand");
+			for (int i=0; i< sortedPositionScoreTexts.length; i++){
+				//chrom start stop name score strand
+				out.println(chrom+"\t"+sortedPositionScoreTexts[i].position+"\t"+sortedPositionScoreTexts[i].score+"\t"+sortedPositionScoreTexts[i].text+"\t"+strand);
+			}
+		}
+	}
+
+	/**Writes position score format to the PrintWriter, 1bp coor*/
+	public void writePositionScore (PrintWriter out){
+		int prior = -1; 
+		for (int i=0; i< sortedPositionScoreTexts.length; i++){
+			if (prior != sortedPositionScoreTexts[i].position) {
+				out.println((sortedPositionScoreTexts[i].position +1) +"\t"+sortedPositionScoreTexts[i].score);
+				prior = sortedPositionScoreTexts[i].position;
+			}
 		}
 	}
 
@@ -209,7 +250,7 @@ public class PositionScoreTextData extends USeqData{
 			USeqUtilities.safeClose(dos);
 		} 
 	}
-	
+
 	/**Assumes all are of the same chromosome and strand! Sorts PositionScoreTextData prior to merging*/
 	public static PositionScoreTextData merge (ArrayList<PositionScoreTextData> pdAL){
 		//convert to arrays and sort
@@ -233,7 +274,7 @@ public class PositionScoreTextData extends USeqData{
 		//return new PositionData
 		return new PositionScoreTextData(concatinate, sliceInfo);
 	}
-	
+
 	public static PositionScoreTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
@@ -301,5 +342,21 @@ public class PositionScoreTextData extends USeqData{
 		al.toArray(sortedPositionScoreTexts);
 		updateSliceInfo(sortedPositionScoreTexts, sliceInfo);
 		return true;
+	}
+
+	public int[] getBasePositions(){
+		if (basePositions == null){
+			basePositions = new int[sortedPositionScoreTexts.length];
+			scores = new float[sortedPositionScoreTexts.length];
+			for (int i=0; i<basePositions.length; i++) {
+				basePositions[i] = sortedPositionScoreTexts[i].position;
+				scores[i] = sortedPositionScoreTexts[i].score;
+			}
+		}
+		return basePositions;
+	}
+	public float[] getBaseScores(){
+		if (scores== null) getBasePositions();
+		return scores;
 	}
 }

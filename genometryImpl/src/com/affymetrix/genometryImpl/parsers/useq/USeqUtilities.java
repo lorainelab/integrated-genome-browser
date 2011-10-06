@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -15,6 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.util.*;
+
 
 /** Utility class to hold constants for working with the USeq binary data type
  * @author david.nix@hci.utah.edu*/
@@ -82,6 +85,13 @@ public class USeqUtilities {
 	}
 
 	//static helper methods from the USeq project util.gen.Misc, util.gen.IO
+	/**Rounds to an int and will set to 0 if neg or 1000 if > 1000 according to bed format requirements.*/
+	public static int fixBedScore(float value){
+		int score = Math.round(value);
+		if (score < 0) score = 0;
+		else if (score > 1000) score = 1000;
+		return score;
+	}
 	/**Prints message to screen, then exits.*/
 	public static void printErrAndExit (String message){
 		System.err.println (message);
@@ -178,6 +188,35 @@ public class USeqUtilities {
 		Arrays.sort(files);
 		return files;
 	}
+	
+	/**Fetches all files with a given extension in a directory recursing through sub directories.
+	 * Will return a file if a file is given with the appropriate extension, or null.*/
+	public static File[] fetchFilesRecursively (File directory, String extension){
+		if (directory.isDirectory() == false){
+			return extractFiles(directory, extension);
+		}
+		ArrayList<File> al = fetchAllFilesRecursively (directory, extension);
+		File[] files = new File[al.size()];
+		al.toArray(files);
+		return files;
+	}
+	
+	/**Fetches all files with a given extension in a directory recursing through sub directories.*/
+	public static ArrayList<File> fetchAllFilesRecursively (File directory, String extension){
+		ArrayList<File> files = new ArrayList<File>(); 
+		File[] list = directory.listFiles();
+		for (int i=0; i< list.length; i++){
+			if (list[i].isDirectory()) {
+				ArrayList<File> al = fetchAllFilesRecursively (list[i], extension);
+				files.addAll(al);
+			}
+			else{
+				if (list[i].getName().endsWith(extension)) files.add(list[i]);
+			}
+		}
+		return files;
+	}
+	
 	/**Extracts the full path file names of all the files in a given directory with a given extension (ie txt or .txt).
 	 * If the dirFile is a file and ends with the extension then it returns a File[] with File[0] the
 	 * given directory. Returns null if nothing found. Case insensitive.*/
@@ -291,6 +330,107 @@ public class USeqUtilities {
 		double halfLength = length/2.0;
 		return (int)Math.round(halfLength) + start;
 	}
+	
+	/**Converts #3333CC to RGB values 51 51 204*/
+	public static String convertHexadecimal2RGB(String hexColor, String divider){
+		String hex = hexColor.replaceFirst("#", "");
+		if (hex.length() != 6) return null;
+		StringBuilder sb = new StringBuilder();
+		String toCon = hex.substring(0,2);
+		int color= Integer.parseInt(toCon,16);
+		sb.append(color);
+		for (int i=2; i<6; i+=2){
+			toCon = hex.substring(i,i+2);
+			color= Integer.parseInt(toCon,16);
+			sb.append(divider);
+			sb.append(color);
+		}
+		return sb.toString();
+	}
+	
+	/**Executes tokenized params on command line, use full paths.
+	 * Put each param in its own String.  
+	 * Returns null if a problem is encountered.
+	 * Returns both error and data from execution.
+	 */
+	public static String[] executeCommandLineReturnAll(String[] command){
+		ArrayList<String> al = new ArrayList<String>();		
+		try {
+			Runtime rt = Runtime.getRuntime();
+			rt.traceInstructions(true); //for debugging
+			rt.traceMethodCalls(true); //for debugging
+			Process p = rt.exec(command);
+			//Process p = rt.exec(Misc.stringArrayToString(command, " "));
+			BufferedReader data = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream())); //for debugging
+			String line;
+			while ((line = data.readLine()) != null){
+				al.add(line);
+			}
+			while ((line = error.readLine()) != null){
+				al.add(line);
+			}
+			data.close();
+			error.close();
+
+		} catch (Exception e) {
+			System.out.println("Problem executing -> "+stringArrayToString(command," ")+" "+e.getLocalizedMessage());
+			e.printStackTrace();
+			return null;
+		}
+		String[] res = new String[al.size()];
+		al.toArray(res);
+		return res;
+	}
+	
+	/**Executes a String of shell script commands via a temp file.  Only good for Unix.*/
+	public static String[] executeShellScript (String shellScript, File tempDirectory){
+		//make shell file
+		File shellFile = new File (tempDirectory, "tempFile_"+UUID.randomUUID() +".sh");
+		String fullPath = getFullPathName(shellFile);
+		//write to shell file
+		writeString(shellScript, shellFile);
+		//set permissions for execution
+		String[] cmd = {"chmod", "777", fullPath};
+		String[] res = executeCommandLineReturnAll(cmd);
+		if (res == null || res.length !=0 ) {
+			shellFile.delete();
+			return null;
+		}
+		//execute
+		cmd = new String[]{fullPath};
+		res = executeCommandLineReturnAll(cmd);
+		shellFile.delete();
+		return res; 
+	}
+	
+	
+	/**Writes a String to disk. */
+	public static boolean writeString(String data, File file) {
+		try {
+			PrintWriter out = new PrintWriter(new FileWriter(file));
+			out.print(data);
+			out.close();
+			return true;
+		} catch (IOException e) {
+			System.out.println("Problem writing String to disk!");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**Gets full path text using getCanonicalPath() on a File*/
+	public static String getFullPathName(File fileDirectory){
+		String full = null;
+		try {
+			full = fileDirectory.getCanonicalPath();
+		}catch (IOException e){
+			System.out.println("Problem with getFullPathtName(), "+fileDirectory);
+			e.printStackTrace();
+		}
+		return full;
+	}
+	
 	/**
 	 * Safely close a Closeable object.  If it doesn't exist, return.
 	 */

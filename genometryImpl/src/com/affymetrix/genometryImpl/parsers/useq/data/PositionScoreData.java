@@ -32,6 +32,11 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		this.sliceInfo = sliceInfo;
 		read (dis);
 	}
+	public PositionScoreData(int[] positions, float[] scoreArray, SliceInfo sliceInfo){
+		this.sliceInfo = sliceInfo;
+		sortedPositionScores = new PositionScore[basePositions.length];
+		for (int i=0; i< sortedPositionScores.length; i++) sortedPositionScores[i] = new PositionScore(positions[i], scoreArray[i]);
+	}
 
 	//methods
 
@@ -141,16 +146,55 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		for (int i=0; i< num; i++) a.add((PositionScoreData) useqDataAL.get(i));
 		return merge (a);
 	}
+	
+	/**Returns the position of the last position in the sortedPositionScores array.*/
+	public int fetchLastBase(){
+		return sortedPositionScores[sortedPositionScores.length-1].position;
+	}
 
-	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
-	public void writeBed (PrintWriter out){
+	/**Writes six column xxx.bed formatted lines to the PrintWriter. Note score must be between 0 and 1000 to meet bed format.*/
+	public void writeBed (PrintWriter out, boolean fixBedScores){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedPositionScores.length; i++){
 			//chrom start stop name score strand
-			out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+sortedPositionScores[i].score+"\t"+strand);
+			if (fixBedScores) {
+				int score = USeqUtilities.fixBedScore(sortedPositionScores[i].score);
+				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+score+"\t"+strand);
+			}
+			else out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+sortedPositionScores[i].score+"\t"+strand);
 		}
 	}
+	
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tPosition\tScore");
+			for (int i=0; i< sortedPositionScores.length; i++) out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+		}
+		else {
+			out.println("#Chr\tPosition\tScore\tStrand");
+			for (int i=0; i< sortedPositionScores.length; i++){
+				//chrom start stop name score strand
+				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score+"\t"+strand);
+			}
+		}
+	}
+	
+	/**Writes position score format to the PrintWriter, 1bp positions*/
+	public void writePositionScore (PrintWriter out){
+		int prior = -1;
+		for (int i=0; i< sortedPositionScores.length; i++){
+				if (prior != sortedPositionScores[i].position) {
+					out.println((sortedPositionScores[i].position +1)+"\t"+sortedPositionScores[i].score);
+					prior = sortedPositionScores[i].position;
+				}
+		}
+	}
+	
+	
 
 	/**Writes the PositionScore[] to a binary file.
 	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory

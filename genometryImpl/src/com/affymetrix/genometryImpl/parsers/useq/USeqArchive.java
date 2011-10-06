@@ -19,19 +19,20 @@ public class USeqArchive {
 	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
 	//DAS2 does not support stranded requests at this time so leave false.
 	private boolean maintainStrandedness = false;
+	private boolean stranded = false;
 
 	public USeqArchive (File zipFile) throws Exception{
 		this.zipFile = zipFile;
 		parseZipFile();
 	}
-	
+
 	/**Fetches and builds a merged USeqData[] object for the data that intersects the region.  Returns null if no data found.
 	 * @return USeqData[0] = "+", USeqData[1] = "-"; USeqData[2] = ".", one or more may be null.*/
 	public USeqData[] fetch (String chromosome, int beginningBP, int endingBP) {
 		//fetch any overlapping entries, these might be mixed strand
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
 		if (entries == null) return null;
-		
+
 		//build ArrayList of USeqData to merge
 		ArrayList<USeqData> useqDataALPlus = new ArrayList<USeqData>();
 		ArrayList<USeqData> useqDataALMinus = new ArrayList<USeqData>();
@@ -64,7 +65,7 @@ public class USeqArchive {
 			if (useqDataALNone.size() != 0) minus = mergeUSeqData(useqDataALNone);
 			if (plus != null || minus != null || non !=null) return new USeqData[]{plus, minus, non};
 			else return null;
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(bis);
@@ -72,8 +73,8 @@ public class USeqArchive {
 		}
 
 	}
-	
-	
+
+
 	/**Merges an ArrayList of the same dataType.*/
 	public USeqData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		//Position
@@ -149,7 +150,7 @@ public class USeqArchive {
 		return true;
 	}
 
-	
+
 	private USeqData loadSlice(int beginningBP, int endingBP, SliceInfo sliceInfo, BufferedInputStream bis) {
 		DataInputStream dis = new DataInputStream(bis);
 		USeqData d = null;
@@ -332,8 +333,8 @@ public class USeqArchive {
 		}
 		return slicedZipArchive;
 	}
-	
-	
+
+
 	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found. 
 	 * Remember this list isn't stranded so must search entire set.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
@@ -374,6 +375,8 @@ public class USeqArchive {
 				String chromName;
 				if (maintainStrandedness) chromName = sliceInfo.getChromosome()+sliceInfo.getStrand();
 				else chromName = sliceInfo.getChromosome();
+				//stranded?
+				if (sliceInfo.getStrand().equals(".") == false) stranded = true;
 				//get/make ArrayList
 				ArrayList<DataRange> al = map.get(chromName);
 				if (al == null){
@@ -458,17 +461,67 @@ public class USeqArchive {
 		return binaryDataType;
 	}
 
+
 	/**Returns a HashMap containing chromosomes and the last base covered.*/
-	public HashMap<String,Integer> fetchChromosomesAndLastBase(){
-		HashMap <String,Integer> map = new HashMap<String,Integer>();
+	public HashMap<String,Integer> fetchChromosomesAndLastBase() throws IOException{
+		//find last DR
+		HashMap <String,DataRange> map = new HashMap<String,DataRange>();
 		for (String chrom : chromStrandRegions.keySet()){
+			//these are sorted by first base so it's best to look at all of them.
 			DataRange[] dr = chromStrandRegions.get(chrom);
-			int lastBase = 0;
+			int lastFirstBase = 0;
+			DataRange lastDataRange = null;
 			for (DataRange d : dr){
-				if (d.endingBP > lastBase) lastBase = d.endingBP;
+				if (d.endingBP > lastFirstBase) {
+					lastFirstBase = d.endingBP;
+					lastDataRange = d;
+				}
 			}
-			map.put(chrom, new Integer(lastBase));
+			map.put(chrom, lastDataRange);
 		}
-		return map;
+
+		//now scan each for actual last base
+		ZipFile zf = new ZipFile(zipFile);
+		HashMap<String,Integer> chromBase = new HashMap<String,Integer>();
+		for (String chrom: map.keySet()){
+			DataRange dr = map.get(chrom);
+			ZipEntry ze = dr.zipEntry;
+			
+			//make a SliceInfo object
+			SliceInfo si = new SliceInfo(ze.getName());
+			DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
+			String extension = si.getBinaryType();
+
+			int lastBase = -1;
+
+			//Position
+			if (USeqUtilities.POSITION.matcher(extension).matches()) lastBase = new PositionData (dis, si).fetchLastBase();
+			//PositionScore
+			else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) lastBase = new PositionScoreData (dis, si).fetchLastBase();
+			//PositionText
+			else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) lastBase = new PositionTextData (dis, si).fetchLastBase();
+			//PositionScoreText
+			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) lastBase = new PositionScoreTextData (dis, si).fetchLastBase();
+			//Region
+			else if (USeqUtilities.REGION.matcher(extension).matches()) lastBase = new RegionData (dis, si).fetchLastBase();
+			//RegionScore
+			else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) lastBase = new RegionScoreData (dis, si).fetchLastBase();
+			//RegionText
+			else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) lastBase =  new RegionTextData (dis, si).fetchLastBase();
+			//RegionScoreText
+			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) lastBase = new RegionScoreTextData (dis, si).fetchLastBase();
+			else  throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+
+			chromBase.put(chrom, new Integer(lastBase));
+		}
+		return chromBase;
+	}
+
+	public File getZipFile() {
+		return zipFile;
+	}
+
+	public boolean isStranded() {
+		return stranded;
 	}
 }

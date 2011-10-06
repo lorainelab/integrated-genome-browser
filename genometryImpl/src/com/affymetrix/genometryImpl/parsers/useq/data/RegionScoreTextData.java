@@ -39,17 +39,47 @@ public class RegionScoreTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegionScoreTexts[sortedRegionScoreTexts.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegionScoreTexts.length);
 	}
+	/**Returns the bp of the last end position in the array.*/
+	public int fetchLastBase(){
+		int lastBase = -1;
+		for (RegionScoreText r : sortedRegionScoreTexts){
+			int end = r.getStop();
+			if (end > lastBase) lastBase = end;
+		}
+		return lastBase;
+	}
 	/**Writes six or 12 column xxx.bed formatted lines to the PrintWriter*/
-	public void writeBed (PrintWriter out){
+	public void writeBed (PrintWriter out, boolean fixScore){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
-			//bed12?
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreTexts[i].text);
-			if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-			else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+			if (fixScore){
+				int score = USeqUtilities.fixBedScore(sortedRegionScoreTexts[i].score);
+				if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ score +"\t"+strand);
+			}
+			else {
+				if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+				else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+			}
 		}
 	}
+
+	/**Writes native format to the PrintWriter*/
+	public void writeNative (PrintWriter out){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		if (strand.equals(".")){
+			out.println("#Chr\tStart\tStop\tScore\t(Text(s)");
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+		}
+		else {
+			out.println("#Chr\tStart\tStop\tScore\tText(s)\tStrand");
+			for (int i=0; i< sortedRegionScoreTexts.length; i++) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+		}
+	}
+
 
 	/**Writes the RegionScoreText[] to a binary file.  Each region's start/stop is converted to a running offset/length which are written as either as ints or shorts.
 	 * @param saveDirectory, the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
@@ -190,7 +220,7 @@ public class RegionScoreTextData extends USeqData{
 		}
 		return binaryFile;
 	}
-	
+
 	/**Assumes all are of the same chromosome and strand!*/
 	public static RegionScoreTextData merge (ArrayList<RegionScoreTextData> pdAL){
 		//convert to arrays and sort
@@ -214,7 +244,7 @@ public class RegionScoreTextData extends USeqData{
 		//return new RegionScoreTextData
 		return new RegionScoreTextData(concatinate, sliceInfo);
 	}
-	
+
 	public static RegionScoreTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList

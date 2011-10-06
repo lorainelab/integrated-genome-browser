@@ -1,11 +1,15 @@
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+
 import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
@@ -66,10 +70,10 @@ public class EmptyTierGlyphFactory {
 		}
 
 		if (style.getSeparate() && !style.isGraphTier()) {
-			addEmptyChild(tiers[0], height, slots);
-			addEmptyChild(tiers[1], height, slots);
+			addEmptyChild(tiers[0], height, slots, gviewer.getAnnotatedSeq());
+			addEmptyChild(tiers[1], height, slots, gviewer.getAnnotatedSeq());
 		} else {
-			addEmptyChild(tiers[0], height, slots);
+			addEmptyChild(tiers[0], height, slots, gviewer.getAnnotatedSeq());
 		}
 
 	}
@@ -88,13 +92,21 @@ public class EmptyTierGlyphFactory {
 		return slot/noOfTiers;
 	}
 	
-	private static void addEmptyChild(TierGlyph tier, double height, int slots){
+	private static void addEmptyChild(TierGlyph tier, double height, int slots, BioSeq seq){
 		if (tier.getChildCount() <= 0) {			
+			Glyph glyph;
+			
 			for(int i=0; i<slots; i++){
-				Glyph glyph = new Glyph() {};
+				// Add empty child.
+				glyph = new Glyph() {};
 				glyph.setCoords(0, 0, 0, height);
 				tier.addChild(glyph);
 			}
+			
+			// Add middle glyphs.
+			glyph = new FillRectGlyph();
+			glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
+			tier.addMiddleGlyph(glyph);
 		}
 	}
 

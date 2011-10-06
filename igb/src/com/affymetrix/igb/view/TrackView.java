@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
-import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
@@ -30,7 +29,6 @@ import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -217,10 +215,7 @@ public class TrackView {
 				}
 			}
 		}
-		
-		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
-			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
-		}
+
 	}
 
 	private static void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {

@@ -9,7 +9,7 @@
   
 	<context-param>
 		<param-name>genometry_server_dir_genopub</param-name>
-		<param-value>/path/to/das2/genopubdata/</param-value>
+		<param-value>/Applications/apache-tomcat-5.5.28/GenoPubData</param-value>
 	</context-param>
 	
 <!--                                                                        -->    
@@ -76,7 +76,7 @@
 	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://www.example.com:8080/das2genopub/genome</param-value>
+		<param-value>http://localhost:8080/das2genopub/genome</param-value>
 	</context-param>
 	
 	<!-- Listener to obtain Hibernate session  --> 

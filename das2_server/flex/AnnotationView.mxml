@@ -865,8 +865,8 @@
 		 * Make UCSC Links 
 		 *
 		 */
-		private function makeUCSCLinks():void {
-			navigateToURL(new URLRequest("genopub/makeUCSCLinks"),"to_blank");	
+		private function makeUCSCLink():void {
+			navigateToURL(new URLRequest('genopub/makeUCSCLink?idAnnotation=' + annotationsTree.selectedItem.@idAnnotation), 'to_blank');	
 		}
   		
 		
@@ -2532,15 +2532,6 @@
 			            	icon="@Embed(source='assets/database_lightning.png')" 
 			            	click="{refreshDAS2()}" 
 			            	id="reloadDas2ServerButton" textAlign="left" />
-			            	
-			            	
-			            <mx:VRule height="20" id="vrule3a" width="2" />
-			            <mx:LinkButton styleName="linkMenuButton" label="Make UCSC Links" 
-			            	icon="@Embed(source='assets/database_lightning.png')" 
-			            	click="{makeUCSCLinks()}" 
-			            	id="makeUCSCLinkButton" textAlign="left" />
-			            	
-
   					 </mx:HBox>       
 
   			        <mx:HBox width="100%" horizontalGap="4" paddingTop="2" verticalAlign="middle" paddingBottom="2" id="hbox15"  backgroundAlpha="0.8" borderStyle="none" paddingRight="2" paddingLeft="2">
@@ -2661,7 +2652,7 @@
 
 				   </mx:VBox>
 				   <mx:VBox width="30%" height="100%" verticalGap="0">
-						 <mx:LinkButton label="Define property ..." click="parentApplication.showDictionaryWindow()" styleName="linkMenuButtonSmall"  textAlign="left" paddingLeft="0"/>					   
+						<mx:LinkButton label="Define property ..." click="parentApplication.showDictionaryWindow()" styleName="linkMenuButtonSmall"  textAlign="left" paddingLeft="0"/>					   
 					   	<mx:VBox id="propertyMainBox" width="100%" height="100%" verticalGap="4" paddingTop="2" >
 					   		<mx:Repeater  id="propertyRepeater" 
 					   					  dataProvider="{annotationProperties}">
@@ -2718,6 +2709,14 @@
 					   			</mx:HBox>
 					   		</mx:Repeater>
 					   	</mx:VBox>
+					   	
+					   	<mx:HBox>
+					   		<mx:LinkButton styleName="linkMenuButton" label="View in UCSC Browser" 
+			            		icon="@Embed(source='assets/ucscFavicon.png')" 
+			            		click="{makeUCSCLink()}" 
+			            		id="makeUCSCLinkButton" textAlign="left"/>
+					   	</mx:HBox>
+					   	
 				   </mx:VBox>
 				  	
 				  </mx:HBox>

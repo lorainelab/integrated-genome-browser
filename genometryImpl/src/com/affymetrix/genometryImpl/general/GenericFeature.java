@@ -116,7 +116,7 @@ public final class GenericFeature {
 		}
 	}
 
-	public void setInvisible(){
+	private void setInvisible(){
 		this.visible = false;
 		setLoadStrategy(LoadStrategy.NO_LOAD);
 	}
@@ -233,7 +233,7 @@ public final class GenericFeature {
 			currentRequestSym.removeChildren();
 		}
 		methods.clear();
-		this.setInvisible();
+		setInvisible();
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}
 	

@@ -80,8 +80,8 @@ public final class GraphState {
 	private boolean show_label = true;
 
 	private HeatMap heat_map;
-	private final ITrackStyle tier_style;
-	private ITrackStyle combo_tier_style = null;
+	private final ITrackStyleExtended tier_style;
+	private ITrackStyleExtended combo_tier_style = null;
 
 	public static final float default_graph_height = 100.0f;
 
@@ -106,7 +106,7 @@ public final class GraphState {
 		tier_style.setExpandable(false);
 	}
 
-	public GraphState(ITrackStyle tierStyle) {
+	public GraphState(ITrackStyleExtended tierStyle) {
 		super();
 		tier_style = tierStyle;
 		setFloatGraph(false);
@@ -198,15 +198,15 @@ public final class GraphState {
 		threshold_direction = d;
 	}
 
-	public ITrackStyle getTierStyle() {
+	public ITrackStyleExtended getTierStyle() {
 		return tier_style;
 	}
 
-	public ITrackStyle getComboStyle() {
+	public ITrackStyleExtended getComboStyle() {
 		return combo_tier_style;
 	}
 
-	public void setComboStyle(ITrackStyle s) {
+	public void setComboStyle(ITrackStyleExtended s) {
 		this.combo_tier_style = s;
 	}
 

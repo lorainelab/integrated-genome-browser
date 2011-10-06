@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.event.PropertyHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -484,7 +485,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
 	 */
 	 static void setTierCollapsed(TierGlyph tg, boolean collapsed) {
-		ITrackStyle style = tg.getAnnotStyle();
+		ITrackStyleExtended style = tg.getAnnotStyle();
 		if (style.getExpandable()) {
 			style.setCollapsed(collapsed);
 			tg.setStyle(style);

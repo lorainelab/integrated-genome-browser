@@ -221,8 +221,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 			TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
 
-			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
-			ITrackStyleExtended the_style = (ITrackStyleExtended) the_tier.getAnnotStyle();
+			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(
 					parent_and_child, insym, the_style, the_tier, pspan, sym, annotseq, coordseq));

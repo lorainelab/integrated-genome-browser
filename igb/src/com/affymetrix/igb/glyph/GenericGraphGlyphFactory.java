@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CollapsePacker;
@@ -127,7 +127,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		if (graph_glyph == null) {
 			graph_glyph = new GraphGlyph(newgraf, gstate);
 		}
-		ITrackStyle tier_style = gstate.getTierStyle();
+		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 		tier_style.setCollapsed(isGenome);
 		if (gstate.getComboStyle() != null) {

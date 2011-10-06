@@ -38,11 +38,11 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.genometryImpl.operator.transform.IdentityTransform;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -930,7 +930,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			
 			// Note that the combo_style does not implement IFloatableTierStyle
 			// because the glyph factory doesn't support floating combo graphs anyway.
-			ITrackStyle combo_style = null;
+			ITrackStyleExtended combo_style = null;
 
 			// If any of them already has a combo style, use that one
 			for (int i = 0; i < gcount && combo_style == null; i++) {
@@ -939,7 +939,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 			// otherwise, construct a new combo style
 			if (combo_style == null) {
-				combo_style = new DefaultTrackStyle("Joined Graphs", true);
+				combo_style = new SimpleTrackStyle("Joined Graphs", true);
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);

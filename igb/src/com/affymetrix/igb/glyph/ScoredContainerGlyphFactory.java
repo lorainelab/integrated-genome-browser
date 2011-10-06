@@ -28,10 +28,10 @@ import com.affymetrix.genometryImpl.IndexedSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -237,7 +237,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			graph_glyph = new GraphGlyph(graf, graf.getGraphState());
 		}
 		GraphState gstate = graph_glyph.getGraphState();
-		ITrackStyle tier_style = gstate.getTierStyle();
+		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());
 
 		NeoMap map = smv.getSeqMap();

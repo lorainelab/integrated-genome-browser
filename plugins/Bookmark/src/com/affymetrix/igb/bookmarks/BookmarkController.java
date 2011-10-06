@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -40,6 +41,7 @@ import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 
+import com.affymetrix.igb.tiers.TrackStyle;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -88,7 +90,7 @@ public abstract class BookmarkController {
 		int default_maxgap_thresh = 100;
 		boolean default_show_thresh = false;
 		int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
-		Map<String, ITrackStyle> combos = new HashMap<String, ITrackStyle>();
+		Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
 
 		try {
 			for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
@@ -192,7 +194,7 @@ public abstract class BookmarkController {
 
 					
 					GraphState gstate = ((GraphSym) sym).getGraphState();
-					style = (ITrackStyleExtended) gstate.getTierStyle();
+					style = gstate.getTierStyle();
 					GenericFeature feature = style.getFeature();
 
 					if (!gFeature.equals(feature)) {
@@ -245,7 +247,7 @@ public abstract class BookmarkController {
  private static void applyGraphProperties(IGBService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
 			boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis,
 			double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction,
-			String combo_name, Map<String, ITrackStyle> combos) {
+			String combo_name, Map<String, ITrackStyleExtended> combos) {
 
 		if (graph_style_num != null) {
 			gstate.setGraphStyle(graph_style_num);
@@ -268,9 +270,9 @@ public abstract class BookmarkController {
 		gstate.setShowThreshold(show_thresh);
 		gstate.setThresholdDirection(thresh_direction);
 		if (combo_name != null) {
-			ITrackStyle combo_style = combos.get(combo_name);
+			ITrackStyleExtended combo_style = combos.get(combo_name);
 			if (combo_style == null) {
-				combo_style = new DefaultTrackStyle("Joined Graphs", true);
+				combo_style = new SimpleTrackStyle("Joined Graphs", true);
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
@@ -335,7 +337,7 @@ public abstract class BookmarkController {
 		  
 		  GraphSym graph = (GraphSym) sym;
 		  GraphState gstate = graph.getGraphState();
-		  ITrackStyleExtended style = (ITrackStyleExtended) gstate.getTierStyle();
+		  ITrackStyleExtended style = gstate.getTierStyle();
 		  GenericFeature feature = style.getFeature();
 
 		  if(feature == null){

@@ -18,7 +18,7 @@ import java.awt.Color;
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
 
 	// Should be called only from within package or from StateProvider.
-	protected SimpleTrackStyle(String name, boolean is_graph) {
+	public SimpleTrackStyle(String name, boolean is_graph) {
 		super(name, is_graph);
 	}
 

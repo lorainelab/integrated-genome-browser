@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -77,16 +76,16 @@ public class TierGlyph extends SolidGlyph {
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
-	private ITrackStyle style;
+	private ITrackStyleExtended style;
 	private ZoomDisplayer zoomDisplayer;
 	
-	public TierGlyph(ITrackStyle style) {
+	public TierGlyph(ITrackStyleExtended style) {
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
 	}
 
-	public final void setStyle(ITrackStyle style) {
+	public final void setStyle(ITrackStyleExtended style) {
 		this.style = style;
 
 		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
@@ -104,7 +103,7 @@ public class TierGlyph extends SolidGlyph {
 		setLabel(style.getTrackName());
 	}
 		
-	public ITrackStyle getAnnotStyle() {
+	public ITrackStyleExtended getAnnotStyle() {
 		return style;
 	}
 	
@@ -681,14 +680,13 @@ public class TierGlyph extends SolidGlyph {
 		
 	}
 	
-	private boolean useLabel(){
-		if (style instanceof ITrackStyleExtended) {
-			String label_field = ((ITrackStyleExtended) style).getLabelField();
-			boolean use_label = label_field != null && (label_field.trim().length() > 0);
-			if (!style.isGraphTier() && use_label) {
-				return true;
-			}
+	private boolean useLabel() {
+		String label_field = style.getLabelField();
+		boolean use_label = label_field != null && (label_field.trim().length() > 0);
+		if (!style.isGraphTier() && use_label) {
+			return true;
 		}
+
 		return false;
 	}
 	

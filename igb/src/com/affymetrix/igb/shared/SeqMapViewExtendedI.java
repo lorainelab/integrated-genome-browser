@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
@@ -25,7 +24,7 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	 */
 	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights);
 
-	TierGlyph getGraphTrack(ITrackStyle style, TierGlyph.Direction tier_direction);
+	TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 	
 	boolean autoChangeView();
 }

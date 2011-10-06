@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.BioSeq;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -36,7 +35,6 @@ import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 
 /**
@@ -186,7 +184,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		int parent_y = 100; // irrelevant because packing will move the glyphs around
 		int child_y = 100; // relevant relative to parent_y
 
-		ITrackStyleExtended the_style = (ITrackStyleExtended) the_tier.getAnnotStyle();
+		ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
 		Color consensus_color = getSymColor(consensus_sym, the_style, forward, direction_type);
 

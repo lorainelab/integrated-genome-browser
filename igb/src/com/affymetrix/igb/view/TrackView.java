@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
+import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
@@ -29,6 +30,7 @@ import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,11 +53,11 @@ public class TrackView {
 	private static final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
 	/** Hash of ITrackStyle to forward TierGlyph */
-	private static final Map<ITrackStyle, TierGlyph> style2forwardTierGlyph = new HashMap<ITrackStyle, TierGlyph>();
+	private static final Map<ITrackStyleExtended, TierGlyph> style2forwardTierGlyph = new HashMap<ITrackStyleExtended, TierGlyph>();
 	/** Hash of ITrackStyle to reverse TierGlyph */
-	private static final Map<ITrackStyle, TierGlyph> style2reverseTierGlyph = new HashMap<ITrackStyle, TierGlyph>();
+	private static final Map<ITrackStyleExtended, TierGlyph> style2reverseTierGlyph = new HashMap<ITrackStyleExtended, TierGlyph>();
 	/** Hash of ITrackStyle to TierGlyph. */
-	private static final Map<ITrackStyle, TierGlyph> gstyle2track = new HashMap<ITrackStyle, TierGlyph>();
+	private static final Map<ITrackStyleExtended, TierGlyph> gstyle2track = new HashMap<ITrackStyleExtended, TierGlyph>();
 
 
 	/**List of Dependent data */
@@ -143,7 +145,7 @@ public class TrackView {
 	 *  Returns a track for the given IAnnotStyle, creating the tier if necessary.
 	 *  Generally called by a Graph Glyph Factory.
 	 */
-	public static TierGlyph getGraphTrack(AffyTieredMap seqmap, ITrackStyle style, TierGlyph.Direction tier_direction) {
+	public static TierGlyph getGraphTrack(AffyTieredMap seqmap, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		TierGlyph tier = gstyle2track.get(style);
 		if (tier == null) {
 			tier = new TierGlyph(style);
@@ -214,6 +216,10 @@ public class TrackView {
 					doMiddlegroundShading(sym, seq);
 				}
 			}
+		}
+		
+		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
+			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
 		}
 	}
 

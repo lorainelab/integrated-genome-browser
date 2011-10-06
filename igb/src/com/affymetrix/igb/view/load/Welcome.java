@@ -13,11 +13,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -68,7 +68,7 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 	}
 
 	private Welcome() {
-		parent = new TransformTierGlyph(new DefaultTrackStyle());
+		parent = new TransformTierGlyph(new SimpleTrackStyle("",false));
 		parent.setHitable(false);
 		FasterExpandPacker packer = new FasterExpandPacker();
 		packer.setSpacing(5);

@@ -38,7 +38,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -79,7 +78,6 @@ import com.affymetrix.igb.action.RefreshAFeatureAction;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
-import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
@@ -1867,7 +1865,7 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
-	public TierGlyph getGraphTrack(ITrackStyle style, TierGlyph.Direction tier_direction) {
+	public TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		return TrackView.getGraphTrack(seqmap, style, tier_direction);
 	}
 

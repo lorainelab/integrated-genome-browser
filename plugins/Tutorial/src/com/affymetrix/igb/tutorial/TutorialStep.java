@@ -28,7 +28,7 @@ public class TutorialStep {
 	private String highlight;
 	private int timeout;
 	private String trigger;
-	private String action;
+	private String waitAction;
 	private String waitMenu;
 	private TutorialExecute execute;
 	private TutorialStep[] subTutorial;
@@ -57,11 +57,11 @@ public class TutorialStep {
 	public void setTrigger(String trigger) {
 		this.trigger = trigger;
 	}
-	public String getAction() {
-		return action;
+	public String getWaitAction() {
+		return waitAction;
 	}
-	public void setAction(String action) {
-		this.action = action;
+	public void setWaitAction(String waitAction) {
+		this.waitAction = waitAction;
 	}
 	public String getWaitMenu() {
 		return waitMenu;

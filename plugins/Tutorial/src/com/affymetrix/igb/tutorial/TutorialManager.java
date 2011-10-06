@@ -146,13 +146,13 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			}
 			catch (InterruptedException x) {}
 		}
-		else if (step.getAction() == null) {
+		else if (step.getWaitAction() == null) {
 			waitAction = TutorialNextAction.class.getSimpleName(); // default
 //			highlightWidget("TutorialNavigator_next");
 			return false;
 		}
 		else {
-			waitAction = step.getAction();
+			waitAction = step.getWaitAction();
 			return false;
 		}
 		return true;

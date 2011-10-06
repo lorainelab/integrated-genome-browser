@@ -66,7 +66,6 @@ public class Annotation implements Serializable, Owned {
 	private String              isLoaded;
 	private Set                 collaborators;
 	private Set                 annotationProperties;
-	private String				ucscHttpURL;
 
 
 	private Map<String, Object> props;  // tag/value representation of annotation properties
@@ -642,12 +641,6 @@ public class Annotation implements Serializable, Owned {
 	}
 	public void setAnnotationProperties(Set annotationProperties) {
 		this.annotationProperties = annotationProperties;
-	}
-	public String getUcscHttpURL() {
-		return ucscHttpURL;
-	}
-	public void setUcscHttpURL(String ucscHttpURL) {
-		this.ucscHttpURL = ucscHttpURL;
 	}
 
 }

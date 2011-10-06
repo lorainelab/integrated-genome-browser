@@ -51,6 +51,18 @@ public class Util {
 		}
 	}
 	
+	/**Recursively deletes the files in a directory that are older than the number of days. Will skip a file called "index.html"*/
+	public static void deleteNonIndexFiles(File directory, int days){		
+		long cutoff = days*24* 60* 1000*60;
+		long current = System.currentTimeMillis();
+		cutoff = current - cutoff;
+		File[] files = directory.listFiles();
+		for (File f: files){
+			if (f.getName().equals("index.html")) continue;
+			if (f.lastModified() < cutoff) f.delete();
+		}
+	}
+	
 	/**Attempts to delete a directory and it's contents.
 	 * Returns false if all the file cannot be deleted or the directory is null.
 	 * Files contained within scheduled for deletion upon close will cause the return to be false.*/
@@ -66,10 +78,10 @@ public class Util {
 		dir.delete();
 	}
 	
-	/**Makes a hard link between the realFile and the linked File using the linux 'ln' command.*/
-	public static boolean makeHardLinkViaUNIXCommandLine(File realFile, File link){
+	/**Makes a soft link between the realFile and the linked File using the linux 'ln -s' command.*/
+	public static boolean makeSoftLinkViaUNIXCommandLine(File realFile, File link){
 		try {
-			String[] cmd = {"ln", realFile.getCanonicalPath(), link.toString()};
+			String[] cmd = {"ln", "-s", realFile.getCanonicalPath(), link.toString()};
 			Runtime.getRuntime().exec(cmd);
 			return true;
 		} catch (IOException e) {

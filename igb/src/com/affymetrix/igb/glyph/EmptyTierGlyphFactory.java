@@ -2,6 +2,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -22,8 +23,9 @@ public class EmptyTierGlyphFactory {
 	
 	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer) {
 
-		// No seqeunce selected. Return.
-		if(gviewer.getAnnotatedSeq() == null){
+		// No seqeunce selected or if it is cytoband or it is residue file. Then return
+		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND_TIER_NAME) ||
+				(feature.symL != null && feature.symL.isResidueLoader)){
 			return;
 		}
 		

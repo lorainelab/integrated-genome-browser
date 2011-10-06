@@ -2,7 +2,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.Application;
@@ -15,7 +14,6 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -23,7 +21,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
-import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.load.DataManagementTable;
@@ -418,15 +415,17 @@ public class TierPrefsView implements ListSelectionListener {
 				show2TracksCheckBox.setEnabled(false);
 			} else {
 				SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
-				SeqSymmetry child = sym.getChild(0);
-				SeqSymmetry original = getMostOriginalSymmetry(child);
-				if (original instanceof SymWithProps) {
-					Map<String, Object> props = ((SymWithProps) original).getProperties();
+				if (sym != null && sym.getChildCount() > 0) {
+					SeqSymmetry child = sym.getChild(0);
+					SeqSymmetry original = getMostOriginalSymmetry(child);
+					if (original instanceof SymWithProps) {
+						Map<String, Object> props = ((SymWithProps) original).getProperties();
 
-					ArrayList<String> properties = new ArrayList<String>();
-					properties.add((String) TrackConstants.LABELFIELD[0]);
-					properties.addAll(props.keySet());
-					labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+						ArrayList<String> properties = new ArrayList<String>();
+						properties.add((String) TrackConstants.LABELFIELD[0]);
+						properties.addAll(props.keySet());
+						labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+					}
 				}
 			}
 

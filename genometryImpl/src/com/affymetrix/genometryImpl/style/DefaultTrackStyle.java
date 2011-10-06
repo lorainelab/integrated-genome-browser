@@ -88,7 +88,7 @@ public class DefaultTrackStyle implements ITrackStyle {
 
 	public String getMethodName() { return null; }
 
-	public boolean drawCollapseControl() { return true; }
+	public boolean drawCollapseControl() { return !isGraphTier() && getExpandable();}
 
 	public Map<String,Object> getTransientPropertyMap() {
 		if (transient_properties == null) {

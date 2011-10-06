@@ -10,10 +10,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView
 Bundle-ClassPath: .,
- resources/,
- lib/jide-common.jar,
- lib/jide-components.jar,
- lib/jide-grids.jar
+ resources/
 Export-Package: com.affymetrix.igb.shared
 Import-Package: affymetrix.calvin.data,
  affymetrix.calvin.parameter,
@@ -57,6 +54,10 @@ Import-Package: affymetrix.calvin.data,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  com.apple.eawt;resolution:=optional,
+ com.jidesoft.combobox,
+ com.jidesoft.grid,
+ com.jidesoft.status,
+ com.jidesoft.utils,
  com.sun.java.swing.plaf.windows;resolution:=optional,
  javax.accessibility,
  javax.imageio,

@@ -164,6 +164,9 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 
 		GeneralLoadView.getLoadView().initVersion(group.getID());
 		gmodel.setSelectedSeqGroup(group);
+		if(group.getSeqCount() > 0){
+			gmodel.setSelectedSeq(group.getSeq(0));
+		}
 	}
 
 	public void componentMoved (ComponentEvent ce){}

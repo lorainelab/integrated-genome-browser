@@ -37,7 +37,9 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
+			if (e.getModifiers() != 0) {
+				super.actionPerformed(e);
+			}
 			populateVersionCB();
 			if(speciesCB.getSelectedIndex() == 0)
 				speciesCB.setEditable(true);
@@ -58,7 +60,9 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
+			if (e.getModifiers() != 0) {
+				super.actionPerformed(e);
+			}
 			if (versionCB.getSelectedIndex() == 0) {
 				versionCB.setEditable(true);
 			} else {

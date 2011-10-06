@@ -18,8 +18,16 @@ public class EmptyTierGlyphFactory {
 	
 	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer) {
 
+		// No seqeunce selected. Return.
+		if(gviewer.getAnnotatedSeq() == null){
+			return;
+		}
+		
 		ITrackStyleExtended style;
 
+		// If feature has at least one track then don't add default.
+		// Also if track has been loaded on one sequence then load it
+		// for other sequence.
 		if (!feature.getMethods().isEmpty()) {
 			for (String method : feature.getMethods()) {
 				style = getStyle(method, feature);
@@ -34,17 +42,15 @@ public class EmptyTierGlyphFactory {
 	}
 
 	private static ITrackStyleExtended getStyle(String method, GenericFeature feature) {
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(
-				method, feature.featureName, feature.getExtension(), feature.featureProps);
-		//Check if it graph file. If it graph file then show only one tier.
 		if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
-			style.setHeight(GraphState.default_graph_height);
-			style.setGraphTier(true);
-			style.setExpandable(false);
-			style.setSeparate(false);
+			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
+					method, feature.featureName, feature.getExtension());
+			
+			return state.getComboStyle() != null? state.getComboStyle(): state.getTierStyle();
+		}else{
+			return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(
+				method, feature.featureName, feature.getExtension(), feature.featureProps);
 		}
-
-		return style;
 	}
 	
 	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
@@ -59,7 +65,7 @@ public class EmptyTierGlyphFactory {
 			tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
 		}
 
-		if (style.getSeparate()) {
+		if (style.getSeparate() && !style.isGraphTier()) {
 			addEmptyChild(tiers[0], height, slots);
 			addEmptyChild(tiers[1], height, slots);
 		} else {
@@ -81,8 +87,9 @@ public class EmptyTierGlyphFactory {
 		
 		return slot/noOfTiers;
 	}
+	
 	private static void addEmptyChild(TierGlyph tier, double height, int slots){
-		if (tier.getChildCount() <= 0) {
+		if (tier.getChildCount() <= 0) {			
 			for(int i=0; i<slots; i++){
 				Glyph glyph = new Glyph() {};
 				glyph.setCoords(0, 0, 0, height);

@@ -139,8 +139,7 @@ public final class LoadFileAction extends OpenURIAction {
 
 	/** Load a file into the global singleton genometry model. */
 	private void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
-
-		MergeOptionChooser fileChooser = getFileChooser("LoadFile");
+		MergeOptionChooser fileChooser = getFileChooser("loadFile");
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));

@@ -4,12 +4,15 @@ import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.*;
+
 import javax.swing.*;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -19,19 +22,62 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *  subclass is more control of where the JCheckBox is placed inside the
  *  dialog.
  */
-public final class MergeOptionChooser extends JRPFileChooser implements ActionListener{
+public final class MergeOptionChooser extends JRPFileChooser {
 	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	public final Box box;
-	public final JComboBox speciesCB = new JComboBox();
-	public final JComboBox versionCB = new JComboBox();
+	public final JRPComboBox speciesCB;
+	public final JRPComboBox versionCB;
+	private final GenericAction speciesAction = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public String getText() {
+			return null;
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			populateVersionCB();
+			if(speciesCB.getSelectedIndex() == 0)
+				speciesCB.setEditable(true);
+			else
+				speciesCB.setEditable(false);
+			versionCB.setSelectedIndex(0);
+		}
+		@Override
+		public String getId() {
+			return MergeOptionChooser.this.getId() + "_speciesAction";
+		}
+	};
+	private final GenericAction versionAction = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+		@Override
+		public String getText() {
+			return null;
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			if (versionCB.getSelectedIndex() == 0) {
+				versionCB.setEditable(true);
+			} else {
+				versionCB.setEditable(false);
+			}
+		}
+		@Override
+		public String getId() {
+			return MergeOptionChooser.this.getId() + "_versionAction";
+		}
+	};
 
 	public MergeOptionChooser(String id) {
 		super(id);
 		
-		speciesCB.addActionListener(this);
-		versionCB.addActionListener(this);
+		speciesCB = new JRPComboBox(id + "_speciesCB");
+		versionCB = new JRPComboBox(id + "_versionCB");
+		speciesCB.addActionListener(speciesAction);
+		versionCB.addActionListener(versionAction);
 		
 		box = new Box(BoxLayout.X_AXIS);
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
@@ -72,31 +118,6 @@ public final class MergeOptionChooser extends JRPFileChooser implements ActionLi
 			versionCB.setSelectedItem(group.getID());
 		} else {
 			versionCB.setSelectedIndex(0);
-		}
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if(e == null)
-			return;
-
-		if(e.getSource() == speciesCB){
-			
-			populateVersionCB();
-
-			if(speciesCB.getSelectedIndex() == 0)
-				speciesCB.setEditable(true);
-			else
-				speciesCB.setEditable(false);
-
-			versionCB.setSelectedIndex(0);
-		}
-
-		if (e.getSource() == versionCB) {
-			if (versionCB.getSelectedIndex() == 0) {
-				versionCB.setEditable(true);
-			} else {
-				versionCB.setEditable(false);
-			}
 		}
 	}
 

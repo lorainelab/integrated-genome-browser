@@ -84,7 +84,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 * @param url the URL to mark
 	 */
 	public void failRepository(String url) {
-		ServerList.getRepositoryInstance().removeServer(url);
+		ServerList.getRepositoryInstance().getServer(url).setEnabled(false);
 	}
 
 	/**

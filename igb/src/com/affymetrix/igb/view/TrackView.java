@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -19,6 +18,7 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
+import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
@@ -29,6 +29,7 @@ import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -215,7 +216,7 @@ public class TrackView {
 				}
 			}
 		}
-
+		
 	}
 
 	private static void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
@@ -250,7 +251,7 @@ public class TrackView {
 	
 	private static void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		GenericFeature feature = style.getFeature();
 		if ((meth != null)
 				&& (annotSym instanceof TypeContainerAnnot)
@@ -331,7 +332,7 @@ public class TrackView {
 			dd.createTier(seq);
 	}
 
-	public static void delete(AffyTieredMap map, String method, ITrackStyle style){
+	public static void delete(AffyTieredMap map, String method, ITrackStyleExtended style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();
 		

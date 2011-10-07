@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -53,6 +54,7 @@ public class DummyContext implements BundleContext {
 	private static final String MAP_VIEW_GLYPH_FACTORY_FILTER = "(objectClass=" + ExtendedMapViewGlyphFactoryI.class.getName() + ")";
 	private static final String WIDGET_DECORATOR = "(objectClass=" + JRPWidgetDecorator.class.getName() + ")";
 	private static final String WINDOW_SERVICE_FILTER = "(objectClass=" + IWindowService.class.getName() + ")";
+	private static final String RPH_FILTER = "(objectClass=" + RecordPlaybackHolder.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -138,6 +140,13 @@ public class DummyContext implements BundleContext {
 	}
 
 	private boolean filterMatches(String filter, Object service) {
+/*
+		if (filter.startsWith("(objectClass=") && filter.endsWith(")")) {
+			String className = filter.substring("(objectClass=".length(), filter.length() - 1);
+			Class<?> clazz = Class.forName(className);
+			return (service instanceof clazz);
+		}
+*/
 		if (IGB_SERVICE_FILTER.equals(filter)) {
 			return service instanceof IGBService;
 		}
@@ -173,6 +182,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (WINDOW_SERVICE_FILTER.equals(filter)) {
 			return service instanceof IWindowService;
+		}
+		if (RPH_FILTER.equals(filter)) {
+			return service instanceof RecordPlaybackHolder;
 		}
 		if (filter == null) {
 			return true;

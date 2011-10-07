@@ -1,8 +1,11 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 
@@ -30,16 +33,24 @@ public class SaveScriptAction extends GenericAction {
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		JFileChooser chooser = new UniFileChooser("Python File", "py");
+		JRPFileChooser chooser = new JRPFileChooser("saveScript");
+		chooser.setMultiSelectionEnabled(false);
+		chooser.addChoosableFileFilter(new UniFileFilter(
+				ScriptProcessorHolder.getInstance().getScriptExtensions(),
+				"Script File"));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.rescanCurrentDirectory();
 		int option = chooser.showSaveDialog(Application.getSingleton().getFrame().getContentPane());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
 				File f = chooser.getSelectedFile();
+				String path = f.getAbsolutePath();
+				int pos = path.lastIndexOf('.');
+				String extension = path.substring(pos + 1);
+				ScriptProcessor scriptManager = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
 				FileWriter fstream = new FileWriter(f);
 				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(RecordPlaybackHolder.getInstance().getScript());
+				out.write(RecordPlaybackHolder.getInstance().getScript(scriptManager));
 				out.close();
 			}
 			catch (Exception x) {

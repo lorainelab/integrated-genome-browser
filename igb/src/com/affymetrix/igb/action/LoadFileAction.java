@@ -170,10 +170,6 @@ public final class LoadFileAction extends OpenURIAction {
 
 	public void openURI(URI uri, String fileName) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (ScriptFileLoader.isScript(uri.toString())) {
-			ScriptFileLoader.runScript(uri.toString());
-			return;
-		}
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
 

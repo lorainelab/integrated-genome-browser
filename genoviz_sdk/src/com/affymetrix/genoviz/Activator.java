@@ -1,5 +1,7 @@
 package com.affymetrix.genoviz;
 
+import java.util.Properties;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -28,6 +30,7 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
+		bundleContext.registerService(RecordPlaybackHolder.class.getName(), RecordPlaybackHolder.getInstance(), new Properties());
 	}
 
 	@Override

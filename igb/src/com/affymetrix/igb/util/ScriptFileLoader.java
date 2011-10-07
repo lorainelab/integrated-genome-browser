@@ -79,7 +79,7 @@ public class ScriptFileLoader {
 	 * @return true if the specified file is a script file, false otherwise
 	 */
 	public static boolean isScript(String fileName) {
-		return fileName.toLowerCase().endsWith(".igb") || fileName.toLowerCase().endsWith(".py");
+		return fileName.toLowerCase().endsWith(".igb") || fileName.toLowerCase().endsWith(".py") || fileName.toLowerCase().endsWith(".js");
 	}
 
 	public static boolean runScript(String fileName) {
@@ -91,8 +91,8 @@ public class ScriptFileLoader {
 			// Potential for an infinite loop here, of course.
 			doActions(fileName);
 		}
-		else if (fileName.toLowerCase().endsWith(".py")) { // python script
-			doPython(fileName);
+		else {
+			executeScript(fileName);
 		}
 		return true;
 	}
@@ -101,7 +101,7 @@ public class ScriptFileLoader {
 	 * Done in a thread to avoid GUI lockup.
 	 * @param batchFileStr
 	 */
-	private static void doPython(String fileName) {
+	private static void executeScript(String fileName) {
 		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
 		(new SwingWorker<Void, Void>() {
 			@Override

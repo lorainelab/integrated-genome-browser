@@ -103,7 +103,7 @@ public class SAM extends XAM implements LineProcessor{
 						}
 
 						if (!(checkRange(sr.getAlignmentStart(), maximum, min, max))) {
-							if (max > maximum) {
+							if (maximum > max) {
 								break;
 							}
 							continue;

@@ -59,6 +59,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 			}
 		}
 
+	public boolean drawCollapseControl() { return getExpandable(); }
+	
 	public void setFeature(GenericFeature f) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -67,10 +69,6 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public boolean drawCollapseControl() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	
 	public String getFileType() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

@@ -899,7 +899,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	public boolean drawCollapseControl() {
-		return (draw_collapse_icon && !isGraphTier() && getExpandable() 
+		return (draw_collapse_icon && getExpandable() 
 				&& (view_mode == null || view_mode.equals(default_view_mode)));
 	}
 

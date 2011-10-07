@@ -12,6 +12,7 @@
  */
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 
 public interface ITrackStyleExtended extends ITrackStyle {
@@ -35,6 +36,11 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	/** Determines which data field in the symmetries will be used to pick the labels. */
 	void setLabelField(String s);
 	String getLabelField();
+	
+	public void setFeature(GenericFeature f);
+	public GenericFeature getFeature();
+
+	public boolean drawCollapseControl();
 	
 	void setForwardColor(Color c);
 	Color getForwardColor();

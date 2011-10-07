@@ -5,7 +5,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -18,10 +18,10 @@ import java.util.List;
 public class VirtualFeature {
 
 	private final GenericFeature gFeature;
-	private ITrackStyle style;
+	private ITrackStyleExtended style;
 	private boolean isPrimary;
 
-	public VirtualFeature(GenericFeature feature, ITrackStyle style) {
+	public VirtualFeature(GenericFeature feature, ITrackStyleExtended style) {
 		this.gFeature = feature;
 		this.style = style;
 		this.isPrimary = true;
@@ -47,11 +47,11 @@ public class VirtualFeature {
 		return this.isPrimary;
 	}
 
-	public void setStyle(ITrackStyle style) {
+	public void setStyle(ITrackStyleExtended style) {
 		this.style = style;
 	}
 
-	public ITrackStyle getStyle() {
+	public ITrackStyleExtended getStyle() {
 		return style;
 	}
 

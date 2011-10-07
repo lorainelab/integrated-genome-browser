@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 import java.util.Map;
 
@@ -63,11 +62,6 @@ public interface ITrackStyle {
 	public boolean isGraphTier();
 	public void setGraphTier(boolean b);
 
-	public void setFeature(GenericFeature f);
-	public GenericFeature getFeature();
-
-	public boolean drawCollapseControl();
-	
 	/**
 	 *  Gets a reference to a Map that can be used to store any arbitrary 
 	 *  extra properties.  This can be used to

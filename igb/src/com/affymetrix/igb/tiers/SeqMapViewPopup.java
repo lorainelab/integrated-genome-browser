@@ -1176,16 +1176,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
-			ITrackStyle style = glyph.getAnnotStyle();
+			ITrackStyleExtended style = glyph.getAnnotStyle();
 			GenericFeature feature = style.getFeature();
 			if (feature != null) {
-				if (style instanceof ITrackStyleExtended) {
-					String file_type = ((ITrackStyleExtended) style).getFileType();
-					if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
-						popup.add(mismatch_action);
-						popup.add(mismatch_pileup_action);
-					}
+				String file_type = style.getFileType();
+				if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
+					popup.add(mismatch_action);
+					popup.add(mismatch_pileup_action);
 				}
+
 				if (feature.friendlyURL != null) {
 					popup.add(new JSeparator());
 					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
@@ -1207,7 +1206,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private void removeTiers(List<TierLabelGlyph> tiers) {
 		for (TierLabelGlyph tlg : tiers) {
-			ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			String method = style.getMethodName();
 			if (method != null) {
 				TrackView.delete(gviewer.getSeqMap(), method, style);

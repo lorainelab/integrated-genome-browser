@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -279,7 +279,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			}
 		}
 		for (TierLabelGlyph tlg : tiers) {
-			ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			String method = style.getMethodName();
 			if (method != null) {
 				TrackView.delete((AffyTieredMap)getSeqMap(), method, style);

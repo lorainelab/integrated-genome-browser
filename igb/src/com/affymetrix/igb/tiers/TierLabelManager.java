@@ -329,7 +329,7 @@ public final class TierLabelManager implements PropertyHolder {
 		return props;
 	}
 	
-	private Map<String, Object> getTierProperties(ITrackStyle style){
+	private Map<String, Object> getTierProperties(ITrackStyleExtended style){
 		for (TierGlyph glyph : getSelectedTiers()) {
 			if(glyph.getAnnotStyle().equals(style)){
 				return getFeatureProperties(style.getFeature());

@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +31,6 @@ public class DefaultTrackStyle implements ITrackStyle {
 	double y = 0.0f;
 	boolean is_graph = false;
 	Map<String,Object> transient_properties = null;
-	private GenericFeature feature = null;
 
 	/** Should only be called by subclasses or a StateProvider. */
 	public DefaultTrackStyle() {
@@ -83,12 +81,7 @@ public class DefaultTrackStyle implements ITrackStyle {
 	public void setExpandable(boolean b) { this.expandable = b; }
 	public boolean getExpandable() { return expandable; }
 
-	public void setFeature(GenericFeature f) { this.feature = f; }
-	public GenericFeature getFeature() { return this.feature; }
-
 	public String getMethodName() { return null; }
-
-	public boolean drawCollapseControl() { return !isGraphTier() && getExpandable();}
 
 	public Map<String,Object> getTransientPropertyMap() {
 		if (transient_properties == null) {

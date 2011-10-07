@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
@@ -58,6 +59,18 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 			}
 		}
 
+	public void setFeature(GenericFeature f) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public GenericFeature getFeature() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public boolean drawCollapseControl() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
 	public String getFileType() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

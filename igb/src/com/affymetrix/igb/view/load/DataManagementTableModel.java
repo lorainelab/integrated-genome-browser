@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -98,7 +99,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		VirtualFeature vFeature = new VirtualFeature(gFeature, null);
 		virtualFeatures.add(vFeature);
 		currentStyles = getCurrentStyles();
-		for (ITrackStyle style : currentStyles) {
+		for (ITrackStyleExtended style : currentStyles) {
 			if (style.getFeature() == gFeature) {
 				vFeature.setStyle(style);
 				if (gFeature.getMethods().size() > 1) {
@@ -115,7 +116,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
 		boolean isPrimary = vFeature.isPrimary();
 		VirtualFeature subVfeature;
-		for (ITrackStyle style : currentStyles) {
+		for (ITrackStyleExtended style : currentStyles) {
 			if (style.getFeature() == vFeature.getFeature()) {
 				subVfeature = new VirtualFeature(vFeature.getFeature(), style);
 				if (isPrimary) {
@@ -187,7 +188,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		VirtualFeature vFeature;
-		ITrackStyle style;
+		ITrackStyleExtended style;
 		if (getFeature(row) == null) {
 			return "";
 		} else {

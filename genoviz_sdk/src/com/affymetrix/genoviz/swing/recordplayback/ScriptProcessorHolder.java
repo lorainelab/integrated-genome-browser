@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 public class ScriptProcessorHolder {
 	private static final ScriptProcessorHolder instance = new ScriptProcessorHolder();
 	private Map<String, ScriptProcessor> scriptProcessors = new HashMap<String, ScriptProcessor>();
 	private ScriptProcessorHolder() {
 		super();
 		addScriptProcessor(new JavascriptScriptProcessor());
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("python");
-		System.out.println("************ " + engine);
 		addScriptProcessor(new PythonScriptProcessor());
 	}
 	public static ScriptProcessorHolder getInstance() {

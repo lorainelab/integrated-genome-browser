@@ -948,9 +948,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 			
 			// Now apply that combo style to all the selected graphs
+			int i=0;
 			for (GraphSym gsym : grafs) {
 				GraphState gstate = gsym.getGraphState();
-				gstate.setComboStyle(combo_style);
+				gstate.setComboStyle(combo_style, i++);
 				gstate.setFloatGraph(false); // ignored since combo_style is set
 				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
@@ -970,7 +971,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 			for (GraphSym gsym : grafs) {
 				GraphState gstate = gsym.getGraphState();
-				gstate.setComboStyle(null);
+				gstate.setComboStyle(null, 0);
 
 				// For simplicity, set the floating state of all new tiers to false.
 				// Otherwise, have to calculate valid, non-overlapping y-positions and heights.

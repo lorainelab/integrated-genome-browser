@@ -232,7 +232,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		gs.setFloatGraph(false);
 		gs.setGraphStyle(GraphType.HEAT_MAP);
 		gs.getTierStyle().setTrackName(score_name);
-		gs.setComboStyle(getContainerStyle(strand));
+		gs.setComboStyle(getContainerStyle(strand), 0);
 		return gs;
 	}
 

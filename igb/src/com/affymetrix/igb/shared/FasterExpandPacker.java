@@ -96,7 +96,7 @@ import java.awt.geom.Rectangle2D;
  *    to visually indicate pileup
  *</p>
  */
-public final class FasterExpandPacker extends ExpandPacker {
+public class FasterExpandPacker extends ExpandPacker {
 
 	private int max_slots_allowed = 1000;
 	private boolean constant_heights = true;

@@ -280,7 +280,7 @@ public abstract class BookmarkController {
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
 				combos.put(combo_name, combo_style);
 			}
-			gstate.setComboStyle(combo_style);
+			gstate.setComboStyle(combo_style, 0);
 		}
 
 	}

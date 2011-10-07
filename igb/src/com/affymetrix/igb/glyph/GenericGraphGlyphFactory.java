@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -152,6 +153,9 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			}
 			
 			TierGlyph tglyph = smv.getGraphTrack(tier_style, direction);
+			if(gstate.getComboStyle() != null && !(tglyph.getPacker() instanceof GraphFasterExpandPacker)){
+				tglyph.setExpandedPacker(new GraphFasterExpandPacker());
+			}
 			if (isGenome && !(tglyph.getPacker() instanceof CollapsePacker)) {
 				CollapsePacker cp = new CollapsePacker();
 				cp.setParentSpacer(0); // fill tier to the top and bottom edges

@@ -61,6 +61,7 @@ public final class GraphState {
 	/**  how much to shift xcoords of span end when painting spans that pass thresholds */
 	private double span_end_shift = 1;  
 
+	private int position = 0;
 	/**
 	 *  visible_max_ycoord is the max ycoord (in graph coords) that is visible (rendered)
 	 *  this number is set to point_max_ycoord in setPointCoords(), but can be modified via
@@ -92,7 +93,7 @@ public final class GraphState {
 	public static GraphType getStyleNumber(String style_name) {
 		return GraphType.fromString(style_name);
 	}
-
+	
 	/** Creates a new GraphState.  Uses the global state provider to generate
 	 *  an initial IAnnotStyle for the tier_style, but you can replace that style if
 	 *  necessary.
@@ -206,10 +207,15 @@ public final class GraphState {
 		return combo_tier_style;
 	}
 
-	public void setComboStyle(ITrackStyleExtended s) {
+	public void setComboStyle(ITrackStyleExtended s, int pos) {
 		this.combo_tier_style = s;
+		this.position = pos;
 	}
 
+	public int getPosition(){
+		return position;
+	}
+	
 	float[] gridLineYValues = null;
 
 	public void setGridLinesYValues(float[] f) {

@@ -1257,6 +1257,8 @@ public final class GeneralLoadUtils {
 
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
 
+		GeneralLoadView.getLoadView().addFeatureTier(gFeature);
+
 		return gFeature;
 	}
 

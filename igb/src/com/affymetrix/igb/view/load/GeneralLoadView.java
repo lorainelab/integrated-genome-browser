@@ -43,6 +43,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
+import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
@@ -493,10 +494,26 @@ public final class GeneralLoadView {
 		
 		List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.GENOME);
-		loadFeature(loadStrategies, feature, null);
+		
+		if(!loadFeature(loadStrategies, feature, null)){
+			addFeatureTier(feature);
+		}
 		
 		createFeaturesTable();
 
+	}
+	
+	public void addFeatureTier(final GenericFeature feature){
+		ThreadUtils.runOnEventQueue(new Runnable(){
+
+			public void run() {
+				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer);
+			gviewer.getSeqMap().packTiers(true, true, false, false);
+			gviewer.getSeqMap().stretchToFit(false, true);
+			gviewer.getSeqMap().updateWidget();
+			}
+			
+		});
 	}
 	
 	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {

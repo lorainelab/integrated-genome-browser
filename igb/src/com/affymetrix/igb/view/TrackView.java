@@ -217,6 +217,10 @@ public class TrackView {
 			}
 		}
 		
+		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
+			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
+		}
+
 	}
 
 	private static void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {

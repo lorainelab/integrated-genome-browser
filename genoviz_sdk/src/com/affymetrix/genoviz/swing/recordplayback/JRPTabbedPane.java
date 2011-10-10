@@ -28,7 +28,9 @@ public class JRPTabbedPane extends JTabbedPane implements JRPWidget {
 		addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
+				if (RecordPlaybackHolder.getInstance().isMouseDown()) {
+					RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
+				}
 			}
 		});
     }

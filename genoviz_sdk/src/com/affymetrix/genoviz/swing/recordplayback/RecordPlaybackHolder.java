@@ -1,5 +1,9 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,11 +24,29 @@ public class RecordPlaybackHolder {
 	private List<Operation> operations = new ArrayList<Operation>();
 	private List<JRPWidgetDecorator> decorators = new ArrayList<JRPWidgetDecorator>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
+	private boolean mouseDown;
 	public static RecordPlaybackHolder getInstance() {
 		return instance;
 	}
 	private RecordPlaybackHolder() {
 		super();
+		mouseDown = false;
+		long eventMask = AWTEvent.MOUSE_EVENT_MASK;
+
+		Toolkit.getDefaultToolkit().addAWTEventListener( new AWTEventListener() {
+			public void eventDispatched(AWTEvent e) {
+				if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+					mouseDown = true;
+				}
+				if (e.getID() == MouseEvent.MOUSE_RELEASED) {
+					mouseDown = false;
+				}
+			}
+		}, eventMask);	
+	}
+
+	public boolean isMouseDown() {
+		return mouseDown;
 	}
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {

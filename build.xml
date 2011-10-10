@@ -110,14 +110,14 @@
 		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
 	</target>
 
-	<target name="copy-bundle" depends="common-init" description="copy bundles to bundle dir">
+	<target name="copy-bundle" description="copy bundles to bundle dir">
 		<available file="${bundle.dir}/${jar_name}.bnd.jar" property="${jar_name}.present"/>
 		<antcall target="copy-bundle-if">
     			<param name="jar_name" value="${jar_name}"/>
 		</antcall>
 	</target>
 
-	<target name="copy-bundles" depends="common-init" description="copy bundles to bundle dir">
+	<target name="copy-bundles" description="copy bundles to bundle dir">
 		<mkdir dir="${bundle.dir}" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="affx_fusion"/>
@@ -336,7 +336,7 @@
 		</my.javadoc>
 	</target>
 
-	<target name="igb_ant" depends="common-init" description="Compile the ant tasks">
+	<target name="igb_ant" description="Compile the ant tasks">
 		<mkdir dir="${igb.ant.dir}/build" />
 		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar;${lib.dir}/felix.jar" />
 	</target>

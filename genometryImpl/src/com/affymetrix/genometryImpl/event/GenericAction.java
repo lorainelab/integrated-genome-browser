@@ -27,8 +27,8 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 			}
 			putValue(Action.SMALL_ICON, icon);
 		}
-		if (getShortcut() != KeyEvent.VK_UNDEFINED) {
-			this.putValue(MNEMONIC_KEY, getShortcut());
+		if (getMnemonic() != KeyEvent.VK_UNDEFINED) {
+			this.putValue(MNEMONIC_KEY, getMnemonic());
 		}
 		if (getTooltip() != null) {
 			this.putValue(SHORT_DESCRIPTION, getTooltip());
@@ -42,7 +42,7 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 	public void actionPerformed(ActionEvent e) {
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}
-	public int getShortcut() { return KeyEvent.VK_UNDEFINED; }
+	public int getMnemonic() { return KeyEvent.VK_UNDEFINED; }
 	public String getTooltip() { return null; }
 	public String getId() {
 		return this.getClass().getSimpleName();

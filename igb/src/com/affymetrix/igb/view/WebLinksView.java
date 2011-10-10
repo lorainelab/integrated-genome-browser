@@ -228,7 +228,7 @@ public final class WebLinksView extends JPanel {
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_I;
 			}
 
@@ -262,7 +262,7 @@ public final class WebLinksView extends JPanel {
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_E;
 			}
 
@@ -298,7 +298,7 @@ public final class WebLinksView extends JPanel {
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_D;
 			}
 
@@ -351,7 +351,7 @@ public final class WebLinksView extends JPanel {
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_A;
 			}
 
@@ -404,7 +404,7 @@ public final class WebLinksView extends JPanel {
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_E;
 			}
 

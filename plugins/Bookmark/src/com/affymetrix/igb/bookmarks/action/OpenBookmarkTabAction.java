@@ -27,7 +27,7 @@ public class OpenBookmarkTabAction extends GenericAction {
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_O;
 	}
 }

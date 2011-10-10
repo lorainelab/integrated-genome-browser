@@ -400,7 +400,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/general/Properties16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_P;
 		}
 		@Override
@@ -438,7 +438,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/media/Play16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_G;
 		}
 		@Override
@@ -581,7 +581,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/general/Refresh16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_R;
 		}
 		@Override
@@ -632,7 +632,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/general/Import16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_I;
 		}
 		@Override
@@ -689,7 +689,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/general/Export16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_E;
 		}
 		@Override
@@ -736,7 +736,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return "toolbarButtonGraphics/general/Delete16.gif";
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return KeyEvent.VK_D;
 		}
 		@Override
@@ -860,7 +860,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			return iconPath;
 		}
 		@Override
-		public int getShortcut() {
+		public int getMnemonic() {
 			return Integer.valueOf(mnemonic);
 		}
 		@Override
@@ -904,7 +904,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 				return "toolbarButtonGraphics/media/FastForward16.gif";
 			}
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_F;
 			}
 			@Override
@@ -950,7 +950,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 			}
 
 			@Override
-			public int getShortcut() {
+			public int getMnemonic() {
 				return KeyEvent.VK_B;
 			}
 

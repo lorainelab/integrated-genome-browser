@@ -70,7 +70,7 @@ public class SaveScriptAction extends GenericAction {
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_C;
 	}
 }

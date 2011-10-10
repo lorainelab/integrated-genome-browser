@@ -314,7 +314,7 @@ public final class PreferencesPanel extends JPanel {
 		public String getIconPath() {
 			return "toolbarButtonGraphics/general/Export16.gif";
 		}
-		public int getShortcut() { return KeyEvent.VK_E; }
+		public int getMnemonic() { return KeyEvent.VK_E; }
 	  };
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(EXPORT_ACTION_COMMAND));
@@ -355,7 +355,7 @@ public final class PreferencesPanel extends JPanel {
 		public String getIconPath() {
 			return "toolbarButtonGraphics/general/Import16.gif";
 		}
-		public int getShortcut() { return KeyEvent.VK_I; }
+		public int getMnemonic() { return KeyEvent.VK_I; }
       };
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
       import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
@@ -378,7 +378,7 @@ public final class PreferencesPanel extends JPanel {
 		public String getIconPath() {
 			return "toolbarButtonGraphics/general/Help16.gif";
 		}
-		public int getShortcut() { return KeyEvent.VK_G; }
+		public int getMnemonic() { return KeyEvent.VK_G; }
       };
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
       help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
@@ -401,7 +401,7 @@ public final class PreferencesPanel extends JPanel {
 		public String getIconPath() {
 			return "toolbarButtonGraphics/general/ContextualHelp16.gif";
 		}
-		public int getShortcut() { return KeyEvent.VK_C; }
+		public int getMnemonic() { return KeyEvent.VK_C; }
       };
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
       help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));

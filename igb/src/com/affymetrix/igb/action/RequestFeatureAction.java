@@ -40,7 +40,7 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_R;
 	}
 }

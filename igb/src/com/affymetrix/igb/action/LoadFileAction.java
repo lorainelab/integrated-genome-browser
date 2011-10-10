@@ -193,7 +193,7 @@ public final class LoadFileAction extends OpenURIAction {
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_O;
 	}
 }

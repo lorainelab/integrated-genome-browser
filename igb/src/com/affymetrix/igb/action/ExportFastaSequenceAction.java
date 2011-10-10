@@ -32,7 +32,7 @@ public class ExportFastaSequenceAction extends GenericAction {
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_S;
 	}
 }

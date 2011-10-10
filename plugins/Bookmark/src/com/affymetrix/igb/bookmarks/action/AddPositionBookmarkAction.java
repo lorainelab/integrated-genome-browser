@@ -29,7 +29,7 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_P;
 	}
 }

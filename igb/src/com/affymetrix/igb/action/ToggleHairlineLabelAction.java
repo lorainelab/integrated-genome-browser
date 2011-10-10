@@ -54,7 +54,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_H;
 	}
 

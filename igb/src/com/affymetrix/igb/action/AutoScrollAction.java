@@ -233,7 +233,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	}
 
 	@Override
-	public int getShortcut() {
+	public int getMnemonic() {
 		return KeyEvent.VK_A;
 	}
 }

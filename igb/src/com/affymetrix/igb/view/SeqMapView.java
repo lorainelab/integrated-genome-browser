@@ -313,54 +313,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer = new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL) {
-
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-
-				if (getAutoLoad() != null) {
-					drawAutoLoadPoint(g);
-				}
-			}
-
-			private void drawAutoLoadPoint(Graphics g) {
-				int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
-				Color c = g.getColor();
-				g.setColor(this.getBackground().brighter());
-				int xp = xPositionForValue(threshValue);
-				int yp = this.getHeight() / 2;
-				int x[] = new int[]{xp, xp - 5, xp - 5, xp + 5, xp + 5};
-				int y[] = new int[]{yp, yp / 2, 0, 0, yp / 2};
-				g.fillPolygon(x, y, 5);
-				g.setColor(Color.BLACK);
-				g.drawPolygon(x, y, 5);
-				g.setColor(c);
-			}
-
-			private int xPositionForValue(int value) {
-				int min = getMinimum();
-				int max = getMaximum();
-				int trackLength = this.getWidth();
-				double valueRange = (double) max - (double) min;
-				double pixelsPerValue = (double) trackLength / valueRange;
-
-				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
-			}
-
-			@Override
-			public String getToolTipText(MouseEvent me) {
-				if (me != null && getAutoLoad() != null) {
-					int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
-					int xp = xPositionForValue(threshValue);
-					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
-						return BUNDLE.getString("autoloadToolTip");
-					}
-					return super.getToolTipText();
-				}
-				return super.getToolTipText();
-			}
-		};
+		Adjustable xzoomer = getXZoomer(id);
 
 		((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
 		Adjustable yzoomer = new RPAdjustableJSlider(id + "_yzoomer", Adjustable.VERTICAL);
@@ -454,10 +407,7 @@ public class SeqMapView extends JPanel
 		xzoombox.add((Component) xzoomer);
 
 		refreshDataAction = new RefreshDataAction(this);
-		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
-//		refresh_button.setText("");
-		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
-		xzoombox.add(refresh_button);
+		addRefreshButton(id);
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());
@@ -490,6 +440,64 @@ public class SeqMapView extends JPanel
 
 	}
 
+	protected void addRefreshButton(String id) {
+		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
+//		refresh_button.setText("");
+		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+		xzoombox.add(refresh_button);
+	}
+
+	protected Adjustable getXZoomer(String id){
+		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL) {
+
+			@Override
+			public void paint(Graphics g) {
+				super.paint(g);
+
+				if (getAutoLoad() != null) {
+					drawAutoLoadPoint(g);
+				}
+			}
+
+			private void drawAutoLoadPoint(Graphics g) {
+				int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
+				Color c = g.getColor();
+				g.setColor(this.getBackground().brighter());
+				int xp = xPositionForValue(threshValue);
+				int yp = this.getHeight() / 2;
+				int x[] = new int[]{xp, xp - 5, xp - 5, xp + 5, xp + 5};
+				int y[] = new int[]{yp, yp / 2, 0, 0, yp / 2};
+				g.fillPolygon(x, y, 5);
+				g.setColor(Color.BLACK);
+				g.drawPolygon(x, y, 5);
+				g.setColor(c);
+			}
+
+			private int xPositionForValue(int value) {
+				int min = getMinimum();
+				int max = getMaximum();
+				int trackLength = this.getWidth();
+				double valueRange = (double) max - (double) min;
+				double pixelsPerValue = (double) trackLength / valueRange;
+
+				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
+			}
+
+			@Override
+			public String getToolTipText(MouseEvent me) {
+				if (me != null && getAutoLoad() != null) {
+					int threshValue = (getAutoLoad().threshold * getMaximum() / 100);
+					int xp = xPositionForValue(threshValue);
+					if (me.getX() > xp - 5 && me.getX() < xp + 5) {
+						return BUNDLE.getString("autoloadToolTip");
+					}
+					return super.getToolTipText();
+				}
+				return super.getToolTipText();
+			}
+		};
+	}
+	
 	protected AutoLoadThresholdAction addAutoLoad() {
 		return AutoLoadThresholdAction.getAction();
 	}

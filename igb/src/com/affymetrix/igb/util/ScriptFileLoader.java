@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -373,9 +374,22 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadFile(String fileName) {
-		File f = new File(fileName.trim());
-		LoadFileAction.openURI(f.toURI(), f.getName());
-	}
+		URI uri;
+ 		File f = new File(fileName.trim());
+		if (fileName.startsWith("http")) {
+			try {
+				uri = new URI(fileName);
+			}
+			catch (URISyntaxException ex) {
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+				return;
+			}
+		}
+		else {
+			uri = f.toURI();
+		}
+		LoadFileAction.openURI(uri, f.getName());
+ 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
 

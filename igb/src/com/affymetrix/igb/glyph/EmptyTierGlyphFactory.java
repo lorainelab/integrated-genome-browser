@@ -1,6 +1,8 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -8,6 +10,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
@@ -37,11 +40,11 @@ public class EmptyTierGlyphFactory {
 		if (!feature.getMethods().isEmpty()) {
 			for (String method : feature.getMethods()) {
 				style = getStyle(method, feature);
-				addTierFor(style, gviewer);
+				addTierFor(style, gviewer, feature.getRequestSym());
 			}
 		} else {
 			style = getStyle(feature.getURI().toString(), feature);
-			addTierFor(style, gviewer);
+			addTierFor(style, gviewer, feature.getRequestSym());
 			style.setFeature(feature);
 		}
 
@@ -59,7 +62,7 @@ public class EmptyTierGlyphFactory {
 		}
 	}
 	
-	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer) {
+	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym) {
 		int slots = getAverageSlots(gviewer.getSeqMap());
 		TierGlyph[] tiers = new TierGlyph[2];
 				
@@ -72,10 +75,10 @@ public class EmptyTierGlyphFactory {
 		}
 
 		if (style.getSeparate() && !style.isGraphTier()) {
-			addEmptyChild(tiers[0], height, slots, gviewer.getAnnotatedSeq());
-			addEmptyChild(tiers[1], height, slots, gviewer.getAnnotatedSeq());
+			addEmptyChild(tiers[0], height, slots, requestSym, gviewer.getAnnotatedSeq());
+			addEmptyChild(tiers[1], height, slots, requestSym, gviewer.getAnnotatedSeq());
 		} else {
-			addEmptyChild(tiers[0], height, slots, gviewer.getAnnotatedSeq());
+			addEmptyChild(tiers[0], height, slots, requestSym, gviewer.getAnnotatedSeq());
 		}
 
 	}
@@ -94,21 +97,42 @@ public class EmptyTierGlyphFactory {
 		return slot/noOfTiers;
 	}
 	
-	private static void addEmptyChild(TierGlyph tier, double height, int slots, BioSeq seq){
-		if (tier.getChildCount() <= 0) {			
+	private static void addEmptyChild(TierGlyph tier, double height, int slots,
+			SeqSymmetry requestSym, BioSeq seq) {
+		if (tier.getChildCount() <= 0) {
 			Glyph glyph;
-			
-			for(int i=0; i<slots; i++){
+
+			for (int i = 0; i < slots; i++) {
 				// Add empty child.
-				glyph = new Glyph() {};
+				glyph = new Glyph() {
+				};
 				glyph.setCoords(0, 0, 0, height);
 				tier.addChild(glyph);
 			}
-			
+
 			// Add middle glyphs.
-			glyph = new FillRectGlyph();
-			glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
-			tier.addMiddleGlyph(glyph);
+			SeqSymmetry inverse = SeqUtils.inverse(requestSym, seq);
+			int child_count = inverse.getChildCount();
+			//If any request was made.
+			if (child_count > 0) {
+				for (int i = 0; i < child_count; i++) {
+					SeqSymmetry child = inverse.getChild(i);
+					for (int j = 0; j < child.getSpanCount(); j++) {
+						SeqSpan ospan = child.getSpan(j);
+						if (ospan.getLength() > 1) {
+							if (tier != null) {
+								glyph = new FillRectGlyph();
+								glyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+								tier.addMiddleGlyph(glyph);
+							}
+						}
+					}
+				}
+			} else {
+				glyph = new FillRectGlyph();
+				glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
+				tier.addMiddleGlyph(glyph);
+			}
 		}
 	}
 

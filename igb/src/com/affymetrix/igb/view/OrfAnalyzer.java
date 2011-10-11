@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
  *  OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.  It does
@@ -141,12 +142,15 @@ public final class OrfAnalyzer extends JComponent
 		
 		SeqSpan aspan = vseq.getComposition().getSpan(seq);
 		if (!(seq.isAvailable(aspan))) {
-			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
-			show_orfs = false;
-			showCB.setSelected(false);
-			return;
+			//Load Residues
+			if(!GeneralLoadView.getLoadView().loadResidues(aspan, true)){
+				show_orfs = false;
+				showCB.setSelected(false);
+				return;
+			}
+			//ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
 		}
-		
+			
 		fortier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);

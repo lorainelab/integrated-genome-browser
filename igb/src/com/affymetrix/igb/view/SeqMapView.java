@@ -1004,12 +1004,17 @@ public class SeqMapView extends JPanel
 
 	private void addAnnotationTracks() {
 		TrackView.addTracks(this, aseq);
-
+		addDependentAndEmptyTrack();
+		
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
 		}
 	}
 
+	protected void addDependentAndEmptyTrack(){
+		TrackView.addDependentAndEmptyTrack(this, aseq);
+	}
+	
 	// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 	//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
 	private void handleCompositionSequence() {

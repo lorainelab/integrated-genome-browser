@@ -46,12 +46,6 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 
 	@Override
-	protected AutoLoadThresholdAction addAutoLoad(){
-		//Do Nothing for alt splice view.
-		return null;
-	}
-
-	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		if (coord_shift) {
 			// ignore the preserve_view parameter, always pretend it is false in the splice view
@@ -291,12 +285,23 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 	
 	@Override
+	protected Adjustable getXZoomer(String id){
+		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL);
+	}
+	
+	@Override
 	protected void addRefreshButton(String id) {
 		//Do nothing.
 	}
 	
 	@Override
-	protected Adjustable getXZoomer(String id){
-		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL);
+	protected AutoLoadThresholdAction addAutoLoad(){
+		//Do Nothing for alt splice view.
+		return null;
+	}
+
+	@Override
+	protected void addDependentAndEmptyTrack(){
+		//Do Nothing for alt splice view.
 	}
 }

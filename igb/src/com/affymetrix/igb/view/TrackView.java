@@ -205,6 +205,9 @@ public class TrackView {
 			}
 		}
 		
+	}
+
+	static void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
 		List<DependentData> dd_list = dependent_list.get(seq);
 		if (dd_list != null) {
 			for (DependentData d : dd_list) {
@@ -220,9 +223,8 @@ public class TrackView {
 		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
 			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
 		}
-
 	}
-
+	
 	private static void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = null;

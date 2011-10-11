@@ -68,9 +68,9 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
         yaxisCB = sgt.yaxisCB;
         floatCB = sgt.floatCB;
         transformLabel = new javax.swing.JLabel();
-        jComboBox2 = sgt.advanced_panel.transformationCB;
-        jLabel4 = new javax.swing.JLabel();
-        jComboBox3 = sgt.advanced_panel.operationCB;
+        transformationCB = sgt.advanced_panel.transformationCB;
+        operationLabel = new javax.swing.JLabel();
+        operationCB = sgt.advanced_panel.operationCB;
         transformationGoB = sgt.advanced_panel.transformationGoB;
         operationGoB = sgt.advanced_panel.operationGoB;
         combineB = sgt.combineB;
@@ -266,7 +266,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 
         transformLabel.setText("Transform");
 
-        jLabel4.setText("Operation");
+        operationLabel.setText("Operation");
 
         transformationGoB.setText("Go");
 
@@ -291,13 +291,13 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                 .add(floatCB))
             .add(manipulationsPanelLayout.createSequentialGroup()
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 153, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 153, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(5, 5, 5)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(operationGoB, 0, 0, Short.MAX_VALUE)))
-            .add(jLabel4)
+            .add(operationLabel)
             .add(manipulationsPanelLayout.createSequentialGroup()
                 .add(combineB)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
@@ -310,7 +310,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                 .addContainerGap(131, Short.MAX_VALUE))
         );
 
-        manipulationsPanelLayout.linkSize(new java.awt.Component[] {jComboBox2, jComboBox3}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationGoB, transformationGoB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
@@ -325,17 +325,17 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                 .add(transformLabel)
                 .add(1, 1, 1)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(transformationGoB))
                 .add(2, 2, 2)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(baseLabel)
                     .add(baseTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(2, 2, 2)
-                .add(jLabel4)
+                .add(operationLabel)
                 .add(3, 3, 3)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jComboBox3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(operationGoB))
                 .add(1, 1, 1)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -344,7 +344,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        manipulationsPanelLayout.linkSize(new java.awt.Component[] {jComboBox2, jComboBox3}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         saveB.setFont(new java.awt.Font("SansSerif", 1, 14));
         saveB.setText("Save Selected");
@@ -443,9 +443,6 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
     private javax.swing.JPanel heightPanel;
     private javax.swing.JSlider height_slider;
     private javax.swing.JRadioButton hmapB;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JCheckBox labelCB;
     private javax.swing.JRadioButton lineB;
     private javax.swing.JPanel manipulationsPanel;
@@ -456,7 +453,9 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
     private javax.swing.JSlider minSlider;
     private javax.swing.JTextField minTextbox;
     private javax.swing.JRadioButton mmavgB;
+    private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;
+    private javax.swing.JLabel operationLabel;
     private javax.swing.JButton saveB;
     private javax.swing.JButton selectAllB;
     private javax.swing.JButton splitB;
@@ -465,6 +464,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
     private javax.swing.ButtonGroup stylegroup;
     private javax.swing.JButton threshB;
     private javax.swing.JLabel transformLabel;
+    private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;
     private javax.swing.JPanel yAxisPanel;
     private javax.swing.JCheckBox yaxisCB;

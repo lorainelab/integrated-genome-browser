@@ -257,7 +257,7 @@
     </copy>
 	</target>
 
-	<target name="cbc" depends="common-init" description="clear bundle cache">
+	<target name="cbc" depends="init" description="clear bundle cache">
 		<mkdir dir="${bundle.dir}" />
 		<subant target="compile" genericantfile="generic.xml" inheritall="true">
 			<dirset dir="${basedir}">

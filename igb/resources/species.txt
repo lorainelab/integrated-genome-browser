@@ -110,6 +110,7 @@ Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta
 Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
 Tribolium castaneum	Red flour beetle	T_castaneum
 Triticum aestivum	Common wheat	T_aestivum
+Trypanosoma brucei	Protozoan parasites	T_brucei
 Tupaia belangeri	Northern tree shrew	T_belangeri		Tupaia_belangeri
 Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos

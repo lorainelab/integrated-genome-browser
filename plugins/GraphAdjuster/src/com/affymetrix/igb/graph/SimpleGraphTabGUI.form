@@ -50,22 +50,24 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="manipulationsPanel" alignment="0" min="0" pref="206" max="32767" attributes="1"/>
-          <Group type="102" alignment="0" attributes="0">
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="selectAllB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="saveB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="deleteB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="threshB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="heightPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="yAxisPanel" min="-2" max="-2" attributes="0"/>
+          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+              <Component id="manipulationsPanel" alignment="0" min="0" pref="207" max="32767" attributes="1"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="selectAllB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="saveB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deleteB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="threshB" linkSize="9" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="stylePanel" min="0" pref="176" max="32767" attributes="1"/>
+                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="heightPanel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="yAxisPanel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="stylePanel" min="0" pref="177" max="32767" attributes="1"/>
+                  </Group>
               </Group>
           </Group>
       </Group>
@@ -84,45 +86,40 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="heat_mapCB" alignment="0" min="-2" pref="214" max="-2" attributes="1"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                  <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="bgLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Component id="bgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+              </Group>
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Component id="bgLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Component id="bgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="hmapB" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="barB" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="dotB" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lineB" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="mmavgB" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="sstepB" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                      <Component id="hmapB" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="barB" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="dotB" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="lineB" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="mmavgB" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="sstepB" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
+              <Component id="heat_mapCB" alignment="0" pref="228" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="bgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
@@ -277,7 +274,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="height_slider" alignment="1" pref="362" max="32767" attributes="0"/>
+              <Component id="height_slider" alignment="1" pref="363" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -326,8 +323,8 @@
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="minSlider" alignment="0" pref="257" max="32767" attributes="0"/>
-                              <Component id="maxSlider" alignment="0" pref="257" max="32767" attributes="0"/>
+                              <Component id="minSlider" pref="258" max="32767" attributes="0"/>
+                              <Component id="maxSlider" alignment="0" pref="258" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -343,20 +340,16 @@
                       <Component id="by_percentileRB" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="minLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="minTextbox" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="minSlider" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="minLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="minTextbox" linkSize="6" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="minSlider" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                          <Component id="maxLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="maxTextBox" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="maxSlider" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="maxLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxTextBox" linkSize="6" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxSlider" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -443,9 +436,9 @@
                       <Component id="jComboBox2" linkSize="10" alignment="0" min="-2" pref="153" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="transformationGoB" linkSize="11" alignment="2" min="-2" pref="61" max="-2" attributes="1"/>
-                      <Component id="operationGoB" linkSize="11" alignment="2" min="0" pref="0" max="32767" attributes="1"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="transformationGoB" linkSize="11" alignment="0" min="-2" pref="61" max="-2" attributes="1"/>
+                      <Component id="operationGoB" linkSize="11" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
                   </Group>
               </Group>
               <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -466,17 +459,17 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="labelCB" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="yaxisCB" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="floatCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="labelCB" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="yaxisCB" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="floatCB" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                   <Component id="transformLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="transformationGoB" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jComboBox2" linkSize="4" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="transformationGoB" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">

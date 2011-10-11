@@ -307,7 +307,7 @@
 		<iterate target="findbugs" />
 	</target>
 
-	<target name="clean" depends="common-init">
+	<target name="clean" depends="init">
 		<delete file="${igb.jar.name}.jar"/>
 		<delete file="protannot_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />

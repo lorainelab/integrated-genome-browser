@@ -130,5 +130,19 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			}
 		};
 	}
+
+	@Override
+	protected int getStairStepEnd(ViewI view, GraphSym graphSym, int nextx, int xtemp) {
+		int stairStepEnd = super.getStairStepEnd(view, graphSym, nextx, xtemp);
+		// if the previous value (x + width) ends before the next one
+		// starts the graph is not generating the y=0 section in between
+		if (graphSym.hasWidth() && nextx != xtemp && nextx != -1) {
+			Point2D.Double end_coord = new Point2D.Double(nextx, 0);
+			Point end_point = new Point();
+			view.transformToPixels(end_coord, end_point);
+			stairStepEnd = end_point.x;
+		}
+		return stairStepEnd;
+	}
 }
 

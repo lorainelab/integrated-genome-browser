@@ -1,4 +1,3 @@
-
 /**
  *   Copyright (c) 2006 Affymetrix, Inc.
  *
@@ -41,6 +40,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -52,9 +52,9 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -64,7 +64,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public final class SimpleGraphTab 
+public final class SimpleGraphTab
 		implements SeqSelectionListener, SymSelectionListener, GraphOperatorHolder {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
@@ -84,7 +84,8 @@ public final class SimpleGraphTab
 	public JRPRadioButton hmapB = new JRPRadioButton("SimpleGraphTab_hmapB", BUNDLE.getString("heatMapButton"));
 	public JRPRadioButton hidden_styleB = new JRPRadioButton("SimpleGraphTab_hidden_styleB", "No Selection"); // this button will not be displayed
 	public ButtonGroup stylegroup = new ButtonGroup();
-	public JRPButton colorB = new JRPButton("SimpleGraphTab_colorB", "Color");
+	public com.jidesoft.combobox.ColorComboBox fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+	public com.jidesoft.combobox.ColorComboBox bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 	public JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
 	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
 	public final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
@@ -153,7 +154,6 @@ public final class SimpleGraphTab
 	public final JRPButton saveB = new JRPButton("SimpleGraphTab_saveB", save_selected_graphs_action);
 	public final JRPButton deleteB = new JRPButton("SimpleGraphTab_deleteB", delete_selected_graphs_action);
 	public final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB", graph_threshold_action);
-	public final JLabel param_label = new JLabel();
 	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
 	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
@@ -205,20 +205,13 @@ public final class SimpleGraphTab
 		stylegroup.add(mmavgB);
 		stylegroup.add(sstepB);
 		stylegroup.add(hidden_styleB); // invisible button
-	
+
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
 		height_slider.addChangeListener(new GraphHeightSetter());
-		
-		colorB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				changeColor(grafs);
-			}
-		});	
 
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
 
@@ -333,8 +326,16 @@ public final class SimpleGraphTab
 		} else if (num_glyphs == 1) {
 			GraphSym graf_0 = grafs.get(0);
 			selected_graphs_label.setText(graf_0.getGraphName());
+			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
+			GraphGlyph gl = (GraphGlyph) g;
+			Color color = gl.getGraphState().getTierStyle().getBackground();
+			bgColorComboBox.setSelectedColor(color);
+			color = gl.getGraphState().getTierStyle().getForeground();
+			fgColorComboBox.setSelectedColor(color);
 		} else {
 			selected_graphs_label.setText(num_glyphs + " graphs selected");
+			fgColorComboBox.setSelectedColor(null);
+			bgColorComboBox.setSelectedColor(null);
 		}
 
 		selectButtonBasedOnGraphStyle(graph_style);
@@ -379,12 +380,14 @@ public final class SimpleGraphTab
 		yaxisCB.setEnabled(b);
 		labelCB.setEnabled(b);
 
-		colorB.setEnabled(b);
+		fgColorComboBox.setEnabled(b);
+		bgColorComboBox.setEnabled(b);
+
 		save_selected_graphs_action.setEnabled(grafs.size() == 1);
 		delete_selected_graphs_action.setEnabled(b);
 		advanced_panel.setPanelEnabled();
 
-		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
+		combineB.setEnabled(!all_are_combined && grafs.size() > 1);
 		splitB.setEnabled(any_are_combined);
 
 		is_listening = true; // turn back on GUI events
@@ -673,30 +676,25 @@ public final class SimpleGraphTab
 			hovereffect = new HoverEffect();
 			paramT.setText("");
 			paramT.setEditable(false);
-			
+
 			transformationCB.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String selection = (String) transformationCB.getSelectedItem();
 					if (selection == null) {
-						param_label.setText("");
 						paramT.setEditable(false);
 					} else {
 						FloatTransformer trans = name2transform.get(selection);
 						String paramPrompt = trans.getParamPrompt();
 						if (paramPrompt == null) {
-							param_label.setText("");
 							paramT.setEditable(false);
 						} else {
-							param_label.setText(paramPrompt + ":");
 							paramT.setEditable(true);
 						}
 					}
 				}
 			});
-		
-
 
 			operationCB.addMouseListener(hovereffect);
 			operationCB.addItemListener(operationListener);
@@ -801,7 +799,7 @@ public final class SimpleGraphTab
 			}
 
 			// Now apply that combo style to all the selected graphs
-			int i=0;
+			int i = 0;
 			for (GraphSym gsym : grafs) {
 				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(combo_style, i++);
@@ -1042,18 +1040,18 @@ public final class SimpleGraphTab
 		return newgrafs;
 	}
 
-	private void applyColorChange(List<GraphSym> graf_syms, Color col) {
+	private void applyFGColorChange(List<GraphSym> graf_syms, Color color) {
 		for (GraphSym graf : graf_syms) {
 			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
 			List<GlyphI> glist = igbService.getSeqMap().getItems(graf);
 			for (GlyphI g : glist) {
 				GraphGlyph gl = (GraphGlyph) g;
-				gl.setColor(col); // this automatically sets the GraphState color
+				gl.setColor(color); // this automatically sets the GraphState color
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
 				GlyphI glParent = gl.getParent();
 				if (isTierGlyph(glParent)) {
-					glParent.setForegroundColor(col);
+					glParent.setForegroundColor(color);
 					List<ViewI> views = glParent.getScene().getViews();
 					for (ViewI v : views) {
 						if (gl.withinView(v)) {
@@ -1065,25 +1063,37 @@ public final class SimpleGraphTab
 		}
 	}
 
-	private void changeColor(List<GraphSym> graf_syms) {
+	private void applyBGColorChange(List<GraphSym> graf_syms, Color color) {
+		for (GraphSym graf : graf_syms) {
+			GlyphI g = igbService.getSeqMap().getItem(graf);
+			GraphGlyph gl = (GraphGlyph) g;
+			gl.getGraphState().getTierStyle().setBackground(color);
+		}
+	}
+
+	private void changeColor(List<GraphSym> graf_syms,
+			com.jidesoft.combobox.ColorComboBox cbox) {
 		if (graf_syms.isEmpty()) {
 			return;
 		}
 
-		// Set an initial color so that the "reset" button will work.
-		GraphSym graf_0 = graf_syms.get(0);
-		GraphGlyph gl_0 = (GraphGlyph) igbService.getSeqMap().getItem(graf_0);
-		Color initial_color = Color.GREEN;
-		if (gl_0 != null) {
-			// gl_0 could be null if there is a selected graph that isn't visible in
-			// the current view.
-			initial_color = gl_0.getColor();
+		Color color = cbox.getSelectedColor();
+		if (color != null) {
+			if (cbox.equals(fgColorComboBox)) {
+				applyFGColorChange(graf_syms, color);
+			} else if (cbox.equals(bgColorComboBox)) {
+				applyBGColorChange(graf_syms, color);
+			}
 		}
-		Color col = JColorChooser.showDialog((Component) SimpleGraphTabGUI.getSingleton(),"Graph Color Chooser", initial_color);
-		// Note: If the user selects "Cancel", col will be null
-		if (col != null) {
-			applyColorChange(graf_syms, col);
-		}
+
 		igbService.getSeqMap().updateWidget();
+	}
+
+	public void fgColorComboBoxActionPerformed() {
+		changeColor(grafs, fgColorComboBox);
+	}
+
+	public void bgColorComboBoxActionPerformed() {
+		changeColor(grafs, bgColorComboBox);
 	}
 }

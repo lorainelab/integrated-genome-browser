@@ -50,7 +50,7 @@
 		</copy>
   </target> 
 
-  <target name="compile" depends="common-init,do-if-proj-lib">
+  <target name="compile" depends="init,do-if-proj-lib">
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
 		<copy todir="${build.dir}" filtering="true">

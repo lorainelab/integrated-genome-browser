@@ -24,6 +24,8 @@
 		<property name="jarfile"       value="${project}.jar" />
 		<property name="report.prefix" value="${project}." />
 
+		<!-- Filters -->
+		<filter token="build.version"  value="${build.version}" />
   </target>
 
   <target name="proj-lib-exists">

@@ -12,16 +12,17 @@ import com.affymetrix.igb.window.service.WindowActivator;
 public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
-		final SimpleGraphTab simpleGraphTab = new SimpleGraphTab(igbService);
+		SimpleGraphTabGUI.init(igbService);
+		final SimpleGraphTabGUI simpleGraphTabGUI = SimpleGraphTabGUI.getSingleton();
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler(FloatTransformer.class) {
 				@Override
 				public void addService(Object o) {
-					simpleGraphTab.addFloatTransformer((FloatTransformer)o);
+					simpleGraphTabGUI.sgt.addFloatTransformer((FloatTransformer)o);
 				}
 				@Override
 				public void removeService(Object o) {
-					simpleGraphTab.removeFloatTransformer((FloatTransformer)o);
+					simpleGraphTabGUI.sgt.removeFloatTransformer((FloatTransformer)o);
 				}
 			}
 		);
@@ -29,14 +30,14 @@ public class Activator extends WindowActivator implements BundleActivator {
 			new ExtensionPointHandler(GraphOperator.class) {
 				@Override
 				public void addService(Object o) {
-					simpleGraphTab.addGraphOperator((GraphOperator)o);
+					simpleGraphTabGUI.sgt.addGraphOperator((GraphOperator)o);
 				}
 				@Override
 				public void removeService(Object o) {
-					simpleGraphTab.removeGraphOperator((GraphOperator)o);
+					simpleGraphTabGUI.sgt.removeGraphOperator((GraphOperator)o);
 				}
 			}
 		);
-		return simpleGraphTab;
+		return simpleGraphTabGUI;
 	}
 }

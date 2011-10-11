@@ -19,7 +19,6 @@ import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
@@ -32,6 +31,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
+import javax.swing.border.TitledBorder;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
@@ -40,16 +40,16 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private final static DecimalFormat val_format;
 	private final static DecimalFormat per_format;
 	private NeoAbstractWidget widg;
-	private JRPSlider min_percent_slider;
-	private JRPSlider max_percent_slider;
-	private JRPSlider min_val_slider;
-	private JRPSlider max_val_slider;
-	private JRPTextField min_perT;
-	private JRPTextField max_perT;
-	private JRPTextField min_valT;
-	private JRPTextField max_valT;
-	private final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", "By Value");
-	private final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", "By Percentile");
+	public JRPSlider min_percent_slider;
+	public JRPSlider max_percent_slider;
+	public JRPSlider min_val_slider;
+	public JRPSlider max_val_slider;
+	public JRPTextField min_perT;
+	public JRPTextField max_perT;
+	public JRPTextField min_valT;
+	public JRPTextField max_valT;
+	public static final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", "By Value");
+	public static final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", "By Percentile");
 	private final JPanel valP = new JPanel();  // for adjust-by-value controls
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
 	private final static int max_chars = 8;
@@ -118,7 +118,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//private boolean set_textbox_sizepref = false;
 	private static final boolean show_min_and_max = false;
 	private boolean includePercentileControls = true;
-
+	public ButtonGroup by_val_group = new ButtonGroup();
 	static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
 		//    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
 		GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
@@ -184,83 +184,24 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		max_perT.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 		valP.setLayout(new BoxLayout(valP, BoxLayout.X_AXIS));
 		perP.setLayout(new BoxLayout(perP, BoxLayout.X_AXIS));
-		//valP.setBorder(new TitledBorder("By Value"));
-		//perP.setBorder(new TitledBorder("By Percentile"));
-
-		JPanel labP2 = new JPanel();
-		JPanel textP2 = new JPanel();
-		JPanel slideP2 = new JPanel();
-		labP2.setLayout(new BoxLayout(labP2, BoxLayout.Y_AXIS));
-		textP2.setLayout(new BoxLayout(textP2, BoxLayout.Y_AXIS));
-		slideP2.setLayout(new BoxLayout(slideP2, BoxLayout.Y_AXIS));
-		labP2.add(new JLabel("Min: "));
-		labP2.add(new JLabel("Max: "));
-		textP2.add(min_valT);
-		textP2.add(max_valT);
-		slideP2.add(min_val_slider);
-		slideP2.add(max_val_slider);
-		valP.add(labP2);
-		valP.add(textP2);
-		valP.add(slideP2);
-
-		JPanel labP = new JPanel();
-		JPanel textP = new JPanel();
-		JPanel slideP = new JPanel();
-		labP.setLayout(new BoxLayout(labP, BoxLayout.Y_AXIS));
-		textP.setLayout(new BoxLayout(textP, BoxLayout.Y_AXIS));
-		slideP.setLayout(new BoxLayout(slideP, BoxLayout.Y_AXIS));
-		labP.add(new JLabel("Min: "));
-		labP.add(new JLabel("Max: "));
-		textP.add(min_perT);
-		textP.add(max_perT);
-		slideP.add(min_percent_slider);
-		slideP.add(max_percent_slider);
-		perP.add(labP);
-		perP.add(textP);
-		perP.add(slideP);
-
-		Box by_val_box = Box.createHorizontalBox();
-		ButtonGroup by_val_group = new ButtonGroup();
+		
+		
+		
 		by_val_group.add(by_valRB);
 		by_val_group.add(by_percentileRB);
 		by_valRB.setSelected(true);
 		by_percentileRB.setSelected(false);
-		by_valRB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				switchView(false);
-			}
-		});
-		by_percentileRB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				switchView(true);
-			}
-		});
-		by_val_box.add(by_valRB);
-		by_val_box.add(by_percentileRB);
-		by_val_box.add(Box.createHorizontalGlue());
-
-		this.setBorder(new TitledBorder("Y-Axis Scale"));
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		if (includePercentileControls) {
-			this.add(by_val_box);
-			this.add(Box.createRigidArea(new Dimension(5, 5)));
-			this.add(valP);
-			this.add(perP);
-		} else {
-			this.add(valP);
-		}
+		
+		
+	
+		
 		valP.setVisible(true);
 		perP.setVisible(false);
 
 		turnOnListening();
 	}
 
-	/**
-	 * Show either the value-based sliders or the percent-based sliders.
-	 * @param b  if true, show the percent-based sliders.
-	 */
+
 	public void switchView(boolean b) {
 		valP.setVisible(!b);
 		perP.setVisible(b);

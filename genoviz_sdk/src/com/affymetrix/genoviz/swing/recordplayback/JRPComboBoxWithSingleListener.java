@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 
 import javax.swing.ComboBoxModel;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
-
 /**
  * Only allow one listener to be added to the combo box.  Otherwise potentially many events can be fired with one change.
  */

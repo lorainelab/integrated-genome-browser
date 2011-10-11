@@ -1,3 +1,4 @@
+
 /**
  *   Copyright (c) 2006 Affymetrix, Inc.
  *
@@ -13,7 +14,6 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
@@ -46,16 +46,15 @@ import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -65,39 +64,36 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public final class SimpleGraphTab extends IGBTabPanel
-				implements SeqSelectionListener, SymSelectionListener, GraphOperatorHolder {
-	private static final long serialVersionUID = 1L;
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
-	private static final int TAB_POSITION = 4;
+public final class SimpleGraphTab 
+		implements SeqSelectionListener, SymSelectionListener, GraphOperatorHolder {
 
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
+	private static SimpleGraphTab singleton;
 	BioSeq current_seq;
 	GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	GraphScoreThreshSetter score_thresh_adjuster;
-	GraphVisibleBoundsSetter vis_bounds_setter;
-
+	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
-	JLabel selected_graphs_label = new JLabel(BUNDLE.getString("selectedGraphsLabel"));
-	JRPRadioButton mmavgB = new JRPRadioButton("SimpleGraphTab_mmavgB", BUNDLE.getString("minMaxAvgButton"));
-	JRPRadioButton lineB = new JRPRadioButton("SimpleGraphTab_lineB", BUNDLE.getString("lineButton"));
-	JRPRadioButton barB = new JRPRadioButton("SimpleGraphTab_barB", BUNDLE.getString("barButton"));
-	JRPRadioButton dotB = new JRPRadioButton("SimpleGraphTab_dotB", BUNDLE.getString("dotButton"));
-	JRPRadioButton sstepB = new JRPRadioButton("SimpleGraphTab_sstepB", BUNDLE.getString("stairStepButton"));
-	JRPRadioButton hmapB = new JRPRadioButton("SimpleGraphTab_hmapB", BUNDLE.getString("heatMapButton"));
-	JRPRadioButton hidden_styleB = new JRPRadioButton("SimpleGraphTab_hidden_styleB", "No Selection"); // this button will not be displayed
-	ButtonGroup stylegroup = new ButtonGroup();
-	JRPButton colorB = new JRPButton("SimpleGraphTab_colorB", "Color");
-	JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
-
-	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
-	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
-
-	private final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
-	private final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
-	private final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
-
+	public JLabel selected_graphs_label = new JLabel(BUNDLE.getString("selectedGraphsLabel"));
+	public JRPRadioButton mmavgB = new JRPRadioButton("SimpleGraphTab_mmavgB", BUNDLE.getString("minMaxAvgButton"));
+	public JRPRadioButton lineB = new JRPRadioButton("SimpleGraphTab_lineB", BUNDLE.getString("lineButton"));
+	public JRPRadioButton barB = new JRPRadioButton("SimpleGraphTab_barB", BUNDLE.getString("barButton"));
+	public JRPRadioButton dotB = new JRPRadioButton("SimpleGraphTab_dotB", BUNDLE.getString("dotButton"));
+	public JRPRadioButton sstepB = new JRPRadioButton("SimpleGraphTab_sstepB", BUNDLE.getString("stairStepButton"));
+	public JRPRadioButton hmapB = new JRPRadioButton("SimpleGraphTab_hmapB", BUNDLE.getString("heatMapButton"));
+	public JRPRadioButton hidden_styleB = new JRPRadioButton("SimpleGraphTab_hidden_styleB", "No Selection"); // this button will not be displayed
+	public ButtonGroup stylegroup = new ButtonGroup();
+	public JRPButton colorB = new JRPButton("SimpleGraphTab_colorB", "Color");
+	public JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
+	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
+	public final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+	public final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
+	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
+	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
+	private IGBService igbService;
 	private final Action select_all_graphs_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -112,6 +108,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	};
 	private final Action delete_selected_graphs_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -125,6 +122,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	};
 	private final Action save_selected_graphs_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -138,6 +136,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	};
 	private final Action graph_threshold_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -150,76 +149,47 @@ public final class SimpleGraphTab extends IGBTabPanel
 			return BUNDLE.getString("graphThresholding") + "...";
 		}
 	};
-	private final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);
-	private final JRPButton saveB = new JRPButton("SimpleGraphTab_saveB", save_selected_graphs_action);
-	private final JRPButton deleteB = new JRPButton("SimpleGraphTab_deleteB", delete_selected_graphs_action);
-	private final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB", graph_threshold_action);
-	private final JLabel param_label = new JLabel();
-	private final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
-	private final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
-	private final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
-	private JRPComboBox heat_mapCB;
-	private AdvancedGraphPanel advanced_panel;
+	public final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);
+	public final JRPButton saveB = new JRPButton("SimpleGraphTab_saveB", save_selected_graphs_action);
+	public final JRPButton deleteB = new JRPButton("SimpleGraphTab_deleteB", delete_selected_graphs_action);
+	public final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB", graph_threshold_action);
+	public final JLabel param_label = new JLabel();
+	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
+	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
+	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
+	public JRPComboBox heat_mapCB;
+	public AdvancedGraphPanel advanced_panel;
 	TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
-		new Comparator<FloatTransformer>() {
-			@Override
-			public int compare(FloatTransformer o1, FloatTransformer o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		}
-	);
-	TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
-		new Comparator<GraphOperator>() {
-			@Override
-			public int compare(GraphOperator o1, GraphOperator o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		}
-	);
+			new Comparator<FloatTransformer>() {
 
-	public SimpleGraphTab(IGBService igbService) {
-		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
+				@Override
+				public int compare(FloatTransformer o1, FloatTransformer o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+	TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
+			new Comparator<GraphOperator>() {
+
+				@Override
+				public int compare(GraphOperator o1, GraphOperator o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+
+	public static void init(IGBService igbService) {
+		singleton = new SimpleGraphTab(igbService);
+	}
+
+	public static synchronized SimpleGraphTab getSingleton() {
+		return singleton;
+	}
+
+	public SimpleGraphTab(IGBService igbS) {
+		igbService = igbS;
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 
 		heat_mapCB = new JRPComboBox("SimpleGraphTab_heat_mapCB", HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());
-
-		// A box to contain the heat-map JComboBox, to help get the alignment right
-		Box heat_mapCB_box = Box.createHorizontalBox();
-		heat_mapCB_box.add(Box.createHorizontalStrut(16));
-		heat_mapCB_box.add(heat_mapCB);
-		heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
-
-		Box stylebox_radiobox = Box.createHorizontalBox();
-		Box stylebox_radiobox_col1 = Box.createVerticalBox();
-		Box stylebox_radiobox_col2 = Box.createVerticalBox();
-		stylebox_radiobox_col1.add(barB);
-		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox_col1.add(dotB);
-		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox_col1.add(hmapB);
-		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox_col2.add(lineB);
-		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox_col2.add(mmavgB);
-		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox_col2.add(sstepB);
-		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
-		stylebox_radiobox.add(stylebox_radiobox_col1);
-		stylebox_radiobox.add(stylebox_radiobox_col2);
-
-		Box color_button_box = Box.createHorizontalBox();
-		color_button_box.add(Box.createRigidArea(new Dimension(16, 1)));
-		color_button_box.add(colorB);
-
-		Box stylebox = Box.createVerticalBox();
-		color_button_box.setAlignmentX(0.0f);
-		stylebox.add(color_button_box);
-		stylebox.add(Box.createRigidArea(new Dimension(0, 9)));
-		stylebox_radiobox.setAlignmentX(0.0f);
-		stylebox.add(stylebox_radiobox);
-		heat_mapCB_box.setAlignmentX(0.0f);
-		stylebox.add(heat_mapCB_box);
 
 		barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
 		dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
@@ -235,75 +205,20 @@ public final class SimpleGraphTab extends IGBTabPanel
 		stylegroup.add(mmavgB);
 		stylegroup.add(sstepB);
 		stylegroup.add(hidden_styleB); // invisible button
-		stylebox.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("stylePanel")));
-
+	
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
-		height_slider.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("heightSlider")));
-
-		Box scalebox = Box.createVerticalBox();
-		vis_bounds_setter.setAlignmentX(0.0f);
-		height_slider.setAlignmentX(0.0f);
-		scalebox.add(height_slider);
-		scalebox.add(vis_bounds_setter);
-
 		height_slider.addChangeListener(new GraphHeightSetter());
-
-		Box butbox = Box.createHorizontalBox();
-		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-		butbox.add(selectAllB);
-		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-		butbox.add(saveB);
-		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-		butbox.add(deleteB);
-		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-//		butbox.add(Box.createHorizontalGlue());
-		butbox.add(threshB);
-		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-
-		Box first_two_columns = Box.createHorizontalBox();
-		stylebox.setAlignmentY(0.0f);
-		first_two_columns.add(stylebox);
-		scalebox.setAlignmentY(0.0f);
-		first_two_columns.add(scalebox);
-		Box megabox = Box.createVerticalBox();
-		butbox.setAlignmentX(0.0f);
-		megabox.add(butbox);
-		megabox.add(Box.createRigidArea(new Dimension(1, 5)));
-		first_two_columns.setAlignmentX(0.0f);
-		megabox.add(first_two_columns);
-
-		Box label_box = Box.createHorizontalBox();
-		label_box.add(selected_graphs_label);
-		label_box.add(Box.createHorizontalGlue());
-
-		Box row1 = Box.createHorizontalBox();
-
-		megabox.setAlignmentY(0.0f);
-		row1.add(megabox);
-		advanced_panel.setAlignmentY(0.0f);
-		row1.add(advanced_panel);
-
+		
 		colorB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				changeColor(grafs);
 			}
-		});
-
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-		this.add(Box.createRigidArea(new Dimension(1, 5)));
-		row1.setAlignmentX(0.0f);
-		this.add(row1);
-		butbox.setAlignmentX(0.0f);
-		butbox.setAlignmentY(1.0f);
-		this.add(Box.createVerticalGlue());
-
-		this.setBorder(BorderFactory.createEtchedBorder());
+		});	
 
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
 
@@ -451,9 +366,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 		height_slider.setEnabled(b);
 		graph_threshold_action.setEnabled(b);
 		boolean type = b;
-		for(GraphSym graf : grafs){
+		for (GraphSym graf : grafs) {
 			type = !(graf instanceof MisMatchGraphSym);
-			if(type){
+			if (type) {
 				break;
 			}
 		}
@@ -495,7 +410,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (GlyphI g : multigl) {
-					glyphs.add((GraphGlyph)g);
+					glyphs.add((GraphGlyph) g);
 				}
 			}
 		}
@@ -587,7 +502,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						}
 					} else {
 						heat_mapCB.setEnabled(false);
-					// don't bother to change the displayed heat map name
+						// don't bother to change the displayed heat map name
 					}
 					igbService.getSeqMap().updateWidget();
 				}
@@ -661,29 +576,33 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	}
 
-	final class AdvancedGraphPanel extends JPanel {
+	final class AdvancedGraphPanel {
+
 		private static final long serialVersionUID = 1L;
 
 		private class HoverEffect implements MouseListener {
+
 			private String A = null;
 			private String B = null;
 
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
 
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
 
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
 
 			public void mouseEntered(MouseEvent e) {
 				JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 				String selection = (String) comp.getSelectedItem();
 				GraphOperator operator = name2operator.get(selection);
 
-				if (grafs.size() >= operator.getOperandCountMin() &&
-					grafs.size() <= operator.getOperandCountMax()) {
+				if (grafs.size() >= operator.getOperandCountMin()
+						&& grafs.size() <= operator.getOperandCountMax()) {
 					setGraphName(comp, operator);
-				}
-				else {
+				} else {
 					comp.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
 				}
 			}
@@ -698,13 +617,13 @@ public final class SimpleGraphTab extends IGBTabPanel
 				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
 					A = grafs.get(0).getGraphName();
 					B = grafs.get(1).getGraphName();
-	
+
 					grafs.get(0).setGraphName("A");
 					grafs.get(1).setGraphName("B");
-	
+
 					comp.setToolTipText(null);
 					ThreadUtils.runOnEventQueue(new Runnable() {
-	
+
 						public void run() {
 							igbService.getSeqMap().updateWidget();
 						}
@@ -717,136 +636,70 @@ public final class SimpleGraphTab extends IGBTabPanel
 					if (A != null && B != null && grafs.size() > 1) {
 						grafs.get(0).setGraphName(A);
 						grafs.get(1).setGraphName(B);
-	
+
 						ThreadUtils.runOnEventQueue(new Runnable() {
-	
+
 							public void run() {
 								igbService.getSeqMap().updateWidget();
 							}
 						});
 						A = null;
 						B = null;
-	
+
 					}
 				}
 			}
 		}
-
-		private static final int PARAM_TEXT_WIDTH = 60;
 		private final Map<String, FloatTransformer> name2transform;
 		private final Map<String, GraphOperator> name2operator;
-		private final JRPButton transformationGoB = new JRPButton("SimpleGraphTab_transformationGoB", BUNDLE.getString("goButton"));
-		private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
-		private final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_transformation");
-		private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
-		private final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_operation");
-		private final JRPButton operationGoB = new JRPButton("SimpleGraphTab_operationGoB", BUNDLE.getString("goButton"));
+		public final JRPButton transformationGoB = new JRPButton("SimpleGraphTab_transformationGoB", BUNDLE.getString("goButton"));
+		public final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
+		public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_transformation");
+		public final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
+		public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_operation");
+		public final JRPButton operationGoB = new JRPButton("SimpleGraphTab_operationGoB", BUNDLE.getString("goButton"));
 		private final HoverEffect hovereffect;
 		private final ItemListener operationListener = new ItemListener() {
+
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				setPanelEnabled();
 			}
 		};
-		
+
 		public AdvancedGraphPanel() {
 			name2transform = new HashMap<String, FloatTransformer>();
 			name2operator = new HashMap<String, GraphOperator>();
-			JPanel advanced_panel = this;
 			hovereffect = new HoverEffect();
-
-			advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
-
 			paramT.setText("");
-			paramT.setVisible(false);
-			Box grouping_box = Box.createHorizontalBox();
-			grouping_box.add(Box.createRigidArea(new Dimension(6, 0)));
-			grouping_box.add(combineB);
-			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
-			grouping_box.add(splitB);
-			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
-
-			Box param_box = Box.createHorizontalBox();
-			param_box.setAlignmentX(0.0f);
-			param_box.add(param_label);
-			param_box.add(paramT);
-			paramT.setMaximumSize(new Dimension((int)Math.round(paramT.getPreferredSize().getWidth()), PARAM_TEXT_WIDTH));
-			grouping_box.add(param_box);
-			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
-
-			Box decoration_row = Box.createHorizontalBox();
-
-			decoration_row.add(Box.createRigidArea(new Dimension(6, 5)));
-			decoration_row.add(labelCB);
-			decoration_row.add(yaxisCB);
-			decoration_row.add(floatCB);
-
+			paramT.setEditable(false);
+			
 			transformationCB.addActionListener(new ActionListener() {
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String selection = (String) transformationCB.getSelectedItem();
 					if (selection == null) {
 						param_label.setText("");
-						paramT.setVisible(false);
-					}
-					else {
+						paramT.setEditable(false);
+					} else {
 						FloatTransformer trans = name2transform.get(selection);
 						String paramPrompt = trans.getParamPrompt();
 						if (paramPrompt == null) {
 							param_label.setText("");
-							paramT.setVisible(false);
-						}
-						else {
-							param_label.setText(paramPrompt + " ");
-							paramT.setVisible(true);
+							paramT.setEditable(false);
+						} else {
+							param_label.setText(paramPrompt + ":");
+							paramT.setEditable(true);
 						}
 					}
 				}
 			});
-			// A box to contain the transformationCB JComboBox, to help get the alignment right
-			Box transformation_box = Box.createHorizontalBox();
-			transformation_box.setAlignmentX(0.0f);
-			transformation_box.add(Box.createRigidArea(new Dimension(6, 5)));
-			transformation_box.add(transformationCB);
-			transformation_box.add(Box.createRigidArea(new Dimension(5, 5)));
-			transformation_box.add(transformationGoB);
-			transformation_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
-			transformationCB.setMaximumSize(transformation_box.getPreferredSize()); // kludge to get width correct
+		
 
-			// A box to contain the operationCB JComboBox, to help get the alignment right
-			Box operation_box = Box.createHorizontalBox();
-			operation_box.setAlignmentX(0.0f);
-			operation_box.add(Box.createRigidArea(new Dimension(6, 5)));
-			operation_box.add(operationCB);
-			operation_box.add(Box.createRigidArea(new Dimension(5, 5)));
-			operation_box.add(operationGoB);
-			operation_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
-			operationCB.setMaximumSize(transformation_box.getPreferredSize()); // kludge to get width correct
 
 			operationCB.addMouseListener(hovereffect);
 			operationCB.addItemListener(operationListener);
-
-			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
-
-			decoration_row.setAlignmentX(0.0f);
-			advanced_panel.add(decoration_row);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
-
-			advanced_panel.add(transformation_label);
-			transformation_box.setAlignmentX(0.0f);
-			advanced_panel.add(transformation_box);
-
-			param_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
-			advanced_panel.add(param_box);
-
-			advanced_panel.add(operation_label);
-			operation_box.setAlignmentX(0.0f);
-			advanced_panel.add(operation_box);
-
-			grouping_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
-			advanced_panel.add(grouping_box);
 
 			transformationGoB.addActionListener(new ActionListener() {
 
@@ -927,7 +780,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private void combineGraphs() {
 			int gcount = grafs.size();
 			float height = 0;
-			
+
 			// Note that the combo_style does not implement IFloatableTierStyle
 			// because the glyph factory doesn't support floating combo graphs anyway.
 			ITrackStyleExtended combo_style = null;
@@ -946,7 +799,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				combo_style.setBackground(igbService.getDefaultBackgroundColor());
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
 			}
-			
+
 			// Now apply that combo style to all the selected graphs
 			int i=0;
 			for (GraphSym gsym : grafs) {
@@ -955,8 +808,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 				gstate.setFloatGraph(false); // ignored since combo_style is set
 				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
-			combo_style.setHeight(height); 
-			
+			combo_style.setHeight(height);
+
 			updateViewer();
 		}
 
@@ -1002,8 +855,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				if (!newgrafs.isEmpty()) {
 					updateViewer();
 				}
-			}
-			else {
+			} else {
 				ErrorHandler.errorPanel(BUNDLE.getString("invalidParam") + " \"" + paramT.getText() + "\" for " + trans.getParamPrompt());
 			}
 		}
@@ -1056,21 +908,19 @@ public final class SimpleGraphTab extends IGBTabPanel
 			operationCB.setEnabled(grafs.size() >= 2);
 			String selection = (String) operationCB.getSelectedItem();
 			GraphOperator operator = name2operator.get(selection);
-			boolean canGraph = (operator != null &&
-				grafs.size() >= operator.getOperandCountMin() &&
-				grafs.size() <= operator.getOperandCountMax());
+			boolean canGraph = (operator != null
+					&& grafs.size() >= operator.getOperandCountMin()
+					&& grafs.size() <= operator.getOperandCountMax());
 			operationGoB.setEnabled(operationCB.isEnabled() && canGraph);
 			if (canGraph || operator == null) {
 				operationGoB.setToolTipText(null);
-			}
-			else {
+			} else {
 				operationGoB.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
 			}
 		}
 	}
 
 	// from GraphAdjusterView
-
 	private void deleteGraphs(GenometryModel gmodel, List<GraphSym> grafs) {
 		int gcount = grafs.size();
 		for (int i = 0; i < gcount; i++) {
@@ -1090,7 +940,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	 */
 	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
 		GraphGlyph gl = (GraphGlyph) igbService.getSeqMap().getItem(gsym);
-		
+
 //		if (gl != null) {
 //			igbService.getSeqMap().removeItem(gl);
 //			// clean-up references to the graph, allowing garbage-collection, etc.
@@ -1118,7 +968,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					igbService.packMap(false, false);
 				}
 			}
-		} else{
+		} else {
 			igbService.deleteGraph(gsym);
 		}
 	}
@@ -1197,7 +1047,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
 			List<GlyphI> glist = igbService.getSeqMap().getItems(graf);
 			for (GlyphI g : glist) {
-				GraphGlyph gl = (GraphGlyph)g;
+				GraphGlyph gl = (GraphGlyph) g;
 				gl.setColor(col); // this automatically sets the GraphState color
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
@@ -1229,16 +1079,11 @@ public final class SimpleGraphTab extends IGBTabPanel
 			// the current view.
 			initial_color = gl_0.getColor();
 		}
-		Color col = JColorChooser.showDialog((Component) this,
-				"Graph Color Chooser", initial_color);
+		Color col = JColorChooser.showDialog((Component) SimpleGraphTabGUI.getSingleton(),"Graph Color Chooser", initial_color);
 		// Note: If the user selects "Cancel", col will be null
 		if (col != null) {
 			applyColorChange(graf_syms, col);
 		}
 		igbService.getSeqMap().updateWidget();
-	}
-	@Override
-	public boolean isEmbedded() {
-		return true;
 	}
 }

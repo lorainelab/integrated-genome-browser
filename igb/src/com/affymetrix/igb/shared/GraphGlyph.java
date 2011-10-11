@@ -441,15 +441,7 @@ public class GraphGlyph extends Glyph {
 					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
 				}
 			} else if (graph_style == GraphType.STAIRSTEP_GRAPH) {
-				int endx = curr_point.x;
-				// if the previous value (x + width) ends before the next one
-				// starts the graph is not generating the y=0 section in between
-				if (graphSym.hasWidth() && nextx != xtemp && nextx != -1) {
-					Point2D.Double end_coord = new Point2D.Double(nextx, 0);
-					Point end_point = new Point();
-					view.transformToPixels(end_coord, end_point);
-					endx = end_point.x;
-				}
+				int endx = getStairStepEnd(view, graphSym, nextx, xtemp);
 				int stairwidth = endx - prev_point.x;
 				if (DEBUG) {
 					System.out.println("stairwidth = " + stairwidth);
@@ -488,6 +480,10 @@ public class GraphGlyph extends Glyph {
 			prev_point.y = curr_point.y;
 			nextx = xtemp + graphSym.getGraphWidthCoord(i);
 		}
+	}
+
+	protected int getStairStepEnd(ViewI view, GraphSym graphSym, int nextx, int xtemp) {
+		return curr_point.x;
 	}
 
 	private void drawLabel(ViewI view) {

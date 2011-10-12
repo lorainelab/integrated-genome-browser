@@ -136,6 +136,12 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		if (map_range_box != null) {
 			if (!b) {
 				map_range_box.range_box.setText("Working...");
+			}else{
+				SeqSpan span = this.getVisibleSpan();
+				if(span != null){
+					map_range_box.setRangeText(span.getMin(), span.getMax());
+				}
+				
 			}
 		}
 		Component[] comps = xzoombox.getComponents();

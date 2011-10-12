@@ -60,12 +60,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		}
 
 	public boolean drawCollapseControl() { return getExpandable(); }
-	
-	public void setFeature(GenericFeature f) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	public GenericFeature getFeature() {
+		return null;
+	}
+	
+	public void setFeature(GenericFeature f) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

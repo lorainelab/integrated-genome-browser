@@ -48,6 +48,21 @@
     </mx:request>
    </mx:HTTPService> 
    
+   <mx:HTTPService             
+    id="fetchUCSCUrls" 
+    url="genopub/makeUCSCLink"
+    resultFormat="e4x"
+    showBusyCursor="true"
+    result="onFetchUCSCUrls(event)"
+    fault="parentApplication.onFailHttpRequest('Failed to get link URLs', event)"
+    method="POST"
+    useProxy="false">
+    <mx:request>
+    	<idAnnotation>{annotationsTree.selectedItem.@idAnnotation}</idAnnotation>
+    </mx:request>
+    
+   </mx:HTTPService> 
+   
    	<mx:HTTPService             
     id="getAnnotation" 
     url="genopub/annotation"
@@ -866,7 +881,31 @@
 		 *
 		 */
 		private function makeUCSCLink():void {
-			navigateToURL(new URLRequest('genopub/makeUCSCLink?idAnnotation=' + annotationsTree.selectedItem.@idAnnotation), 'to_blank');	
+			if (getAnnotation.lastResult.@ucscLinkFile == 'convert') Alert.show("Patience! Converting useq to bw/bb format.");
+			fetchUCSCUrls.send();
+		}
+		
+		private function onFetchUCSCUrls(event:ResultEvent) {
+			if (fetchUCSCUrls.lastResult.name() == "SUCCESS") {
+				
+				//this works
+				//navigateToURL( new URLRequest("http://www.google.com/"), "UCSC");
+				
+				//need to check out this first block
+				 if (fetchUCSCUrls.lastResult.@ucscURL2 != ""){
+					sendToURL(new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1))
+					navigateToURL( new URLRequest(fetchUCSCUrls.lastResult.@ucscURL2), "UCSC");
+				}
+				else {
+					var url:URLRequest = new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1);
+					navigateToURL(url,"UCSC");
+				}
+				
+			}
+			else {
+				//this should never happen
+				Alert.show(fetchUCSCUrls.lastResult.toXMLString(), "Failed to convert UCSC link, contact site admin!");
+			}
 		}
   		
 		
@@ -2523,6 +2562,17 @@
 				        	icon="@Embed(source='assets/download.gif')" 
 				            enabled="true"
 				        	click="{treeItemToSelect=null;promptToDownloadSelectedItems()}" id="downloadButton" />
+				        
+				        <mx:VRule height="20" id="vrule21x" width="2" />	
+				        <mx:LinkButton styleName="linkMenuButton" label="UCSC Browser" 
+			            icon="@Embed(source='assets/ucscFavicon.png')"
+			            disabledIcon="@Embed(source='assets/ucscFaviconDeselected.png')"  					        	
+			            toolTip="Create file link(s) for viewing the selected annotation in the UCSC Genome Browser"
+			            enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.name() == 'Annotation' &amp;&amp;  getAnnotation.lastResult.@ucscLinkFile != 'none'}"  
+			            click="{makeUCSCLink()}" 
+			            id="makeUCSCLinkButton" />
+				        	
+				        	
 						<mx:VRule height="20" id="vrule1" width="2" />
 				        <mx:LinkButton styleName="linkMenuButton" label="Refresh" 
 				        	icon="@Embed(source='assets/refresh.png')" 
@@ -2707,16 +2757,9 @@
 					   					</mx:HBox>
 					   				</mx:ViewStack>
 					   			</mx:HBox>
-					   		</mx:Repeater>
+					   		</mx:Repeater>	
 					   	</mx:VBox>
-					   	
-					   	<mx:HBox>
-					   		<mx:LinkButton styleName="linkMenuButton" label="View in UCSC Browser" 
-			            		icon="@Embed(source='assets/ucscFavicon.png')" 
-			            		click="{makeUCSCLink()}" 
-			            		id="makeUCSCLinkButton" textAlign="left"/>
-					   	</mx:HBox>
-					   	
+					  
 				   </mx:VBox>
 				  	
 				  </mx:HBox>

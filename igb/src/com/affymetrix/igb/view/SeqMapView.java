@@ -1361,7 +1361,7 @@ public class SeqMapView extends JPanel
 	 *  Zoom to include (and slightly exceed) a given rectangular region in coordbox coords.
 	 */
 	private void zoomToRectangle(Rectangle2D.Double rect) {
-		if (rect != null) {
+		if (rect != null && aseq != null) {
 			double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);
 			seqmap.zoom(NeoAbstractWidget.X, Math.min(
 					seqmap.getView().getPixelBox().width / desired_width,

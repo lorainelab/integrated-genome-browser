@@ -19,8 +19,10 @@ public class Constants {
 	public static final int MAXIMUM_NUMBER_TEXT_FILE_LINES = 10000;
 	
 	public static final int DAYS_TO_KEEP_URL_LINKS= 7;
-	public static final String UCSC_URL_LINK_DIR_NAME = "UCSCLinkDirectory";
-	public static final String UCSC_TREE_FILES_DIR_NAME = "UCSCTreeFilesDirectory";
+	public static final String UCSC_URL_LINK_DIR_NAME = "UCSCLinks";
+	public static final String UCSC_EXECUTABLE_DIR_NAME = "UCSCExecutables";
+	public static final String UCSC_WIG_TO_BIG_WIG_NAME = "wigToBigWig";
+	public static final String UCSC_BED_TO_BIG_BED_NAME = "bedToBigBed";
 
 	static final String[] ANNOTATION_FILE_EXTENSIONS = new String[] 
 	                                                              {

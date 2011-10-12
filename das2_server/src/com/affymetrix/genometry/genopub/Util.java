@@ -41,25 +41,22 @@ public class Util {
 		return true;
 	}
 	
-	/**Recursively deletes a directory and it's contents that are older than the number of days.*/
-	public static void deleteOldDirectories(File directory, int days){		
-		long cutoff = days*24* 60* 1000*60;
-		long current = System.currentTimeMillis();
-		cutoff = current - cutoff;
-		if (directory.isDirectory() && directory.lastModified() < cutoff){
-			deleteDirectory(directory);
-		}
-	}
-	
 	/**Recursively deletes the files in a directory that are older than the number of days. Will skip a file called "index.html"*/
-	public static void deleteNonIndexFiles(File directory, int days){		
-		long cutoff = days*24* 60* 1000*60;
+	public static void deleteNonIndexFiles(File directory, long days){		
+		long cutoff = days * 24L* 60L * 1000L *60L;
 		long current = System.currentTimeMillis();
 		cutoff = current - cutoff;
 		File[] files = directory.listFiles();
 		for (File f: files){
 			if (f.getName().equals("index.html")) continue;
-			if (f.lastModified() < cutoff) f.delete();
+			if (f.lastModified() < cutoff) {
+				System.out.println("\nDeleting "+f);
+				System.out.println("\tCurr\t"+ System.currentTimeMillis());
+				System.out.println("\tCut \t"+(days * 24L* 60L * 1000L *60L));
+				System.out.println("\tDiff\t"+cutoff);
+				System.out.println("\tLast\t"+f.lastModified());
+				deleteDirectory(f);
+			}
 		}
 	}
 	

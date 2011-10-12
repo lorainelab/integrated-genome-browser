@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,6 +54,7 @@ import org.hibernate.Transaction;
 
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.parsers.useq.apps.USeq2UCSCBig;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -142,14 +143,23 @@ public class GenoPubServlet extends HttpServlet {
 	//html link to the UCSC server to push tracks to, defaults to the main UCSC site
 	private String ucscHttpServerAddress = "http://genome.ucsc.edu";
 	private static final Pattern HTML_BRACKETS = Pattern.compile("<[^>]+>");
+	private static boolean autoConvertUSeqArchives = true;
+	private File ucscWig2BigWigExe;
+	private File ucscBed2BigBedExe;
 
 
 	public void init() throws ServletException {
+		//fetch genopub dir
 		if (getGenoPubDir() == false) {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
-
+		
+		//attempt to find the UCSC executables for converting bed and wig files to bigBed, bigWig formats
+		if (autoConvertUSeqArchives && fetchUCSCExecutableFiles() == false){
+			autoConvertUSeqArchives = false;
+			Logger.getLogger(this.getClass().getName()).warning("FAILED to find the UCSC big file executables, turning off useq auto conversion.");
+		}
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -5005,7 +5015,7 @@ public class GenoPubServlet extends HttpServlet {
 				Element node = (Element)i.next();
 
 				String idInstitute = node.attributeValue("idInstitute");
-				Institute institute = institute = Institute.class.cast(sess.load(Institute.class, Integer.parseInt(idInstitute))); 
+				Institute institute = Institute.class.cast(sess.load(Institute.class, Integer.parseInt(idInstitute))); 
 				sess.delete(institute);
 			}
 
@@ -5031,14 +5041,23 @@ public class GenoPubServlet extends HttpServlet {
 	}
 	
 	private void handleMakeUCSCLinkRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		//make the link docs
-		String urlToLoad = makeUCSCLink(request, res);
-		
-		//check for errors!
-		
+		try {
+			
+			//make links fetching url(s)
+			ArrayList<String>  urlsToLoad = makeUCSCLink(request, res);
+			String url1 = urlsToLoad.get(0);
+			String url2 = "";
+			if (urlsToLoad.size() == 2) url2 = urlsToLoad.get(1);
+			
+			//post results with link urls
+			reportSuccess(res, "ucscURL1", url1, "ucscURL2", url2);
+			
+			
+		} catch (Exception e) {
 
-		//redirect page to the url
-		res.sendRedirect(urlToLoad);
+			e.printStackTrace();
+			reportError(res, e.getMessage());
+		}
 	}
 
 	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
@@ -5221,8 +5240,7 @@ public class GenoPubServlet extends HttpServlet {
 		
 		//set web app dir for UCSC hot links
 		genoPubWebAppDir = new File (context.getRealPath("/"));
-
-
+		
 		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
 
 		return true;
@@ -5464,13 +5482,15 @@ public class GenoPubServlet extends HttpServlet {
 		return null;
 	}
 
-	/**Returns null if no appropriate file is found for http linking.*/
-	private File[] fetchUCSCLinkFiles(List<File> files) {
+	/**Returns null if no appropriate file is found for http linking or a UCSCLinkFiles object that will let you know if on the fly useq conversion is going on.
+	 * For bw and bb, only one file will be returned for useq files converted to bw, might have two, one for each strand, for bam will have two, bam and its index bai.*/
+	private UCSCLinkFiles fetchUCSCLinkFiles(List<File> files) throws Exception{
 		if (urlLinkFileExtensions == null){
 			urlLinkFileExtensions = new HashSet<String>();
 			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
 		}
 		File useq = null;
+		boolean converting = false;
 		ArrayList<File> filesAL = new ArrayList<File>();
 		for (File f: files){
 			int index = f.getName().lastIndexOf(".");
@@ -5481,28 +5501,46 @@ public class GenoPubServlet extends HttpServlet {
 				else if (urlLinkFileExtensions.contains(ext))  filesAL.add(f);
 			}
 		}
+
+		//convert useq archive?  If a xxx.useq file is found and autoConvertUSeqArchives == true, then the file is converted using a separate thread.
+		if (filesAL.size()==0 && useq !=null && autoConvertUSeqArchives){
+			//this can consume alot of resources and take 1-10min
+			USeq2UCSCBig c = new USeq2UCSCBig(this.ucscWig2BigWigExe, this.ucscBed2BigBedExe, useq);
+			filesAL = c.fetchConvertedFileNames();
+			//converting = true;
+			c.convert(); //same thread!
+			//c.start(); //separate thread!
+		}
+		
 		if (filesAL.size() !=0){
 			File[] toReturn = new File[filesAL.size()];
 			filesAL.toArray(toReturn);
-			return toReturn;
+			return new UCSCLinkFiles (toReturn, converting);
 		}
-		//convert useq archive?  If a xxx.useq file is found and convertUSeqArchives == true, then the file is converted and this is returned.
-		//if (useq !=null && convertUSeqArchives){
-		//TODO:
-		//attempt to convert file
-
-		//}
+		
+		//something bad happened.
 		return null;
 	}
 	
+	private boolean fetchUCSCExecutableFiles(){
+		File ucscExtDir = new File (genoPubWebAppDir, Constants.UCSC_EXECUTABLE_DIR_NAME);
+		ucscWig2BigWigExe = new File (ucscExtDir, Constants.UCSC_WIG_TO_BIG_WIG_NAME);
+		ucscBed2BigBedExe = new File (ucscExtDir, Constants.UCSC_BED_TO_BIG_BED_NAME);
+		//check files
+		if (ucscWig2BigWigExe.canExecute() == false || ucscBed2BigBedExe.canExecute() == false) {
+			System.err.println("\nError: can't execute or find "+ucscWig2BigWigExe+" or "+ucscBed2BigBedExe);
+			return false;
+		}
+		return true;
+	}
 	
-	private String makeUCSCLink(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	
+	private ArrayList<String>  makeUCSCLink(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		
 		Session sess = null;
-		Transaction tx = null;
-		String urlToLoad = "";
+		ArrayList<String> urlsToLoad = new ArrayList<String>();
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-			tx = sess.beginTransaction();
 
 			// Make sure that the required fields are filled in
 			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
@@ -5519,10 +5557,16 @@ public class GenoPubServlet extends HttpServlet {
 				throw new Exception ("Missing UCSC Genome Version name, update, and resubmit.");
 			}
 			
-			//check if annotation has exportable file type (xxx.bam, xxx.bai, xxx.bw, xxx.bb, xxx.useq (will need to be automatically? converted))
-			File[] filesToLink = fetchUCSCLinkFiles(annotation.getFiles(genometry_genopub_dir));
+			//check if annotation has exportable file type (xxx.bam, xxx.bai, xxx.bw, xxx.bb, xxx.useq (will be converted if autoConvert is true))
+			UCSCLinkFiles link = fetchUCSCLinkFiles(annotation.getFiles(genometry_genopub_dir));
+			File[] filesToLink = link.getFilesToLink();
 			if (filesToLink== null) {
 				throw new Exception ("No files to link?!");
+			}
+			
+			//need to throw warning of pause?
+			if (link.isConverting()){
+				System.out.println("WARNING: converting xxx.useq file to UCSC big format....");
 			}
 			
 			//look and or make directory to hold softlinks to data, also removes old softlinks
@@ -5533,8 +5577,11 @@ public class GenoPubServlet extends HttpServlet {
 			String type = "type="+fetchUCSCDataType (filesToLink);
 
 			//is there a summary?
-			String summary = HTML_BRACKETS.matcher(annotation.getSummary()).replaceAll("");
-			if (summary !=null && summary.trim().length() !=0) summary = "description=\""+summary+"\"";
+			String summary = annotation.getSummary();
+			if (summary !=null && summary.trim().length() !=0) {
+				summary = HTML_BRACKETS.matcher(summary).replaceAll("");
+				summary = "description=\""+summary+"\"";
+			}
 			else summary = "";
 
 			//TODO: color indicated? look for property named color, convert to RGB, comma delimited and set 'color='
@@ -5542,15 +5589,23 @@ public class GenoPubServlet extends HttpServlet {
 			String datasetName = "name=\""+annotation.getName()+" "+annotation.getFileName()+"\"";
 			String randomWord = UUID.randomUUID().toString();
 			
-			//for each file, there might be two for xxx.bam and xxx.bai files, otherwise there will be just one.
+			//create directory to hold links, need to do this so one can get the actual age of the links and not the age of the linked file
+			File dir = new File (urlLinkDir, randomWord);
+			dir.mkdir();
+			
+			//for each file, there might be two for xxx.bam and xxx.bai files, possibly two for converted useq files, plus/minus strands, otherwise just one.
 			String customHttpLink = null;
 			String toEncode = null;
 			for (File f: filesToLink){
-				File annoFile = new File(urlLinkDir, randomWord+Util.stripBadURLChars(f.getName(), "_"));
+				File annoFile = new File(dir, Util.stripBadURLChars(f.getName(), "_"));
 				String annoString = annoFile.toString();
 
 				//make soft link
 				Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
+				
+				System.out.println("\nLast modified....");
+				System.out.println("f\t"+f.lastModified());
+				System.out.println("d\t"+dir.lastModified());
 
 				//is it a bam index xxx.bai? If so then skip!
 				if (annoString.endsWith(".bai")) continue;
@@ -5568,17 +5623,15 @@ public class GenoPubServlet extends HttpServlet {
 				System.out.println("LinkForLoading "+customHttpLink + toEncode);
 				//System.out.println(customHttpLink+ GeneralUtils.URLEncode(toEncode)+"\n");
 				
-				urlToLoad = customHttpLink + GeneralUtils.URLEncode(toEncode);
+				urlsToLoad.add(customHttpLink + GeneralUtils.URLEncode(toEncode));
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			this.reportError(res, e.toString());
-			if (tx != null) tx.rollback();				
+			throw e;			
 		} finally {
 			if (sess != null) sess.close();
 		}
-		return urlToLoad;
+		return urlsToLoad;
 
 	}
 

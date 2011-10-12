@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 /**Class to convert xxx.useq archives to UCSC xxx.bb or xxx.bw archives.*/
-public class USeq2UCSCBig {
+public class USeq2UCSCBig extends Thread{
 
 	private File[] useqArchives;
+	private File workingUSeqArchiveFile;
+	private USeqArchive workingUSeqArchive;
 	private File ucscWig2BigWig;
 	private File ucscBed2BigBed;
 	private boolean verbose = false;
@@ -32,57 +32,95 @@ public class USeq2UCSCBig {
 
 			//for each archive
 			for (File u : useqArchives){
-				if (verbose) System.out.println("Processing: "+u.getName());
-				convert(u);
-			}
+				workingUSeqArchiveFile = u;
+				if (verbose) System.out.println("Processing: "+workingUSeqArchiveFile.getName());
 
+				convert();
+
+			}
 			if (verbose) System.out.println("\nDone!\n");
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
-	//for GenoPub integration
-	public USeq2UCSCBig (File ucscWig2BigWig, File ucscBed2BigBed) throws Exception{
+	//for GenoPub integration using threads, create the Object, call the fetchConvertedFileNames(), then start the thread
+	public USeq2UCSCBig (File ucscWig2BigWig, File ucscBed2BigBed, File useq){
 		this.ucscWig2BigWig = ucscWig2BigWig;
 		this.ucscBed2BigBed = ucscBed2BigBed;
-		//check files
-		if (ucscWig2BigWig.canExecute() == false) throw new Exception("\nCannot find or execute -> "+ucscWig2BigWig);
-		if (ucscBed2BigBed.canExecute() == false) throw new Exception("\nCannot find or execute -> "+ucscBed2BigBed);
+		workingUSeqArchiveFile = useq;
 	}
 
 	//methods
 	/**Returns converted File(s) or null if something bad happened.*/
-	public ArrayList<File> convert (File useq) throws Exception{
-		//create archive
-		USeqArchive ua = new USeqArchive( useq);
+	public ArrayList<File> convert () throws Exception{
+	
+		try {
+			//create archive
+			workingUSeqArchive = new USeqArchive(workingUSeqArchiveFile);
 
-		//write out chrom name: max lengths
-		writeChromLengths(ua);
+			//write out chrom name: max lengths
+			writeChromLengths();
 
-		//convert graph data
-		if (ua.getArchiveInfo().isGraphData()) return convertGraphData(ua, useq);
+			//convert graph data
+			if (workingUSeqArchive.getArchiveInfo().isGraphData()) return convertGraphData();
 
-		//convert region data
-		else return convertRegionData(useq);
+			//convert region data
+			else return convertRegionData();
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
 
 	}
 
-	private ArrayList<File> convertRegionData(File useq) throws Exception{
-		String name = useq.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-		tempFile = new File (useq.getCanonicalPath() + ".bed");
+	public void run(){
+		try {
+			convert();
+		} catch (Exception e) {
+			System.err.println("\nERROR: failed to convert useq file to big file!\n");
+			e.printStackTrace();
+		}
+	}
+
+	/**Fetches File objects for the converted files if they were converted.  Does not convert.*/
+	public ArrayList<File> fetchConvertedFileNames() throws Exception{
+		//create archive
+		workingUSeqArchive = new USeqArchive(workingUSeqArchiveFile);
+		
+		//convert graph data
+		if (workingUSeqArchive.getArchiveInfo().isGraphData()) return fetchConvertedGraphNames();
+
+		//convert region data
+		else return fetchConvertRegionNames();
+	}
+
+	private ArrayList<File> fetchConvertRegionNames(){
+		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+		File convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bb");
+		ArrayList<File> al = new ArrayList<File>();
+		al.add(convertedFile);
+		return al;
+	}
+
+	private ArrayList<File> convertRegionData() throws Exception{
+		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+		tempFile = new File (workingUSeqArchiveFile.getCanonicalPath() + ".bed");
 		tempFile.deleteOnExit();
-		
-		USeq2Text.print2TextFile(useq, tempFile, true, true);
-		
+
+		USeq2Text.print2TextFile(workingUSeqArchiveFile, tempFile, true, true);
+
 		//sort it using unix command
-		tempFileSorted = new File (useq.getCanonicalPath() + ".sorted.bed");
+		tempFileSorted = new File (workingUSeqArchiveFile.getCanonicalPath() + ".sorted.bed");
 		tempFileSorted.deleteOnExit();
 		String shell = "sort -k1,1 -k2,2n "+tempFile.getCanonicalPath()+" > "+tempFileSorted.getCanonicalPath();
-		USeqUtilities.executeShellScript(shell, useq.getParentFile());
+		USeqUtilities.executeShellScript(shell, workingUSeqArchiveFile.getParentFile());
 
 		//convert to binary
-		convertedFile = new File (useq.getParentFile(), name + ".bb");
+		convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bb");
 		String[] command = new String[]{
 				ucscBed2BigBed.getCanonicalPath(),
 				tempFileSorted.getCanonicalPath(),
@@ -90,27 +128,47 @@ public class USeq2UCSCBig {
 				convertedFile.getCanonicalPath()
 		};
 		executeUCSCCommand(command);
+		deleteTempFiles();
 		//return
 		ArrayList<File> al = new ArrayList<File>();
 		al.add(convertedFile);
 		return al;
 	}
-	
-	private ArrayList<File> convertGraphData(USeqArchive ua, File useqArchive) throws Exception{
+
+	private ArrayList<File> fetchConvertedGraphNames(){
+		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+		ArrayList<File> convertedFiles = new ArrayList<File>();
+		//is it stranded
+		boolean stranded = workingUSeqArchive.isStranded();
+		if (stranded){
+			File convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + "_Plus.bw");
+			convertedFiles.add(convertedFile);
+			convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + "_Minus.bw");
+			convertedFiles.add(convertedFile);
+		}
+		else {
+			File convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bw");
+			convertedFiles.add(convertedFile);
+		}
+		return convertedFiles;
+	}
+
+
+	private ArrayList<File> convertGraphData() throws Exception{
 		USeq2Text useq2Text = new USeq2Text();
 		useq2Text.setPrintWigFormat(true);
-		String name = useqArchive.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
 		ArrayList<File> convertedFiles = new ArrayList<File>();
-		tempFile = new File (useqArchive.getCanonicalPath() + ".wig");
+		tempFile = new File (workingUSeqArchiveFile.getCanonicalPath() + ".wig");
 		tempFile.deleteOnExit();
-		
+
 		//is it stranded
-		boolean stranded = ua.isStranded();
+		boolean stranded = workingUSeqArchive.isStranded();
 		if (stranded){
 			//convert for plus
-			useq2Text.print2WigFile(useqArchive, tempFile, "+");
+			useq2Text.print2WigFile(workingUSeqArchiveFile, tempFile, "+");
 			//convert text to binary, wigToBigWig in.wig chrom.sizes out.bw
-			convertedFile = new File (useqArchive.getParentFile(), name + "_Plus.bw");
+			convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + "_Plus.bw");
 			String[] command = new String[]{
 					ucscWig2BigWig.getCanonicalPath(),
 					tempFile.getCanonicalPath(),
@@ -120,11 +178,11 @@ public class USeq2UCSCBig {
 			//execute it
 			executeUCSCCommand(command);
 			convertedFiles.add(convertedFile);
-			
+
 			//convert for minus
-			useq2Text.print2WigFile(useqArchive, tempFile, "-");
+			useq2Text.print2WigFile(workingUSeqArchiveFile, tempFile, "-");
 			//convert text to binary, wigToBigWig in.wig chrom.sizes out.bw
-			convertedFile = new File (useqArchive.getParentFile(), name + "_Minus.bw");
+			convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + "_Minus.bw");
 			command[3] = convertedFile.getCanonicalPath();
 			//execute and save it
 			executeUCSCCommand(command);
@@ -133,9 +191,9 @@ public class USeq2UCSCBig {
 		}
 		else {
 			//convert all
-			useq2Text.print2WigFile(useqArchive, tempFile, null);
+			useq2Text.print2WigFile(workingUSeqArchiveFile, tempFile, null);
 			//convert text to binary, wigToBigWig in.wig chrom.sizes out.bw
-			convertedFile = new File (useqArchive.getParentFile(), name + ".bw");
+			convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bw");
 			String[] command = new String[]{
 					ucscWig2BigWig.getCanonicalPath(),
 					tempFile.getCanonicalPath(),
@@ -144,7 +202,7 @@ public class USeq2UCSCBig {
 			};
 			//execute it
 			executeUCSCCommand(command);
-			
+
 			convertedFiles.add(convertedFile);
 		}
 		//cleanup
@@ -177,9 +235,9 @@ public class USeq2UCSCBig {
 		}
 	}
 
-	private void writeChromLengths(USeqArchive ua) throws IOException{
-		HashMap<String,Integer> nameBase = ua.fetchChromosomesAndLastBase();
-		chromLengths = new File (ua.getZipFile()+".chromLengths");
+	private void writeChromLengths() throws IOException{
+		HashMap<String,Integer> nameBase = workingUSeqArchive.fetchChromosomesAndLastBase();
+		chromLengths = new File (workingUSeqArchive.getZipFile()+".chromLengths");
 		chromLengths.deleteOnExit();
 		PrintWriter out = new PrintWriter( new FileWriter (chromLengths));
 		for (String name: nameBase.keySet()){
@@ -190,7 +248,7 @@ public class USeq2UCSCBig {
 		}
 		out.close();
 	}
-	
+
 	public void deleteAllFiles(){
 		deleteTempFiles();
 		if (convertedFile != null) convertedFile.delete();

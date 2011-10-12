@@ -67,7 +67,6 @@ public class Annotation implements Serializable, Owned {
 	private Set                 collaborators;
 	private Set                 annotationProperties;
 
-
 	private Map<String, Object> props;  // tag/value representation of annotation properties
 
 
@@ -156,7 +155,6 @@ public class Annotation implements Serializable, Owned {
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
 	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dh, String data_root) throws Exception {
 		Document doc = DocumentHelper.createDocument();
@@ -186,9 +184,11 @@ public class Annotation implements Serializable, Owned {
 		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
 		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
 		root.addAttribute("annotationGroupingCount", Integer.valueOf(this.getAnnotationGroupings().size()).toString());
+		root.addAttribute("number", this.getNumber());
 
 		// Only show annotation groupings and annotation files for detail
 		// (when data_root is provided).
+		// Also look for files that can be linked to the UCSC Genome Browser
 		if (data_root != null) {
 			Element agsNode = root.addElement("AnnotationGroupings");
 			for(AnnotationGrouping ag : (Set<AnnotationGrouping>)this.getAnnotationGroupings()) {
@@ -200,12 +200,11 @@ public class Annotation implements Serializable, Owned {
 			String filePath = getDirectory(data_root);
 			File fd = new File(filePath);
 			if (fd.exists()) {
-
-
 				Element fileNode = filesNode.addElement("Dir");
 				fileNode.addAttribute("name", this.getFileName());
 				fileNode.addAttribute("url", filePath);
-				appendFileXML(filePath, fileNode, null);	    	
+				String ucscLinkFile = appendFileXML(filePath, fileNode, null);
+				root.addAttribute("ucscLinkFile", ucscLinkFile);
 			}			
 		}
 
@@ -346,14 +345,19 @@ public class Annotation implements Serializable, Owned {
 		return doc;
 	}
 
-	public static void appendFileXML(String filePath, Element parentNode, String subDirName) {
+	/**Returns 'none' if no files available for UCSC linking, 'convert' for files requiring conversion, or 'link' if they are ready to go.*/
+	public static String appendFileXML(String filePath, Element parentNode, String subDirName) {
 		File fd = new File(filePath);
-
+		String ucscLinkFile = "none";
 		if (fd.isDirectory()) {
 			String[] fileList = fd.list();
 			for (int x = 0; x < fileList.length; x++) {
 				String fileName = filePath + "/" + fileList[x];
 				File f1 = new File(fileName);
+				
+				//link file?
+				if (fileList[x].endsWith(".useq") && ucscLinkFile.equals("none")) ucscLinkFile = "convert";
+				else if (fileList[x].endsWith(".bb") || fileList[x].endsWith(".bw") || fileList[x].endsWith(".bam")) ucscLinkFile = "link";
 
 				// Show the subdirectory in the name if we are not at the main folder level
 				String displayName = "";
@@ -384,6 +388,7 @@ public class Annotation implements Serializable, Owned {
 				}
 			}
 		}
+		return ucscLinkFile;
 	}
 
 	public void removeFiles(String data_root) throws IOException {
@@ -423,7 +428,6 @@ public class Annotation implements Serializable, Owned {
 		File dir = new File(filePath);
 
 		if (dir.exists()) {
-			// Delete the files in the directory
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {

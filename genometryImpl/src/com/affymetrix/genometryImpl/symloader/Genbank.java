@@ -248,7 +248,7 @@ public final class Genbank extends SymLoader {
 			
 			String[] vals = first_line.split("\\s+");
 			
-			readFeature(br,vals[1],chrLength);
+			readFeature(br,vals[1],vals[2],chrLength);
 					
 			return true;
 		} catch (Exception ex){
@@ -271,20 +271,27 @@ public final class Genbank extends SymLoader {
 		}
 	}
 	
-	private void readFeature(BufferedReader input, String seqName, Map<String, Integer> chrLength) {
+	private void readFeature(BufferedReader input, String seqName, String lengthStr, Map<String, Integer> chrLength) {
 		boolean done = false;
-	
+		int length;
+		
+		try{
+			length = Integer.valueOf(lengthStr);
+		}catch(NumberFormatException ex){
+			length = -1;
+		}
+		
 		while (current_line != null && !done) {
 			getCurrentInput(input);
 			switch (current_line_type) {
 				case FEATURE_HEADER:
 				case FEATURE:
-					readSingleFeature(input, seqName, chrLength);
+					readSingleFeature(input, seqName, length, chrLength);
 			}
 		}
 	}
 	
-	private void readSingleFeature(BufferedReader input, String seqName, Map<String, Integer> chrLength) {
+	private void readSingleFeature(BufferedReader input, String seqName, int length, Map<String, Integer> chrLength) {
 		
 		BioSeq seq = null;
 		// first get past the header
@@ -292,6 +299,10 @@ public final class Genbank extends SymLoader {
 			getCurrentInput(input);
 		}
 		
+		boolean findLength = length < 0;
+		if(findLength){
+			length = 0;
+		}
 		while (current_line != null && current_line_type == FEATURE) {
 			
 			GenbankFeature current_feature = new GenbankFeature();
@@ -318,8 +329,8 @@ public final class Genbank extends SymLoader {
 						if (tag.equals("chromosome")) {
 							seq = this.group.getSeq(value);
 							if (seq == null) {
-								seq = new BioSeq(value,"",0);
-								chrLength.put(value, 0);
+								seq = new BioSeq(value,"",length);
+								chrLength.put(value, length);
 							}
 							chrFound = true;
 						} else if (tag.equals("organism")) {
@@ -329,13 +340,13 @@ public final class Genbank extends SymLoader {
 				}
 				if(!chrFound){
 					Logger.getLogger(Genbank.class.getName()).log(Level.WARNING, "No chromosome name found in sources");
-					seq = new BioSeq(seqName, "", 0);
-					chrLength.put(seqName, 0);
+					seq = new BioSeq(seqName, "", length);
+					chrLength.put(seqName, length);
 				}
-			}else if (key.equals("gene")
+			}else if (findLength && (key.equals("gene")
 					|| // Some GenBank records seem to use locus_tag instead of gene
 					// for the gene name/id
-					key.equals("locus_tag")) {
+					key.equals("locus_tag"))) {
 				//GenbankSym annotation = buildAnnotation(seq, current_locus, current_feature, id2sym, Integer.MIN_VALUE, Integer.MAX_VALUE);
 				List<int[]> locs = current_feature.initLocations();
 				if(locs == null || locs.isEmpty()){

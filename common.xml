@@ -15,7 +15,7 @@
 		<property name="release.dir"  value="${dist.dir}/release" />
 		<property name="root.dir"     value="${basedir}" />
 
-		<property name="server.deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_HERE" />
+		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.28/webapps" />
 
 		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
 			<isset property="svn.info.rev" />
@@ -27,6 +27,7 @@
 		<property name="classic.web.xml" value="${das2server}/web_classic.xml" />
 		<property name="classic.context.xml" value="${das2server}/context_classic.xml" />
 		<property name="das2.resources" value="${das2server}/resources" />
+		<property name="das2.UCSCExecutables" value="${das2server}/UCSCExecutables" />
 
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />

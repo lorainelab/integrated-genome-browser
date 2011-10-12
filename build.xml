@@ -237,6 +237,16 @@
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
+		
+		<mkdir dir="${webapp.dir}/UCSCExecutables" />
+		<copy todir="${webapp.dir}/UCSCExecutables">
+			<fileset dir="${das2.UCSCExecutables}">
+				<include name="bedToBigBed" />
+				<include name="readMe.txt" />
+				<include name="wigToBigWig" />
+			</fileset>
+		</copy>
+		
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
 				<include name="antlr-2.7.6rc1.jar"/>

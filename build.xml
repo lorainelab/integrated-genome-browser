@@ -363,6 +363,7 @@
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_menu_prefs.xml" />
+			<fileset dir="${igb-18n}/resources" />
 		</jar>
 		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>
@@ -436,6 +437,7 @@
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_menu_prefs.xml" />
+			<fileset dir="${igb-18n}/resources" />
 		</jar>
 	</target>
 	

@@ -114,7 +114,7 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 			map.prepareImage(image, map);
 
 			BasicImageGlyph big = new BasicImageGlyph();
-			big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
+			//big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
 			big.setImage(image, map);
 			big.setCoords(20 * i, 0, 15, 30);
 			sg.addChild(big);
@@ -125,13 +125,13 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 		map.addItem(parent);
 		parent.pack(map.getView(), false);
 		parent.setVisibility(true);
-		gmodel.addSymSelectionListener(this);
+		//gmodel.addSymSelectionListener(this);
 	}
 
 	public void itemStateChanged(ItemEvent evt) {
 		map.removeItem(parent);
 		parent.setVisibility(false);
-		gmodel.removeSymSelectionListener(this);
+		//gmodel.removeSymSelectionListener(this);
 
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&

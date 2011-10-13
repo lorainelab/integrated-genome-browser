@@ -21,8 +21,8 @@ public class MapViewModeHolder {
 	
 	private MapViewModeHolder(){
 		addViewFactory(new DepthGraphGlyphFactory());
-		addViewFactory(new MismatchGraphGlyphFactory(false));
-		addViewFactory(new MismatchGraphGlyphFactory(true));
+		addViewFactory(new MismatchGraphGlyphFactory());
+		addViewFactory(new MismatchPileupGraphGlyphFactory());
 	}
 	
 	public MapViewGlyphFactoryI getViewFactory(String view){

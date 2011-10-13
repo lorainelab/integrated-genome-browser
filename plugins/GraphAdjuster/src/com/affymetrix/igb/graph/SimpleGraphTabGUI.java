@@ -11,10 +11,6 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 	private static final int TAB_POSITION = 4;
 	public SimpleGraphTab sgt;
 	private static SimpleGraphTabGUI singleton;
-	private javax.swing.JTextField maxPerT;
-	private javax.swing.JTextField minPerT;
-	private javax.swing.JSlider minPerTSlider;
-	private javax.swing.JSlider maxPerTSlider;
 
 	/** Creates new form SimpleGraphTab1 */
 	public SimpleGraphTabGUI(IGBService _igbService) {
@@ -24,15 +20,6 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 		sgt = SimpleGraphTab.getSingleton();
 
 		initComponents();
-		initYaxisComponents();
-
-	}
-
-	private void initYaxisComponents() {
-		maxPerT = sgt.vis_bounds_setter.max_perT;
-		minPerT = sgt.vis_bounds_setter.min_perT;
-		minPerTSlider = sgt.vis_bounds_setter.min_percent_slider;
-		maxPerTSlider = sgt.vis_bounds_setter.max_percent_slider;
 	}
 
 	public static void init(IGBService igbService) {
@@ -67,15 +54,6 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
         bgColorComboBox = sgt.bgColorComboBox;
         heightPanel = new javax.swing.JPanel();
         height_slider = sgt.height_slider;
-        yAxisPanel = new javax.swing.JPanel();
-        by_valRB = sgt.vis_bounds_setter.by_valRB;
-        by_percentileRB = sgt.vis_bounds_setter.by_percentileRB;
-        minTextBox = sgt.vis_bounds_setter.min_valT;
-        maxTextBox = sgt.vis_bounds_setter.max_valT;
-        minLabel = new javax.swing.JLabel();
-        maxLabel = new javax.swing.JLabel();
-        minSlider = sgt.vis_bounds_setter.min_val_slider;
-        maxSlider = sgt.vis_bounds_setter.max_val_slider;
         manipulationsPanel = new javax.swing.JPanel();
         labelCB = sgt.labelCB;
         yaxisCB = sgt.yaxisCB;
@@ -94,6 +72,25 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
         deleteB = sgt.deleteB;
         selectAllB = sgt.selectAllB;
         threshB = sgt.threshB;
+        jPanel1 = new javax.swing.JPanel();
+        yAxisValPanel = new javax.swing.JPanel();
+        by_valRB_val = new javax.swing.JRadioButton();
+        by_percentileRB_val = sgt.vis_bounds_setter.by_percentileRB;
+        minValLabel = new javax.swing.JLabel();
+        min_valT = sgt.vis_bounds_setter.min_valT;
+        min_val_slider = sgt.vis_bounds_setter.min_val_slider;
+        max_val_slider = sgt.vis_bounds_setter.max_val_slider;
+        max_valT = sgt.vis_bounds_setter.max_valT;
+        maxValLabel = new javax.swing.JLabel();
+        yAxisPerPanel = new javax.swing.JPanel();
+        by_valRB_per = sgt.vis_bounds_setter.by_valRB;
+        by_percentileRB_per = new javax.swing.JRadioButton();
+        minValLabel1 = new javax.swing.JLabel();
+        min_perT = sgt.vis_bounds_setter.min_perT;
+        min_percent_slider = sgt.vis_bounds_setter.min_percent_slider;
+        max_percent_slider = sgt.vis_bounds_setter.max_percent_slider;
+        max_perT = sgt.vis_bounds_setter.max_perT;
+        maxValLabel1 = new javax.swing.JLabel();
 
         stylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
 
@@ -185,7 +182,8 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(sstepB)))
                 .add(18, 18, 18)
-                .add(heat_mapCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(heat_mapCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         heightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Height"));
@@ -194,80 +192,12 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
         heightPanel.setLayout(heightPanelLayout);
         heightPanelLayout.setHorizontalGroup(
             heightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, height_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, height_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
         );
         heightPanelLayout.setVerticalGroup(
             heightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(height_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
         );
-
-        yAxisPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y-Axis Scale"));
-
-        by_valRB.setText("By Value");
-        by_valRB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                by_valRBActionPerformed(evt);
-            }
-        });
-
-        by_percentileRB.setText("By Percentile");
-        by_percentileRB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                by_percentileRBActionPerformed(evt);
-            }
-        });
-
-        minLabel.setText("Min:");
-
-        maxLabel.setText("Max:");
-
-        org.jdesktop.layout.GroupLayout yAxisPanelLayout = new org.jdesktop.layout.GroupLayout(yAxisPanel);
-        yAxisPanel.setLayout(yAxisPanelLayout);
-        yAxisPanelLayout.setHorizontalGroup(
-            yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(yAxisPanelLayout.createSequentialGroup()
-                .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(yAxisPanelLayout.createSequentialGroup()
-                        .add(8, 8, 8)
-                        .add(by_valRB)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(by_percentileRB))
-                    .add(yAxisPanelLayout.createSequentialGroup()
-                        .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(minLabel)
-                            .add(maxLabel))
-                        .add(5, 5, 5)
-                        .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(maxTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(minTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(1, 1, 1)
-                        .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(minSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                            .add(maxSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE))))
-                .addContainerGap())
-        );
-
-        yAxisPanelLayout.linkSize(new java.awt.Component[] {maxTextBox, minTextBox}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        yAxisPanelLayout.setVerticalGroup(
-            yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(yAxisPanelLayout.createSequentialGroup()
-                .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(by_valRB)
-                    .add(by_percentileRB))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(minLabel)
-                    .add(minTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(minSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(3, 3, 3)
-                .add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(maxLabel)
-                    .add(maxTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(maxSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-        );
-
-        yAxisPanelLayout.linkSize(new java.awt.Component[] {maxTextBox, minTextBox}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         manipulationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Manipulations"));
 
@@ -353,8 +283,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
                 .add(1, 1, 1)
                 .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(combineB)
-                    .add(splitB))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(splitB)))
         );
 
         manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -371,27 +300,165 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
         threshB.setFont(new java.awt.Font("SansSerif", 1, 14));
         threshB.setText("Thresholding");
 
+        yAxisValPanel.setVisible(true);
+        yAxisValPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y-Axis Scale"));
+
+        by_valRB_val.setText("By Value");
+
+        by_percentileRB_val.setText("By Percentile");
+        by_percentileRB_val.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                by_percentileRB_valActionPerformed(evt);
+            }
+        });
+
+        minValLabel.setText("Min:");
+
+        maxValLabel.setText("Max:");
+
+        org.jdesktop.layout.GroupLayout yAxisValPanelLayout = new org.jdesktop.layout.GroupLayout(yAxisValPanel);
+        yAxisValPanel.setLayout(yAxisValPanelLayout);
+        yAxisValPanelLayout.setHorizontalGroup(
+            yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(yAxisValPanelLayout.createSequentialGroup()
+                .add(by_valRB_val)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(by_percentileRB_val))
+            .add(yAxisValPanelLayout.createSequentialGroup()
+                .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(minValLabel)
+                    .add(maxValLabel))
+                .add(3, 3, 3)
+                .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(yAxisValPanelLayout.createSequentialGroup()
+                        .add(max_valT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(max_val_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE))
+                    .add(yAxisValPanelLayout.createSequentialGroup()
+                        .add(min_valT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(5, 5, 5)
+                        .add(min_val_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))))
+        );
+
+        yAxisValPanelLayout.linkSize(new java.awt.Component[] {max_valT, min_valT}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        yAxisValPanelLayout.setVerticalGroup(
+            yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(yAxisValPanelLayout.createSequentialGroup()
+                .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(by_valRB_val)
+                    .add(by_percentileRB_val))
+                .add(3, 3, 3)
+                .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(minValLabel)
+                        .add(min_valT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(min_val_slider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(3, 3, 3)
+                .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(yAxisValPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(maxValLabel)
+                        .add(max_valT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(max_val_slider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        yAxisValPanelLayout.linkSize(new java.awt.Component[] {max_valT, min_valT}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        yAxisValPanelLayout.linkSize(new java.awt.Component[] {max_val_slider, min_val_slider}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        yAxisPerPanel.setVisible(false);
+        yAxisPerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y-Axis Scale"));
+
+        by_valRB_per.setText("By Value");
+        by_valRB_per.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                by_valRB_perActionPerformed(evt);
+            }
+        });
+
+        by_percentileRB_per.setText("By Percentile");
+
+        minValLabel1.setText("Min:");
+
+        maxValLabel1.setText("Max:");
+
+        org.jdesktop.layout.GroupLayout yAxisPerPanelLayout = new org.jdesktop.layout.GroupLayout(yAxisPerPanel);
+        yAxisPerPanel.setLayout(yAxisPerPanelLayout);
+        yAxisPerPanelLayout.setHorizontalGroup(
+            yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(yAxisPerPanelLayout.createSequentialGroup()
+                .add(by_valRB_per)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(by_percentileRB_per))
+            .add(yAxisPerPanelLayout.createSequentialGroup()
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(maxValLabel1)
+                    .add(minValLabel1))
+                .add(3, 3, 3)
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(max_perT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(min_perT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(max_percent_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .add(min_percent_slider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)))
+        );
+        yAxisPerPanelLayout.setVerticalGroup(
+            yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(yAxisPerPanelLayout.createSequentialGroup()
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(by_valRB_per)
+                    .add(by_percentileRB_per))
+                .add(3, 3, 3)
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(minValLabel1)
+                    .add(min_perT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(min_percent_slider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(3, 3, 3)
+                .add(yAxisPerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(max_percent_slider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(max_perT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(maxValLabel1)))
+        );
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(yAxisValPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(yAxisPerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(yAxisValPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(yAxisPerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jPanel1Layout.linkSize(new java.awt.Component[] {yAxisPerPanel, yAxisValPanel}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(1, 1, 1)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(yAxisPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(heightPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(selectAllB)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(saveB)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(deleteB)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(threshB)))
-                .add(1, 1, 1)
+                        .add(threshB))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(heightPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(manipulationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -399,34 +466,30 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, manipulationsPanel, 0, 207, Short.MAX_VALUE)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(selectAllB)
-                        .add(saveB)
-                        .add(deleteB)
-                        .add(threshB))
-                    .add(1, 1, 1)
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                        .add(layout.createSequentialGroup()
-                            .add(heightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(yAxisPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(stylePanel, 0, 177, Short.MAX_VALUE))))
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(selectAllB)
+                    .add(saveB)
+                    .add(deleteB)
+                    .add(threshB))
+                .add(1, 1, 1)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(heightPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(stylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 181, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+            .add(manipulationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
         layout.linkSize(new java.awt.Component[] {deleteB, saveB, selectAllB, threshB}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void by_valRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_valRBActionPerformed
-		switchAxisScaleView(false);
-	}//GEN-LAST:event_by_valRBActionPerformed
-
-	private void by_percentileRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_percentileRBActionPerformed
-		switchAxisScaleView(true);
-	}//GEN-LAST:event_by_percentileRBActionPerformed
+	private void by_percentileRB_valActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_percentileRB_valActionPerformed
+		switchView(false);
+		by_percentileRB_per.setSelected(true);
+	}//GEN-LAST:event_by_percentileRB_valActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
 		sgt.fgColorComboBoxActionPerformed();
@@ -435,14 +498,22 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
 		sgt.bgColorComboBoxActionPerformed();
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
+
+	private void by_valRB_perActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_valRB_perActionPerformed
+		switchView(true);
+		by_valRB_val.setSelected(true);
+}//GEN-LAST:event_by_valRB_perActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton barB;
     private javax.swing.JLabel baseLabel;
     private javax.swing.JTextField baseTextBox;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel bgLabel;
-    private javax.swing.JRadioButton by_percentileRB;
-    private javax.swing.JRadioButton by_valRB;
+    private javax.swing.JRadioButton by_percentileRB_per;
+    private javax.swing.JRadioButton by_percentileRB_val;
+    private javax.swing.JRadioButton by_valRB_per;
+    private javax.swing.JRadioButton by_valRB_val;
     private javax.swing.JButton combineB;
     private javax.swing.JButton deleteB;
     private javax.swing.JRadioButton dotB;
@@ -453,15 +524,22 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
     private javax.swing.JPanel heightPanel;
     private javax.swing.JSlider height_slider;
     private javax.swing.JRadioButton hmapB;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JCheckBox labelCB;
     private javax.swing.JRadioButton lineB;
     private javax.swing.JPanel manipulationsPanel;
-    private javax.swing.JLabel maxLabel;
-    private javax.swing.JSlider maxSlider;
-    private javax.swing.JTextField maxTextBox;
-    private javax.swing.JLabel minLabel;
-    private javax.swing.JSlider minSlider;
-    private javax.swing.JTextField minTextBox;
+    private javax.swing.JLabel maxValLabel;
+    private javax.swing.JLabel maxValLabel1;
+    private javax.swing.JTextField max_perT;
+    private javax.swing.JSlider max_percent_slider;
+    private javax.swing.JTextField max_valT;
+    private javax.swing.JSlider max_val_slider;
+    private javax.swing.JLabel minValLabel;
+    private javax.swing.JLabel minValLabel1;
+    private javax.swing.JTextField min_perT;
+    private javax.swing.JSlider min_percent_slider;
+    private javax.swing.JTextField min_valT;
+    private javax.swing.JSlider min_val_slider;
     private javax.swing.JRadioButton mmavgB;
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;
@@ -476,7 +554,8 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
     private javax.swing.JLabel transformLabel;
     private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;
-    private javax.swing.JPanel yAxisPanel;
+    private javax.swing.JPanel yAxisPerPanel;
+    private javax.swing.JPanel yAxisValPanel;
     private javax.swing.JCheckBox yaxisCB;
     // End of variables declaration//GEN-END:variables
 
@@ -485,61 +564,8 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 		return true;
 	}
 
-	/**
-	 * Show either the value-based sliders or the percent-based sliders.
-	 * @param b  if true, show the percent-based sliders.
-	 */
-	private void switchAxisScaleView(boolean b) {
-		if (b) {
-			minTextBox.setVisible(false);
-			maxTextBox.setVisible(false);
-			minSlider.setVisible(false);
-			maxSlider.setVisible(false);
-			maxPerT.setVisible(true);
-			minPerT.setVisible(true);
-			minPerTSlider.setVisible(true);
-			maxPerTSlider.setVisible(true);
-			refreshYaxis(true);
-		} else {
-			minTextBox.setVisible(true);
-			maxTextBox.setVisible(true);
-			minSlider.setVisible(true);
-			maxSlider.setVisible(true);
-			maxPerT.setVisible(false);
-			minPerT.setVisible(false);
-			minPerTSlider.setVisible(false);
-			maxPerTSlider.setVisible(false);
-			refreshYaxis(false);
-		}
-
-	}
-
-	private void refreshYaxis(boolean b) {
-		if (b) {
-			org.jdesktop.layout.GroupLayout yAxisPanelLayout = new org.jdesktop.layout.GroupLayout(yAxisPanel);
-			yAxisPanel.setLayout(yAxisPanelLayout);
-			yAxisPanelLayout.setHorizontalGroup(
-					yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(8, 8, 8).add(by_valRB).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(by_percentileRB)).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(minLabel).add(maxLabel)).add(5, 5, 5).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(maxPerT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(minPerT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).add(1, 1, 1).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(minPerTSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE).add(maxPerTSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)))).addContainerGap()));
-
-			yAxisPanelLayout.linkSize(new java.awt.Component[]{maxPerT, minPerT}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-			yAxisPanelLayout.setVerticalGroup(
-					yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(by_valRB).add(by_percentileRB)).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(minLabel).add(minPerT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(minPerTSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).add(3, 3, 3).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(maxLabel).add(maxPerT, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(maxPerTSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))));
-
-			yAxisPanelLayout.linkSize(new java.awt.Component[]{maxPerT, minPerT}, org.jdesktop.layout.GroupLayout.VERTICAL);
-		} else {
-			org.jdesktop.layout.GroupLayout yAxisPanelLayout = new org.jdesktop.layout.GroupLayout(yAxisPanel);
-			yAxisPanel.setLayout(yAxisPanelLayout);
-			yAxisPanelLayout.setHorizontalGroup(
-					yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(8, 8, 8).add(by_valRB).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(by_percentileRB)).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(minLabel).add(maxLabel)).add(5, 5, 5).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(maxTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(minTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).add(1, 1, 1).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(minSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE).add(maxSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)))).addContainerGap()));
-
-			yAxisPanelLayout.linkSize(new java.awt.Component[]{maxTextBox, minTextBox}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-			yAxisPanelLayout.setVerticalGroup(
-					yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(yAxisPanelLayout.createSequentialGroup().add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(by_valRB).add(by_percentileRB)).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(minLabel).add(minTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(minSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).add(3, 3, 3).add(yAxisPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(maxLabel).add(maxTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(maxSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))));
-
-			yAxisPanelLayout.linkSize(new java.awt.Component[]{maxTextBox, minTextBox}, org.jdesktop.layout.GroupLayout.VERTICAL);
-
-		}
+	private void switchView(boolean b) {
+		yAxisValPanel.setVisible(b);
+		yAxisPerPanel.setVisible(!b);
 	}
 }

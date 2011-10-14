@@ -335,15 +335,30 @@ public final class GeneralLoadView {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
-				if (features == null || features.isEmpty()) {
-					dataManagementTableModel.clearFeatures();
-				}
-				feature_tree_view.initOrRefreshTree(features);
+				refreshTree();
 			}
 		});
 	}
 
+	private void refreshTree() {
+		final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+		if (features == null || features.isEmpty()) {
+			dataManagementTableModel.clearFeatures();
+		}
+		feature_tree_view.initOrRefreshTree(features);
+	}
+	
+	public void refreshTreeViewAndRestore() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				String state = feature_tree_view.getExpansionState();
+				refreshTree();
+				feature_tree_view.restoreExpanstionState(state);
+			}
+		});
+	}
+	
 	/**
 	 * Create the table with the list of features and their status.
 	 */
@@ -554,7 +569,7 @@ public final class GeneralLoadView {
 			protected void finished() {
 				if (refresh) {
 					// Refresh
-					refreshTreeView();
+					refreshTreeViewAndRestore();
 					createFeaturesTable();
 					gviewer.dataRemoved();
 				}

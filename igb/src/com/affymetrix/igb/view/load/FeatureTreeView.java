@@ -67,6 +67,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
 import java.net.URI;
+import java.util.StringTokenizer;
 
 /**
  * View of genome features as a tree.
@@ -344,6 +345,30 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	public void dragDropEnd(DragSourceDropEvent dsde) {
 	}
 
+	//Ref : http://www.javalobby.org/java/forums/t19857.html
+	public String getExpansionState() {
+		int row = 0;
+		StringBuilder buf = new StringBuilder();
+		int rowCount = tree.getRowCount();
+		for (int i = 0; i < rowCount; i++) {
+			TreePath path = tree.getPathForRow(i);
+			if (tree.isExpanded(path)) {
+				buf.append(",").append(String.valueOf(i - row));
+			}
+		}
+		return buf.toString();
+	}
+
+	public void restoreExpanstionState(String expansionState) {
+		int row = 0;
+		StringTokenizer stok = new StringTokenizer(expansionState, ",");
+		while (stok.hasMoreTokens()) {
+			int token = row + Integer.parseInt(stok.nextToken());
+			tree.expandRow(token);
+		}
+	}
+	
+	
 	private class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);

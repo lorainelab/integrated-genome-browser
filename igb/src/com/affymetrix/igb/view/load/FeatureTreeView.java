@@ -185,11 +185,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			public void run() {
 				tree.setModel(tmodel);
 
-				if (tree.getRowCount() > 0) {
-					for (int i = 0; i < tree.getRowCount(); i++) {
-						expand(tree, tree.getPathForRow(i));
-					}
-				}
+//				if (tree.getRowCount() > 0) {
+//					for (int i = 0; i < tree.getRowCount(); i++) {
+//						expand(tree, tree.getPathForRow(i));
+//					}
+//				}
 
 				tree_scroller.invalidate();
 			}

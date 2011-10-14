@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -183,10 +184,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			public void run() {
 				tree.setModel(tmodel);
 
-				if(tree.getRowCount() > 0){
-					for(int i=0; i<tree.getRowCount(); i++)
-						expand(tree, tree.getPathForRow(i));
-				}
+//				if(tree.getRowCount() > 0){
+//					for(int i=0; i<tree.getRowCount(); i++)
+//						expand(tree, tree.getPathForRow(i));
+//				}
 				
 				tree_scroller.invalidate();
 			}
@@ -367,7 +368,30 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		public void mouseDragged(MouseEvent e) {
 		}
 	}
+	
+	//Ref : http://www.javalobby.org/java/forums/t19857.html
+	public String getExpansionState() {
+		int row = 0;
+		StringBuilder buf = new StringBuilder();
+		int rowCount = tree.getRowCount();
+		for (int i = 0; i < rowCount; i++) {
+			TreePath path = tree.getPathForRow(i);
+			if (tree.isExpanded(path)) {
+				buf.append(",").append(String.valueOf(i - row));
+			}
+		}
+		return buf.toString();
+	}
 
+	public void restoreExpanstionState(String expansionState) {
+		int row = 0;
+		StringTokenizer stok = new StringTokenizer(expansionState, ",");
+		while (stok.hasMoreTokens()) {
+			int token = row + Integer.parseInt(stok.nextToken());
+			tree.expandRow(token);
+		}
+	}
+	
 
 	/**
 	 * See if there is a hyperlink at this location.

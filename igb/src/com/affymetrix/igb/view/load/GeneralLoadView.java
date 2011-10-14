@@ -949,11 +949,26 @@ public final class GeneralLoadView extends IGBTabPanel
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
-				if (features == null || features.isEmpty()) {
-					loadModeDataTableModel.clearFeatures();
-				}
-				feature_tree_view.initOrRefreshTree(features);
+				refreshTree();
+			}
+		});
+	}
+
+	private void refreshTree() {
+		final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+		if (features == null || features.isEmpty()) {
+			loadModeDataTableModel.clearFeatures();
+		}
+		feature_tree_view.initOrRefreshTree(features);
+	}
+
+	public void refreshTreeViewAndRestore() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				String state = feature_tree_view.getExpansionState();
+				refreshTree();
+				feature_tree_view.restoreExpanstionState(state);
 			}
 		});
 	}
@@ -1137,8 +1152,8 @@ public final class GeneralLoadView extends IGBTabPanel
 			protected void finished() {
 				if (refresh) {
 					// Refresh
-					GeneralLoadView.getLoadView().refreshTreeView();
-					GeneralLoadView.getLoadView().createFeaturesTable();
+					refreshTreeViewAndRestore();
+					createFeaturesTable();
 					gviewer.dataRemoved();
 				}
 			}

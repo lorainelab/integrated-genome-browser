@@ -177,12 +177,6 @@
                     <location>protannot/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
-                <source-folder>
-                    <label>quickload_site_creator/src</label>
-                    <type>java</type>
-                    <location>quickload_site_creator/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -450,10 +444,6 @@
                         <label>protannot/src</label>
                         <location>protannot/src</location>
                     </source-folder>
-                    <source-folder style="packages">
-                        <label>quickload_site_creator/src</label>
-                        <location>quickload_site_creator/src</location>
-                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -511,7 +501,6 @@
                 <package-root>genoviz_sdk/test</package-root>
                 <package-root>igb/test</package-root>
                 <package-root>protannot/src</package-root>
-                <package-root>quickload_site_creator/src</package-root>
                 <classpath mode="compile">genometryImpl/src:genoviz_sdk/src:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/tribble-0.1.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>
@@ -546,11 +535,6 @@
                                 <property name="indent-shift-width" value="4"/>
                                 <property name="tab-size" value="4"/>
                             </node>
-                        </node>
-                    </node>
-                    <node name="x-ant+xml">
-                        <node name="CodeStyle">
-                            <node name="project"/>
                         </node>
                     </node>
                 </node>

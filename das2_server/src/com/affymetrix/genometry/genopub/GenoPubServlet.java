@@ -5515,7 +5515,13 @@ public class GenoPubServlet extends HttpServlet {
 		if (filesAL.size() !=0){
 			File[] toReturn = new File[filesAL.size()];
 			filesAL.toArray(toReturn);
-			return new UCSCLinkFiles (toReturn, converting);
+			//stranded?
+			boolean stranded = false;
+			if (toReturn.length == 2){
+				String name = toReturn[0].getName();
+				if (name.endsWith("_Plus.bw") || name.endsWith("_Minus.bw")) stranded = true;
+			}
+			return new UCSCLinkFiles (toReturn, converting, stranded);
 		}
 		
 		//something bad happened.
@@ -5526,6 +5532,9 @@ public class GenoPubServlet extends HttpServlet {
 		File ucscExtDir = new File (genoPubWebAppDir, Constants.UCSC_EXECUTABLE_DIR_NAME);
 		ucscWig2BigWigExe = new File (ucscExtDir, Constants.UCSC_WIG_TO_BIG_WIG_NAME);
 		ucscBed2BigBedExe = new File (ucscExtDir, Constants.UCSC_BED_TO_BIG_BED_NAME);
+		//make executable
+		if (ucscWig2BigWigExe.exists()) ucscWig2BigWigExe.setExecutable(true);
+		if (ucscBed2BigBedExe.exists()) ucscBed2BigBedExe.setExecutable(true);
 		//check files
 		if (ucscWig2BigWigExe.canExecute() == false || ucscBed2BigBedExe.canExecute() == false) {
 			System.err.println("\nError: can't execute or find "+ucscWig2BigWigExe+" or "+ucscBed2BigBedExe);
@@ -5586,7 +5595,6 @@ public class GenoPubServlet extends HttpServlet {
 
 			//TODO: color indicated? look for property named color, convert to RGB, comma delimited and set 'color='
 
-			String datasetName = "name=\""+annotation.getName()+" "+annotation.getFileName()+"\"";
 			String randomWord = UUID.randomUUID().toString();
 			
 			//create directory to hold links, need to do this so one can get the actual age of the links and not the age of the linked file
@@ -5602,13 +5610,19 @@ public class GenoPubServlet extends HttpServlet {
 
 				//make soft link
 				Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
-				
-				System.out.println("\nLast modified....");
-				System.out.println("f\t"+f.lastModified());
-				System.out.println("d\t"+dir.lastModified());
 
 				//is it a bam index xxx.bai? If so then skip!
 				if (annoString.endsWith(".bai")) continue;
+				
+				//stranded?
+				String strand = "";
+				if (link.isStranded()){
+					if (annoString.endsWith("_Plus.bw")) strand = " + ";
+					else if (annoString.endsWith("_Minus.bw")) strand = " - ";
+					else throw new Exception ("\nCan't determine strand of bw file? "+annoString);
+				}
+				
+				String datasetName = "name=\""+annotation.getName()+ strand +" "+annotation.getFileName()+"\"";
 
 				//make bigData URL e.g. bigDataUrl=http://genome.ucsc.edu/goldenPath/help/examples/bigBedExample.bb
 				int index = annoString.indexOf(Constants.UCSC_URL_LINK_DIR_NAME);
@@ -5620,7 +5634,7 @@ public class GenoPubServlet extends HttpServlet {
 				toEncode = type +" "+ datasetName +" "+ summary +" "+ bigDataUrl;
 				
 				//save html link to annotation
-				System.out.println("LinkForLoading "+customHttpLink + toEncode);
+				//System.out.println("LinkForLoading "+customHttpLink + toEncode);
 				//System.out.println(customHttpLink+ GeneralUtils.URLEncode(toEncode)+"\n");
 				
 				urlsToLoad.add(customHttpLink + GeneralUtils.URLEncode(toEncode));

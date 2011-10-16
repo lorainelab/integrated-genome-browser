@@ -310,7 +310,6 @@
         <![CDATA[
         import flash.events.TimerEvent;
         import flash.utils.Timer;
-        
         import mx.collections.ArrayCollection;
         import mx.controls.Alert;
         import mx.controls.Menu;
@@ -885,20 +884,16 @@
 			fetchUCSCUrls.send();
 		}
 		
+		private var listingData:Array = null;
+		
 		private function onFetchUCSCUrls(event:ResultEvent) {
 			if (fetchUCSCUrls.lastResult.name() == "SUCCESS") {
+
+				navigateToURL(new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1),"UCSC");
 				
-				//this works
-				//navigateToURL( new URLRequest("http://www.google.com/"), "UCSC");
-				
-				//need to check out this first block
+				//work around to flex bug
 				 if (fetchUCSCUrls.lastResult.@ucscURL2 != ""){
-					sendToURL(new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1))
-					navigateToURL( new URLRequest(fetchUCSCUrls.lastResult.@ucscURL2), "UCSC");
-				}
-				else {
-					var url:URLRequest = new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1);
-					navigateToURL(url,"UCSC");
+					showAlert();
 				}
 				
 			}
@@ -907,7 +902,27 @@
 				Alert.show(fetchUCSCUrls.lastResult.toXMLString(), "Failed to convert UCSC link, contact site admin!");
 			}
 		}
-  		
+		
+        private function showAlert():void {
+			var txt:String = "Click to load second track after first completes:<br><br><a href='"+fetchUCSCUrls.lastResult.@ucscURL2+"' target='UCSC'><b><u>Load Second Track</u></b></a>";
+			var alert:Alert = Alert.show(txt);
+			alert.mx_internal::alertForm.mx_internal::textField.htmlText =txt;
+        }
+        
+		
+		//this doesn't work, two hits to the same window cancel each other out!
+        private function openWindows(n: Number):void { 
+            if (n < listingData.length) {
+                navigateToURL(new URLRequest(listingData[n]), "UCSC"); 
+                callLater(callLater, [openWindows, [n+1]]); 
+            } 
+        } 
+      	
+      	
+      	
+      	
+      	
+      	
 		
 		/************************************************************************
 		 * Refresh DAS2 Server

@@ -72,6 +72,7 @@ public final class LoadFileAction extends OpenURIAction {
 				url = url.substring(url.indexOf(":") + 1, url.length());
 				try {
 					GeneralLoadView.getLoadView().getFeatureTree().updateTree(url);
+					GeneralLoadView.getLoadView().refreshTreeView();
 				} catch (URISyntaxException ex) {
 					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
 				}

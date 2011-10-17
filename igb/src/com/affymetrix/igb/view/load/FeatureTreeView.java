@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -128,7 +127,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		/*tree_scroller.setPreferredSize(new Dimension(
 		tree_scroller.getMinimumSize().width,
 		tree_scroller.getPreferredSize().height));*/
-		initOrRefreshTree(null);
+		//initOrRefreshTree(null);
 
 		tree_panel.add(tree_scroller);
 
@@ -179,21 +178,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 */
 	void initOrRefreshTree(final List<GenericFeature> features) {
 		final TreeModel tmodel = new DefaultTreeModel(CreateTree(features), true);
+		tree.setModel(tmodel);
 
-		ThreadUtils.runOnEventQueue(new Runnable() {
-
-			public void run() {
-				tree.setModel(tmodel);
-
-//				if (tree.getRowCount() > 0) {
-//					for (int i = 0; i < tree.getRowCount(); i++) {
-//						expand(tree, tree.getPathForRow(i));
-//					}
-//				}
-
-				tree_scroller.invalidate();
+		if (tree.getRowCount() > 0) {
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				expand(tree, tree.getPathForRow(i));
 			}
-		});
+		}
+
+		tree_scroller.invalidate();
 	}
 
 	private void expand(JTree tree, TreePath path) {
@@ -346,7 +339,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	//Ref : http://www.javalobby.org/java/forums/t19857.html
-	public String getExpansionState() {
+	public String getState() {
 		int row = 0;
 		StringBuilder buf = new StringBuilder();
 		int rowCount = tree.getRowCount();
@@ -356,14 +349,34 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				buf.append(",").append(String.valueOf(i - row));
 			}
 		}
+		
+		buf.append(":");
+		
+		for (int i = 0; i < rowCount; i++) {
+			TreePath path = tree.getPathForRow(i);
+			if (!tree.isExpanded(path)) {
+				buf.append(",").append(String.valueOf(i - row));
+			}
+		}
 		return buf.toString();
 	}
 
-	public void restoreExpanstionState(String expansionState) {
-		int row = 0;
-		StringTokenizer stok = new StringTokenizer(expansionState, ",");
+	public void restoreState(String state) {
+		int colon = state.indexOf(":");
+		String expand = state.substring(0, colon);
+		String collapse = state.substring(colon+1,state.length());
+		
+		// Collapse
+		StringTokenizer stok = new StringTokenizer(collapse, ",");
 		while (stok.hasMoreTokens()) {
-			int token = row + Integer.parseInt(stok.nextToken());
+			int token = Integer.parseInt(stok.nextToken());
+			tree.collapseRow(token);
+		}
+		
+		// Expand
+		stok = new StringTokenizer(expand, ",");
+		while (stok.hasMoreTokens()) {
+			int token = Integer.parseInt(stok.nextToken());
 			tree.expandRow(token);
 		}
 	}
@@ -859,7 +872,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				}
 			}
 		}
-		initOrRefreshTree(GeneralLoadUtils.getSelectedVersionFeatures());
 	}
 
 	public boolean isLoaded(URI uri) {

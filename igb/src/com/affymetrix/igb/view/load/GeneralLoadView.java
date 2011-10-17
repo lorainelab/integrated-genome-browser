@@ -352,9 +352,9 @@ public final class GeneralLoadView {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				String state = feature_tree_view.getExpansionState();
+				String state = feature_tree_view.getState();
 				refreshTree();
-				feature_tree_view.restoreExpanstionState(state);
+				feature_tree_view.restoreState(state);
 			}
 		});
 	}

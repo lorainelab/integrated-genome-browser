@@ -175,7 +175,7 @@ DROP TABLE IF EXISTS `GenomeVersion`;
 CREATE TABLE `GenomeVersion` (
   `idGenomeVersion` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(50) NOT NULL,
-  `ucscName` varchar(50) default NULL,
+  `ucscName` varchar(100) default NULL,
   `idOrganism` int(10) unsigned default NULL,
   `buildDate` datetime default NULL,
   `coordURI` varchar(2000) default NULL,
@@ -717,6 +717,7 @@ CREATE TABLE `User` (
   `institute` varchar(200) default NULL,
   `UserName` varchar(30) default NULL,
   `password` varchar(200) default NULL,
+  `ucscUrl` varchar(250) default 'http://genome.ucsc.edu',
   PRIMARY KEY  USING BTREE (`idUser`),
   UNIQUE KEY `Index_UserName` (`UserName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;

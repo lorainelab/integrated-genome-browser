@@ -242,7 +242,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 			statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
 		}
 		statusHolder.setStatus(statusStr);
-		gmodel.setSelectedSymmetriesAndSeq(localSymList, this);
+
 		if (remoteSymList != null) {
 			localSymList.addAll(remoteSymList);
 		}

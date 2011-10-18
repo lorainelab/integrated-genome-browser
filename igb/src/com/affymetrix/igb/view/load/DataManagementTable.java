@@ -13,7 +13,6 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
-import com.jidesoft.grid.BooleanCellEditor;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -31,9 +30,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
-import java.awt.Checkbox;
 import java.awt.Color;
-import javax.swing.JCheckBox;
 
 /**
  * A table with two customizations:

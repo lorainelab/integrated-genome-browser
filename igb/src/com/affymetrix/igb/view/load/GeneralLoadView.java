@@ -399,9 +399,9 @@ public final class GeneralLoadView {
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(25);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(25);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(26);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(26);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(26);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);

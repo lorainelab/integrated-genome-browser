@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.7" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -35,10 +35,19 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Data Sources and Data Sets"/>
+            <TitledBorder title="Data Sources and Data Sets">
+              <Connection PropertyName="font" code="boldUnderline" type="code"/>
+              <Color PropertyName="color" blue="ff" green="0" id="blue" palette="1" red="0" type="palette"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel1MouseClicked"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Map&lt;TextAttribute, Integer&gt; fontAttributes = new HashMap&lt;TextAttribute, Integer&gt;();&#xa;fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);&#xa;Font boldUnderline = new Font(&quot;SansSerif&quot;,Font.BOLD, 13).deriveFont(fontAttributes);"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -67,6 +76,9 @@
                     <TitledBorder/>
                   </Border>
                 </Property>
+                <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
+                  <TreeModel code="Empty"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="GeneralLoadView.getLoadView().getTree()"/>
@@ -80,7 +92,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Data Management Table"/>
+            <TitledBorder title="Data Management Table">
+              <Font PropertyName="font" name="SansSerif" size="13" style="0"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>

@@ -14,6 +14,13 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import javax.swing.JTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.prefs.PreferencesPanel;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.font.TextAttribute;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author dcnorris
@@ -49,6 +56,9 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
+        fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        Font boldUnderline = new Font("SansSerif",Font.BOLD, 13).deriveFont(fontAttributes);
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tree = GeneralLoadView.getLoadView().getTree();
@@ -60,9 +70,16 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         refresh_dataB = GeneralLoadView.getLoadView().getRefreshDataButton();
         all_residuesB = GeneralLoadView.getLoadView().getAll_ResiduesButton();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Sources and Data Sets"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Sources and Data Sets", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, boldUnderline, java.awt.Color.blue));
+        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel1MouseClicked(evt);
+            }
+        });
 
         tree.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Empty");
+        tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(tree);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -76,7 +93,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Management Table"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Management Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
 
         dataManagementTable.setModel(dataManagementTableModel);
         dataManagementTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
@@ -122,6 +139,17 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
             .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+	private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
+		// TODO add your handling code here:
+		Rectangle bounds = new Rectangle(0, 0, 200, 15);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			PreferencesPanel pv = PreferencesPanel.getSingleton();
+			pv.setTab(GeneralLoadView.TAB_DATALOAD_PREFS);
+			javax.swing.JFrame f = pv.getFrame();
+			f.setVisible(true);
+		}
+	}//GEN-LAST:event_jPanel1MouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton all_residuesB;
     private javax.swing.JTable dataManagementTable;
@@ -133,6 +161,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
     private javax.swing.JButton refresh_dataB;
     private javax.swing.JTree tree;
     // End of variables declaration//GEN-END:variables
+
 	@Override
 	public boolean isEmbedded() {
 		return true;

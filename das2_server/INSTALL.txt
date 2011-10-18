@@ -13,9 +13,7 @@ Here are instructions for installing the DAS2 server in GenoPub mode. Any java s
 * Apache Tomcat 5.5+ (http://apache.tomcat.org/)
 * MySQL database server (http://mysql.com)
 * MySQL jdbc driver (http://mysql.com, download the mysql-connector-java-5.1.7.zip)
-* Web accessible Linux, MacOSX, or Windows server with > 4G of RAM. This demo uses Red Hat Enterprize 5.
-
-
+* Web accessible Linux, MacOSX, or Windows 64-bit server with > 4G of RAM. This demo uses Red Hat Enterprize 5.
 
 == Step 1: Check your java version ==
 * Check that your java version is 6+ or 1.6+ by typing 'java -version' on the command line
@@ -123,6 +121,11 @@ mysql -u root -p
 ** Password 'your genopub password'
 * Click the 'Add' button, a confirmatory message should appear
 * Under the 'Data Access' tab, select a Species and a Genome Version where your data resides
+
+
+===For Non Linux 64-bit Installations===
+* Download appropriate UCSC bedToBigBed and wigToBigWig executables from http://hgdownload.cse.ucsc.edu/admin/exe/ 
+and replace those in the '~/apache-tomcat-5.xxx/webapps/das2genopub/UCSCExecutables' directory
 
 
 ===Configuring GNomEx for FDT Uploads and Downloads===

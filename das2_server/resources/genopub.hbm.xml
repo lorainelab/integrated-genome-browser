@@ -196,6 +196,7 @@
         <property name="password"            column="password"              type="string"/>
         <property name="email"               column="email"                 type="string"/>
         <property name="institute"           column="institute"             type="string"/>
+        <property name="ucscUrl"             column="ucscUrl"               type="string"/>
 		  	<set name="memberUserGroups" table="UserGroupMember" lazy="true" cascade="none">
 					<key column="idUser"/>
 					<many-to-many column="idUserGroup" class="com.affymetrix.genometry.genopub.UserGroup"/>

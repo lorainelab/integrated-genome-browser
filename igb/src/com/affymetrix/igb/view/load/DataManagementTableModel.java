@@ -37,7 +37,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = {"", "", "", "FG", "BG", "2 Track",
 		"Choose Load Mode", "Data Set/File Name",
-		"Track Name (Click To Edit)", ""};
+		"Track Name (Double Click To Edit)", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;

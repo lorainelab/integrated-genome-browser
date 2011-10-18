@@ -405,6 +405,9 @@ public final class GeneralLoadView {
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);

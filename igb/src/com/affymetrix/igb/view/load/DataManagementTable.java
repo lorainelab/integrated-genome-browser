@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
@@ -12,6 +13,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.grid.BooleanCellEditor;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -29,7 +31,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
+import java.awt.Checkbox;
 import java.awt.Color;
+import javax.swing.JCheckBox;
 
 /**
  * A table with two customizations:
@@ -50,10 +54,11 @@ public final class DataManagementTable {
 	static final int REFRESH_FEATURE_COLUMN = 2;
 	static final int FOREGROUND_COLUMN = 3;
 	static final int BACKGROUND_COLUMN = 4;
-	static final int LOAD_STRATEGY_COLUMN = 5;
-	static final int FEATURE_NAME_COLUMN = 6;
-	static final int TRACK_NAME_COLUMN = 7;
-	static final int DELETE_FEATURE_COLUMN = 8;
+	static final int SEPARATE_COLUMN = 5;
+	static final int LOAD_STRATEGY_COLUMN = 6;
+	static final int FEATURE_NAME_COLUMN = 7;
+	static final int TRACK_NAME_COLUMN = 8;
+	static final int DELETE_FEATURE_COLUMN = 9;
 	//public static boolean iconTest;
 
 	/**
@@ -76,6 +81,7 @@ public final class DataManagementTable {
 		RowEditorModel action = new RowEditorModel(featureSize);
 		RowEditorModel text = new RowEditorModel(featureSize);
 		RowEditorModel color = new RowEditorModel(featureSize);
+		RowEditorModel bool = new RowEditorModel(featureSize);
 
 		// tell the JTableX which RowEditorModel we are using
 		table.setRowEditorModel(DataManagementTableModel.INFO_FEATURE_COLUMN, action);
@@ -83,6 +89,7 @@ public final class DataManagementTable {
 		table.setRowEditorModel(DataManagementTableModel.HIDE_FEATURE_COLUMN, action);
 		table.setRowEditorModel(DataManagementTableModel.BACKGROUND_COLUMN, color);
 		table.setRowEditorModel(DataManagementTableModel.FOREGROUND_COLUMN, color);
+		table.setRowEditorModel(DataManagementTableModel.SEPARATE_COLUMN, bool);
 		table.setRowEditorModel(DataManagementTableModel.LOAD_STRATEGY_COLUMN, choices);
 		table.setRowEditorModel(DataManagementTableModel.FEATURE_NAME_COLUMN, text);
 		table.setRowEditorModel(DataManagementTableModel.TRACK_NAME_COLUMN, text);
@@ -105,6 +112,7 @@ public final class DataManagementTable {
 
 		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
 		table.setDefaultEditor(Color.class, cellEditor);
+		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
 		for (int row = 0; row < featureSize; row++) {
 			VirtualFeature vFeature = ftm.getFeature(row);
@@ -128,19 +136,12 @@ public final class DataManagementTable {
 
 		c = table.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(delete_icon, true));
-		//c.setHeaderRenderer(new LabelTableCellRenderer(delete_icon, true));
 
 		c = table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
-		//c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
-
-		//c = table.getColumnModel().getColumn(LoadModeDataTableModel.INFO_FEATURE_COLUMN);
-		//c.setHeaderRenderer(new LabelTableCellRenderer(info_icon, true));
 
 		c = table.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN);
 		c.setCellRenderer(new LabelTableCellRenderer(visible_icon, true));
-		//c.setHeaderRenderer(new LabelTableCellRenderer(visible_icon, true));
-		//iconTest = true;
 	}
 
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -212,6 +213,7 @@ class JTableX extends JTable implements MouseListener {
 		"Load data for track.",
 		"Set annotation color when Color by Strand Preference is not checked.",
 		"Set track background color.",
+		"Show 2 Tracks (+/-)",
 		"Load Strategy",
 		"Name of active file or data set",
 		"Set label text (display name) for Track Label.",
@@ -240,7 +242,7 @@ class JTableX extends JTable implements MouseListener {
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		if (rmMap != null) {
+		if (rmMap != null) { 
 
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
@@ -342,6 +344,9 @@ class JTableX extends JTable implements MouseListener {
 			case DataManagementTableModel.FOREGROUND_COLUMN:
 				tip = "Foreground";
 				break;
+			case DataManagementTableModel.SEPARATE_COLUMN:
+				tip = "Show 2 Tracks";
+				break;
 			default:
 				tip = "";
 		}
@@ -428,7 +433,6 @@ class JTableX extends JTable implements MouseListener {
 //			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, false);
 //		}
 //	}
-
 	public void mouseClicked(MouseEvent e) {
 	}
 

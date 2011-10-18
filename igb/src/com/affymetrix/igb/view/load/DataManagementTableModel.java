@@ -35,17 +35,20 @@ import javax.swing.table.AbstractTableModel;
 public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"", "", "", "FG", "BG", "Choose Load Mode", "Data Set/File Name", "Track Name (Click To Edit)", ""};
+	private static final String[] columnNames = {"", "", "", "FG", "BG", "2 Track",
+		"Choose Load Mode", "Data Set/File Name",
+		"Track Name (Click To Edit)", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int REFRESH_FEATURE_COLUMN = 2;
 	static final int FOREGROUND_COLUMN = 3;
 	static final int BACKGROUND_COLUMN = 4;
-	static final int LOAD_STRATEGY_COLUMN = 5;
-	static final int FEATURE_NAME_COLUMN = 6;
-	static final int TRACK_NAME_COLUMN = 7;
-	static final int DELETE_FEATURE_COLUMN = 8;
+	static final int SEPARATE_COLUMN = 5;
+	static final int LOAD_STRATEGY_COLUMN = 6;
+	static final int FEATURE_NAME_COLUMN = 7;
+	static final int TRACK_NAME_COLUMN = 8;
+	static final int DELETE_FEATURE_COLUMN = 9;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 	private SeqMapView smv;
@@ -82,7 +85,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	void createVirtualFeatures(List<GenericFeature> features) {
 		// Sort these features so the features to be loaded are at the top.
 		Collections.sort(features, visibleFeatureComp);
-		
+
 		this.features = features;
 		if (virtualFeatures != null) {
 			virtualFeatures.clear();
@@ -222,16 +225,21 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					return "No Data Loaded";
 				}
 				return style.getTrackName();
-			case BACKGROUND_COLUMN:
-				if (style == null) {
-					return Color.WHITE;
-				}
-				return style.getBackground();
 			case FOREGROUND_COLUMN:
 				if (style == null) {
 					return Color.WHITE;
 				}
 				return style.getForeground();
+			case BACKGROUND_COLUMN:
+				if (style == null) {
+					return Color.WHITE;
+				}
+				return style.getBackground();
+			case SEPARATE_COLUMN:
+				if (style == null) {
+					return false;
+				}
+				return style.getSeparate();
 			case DELETE_FEATURE_COLUMN:
 				return "";
 			case HIDE_FEATURE_COLUMN:
@@ -257,7 +265,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if ((vFeature.getStyle() == null)
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
-				|| col == HIDE_FEATURE_COLUMN)) {
+				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
 		} else if (col == FEATURE_NAME_COLUMN) {
 			return false;
@@ -284,7 +292,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
-				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
+				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
+				|| col == SEPARATE_COLUMN) {
 			return true;
 		} else if (getFeature(row) == null) {
 			return false;
@@ -353,6 +362,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					vFeature.getStyle().setForeground((Color) value);
 				}
 				break;
+			case SEPARATE_COLUMN:
+				if (vFeature.getStyle() != null) {
+					vFeature.getStyle().setSeparate((Boolean) value);
+				}
+				break;
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setTrackName((String) value);
@@ -369,6 +383,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				&& col != REFRESH_FEATURE_COLUMN) {
 			refreshSeqMapView();
 		}
+		
 		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
@@ -412,10 +427,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
-					if(tier.getChildCount() > 0)
-					{
+					if (tier.getChildCount() > 0) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
-					}else if(smv.getPixelFloater().getChildren() != null) {
+					} else if (smv.getPixelFloater().getChildren() != null) {
 						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
 						for (GlyphI g : floatingGraphs) {
 							GraphGlyph j = (GraphGlyph) g;

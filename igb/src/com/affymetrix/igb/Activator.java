@@ -119,10 +119,10 @@ public class Activator implements BundleActivator {
         igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
-		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), new Properties());
+		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), null);
 		// register tabs created in IGB itself - IGBTabPanel is an extension point
 		for (IGBTabPanel tab : tabs) {
-			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
+			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler(TrackClickListener.class) {

@@ -1,7 +1,5 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import java.util.Properties;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -20,8 +18,8 @@ public class Activator implements BundleActivator {
         try
         {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-    		searchModeIDRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeID(igbService), new Properties());
-    		searchModePropsRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeProps(igbService), new Properties());
+    		searchModeIDRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeID(igbService), null);
+    		searchModePropsRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeProps(igbService), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

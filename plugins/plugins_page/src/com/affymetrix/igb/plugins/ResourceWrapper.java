@@ -1,5 +1,6 @@
 package com.affymetrix.igb.plugins;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -195,5 +196,17 @@ public class ResourceWrapper implements Bundle {
 		} else if (!resource.equals(other.resource))
 			return false;
 		return true;
+	}
+
+	public int compareTo(Bundle o) {
+		return 0;
+	}
+
+	public <A> A adapt(Class<A> type) {
+		return null;
+	}
+
+	public File getDataFile(String filename) {
+		return null;
 	}
 }

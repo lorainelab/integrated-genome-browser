@@ -45,7 +45,7 @@ public abstract class WindowActivator implements BundleActivator {
         try
         {
         	final IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-        	serviceRegistration = bundleContext.registerService(IGBTabPanel.class.getName(), getPage(igbService), new Properties());
+        	serviceRegistration = bundleContext.registerService(IGBTabPanel.class.getName(), getPage(igbService), null);
         	bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

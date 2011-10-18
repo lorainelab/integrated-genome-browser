@@ -19,7 +19,7 @@ public class Activator implements BundleActivator {
         try
         {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-        	searchModeResidueRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeResidue(igbService), new Properties());
+        	searchModeResidueRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeResidue(igbService), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

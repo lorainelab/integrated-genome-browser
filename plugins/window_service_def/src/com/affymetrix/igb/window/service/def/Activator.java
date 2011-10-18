@@ -60,7 +60,7 @@ public class Activator implements BundleActivator {
 			}
 		}
 		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
-		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, new Properties());
+		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);
 		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference serviceReference : serviceReferences) {

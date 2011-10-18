@@ -140,8 +140,6 @@ public class GenoPubServlet extends HttpServlet {
 	//fields to support url soft links to big bed/wig bam files
 	private File genoPubWebAppDir;
 	private HashSet<String> urlLinkFileExtensions = null;
-	//html link to the UCSC server to push tracks to, defaults to the main UCSC site
-	private String ucscHttpServerAddress = "http://genome.ucsc.edu";
 	private static final Pattern HTML_BRACKETS = Pattern.compile("<[^>]+>");
 	private static boolean autoConvertUSeqArchives = true;
 	private File ucscWig2BigWigExe;
@@ -4080,7 +4078,8 @@ public class GenoPubServlet extends HttpServlet {
 				userNode.addAttribute("lastName",  user.getLastName() != null ? user.getLastName() : "");
 				userNode.addAttribute("middleName",  user.getMiddleName() != null ? user.getMiddleName() : "");
 				userNode.addAttribute("email", user.getEmail() != null ? user.getEmail() : "");					
-				userNode.addAttribute("institute", user.getInstitute() != null ? user.getInstitute() : "");					
+				userNode.addAttribute("institute", user.getInstitute() != null ? user.getInstitute() : "");
+				userNode.addAttribute("ucscUrl",  user.getUcscUrl() != null ? user.getUcscUrl() : Constants.UCSC_URL);
 				userNode.addAttribute("userName",  user.getUserName() != null ? user.getUserName() : "");
 				userNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(user) ? "Y" : "N");
 
@@ -4343,6 +4342,7 @@ public class GenoPubServlet extends HttpServlet {
 			user.setUserName(request.getParameter("userName"));
 			user.setEmail(request.getParameter("email"));
 			user.setInstitute(request.getParameter("institute"));
+			user.setUcscUrl(request.getParameter("ucscUrl"));
 
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD)) {
@@ -5550,11 +5550,9 @@ public class GenoPubServlet extends HttpServlet {
 		ArrayList<String> urlsToLoad = new ArrayList<String>();
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-
-			// Make sure that the required fields are filled in
-			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
-				throw new Exception("idAnnotation required.");
-			}
+			
+			// What is the users preferred ucsc url?
+			String ucscUrl = fetchUCSCUrl(request.getParameter("userName"), sess);
 
 			//load annotation
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));			
@@ -5562,21 +5560,12 @@ public class GenoPubServlet extends HttpServlet {
 			//check genome has UCSC name
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, annotation.getIdGenomeVersion()));
 			String ucscGenomeVersionName = gv.getUcscName();
-			if (ucscGenomeVersionName == null || ucscGenomeVersionName.length() ==0){
-				throw new Exception ("Missing UCSC Genome Version name, update, and resubmit.");
-			}
+			if (ucscGenomeVersionName == null || ucscGenomeVersionName.length() ==0) throw new Exception ("Missing UCSC Genome Version name, update, and resubmit.");
 			
 			//check if annotation has exportable file type (xxx.bam, xxx.bai, xxx.bw, xxx.bb, xxx.useq (will be converted if autoConvert is true))
 			UCSCLinkFiles link = fetchUCSCLinkFiles(annotation.getFiles(genometry_genopub_dir));
 			File[] filesToLink = link.getFilesToLink();
-			if (filesToLink== null) {
-				throw new Exception ("No files to link?!");
-			}
-			
-			//need to throw warning of pause?
-			if (link.isConverting()){
-				System.out.println("WARNING: converting xxx.useq file to UCSC big format....");
-			}
+			if (filesToLink== null)  throw new Exception ("No files to link?!");
 			
 			//look and or make directory to hold softlinks to data, also removes old softlinks
 			String xml_base = getServletContext().getInitParameter("xml_base").replace("/genome", "/");
@@ -5611,7 +5600,7 @@ public class GenoPubServlet extends HttpServlet {
 				//make soft link
 				Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
 
-				//is it a bam index xxx.bai? If so then skip!
+				//is it a bam index xxx.bai? If so then skip after making soft link.
 				if (annoString.endsWith(".bai")) continue;
 				
 				//stranded?
@@ -5630,10 +5619,9 @@ public class GenoPubServlet extends HttpServlet {
 				String bigDataUrl = "bigDataUrl="+ xml_base+ annoPartialPath;
 
 				//make final html link
-				customHttpLink = ucscHttpServerAddress + "/cgi-bin/hgTracks?db=" + ucscGenomeVersionName + "&hgct_customText=track+visibility=full+";
+				customHttpLink = ucscUrl + "/cgi-bin/hgTracks?db=" + ucscGenomeVersionName + "&hgct_customText=track+visibility=full+";
 				toEncode = type +" "+ datasetName +" "+ summary +" "+ bigDataUrl;
 				
-				//save html link to annotation
 				//System.out.println("LinkForLoading "+customHttpLink + toEncode);
 				//System.out.println(customHttpLink+ GeneralUtils.URLEncode(toEncode)+"\n");
 				
@@ -5649,7 +5637,17 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-
+	private String fetchUCSCUrl(String userName, Session sess) throws Exception{
+		//sql
+		String query = "SELECT ucscUrl FROM User WHERE userName = '"+ userName +"'";
+		//fetch it
+		List<?> rows = sess.createQuery(query).list();
+		//any results?
+		if (rows.size() != 1) System.out.println("\nWarning: '"+userName+ "' has no associated ucscURL.\n");
+		else return rows.get(0).toString();
+		//return default
+		return Constants.UCSC_URL;
+	}
 
 
 

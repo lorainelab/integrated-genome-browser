@@ -15,6 +15,7 @@ public class User implements Serializable {
 	private String  password;
 	private String  email;
 	private String  institute;
+	private String	ucscUrl;
 	private Set     memberUserGroups;
 	private Set     collaboratingUserGroups;
 	private Set     managingUserGroups;
@@ -137,6 +138,12 @@ public class User implements Serializable {
 	public void setInstitute(String institute) {
     	this.institute = institute;
     }
+	public String getUcscUrl() {
+		return ucscUrl;
+	}
+	public void setUcscUrl(String ucscUrl) {
+		this.ucscUrl = ucscUrl;
+	}
 	
 
 }

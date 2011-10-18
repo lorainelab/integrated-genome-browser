@@ -18,6 +18,7 @@ public class Constants {
 
 	public static final int MAXIMUM_NUMBER_TEXT_FILE_LINES = 10000;
 	
+	public static final String UCSC_URL = "http://genome.ucsc.edu";
 	public static final int DAYS_TO_KEEP_URL_LINKS= 7;
 	public static final String UCSC_URL_LINK_DIR_NAME = "UCSCLinks";
 	public static final String UCSC_EXECUTABLE_DIR_NAME = "UCSCExecutables";

@@ -333,7 +333,7 @@ class JTableX extends JTable implements MouseListener {
 				tip = "Switches track visibility On or OFF";
 				break;
 			case DataManagementTableModel.TRACK_NAME_COLUMN:
-				tip = "Track Name";
+				tip = "Double click to edit track name";
 				break;
 			case DataManagementTableModel.BACKGROUND_COLUMN:
 				tip = "Background";
@@ -342,7 +342,7 @@ class JTableX extends JTable implements MouseListener {
 				tip = "Foreground";
 				break;
 			case DataManagementTableModel.SEPARATE_COLUMN:
-				tip = "Show 2 Tracks";
+				tip = "Show 2 Tracks (+/-)";
 				break;
 			default:
 				tip = "";

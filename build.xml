@@ -107,14 +107,14 @@
 		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
 	</target>
 
-	<target name="copy-bundle" depends="common-init" description="copy bundles to bundle dir">
+	<target name="copy-bundle" description="copy bundles to bundle dir">
 		<available file="${bundle.dir}/${jar_name}.bnd.jar" property="${jar_name}.present"/>
 		<antcall target="copy-bundle-if">
     			<param name="jar_name" value="${jar_name}"/>
 		</antcall>
 	</target>
 
-	<target name="copy-bundles" depends="common-init" description="copy bundles to bundle dir">
+	<target name="copy-bundles" description="copy bundles to bundle dir">
 		<mkdir dir="${bundle.dir}" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="affx_fusion"/>
@@ -287,7 +287,7 @@
 		<iterate target="findbugs" />
 	</target>
 
-	<target name="clean" depends="common-init">
+	<target name="clean" depends="init">
 		<delete file="${igb.jar.name}.jar"/>
 		<delete file="protannot_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
@@ -316,7 +316,7 @@
 		</my.javadoc>
 	</target>
 
-	<target name="igb_ant" depends="common-init" description="Compile the ant tasks">
+	<target name="igb_ant" description="Compile the ant tasks">
 		<mkdir dir="${igb.ant.dir}/build" />
 		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar;${lib.dir}/felix.jar" />
 	</target>
@@ -342,6 +342,8 @@
 		<jar jarfile="${bundle.dir}/igb.jar" update="true">
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
+			<fileset file="${def.prefs.dir}/igb_default_menu_prefs.xml" />
+			<fileset dir="${igb-18n}/resources" />
 		</jar>
 		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>
@@ -414,6 +416,8 @@
 		<jar jarfile="${bundle.dir}/igb.jar" update="true">
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />
 			<fileset file="${def.prefs.dir}/igb_default_APIprefs.xml" />
+			<fileset file="${def.prefs.dir}/igb_default_menu_prefs.xml" />
+			<fileset dir="${igb-18n}/resources" />
 		</jar>
 	</target>
 	

@@ -237,7 +237,7 @@ public class GraphGlyph extends Glyph {
 			}
 		}
 		if (!rangeInit) {
-			float[] range = graf.getVisibleYRange();
+			float[] range = getGrafVisibleYRange();
 			if (point_max_ycoord == Float.POSITIVE_INFINITY) {
 				point_max_ycoord = range[1];
 			}
@@ -258,6 +258,10 @@ public class GraphGlyph extends Glyph {
 			setVisibleMaxY(point_max_ycoord);
 		}
 		
+	}
+
+	protected float[] getGrafVisibleYRange() {
+		return graf.getVisibleYRange();
 	}
 
 	public GraphState getGraphState() {

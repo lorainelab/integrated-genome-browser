@@ -109,9 +109,10 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			}
 		}
 		g.setColor(saveColor);
-		float[] totalYRange = mmgs.getVisibleTotalYRange();
-		setVisibleMinY(0);//setVisibleMinY(totalYRange[0]);
-		setVisibleMaxY(totalYRange[1]);
+	}
+
+	protected float[] getGrafVisibleYRange() {
+		return ((MisMatchGraphSym)graf).getVisibleTotalYRange();
 	}
 
 	private GraphSym getTotalSym(final MisMatchGraphSym mmgs) {

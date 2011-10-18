@@ -59,8 +59,9 @@
     useProxy="false">
     <mx:request>
     	<idAnnotation>{annotationsTree.selectedItem.@idAnnotation}</idAnnotation>
+    	<userName>{parentApplication.getSecurity.lastResult.@userName}</userName>
     </mx:request>
-    
+
    </mx:HTTPService> 
    
    	<mx:HTTPService             
@@ -880,20 +881,20 @@
 		 *
 		 */
 		private function makeUCSCLink():void {
-			if (getAnnotation.lastResult.@ucscLinkFile == 'convert') Alert.show("Patience! Converting useq to bw/bb format.");
+			if (getAnnotation.lastResult.@ucscLinkFile == 'convert') {
+				Alert.show("Patience! Converting useq to bw/bb format.");
+			}
 			fetchUCSCUrls.send();
 		}
 		
-		private var listingData:Array = null;
-		
 		private function onFetchUCSCUrls(event:ResultEvent) {
 			if (fetchUCSCUrls.lastResult.name() == "SUCCESS") {
-
 				navigateToURL(new URLRequest(fetchUCSCUrls.lastResult.@ucscURL1),"UCSC");
-				
 				//work around to flex bug
 				 if (fetchUCSCUrls.lastResult.@ucscURL2 != ""){
-					showAlert();
+					var txt:String = "Click to load second track after first completes:<br><br><a href='"+fetchUCSCUrls.lastResult.@ucscURL2+"' target='UCSC'><b><u>Load Second Track</u></b></a>";
+					var alert:Alert = Alert.show(txt);
+					alert.mx_internal::alertForm.mx_internal::textField.htmlText =txt;
 				}
 				
 			}
@@ -903,25 +904,7 @@
 			}
 		}
 		
-        private function showAlert():void {
-			var txt:String = "Click to load second track after first completes:<br><br><a href='"+fetchUCSCUrls.lastResult.@ucscURL2+"' target='UCSC'><b><u>Load Second Track</u></b></a>";
-			var alert:Alert = Alert.show(txt);
-			alert.mx_internal::alertForm.mx_internal::textField.htmlText =txt;
-        }
-        
-		
-		//this doesn't work, two hits to the same window cancel each other out!
-        private function openWindows(n: Number):void { 
-            if (n < listingData.length) {
-                navigateToURL(new URLRequest(listingData[n]), "UCSC"); 
-                callLater(callLater, [openWindows, [n+1]]); 
-            } 
-        } 
-      	
-      	
-      	
-      	
-      	
+ 
       	
 		
 		/************************************************************************
@@ -2609,10 +2592,22 @@
   			        	<mx:HBox  horizontalGap="0" verticalGap="0" verticalAlign="middle" paddingTop="0">
   			        		<mx:ComboBox dataProvider="{organismCombo.selectedItem.GenomeVersion}" labelField="@name" id="genomeVersionCombo" change="refreshAnnotations()" styleName="menuLabelSmall" width="170"  prompt="Genome version..."></mx:ComboBox>
   			        	</mx:HBox>
+  			        	
 						<mx:LinkButton styleName="linkMenuButton" label="Download" 
 							icon="@Embed(source='assets/download.gif')" 
 						    enabled="true"
 							click="{treeItemToSelect=null;promptToDownloadSelectedItems()}" id="downloadButton0"  includeIn="GuestState"/>
+							
+						<mx:VRule height="20" id="vrule7u"   width="2"  includeIn="GuestState"/>
+						<mx:LinkButton styleName="linkMenuButton" label="UCSC Browser" 
+			            icon="@Embed(source='assets/ucscFavicon.png')"
+			            disabledIcon="@Embed(source='assets/ucscFaviconDeselected.png')"  					        	
+			            toolTip="Create file link(s) for viewing the selected annotation in the UCSC Genome Browser"
+			            enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.name() == 'Annotation' &amp;&amp;  getAnnotation.lastResult.@ucscLinkFile != 'none'}"  
+			            click="{makeUCSCLink()}" 
+			            id="makeUCSCLinkButtonGuest" 
+			            includeIn="GuestState"/>
+				
 						<mx:VRule height="20" id="vrule7"   width="2"  includeIn="GuestState"/>
 						<mx:LinkButton styleName="linkMenuButton"  label="Refresh" 
 							icon="@Embed(source='assets/refresh.png')" 

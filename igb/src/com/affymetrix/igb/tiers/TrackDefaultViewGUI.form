@@ -18,15 +18,15 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackDefaultPanel" alignment="0" max="32767" attributes="3"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
+                      <Component id="propertiesPanel" min="-2" pref="358" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="showStrandPanel" min="-2" pref="108" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -197,7 +197,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="434" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="432" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="addTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -301,7 +301,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldComboBox" alignment="0" pref="82" max="32767" attributes="1"/>
+                              <Component id="labelFieldComboBox" alignment="0" pref="94" max="32767" attributes="1"/>
                               <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -498,7 +498,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="show2TracksCheckBox">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Show (+/-) tracks"/>
+            <Property name="text" type="java.lang.String" value="Show 2 tracks (+/-)"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show2TracksCheckBoxActionPerformed"/>

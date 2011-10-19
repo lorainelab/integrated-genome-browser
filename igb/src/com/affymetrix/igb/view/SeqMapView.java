@@ -781,7 +781,8 @@ public class SeqMapView extends JPanel
 			 **/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve above mentioned bug.
-			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
+			// Probably not necessary after a fix in r9248 - HV
+			//seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
 			seqmap.stretchToFit(true, true);
 
@@ -791,7 +792,8 @@ public class SeqMapView extends JPanel
 			 **/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
-			seqmap.stretchToFit(true, true);
+			// Probably not necessary after a fix in r9248 - HV
+			//seqmap.stretchToFit(true, true);
 			zoomToSelections();
 			postSelections();
 			int[] range = seqmap.getVisibleRange();

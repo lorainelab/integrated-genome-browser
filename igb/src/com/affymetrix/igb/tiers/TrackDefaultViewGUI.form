@@ -21,8 +21,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackDefaultPanel" alignment="0" max="32767" attributes="3"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="358" max="-2" attributes="1"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="propertiesPanel" min="-2" pref="362" max="-2" attributes="1"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="showStrandPanel" min="-2" pref="108" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -37,8 +37,8 @@
               <Component id="selectTrackDefaultPanel" max="32767" attributes="1"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
                   <Component id="showStrandPanel" min="-2" pref="105" max="-2" attributes="0"/>
+                  <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

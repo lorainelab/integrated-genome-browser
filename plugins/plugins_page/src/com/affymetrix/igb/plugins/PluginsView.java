@@ -150,7 +150,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				public void mouseClicked(MouseEvent e) {
 		            Bundle bundle = getNameInfoBundle(e.getPoint());
 		            if (bundle != null) {
-			            String bundleDocURL = (String)bundle.getHeaders().get(Constants.BUNDLE_DOCURL);
+			            String bundleDocURL = bundle.getHeaders().get(Constants.BUNDLE_DOCURL);
 			            if (bundleDocURL != null) {
 				            GeneralUtils.browse(bundleDocURL);
 			            }

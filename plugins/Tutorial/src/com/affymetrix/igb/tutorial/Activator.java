@@ -24,11 +24,11 @@ public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 	private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
 
-	private void handleWindowService(JRPMenu help_menu, ServiceReference windowServiceReference) {
+	private void handleWindowService(JRPMenu help_menu, ServiceReference<?> windowServiceReference) {
 		loadDefaultTutorialPrefs();
 		try {
 	        IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
-	    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+	    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
 	    	final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
 	    	GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
@@ -55,12 +55,13 @@ public class Activator implements BundleActivator {
         }
 	}
 	
-	private void handleIGBService(ServiceReference igbServiceReference) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void handleIGBService(ServiceReference<?> igbServiceReference) {
         try {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
     		final JRPMenu help_menu = igbService.getHelpMenu();
 
-    		ServiceReference windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
+    		ServiceReference<?> windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
             if (windowServiceReference != null)
             {
             	handleWindowService(help_menu, windowServiceReference);
@@ -82,10 +83,11 @@ public class Activator implements BundleActivator {
         }
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
 
         if (igbServiceReference != null) {
         	handleIGBService(igbServiceReference);

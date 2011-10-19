@@ -1,7 +1,6 @@
 package com.affymetrix.igb;
 
 import java.util.Arrays;
-import java.util.Properties;
 
 import javax.swing.ImageIcon;
 
@@ -63,7 +62,7 @@ public class Activator implements BundleActivator {
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 			"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-    	ServiceReference windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
+    	ServiceReference<?> windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
 
         if (windowServiceReference != null)
         {
@@ -71,8 +70,8 @@ public class Activator implements BundleActivator {
         }
         else
         {
-        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IWindowService.class.getName(), null) {
-        	    public Object addingService(ServiceReference windowServiceReference) {
+        	ServiceTracker<?, ?> serviceTracker = new ServiceTracker<Object, Object>(bundleContext, IWindowService.class.getName(), null) {
+        	    public Object addingService(ServiceReference<Object> windowServiceReference) {
         	    	run(windowServiceReference);
         	        return super.addingService(windowServiceReference);
         	    }
@@ -90,7 +89,7 @@ public class Activator implements BundleActivator {
 	 * add any extension points handling here
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
-	private void run(ServiceReference windowServiceReference) {
+	private void run(ServiceReference<?> windowServiceReference) {
     	GenericActionHolder.getInstance().addGenericActionListener(
     		new GenericActionListener() {
 				@Override

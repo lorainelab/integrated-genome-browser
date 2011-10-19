@@ -11,10 +11,10 @@ import com.affymetrix.igb.shared.ISearchMode;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration searchModeIDRegistration;
-	private ServiceRegistration searchModePropsRegistration;
+	private ServiceRegistration<?> searchModeIDRegistration;
+	private ServiceRegistration<?> searchModePropsRegistration;
 
-	private void registerService(ServiceReference igbServiceReference) {
+	private void registerService(ServiceReference<?> igbServiceReference) {
         try
         {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
@@ -27,10 +27,11 @@ public class Activator implements BundleActivator {
         }
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
 
         if (igbServiceReference != null)
         {

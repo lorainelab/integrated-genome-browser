@@ -3,7 +3,6 @@ package com.affymetrix.igb.window.service.def;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +31,7 @@ public class Activator implements BundleActivator {
 		return bundleContext;
 	}
 
-	private void addTab(ServiceReference serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
+	private void addTab(ServiceReference<?> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
 		IGBTabPanel panel = (IGBTabPanel)bundleContext.getService(serviceReference);
 		windowServiceDefaultImpl.addTab(panel);
 		tabPanels.remove(panel.getName());
@@ -61,9 +60,9 @@ public class Activator implements BundleActivator {
 		}
 		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);
-		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
+		ServiceReference<?>[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
-			for (ServiceReference serviceReference : serviceReferences) {
+			for (ServiceReference<?> serviceReference : serviceReferences) {
 				addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
 			}
 		}
@@ -72,7 +71,7 @@ public class Activator implements BundleActivator {
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {
-						ServiceReference serviceReference = event.getServiceReference();
+						ServiceReference<?> serviceReference = event.getServiceReference();
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
 							windowServiceDefaultImpl.removeTab((IGBTabPanel)bundleContext.getService(serviceReference));
 						}

@@ -19,7 +19,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception
 	{
-    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
         if (igbServiceReference != null) {
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
             igbService.getSeqMapView().setPropertyHandler(null);

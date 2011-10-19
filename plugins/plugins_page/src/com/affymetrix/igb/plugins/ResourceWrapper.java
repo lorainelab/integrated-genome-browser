@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
@@ -48,7 +50,7 @@ public class ResourceWrapper implements Bundle {
 	}
 
 	@Override
-	public Enumeration findEntries(String arg0, String arg1, boolean arg2) {
+	public Enumeration<URL> findEntries(String arg0, String arg1, boolean arg2) {
 		return null;
 	}
 
@@ -68,26 +70,25 @@ public class ResourceWrapper implements Bundle {
 	}
 
 	@Override
-	public Enumeration getEntryPaths(String arg0) {
+	public Enumeration<String> getEntryPaths(String arg0) {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Dictionary getHeaders() {
-		Hashtable dictionary = new Hashtable();
+	public Dictionary<String, String> getHeaders() {
+		Hashtable<String, String> dictionary = new Hashtable<String, String>();
 		Map resourceProperties = resource.getProperties();
 		for (Object resourceKey : resourceProperties.keySet()) {
 			String bundleKey = KEY_CONVERTER.get(resourceKey);
 			if (bundleKey != null) {
-				dictionary.put(bundleKey, resourceProperties.get(resourceKey));
+				dictionary.put(bundleKey, resourceProperties.get(resourceKey).toString());
 			}
 		}
 		return dictionary;
 	}
 
 	@Override
-	public Dictionary getHeaders(String arg0) {
+	public Dictionary<String, String> getHeaders(String arg0) {
 		return null;
 	}
 
@@ -102,7 +103,7 @@ public class ResourceWrapper implements Bundle {
 	}
 
 	@Override
-	public ServiceReference[] getRegisteredServices() {
+	public ServiceReference< ? >[] getRegisteredServices() {
 		return null;
 	}
 
@@ -112,17 +113,17 @@ public class ResourceWrapper implements Bundle {
 	}
 
 	@Override
-	public Enumeration getResources(String arg0) throws IOException {
+	public Enumeration<URL> getResources(String arg0) throws IOException {
 		return null;
 	}
 
 	@Override
-	public ServiceReference[] getServicesInUse() {
+	public ServiceReference< ? >[] getServicesInUse() {
 		return null;
 	}
 
 	@Override
-	public Map getSignerCertificates(int arg0) {
+	public Map<X509Certificate, List<X509Certificate>> getSignerCertificates(int arg0) {
 		return null;
 	}
 
@@ -147,7 +148,7 @@ public class ResourceWrapper implements Bundle {
 	}
 
 	@Override
-	public Class loadClass(String arg0) throws ClassNotFoundException {
+	public Class< ? > loadClass(String arg0) throws ClassNotFoundException {
 		return null;
 	}
 

@@ -1,7 +1,5 @@
 package com.affymetrix.igb.searchmoderesidue;
 
-import java.util.Properties;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -13,9 +11,9 @@ import com.affymetrix.igb.shared.ISearchMode;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration searchModeResidueRegistration;
+	private ServiceRegistration<?> searchModeResidueRegistration;
 
-	private void registerService(ServiceReference igbServiceReference) {
+	private void registerService(ServiceReference<?> igbServiceReference) {
         try
         {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
@@ -27,10 +25,11 @@ public class Activator implements BundleActivator {
         }
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
 
         if (igbServiceReference != null)
         {

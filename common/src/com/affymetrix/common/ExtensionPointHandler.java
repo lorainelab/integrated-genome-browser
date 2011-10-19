@@ -23,9 +23,9 @@ public abstract class ExtensionPointHandler {
 	public static void addExtensionPoint(final BundleContext bundleContext, final ExtensionPointHandler serviceHandler) {
 		// register service - an extension point
 		try {
-			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(serviceHandler.getClassName(), null);
+			ServiceReference<?>[] serviceReferences = bundleContext.getAllServiceReferences(serviceHandler.getClassName(), null);
 			if (serviceReferences != null) {
-				for (ServiceReference serviceReference : serviceReferences) {
+				for (ServiceReference<?> serviceReference : serviceReferences) {
 					serviceHandler.addService(bundleContext.getService(serviceReference));
 				}
 			}
@@ -33,7 +33,7 @@ public abstract class ExtensionPointHandler {
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {
-						ServiceReference serviceReference = event.getServiceReference();
+						ServiceReference<?> serviceReference = event.getServiceReference();
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
 							serviceHandler.removeService(bundleContext.getService(serviceReference));
 						}

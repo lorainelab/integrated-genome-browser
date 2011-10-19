@@ -315,25 +315,30 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="fgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="labelFieldTip" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="labelFieldComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackNameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldTip" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="maxDepthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxDepthTextField" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
@@ -341,29 +346,6 @@
                       <Component id="connectedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="53" pref="53" max="53" attributes="0"/>
-                  <Component id="labelFieldLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="55" pref="55" max="55" attributes="0"/>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="50" pref="50" max="50" attributes="0"/>
-                  <Component id="trackNameSizeComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="52" pref="52" max="52" attributes="0"/>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="53" pref="53" max="53" attributes="0"/>
-                  <Component id="trackNameSizeLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="55" pref="55" max="55" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="27" pref="27" max="27" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace pref="79" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

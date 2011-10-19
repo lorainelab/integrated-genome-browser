@@ -27,13 +27,13 @@
 	<classpathentry kind="lib" path="/SearchView/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Bookmark"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/affx_fusion.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/colt.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/freehep-2.1.1.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/image4j.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/jlfgr-1_0.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/picard.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/sam.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/affx_fusion.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/freehep-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/image4j.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jlfgr-1_0.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/picard.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

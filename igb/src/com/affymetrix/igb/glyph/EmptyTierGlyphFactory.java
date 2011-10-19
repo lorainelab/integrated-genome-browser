@@ -15,7 +15,6 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -63,7 +62,7 @@ public class EmptyTierGlyphFactory {
 	}
 	
 	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym) {
-		int slots = getAverageSlots(gviewer.getSeqMap());
+		int slots = gviewer.getAverageSlots();
 		TierGlyph[] tiers = new TierGlyph[2];
 				
 		double height = style.getHeight();
@@ -82,21 +81,7 @@ public class EmptyTierGlyphFactory {
 		}
 
 	}
-		
-	private static int getAverageSlots(AffyTieredMap seqmap) {
-		int slot = 1;
-		int noOfTiers = 1;
-		for(TierGlyph tier : seqmap.getTiers()){
-			if(!tier.isVisible())
-				continue;
 			
-			slot += tier.getActualSlots();
-			noOfTiers += 1;
-		}
-		
-		return slot/noOfTiers;
-	}
-	
 	private static void addEmptyChild(TierGlyph tier, double height, int slots,
 			SeqSymmetry requestSym, BioSeq seq) {
 		if (tier.getChildCount() <= 0) {

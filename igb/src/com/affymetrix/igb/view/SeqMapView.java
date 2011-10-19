@@ -2062,6 +2062,19 @@ public class SeqMapView extends JPanel
 		return ag;
 	}
 
+	public int getAverageSlots() {
+		int slot = 1;
+		int noOfTiers = 1;
+		for(TierGlyph tier : seqmap.getTiers()){
+			if(!tier.isVisible())
+				continue;
+			
+			slot += tier.getActualSlots();
+			noOfTiers += 1;
+		}
+		
+		return slot/noOfTiers;
+	}
 	public final void addToRefreshList(SeqMapRefreshed smr) {
 		seqmap_refresh_list.add(smr);
 	}

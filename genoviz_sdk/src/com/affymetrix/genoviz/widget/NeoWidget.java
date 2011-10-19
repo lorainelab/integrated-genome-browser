@@ -550,6 +550,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 				else {
 					scene_center = scene_coords.y + (scene_coords.height/2);
 					coord_value = scene_center - (view_coords.height/2);
+					
+					// Quick hack to prevent -ve values
+					// This resolves tier and tier glyph out of align bug.
+					if(coord_value < 0){
+						coord_value = 0;
+					}
 					force_scroller_adjust = true;
 				}
 			}

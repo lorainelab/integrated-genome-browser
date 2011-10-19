@@ -60,7 +60,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         negativeLabel.setText("-");
 
-        possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         possitiveColorComboBox.setButtonVisible(false);
         possitiveColorComboBox.setColorValueVisible(false);
@@ -72,7 +71,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
-        negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setColorValueVisible(false);
@@ -115,7 +113,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                         .add(negativeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -129,7 +127,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(negativeLabel)
                     .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         selectTrackDefaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track Default"));
@@ -189,7 +187,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         bgLabel.setText("Background:");
 
-        bgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         bgColorComboBox.setButtonVisible(false);
         bgColorComboBox.setColorValueVisible(false);
@@ -215,7 +212,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         fgLabel.setText("Foreground:");
 
-        fgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         fgColorComboBox.setButtonVisible(false);
         fgColorComboBox.setColorValueVisible(false);
@@ -291,7 +287,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                             .add(labelFieldLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(labelFieldComboBox, 0, 90, Short.MAX_VALUE)
+                            .add(labelFieldComboBox, 0, 91, Short.MAX_VALUE)
                             .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(labelFieldTip)
@@ -306,38 +302,44 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(TrackTypeNameLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(bgLabel))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(trackNameSizeLabel)
-                                    .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(labelFieldLabel)
-                                    .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(fgLabel)
-                                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(maxDepthLabel)
-                            .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(62, 62, 62)
-                        .add(labelFieldTip)))
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(TrackTypeNameLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(bgLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(labelFieldTip)
+                    .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(maxDepthLabel)
+                    .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(show2TracksCheckBox)
                     .add(connectedCheckBox)
                     .add(collapsedCheckBox)))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(53, 53, 53)
+                .add(labelFieldLabel)
+                .add(55, 55, 55))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(50, 50, 50)
+                .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(52, 52, 52))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(53, 53, 53)
+                .add(trackNameSizeLabel)
+                .add(55, 55, 55))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(27, 27, 27)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(fgLabel)
+                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -351,7 +353,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                     .add(layout.createSequentialGroup()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(18, 18, 18)
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -362,7 +364,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents

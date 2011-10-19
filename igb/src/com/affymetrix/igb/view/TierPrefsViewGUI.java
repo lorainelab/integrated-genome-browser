@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.Application;
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;

@@ -23,7 +23,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="showStrandPanel" min="-2" pref="108" max="-2" attributes="0"/>
+                      <Component id="showStrandPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -38,7 +38,7 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
-                  <Component id="showStrandPanel" min="-2" pref="105" max="-2" attributes="0"/>
+                  <Component id="showStrandPanel" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -73,7 +73,7 @@
                           <Component id="negativeColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="8" max="32767" attributes="0"/>
+                  <EmptySpace pref="26" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -90,7 +90,7 @@
                       <Component id="negativeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="negativeColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="9" max="32767" attributes="0"/>
+                  <EmptySpace pref="14" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -108,9 +108,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="possitiveColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -134,9 +131,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="negativeColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -301,7 +295,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldComboBox" pref="90" max="32767" attributes="1"/>
+                              <Component id="labelFieldComboBox" pref="91" max="32767" attributes="1"/>
                               <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -322,42 +316,24 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="trackNameSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="trackNameSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="62" pref="62" max="62" attributes="0"/>
-                          <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="labelFieldTip" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
@@ -365,6 +341,29 @@
                       <Component id="connectedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
+              </Group>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="53" pref="53" max="53" attributes="0"/>
+                  <Component id="labelFieldLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="55" pref="55" max="55" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="50" pref="50" max="50" attributes="0"/>
+                  <Component id="trackNameSizeComboBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="52" pref="52" max="52" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="53" pref="53" max="53" attributes="0"/>
+                  <Component id="trackNameSizeLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="55" pref="55" max="55" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="27" pref="27" max="27" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="79" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -390,9 +389,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -445,9 +441,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">

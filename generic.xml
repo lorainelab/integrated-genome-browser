@@ -56,12 +56,13 @@
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
 		<copy todir="${build.dir}" filtering="true">
-			<fileset dir="${rsrc.dir}" excludes="**/*.gif,igb_default_prefs.xml,igb_default_APIprefs.xml"/>
+			<fileset dir="${rsrc.dir}" excludes="**/*.gif,**/*.png,igb_default_prefs.xml,igb_default_APIprefs.xml"/>
 		</copy>
 		<!-- Necessary to copy binary files separately, as filtering can corrupt them.  See http://ant.apache.org/manual/CoreTasks/copy.html for details. -->
 		<copy todir="${build.dir}" filtering="false">
 			<fileset dir="${rsrc.dir}"> 
 			<include name="**/*.gif"/>
+			<include name="**/*.png"/>
 			</fileset>
 		</copy>
 

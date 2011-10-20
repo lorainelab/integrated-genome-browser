@@ -280,6 +280,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		double pixel_height = this.getView().getPixelBox().height;
 		double ppc = pixel_height / coord_height; 
 		ppc = Math.min(ppc, getMaxZoom(Y));
+		ppc = Math.max(ppc, getMinZoom(Y));
 		zoom(Y, ppc);
 		scroll(Y, range[0]);
 		setZoomBehavior(Y, CONSTRAIN_COORD, (range[0] + range[1]) / 2);

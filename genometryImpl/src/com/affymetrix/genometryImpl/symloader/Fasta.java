@@ -72,10 +72,12 @@ public class Fasta extends FastaCommon {
 					count += line.trim().length();
 				}
 				if (seq == null) {
-					chrSet.add(new BioSeq(seqid, "", count));
+					seq = new BioSeq(seqid, "", count);
+					chrSet.add(seq);
+					group.addSeq(seqid, count, uri.toString());
 				} else {
 					group.addSeq(seqid, count, uri.toString());
-					chrSet.add(seq);
+					chrSet.add(seq);	
 				}
 			}
 
@@ -99,7 +101,9 @@ public class Fasta extends FastaCommon {
 		Matcher matcher = header_regex.matcher("");
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			br = new BufferedReader(new InputStreamReader(bis));
+			//Bigger buffers should increase multitasking.  That is, the thread tha manages the buffer
+			//can keep loading the file from the web or hardrive while the main program can compute.
+			br = new BufferedReader(new InputStreamReader(bis), 1024 * 1024 * 50);
 			String header = br.readLine();
 			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
 				if (header == null) {
@@ -112,7 +116,8 @@ public class Fasta extends FastaCommon {
 				}
 				String seqid = matcher.group(1).split(" ")[0];	// get rid of spaces
 				BioSeq seq = group.getSeq(seqid);
-				boolean seqMatch = (seq != null && seq == span.getBioSeq());
+												//equals ?
+				boolean seqMatch = (seq != null && seq.equals(span.getBioSeq()) );
 				header = null;	// reset for next header
 
 				StringBuffer buf = new StringBuffer();

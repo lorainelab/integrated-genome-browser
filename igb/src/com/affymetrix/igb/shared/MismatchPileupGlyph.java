@@ -30,13 +30,19 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		BAR_ORDERS.put('N', new int[]{0,1,2,3});
 	}
 	private static final Color MATCH_COLOR = Color.GRAY;
-	private static final Color[] baseColors = {
-		ResidueColorHelper.getColorHelper().determineResidueColor('A'),
-		ResidueColorHelper.getColorHelper().determineResidueColor('T'),
-		ResidueColorHelper.getColorHelper().determineResidueColor('G'),
-		ResidueColorHelper.getColorHelper().determineResidueColor('C'),
-		ResidueColorHelper.getColorHelper().determineResidueColor('N')
-	};
+	
+	private static Color[] baseColors;
+	
+	private static void setBaseColor(){
+		baseColors = new Color[]{
+			ResidueColorHelper.getColorHelper().determineResidueColor('A'),
+			ResidueColorHelper.getColorHelper().determineResidueColor('T'),
+			ResidueColorHelper.getColorHelper().determineResidueColor('G'),
+			ResidueColorHelper.getColorHelper().determineResidueColor('C'),
+			ResidueColorHelper.getColorHelper().determineResidueColor('N')
+		};
+	}
+	
 	public MismatchPileupGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);
 	}
@@ -47,6 +53,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 	protected void bigDrawLoop(
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
 			GraphType graph_style, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
+		setBaseColor();
 		MisMatchGraphSym mmgs = (MisMatchGraphSym)graphSym;
 		Color saveColor = g.getColor();
 //		Point p = new Point();

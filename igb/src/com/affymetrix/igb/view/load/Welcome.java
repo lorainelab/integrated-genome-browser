@@ -212,32 +212,4 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 		return resizedImage;
 	}
 	
-//		EfficientLabelledGlyph elg;
-//		for (int i = 0; i < SPECIES.length; i++) {
-//			elg = new EfficientLabelledGlyph();
-//			elg.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-//			elg.setLabelLocation(GlyphI.SOUTH);
-//			elg.setSelectable(false);
-//			elg.setLabel(SPECIES[i].str);
-//			elg.setColor(SPECIES[i].color);
-//			elg.setCoords(20 * i, 0, 15, 60);
-//			
-//			Font font = new Font("Monospaced", Font.PLAIN, 1);
-//			font = font.deriveFont(SPECIES[i].font_size);
-//			
-//			
-//			ImageIcon ii = CommonUtils.getInstance().getIcon("images/" + SPECIES[i].image_name);
-//			Image image = ii.getImage();
-//			image = resizeImage(image, BufferedImage.TYPE_INT_RGB);
-//			map.prepareImage(image, map);
-//
-//			BasicImageGlyph big = new BasicImageGlyph();
-//			//big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
-//			big.setImage(image, map);
-//			big.setCoords(20 * i, 0, 15, 30);
-//			elg.addChild(big);
-//			
-//			parent.addChild(elg);
-//		}
-	
 }

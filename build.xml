@@ -433,7 +433,7 @@
 		</java>
 	</target>
 
-	<target name="classpath" depends="compile, copy-bundles, bundles_properties" >
+	<target name="classpath" depends="cbc, compile, copy-bundles, bundles_properties" >
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />

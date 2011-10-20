@@ -54,8 +54,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         collapsedCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getCollapsedCheckBox();
         labelFieldTip = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getLabelFieldTip();
 
-        setMaximumSize(new java.awt.Dimension(600, 600));
-        setPreferredSize(new java.awt.Dimension(800, 512));
+        setPreferredSize(new java.awt.Dimension(540, 512));
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
 
@@ -290,20 +289,13 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                                     .add(org.jdesktop.layout.GroupLayout.TRAILING, labelFieldLabel)
                                     .add(org.jdesktop.layout.GroupLayout.TRAILING, fgLabel)))
                             .add(maxDepthLabel))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanelLayout.createSequentialGroup()
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(maxDepthTextField))
-                                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanelLayout.createSequentialGroup()
-                                        .add(5, 5, 5)
-                                        .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 87, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                                .add(0, 0, 0)
-                                .add(labelFieldTip))))
+                            .add(maxDepthTextField)
+                            .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 87, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(labelFieldTip))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(trackDefaultTextField))))
@@ -314,19 +306,22 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
+
+        propertiesPanelLayout.linkSize(new java.awt.Component[] {labelFieldComboBox, maxDepthTextField}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(TrackTypeNameLabel)
                     .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(10, 10, 10)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(bgLabel)
                     .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(fgLabel)
                     .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(10, 10, 10)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelFieldTip)
@@ -365,7 +360,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                 .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 183, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );

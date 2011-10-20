@@ -161,7 +161,7 @@
                           <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="applyToAllButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>

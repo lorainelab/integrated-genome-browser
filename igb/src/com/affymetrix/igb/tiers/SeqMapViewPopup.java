@@ -428,7 +428,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Adjust Max Expand";
+			return "Adjust Max Stack Depth";
 		}
 	};
 	private final Action change_expand_max_all_action = new GenericAction() {
@@ -442,7 +442,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Adjust Max Expand All";
+			return "Adjust Max Stack Depth All";
 		}
 	};
 	private final Action delete_action = new GenericAction() {

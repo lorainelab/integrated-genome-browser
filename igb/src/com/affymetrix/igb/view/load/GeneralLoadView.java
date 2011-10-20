@@ -151,15 +151,6 @@ public final class GeneralLoadView {
 		return refreshDataAction;
 	}
 
-	public void initVersion(String versionName) {
-		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
-		try {
-			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-		} finally {
-			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
-		}
-	}
-
 	/**
 	 * Handles clicking of partial residue, all residue, and refresh data buttons.
 	 * @param evt

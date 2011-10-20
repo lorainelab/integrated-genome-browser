@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -130,8 +131,7 @@ public final class UnibrowControlServlet {
 			group = gmodel.getSeqGroup(version);
 		}
 		if (group != null && !group.equals(gmodel.getSelectedSeqGroup())) {
-			GeneralLoadView.getLoadView().initVersion(version);
-			gmodel.setSelectedSeqGroup(group);
+			SeqGroupView.getInstance().setSelectedGroup(version);
 		}
 		return group;
 	}

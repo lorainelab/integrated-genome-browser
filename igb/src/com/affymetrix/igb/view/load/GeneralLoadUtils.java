@@ -1134,8 +1134,6 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
-
 		if (gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature);
 		}
@@ -1143,10 +1141,7 @@ public final class GeneralLoadUtils {
 		// force a refresh of this server		
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
-		// Annotated Seq Group must be selected before feature table change call.
-		if(gmodel.getSelectedSeqGroup() != gFeature.gVersion.group){
-			gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
-		}
+		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}

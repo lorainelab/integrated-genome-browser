@@ -164,7 +164,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	}
 
-	public static void init(IGBService _igbService) {
+	static void init(IGBService _igbService) {
 		singleton = new SeqGroupView(_igbService);
 	}
 

@@ -28,7 +28,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TransformTierGlyph;
-import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -107,31 +106,31 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 			Font font = sg.getFont();
 			font = font.deriveFont(SPECIES[i].font_size);
 			sg.setFont(font);
-
+			
 			ImageIcon ii = CommonUtils.getInstance().getIcon("images/" + SPECIES[i].image_name);
 			Image image = ii.getImage();
 			image = resizeImage(image, BufferedImage.TYPE_INT_RGB);
 			map.prepareImage(image, map);
 
 			BasicImageGlyph big = new BasicImageGlyph();
-			//big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
+			big.setInfo(SPECIES[i].group);
 			big.setImage(image, map);
 			big.setCoords(20 * i, 0, 15, 30);
 			sg.addChild(big);
-
+			
 			parent.addChild(sg);
 		}
 
 		map.addItem(parent);
 		parent.pack(map.getView(), false);
 		parent.setVisibility(true);
-		//gmodel.addSymSelectionListener(this);
+		gmodel.addSymSelectionListener(this);
 	}
 
 	public void itemStateChanged(ItemEvent evt) {
 		map.removeItem(parent);
 		parent.setVisibility(false);
-		//gmodel.removeSymSelectionListener(this);
+		gmodel.removeSymSelectionListener(this);
 
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&
@@ -160,8 +159,14 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 		if(obj == null)
 			return;
 
-		AnnotatedSeqGroup group = (AnnotatedSeqGroup)obj;
-
+		String groupStr = (String)obj;
+		AnnotatedSeqGroup group = gmodel.getSeqGroup(groupStr);
+		
+		if(group == null){
+			Application.getSingleton().setStatus(groupStr+" Not Available", true);
+			return;
+		}
+		
 		GeneralLoadView.getLoadView().initVersion(group.getID());
 		gmodel.setSelectedSeqGroup(group);
 		if(group.getSeqCount() > 0){
@@ -206,4 +211,33 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 
 		return resizedImage;
 	}
+	
+//		EfficientLabelledGlyph elg;
+//		for (int i = 0; i < SPECIES.length; i++) {
+//			elg = new EfficientLabelledGlyph();
+//			elg.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
+//			elg.setLabelLocation(GlyphI.SOUTH);
+//			elg.setSelectable(false);
+//			elg.setLabel(SPECIES[i].str);
+//			elg.setColor(SPECIES[i].color);
+//			elg.setCoords(20 * i, 0, 15, 60);
+//			
+//			Font font = new Font("Monospaced", Font.PLAIN, 1);
+//			font = font.deriveFont(SPECIES[i].font_size);
+//			
+//			
+//			ImageIcon ii = CommonUtils.getInstance().getIcon("images/" + SPECIES[i].image_name);
+//			Image image = ii.getImage();
+//			image = resizeImage(image, BufferedImage.TYPE_INT_RGB);
+//			map.prepareImage(image, map);
+//
+//			BasicImageGlyph big = new BasicImageGlyph();
+//			//big.setInfo(gmodel.getSeqGroup(SPECIES[i].group));
+//			big.setImage(image, map);
+//			big.setCoords(20 * i, 0, 15, 30);
+//			elg.addChild(big);
+//			
+//			parent.addChild(elg);
+//		}
+	
 }

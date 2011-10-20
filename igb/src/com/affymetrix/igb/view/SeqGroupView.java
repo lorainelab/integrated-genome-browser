@@ -314,6 +314,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
+		setSelectedGroup(versionName);
+	}
+
+	public void setSelectedGroup(String versionName){
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");
@@ -328,7 +332,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		(new InitVersionWorker(versionName, group)).execute();
 	}
-
+	
 	public void valueChanged(ListSelectionEvent evt) {
 		Object src = evt.getSource();
 		if ((src == lsm) && (!evt.getValueIsAdjusting())) { // ignore extra messages

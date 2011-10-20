@@ -28,6 +28,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -167,11 +168,7 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 			return;
 		}
 		
-		GeneralLoadView.getLoadView().initVersion(group.getID());
-		gmodel.setSelectedSeqGroup(group);
-		if(group.getSeqCount() > 0){
-			gmodel.setSelectedSeq(group.getSeq(0));
-		}
+		SeqGroupView.getInstance().setSelectedGroup(groupStr);
 	}
 
 	public void componentMoved (ComponentEvent ce){}

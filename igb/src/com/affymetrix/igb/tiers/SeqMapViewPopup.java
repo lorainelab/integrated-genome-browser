@@ -295,7 +295,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //			gviewer.getSeqMap().repackTheTiers(true, true, true);
 //		}
 //	};
-	private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
+	private final Action change_expand_max_action = new AbstractAction("Adjust Max Stack Depth") {
 
 		private static final long serialVersionUID = 1L;
 
@@ -304,7 +304,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			PreferencesPanel.getSingleton().tpv.externalChange();
 		}
 	};
-	private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
+	private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Stack Depth") {
 
 		private static final long serialVersionUID = 1L;
 

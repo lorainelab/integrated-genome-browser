@@ -25,7 +25,7 @@
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="selectTrackDefaultPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="362" max="-2" attributes="1"/>
+                      <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="showStrandPanel" min="-2" pref="108" max="-2" attributes="0"/>
                   </Group>
@@ -275,37 +275,40 @@
                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="trackNameSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="maxDepthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="TrackTypeNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="maxDepthTextField" alignment="0" max="32767" attributes="1"/>
-                              <Component id="bgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
-                              <Component id="trackNameSizeComboBox" alignment="0" pref="59" max="32767" attributes="1"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="bgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
+                                      <Component id="trackNameSizeComboBox" alignment="0" pref="59" max="32767" attributes="1"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="fgLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelFieldLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Component id="maxDepthLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="fgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="labelFieldComboBox" min="-2" pref="85" max="-2" attributes="1"/>
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="maxDepthTextField" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="labelFieldComboBox" alignment="0" pref="85" max="32767" attributes="1"/>
+                                  </Group>
                                   <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                                   <Component id="labelFieldTip" min="-2" pref="14" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="trackDefaultTextField" pref="246" max="32767" attributes="1"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="trackDefaultTextField" max="32767" attributes="1"/>
                   </Group>
               </Group>
               <Group type="102" alignment="0" attributes="0">
@@ -321,50 +324,42 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="trackNameSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="trackNameSizeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="labelFieldTip" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackNameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="maxDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="maxDepthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="show2TracksCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="connectedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="collapsedCheckBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="36" pref="36" max="36" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="fgLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="101" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -470,7 +465,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="maxDepthLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Max Depth:"/>
+            <Property name="text" type="java.lang.String" value="Max Stack Depth:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="maxDepthTextField">

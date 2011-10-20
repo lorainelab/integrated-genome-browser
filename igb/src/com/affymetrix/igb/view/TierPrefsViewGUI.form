@@ -504,6 +504,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="possitiveColorComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.possitiveColorComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="negativeColorComboBox">
           <Properties>
@@ -527,6 +530,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="negativeColorComboBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.negativeColorComboBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="colorCheckBox">
           <Properties>
@@ -535,6 +541,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.colorCheckBox"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="arrowCheckBox">
           <Properties>
@@ -543,6 +552,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="arrowCheckBoxActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.arrowCheckBox"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

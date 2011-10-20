@@ -69,10 +69,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
-        possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        colorCheckBox = new javax.swing.JCheckBox();
-        arrowCheckBox = new javax.swing.JCheckBox();
+        possitiveColorComboBox = tpv.possitiveColorComboBox;
+        negativeColorComboBox = tpv.negativeColorComboBox;
+        colorCheckBox = tpv.colorCheckBox;
+        arrowCheckBox = tpv.arrowCheckBox;
         viewModelPanel = new javax.swing.JPanel();
         viewModeCB = tpv.viewModeCB;
 

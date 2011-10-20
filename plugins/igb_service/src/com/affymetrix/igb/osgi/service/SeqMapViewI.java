@@ -90,6 +90,6 @@ public interface SeqMapViewI {
 	public Object getMouseListener();
 	public void addPopupListener(ContextualPopupListener listener);
 	public void selectAllGraphs();
-	public void select(List<SeqSymmetry> sym_list);
+	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
 
 }

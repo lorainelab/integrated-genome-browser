@@ -1126,8 +1126,16 @@ public class SeqMapView extends JPanel
 		select(glyphsToSyms(visibleList), false, true, true);
 	}
 
-	public final void select(List<SeqSymmetry> sym_list) {
-		select(sym_list, false, false, true);
+	public final void select(List<SeqSymmetry> sym_list, boolean normal_selection) {
+		select(sym_list, false, normal_selection, true);
+		if (normal_selection) {
+			zoomToSelections();
+			List<GlyphI> glyphs = seqmap.getSelected();
+			setStatus(getSelectionTitle(glyphs));
+			if (show_edge_matches) {
+				doEdgeMatching(glyphs, false);
+			}
+		}
 	}
 
 	private void select(List<SeqSymmetry> sym_list, boolean add_to_previous,

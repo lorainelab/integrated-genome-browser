@@ -123,7 +123,7 @@ public class AltSpliceView extends IGBTabPanel
 					this.sliceAndDice(last_selected_syms);
 					pending_selection_change = false;
 				} else {
-					spliced_view.select(last_selected_syms);
+					spliced_view.select(last_selected_syms, false);
 					pending_selection_change = false;
 				}
 			}
@@ -202,7 +202,7 @@ public class AltSpliceView extends IGBTabPanel
 			if (slice_by_selection_on) {
 				this.sliceAndDice(last_selected_syms);
 			} else {
-				spliced_view.select(last_selected_syms);
+				spliced_view.select(last_selected_syms, false);
 			}
 			pending_selection_change = false;
 		}

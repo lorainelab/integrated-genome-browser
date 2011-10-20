@@ -345,7 +345,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 			// Set selected symmetry normally
 			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
 			syms.add(sym);
-			gmodel.setSelectedSymmetriesAndSeq(syms, this);
+			igbService.getSeqMapView().select(syms, true);
 		}
 	}
 

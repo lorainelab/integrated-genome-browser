@@ -348,13 +348,13 @@
 
 	<target name="igb_ant" description="Compile the ant tasks">
 		<mkdir dir="${igb.ant.dir}/build" />
-		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar;${lib.dir}/felix.jar" />
+		<my.javac srcdir="${igb.ant.dir}/src" destdir="${igb.ant.dir}/build" classpath="${igb.ant.dir}/lib/ant.jar;${osgi.impl}" />
 	</target>
 
 	<target name="declare_igb_ant" depends="igb_ant">
 		<taskdef name="bndlprops"
 	        classname="com.affymetrix.igb.ant.IncludeJars"
-	        classpath="${igb.ant.dir}/build;${lib.dir}/felix.jar"/>
+	        classpath="${igb.ant.dir}/build;${osgi.impl}"/>
 	</target>
 
 	<target name="bundles_properties" depends="declare_igb_ant" description="Create the bundles.properties file">
@@ -386,9 +386,7 @@
 				<include name="main.jar"/>
 				<include name="common.jar"/>
 			</zipgroupfileset>
-			<zipgroupfileset dir="${lib.dir}">
-				<include name="felix.jar" />
-			</zipgroupfileset>
+			<zipgroupfileset file="${osgi.impl}" />
 			<fileset dir="${bundle.dir}">
 				<include name="*.jar"/>
 			</fileset>
@@ -439,9 +437,7 @@
 			<dirset dir="${main}/build/" />
 			<dirset dir="${common}/build/" />
 			<dirset dir="${etc.dir}/" />
-			<fileset dir="${lib.dir}" >
-				<include name="felix.jar" />
-			</fileset>
+			<fileset file="${osgi.impl}" />
 		</path>
 		<jar jarfile="${bundle.dir}/igb.jar" update="true">
 			<fileset file="${def.prefs.dir}/igb_default_prefs.xml" />

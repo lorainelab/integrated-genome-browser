@@ -4,9 +4,12 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -23,10 +26,11 @@ import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
-import org.apache.felix.framework.Felix;
-import org.apache.felix.framework.util.StringMap;
+//import org.apache.felix.main.AutoProcessor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.launch.Framework;
+import org.osgi.framework.launch.FrameworkFactory;
 
 import com.affymetrix.common.CommonUtils;
 
@@ -36,7 +40,7 @@ import com.affymetrix.common.CommonUtils;
 public class OSGiHandler {
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
-	private Felix felix;
+	private Framework m_fwk;
 	private String bundlePathToInstall;
 	private String bundleSymbolicNameToUninstall;
 
@@ -83,24 +87,39 @@ public class OSGiHandler {
 		return (path.delete());
 	}
 
-	/**
-	 * load the OSGi implementation - Apache felix.
-	 * @param argArray the command line arguments joined into a String
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private final void loadFelix(String argArray) {
-		Map configMap = new StringMap(false);
-		configMap.put("org.osgi.framework.storage", getCacheDir());
-		for (String key : CONFIG_BUNDLE.keySet()) {
-			configMap.put(key, CONFIG_BUNDLE.getString(key));
+	private static FrameworkFactory getFrameworkFactory() throws Exception
+    {
+		ServiceLoader<FrameworkFactory> factoryLoader =
+				ServiceLoader.load(FrameworkFactory.class);
+		Iterator<FrameworkFactory> it = factoryLoader.iterator();
+		if (!it.hasNext()) {
+	        System.err.println("Could not create framework, no OSGi implementation found");
+	        System.exit(0);
 		}
-		configMap.put("args", argArray);
-//        Runtime.getRuntime().addShutdownHook(new Thread("Felix Shutdown Hook") {
-//        	public void run() {
-//        		stop();
-//        	}
-//        });
-        felix = new Felix(configMap);
+		return it.next();
+	}
+
+	private final void loadFramework(String argArray) {
+		try
+	    {
+			Map<String, String> configProps = new HashMap<String, String>();
+			configProps.put("org.osgi.framework.storage", getCacheDir());
+			for (String key : CONFIG_BUNDLE.keySet()) {
+				configProps.put(key, CONFIG_BUNDLE.getString(key));
+			}
+			configProps.put("args", argArray);
+			FrameworkFactory factory = getFrameworkFactory();
+	        m_fwk = factory.newFramework(configProps);
+	        m_fwk.init();
+//	        AutoProcessor.process(configProps, m_fwk.getBundleContext());
+	        m_fwk.start();
+	    }
+	    catch (Exception ex)
+	    {
+	        System.err.println("Could not create framework: " + ex);
+	        ex.printStackTrace();
+	        System.exit(0);
+	    }
 	}
 
 	/**
@@ -112,12 +131,12 @@ public class OSGiHandler {
 		setLaf();
 
 		String argArray = Arrays.toString(args);
-		loadFelix(argArray.substring(1, argArray.length() - 1));
+		loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try
         {
-            felix.start();
-            BundleContext bundleContext = felix.getBundleContext();
+            m_fwk.start();
+            BundleContext bundleContext = m_fwk.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
 	           	// load embedded bundles
 	            String[] jarNames = getResourceListing(OSGiHandler.class, "");
@@ -174,7 +193,7 @@ public class OSGiHandler {
     		for (Bundle bundle : bundleContext.getBundles()) {
     			bundle.start();
     		}
-          	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");
+          	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started with " + m_fwk.getSymbolicName() + " version " + m_fwk.getVersion());
         }
         catch (Exception ex)
         {
@@ -310,21 +329,21 @@ public class OSGiHandler {
 	}
 
 	public BundleContext getBundleContext() {
-		if (felix == null) {
+		if (m_fwk == null) {
 			return null;
 		}
-		return felix.getBundleContext();
+		return m_fwk.getBundleContext();
 	}
 
 	public boolean installBundle(String filePath) {
-		if (felix == null) {
+		if (m_fwk == null) {
 			bundlePathToInstall = filePath;
 			return true;
 		}
 		Bundle bundle = null;
 		if (filePath != null) {
 			try {
-	            BundleContext bundleContext = felix.getBundleContext();
+	            BundleContext bundleContext = m_fwk.getBundleContext();
 				bundle = bundleContext.installBundle(filePath);
 				bundle.start();
 			}
@@ -340,13 +359,13 @@ public class OSGiHandler {
 	}
 
 	public boolean uninstallBundle(String symbolicName) {
-		if (felix == null) {
+		if (m_fwk == null) {
 			bundleSymbolicNameToUninstall = symbolicName;
 			return true;
 		}
 		boolean found = false;
 		if (symbolicName != null) {
-            BundleContext bundleContext = felix.getBundleContext();
+            BundleContext bundleContext = m_fwk.getBundleContext();
 			for (Bundle bundle : bundleContext.getBundles()) {
 				if (symbolicName.equals(bundle.getSymbolicName())) {
 					try {

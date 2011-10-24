@@ -81,7 +81,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			x_plus_width2D.x = xtemp + 1;
 			int savey = zero_point.y;
 			char referenceBase = seq.getResidues(xtemp,xtemp + 1).toUpperCase().charAt(0);
-			float y_accum = 0;//getVisibleMinY();
+			float y_accum = 0;
 			int[] barOrder = BAR_ORDERS.get(referenceBase);
 			if (barOrder == null) {
 				continue;

@@ -61,7 +61,7 @@ public class TierGlyph extends SolidGlyph {
 	 *  included GraphGlyph to also draw a handle.
 	 */
 	public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
-	private double spacer = 10;
+	private double spacer = 2;
 
 	/*
 	 * other_fill_color is derived from fill_color whenever setFillColor() is called.

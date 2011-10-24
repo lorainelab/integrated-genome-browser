@@ -99,7 +99,6 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	 * Swing Renderer class for the NameInfoPanel
 	 */
 	public static class NameInfoRenderer implements TableCellRenderer, UIResource {
-		private static final long serialVersionUID = 1L;
 		private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
 		@Override

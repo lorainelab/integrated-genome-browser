@@ -463,6 +463,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading Genomes from DB");
 		Session sess  = null;
 		Transaction tx = null;
+		File file = null;
 		try {
 			sess  = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
@@ -554,7 +555,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						String fileName = qa.getAnnotation().getQualifiedFileName(genometry_server_dir);    
 						String typePrefix = qa.getTypePrefix(); 
 						
-						File file = new File(fileName);		
+						file = new File(fileName);
 						
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
@@ -579,13 +580,21 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 							} else {
-								ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+								//watch out for single file bai indexes, just warn and skip
+								if (file.getName().toLowerCase().endsWith(".bai")){
+									Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+											Level.WARNING, "Bypassing annotation {0}.  No associated bam alignment file for "+file);
+								}
+								
+								else {
+									ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 										file, 
 										genomeVersion, 
 										annots_map,
 										typePrefix, 
 										qa.getAnnotation().getIdAnnotation(),
-										graph_name2file);                                            
+										graph_name2file); 
+								}
 							}
 							
 							// Update the flag indicating that the annotation has been loaded
@@ -612,7 +621,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		} catch (Exception e) {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
-					Level.SEVERE, "Problems reading annotations from database {0}", e.toString());
+					Level.SEVERE, "Problems reading annotations from file '"+file+"' in database {0}", e.toString());
 			e.printStackTrace();
 			if (tx != null) {
 				tx.rollback();

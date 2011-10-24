@@ -161,13 +161,13 @@ public final class IndexingUtils {
 				continue;	// ignore; this is a seq that was added during parsing.
 			}
 
-			Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
+			if (DEBUG) Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
 					"Determining indexes for {0}, {1}", new Object[]{tempGenome.getID(), tempSeq.getID()});
 
 			// Sort symmetries for this specific chromosome.
 			List<SeqSymmetry> sortedSyms =
 					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
-			if (sortedSyms.isEmpty()) {
+			if (DEBUG && sortedSyms.isEmpty()) {
 				Logger.getLogger(IndexingUtils.class.getName()).log(Level.WARNING,
 						"No annotations found for file: {0} on chromosome:{1}", new Object[]{file.getName(), tempSeq.getID()});
 				continue;

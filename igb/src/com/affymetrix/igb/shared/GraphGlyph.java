@@ -135,7 +135,7 @@ public class GraphGlyph extends Glyph {
 	 * 
 	 */
 	public float[] copyYCoords() {
-		return graf.copyGraphYCoords();
+		return graf.normalizeGraphYCoords();
 	}
 
 	public GraphGlyph(GraphSym graf, GraphState gstate) {
@@ -237,7 +237,7 @@ public class GraphGlyph extends Glyph {
 			}
 		}
 		if (!rangeInit) {
-			float[] range = getGrafVisibleYRange();
+			float[] range = graf.getVisibleYRange();
 			if (point_max_ycoord == Float.POSITIVE_INFINITY) {
 				point_max_ycoord = range[1];
 			}
@@ -258,10 +258,6 @@ public class GraphGlyph extends Glyph {
 			setVisibleMaxY(point_max_ycoord);
 		}
 		
-	}
-
-	protected float[] getGrafVisibleYRange() {
-		return graf.getVisibleYRange();
 	}
 
 	public GraphState getGraphState() {

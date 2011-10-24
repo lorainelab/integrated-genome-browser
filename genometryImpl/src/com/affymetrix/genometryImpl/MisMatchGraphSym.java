@@ -23,8 +23,6 @@ public class MisMatchGraphSym extends GraphSym {
 
 	int[][] residuesTot = null;
 	private final File helperIndex;
-	private float min_totalycoord = Float.POSITIVE_INFINITY;
-	private float max_totalycoord = Float.NEGATIVE_INFINITY;
 
 	public MisMatchGraphSym(int[] x, int[] w, float[] y, 
 			int[] a, int[] t, int[] g, int[] c, int[] n, 
@@ -36,7 +34,7 @@ public class MisMatchGraphSym extends GraphSym {
 		helperIndex = index(id+"helper",a,t,g,c,n);
 	}
 	
-	private File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {
+	protected File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {
 		residuesTot = new int[5][BUFSIZE];
 		
 		System.arraycopy(a, 0, residuesTot[0], 0, Math.min(BUFSIZE, getPointCount()));
@@ -50,7 +48,6 @@ public class MisMatchGraphSym extends GraphSym {
 			return null;
 		}
 		
-		setVisibleTotalYRange(residuesTot);
 		return createIndexedFile(graphName,a,t,g,c,n);
 	}
 	
@@ -91,32 +88,6 @@ public class MisMatchGraphSym extends GraphSym {
 		System.arraycopy(g, 0, residuesTot[2], 0, g.length);
 		System.arraycopy(c, 0, residuesTot[3], 0, c.length);
 		System.arraycopy(n, 0, residuesTot[4], 0, n.length);
-		setVisibleTotalYRange(residuesTot);
-	}
-
-	private synchronized void setVisibleTotalYRange(int[][] resT) {
-		min_totalycoord = Float.POSITIVE_INFINITY;
-		max_totalycoord = Float.NEGATIVE_INFINITY;
-		for (int i = 0; i < resT[0].length; i++) {
-			float f = 0;
-			for (int j = 0; j < 5; j++) {
-				f += resT[j][i];
-			}
-			if (f < min_totalycoord) {
-				min_totalycoord = f;
-			}
-			if (f > max_totalycoord) {
-				max_totalycoord = f;
-			}
-		}
-	}
-
-	public final float getTotalY(int i) {
-		float totalY = 0.0f;
-		for (float y : getAllResiduesY(i)) {
-			totalY += y;
-		}
-		return totalY;
 	}
 
 	public final float[] getAllResiduesY(int i) {
@@ -366,22 +337,11 @@ public class MisMatchGraphSym extends GraphSym {
 		} finally {
 			GeneralUtils.safeClose(dis);
 		}
-		setVisibleTotalYRange(residuesTot);
 	}
 	
 	@Override
 	public void clear(){
 		super.clear();
 		residuesTot = null;
-	}
-
-	public final float[] getVisibleTotalYRange() {
-		float[] result = new float[2];
-		if (min_totalycoord == Float.POSITIVE_INFINITY || max_totalycoord == Float.NEGATIVE_INFINITY) {
-			setVisibleTotalYRange(residuesTot);
-		}
-		result[0] = min_totalycoord;
-		result[1] = max_totalycoord;
-		return result;
 	}
 }

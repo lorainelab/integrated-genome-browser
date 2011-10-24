@@ -40,7 +40,7 @@ public class GraphSym extends SimpleSymWithProps {
 	public static final int BUFSIZE = 100000;	// buffer size
 	private int bufStart = 0;	// current buffer start
 	//private int xBuf[];
-	private float yBuf[];
+	protected float yBuf[];
 	private int wBuf[];
 	private File bufFile;
 
@@ -268,7 +268,7 @@ public class GraphSym extends SimpleSymWithProps {
 	/** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
 	 *  were originally specified as non-floats.
 	 */
-	public final synchronized float[] copyGraphYCoords() {
+	public synchronized float[] copyGraphYCoords() {
 		float[] tempCoords = new float[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphYCoord(i);
@@ -276,7 +276,15 @@ public class GraphSym extends SimpleSymWithProps {
 		return tempCoords;
 	}
 
-	public final float[] getVisibleYRange() {
+	/**
+	 * @return a "normalized" copy of the Y coords, remove
+	 * consecutive duplicates
+	 */
+	public synchronized float[] normalizeGraphYCoords() {
+		return copyGraphYCoords();
+	}
+
+	public float[] getVisibleYRange() {
 		float[] result = new float[2];
 		result[0] = min_ycoord;
 		result[1] = max_ycoord;
@@ -414,9 +422,9 @@ public class GraphSym extends SimpleSymWithProps {
 		return IndexingUtils.createIndexedFile(this.pointCount, x, y, w);
 	}
 
-	private String cleanFileName(String fileName) {
-		return fileName.replaceAll("\\(", "_").replaceAll("\\)", "_").replaceAll("\\*", "_").replaceAll("\\.", "_");
-	}
+//	private String cleanFileName(String fileName) {
+//		return fileName.replaceAll("\\(", "_").replaceAll("\\)", "_").replaceAll("\\*", "_").replaceAll("\\.", "_");
+//	}
 	
 	/**
 	 * Read into buffers

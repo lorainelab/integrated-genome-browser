@@ -24,7 +24,7 @@ import java.util.*;
 
 public final class SeqSymSummarizer {
 
-	public static MisMatchGraphSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
+	public static MisMatchGraphSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end, boolean pileup)  {
 
 		if(syms.isEmpty())
 			return null;
@@ -71,7 +71,7 @@ public final class SeqSymSummarizer {
 
 		}
 
-		MisMatchGraphSym summary = createMisMatchGraph(range, yR, start, y, id, seq);
+		MisMatchGraphSym summary = createMisMatchGraph(range, yR, start, y, id, seq, pileup);
 		summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
 		
 		//Request Garbage Collection
@@ -80,7 +80,7 @@ public final class SeqSymSummarizer {
 		return summary;
 	}
 	
-	private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq) {
+	private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq, boolean pileup) {
 		MisMatchGraphSym summary;
 		IntArrayList _x = new IntArrayList(range);
 		FloatArrayList _y = new FloatArrayList(range);
@@ -113,7 +113,12 @@ public final class SeqSymSummarizer {
 		_yC.trimToSize();
 		_yN.trimToSize();
 
-		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), 
+		summary = pileup ?
+				new MisMatchPileupGraphSym(_x.elements(), _w.elements(), _y.elements(), 
+				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
+				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq)
+				:
+				new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), 
 				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
 				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
 		return summary;

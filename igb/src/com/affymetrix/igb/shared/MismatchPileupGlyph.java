@@ -69,7 +69,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		g.setColor(MATCH_COLOR);
 		super.bigDrawLoop(
 				draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width,
-				graph_style, g, max_x_plus_width, getTotalSym(mmgs));
+				graph_style, g, max_x_plus_width, mmgs);
 
 		// now draw the mismatches, piled up
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
@@ -81,7 +81,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			x_plus_width2D.x = xtemp + 1;
 			int savey = zero_point.y;
 			char referenceBase = seq.getResidues(xtemp,xtemp + 1).toUpperCase().charAt(0);
-			float y_accum = getVisibleMinY();
+			float y_accum = 0;//getVisibleMinY();
 			int[] barOrder = BAR_ORDERS.get(referenceBase);
 			if (barOrder == null) {
 				continue;
@@ -97,6 +97,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 					return;
 				}
 				ytemp += y_accum;
+				y_accum = ytemp;
 				// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 				ytemp = Math.min(ytemp, getVisibleMaxY());
 				ytemp = Math.max(ytemp, getVisibleMinY());
@@ -111,32 +112,10 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 				yheight_pixel = Math.max(1, yheight_pixel);
 				g.setColor(baseColors[loopIndex]);
 				g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
-				y_accum = ytemp;
 				savey = curr_point.y;
 			}
 		}
 		g.setColor(saveColor);
-	}
-
-	protected float[] getGrafVisibleYRange() {
-		return ((MisMatchGraphSym)graf).getVisibleTotalYRange();
-	}
-
-	private GraphSym getTotalSym(final MisMatchGraphSym mmgs) {
-		return new GraphSym(null, null, null, mmgs.getGraphSeq()) { // only implement methods needed by bigDrawLoop()
-			public int getGraphXCoord(int i) {
-				return mmgs.getGraphXCoord(i);
-			}
-			public float getGraphYCoord(int i) {
-				return mmgs.getTotalY(i);
-			}
-			public int getGraphWidthCoord(int i) {
-				return mmgs.getGraphWidthCoord(i);
-			}
-			public boolean hasWidth() {
-				return mmgs.hasWidth();
-			}
-		};
 	}
 
 	@Override

@@ -884,6 +884,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	public static void addMisMatchTier(TierGlyph atier, String prefix) {
+		boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);
 		BioSeq aseq = gmodel.getSelectedSeq();
 		String human_name = prefix + ": " + atier.getLabel();
 		String unique_name = TrackStyle.getUniqueName(human_name);
@@ -913,7 +914,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 
-		DependentData dd = new DependentData(unique_name, DependentType.MISMATCH, method);
+		DependentData dd = new DependentData(unique_name, pileup ? DependentType.MISMATCH_PILEUP : DependentType.MISMATCH, method);
 		SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 
 		if (wrapperSym == null) {

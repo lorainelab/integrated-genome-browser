@@ -1,5 +1,7 @@
 package com.affymetrix.igb.glyph;
 
+import java.util.List;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -62,7 +64,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapVi
 		//Force to use single track
 		style.setSeparate(false);
 		
-		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, meth, startEnd[0], startEnd[1]);
+		MisMatchGraphSym mgsym = getMismatchGraph(syms, aseq, false, meth, startEnd[0], startEnd[1]);
 		
 		TierGlyph[] tiers = smv.getTiers(false, style, true);
 		
@@ -81,6 +83,8 @@ public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapVi
 		}
 		return false;
 	}
+
+	protected abstract MisMatchGraphSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end);
 
 	protected abstract GraphGlyph getGraphGlyph(MisMatchGraphSym gsym, GraphState state);
 

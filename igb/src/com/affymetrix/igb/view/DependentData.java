@@ -26,7 +26,8 @@ public class DependentData {
 
 		SUMMARY,
 		COVERAGE,
-		MISMATCH
+		MISMATCH,
+		MISMATCH_PILEUP
 	}
 
 	final private String id;
@@ -54,7 +55,9 @@ public class DependentData {
 		}
 		
 		if (type == DependentType.MISMATCH){
-			sym = createMisMatchGraph(aseq, psym);
+			sym = createMisMatchGraph(aseq, psym, false);
+		}else if (type == DependentType.MISMATCH_PILEUP){
+			sym = createMisMatchGraph(aseq, psym, true);
 		}else if (type == DependentType.SUMMARY) { //Check if type is summary.
 			sym = createSummaryGraph(aseq, psym);
 		} else {	//If type is not summary then it should be coverage.
@@ -64,7 +67,7 @@ public class DependentData {
 		return sym;
 	}
 
-	private GraphSym createMisMatchGraph(BioSeq aseq, SeqSymmetry tsym){
+	private GraphSym createMisMatchGraph(BioSeq aseq, SeqSymmetry tsym, boolean pileup){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(tsym);
 		
@@ -78,7 +81,7 @@ public class DependentData {
 			}
 		}
 		
-		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1]);
+		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1], pileup);
 
 		return mgsym;
 	}

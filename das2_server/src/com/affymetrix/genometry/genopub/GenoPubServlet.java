@@ -136,7 +136,7 @@ public class GenoPubServlet extends HttpServlet {
 	private String fdt_task_dir;
 	private String fdt_client_codebase;
 	private String fdt_server_name;
-	
+
 	//fields to support url soft links to big bed/wig bam files
 	private File genoPubWebAppDir;
 	private HashSet<String> urlLinkFileExtensions = null;
@@ -145,6 +145,9 @@ public class GenoPubServlet extends HttpServlet {
 	private File ucscWig2BigWigExe;
 	private File ucscBed2BigBedExe;
 
+	//fields for bulkUploading
+	private static final Pattern BULK_UPLOAD_LINE_SPLITTER = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t([^\\t]+)\\t(.+)", Pattern.DOTALL);
+
 
 	public void init() throws ServletException {
 		//fetch genopub dir
@@ -152,7 +155,7 @@ public class GenoPubServlet extends HttpServlet {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
-		
+
 		//attempt to find the UCSC executables for converting bed and wig files to bigBed, bigWig formats
 		if (autoConvertUSeqArchives && fetchUCSCExecutableFiles() == false){
 			autoConvertUSeqArchives = false;
@@ -1918,7 +1921,7 @@ public class GenoPubServlet extends HttpServlet {
 			// Add annotation properties
 			for(Iterator<?> i = propsDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element node = (Element)i.next();
-//Adding annotations
+				//Adding annotations
 				String idAnnotationProperty = node.attributeValue("idAnnotationProperty");
 
 				AnnotationProperty ap = null;
@@ -1986,7 +1989,7 @@ public class GenoPubServlet extends HttpServlet {
 					}
 				}
 				sess.flush();
-				
+
 
 				String optionValue = "";
 				TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
@@ -2059,7 +2062,7 @@ public class GenoPubServlet extends HttpServlet {
 	private void handleAnnotationDuplicateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
@@ -2089,16 +2092,16 @@ public class GenoPubServlet extends HttpServlet {
 			dup.setIsLoaded("N");
 			dup.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 			dup.setCreatedBy(this.genoPubSecurity.getUserName());
-			
+
 			//save Annotation so that it's assigned an ID
 			sess.save(dup);
-			
+
 			//add annotation properties			
 			Set<AnnotationProperty> clonedAPSet = new HashSet<AnnotationProperty>(); 
 
 			//for each AnnotationProperty in the source Annotation
 			for(Iterator<?> i = sourceAnnot.getAnnotationProperties().iterator(); i.hasNext();) {
-				
+
 				//get the AnnotationProperty
 				AnnotationProperty sourceAP = (AnnotationProperty)i.next();
 
@@ -2159,7 +2162,7 @@ public class GenoPubServlet extends HttpServlet {
 			Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
 			while (cIt.hasNext()) collaborators.add((User)cIt.next());
 			dup.setCollaborators(collaborators);
-			
+
 			//groupings?
 			Set<AnnotationGrouping>  annotationGroupings= new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
 			Iterator<?> aIt = sourceAnnot.getAnnotationGroupings().iterator();
@@ -2381,8 +2384,8 @@ public class GenoPubServlet extends HttpServlet {
 			UnloadAnnotation unload = new UnloadAnnotation();
 			unload.setTypeName(typeName);
 			unload.setIdUser(this.genoPubSecurity.getIdUser());
-      unload.setIdGenomeVersion(annotation.getIdGenomeVersion());
-      sess.save(unload);
+			unload.setIdGenomeVersion(annotation.getIdGenomeVersion());
+			sess.save(unload);
 
 
 			// Remove the annotation grouping the annotation was in
@@ -2975,13 +2978,12 @@ public class GenoPubServlet extends HttpServlet {
 								}
 								// bam file? check if it is sorted and can be read
 								if (fileName.toUpperCase().endsWith(".BAM")) {
-									//TODO: Need Tony's help to get this to build and recognize the sam.jar and picard.jar 's
 									String error = checkBamFile(file);
 									if (error != null ) {
 										if (!file.delete()) {
 											Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
 										}
-										throw new MalformedBamFileException(error);
+										throw new MalformedBamFileException("Errors found with bam file -> "+fileName+". Aborting upload. "+error);
 									}
 								}
 							}
@@ -3035,7 +3037,7 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 			this.reportError(res, e.getMessage(), ERROR_CODE_UNSUPPORTED_FILE_TYPE);
-			
+
 		} catch (IOException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
@@ -3086,78 +3088,164 @@ public class GenoPubServlet extends HttpServlet {
 			//clean up
 			reader.close();
 		} catch (Exception e){
-			message = "Aborting bam file upload for '"+bamFile.getName() +"'. Use the Picard tools " +
-			"(http://picard.sourceforge.net) to sort by coordinate, generate bam index files (xxx.bam.bai), and validate both before uploading. "+e.getMessage();
+			message = e.getMessage();
 		} finally {
 			if (reader != null) reader.close();
 		}
 		return message;
 	}
 
-	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
+	/**Checks the bulk upload file before making any annotations. Returns null if all OK or error messages.
 	 * @author davidnix*/
-	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
-	throws BulkFileUploadException, InsufficientPermissionException, IOException  {
+	private String validateBulkUploadFile(File spreadSheet)   {
+		//for each line check params are OK
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader (new FileReader(spreadSheet));
+			String line;
+			StringBuilder errors = new StringBuilder();
+			HashSet<String> bamBaiFiles = new HashSet<String>();
+			while ((line = in.readLine()) != null){
+				line = line.trim();
+				if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) continue;
 
-		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
-		String line;
-		Pattern tab = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t([^\\t]+)\\t(.+)", Pattern.DOTALL);
-		
-		//for each line create a new annotation if it doesn't exist
-		while ((line = in.readLine()) != null){
-			line = line.trim();
-			if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) {
-				continue;
-			}
-
-			//parse name, fileName, summary, description
-			Matcher mat = tab.matcher(line);
-			if (mat.matches() == false) { 
-				throw new BulkFileUploadException("Unable to parse the required fields from this line -> " + line+"  Aborting bulk upload.");
-			}
-			String name = mat.group(1).trim();
-			if (name.length()==0) {
-				throw new BulkFileUploadException("Failed to parse an annotation name from this line -> " + line+"  Aborting bulk upload.");
-			}
-			//remove any preceeding /s
-			if (name.startsWith("/")) name = name.substring(1);
-			File dataFile = new File (mat.group(2).trim());
-			if (dataFile.canRead() == false) {
-				throw new BulkFileUploadException("Cannot read or find the File in line -> " + line+", looking for "+dataFile+" . Aborting bulk uploading.");
-			}
-			String summary = mat.group(3).trim();
-			String description = mat.group(4).trim();
-
-			// If the annotation name is preceded by a directory structure, parse
-			// out actual name and create/find the annotation groupings represented
-			// the the directory structure embedded in the name;
-			String annotationName = "";
-			AnnotationGrouping ag = null;
-			if (name.lastIndexOf("/") >= 0) {
-				annotationName = name.substring(name.lastIndexOf("/") + 1);
-				ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf("/")));
-			} else {
-				annotationName = name;
-				ag = defaultAnnotationGrouping;
-			}
-
-			//does the annotation currently exist?  if so then add files to it, needed for bar and bam files
-			File dir = fetchAnnotationDirectory(ag, annotationName);
-			if (dir != null) {
-				File moved = new File (dir, dataFile.getName());
-				if (dataFile.renameTo(moved) == false) {
-					throw new BulkFileUploadException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
+				//parse name, fileName, summary, description
+				Matcher mat = BULK_UPLOAD_LINE_SPLITTER.matcher(line);
+				if (mat.matches() == false) { 
+					errors.append("Malformed data line -> " + line+" . \n");
+					continue;
+				}
+				//name is required
+				String name = mat.group(1).trim();
+				if (name.length()==0) {
+					errors.append("Missing name -> " + line+" . \n");
+				}
+				//check file
+				File dataFile = new File (mat.group(2).trim());
+				if (dataFile.canRead() == false || dataFile.canWrite() == false) {
+					errors.append("Cannot find/modify file -> " + line+" . \n");
+				}
+				//check file extension
+				String fileName = dataFile.toString();
+				if (Util.isValidAnnotationFileType(fileName) == false) {
+					errors.append("Unsupported file type ->  " + line+" . \n");
+				}
+				//bam or bai?
+				if (fileName.endsWith(".bam") || fileName.endsWith(".bai")) bamBaiFiles.add(name+"__"+fileName);
+				
+				//check bam file
+				if (fileName.endsWith(".bam")) {
+					String log = checkBamFile(dataFile);
+					if (log != null) errors.append("Problems were found with this bam file ->  " + line+" . "+log);
 				}
 			}
 
-			//make new annotation cloning current annotation
-			else addNewClonedAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
+			//check bam and bai files, must be paired
+			for (String f: bamBaiFiles){
+				if (f.endsWith(".bam")) {
+					String bai1 = f.substring(0, f.length()-4)+".bai";
+					String bai2 = f+".bai";
+					if (bamBaiFiles.contains(bai1) == false && bamBaiFiles.contains(bai2) == false) errors.append("Missing xxx.bai index file for ->  " + f+" . \n");
+				}
+				else {
+					//else bai, might be .bam.bai
+					String bam = f.substring(0, f.length()-4);
+					if (bam.endsWith(".bam") == false) bam += ".bam";
+					if (bamBaiFiles.contains(bam) == false) errors.append("Missing xxx.bam alignment file for ->  " + f+" . \n");
+				}
+			}
+			if (errors.length() != 0) {
+				errors.append("Aborting bulk uploading. \n");
+				return errors.toString();
+			}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
-		in.close();
+		return null;
+	}
+
+	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
+	 * @author davidnix*/
+	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
+	throws Exception  {
+		
+		//validate upload file
+		String errors = validateBulkUploadFile(spreadSheet);
+		if (errors != null) throw new BulkFileUploadException (errors);
+
+		//all OK so make annotations
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader (new FileReader(spreadSheet));
+			String line;
+
+			//for each line create a new annotation if it doesn't exist
+			while ((line = in.readLine()) != null){
+				line = line.trim();
+				if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) continue;
+
+				//parse name, fileName, summary, description
+				Matcher mat = BULK_UPLOAD_LINE_SPLITTER.matcher(line);
+				mat.matches();
+				String name = mat.group(1).trim();
+
+				//remove any preceeding /s
+				if (name.startsWith("/")) name = name.substring(1);
+				File dataFile = new File (mat.group(2).trim());
+				String summary = mat.group(3).trim();
+				String description = mat.group(4).trim();
+
+				// If the annotation name is preceded by a directory structure, parse
+				// out actual name and create/find the annotation groupings represented
+				// the the directory structure embedded in the name;
+				String annotationName = "";
+				AnnotationGrouping ag = null;
+				if (name.lastIndexOf("/") >= 0) {
+					annotationName = name.substring(name.lastIndexOf("/") + 1);
+					ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf("/")));
+				} else {
+					annotationName = name;
+					ag = defaultAnnotationGrouping;
+				}
+
+				//does the annotation currently exist?  if so then add files to it, needed for bar and bam files
+				File dir = fetchAnnotationDirectory(ag, annotationName);
+				if (dir != null) {
+					File moved = new File (dir, dataFile.getName());
+					if (dataFile.renameTo(moved) == false) {
+						//System.out.println("Moved "+moved.canWrite());
+						//System.out.println("Dir "+dir.canWrite()+" | "+dir.exists());
+						//System.out.println("DataFile "+dataFile.canWrite()+" | "+dataFile.exists());
+						throw new BulkFileUploadException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
+						
+					}
+				}
+				//make new annotation cloning current annotation
+				else addNewClonedAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
+
+			}
+
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					throw e;
+				}
+		}
 
 	}
-	
+
 	/**Looks for an Annotation in the provided AnnotationGrouping with the given name.  Returns null if not found or its directory.
 	 * Used for adding multiple files to the same Annotation to suport bar and bam file formats.
 	 * @author davidnix*/
@@ -3241,7 +3329,7 @@ public class GenoPubServlet extends HttpServlet {
 
 		//name
 		dup.setName(name);
-		
+
 		//description
 		if (description.length()!=0) dup.setDescription(description);
 		else dup.setDescription(sourceAnnot.getDescription());
@@ -3257,16 +3345,16 @@ public class GenoPubServlet extends HttpServlet {
 		dup.setIsLoaded("N");
 		dup.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 		dup.setCreatedBy(this.genoPubSecurity.getUserName());
-		
+
 		//save Annotation so that it's assigned an ID
 		sess.save(dup);
-		
+
 		//add annotation properties		
 		Set<AnnotationProperty> clonedAPSet = new HashSet<AnnotationProperty>(); 
 
 		//for each AnnotationProperty in the source Annotation
 		for(Iterator<?> i = sourceAnnot.getAnnotationProperties().iterator(); i.hasNext();) {
-			
+
 			//get the AnnotationProperty
 			AnnotationProperty sourceAP = (AnnotationProperty)i.next();
 
@@ -3321,17 +3409,17 @@ public class GenoPubServlet extends HttpServlet {
 
 		//add Set of AnnotationPropery to cloned Annotation
 		dup.setAnnotationProperties(clonedAPSet);
-		
+
 		//collaborators?
 		TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 		Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
 		while (cIt.hasNext()) collaborators.add((User)cIt.next());
 		dup.setCollaborators(collaborators);
-		
+
 		//is this needed?
 		sess.save(dup);
 		sess.flush();
-		
+
 		// Add the annotation to the annotation grouping
 		Set<Annotation> newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
 		for(Iterator<?> i = ag.getAnnotations().iterator(); i.hasNext();) {
@@ -5039,20 +5127,20 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
-	
+
 	private void handleMakeUCSCLinkRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		try {
-			
+
 			//make links fetching url(s)
 			ArrayList<String>  urlsToLoad = makeUCSCLink(request, res);
 			String url1 = urlsToLoad.get(0);
 			String url2 = "";
 			if (urlsToLoad.size() == 2) url2 = urlsToLoad.get(1);
-			
+
 			//post results with link urls
 			reportSuccess(res, "ucscURL1", url1, "ucscURL2", url2);
-			
-			
+
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -5061,7 +5149,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		 
+
 		Session sess  = null;
 
 		StringBuffer invalidGenomeVersions = new StringBuffer();
@@ -5168,7 +5256,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
-	
+
 
 	private String getFlexHTMLWrapper(HttpServletRequest request) {
 		StringBuffer buf = new StringBuffer();
@@ -5237,10 +5325,10 @@ public class GenoPubServlet extends HttpServlet {
 		if (genometry_genopub_dir != null && !genometry_genopub_dir.endsWith("/")) {
 			genometry_genopub_dir += "/";			
 		}
-		
+
 		//set web app dir for UCSC hot links
 		genoPubWebAppDir = new File (context.getRealPath("/"));
-		
+
 		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
 
 		return true;
@@ -5446,12 +5534,12 @@ public class GenoPubServlet extends HttpServlet {
 
 		}
 	}
-	
+
 	private File checkUCSCLinkDirectory(String xml_base) throws Exception{
 		File urlLinkDir = new File (genoPubWebAppDir, Constants.UCSC_URL_LINK_DIR_NAME);
 		urlLinkDir.mkdirs();
 		if (urlLinkDir.exists() == false) throw new Exception("\nFailed to find and or make a directory to contain url softlinks for UCSC data distribution.\n");
-		
+
 		//add redirect index.html if not present, send them to genopub
 		File redirect = new File (urlLinkDir, "index.html");
 		if (redirect.exists() == false){
@@ -5460,10 +5548,10 @@ public class GenoPubServlet extends HttpServlet {
 			out.println(toWrite);
 			out.close();
 		}
-		
+
 		//delete old softlinks within
 		Util.deleteNonIndexFiles(urlLinkDir, Constants.DAYS_TO_KEEP_URL_LINKS);
-		
+
 		return urlLinkDir;
 	}
 
@@ -5511,7 +5599,7 @@ public class GenoPubServlet extends HttpServlet {
 			c.convert(); //same thread!
 			//c.start(); //separate thread!
 		}
-		
+
 		if (filesAL.size() !=0){
 			File[] toReturn = new File[filesAL.size()];
 			filesAL.toArray(toReturn);
@@ -5523,11 +5611,11 @@ public class GenoPubServlet extends HttpServlet {
 			}
 			return new UCSCLinkFiles (toReturn, converting, stranded);
 		}
-		
+
 		//something bad happened.
 		return null;
 	}
-	
+
 	private boolean fetchUCSCExecutableFiles(){
 		File ucscExtDir = new File (genoPubWebAppDir, Constants.UCSC_EXECUTABLE_DIR_NAME);
 		ucscWig2BigWigExe = new File (ucscExtDir, Constants.UCSC_WIG_TO_BIG_WIG_NAME);
@@ -5542,15 +5630,15 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		return true;
 	}
-	
-	
+
+
 	private ArrayList<String>  makeUCSCLink(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		
+
 		Session sess = null;
 		ArrayList<String> urlsToLoad = new ArrayList<String>();
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-			
+
 			// What is the users preferred ucsc url?
 			String ucscUrl = fetchUCSCUrl(request.getParameter("userName"), sess);
 
@@ -5561,16 +5649,16 @@ public class GenoPubServlet extends HttpServlet {
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, annotation.getIdGenomeVersion()));
 			String ucscGenomeVersionName = gv.getUcscName();
 			if (ucscGenomeVersionName == null || ucscGenomeVersionName.length() ==0) throw new Exception ("Missing UCSC Genome Version name, update, and resubmit.");
-			
+
 			//check if annotation has exportable file type (xxx.bam, xxx.bai, xxx.bw, xxx.bb, xxx.useq (will be converted if autoConvert is true))
 			UCSCLinkFiles link = fetchUCSCLinkFiles(annotation.getFiles(genometry_genopub_dir));
 			File[] filesToLink = link.getFilesToLink();
 			if (filesToLink== null)  throw new Exception ("No files to link?!");
-			
+
 			//look and or make directory to hold softlinks to data, also removes old softlinks
 			String xml_base = getServletContext().getInitParameter("xml_base").replace("/genome", "/");
 			File urlLinkDir = checkUCSCLinkDirectory(xml_base);
-			
+
 			//what data type (bam, bigBed, bigWig)
 			String type = "type="+fetchUCSCDataType (filesToLink);
 
@@ -5585,11 +5673,11 @@ public class GenoPubServlet extends HttpServlet {
 			//TODO: color indicated? look for property named color, convert to RGB, comma delimited and set 'color='
 
 			String randomWord = UUID.randomUUID().toString();
-			
+
 			//create directory to hold links, need to do this so one can get the actual age of the links and not the age of the linked file
 			File dir = new File (urlLinkDir, randomWord);
 			dir.mkdir();
-			
+
 			//for each file, there might be two for xxx.bam and xxx.bai files, possibly two for converted useq files, plus/minus strands, otherwise just one.
 			String customHttpLink = null;
 			String toEncode = null;
@@ -5602,7 +5690,7 @@ public class GenoPubServlet extends HttpServlet {
 
 				//is it a bam index xxx.bai? If so then skip after making soft link.
 				if (annoString.endsWith(".bai")) continue;
-				
+
 				//stranded?
 				String strand = "";
 				if (link.isStranded()){
@@ -5610,7 +5698,7 @@ public class GenoPubServlet extends HttpServlet {
 					else if (annoString.endsWith("_Minus.bw")) strand = " - ";
 					else throw new Exception ("\nCan't determine strand of bw file? "+annoString);
 				}
-				
+
 				String datasetName = "name=\""+annotation.getName()+ strand +" "+annotation.getFileName()+"\"";
 
 				//make bigData URL e.g. bigDataUrl=http://genome.ucsc.edu/goldenPath/help/examples/bigBedExample.bb
@@ -5621,13 +5709,13 @@ public class GenoPubServlet extends HttpServlet {
 				//make final html link
 				customHttpLink = ucscUrl + "/cgi-bin/hgTracks?db=" + ucscGenomeVersionName + "&hgct_customText=track+visibility=full+";
 				toEncode = type +" "+ datasetName +" "+ summary +" "+ bigDataUrl;
-				
+
 				//System.out.println("LinkForLoading "+customHttpLink + toEncode);
 				//System.out.println(customHttpLink+ GeneralUtils.URLEncode(toEncode)+"\n");
-				
+
 				urlsToLoad.add(customHttpLink + GeneralUtils.URLEncode(toEncode));
 			}
-			
+
 		} catch (Exception e) {
 			throw e;			
 		} finally {

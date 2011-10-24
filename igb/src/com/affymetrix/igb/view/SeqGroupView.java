@@ -879,7 +879,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
-			if (curGroup != null || group != null) {
+			if ((curGroup != null || group != null) && curGroup != group) {
 				// avoid calling these a half-dozen times
 				gmodel.setSelectedSeqGroup(group);
 				// TODO: Need to be certain that the group is selected at this point!

@@ -874,27 +874,30 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-	public boolean isLoaded(URI uri) {
+	public GenericFeature isLoaded(URI uri) {
 		List<GenericFeature> gFeatureList = GeneralLoadView.getLoadView().getLoadModeDataTableModel().features;
+		
 		if (gFeatureList == null) {
-			return false;
+			return null;
 		}
-		for (GenericFeature gFeature : gFeatureList){
-		if (gFeature.getURI().equals(uri)) {
-				return true;
-			}		
-		}		
-		return false;
+		
+		for (GenericFeature gFeature : gFeatureList) {
+			if (gFeature.getURI().equals(uri)) {
+				return gFeature;
+			}
+		}
+		
+		return null;
 	}
 
-	public boolean isContained(AnnotatedSeqGroup loadGroup, URI uri) {
+	public GenericFeature isContained(AnnotatedSeqGroup loadGroup, URI uri) {
 		for (GenericVersion version : loadGroup.getAllVersions()) {
 			for (GenericFeature feature : version.getFeatures()) {
 				if (uri.equals(feature.getURI())) {
-					return true;
+					return feature;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 }

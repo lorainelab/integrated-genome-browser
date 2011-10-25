@@ -76,6 +76,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -1121,6 +1122,11 @@ public final class GeneralLoadUtils {
 	}
 
 	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName) {
+		if (ScriptFileLoader.isScript(uri.toString())) {
+			ScriptFileLoader.runScript(uri.toString());
+			return;
+		}
+		
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
@@ -1204,56 +1210,53 @@ public final class GeneralLoadUtils {
 	}
 	
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup) {
-		boolean isloaded = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
+		GenericFeature gFeature = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
-		if (isloaded) {
-			ErrorHandler.errorPanel("Cannot add same feature",
-					"The feature " + uri + " has already been added.");
-			return null;
-		}
-		boolean isContained = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
-		// Test to determine if a feature already exist in the feature tree
-		if (isContained) {
-			GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
-			return null;
-		}
+		if (gFeature == null) {
+			gFeature = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
+			// Test to determine if a feature already exist in the feature tree
+			if (gFeature != null) {
+				GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
+				return gFeature;
+			}
 
-		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
-		version = setVersion(uri, loadGroup, version);
+			GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
+			version = setVersion(uri, loadGroup, version);
 
-		// In case of BAM
-		if (version == null) {
-			return null;
-		}
+			// In case of BAM
+			if (version == null) {
+				return null;
+			}
 
-		// handle URL case.
-		String uriString = uri.toString();
-		int httpIndex = uriString.toLowerCase().indexOf("http:");
-		if (httpIndex > -1) {
-			// Strip off initial characters up to and including http:
-			// Sometimes this is necessary, as URLs can start with invalid "http:/"
-			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
-			uri = URI.create(uriString);
+			// handle URL case.
+			String uriString = uri.toString();
+			int httpIndex = uriString.toLowerCase().indexOf("http:");
+			if (httpIndex > -1) {
+				// Strip off initial characters up to and including http:
+				// Sometimes this is necessary, as URLs can start with invalid "http:/"
+				uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
+				uri = URI.create(uriString);
+			}
+			boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+
+			Map<String, String> featureProps = null;
+			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
+			if (symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")) {
+				symL = new ResidueTrackSymLoader(symL);
+				featureProps = new HashMap<String, String>();
+				featureProps.put("collapsed", "true");
+				featureProps.put("show2tracks", "false");
+			}
+
+			gFeature = new GenericFeature(fileName, featureProps, version, new QuickLoad(version, uri, symL), File.class, autoload);
+
+			version.addFeature(gFeature);
+			
+			gFeature.setVisible(); // this should be automatically checked in the feature tree
+			
+			GeneralLoadView.getLoadView().addFeatureTier(gFeature);
 		}
-		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		
-		Map<String, String> featureProps = null;
-		SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
-		if(symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")){
-			symL = new ResidueTrackSymLoader(symL);		
-			featureProps = new HashMap<String, String>();
-			featureProps.put("collapsed", "true");
-			featureProps.put("show2tracks", "false");
-		}
-		
-		GenericFeature gFeature = new GenericFeature(fileName, featureProps, version, new QuickLoad(version, uri, symL), File.class, autoload);
-
-		version.addFeature(gFeature);
-
-		gFeature.setVisible(); // this should be automatically checked in the feature tree
-
-		GeneralLoadView.getLoadView().addFeatureTier(gFeature);
-
 		return gFeature;
 	}
 

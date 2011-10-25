@@ -3,7 +3,6 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -179,19 +178,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	void initOrRefreshTree(final List<GenericFeature> features) {
 		final TreeModel tmodel = new DefaultTreeModel(CreateTree(features), true);
 
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		tree.setModel(tmodel);
 
-			public void run() {
-				tree.setModel(tmodel);
-
-//				if(tree.getRowCount() > 0){
-//					for(int i=0; i<tree.getRowCount(); i++)
-//						expand(tree, tree.getPathForRow(i));
-//				}
-				
-				tree_scroller.invalidate();
+		if (tree.getRowCount() > 0) {
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				expand(tree, tree.getPathForRow(i));
 			}
-		});
+		}
+
+		tree_scroller.invalidate();
 	}
 
 	private void expand(JTree tree, TreePath path) {

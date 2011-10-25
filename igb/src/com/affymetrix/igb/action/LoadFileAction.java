@@ -207,42 +207,42 @@ public final class LoadFileAction extends AbstractAction {
 			gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
 		}
 		
+		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
-
+		
 		if(!mergeSelected){
 			unknown_group_count++;
 		}
 	}
 
-	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup){
-		if (!isUniqueURI(loadGroup, uri)) {
-			ErrorHandler.errorPanel("Cannot add same feature",
-					"The feature " + uri + " has already been added.");
-			return null;
+	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup) {
+		GenericFeature gFeature = getExistingFeature(loadGroup, uri);
+
+		if (gFeature == null) {
+			GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
+
+			version = setVersion(uri, loadGroup, version);
+
+			//In case of BAM
+			if (version == null) {
+				return null;
+			}
+
+			// handle URL case.
+			String uriString = uri.toString();
+			int httpIndex = uriString.toLowerCase().indexOf("http:");
+			if (httpIndex > -1) {
+				// Strip off initial characters up to and including http:
+				// Sometimes this is necessary, as URLs can start with invalid "http:/"
+				uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
+				uri = URI.create(uriString);
+			}
+			boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+			gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
+
+			version.addFeature(gFeature);
 		}
-
-		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
-
-		version = setVersion(uri, loadGroup, version);
-
-		//In case of BAM
-		if(version == null){
-			return null;
-		}
-
-		// handle URL case.
-		String uriString = uri.toString();
-		int httpIndex = uriString.toLowerCase().indexOf("http:");
-		if (httpIndex > -1) {
-			// Strip off initial characters up to and including http:
-			// Sometimes this is necessary, as URLs can start with invalid "http:/"
-			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
-			uri = URI.create(uriString);
-		}
-		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
-		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
-
-		version.addFeature(gFeature);
+		
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
 
 		return gFeature;
@@ -255,16 +255,16 @@ public final class LoadFileAction extends AbstractAction {
 	 * @param uri
 	 * @return
 	 */
-	private static boolean isUniqueURI(AnnotatedSeqGroup loadGroup, URI uri) {
+	private static GenericFeature getExistingFeature(AnnotatedSeqGroup loadGroup, URI uri) {
 		for (GenericVersion version : loadGroup.getAllVersions()) {
 			// See if symloader feature was created with the same uri.
 			for (GenericFeature feature : version.getFeatures()) {
 				if (uri.equals(feature.getURI())) {
-					return false;
+					return feature;
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 
 	/**

@@ -53,6 +53,10 @@ public class OSGiHandler {
 		super();
 	}
 
+	public static void main(final String[] args) {
+        getInstance().startOSGi(args);
+	}
+
 	/**
 	 * get the OSGi cache directory
 	 * @return the OSGi cache directory

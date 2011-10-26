@@ -76,6 +76,7 @@
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/furbelow.jar"/>
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/jackson-all-1.7.9.jar"/>
 	<classpathentry kind="lib" path="etc"/>
-	<classpathentry kind="lib" path="ext/org.eclipse.osgi_3.7.1.R37x_v20110808-1106.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="ext/felix.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

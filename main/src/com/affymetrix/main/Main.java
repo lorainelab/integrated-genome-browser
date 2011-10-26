@@ -1,4 +1,6 @@
 package com.affymetrix.main;
+
+import com.jdotsoft.jarloader.JarClassLoader;
 /**
  *   Copyright (c) 2001-2007 Affymetrix, Inc.
  *
@@ -23,7 +25,13 @@ public final class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			OSGiHandler.getInstance().startOSGi(args);
+//	        OSGiHandler.getInstance().startOSGi(args);
+			JarClassLoader jcl = new JarClassLoader();
+	        try {
+	            jcl.invokeMain("com.affymetrix.main.OSGiHandler", args);
+	        } catch (Throwable e) {
+	            e.printStackTrace();
+	        }
 		}
 		catch (Exception e) {
 			e.printStackTrace();

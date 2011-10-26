@@ -195,39 +195,42 @@ public final class RestrictionControlView extends IGBTabPanel
 			return;
 		}
 
-		final SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
-		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
+		final SeqSpan span = igbService.getSeqMapView().getVisibleSpan();	
+		boolean loadResidue = false;
+		
 		if(!vseq.isAvailable(span)){
-			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
+			loadResidue = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");
-			if (!confirm) {
+			if (!loadResidue) {
 				return;
 			}
-			vexec.execute(new Runnable() {
-				public void run() {
-					igbService.loadResidues(span, true);
-					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
-				}
-			});
 		}
 		
-		vexec.execute(new Thread(new GlyphifyMatchesThread(span)));
+		ThreadUtils.getPrimaryExecutor(this).execute(new Thread(new GlyphifyMatchesThread(vseq, span, loadResidue)));
 	}
 
 	
 	private class GlyphifyMatchesThread implements Runnable
 	{
 		final SeqSpan span;
+		final boolean loadResidues;
+		final BioSeq vseq;
 		
-		GlyphifyMatchesThread(SeqSpan span){
+		GlyphifyMatchesThread(BioSeq vseq, SeqSpan span, boolean loadResidues){
+			this.vseq = vseq;
 			this.span = span;
+			this.loadResidues = loadResidues;
 		}
 		
 		public void run()
 		{
-			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
-				BioSeq vseq = igbService.getSeqMapView().getViewSeq();
+				if(loadResidues){
+					igbService.loadResidues(span, true);
+					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
+				}
+				
+				igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 				if (vseq == null || !vseq.isAvailable(span)) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;

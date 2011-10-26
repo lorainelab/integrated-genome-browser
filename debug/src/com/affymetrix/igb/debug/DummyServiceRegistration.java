@@ -5,16 +5,16 @@ import java.util.Dictionary;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-public class DummyServiceRegistration implements ServiceRegistration {
+public class DummyServiceRegistration<S> implements ServiceRegistration<S> {
 
 	@Override
-	public ServiceReference getReference() {
+	public ServiceReference<S> getReference() {
 		throw new RuntimeException("not implemented");
 //		return null;
 	}
 
 	@Override
-	public void setProperties(@SuppressWarnings("rawtypes") Dictionary properties) {
+	public void setProperties(Dictionary<String, ? > properties) {
 		throw new RuntimeException("not implemented");
 	}
 

@@ -4,7 +4,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-public class DummyServiceReference implements ServiceReference {
+public class DummyServiceReference<S> implements ServiceReference<S> {
 	private final Object service;
 	private final BundleContext bundleContext;
 

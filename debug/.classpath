@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/org.osgi.core-4.2.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/igb_service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ExternalView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
@@ -26,7 +25,6 @@
 	<classpathentry kind="lib" path="/RestrictionSites/resources"/>
 	<classpathentry kind="lib" path="/SearchView/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Bookmark"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-codec-1.4.jar"/>
@@ -35,5 +33,9 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jlfgr-1_0.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/picard.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
+	<classpathentry kind="lib" path="lib/org.osgi.core-4.3.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Bookmark"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeIdOrProps"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeResidue"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

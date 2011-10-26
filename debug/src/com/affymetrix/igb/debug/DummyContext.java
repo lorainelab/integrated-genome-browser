@@ -3,6 +3,7 @@ package com.affymetrix.igb.debug;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,78 +65,7 @@ public class DummyContext implements BundleContext {
 	}
 
 	@Override
-	public String getProperty(String key) {
-		return properties.getProperty(key);
-	}
-
-	@Override
-	public Bundle getBundle() {
-		throw new RuntimeException("not implemented");
-//		return null;
-	}
-
-	@Override
-	public Bundle installBundle(String location, InputStream input)
-			throws BundleException {
-		throw new RuntimeException("not implemented");
-//		return null;
-	}
-
-	@Override
-	public Bundle installBundle(String location) throws BundleException {
-		throw new RuntimeException("not implemented");
-//		return null;
-	}
-
-	@Override
-	public Bundle getBundle(long id) {
-		return new DummyBundle(this);
-	}
-
-	@Override
-	public Bundle[] getBundles() {
-		return new Bundle[]{};
-	}
-
-	@Override
-	public void addServiceListener(ServiceListener listener, String filter)
-			throws InvalidSyntaxException {
-		Set<ServiceListener> listeners = filteredServiceListeners.get(filter);
-		if (listeners == null) {
-			listeners = new HashSet<ServiceListener>();
-			filteredServiceListeners.put(filter, listeners);
-		}
-//		private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
-		listeners.add(listener);
-	}
-
-	@Override
-	public void addServiceListener(ServiceListener listener) {
-		serviceListeners.add(listener);
-	}
-
-	@Override
-	public void removeServiceListener(ServiceListener listener) {
-		serviceListeners.remove(listener);
-	}
-
-	@Override
-	public void addBundleListener(BundleListener listener) {
-		bundleListeners.add(listener);
-	}
-
-	@Override
-	public void removeBundleListener(BundleListener listener) {
-		bundleListeners.remove(listener);
-	}
-
-	@Override
 	public void addFrameworkListener(FrameworkListener listener) {
-		throw new RuntimeException("not implemented");
-	}
-
-	@Override
-	public void removeFrameworkListener(FrameworkListener listener) {
 		throw new RuntimeException("not implemented");
 	}
 
@@ -191,10 +121,66 @@ public class DummyContext implements BundleContext {
 		}
 		throw new RuntimeException("not implemented");
 	}
-
+////////////////////////////////////////////
 	@Override
-	public ServiceRegistration registerService(String[] clazzes,
-			Object service, @SuppressWarnings("rawtypes") Dictionary properties) {
+	public String getProperty(String key){
+		return properties.getProperty(key);
+	}
+	@Override
+	public Bundle getBundle(){
+		throw new RuntimeException("not implemented");
+	}
+	@Override
+	public Bundle installBundle(String location, InputStream input)
+				throws BundleException{
+		throw new RuntimeException("not implemented");
+	}
+	@Override
+	public Bundle installBundle(String location) throws BundleException{
+		throw new RuntimeException("not implemented");
+	}
+	@Override
+	public Bundle getBundle(long id){
+		return new DummyBundle(this);
+	}
+	@Override
+	public Bundle[] getBundles(){
+		return new Bundle[]{};
+	}
+	@Override
+	public void addServiceListener(ServiceListener listener, String filter)
+				throws InvalidSyntaxException{
+		Set<ServiceListener> listeners = filteredServiceListeners.get(filter);
+		if (listeners == null) {
+			listeners = new HashSet<ServiceListener>();
+			filteredServiceListeners.put(filter, listeners);
+		}
+//		private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
+		listeners.add(listener);
+	}
+	@Override
+	public void addServiceListener(ServiceListener listener){
+		serviceListeners.add(listener);
+	}
+	@Override
+	public void removeServiceListener(ServiceListener listener){
+		serviceListeners.remove(listener);
+	}
+	@Override
+	public void addBundleListener(BundleListener listener){
+		bundleListeners.add(listener);
+	}
+	@Override
+	public void removeBundleListener(BundleListener listener){
+		bundleListeners.remove(listener);
+	}
+	@Override
+	public void removeFrameworkListener(FrameworkListener listener){
+		throw new RuntimeException("not implemented");
+	}
+	@Override
+	public ServiceRegistration< ? > registerService(String[] clazzes, Object service,
+				Dictionary<String, ? > properties){
 		for (String clazz : clazzes) {
 			List<Object> services = servicesMap.get(clazz);
 			if (services == null) {
@@ -218,24 +204,26 @@ public class DummyContext implements BundleContext {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	@Override
-	public ServiceRegistration registerService(String clazz, Object service,
-			@SuppressWarnings("rawtypes") Dictionary properties) {
+	public ServiceRegistration< ? > registerService(String clazz, Object service,
+				Dictionary<String, ? > properties){
 		return registerService(new String[]{clazz},
 				service, properties);
 	}
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public ServiceReference[] getServiceReferences(String clazz, String filter)
-			throws InvalidSyntaxException {
+	public <S> ServiceRegistration<S> registerService(Class<S> clazz, S service,
+				Dictionary<String, ? > properties){
+		return (ServiceRegistration<S>) registerService(clazz.getName(), service, properties);
+	}
+	@Override
+	public ServiceReference< ? >[] getServiceReferences(String clazz, String filter)
+				throws InvalidSyntaxException{
 		return getAllServiceReferences(clazz, filter);
 	}
-
 	@Override
-	public ServiceReference[] getAllServiceReferences(String clazz,
-			String filter) throws InvalidSyntaxException {
-		
+	public ServiceReference< ? >[] getAllServiceReferences(String clazz, String filter)
+				throws InvalidSyntaxException{
 		List<Object> servicesList = servicesMap.get(clazz);
 		ArrayList<Object> filteredServices = new ArrayList<Object>();
 		if (servicesList != null) {
@@ -245,57 +233,77 @@ public class DummyContext implements BundleContext {
 				}
 			}
 		}
-		ServiceReference[] serviceReferenceArray = new ServiceReference[filteredServices.size()];
+		ServiceReference< ? >[] serviceReferenceArray = new ServiceReference[filteredServices.size()];
 		for (int i = 0; i < filteredServices.size(); i++) {
 			serviceReferenceArray[i] = new DummyServiceReference(this, filteredServices.get(i));
 		}
 		return serviceReferenceArray;
 	}
-
 	@Override
-	public ServiceReference getServiceReference(String clazz) {
+	public ServiceReference< ? > getServiceReference(String clazz){
 		if (servicesMap.get(clazz) == null) {
 			return null;
 		}
 		return new DummyServiceReference(this, servicesMap.get(clazz).get(0));
 	}
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getService(ServiceReference reference) {
-		return ((DummyServiceReference)reference).getService();
+	public <S> ServiceReference<S> getServiceReference(Class<S> clazz){
+		return (ServiceReference<S>) getServiceReference(clazz.getName());
 	}
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean ungetService(ServiceReference reference) {
+	public <S> Collection<ServiceReference<S>> getServiceReferences(Class<S> clazz,
+				String filter) throws InvalidSyntaxException{
+		ServiceReference<?>[] serviceReferenceArray = getServiceReferences(clazz.getName(), filter);
+		Collection<ServiceReference<S>> serviceReferences = new ArrayList<ServiceReference<S>>();
+		for (ServiceReference<?> serviceReference : serviceReferenceArray) {
+			serviceReferences.add((ServiceReference<S>)serviceReference);
+		}
+		return serviceReferences;
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public <S> S getService(ServiceReference<S> reference){
+		return (S) ((DummyServiceReference<S>)reference).getService();
+	}
+	@Override
+	public boolean ungetService(ServiceReference<?> reference){
 		return false;
 	}
-
 	@Override
-	public File getDataFile(String filename) {
+	public File getDataFile(String filename){
 		throw new RuntimeException("not implemented");
-//		return null;
 	}
-
 	@Override
-	public Filter createFilter(String filter) throws InvalidSyntaxException {
+	public Filter createFilter(String filter) throws InvalidSyntaxException{
 //		throw new RuntimeException("not implemented");
 		return new Filter() {
 			
 			@Override
-			public boolean matchCase(@SuppressWarnings("rawtypes") Dictionary dictionary) {
+			public boolean matchCase(Dictionary<String, ?> dictionary) {
 				return false;
 			}
 			
 			@Override
-			public boolean match(@SuppressWarnings("rawtypes") Dictionary dictionary) {
+			public boolean match(Dictionary<String, ?> dictionary) {
 				return false;
 			}
 			
 			@Override
-			public boolean match(ServiceReference reference) {
+			public boolean match(ServiceReference< ? > reference) {
+				return false;
+			}
+
+			@Override
+			public boolean matches(Map<String, ?> map) {
+				// TODO Auto-generated method stub
 				return false;
 			}
 		};
 	}
-
+	@Override
+	public Bundle getBundle(String location) {
+		return new DummyBundle(this);
+	}
 }

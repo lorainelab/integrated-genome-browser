@@ -1,26 +1,20 @@
 package com.affymetrix.main;
 
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
@@ -29,6 +23,7 @@ import javax.swing.UIManager;
 //import org.apache.felix.main.AutoProcessor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
@@ -142,58 +137,10 @@ public class OSGiHandler {
             m_fwk.start();
             BundleContext bundleContext = m_fwk.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
-	           	// load embedded bundles
-	            String[] jarNames = getResourceListing(OSGiHandler.class, "");
-	    		for (String fileName : jarNames) {
-	    			if (fileName.endsWith(".jar")) {
-		     			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
-		    			if (locationURL != null){
-							Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
-							try {
-								bundleContext.installBundle(locationURL.toString());
-							}
-			    	        catch (Exception ex)
-			    	        {
-			    	        	ex.printStackTrace(System.err);
-								Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
-			    	        }
-		    			}
-		    			else{
-							Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
-						}
-	    			}
-	    		}
+            	loadEmbeddedBundles(bundleContext);
             }
-    		String uninstall_bundle = CommonUtils.getInstance().getArg("-uninstall_bundle", args);
-    		if (uninstall_bundle != null) {
-    			for (Bundle bundle : bundleContext.getBundles()) {
-    				if (uninstall_bundle.equals(bundle.getSymbolicName())) {
-    					bundle.uninstall();
-    					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
-    				}
-    			}
-    		}
-    		if (bundleSymbolicNameToUninstall != null) {
-    			for (Bundle bundle : bundleContext.getBundles()) {
-    				if (bundleSymbolicNameToUninstall.equals(bundle.getSymbolicName())) {
-    					bundle.uninstall();
-    					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
-    				}
-    			}
-    		}
-    		String install_bundle = CommonUtils.getInstance().getArg("-install_bundle", args);
-    		if (install_bundle != null) {
-				Bundle bundle = bundleContext.installBundle(install_bundle);
-				if (bundle != null) {
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", install_bundle);
-				}
-    		}
-    		if (bundlePathToInstall != null) {
-				Bundle bundle = bundleContext.installBundle(bundlePathToInstall);
-				if (bundle != null) {
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
-				}
-    		}
+    		uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
+    		installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
     		for (Bundle bundle : bundleContext.getBundles()) {
     			bundle.start();
     		}
@@ -206,96 +153,92 @@ public class OSGiHandler {
         }
     }
 
-	private static final String FILE_PROTOCOL = "file";
-	private static final String WEB_PROTOCOL = "http";
-	private static final String SECURE_WEB_PROTOCOL = "https";
-
-	/**
-	 * List directory contents for a resource folder. Not recursive. This is
-	 * basically a brute-force implementation. Works for regular files and also
-	 * JARs.
-	 *
-	 * @author Greg Briggs
-	 *    modified LF 02/02/2011 to support java web start
-	 * @param clazz
-	 *            Any java class that lives in the same place as the resources
-	 *            you want.
-	 * @param path
-	 *            Should end with "/", but not start with one.
-	 * @return Just the name of each member item, not the full paths.
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 */
-	private String[] getResourceListing(Class<?> clazz, String path)
-			throws URISyntaxException, IOException {
-		URL dirURL = clazz.getClassLoader().getResource(path);
-		if (dirURL != null && dirURL.getProtocol().equals("file")) {
-			/* A file path: easy enough */
-			return new File(dirURL.toURI()).list();
-		}
-
-		if (dirURL == null) {
-			/*
-			 * In case of a jar file, we can't actually find a directory. Have
-			 * to assume the same jar as clazz.
-			 */
-			String me = clazz.getName().replace(".", "/") + ".class";
-			dirURL = clazz.getClassLoader().getResource(me);
-		}
-
-		if (dirURL.getProtocol().equals("jar")) {
-			/* A JAR path */
-			String protocol = dirURL.getPath().substring(0,
-					dirURL.getPath().indexOf(":"));
-			Set<String> result = new HashSet<String>(); // avoid duplicates in
-														// case it is a
-														// subdirectory
-			if (FILE_PROTOCOL.equals(protocol)) {
-				String jarPath = dirURL.getPath().substring(5,
-						dirURL.getPath().indexOf("!")); // strip out only the
-														// JAR
-														// file
-				JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-				Enumeration<JarEntry> entries = jar.entries(); // gives ALL
-																// entries
-																// in jar
-				while (entries.hasMoreElements()) {
-					String name = entries.nextElement().getName();
-					if (name.startsWith(path)) { // filter according to the path
-						String entry = name.substring(path.length());
-						int checkSubdir = entry.indexOf("/");
-						if (checkSubdir >= 0) {
-							// if it is a subdirectory, we just return the
-							// directory
-							// name
-							entry = entry.substring(0, checkSubdir);
-						}
-						result.add(entry);
-					}
+	private void uninstallBundles(BundleContext bundleContext, String uninstall_bundle) throws BundleException {
+		if (uninstall_bundle != null) {
+			for (Bundle bundle : bundleContext.getBundles()) {
+				if (uninstall_bundle.equals(bundle.getSymbolicName())) {
+					bundle.uninstall();
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
 				}
 			}
-			if (WEB_PROTOCOL.equals(protocol) || SECURE_WEB_PROTOCOL.equals(protocol)) {
-				final ProtectionDomain domain = OSGiHandler.class.getProtectionDomain();
-				final CodeSource source = domain.getCodeSource();
-				URL url = source.getLocation();
-				if (url.toExternalForm().endsWith(".jar")) {
-					try {
-						JarInputStream jarStream = new JarInputStream(url.openStream(), false);
-						for (String entry : jarStream.getManifest().getEntries().keySet()) {
-							result.add(entry);
-						}
-					}
-					catch (IOException e) {
-						Logger.getLogger(getClass().getName()).log(Level.WARNING, "error reading manifest", e.getMessage());
-					}
+		}
+		if (bundleSymbolicNameToUninstall != null) {
+			for (Bundle bundle : bundleContext.getBundles()) {
+				if (bundleSymbolicNameToUninstall.equals(bundle.getSymbolicName())) {
+					bundle.uninstall();
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
 				}
 			}
-			if (result.size() > 0) {
-				return result.toArray(new String[result.size()]);
+		}
+	}
+
+	private void installBundles(BundleContext bundleContext, String install_bundle) throws BundleException {
+		if (install_bundle != null) {
+			Bundle bundle = bundleContext.installBundle(install_bundle);
+			if (bundle != null) {
+				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", install_bundle);
 			}
 		}
+		if (bundlePathToInstall != null) {
+			Bundle bundle = bundleContext.installBundle(bundlePathToInstall);
+			if (bundle != null) {
+				Logger.getLogger(getClass().getName()).log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
+			}
+		}
+	}
 
-		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	private void loadEmbeddedBundles(BundleContext bundleContext) throws IOException {
+		for (String fileName : getJarFileNames()) {
+ 			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
+			if (locationURL != null){
+				Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
+				try {
+					bundleContext.installBundle(locationURL.toString());
+				}
+    	        catch (Exception ex)
+    	        {
+    	        	ex.printStackTrace(System.err);
+					Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
+    	        }
+			}
+			else{
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
+			}
+		}
+	}
+
+	private List<String> getJarFileNames() throws IOException {
+        List<String> entries = new ArrayList<String>();
+		URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+		if (codesource.toString().endsWith(".jar")) { // ant exe or webstart
+	    	ZipInputStream zipinputstream = null;
+	        zipinputstream = new ZipInputStream(codesource.openStream());
+	        ZipEntry zipentry = zipinputstream.getNextEntry();
+	        while (zipentry != null) 
+	        { 
+	            //for each entry to be extracted
+	            String entryName = zipentry.getName();
+	            if (entryName.endsWith(".jar")) {
+	            	entries.add(entryName);
+	            }
+	            File newFile = new File(entryName);
+	            String directory = newFile.getParent();
+	            
+	            if(directory == null)
+	            {
+	                if(newFile.isDirectory())
+	                    break;
+	            }
+	            zipinputstream.closeEntry();
+	            zipentry = zipinputstream.getNextEntry();
+	        }//while
+	        zipinputstream.close();
+		}
+		else { // ant run
+			File dir = new File("bundles");
+			entries = Arrays.asList(dir.list());
+		}
+        return entries;
 	}
 
 	/**

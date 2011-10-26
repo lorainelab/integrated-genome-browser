@@ -370,7 +370,7 @@ public class GraphGlyph extends Glyph {
 			coord.x = xtemp;
 			float ytemp = graphSym.getGraphYCoord(i);
 			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
-				return;
+				continue;
 			}			
 			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 			ytemp = Math.min(ytemp, getVisibleMaxY());

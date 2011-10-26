@@ -2,9 +2,6 @@ package com.affymetrix.igb.bookmarks.action;
 
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
-
-import javax.swing.JOptionPane;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -15,47 +12,31 @@ import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 
 public abstract class AddBookmarkAction extends GenericAction {
+
 	private static final long serialVersionUID = 1L;
-	private static final boolean DEBUG = false;
 
 	protected void bookmarkCurrentPosition(boolean include_sym_and_props) {
-		if (include_sym_and_props && !BookmarkController.hasSymmetriesOrGraphs()){
+		if (include_sym_and_props && !BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
 			return;
 		}
 		Bookmark bookmark = null;
 		try {
 			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, BookmarkActionManager.getInstance().getVisibleSpan());
+		} catch (MalformedURLException m) {
+			ErrorHandler.errorPanel("Couldn't add bookmark", m);
+			return;
 		}
-	    catch (MalformedURLException m) {
-	    	ErrorHandler.errorPanel("Couldn't add bookmark", m);
-	    	return;
-	    }
 		if (bookmark == null) {
 			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
 			return;
 		}
-		String default_name = bookmark.getName();
-		String bookmark_name = (String) JOptionPane.showInputDialog(BookmarkActionManager.getInstance().getBookmarkManagerView(),
-				"Enter name for bookmark", "Input",
-				JOptionPane.PLAIN_MESSAGE, null, null, default_name);
-		if (bookmark_name == null) {
-			if (DEBUG) {
-				System.out.println("bookmark action cancelled");
-			}
-		} else {
-			if (bookmark_name.trim().length() == 0) {
-				bookmark_name = default_name;
-			}
-			if (DEBUG) {
-				System.out.println("bookmark name: " + bookmark_name);
-			}
-			bookmark.setName(bookmark_name);
-			addBookmark(bookmark);
-		}
+
+		BookmarkEditor editor = new BookmarkEditor(bookmark);
+		editor.run();
 	}
 
-	private JRPMenuItem addBookmark(Bookmark bm) {
+	public JRPMenuItem addBookmark(Bookmark bm) {
 		JRPMenuItem markMI = null;
 		JRPMenu parent_menu = (JRPMenu) BookmarkActionManager.getInstance().getComponentHash().get(BookmarkActionManager.getInstance().getMainBookmarkList());
 		if (parent_menu == null) {
@@ -66,8 +47,8 @@ public abstract class AddBookmarkAction extends GenericAction {
 		BookmarkList bl = BookmarkActionManager.getInstance().getMainBookmarkList().addBookmark(bm);
 
 		BookmarkActionManager.getInstance().updateBookmarkManager();
-		if (BookmarkActionManager.getInstance().getBookmarkManagerView() != null) {
-			BookmarkActionManager.getInstance().getBookmarkManagerView().addBookmarkToHistory(bl);
+		if (BookmarkActionManager.getInstance().getBookmarkManagerViewGUI() != null) {
+			BookmarkActionManager.getInstance().getBookmarkManagerViewGUI().getBookmarkManagerView().addBookmarkToHistory(bl);
 		}
 		return markMI;
 	}
@@ -91,5 +72,53 @@ public abstract class AddBookmarkAction extends GenericAction {
 		} catch (Exception x) {
 		}
 		return id;
+	}
+
+	class BookmarkEditor {
+		Bookmark bookmark;
+		javax.swing.JTextField nameField;
+		javax.swing.JTextArea commentField = new javax.swing.JTextArea("", 5, 8);
+
+		public BookmarkEditor(Bookmark b) {
+			bookmark = b;
+			nameField = new javax.swing.JTextField(b.getName());
+		}
+
+		void run() {
+			javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(commentField);
+			scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			Object[] msg = {"Name:", nameField, "Comment:", scrollpane};
+			javax.swing.JOptionPane op = new javax.swing.JOptionPane(
+					msg,
+					javax.swing.JOptionPane.PLAIN_MESSAGE,
+					javax.swing.JOptionPane.OK_CANCEL_OPTION,
+					null,
+					null);
+
+			javax.swing.JDialog dialog = op.createDialog("Enter Bookmark Information...");
+			dialog.setVisible(true);
+			dialog.setPreferredSize(new java.awt.Dimension(250, 250));
+			dialog.setDefaultCloseOperation(javax.swing.JDialog.HIDE_ON_CLOSE);
+			dialog.setAlwaysOnTop(true);
+			dialog.setResizable(true);
+			dialog.pack();
+
+			int result = javax.swing.JOptionPane.OK_OPTION;
+
+			if (result == javax.swing.JOptionPane.OK_OPTION) {
+				String name;
+				String comment;
+				name = nameField.getText();
+				comment = commentField.getText();
+
+				if (name.trim().length() == 0) {
+					name = bookmark.getName();
+				}
+
+				bookmark.setName(name);
+				bookmark.setComment(comment);
+				addBookmark(bookmark);
+			}
+		}
 	}
 }

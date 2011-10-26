@@ -57,7 +57,7 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 		}
 
 		try {
-			final Bookmark bm = new Bookmark(null, url);
+			final Bookmark bm = new Bookmark(null, "", url);
 			if (bm.isUnibrowControl()) {
 				SwingUtilities.invokeLater(new Runnable() {
 

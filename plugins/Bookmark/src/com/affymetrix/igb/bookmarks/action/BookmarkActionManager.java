@@ -29,7 +29,6 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
-import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.bookmarks.BookmarksParser;
 import com.affymetrix.igb.bookmarks.Separator;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -41,6 +40,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.bookmarks.BookmarkManagerViewGUI;
 
 public final class BookmarkActionManager implements ActionListener, MenuListener {
    private final static boolean DEBUG = false;
@@ -49,7 +49,7 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
   private final Map<Object,Component> component_hash = new HashMap<Object,Component>();
   private final BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
   private final JRPMenu main_bm_menu;
-  private BookmarkManagerView bmv = null;
+  private BookmarkManagerViewGUI bmvGUI = null;
   private IGBService igbService;
 
   private static BookmarkActionManager instance;
@@ -79,13 +79,13 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
     buildMenus(main_bm_menu, main_bookmark_list);
   }
 
-  public void setBmv(BookmarkManagerView bmv) {
-	this.bmv = bmv;
-	bmv.setBList(main_bookmark_list);
+  public void setBmv(BookmarkManagerViewGUI bmvGUI) {
+	this.bmvGUI = bmvGUI;
+	bmvGUI.getBookmarkManagerView().setBList(main_bookmark_list);
   }
 
   public void updateBookmarkManager() {
-    if (bmv != null) bmv.setBList(main_bookmark_list);
+    if (bmvGUI != null) bmvGUI.getBookmarkManagerView().setBList(main_bookmark_list);
   }
 
   public static File getBookmarksFile() {
@@ -290,8 +290,8 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 	  return main_bookmark_list;
   }
 
-  public BookmarkManagerView getBookmarkManagerView() {
-	  return bmv;
+  public BookmarkManagerViewGUI getBookmarkManagerViewGUI() {
+	  return bmvGUI;
   }
 
   public Map<Object,Component> getComponentHash() {
@@ -303,6 +303,6 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
   }
 
   public void setTabState(TabState tabState) {
-      igbService.setTabStateAndMenu(bmv, tabState);
+      igbService.setTabStateAndMenu(bmvGUI, tabState);
   }
 }

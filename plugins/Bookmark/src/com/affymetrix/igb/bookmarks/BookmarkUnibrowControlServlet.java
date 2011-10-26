@@ -61,7 +61,6 @@ public final class BookmarkUnibrowControlServlet {
 	public static final BookmarkUnibrowControlServlet getInstance() {
 		return instance;
 	}
-
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
@@ -104,6 +103,7 @@ public final class BookmarkUnibrowControlServlet {
 		String version = getStringParameter(parameters, Bookmark.VERSION);
 		String start_param = getStringParameter(parameters, Bookmark.START);
 		String end_param = getStringParameter(parameters, Bookmark.END);
+		String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
 		String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
 		String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
 		boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));
@@ -118,13 +118,13 @@ public final class BookmarkUnibrowControlServlet {
 		//    Checks to avoid double-loading of files
 		//    Loading can freeze the GUI
 		//    Can be any URL, not just a file
-		boolean has_properties = (parameters.get(SYM.FEATURE_URL+"0") != null);
+		boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
 		boolean loaddata = true;
 		boolean loaddas2data = true;
 
 		int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
 		int start = values[0],
-			end   = values[1];
+				end = values[1];
 
 		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
 		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
@@ -138,7 +138,7 @@ public final class BookmarkUnibrowControlServlet {
 		}
 
 		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-	    String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 
 		GenericServer[] gServers2 = null;
 
@@ -176,7 +176,7 @@ public final class BookmarkUnibrowControlServlet {
 			}
 		}
 
-		if(loaddas2data){
+		if (loaddas2data) {
 			loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
 		}
 
@@ -189,7 +189,7 @@ public final class BookmarkUnibrowControlServlet {
 			igbService.performSelection(selectParam);
 		}
 
-		if(loadResidue){
+		if (loadResidue) {
 			BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
 			SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
 			igbService.loadResidues(span, true);
@@ -197,15 +197,15 @@ public final class BookmarkUnibrowControlServlet {
 
 	}
 
-	 public List<String> getGraphUrls(Map<String, String[]> map){
+	public List<String> getGraphUrls(Map<String, String[]> map) {
 		List<String> graph_paths = new ArrayList<String>();
 		for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
 			graph_paths.add(getStringParameter(map, SYM.FEATURE_URL.toString() + i));
 		}
 		return graph_paths;
-	 }
+	}
 
-	private void loadOldBookmarks(final IGBService igbService, GenericServer[] gServers, String[] das2_query_urls, int start, int end){
+	private void loadOldBookmarks(final IGBService igbService, GenericServer[] gServers, String[] das2_query_urls, int start, int end) {
 		List<String> opaque_requests = new ArrayList<String>();
 		for (int i = 0; i < das2_query_urls.length; i++) {
 			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
@@ -252,7 +252,7 @@ public final class BookmarkUnibrowControlServlet {
 			}
 
 			GenericFeature feature = getFeature(igbService, gServers[i], type_uri);
-			if(feature != null){
+			if (feature != null) {
 				BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 				loadFeature(igbService, feature, seq, start, end);
 			}
@@ -267,7 +267,7 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 
-	private GenericFeature[] loadData(final IGBService igbService, final GenericServer[] gServers, final String[] query_urls, int start, int end){
+	private GenericFeature[] loadData(final IGBService igbService, final GenericServer[] gServers, final String[] query_urls, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
 		for (int i = 0; i < query_urls.length; i++) {
@@ -285,7 +285,7 @@ public final class BookmarkUnibrowControlServlet {
 		return gFeatures;
 	}
 
-	private GenericFeature getFeature(IGBService igbService, final GenericServer gServer, final String query_url){
+	private GenericFeature getFeature(IGBService igbService, final GenericServer gServer, final String query_url) {
 
 		if (gServer == null) {
 			return null;
@@ -297,7 +297,7 @@ public final class BookmarkUnibrowControlServlet {
 		//if (!LocalUrlCacher.isValidURL(query_url)) {
 		//	return null;
 		//}
-		
+
 		GenericFeature feature = igbService.getFeature(gServer, query_url);
 
 		if (feature == null) {
@@ -307,8 +307,8 @@ public final class BookmarkUnibrowControlServlet {
 
 		return feature;
 	}
-	
-	private void loadFeature(IGBService igbService, GenericFeature gFeature, BioSeq seq, int start, int end){
+
+	private void loadFeature(IGBService igbService, GenericFeature gFeature, BioSeq seq, int start, int end) {
 		gFeature.setVisible();
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
 		if (!gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE)) {
@@ -317,7 +317,7 @@ public final class BookmarkUnibrowControlServlet {
 		igbService.loadAndDisplaySpan(overlap, gFeature);
 	}
 
-	private GenericServer[] loadServers(IGBService igbService, String[] server_urls){
+	private GenericServer[] loadServers(IGBService igbService, String[] server_urls) {
 		GenericServer[] gServers = new GenericServer[server_urls.length];
 
 		for (int i = 0; i < server_urls.length; i++) {
@@ -346,21 +346,21 @@ public final class BookmarkUnibrowControlServlet {
 	}
 
 	private int[] parseValues(String start_param, String end_param,
-					String select_start_param, String select_end_param)
-					throws NumberFormatException {
+			String select_start_param, String select_end_param)
+			throws NumberFormatException {
 
 		int start = 0;
 		int end = 0;
 		if (start_param == null || start_param.equals("")) {
-			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING, 
-					"No start value found in the bookmark URL. Setting start={0}",start);
+			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
+					"No start value found in the bookmark URL. Setting start={0}", start);
 		} else {
 			start = Integer.parseInt(start_param);
 		}
 		if (end_param == null || end_param.equals("")) {
 			end = start + 10000;
-			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING, 
-					"No end value found in the bookmark URL. Setting end={0}",end);
+			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
+					"No end value found in the bookmark URL. Setting end={0}", end);
 		} else {
 			end = Integer.parseInt(end_param);
 		}
@@ -386,8 +386,8 @@ public final class BookmarkUnibrowControlServlet {
 	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
 		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
 		if (book_group == null) {
-			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
-							"You may need to choose a different server.");
+			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n"
+					+ "You may need to choose a different server.");
 			return null; // cancel
 		}
 

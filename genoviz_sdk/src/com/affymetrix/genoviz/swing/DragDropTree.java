@@ -1,6 +1,8 @@
 package com.affymetrix.genoviz.swing;
 
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -13,13 +15,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
-public class DragDropTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener {
+public class DragDropTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener, Autoscroll {
 
 	private final DragSource source;
 	private TransferableTreeNode transferable;
 	private DefaultMutableTreeNode oldNode;
 	private final boolean DEBUG = false;
-	
+	private int margin = 12;
 	public DragDropTree() {
 		super();
 		
@@ -131,6 +133,23 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		}
 	}
 
+	public void autoscroll(Point p) {
+      int realrow = getRowForLocation(p.x, p.y);
+      Rectangle outer = getBounds();
+      realrow = (p.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
+          : realrow < getRowCount() - 1 ? realrow + 1 : realrow);
+      scrollRowToVisible(realrow);
+    }
+
+    public Insets getAutoscrollInsets() {
+      Rectangle outer = getBounds();
+      Rectangle inner = getParent().getBounds();
+      return new Insets(inner.y - outer.y + margin, inner.x - outer.x
+          + margin, outer.height - inner.height - inner.y + outer.y
+          + margin, outer.width - inner.width - inner.x + outer.x
+          + margin);
+    }
+	
 	//TransferableTreeNode.java
 	//A Transferable TreePath to be used with Drag & Drop applications.
 	//

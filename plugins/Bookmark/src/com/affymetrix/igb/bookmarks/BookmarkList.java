@@ -1,16 +1,15 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
+ *   Copyright (c) 2001-2004 Affymetrix, Inc.
+ *    
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.  
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.bookmarks;
 
 import java.io.*;
@@ -32,210 +31,220 @@ import javax.swing.tree.*;
  * @version $Id: BookmarkList.java 5912 2010-05-10 19:42:58Z sgblanch $
  */
 public final class BookmarkList extends DefaultMutableTreeNode {
-  private static final long serialVersionUID = 1L;
-  public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
- 
-  public BookmarkList(String s) {
-    super(s, true);
-  }
 
-  public BookmarkList(Bookmark b) {
-    super(b, false);
-  }
-  
-  public BookmarkList(Separator s) {
-    super(s, false);
-  }
-  
-  public BookmarkList addBookmark(Bookmark bookmark) {
-	BookmarkList bl = new BookmarkList(bookmark);
-    add(bl);
-    return bl;
-  }
+	private static final long serialVersionUID = 1L;
+	public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
+	
+	public BookmarkList(String s) {
+		super(s, true);
+	}
+	
+	public BookmarkList(Bookmark b) {
+		super(b, false);
+	}
+	
+	public BookmarkList(Separator s) {
+		super(s, false);
+	}
+	
+	public BookmarkList addBookmark(Bookmark bookmark) {
+		BookmarkList bl = new BookmarkList(bookmark);
+		add(bl);
+		return bl;
+	}
+	
+	public void addSeparator() {
+		add(new BookmarkList(new Separator()));
+	}
+	
+	public void addSublist(BookmarkList sublist) {
+		add(sublist);
+	}
 
-  public void addSeparator() {
-    add(new BookmarkList(new Separator()));
-  }
-
-  public void addSublist(BookmarkList sublist) {
-    add(sublist);
-  }
-
-  /** Overriden to return getAllowsChildren().  Thus BookmarkLists which <b>can</b> contain
-   *  other items return false even if they don't currently contain other items.
-   *  This is important so that a JTree will display
-   *  BookmarkLists with a folder icon, not a leaf icon.
-   */
+	/** Overriden to return getAllowsChildren().  Thus BookmarkLists which <b>can</b> contain
+	 *  other items return false even if they don't currently contain other items.
+	 *  This is important so that a JTree will display
+	 *  BookmarkLists with a folder icon, not a leaf icon.
+	 */
 	@Override
-  public boolean isLeaf() {
-    return (! getAllowsChildren());
-  }
-  
-  /** Overridden to insure that all children are instances of BookmarkList.
-   *  @throws IllegalArgumentException
-   */
+	public boolean isLeaf() {
+		return (!getAllowsChildren());
+	}
+
+	/** Overridden to insure that all children are instances of BookmarkList.
+	 *  @throws IllegalArgumentException
+	 */
 	@Override
-  public void insert(MutableTreeNode item, int index) {
-    if (! (item instanceof BookmarkList)) {
-      throw new IllegalArgumentException("All children of BookmarkList must be instances of BookmarkList");
-    }
-    super.insert(item, index);
-  }
-  
-  /** Not recommended.  Set the object during the constructor, then leave it alone. */
+	public void insert(MutableTreeNode item, int index) {
+		if (!(item instanceof BookmarkList)) {
+			throw new IllegalArgumentException("All children of BookmarkList must be instances of BookmarkList");
+		}
+		super.insert(item, index);
+	}
+
+	/** Not recommended.  Set the object during the constructor, then leave it alone. */
 	@Override
-  public void setUserObject(Object o) throws IllegalArgumentException {
-    if (o instanceof String) {
-      setAllowsChildren(true);
-    } else if (o instanceof Bookmark) {
-      setAllowsChildren(false);
-    } else if (o instanceof Separator) {
-      setAllowsChildren(false);
-    } else {
-      throw new IllegalArgumentException("Cannot accept object of type: "+o.getClass());
-    }
-    super.setUserObject(o);
-  }
-  
-  public String getName() {
-    return this.toString();
-  }
-
+	public void setUserObject(Object o) throws IllegalArgumentException {
+		if (o instanceof String) {
+			setAllowsChildren(true);
+		} else if (o instanceof Bookmark) {
+			setAllowsChildren(false);
+		} else if (o instanceof Separator) {
+			setAllowsChildren(false);
+		} else {
+			throw new IllegalArgumentException("Cannot accept object of type: " + o.getClass());
+		}
+		super.setUserObject(o);
+	}
+	
+	public String getName() {
+		return this.toString();
+	}
+	
 	@Override
-  public String toString() {
-    Object o = getUserObject();
-    if (o instanceof String) {
-      return ((String) o);
-    } else if (o instanceof Bookmark) {
-      return ((Bookmark) o).getName();
-    } else if (o instanceof Separator) {
-      return "-----";
-    } else {
-      assert false; // should not get here
-      return ""+o; // but if you do....
-    }
-  }
+	public String toString() {
+		Object o = getUserObject();
+		if (o instanceof String) {
+			return ((String) o);
+		} else if (o instanceof Bookmark) {
+			return ((Bookmark) o).getName();
+		} else if (o instanceof Separator) {
+			return "-----";
+		} else {
+			assert false; // should not get here
+			return "" + o; // but if you do....
+		}
+	}
 
-  /** Finds a sublist with the given name.
-   *  @param create if true, will create the sublist if it doesn't exist.
-   */
-  private BookmarkList getSubListByName(String name, boolean create) {
-    BookmarkList result = null;
-    @SuppressWarnings("unchecked")
-	Enumeration<BookmarkList> childs = children();
-    while (childs.hasMoreElements()) {
-      BookmarkList tn = childs.nextElement();
-      Object o = tn.getUserObject();
-      if (o instanceof String) {
-        if (name.equals(o)) {
-          result = tn;
-          break;
-        }
-      }
-    }
-    if (create && result == null) {
-      result = new BookmarkList(name);
-      this.add(result);
-    }
-    return result;
-  }
- 
-  /** Finds or creates a sublist with a given path.
-   *  Example getSublistByPath("aaa/bbb/ccc", "/", true) will find or create
-   *  a BookmarkList called "aaa" containing a BookmarkList "bbb" containing
-   *  a BookmarkList "ccc".
-   */
-  public BookmarkList getSubListByPath(String path, String delimiter, boolean create) {
-    StringTokenizer st = new StringTokenizer(path, delimiter);
-    BookmarkList current_list = this;
-    while (current_list != null && st.hasMoreElements()) {
-      String name = st.nextToken();
-      current_list = current_list.getSubListByName(name, create);
-    }
-    return current_list;
-  }
+	/** Finds a sublist with the given name.
+	 *  @param create if true, will create the sublist if it doesn't exist.
+	 */
+	private BookmarkList getSubListByName(String name, boolean create) {
+		BookmarkList result = null;
+		@SuppressWarnings("unchecked")
+		Enumeration<BookmarkList> childs = children();
+		while (childs.hasMoreElements()) {
+			BookmarkList tn = childs.nextElement();
+			Object o = tn.getUserObject();
+			if (o instanceof String) {
+				if (name.equals(o)) {
+					result = tn;
+					break;
+				}
+			}
+		}
+		if (create && result == null) {
+			result = new BookmarkList(name);
+			this.add(result);
+		}
+		return result;
+	}
 
-  /** Prints a description of the list to a PrintStream, for debugging. */
-  public void printText(PrintStream out) {
-    printTextRecursively(out, "");
-  }
+	/** Finds or creates a sublist with a given path.
+	 *  Example getSublistByPath("aaa/bbb/ccc", "/", true) will find or create
+	 *  a BookmarkList called "aaa" containing a BookmarkList "bbb" containing
+	 *  a BookmarkList "ccc".
+	 */
+	public BookmarkList getSubListByPath(String path, String delimiter, boolean create) {
+		StringTokenizer st = new StringTokenizer(path, delimiter);
+		BookmarkList current_list = this;
+		while (current_list != null && st.hasMoreElements()) {
+			String name = st.nextToken();
+			current_list = current_list.getSubListByName(name, create);
+		}
+		return current_list;
+	}
 
-  // not a public method.  Use printText(PrintStream)
-  private void printTextRecursively(PrintStream out, String indent) {
-    out.println(indent+"Bookmark List: '"+this.toString()+"'  length: "+this.getChildCount());
-    @SuppressWarnings("unchecked")
-    Enumeration<BookmarkList> e = children();
-    while (e.hasMoreElements()) {
-      BookmarkList btn = e.nextElement();
-      Object o = btn.getUserObject();
-      if (o instanceof String) {
-        btn.printTextRecursively(out, indent + " -> ");
-      } else if (o instanceof Separator) {
-        out.println(indent+"  --------------------------");
-      } else if (o instanceof Bookmark) {
-        Bookmark b = (Bookmark) o;
-        out.println(indent+"  Bookmark: '"+b.getName()+"' -> '"+b.getURL().toExternalForm()+"'");
-      } else {
-        out.println(indent+"  Unknown object: "+o);
-      }
-    }
-  }
+	/** Prints a description of the list to a PrintStream, for debugging. */
+	public void printText(PrintStream out) {
+		printTextRecursively(out, "");
+	}
 
-  /** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
-   *  format.  Microsoft IE can also read this format.
-   */
-  public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
-    FileWriter fw = null;
-    BufferedWriter bw = null;
-    try {
-      fw = new FileWriter(fil);
-      bw = new BufferedWriter(fw);
-      bw.write(NETSCAPE_BOOKMARKS_DOCTYPE+"\n");
-      bw.write("<!-- This file was generated by "+appName+" "+appVersion+"\n");
-      bw.write("     You may import and export these with a web browser.\n");
-      bw.write("     DO NOT EDIT BY HAND! \n");
-      bw.write("     Doing so could make the file unusable. -->\n");
-      bw.write("<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n");
-      bw.write("<TITLE>Bookmarks</TITLE>\n");
-      bw.write("<H1>Bookmarks</H1>\n");
+	// not a public method.  Use printText(PrintStream)
+	private void printTextRecursively(PrintStream out, String indent) {
+		out.println(indent + "Bookmark List: '" + this.toString() + "'  length: " + this.getChildCount());
+		@SuppressWarnings("unchecked")
+		Enumeration<BookmarkList> e = children();
+		while (e.hasMoreElements()) {
+			BookmarkList btn = e.nextElement();
+			Object o = btn.getUserObject();
+			if (o instanceof String) {
+				btn.printTextRecursively(out, indent + " -> ");
+			} else if (o instanceof Separator) {
+				out.println(indent + "  --------------------------");
+			} else if (o instanceof Bookmark) {
+				Bookmark b = (Bookmark) o;
+				out.println(indent + "  Bookmark: '" + b.getName() + "' -> '" + b.getURL().toExternalForm() + "'");
+			} else {
+				out.println(indent + "  Unknown object: " + o);
+			}
+		}
+	}
 
-      bw.write("<DL><p>\n");
-      exportAsHTML_recursive(list, bw, "  ");
-      bw.write("</DL><p>\n");
-      bw.close();
-    } finally {
-      if (bw != null) {bw.close();}
-      if (fw != null) {fw.close();}
-    }
-  }
+	/** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
+	 *  format.  Microsoft IE can also read this format.
+	 */
+	public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+		try {
+			fw = new FileWriter(fil);
+			bw = new BufferedWriter(fw);
+			bw.write(NETSCAPE_BOOKMARKS_DOCTYPE + "\n");
+			bw.write("<!-- This file was generated by " + appName + " " + appVersion + "\n");
+			bw.write("     You may import and export these with a web browser.\n");
+			bw.write("     DO NOT EDIT BY HAND! \n");
+			bw.write("     Doing so could make the file unusable. -->\n");
+			bw.write("<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n");
+			bw.write("<TITLE>Bookmarks</TITLE>\n");
+			bw.write("<H1>Bookmarks</H1>\n");
+			
+			bw.write("<DL><p>\n");
+			exportAsHTML_recursive(list, bw, " ");
+			bw.write("</DL><p>\n");
+			bw.close();
+		} finally {
+			if (bw != null) {
+				bw.close();
+			}
+			if (fw != null) {
+				fw.close();
+			}
+		}
+	}
 
-  // Used by exportAsNetscapeHTML
-  private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
-    // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
-	@SuppressWarnings("unchecked")
-    Enumeration<BookmarkList> e = list.children();
-    while (e.hasMoreElements()) {
-      BookmarkList btn = e.nextElement();
-      Object o = btn.getUserObject();
-      if (o instanceof String) {
-        bw.write(indent+"<DT><H3>"+o+"</H3>\n");
-        bw.write(indent+"<DL><p>\n");
-        exportAsHTML_recursive(btn, bw, indent+"  ");
-        bw.write(indent+"</DL><p>\n");
-      } else if (o instanceof Bookmark) {
-        Bookmark bm = (Bookmark) o;
-        bw.write(indent+"<DT><A HREF=\""+bm.getURL().toExternalForm()+"\">");
-        bw.write(bm.getName());
-        bw.write("</A>\n");
-      } else if (o instanceof Separator) {
-        bw.write(indent+"<HR>\n");
-      }
-    }
-  }
-
-  /** Returns true only if the two objects are the same identical object. */
-  public boolean equals(Object o) {
-    return (this == o);
-  }
-  
+	// Used by exportAsNetscapeHTML
+	private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
+		@SuppressWarnings("unchecked")
+		Enumeration<BookmarkList> e = list.children();
+		while (e.hasMoreElements()) {
+			BookmarkList btn = e.nextElement();
+			Object o = btn.getUserObject();
+			if (o instanceof String) {
+				bw.write(indent + "<DT><H3>" + o + "</H3>\n");
+				bw.write(indent + "<DL><p>\n");
+				exportAsHTML_recursive(btn, bw, indent + "  ");
+				bw.write(indent + "</DL><p>\n");
+			} else if (o instanceof Bookmark) {
+				Bookmark bm = (Bookmark) o;
+				bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");				
+				bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
+				bw.write(bm.getName());
+				bw.write("</A>\n");
+			} else if (o instanceof Separator) {
+				bw.write(indent + "<HR>\n");
+			}
+		}
+	}
+	
+	private static String formatComment(String comment) 
+	{
+		return comment.replaceAll("\n","&newLine"); 
+	}
+			
+	/** Returns true only if the two objects are the same identical object. */
+	public boolean equals(Object o) {
+		return (this == o);
+	}
 }

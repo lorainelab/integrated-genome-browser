@@ -68,9 +68,9 @@ public class Activator extends WindowActivator implements BundleActivator {
 				}
 			}
 		);
-		BookmarkManagerView bmv = new BookmarkManagerView(igbService);
-		bmark_action.setBmv(bmv);
-		return bmv;
+		BookmarkManagerViewGUI.init(igbService);
+		bmark_action.setBmv(BookmarkManagerViewGUI.getSingleton());
+		return BookmarkManagerViewGUI.getSingleton();
 	}
 
 	private void startControlServer() {

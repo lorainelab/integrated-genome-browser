@@ -19,10 +19,11 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
+
 public class RecordPlaybackHolder {
 	private static final RecordPlaybackHolder instance = new RecordPlaybackHolder();
 	private List<Operation> operations = new ArrayList<Operation>();
-	private List<JRPWidgetDecorator> decorators = new ArrayList<JRPWidgetDecorator>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
 	private boolean mouseDown;
 	public static RecordPlaybackHolder getInstance() {
@@ -48,12 +49,17 @@ public class RecordPlaybackHolder {
 	public boolean isMouseDown() {
 		return mouseDown;
 	}
+
+	private List<JRPWidgetDecorator> getWidgetDecorators() {
+		return ExtensionPointImplHolder.getInstance(JRPWidgetDecorator.class).getExtensionPointImpls();
+	}
+
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
 		widgets.put(widget.getId(), widget);
-		for (JRPWidgetDecorator decorator : decorators) {
+		for (JRPWidgetDecorator decorator : getWidgetDecorators()) {
 			decorator.widgetAdded(widget);
 		}
 	}
@@ -116,13 +122,8 @@ public class RecordPlaybackHolder {
 	}
 
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
-		decorators.add(decorator);
 		for (JRPWidget widget : widgets.values()) {
 			decorator.widgetAdded(widget);
 		}
-	}
-
-	public void removeDecorator(JRPWidgetDecorator decorator) {
-		decorators.remove(decorator);
 	}
 }

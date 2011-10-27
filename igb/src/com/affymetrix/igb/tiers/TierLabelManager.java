@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
@@ -29,6 +30,7 @@ import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.view.GlyphResizer;
 
 import java.awt.geom.Rectangle2D;
@@ -584,8 +586,10 @@ public final class TierLabelManager implements PropertyHolder {
 		for (PopupListener pl : popup_listeners) {
 			pl.popupNotify(popup, this);
 		}
-
-		TrackClickHolder.getInstance().doTrackClick(popup, getSelectedTiers());
+		List<TierGlyph> selectedGlyphs = getSelectedTiers();
+		for (TrackClickListener l : ExtensionPointImplHolder.getInstance(TrackClickListener.class).getExtensionPointImpls()) {
+			l.trackClickNotify(popup, selectedGlyphs);
+		}
 		if (popup.getComponentCount() > 0) {
 			popup.show(labelmap, e.getX() + xoffset_pop, e.getY() + yoffset_pop);
 		}

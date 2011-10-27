@@ -19,11 +19,9 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.igb.glyph.GlyphProcessorHolder;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.tiers.TrackClickHolder;
 import com.affymetrix.igb.util.SearchModeHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
@@ -125,9 +123,7 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler<TrackClickListener>() {
 				@Override
-				public void addService(TrackClickListener trackClickListener) {
-					TrackClickHolder.getInstance().addTrackClickListener(trackClickListener);
-				}
+				public void addService(TrackClickListener trackClickListener) {}
 				@Override
 				public void removeService(TrackClickListener trackClickListener) {}
 			}
@@ -135,13 +131,9 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler<GlyphProcessor>() {
 				@Override
-				public void addService(GlyphProcessor glyphProcessor) {
-					GlyphProcessorHolder.getInstance().addGlyphProcessor(glyphProcessor);
-				}
+				public void addService(GlyphProcessor glyphProcessor) {}
 				@Override
-				public void removeService(GlyphProcessor glyphProcessor) {
-					GlyphProcessorHolder.getInstance().removeGlyphProcessor(glyphProcessor);
-				}
+				public void removeService(GlyphProcessor glyphProcessor) {}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,

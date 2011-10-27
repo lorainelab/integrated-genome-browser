@@ -23,9 +23,7 @@ public class Activator implements BundleActivator {
 					RecordPlaybackHolder.getInstance().addDecorator(decorator);
 				}
 				@Override
-				public void removeService(JRPWidgetDecorator decorator) {
-					RecordPlaybackHolder.getInstance().removeDecorator(decorator);
-				}
+				public void removeService(JRPWidgetDecorator decorator) {}
 			}
 		);
 		bundleContext.registerService(RecordPlaybackHolder.class.getName(), RecordPlaybackHolder.getInstance(), null);

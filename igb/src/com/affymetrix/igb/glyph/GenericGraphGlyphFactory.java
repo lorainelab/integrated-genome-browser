@@ -124,7 +124,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
-		GraphGlyph graph_glyph = GlyphProcessorHolder.getInstance().createGraphGlyph(newgraf, gstate);
+		GraphGlyph graph_glyph = GlyphProcessorUtil.getInstance().createGraphGlyph(newgraf, gstate);
 		if (graph_glyph == null) {
 			graph_glyph = new GraphGlyph(newgraf, gstate);
 		}

@@ -372,7 +372,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
-				GlyphProcessorHolder.getInstance().fireProcessGlyph(cglyph);
+				GlyphProcessorUtil.getInstance().fireProcessGlyph(cglyph);
 			}
 		}
 				
@@ -457,7 +457,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
 				gviewer.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
-				GlyphProcessorHolder.getInstance().fireProcessGlyph(cds_glyph);
+				GlyphProcessorUtil.getInstance().fireProcessGlyph(cds_glyph);
 			}
 		}
 		return thin_height;

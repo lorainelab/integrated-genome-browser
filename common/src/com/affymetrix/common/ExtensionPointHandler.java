@@ -19,20 +19,11 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 public abstract class ExtensionPointHandler<S> {
-	private Class<?> clazz;
 	public ExtensionPointHandler() {
 		super();
-		this.clazz = null;
-	}
-	public ExtensionPointHandler(Class<?> clazz) {
-		super();
-		this.clazz = clazz;
 	}
 	private Class<?> getBaseClass() {
-		if (clazz == null) {
-			return getTypeArguments(ExtensionPointHandler.class, getClass()).get(0);
-		}
-		return clazz;
+		return getTypeArguments(ExtensionPointHandler.class, getClass()).get(0);
 	}
 	public String getClassName() {
 		return getBaseClass().getName();

@@ -44,7 +44,7 @@ public abstract class SymLoader {
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call
 	public final URI uri;
-	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
+	protected boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 	protected final Map<BioSeq,Boolean> chrSort = new HashMap<BioSeq,Boolean>();
@@ -205,6 +205,10 @@ public abstract class SymLoader {
 		return chrResults;
     }
 
+	public boolean isResidueLoader(){
+		return isResidueLoader;
+	}
+	
 	/**
      * Get residues in the region of the chromosome.  This is generally only defined for some parsers
      * @param span - span of chromosome

@@ -828,7 +828,7 @@ public final class GeneralLoadUtils {
 				}
 				return false;
 			}
-			
+									
 			@Override
 			protected void finished() {
 				BioSeq aseq = gmodel.getSelectedSeq();
@@ -1241,7 +1241,7 @@ public final class GeneralLoadUtils {
 
 			Map<String, String> featureProps = null;
 			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
-			if (symL != null && symL.isResidueLoader && loadAsTrack) {
+			if (symL != null && symL.isResidueLoader() && loadAsTrack) {
 				symL = new ResidueTrackSymLoader(symL);
 				featureProps = new HashMap<String, String>();
 				featureProps.put("collapsed", "true");

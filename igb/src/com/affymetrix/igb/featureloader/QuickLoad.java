@@ -53,14 +53,14 @@ public final class QuickLoad extends SymLoader {
 		super(determineURI(version, featureName, organism_dir), featureName, null);
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
-		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
 	}
 
 	public QuickLoad(GenericVersion version, URI uri, SymLoader symL) {
 		super(uri, detemineFriendlyName(uri), null);
 		this.version = version;
 		this.symL = symL;
-		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
 	}
 	
 	@Override
@@ -140,7 +140,7 @@ public final class QuickLoad extends SymLoader {
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
 		try {
-			if (this.symL != null && this.symL.isResidueLoader) {
+			if (this.symL != null && this.symL.isResidueLoader()) {
 				loadResiduesThread(feature, overlapSpan);
 				return true;
 			} else {
@@ -398,7 +398,7 @@ public final class QuickLoad extends SymLoader {
 
 	@Override
 	public String getRegionResidues(SeqSpan span)throws Exception  {
-		if (this.symL != null && this.symL.isResidueLoader) {
+		if (this.symL != null && this.symL.isResidueLoader()) {
 			return this.symL.getRegionResidues(span);
 		}
 		Logger.getLogger(QuickLoad.class.getName()).log(

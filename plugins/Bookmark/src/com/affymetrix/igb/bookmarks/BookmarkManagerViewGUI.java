@@ -58,8 +58,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         commentTextArea = bmv.thing.comment_text_area;
         jLabel1 = new javax.swing.JLabel();
-        undoCommentButton = new javax.swing.JButton();
-        redoCommentButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         backwardActionButton = new javax.swing.JButton();
         forwardActionButton = new javax.swing.JButton();
@@ -117,34 +115,13 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
         jLabel1.setText("Comment:");
 
-        undoCommentButton.setIcon(CommonUtils.getInstance().getIcon("images/undo.png"));
-        undoCommentButton.setToolTipText("Undo comment");
-        undoCommentButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        undoCommentButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                undoCommentButtonActionPerformed(evt);
-            }
-        });
-
-        redoCommentButton.setIcon(CommonUtils.getInstance().getIcon("images/redo.png"));
-        redoCommentButton.setToolTipText("Redo Comment");
-        redoCommentButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        redoCommentButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                redoCommentButtonActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout PropertiesPanelLayout = new org.jdesktop.layout.GroupLayout(PropertiesPanel);
         PropertiesPanel.setLayout(PropertiesPanelLayout);
         PropertiesPanelLayout.setHorizontalGroup(
             PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PropertiesPanelLayout.createSequentialGroup()
                 .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 93, Short.MAX_VALUE)
-                .add(undoCommentButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(4, 4, 4)
-                .add(redoCommentButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(145, Short.MAX_VALUE))
             .add(jScrollPane2, 0, 0, Short.MAX_VALUE)
             .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, PropertiesPanelLayout.createSequentialGroup()
@@ -166,25 +143,16 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                     .add(nameLabel))
                 .add(0, 0, 0)
                 .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(PropertiesPanelLayout.createSequentialGroup()
-                        .add(4, 4, 4)
-                        .add(jLabel1))
-                    .add(PropertiesPanelLayout.createSequentialGroup()
-                        .add(4, 4, 4)
-                        .add(PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(undoCommentButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(redoCommentButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .add(4, 4, 4)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
+                .add(jLabel1)
+                .add(4, 4, 4)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
         );
 
         PropertiesPanelLayout.linkSize(new java.awt.Component[] {redoNameButton, undoNameButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         undoNameButton.setBorder(null);
         redoNameButton.setBorder(null);
-        undoCommentButton.setBorder(null);
-        redoCommentButton.setBorder(null);
 
         backwardActionButton.setIcon(CommonUtils.getInstance().getIcon("images/backward.png"));
         backwardActionButton.setToolTipText("Return to Previously visited Bookmark");
@@ -397,27 +365,15 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
 	private void undoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoNameButtonActionPerformed
 		try {
-			bmv.thing.undoNameManager.undo();
+			bmv.thing.undoManager.undo();
 		} catch (CannotUndoException ex) {}
 	}//GEN-LAST:event_undoNameButtonActionPerformed
 
 	private void redoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoNameButtonActionPerformed
 		try {
-			bmv.thing.undoNameManager.redo();
+			bmv.thing.undoManager.redo();
 		} catch (CannotRedoException ex) {}
 	}//GEN-LAST:event_redoNameButtonActionPerformed
-
-	private void undoCommentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoCommentButtonActionPerformed
-		try {
-			bmv.thing.undoCommentManager.undo();
-		} catch (CannotUndoException ex) {}
-	}//GEN-LAST:event_undoCommentButtonActionPerformed
-
-	private void redoCommentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoCommentButtonActionPerformed
-		try {
-			bmv.thing.undoCommentManager.redo();
-		} catch (CannotRedoException ex) {}
-	}//GEN-LAST:event_redoCommentButtonActionPerformed
 
 	private void commentTextAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentTextAreaFocusLost
 		bmv.thing.updateBookmarkData();
@@ -441,10 +397,8 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JButton redoCommentButton;
     private javax.swing.JButton redoNameButton;
     private javax.swing.JButton removeBookmarkActionButton;
-    private javax.swing.JButton undoCommentButton;
     private javax.swing.JButton undoNameButton;
     // End of variables declaration//GEN-END:variables
 }

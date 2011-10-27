@@ -187,8 +187,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public final DefaultTreeModel def_tree_model;
 		Action properties_action;
 		Action goto_action;
-		UndoManager undoNameManager = new UndoManager();
-		UndoManager undoCommentManager = new UndoManager();
+		UndoManager undoManager = new UndoManager();
+		//UndoManager undoCommentManager = new UndoManager();
 
 		BottomThing(JTree tree) {
 			if (tree == null) {
@@ -224,9 +224,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			goto_action.setEnabled(false);
 
 			this.name_text_field.setEnabled(false);
-			this.name_text_field.getDocument().addUndoableEditListener(undoNameManager);
+			this.name_text_field.getDocument().addUndoableEditListener(undoManager);
 			this.comment_text_area.setEnabled(false);
-			this.comment_text_area.getDocument().addUndoableEditListener(undoCommentManager);
+			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
 
 			bl_editor = new BookmarkListEditor(def_tree_model);
 		}

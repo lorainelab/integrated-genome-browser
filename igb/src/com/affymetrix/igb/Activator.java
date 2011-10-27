@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
-import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -148,13 +147,9 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler<AnnotationOperator>() {
 				@Override
-				public void addService(AnnotationOperator annotationOperator) {
-					AnnotationOperatorHolder.getInstance().addAnnotationOperator(annotationOperator);
-				}
+				public void addService(AnnotationOperator annotationOperator) {}
 				@Override
-				public void removeService(AnnotationOperator annotationOperator) {
-					AnnotationOperatorHolder.getInstance().removeAnnotationOperator(annotationOperator);
-				}
+				public void removeService(AnnotationOperator annotationOperator) {}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,

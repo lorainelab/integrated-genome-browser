@@ -3,8 +3,8 @@ package com.affymetrix.igb.tiers;
 import java.util.*;
 import javax.swing.*;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
-import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.igb.action.TierAnnotationOperationAction;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -26,7 +26,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			throw new RuntimeException("");
 		}
 		JMenu combineMenu = new JMenu("Track Operations...");
-		for (AnnotationOperator annotationOperator : AnnotationOperatorHolder.getInstance().getAnnotationOperators()) {
+		for (AnnotationOperator annotationOperator : ExtensionPointImplHolder.getInstance(AnnotationOperator.class).getExtensionPointImpls()) {
 			String name = annotationOperator.getName();
 			String title = name.substring(0, 1).toUpperCase() + name.substring(1);
 			JMenuItem operatorMI = new JMenuItem(title);

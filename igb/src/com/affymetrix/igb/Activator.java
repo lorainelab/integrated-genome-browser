@@ -22,7 +22,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.util.SearchModeHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -159,25 +158,17 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler<GraphOperator>() {
 				@Override
-				public void addService(GraphOperator graphOperator) {
-					igb.getMapView().addGraphOperator(graphOperator);
-				}
+				public void addService(GraphOperator graphOperator) {}
 				@Override
-				public void removeService(GraphOperator graphOperator) {
-					igb.getMapView().removeGraphOperator(graphOperator);
-				}
+				public void removeService(GraphOperator graphOperator) {}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler<ISearchMode>() {
 				@Override
-				public void addService(ISearchMode searchMode) {
-					SearchModeHolder.getInstance().addSearchMode(searchMode);
-				}
+				public void addService(ISearchMode searchMode) {}
 				@Override
-				public void removeService(ISearchMode searchMode) {
-					SearchModeHolder.getInstance().removeSearchMode(searchMode);
-				}
+				public void removeService(ISearchMode searchMode) {}
 			}
 		);
 	}

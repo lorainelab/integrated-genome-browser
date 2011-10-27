@@ -2129,14 +2129,6 @@ public class SeqMapView extends JPanel
 //		}
 	}
 
-	public void addGraphOperator(GraphOperator graphOperator) {
-		graph_manager.addGraphOperator(graphOperator);
-	}
-
-	public void removeGraphOperator(GraphOperator graphOperator) {
-		graph_manager.removeGraphOperator(graphOperator);
-	}
-
 	public void focusTrack(TierGlyph selectedTier) {
 		// set zoom to height of selected track
 		double tierCoordHeight = selectedTier.getCoordBox().getHeight();

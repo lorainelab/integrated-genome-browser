@@ -16,12 +16,10 @@ public class Activator extends WindowActivator implements BundleActivator {
 			new ExtensionPointHandler<ISearchMode>() {
 				@Override
 				public void addService(ISearchMode searchMode) {
-					searchView.addSearchMode(searchMode);
 					searchView.initSearchCB();
 				}
 				@Override
 				public void removeService(ISearchMode searchMode) {
-					searchView.removeSearchMode(searchMode);
 					searchView.initSearchCB();
 				}
 			}

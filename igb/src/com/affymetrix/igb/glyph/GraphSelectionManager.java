@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
@@ -120,14 +121,12 @@ public final class GraphSelectionManager
   private GlyphDragger dragger;
   private SeqMapView gviewer;
   private JFrame frm;
-  private List<GraphOperator> operators;
 
   public GraphSelectionManager(SeqMapView smv) {
     this();
     gviewer = smv;
     current_source = gviewer.getSeqMap();
     frm = Application.getSingleton().getFrame();
-    operators = new ArrayList<GraphOperator>();
   }
   
   private GraphSelectionManager() {
@@ -543,6 +542,7 @@ public final class GraphSelectionManager
       combine.add(graph_info_A);
       combine.add(graph_info_B);
       combine.add(new JSeparator());
+      List<GraphOperator> operators = ExtensionPointImplHolder.getInstance(GraphOperator.class).getExtensionPointImpls();
       for (final GraphOperator graphOperator : operators) {
     	  JMenuItem menuItem = new JMenuItem(graphOperator.getName());
     	  menuItem.addActionListener(
@@ -580,14 +580,6 @@ public final class GraphSelectionManager
 		}
 
       this.popupNotify(popup, graph_syms, primary_sym);
-    }
-
-    public void addGraphOperator(GraphOperator graphOperator) {
-    	operators.add(graphOperator);
-    }
-
-    public void removeGraphOperator(GraphOperator graphOperator) {
-    	operators.remove(graphOperator);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.search;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -144,8 +145,6 @@ public final class SearchView extends IGBTabPanel implements
 	// This helps protect against out-of-memory errors.
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	private List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
-
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
 	private static final String FORLABELTEXT = "for ";
@@ -247,14 +246,6 @@ public final class SearchView extends IGBTabPanel implements
 		igbService.addServerInitListener(this);
 	}
 
-	public void addSearchMode(ISearchMode searchMode) {
-		searchModes.add(searchMode);
-	}
-
-	public void removeSearchMode(ISearchMode searchMode) {
-		searchModes.remove(searchMode);
-	}
-
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
 		int remoteServerCount = getRemoteServerCount(group);
 		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCH2 : REMOTESERVERSEARCH2PLURAL;
@@ -297,6 +288,8 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
+		List<ISearchMode> searchModes = ExtensionPointImplHolder.getInstance(ISearchMode.class).getExtensionPointImpls();
+
 		for (ISearchMode searchMode : searchModes) {
 			searchCB.addItem(searchMode.getName());
 			searchModeMap.put(searchMode.getName(), searchMode);

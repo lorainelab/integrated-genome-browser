@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.common.ExtensionPointImplHolder;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -40,7 +41,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -52,7 +52,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -65,7 +64,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab
-		implements SeqSelectionListener, SymSelectionListener, GraphOperatorHolder {
+		implements SeqSelectionListener, SymSelectionListener {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
 	private static SimpleGraphTab singleton;
@@ -159,23 +158,6 @@ public final class SimpleGraphTab
 	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
 	public JRPComboBox heat_mapCB;
 	public AdvancedGraphPanel advanced_panel;
-	TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
-			new Comparator<FloatTransformer>() {
-
-				@Override
-				public int compare(FloatTransformer o1, FloatTransformer o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-	TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
-			new Comparator<GraphOperator>() {
-
-				@Override
-				public int compare(GraphOperator o1, GraphOperator o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-
 	public static void init(IGBService igbService) {
 		singleton = new SimpleGraphTab(igbService);
 	}
@@ -228,27 +210,19 @@ public final class SimpleGraphTab
 		score_thresh_adjuster.showFrame();
 	}
 
-	public TreeSet<GraphOperator> getGraphOperators() {
-		return graphOperators;
-	}
-
 	public void addFloatTransformer(FloatTransformer floatTransformer) {
-		floatTransformers.add(floatTransformer);
 		advanced_panel.loadTransforms();
 	}
 
 	public void removeFloatTransformer(FloatTransformer floatTransformer) {
-		floatTransformers.remove(floatTransformer);
 		advanced_panel.loadTransforms();
 	}
 
 	public void addGraphOperator(GraphOperator graphOperator) {
-		graphOperators.add(graphOperator);
 		advanced_panel.loadOperators();
 	}
 
 	public void removeGraphOperator(GraphOperator graphOperator) {
-		graphOperators.remove(graphOperator);
 		advanced_panel.loadOperators();
 	}
 
@@ -581,8 +555,6 @@ public final class SimpleGraphTab
 
 	final class AdvancedGraphPanel {
 
-		private static final long serialVersionUID = 1L;
-
 		private class HoverEffect implements MouseListener {
 
 			private String A = null;
@@ -756,6 +728,15 @@ public final class SimpleGraphTab
 		public void loadTransforms() {
 			transformationCB.removeAllItems();
 			name2transform.clear();
+			TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
+				new Comparator<FloatTransformer>() {
+					@Override
+					public int compare(FloatTransformer o1, FloatTransformer o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				}
+			);
+			floatTransformers.addAll(ExtensionPointImplHolder.getInstance(FloatTransformer.class).getExtensionPointImpls());
 			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
 				transformationCB.addItem(transformer.getName());
@@ -765,6 +746,15 @@ public final class SimpleGraphTab
 		public void loadOperators() {
 			operationCB.removeAllItems();
 			name2operator.clear();
+			TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
+				new Comparator<GraphOperator>() {
+					@Override
+					public int compare(GraphOperator o1, GraphOperator o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				}
+			);
+			graphOperators.addAll(ExtensionPointImplHolder.getInstance(GraphOperator.class).getExtensionPointImpls());
 			for (GraphOperator graphOperator : graphOperators) {
 				name2operator.put(graphOperator.getName(), graphOperator);
 				operationCB.addItem(graphOperator.getName());

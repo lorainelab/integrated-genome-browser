@@ -22,11 +22,11 @@ public abstract class ExtensionPointHandler<S> {
 	public ExtensionPointHandler() {
 		super();
 	}
-	private Class<?> getBaseClass() {
+	private Class<?> getExtensionPointClass() {
 		return getTypeArguments(ExtensionPointHandler.class, getClass()).get(0);
 	}
-	public String getClassName() {
-		return getBaseClass().getName();
+	private String getExtensionPointName() {
+		return getExtensionPointClass().getName();
 	}
 	public abstract void addService(S o);
 	public abstract void removeService(S o);
@@ -34,11 +34,11 @@ public abstract class ExtensionPointHandler<S> {
 	public static <Z> void addExtensionPoint(final BundleContext bundleContext, final ExtensionPointHandler<Z> serviceHandler) {
 		// register service - an extension point
 		try {
-			ServiceReference<Z>[] serviceReferences = (ServiceReference<Z>[]) bundleContext.getAllServiceReferences(serviceHandler.getClassName(), null);
+			ServiceReference<Z>[] serviceReferences = (ServiceReference<Z>[]) bundleContext.getAllServiceReferences(serviceHandler.getExtensionPointName(), null);
 			if (serviceReferences != null) {
 				for (ServiceReference<Z> serviceReference : serviceReferences) {
 					Z extensionPoint = bundleContext.getService(serviceReference);
-					ExtensionPointImplHolder<Z> extensionPointImplHolder = (ExtensionPointImplHolder<Z>)ExtensionPointImplHolder.getInstance(serviceHandler.getBaseClass());
+					ExtensionPointImplHolder<Z> extensionPointImplHolder = (ExtensionPointImplHolder<Z>)ExtensionPointImplHolder.getInstance(serviceHandler.getExtensionPointClass());
 					extensionPointImplHolder.addExtensionPointImpl(extensionPoint);
 					if (serviceHandler != null) {
 						serviceHandler.addService(extensionPoint);
@@ -51,7 +51,7 @@ public abstract class ExtensionPointHandler<S> {
 					public void serviceChanged(ServiceEvent event) {
 						ServiceReference<Z> serviceReference = (ServiceReference<Z>) event.getServiceReference();
 						Z extensionPoint = bundleContext.getService(serviceReference);
-						ExtensionPointImplHolder<Z> extensionPointImplHolder = (ExtensionPointImplHolder<Z>)ExtensionPointImplHolder.getInstance(serviceHandler.getBaseClass());
+						ExtensionPointImplHolder<Z> extensionPointImplHolder = (ExtensionPointImplHolder<Z>)ExtensionPointImplHolder.getInstance(serviceHandler.getExtensionPointClass());
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
 							extensionPointImplHolder.removeExtensionPointImpl(extensionPoint);
 							if (serviceHandler != null) {
@@ -66,10 +66,10 @@ public abstract class ExtensionPointHandler<S> {
 						}
 					}
 				}
-			, "(objectClass=" + serviceHandler.getClassName() + ")");
+			, "(objectClass=" + serviceHandler.getExtensionPointName() + ")");
 		}
 		catch (InvalidSyntaxException x) {
-			Logger.getLogger(ExtensionPointHandler.class.getName()).log(Level.WARNING, "error loading/unloading " + serviceHandler.getClassName(), x.getMessage());
+			Logger.getLogger(ExtensionPointHandler.class.getName()).log(Level.WARNING, "error loading/unloading " + serviceHandler.getExtensionPointName(), x.getMessage());
 		}
 	}
 

@@ -403,4 +403,12 @@ public class FileTypeHolder {
 		}
 		return nameToExtensionMap;
 	}
+	
+	public Map<String, String[]> getSequenceToExtensionMap() {
+		Map<String, String[]> map = new TreeMap<String, String[]>();
+		map.put("Fasta", new String[]{"fa","fas","fasta"});
+		map.put(".2bit", new String[]{"2bit"});
+		map.put("Binary", new String[]{"bnib"});
+		return map;
+	}
 }

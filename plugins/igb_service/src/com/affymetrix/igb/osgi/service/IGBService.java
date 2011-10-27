@@ -172,6 +172,6 @@ public interface IGBService {
 	public GenericServer getServer(String URLorName);
 	
 	// Open Uri
-	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName);
+	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack);
 	public String getSelectedSpecies();
 }

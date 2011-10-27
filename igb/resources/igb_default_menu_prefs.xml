@@ -24,72 +24,77 @@
 									<entry key="item" value="LoadURLAction" />
 								</map>
 							</node>
-							<node name="m01_03_separator">
+							<node name="m01_03_load__ref_seq_file">
+								<map>
+									<entry key="item" value="LoadRefTrackAction" />
+								</map>
+							</node>
+							<node name="m01_04_separator">
 								<map>
 									<entry key="separator" value="true" />
 								</map>
 							</node>
-							<node name="m01_04_print">
+							<node name="m01_05_print">
 								<map>
 									<entry key="item" value="PrintAction" />
 								</map>
 							</node>
-							<node name="m01_05_print_frame">
+							<node name="m01_07_print_frame">
 								<map>
 									<entry key="item" value="PrintFrameAction" />
 								</map>
 							</node>
-							<node name="m01_06_export_menu">
+							<node name="m01_07_export_menu">
 								<map>
 									<entry key="menu" value="export" />
 								</map>
-								<node name="m01_06_01_export_main_view">
+								<node name="m01_07_01_export_main_view">
 									<map>
 										<entry key="item" value="ExportMainViewAction" />
 									</map>
 								</node>
-								<node name="m01_06_02_export_labelled_main_view">
+								<node name="m01_07_02_export_labelled_main_view">
 									<map>
 										<entry key="item" value="ExportLabelledMainViewAction" />
 									</map>
 								</node>
-								<node name="m01_06_03_export_whole_frame">
+								<node name="m01_07_03_export_whole_frame">
 									<map>
 										<entry key="item" value="ExportWholeFrameAction" />
 									</map>
 								</node>
-								<node name="m01_06_04_export_sliced_view">
+								<node name="m01_07_04_export_sliced_view">
 									<map>
 										<entry key="item" value="ExportSlicedViewAction" />
 									</map>
 								</node>
 							</node>
-							<node name="m01_07_separator">
+							<node name="m01_08_separator">
 								<map>
 									<entry key="separator" value="true" />
 								</map>
 							</node>
-							<node name="m01_08_preferences">
+							<node name="m01_09_preferences">
 								<map>
 									<entry key="item" value="PreferencesAction" />
 								</map>
 							</node>
-							<node name="m01_09_run_script">
+							<node name="m01_10_run_script">
 								<map>
 									<entry key="item" value="RunScriptAction" />
 								</map>
 							</node>
-							<node name="m01_10_save_script">
+							<node name="m01_11_save_script">
 								<map>
 									<entry key="item" value="SaveScriptAction" />
 								</map>
 							</node>
-							<node name="m01_11_separator">
+							<node name="m01_12_separator">
 								<map>
 									<entry key="separator" value="true" />
 								</map>
 							</node>
-							<node name="m01_12_exit">
+							<node name="m01_13_exit">
 								<map>
 									<entry key="item" value="ExitAction" />
 								</map>

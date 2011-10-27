@@ -76,7 +76,7 @@ public final class LoadURLAction extends OpenURIAction {
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 
-		openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
+		openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem(), false);
 		
 	}
 

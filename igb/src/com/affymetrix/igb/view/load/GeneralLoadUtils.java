@@ -828,7 +828,7 @@ public final class GeneralLoadUtils {
 				}
 				return false;
 			}
-
+			
 			@Override
 			protected void finished() {
 				BioSeq aseq = gmodel.getSelectedSeq();
@@ -1121,7 +1121,7 @@ public final class GeneralLoadUtils {
 		return versionNames;
 	}
 
-	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName) {
+	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
 		if (ScriptFileLoader.isScript(uri.toString())) {
 			ScriptFileLoader.runScript(uri.toString());
 			return;
@@ -1134,7 +1134,7 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
+		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 
 		if (gFeature == null) {
 			return;
@@ -1209,7 +1209,7 @@ public final class GeneralLoadUtils {
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 	
-	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup) {
+	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
 		GenericFeature gFeature = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
 		if (gFeature == null) {
@@ -1241,7 +1241,7 @@ public final class GeneralLoadUtils {
 
 			Map<String, String> featureProps = null;
 			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
-			if (symL != null && symL.isResidueLoader && IGB.confirmPanel("Would you like to load sequence on a track?")) {
+			if (symL != null && symL.isResidueLoader && loadAsTrack) {
 				symL = new ResidueTrackSymLoader(symL);
 				featureProps = new HashMap<String, String>();
 				featureProps.put("collapsed", "true");

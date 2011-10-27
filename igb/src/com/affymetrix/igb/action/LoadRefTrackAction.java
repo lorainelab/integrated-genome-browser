@@ -1,0 +1,55 @@
+package com.affymetrix.igb.action;
+
+import java.util.Map;
+import java.text.MessageFormat;
+
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
+/**
+ *
+ * @author hiralv
+ */
+public class LoadRefTrackAction extends AbstractLoadFileAction {
+
+	private static final LoadRefTrackAction ACTION = new LoadRefTrackAction();
+
+	public static LoadRefTrackAction getAction() {
+		return ACTION;
+	}
+	
+	@Override
+	protected void addSupportedFiles() {
+		Map<String, String[]> nameToExtensionMap = FileTypeHolder.getInstance().getSequenceToExtensionMap();
+		for (String name : nameToExtensionMap.keySet()) {
+			chooser.addChoosableFileFilter(new UniFileFilter(
+					nameToExtensionMap.get(name),
+					name + " Files"));
+		}
+	}
+
+	@Override
+	protected String getID() {
+		return "openRefSeq";
+	}
+
+	@Override
+	protected String getFriendlyNameID() {
+		return "openRefSeq";
+	}
+
+	@Override
+	public String getText() {
+		return MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("openRefTrackFile"));
+	}
+
+	@Override
+	protected boolean loadSequenceAsTrack() {
+		return true;
+	}
+	
+}

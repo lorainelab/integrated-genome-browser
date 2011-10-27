@@ -21,14 +21,14 @@ public class Activator implements BundleActivator {
 		bundleContext = _bundleContext;
 		// add all FileTypeHandler implementations to FileTypeHolder
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(FileTypeHandler.class) {
+			new ExtensionPointHandler<FileTypeHandler>() {
 				@Override
-				public void addService(Object o) {
-					FileTypeHolder.getInstance().addFileTypeHandler((FileTypeHandler)o);
+				public void addService(FileTypeHandler fileTypeHandler) {
+					FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
 				}
 				@Override
-				public void removeService(Object o) {
-					FileTypeHolder.getInstance().removeFileTypeHandler((FileTypeHandler)o);
+				public void removeService(FileTypeHandler fileTypeHandler) {
+					FileTypeHolder.getInstance().removeFileTypeHandler(fileTypeHandler);
 				}
 			}
 		);

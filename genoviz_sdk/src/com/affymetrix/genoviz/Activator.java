@@ -17,14 +17,14 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(JRPWidgetDecorator.class) {
+			new ExtensionPointHandler<JRPWidgetDecorator>() {
 				@Override
-				public void addService(Object o) {
-					RecordPlaybackHolder.getInstance().addDecorator((JRPWidgetDecorator)o);
+				public void addService(JRPWidgetDecorator decorator) {
+					RecordPlaybackHolder.getInstance().addDecorator(decorator);
 				}
 				@Override
-				public void removeService(Object o) {
-					RecordPlaybackHolder.getInstance().removeDecorator((JRPWidgetDecorator)o);
+				public void removeService(JRPWidgetDecorator decorator) {
+					RecordPlaybackHolder.getInstance().removeDecorator(decorator);
 				}
 			}
 		);

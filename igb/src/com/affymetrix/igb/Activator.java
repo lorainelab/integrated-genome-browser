@@ -124,72 +124,72 @@ public class Activator implements BundleActivator {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(TrackClickListener.class) {
+			new ExtensionPointHandler<TrackClickListener>() {
 				@Override
-				public void addService(Object o) {
-					TrackClickHolder.getInstance().addTrackClickListener((TrackClickListener)o);
+				public void addService(TrackClickListener trackClickListener) {
+					TrackClickHolder.getInstance().addTrackClickListener(trackClickListener);
 				}
 				@Override
-				public void removeService(Object o) {}
+				public void removeService(TrackClickListener trackClickListener) {}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(GlyphProcessor.class) {
+			new ExtensionPointHandler<GlyphProcessor>() {
 				@Override
-				public void addService(Object o) {
-					GlyphProcessorHolder.getInstance().addGlyphProcessor((GlyphProcessor)o);
+				public void addService(GlyphProcessor glyphProcessor) {
+					GlyphProcessorHolder.getInstance().addGlyphProcessor(glyphProcessor);
 				}
 				@Override
-				public void removeService(Object o) {
-					GlyphProcessorHolder.getInstance().removeGlyphProcessor((GlyphProcessor)o);
-				}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(AnnotationOperator.class) {
-				@Override
-				public void addService(Object o) {
-					AnnotationOperatorHolder.getInstance().addAnnotationOperator((AnnotationOperator)o);
-				}
-				@Override
-				public void removeService(Object o) {
-					AnnotationOperatorHolder.getInstance().removeAnnotationOperator((AnnotationOperator)o);
+				public void removeService(GlyphProcessor glyphProcessor) {
+					GlyphProcessorHolder.getInstance().removeGlyphProcessor(glyphProcessor);
 				}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(ExtendedMapViewGlyphFactoryI.class) {
+			new ExtensionPointHandler<AnnotationOperator>() {
 				@Override
-				public void addService(Object o) {
-					MapViewModeHolder.getInstance().addViewFactory((ExtendedMapViewGlyphFactoryI)o);
+				public void addService(AnnotationOperator annotationOperator) {
+					AnnotationOperatorHolder.getInstance().addAnnotationOperator(annotationOperator);
 				}
 				@Override
-				public void removeService(Object o) {
-					MapViewModeHolder.getInstance().removeViewFactory((ExtendedMapViewGlyphFactoryI)o);
-				}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(GraphOperator.class) {
-				@Override
-				public void addService(Object o) {
-					igb.getMapView().addGraphOperator((GraphOperator)o);
-				}
-				@Override
-				public void removeService(Object o) {
-					igb.getMapView().removeGraphOperator((GraphOperator)o);
+				public void removeService(AnnotationOperator annotationOperator) {
+					AnnotationOperatorHolder.getInstance().removeAnnotationOperator(annotationOperator);
 				}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(ISearchMode.class) {
+			new ExtensionPointHandler<ExtendedMapViewGlyphFactoryI>() {
 				@Override
-				public void addService(Object o) {
-					SearchModeHolder.getInstance().addSearchMode((ISearchMode)o);
+				public void addService(ExtendedMapViewGlyphFactoryI extendedMapViewGlyphFactory) {
+					MapViewModeHolder.getInstance().addViewFactory(extendedMapViewGlyphFactory);
 				}
 				@Override
-				public void removeService(Object o) {
-					SearchModeHolder.getInstance().removeSearchMode((ISearchMode)o);
+				public void removeService(ExtendedMapViewGlyphFactoryI extendedMapViewGlyphFactory) {
+					MapViewModeHolder.getInstance().removeViewFactory(extendedMapViewGlyphFactory);
+				}
+			}
+		);
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler<GraphOperator>() {
+				@Override
+				public void addService(GraphOperator graphOperator) {
+					igb.getMapView().addGraphOperator(graphOperator);
+				}
+				@Override
+				public void removeService(GraphOperator graphOperator) {
+					igb.getMapView().removeGraphOperator(graphOperator);
+				}
+			}
+		);
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler<ISearchMode>() {
+				@Override
+				public void addService(ISearchMode searchMode) {
+					SearchModeHolder.getInstance().addSearchMode(searchMode);
+				}
+				@Override
+				public void removeService(ISearchMode searchMode) {
+					SearchModeHolder.getInstance().removeSearchMode(searchMode);
 				}
 			}
 		);

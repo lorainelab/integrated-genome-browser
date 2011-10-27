@@ -13,15 +13,15 @@ public class Activator extends WindowActivator implements BundleActivator {
 	protected IGBTabPanel getPage(IGBService igbService) {
 		final SearchView searchView = new SearchView(igbService);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(ISearchMode.class) {
+			new ExtensionPointHandler<ISearchMode>() {
 				@Override
-				public void addService(Object o) {
-					searchView.addSearchMode((ISearchMode)o);
+				public void addService(ISearchMode searchMode) {
+					searchView.addSearchMode(searchMode);
 					searchView.initSearchCB();
 				}
 				@Override
-				public void removeService(Object o) {
-					searchView.removeSearchMode((ISearchMode)o);
+				public void removeService(ISearchMode searchMode) {
+					searchView.removeSearchMode(searchMode);
 					searchView.initSearchCB();
 				}
 			}

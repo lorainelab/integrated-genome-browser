@@ -15,26 +15,26 @@ public class Activator extends WindowActivator implements BundleActivator {
 		SimpleGraphTabGUI.init(igbService);
 		final SimpleGraphTabGUI simpleGraphTabGUI = SimpleGraphTabGUI.getSingleton();
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(FloatTransformer.class) {
+			new ExtensionPointHandler<FloatTransformer>() {
 				@Override
-				public void addService(Object o) {
-					simpleGraphTabGUI.sgt.addFloatTransformer((FloatTransformer)o);
+				public void addService(FloatTransformer floatTransformer) {
+					simpleGraphTabGUI.sgt.addFloatTransformer(floatTransformer);
 				}
 				@Override
-				public void removeService(Object o) {
-					simpleGraphTabGUI.sgt.removeFloatTransformer((FloatTransformer)o);
+				public void removeService(FloatTransformer floatTransformer) {
+					simpleGraphTabGUI.sgt.removeFloatTransformer(floatTransformer);
 				}
 			}
 		);
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler(GraphOperator.class) {
+			new ExtensionPointHandler<GraphOperator>() {
 				@Override
-				public void addService(Object o) {
-					simpleGraphTabGUI.sgt.addGraphOperator((GraphOperator)o);
+				public void addService(GraphOperator graphOperator) {
+					simpleGraphTabGUI.sgt.addGraphOperator(graphOperator);
 				}
 				@Override
-				public void removeService(Object o) {
-					simpleGraphTabGUI.sgt.removeGraphOperator((GraphOperator)o);
+				public void removeService(GraphOperator graphOperator) {
+					simpleGraphTabGUI.sgt.removeGraphOperator(graphOperator);
 				}
 			}
 		);

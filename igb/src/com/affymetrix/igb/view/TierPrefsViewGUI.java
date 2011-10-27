@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed {
 
 	public static final long serialVersionUID = 1l;
-	public static TierPrefsView tpv;
+	public TierPrefsView tpv;
 	private SeqMapView smv;
 
 	/** Creates new form PrototypeOne */

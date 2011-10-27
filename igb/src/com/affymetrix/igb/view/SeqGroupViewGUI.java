@@ -16,7 +16,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
 	private static final int TAB_POSITION = 7;
 	private final JRPTable seqtable;
 	private static SeqGroupViewGUI singleton;
-	private static SeqGroupView seqGroupModel;
+	private SeqGroupView seqGroupModel;
 
 	public static void init(IGBService _igbService) {
 		singleton = new SeqGroupViewGUI(_igbService);

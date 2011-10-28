@@ -55,6 +55,7 @@ public class Annotation implements Serializable, Owned {
 	private String              description;
 	private String              codeVisibility;
 	private String              fileName;
+	private String              dataPath;
 	private Integer             idGenomeVersion;
 	private Set                 annotationGroupings;
 	private Integer             idUser;
@@ -101,7 +102,13 @@ public class Annotation implements Serializable, Owned {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	public Integer getIdGenomeVersion() {
+	public String getDataPath() {
+    return dataPath;
+  }
+  public void setDataPath(String dataPath) {
+    this.dataPath = dataPath;
+  }
+  public Integer getIdGenomeVersion() {
 		return idGenomeVersion;
 	}
 	public void setIdGenomeVersion(Integer idGenomeVersion) {
@@ -519,7 +526,8 @@ public class Annotation implements Serializable, Owned {
 		if (this.getFileName() == null || this.getFileName().equals("")) {
 			return "";
 		}
-		String filePath =  data_root + this.getFileName();
+		
+		String filePath =  getDirectory(data_root);
 		File file = new File(filePath);
 
 		File[] files = file.listFiles();
@@ -556,7 +564,13 @@ public class Annotation implements Serializable, Owned {
 	}
 
 	public String getDirectory(String data_root) {
-		return data_root  + this.getFileName();
+	  String dataPath = null;
+	  if (this.getDataPath() != null && !this.getDataPath().equals("")) {
+      dataPath = this.getDataPath();
+    } else {
+      dataPath = data_root;
+    }
+	  return dataPath + this.getFileName();
 	}
 
 

@@ -715,6 +715,7 @@ public class GenoPubServlet extends HttpServlet {
 			genomeVersion.setIdOrganism(idOrganism);
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
+			genomeVersion.setDataPath(genometry_genopub_dir);
 			sess.save(genomeVersion);
 
 			// Now add a root annotation grouping
@@ -1769,6 +1770,7 @@ public class GenoPubServlet extends HttpServlet {
 		annotation.setCodeVisibility(codeVisibility);
 		annotation.setIdUserGroup(idUserGroup);
 		annotation.setIsLoaded("N");
+		annotation.setDataPath(genometry_genopub_dir);
 
 		// Only set ownership if this is not an admin
 		if (!genoPubSecurity.isAdminRole()) {
@@ -3345,6 +3347,7 @@ public class GenoPubServlet extends HttpServlet {
 		dup.setIsLoaded("N");
 		dup.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 		dup.setCreatedBy(this.genoPubSecurity.getUserName());
+		dup.setDataPath(genometry_genopub_dir);
 
 		//save Annotation so that it's assigned an ID
 		sess.save(dup);

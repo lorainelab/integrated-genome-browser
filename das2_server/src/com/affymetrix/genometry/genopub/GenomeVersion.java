@@ -30,6 +30,7 @@ public class GenomeVersion implements Serializable {
 	private Set      segments;
 	private Set      aliases;
 	private Integer  idOrganism;
+	private String   dataPath;
 	private Set      annotationGroupings;
 	private Set      annotations;
 
@@ -127,7 +128,13 @@ public class GenomeVersion implements Serializable {
 	public void setIdOrganism(Integer idOrganism) {
 		this.idOrganism = idOrganism;
 	}
-	public Set getAnnotations() {
+	public String getDataPath() {
+    return dataPath;
+  }
+  public void setDataPath(String dataPath) {
+    this.dataPath = dataPath;
+  }
+  public Set getAnnotations() {
 		return annotations;
 	}
 	public void setAnnotations(Set annotations) {
@@ -190,7 +197,13 @@ public class GenomeVersion implements Serializable {
 	}
 
 	public String getSequenceDirectory(String data_root) {
-		return data_root  + getSequenceFileName();
+	  String dataPath = null;
+	  if (this.getDataPath() != null && !this.getDataPath().equals("")) {
+	    dataPath = this.getDataPath();
+	  } else {
+	    dataPath = data_root;
+	  }
+		return dataPath + getSequenceFileName();
 	}
 
 

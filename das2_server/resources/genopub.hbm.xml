@@ -17,6 +17,7 @@
         <property name="summary"                     column="summary"                    type="string"/>
         <property name="description"                 column="description"                type="string"/>
         <property name="fileName"                    column="fileName"                   type="string"/>
+        <property name="dataPath"                    column="dataPath"                   type="string"/>
         <property name="codeVisibility"              column="codeVisibility"             type="string"/>
         <property name="idGenomeVersion"             column="idGenomeVersion"            type="integer"/>
         <property name="idUser"                      column="idUser"                     type="integer"/>
@@ -111,6 +112,7 @@
         <property name="name"            column="name"              type="string"/>
         <property name="ucscName"        column="ucscName"          type="string"/>
         <property name="idOrganism"      column="idOrganism"        type="integer"/>
+        <property name="dataPath"        column="dataPath"          type="string"/>
         <property name="buildDate"       column="buildDate"         type="java.sql.Date"/>
         <property name="coordURI"        column="coordURI"          type="string"/>
         <property name="coordAuthority"  column="coordAuthority"    type="string"/>

@@ -19,7 +19,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 
 public class RecordPlaybackHolder {
 	private static final RecordPlaybackHolder instance = new RecordPlaybackHolder();
@@ -50,17 +50,15 @@ public class RecordPlaybackHolder {
 		return mouseDown;
 	}
 
-	private List<JRPWidgetDecorator> getWidgetDecorators() {
-		return ExtensionPointImplHolder.getInstance(JRPWidgetDecorator.class).getExtensionPointImpls();
-	}
-
 	public void addWidget(JRPWidget widget) {
 		if (widgets.get(widget.getId()) != null) {
 //			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
 		widgets.put(widget.getId(), widget);
-		for (JRPWidgetDecorator decorator : getWidgetDecorators()) {
-			decorator.widgetAdded(widget);
+		if (ExtensionPointHandler.getExtensionPoint(JRPWidgetDecorator.class) != null) {
+			for (JRPWidgetDecorator decorator : ExtensionPointHandler.getExtensionPoint(JRPWidgetDecorator.class).getExtensionPointImpls()) {
+				decorator.widgetAdded(widget);
+			}
 		}
 	}
 	public void removeWidget(String id) {

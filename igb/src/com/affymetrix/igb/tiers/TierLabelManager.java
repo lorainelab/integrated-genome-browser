@@ -6,7 +6,7 @@ import java.util.*;
 
 import javax.swing.*;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
@@ -587,7 +587,7 @@ public final class TierLabelManager implements PropertyHolder {
 			pl.popupNotify(popup, this);
 		}
 		List<TierGlyph> selectedGlyphs = getSelectedTiers();
-		for (TrackClickListener l : ExtensionPointImplHolder.getInstance(TrackClickListener.class).getExtensionPointImpls()) {
+		for (TrackClickListener l : ExtensionPointHandler.getExtensionPoint(TrackClickListener.class).getExtensionPointImpls()) {
 			l.trackClickNotify(popup, selectedGlyphs);
 		}
 		if (popup.getComponentCount() > 0) {

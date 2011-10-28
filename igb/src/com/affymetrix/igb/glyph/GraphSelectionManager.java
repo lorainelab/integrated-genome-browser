@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
@@ -542,7 +542,7 @@ public final class GraphSelectionManager
       combine.add(graph_info_A);
       combine.add(graph_info_B);
       combine.add(new JSeparator());
-      List<GraphOperator> operators = ExtensionPointImplHolder.getInstance(GraphOperator.class).getExtensionPointImpls();
+      List<GraphOperator> operators = ExtensionPointHandler.getExtensionPoint(GraphOperator.class).getExtensionPointImpls();
       for (final GraphOperator graphOperator : operators) {
     	  JMenuItem menuItem = new JMenuItem(graphOperator.getName());
     	  menuItem.addActionListener(

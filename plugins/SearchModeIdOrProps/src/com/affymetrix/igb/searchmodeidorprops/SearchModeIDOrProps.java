@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -16,11 +17,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -228,8 +226,14 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 				return null;
 			}
 
-			statusHolder.setStatus(friendlySearchStr + ": Searching remotely...");
-			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			//remoteSearches
+			remoteSymList = new ArrayList<SeqSymmetry>();
+			for (RemoteSearchI remoteSearch : ExtensionPointHandler.getExtensionPoint(RemoteSearchI.class).getExtensionPointImpls()) {
+				statusHolder.setStatus(friendlySearchStr + ": Searching remotely with " + remoteSearch.getClass().getName() + "...");
+				List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
+				symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
+				remoteSymList.addAll(symList);
+			}
 		}
 
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
@@ -291,29 +295,6 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 
 		return rows;
 	}	
-
-	private static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
-		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
-
-		if (name == null || name.isEmpty()) {
-			return features;
-		}
-
-		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerType.DAS2) {
-				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
-				if (version != null) {
-					List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
-					if (newFeatures != null) {
-						newFeatures = filterBySeq(newFeatures, chrFilter);	// make sure we filter out other chromosomes
-						features.addAll(newFeatures);
-					}
-				}
-			}
-		}
-
-		return features;
-	}
 
 	@Override
 	public void finished(BioSeq vseq) {	}

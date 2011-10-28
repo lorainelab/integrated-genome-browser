@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.operator.annotation.*;
 import com.affymetrix.genometryImpl.operator.graph.*;
 import com.affymetrix.genometryImpl.operator.transform.*;
@@ -20,18 +21,19 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
 		// add all FileTypeHandler implementations to FileTypeHolder
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<FileTypeHandler>() {
-				@Override
-				public void addService(FileTypeHandler fileTypeHandler) {
-					FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
-				}
-				@Override
-				public void removeService(FileTypeHandler fileTypeHandler) {
-					FileTypeHolder.getInstance().removeFileTypeHandler(fileTypeHandler);
-				}
+		ExtensionPointHandler<FileTypeHandler> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
+		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
+			
+			@Override
+			public void removeService(FileTypeHandler fileTypeHandler) {
+				FileTypeHolder.getInstance().removeFileTypeHandler(fileTypeHandler);
 			}
-		);
+			
+			@Override
+			public void addService(FileTypeHandler fileTypeHandler) {
+				FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
+			}
+		});
 		initTransforms();
 		initGraphOperators();
 		initAnnotationOperators();

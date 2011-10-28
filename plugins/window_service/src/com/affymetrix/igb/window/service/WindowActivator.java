@@ -17,7 +17,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 public abstract class WindowActivator implements BundleActivator {
 
 	protected BundleContext bundleContext;
-	protected ServiceRegistration<?> serviceRegistration;
+	protected ServiceRegistration<IGBTabPanel> serviceRegistration;
 
 	/**
 	 * standard getter
@@ -39,11 +39,12 @@ public abstract class WindowActivator implements BundleActivator {
 	 * register it with OSGi, so that the tab can be added.
 	 * @param igbServiceReference the ServiceReference for the IGBService
 	 */
-	private void createPage(ServiceReference<?> igbServiceReference) {
+	@SuppressWarnings("unchecked")
+	private void createPage(ServiceReference<IGBService> igbServiceReference) {
         try
         {
-        	final IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-        	serviceRegistration = bundleContext.registerService(IGBTabPanel.class.getName(), getPage(igbService), null);
+        	final IGBService igbService = bundleContext.getService(igbServiceReference);
+        	serviceRegistration = (ServiceRegistration<IGBTabPanel>) bundleContext.registerService(IGBTabPanel.class.getName(), getPage(igbService), null);
         	bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -58,7 +59,7 @@ public abstract class WindowActivator implements BundleActivator {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void processCreatePage() throws Exception
 	{
-    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<IGBService> igbServiceReference = (ServiceReference<IGBService>) bundleContext.getServiceReference(IGBService.class.getName());
 
         if (igbServiceReference != null)
         {

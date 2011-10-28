@@ -2,7 +2,7 @@ package com.affymetrix.igb.glyph;
 
 import java.util.List;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -14,7 +14,7 @@ public class GlyphProcessorUtil {
 	
 	private GlyphProcessorUtil() {
 		super();
-		ExtensionPointImplHolder.getInstance(GlyphProcessor.class).addExtensionPointImpl(new MismatchPileupGlyphProcessor());
+		ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).addExtensionPointImpl(new MismatchPileupGlyphProcessor());
 	}
 	
 	public static GlyphProcessorUtil getInstance() {
@@ -22,14 +22,14 @@ public class GlyphProcessorUtil {
 	}
 
 	public void fireProcessGlyph(GlyphI glyph) {
-		List<GlyphProcessor> glyphProcessors = ExtensionPointImplHolder.getInstance(GlyphProcessor.class).getExtensionPointImpls();
+		List<GlyphProcessor> glyphProcessors = ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).getExtensionPointImpls();
 		for (GlyphProcessor glyphProcessor : glyphProcessors) {
 			glyphProcessor.processGlyph(glyph);
 		}
 	}
 
 	public GraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
-		List<GlyphProcessor> glyphProcessors = ExtensionPointImplHolder.getInstance(GlyphProcessor.class).getExtensionPointImpls();
+		List<GlyphProcessor> glyphProcessors = ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).getExtensionPointImpls();
 		GraphGlyph graphGlyph = null;
 		for (GlyphProcessor glyphProcessor : glyphProcessors) {
 			graphGlyph = glyphProcessor.createGraphGlyph(sym, gstate);

@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 
@@ -16,16 +17,17 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<JRPWidgetDecorator>() {
-				@Override
-				public void addService(JRPWidgetDecorator decorator) {
-					RecordPlaybackHolder.getInstance().addDecorator(decorator);
-				}
-				@Override
-				public void removeService(JRPWidgetDecorator decorator) {}
+		ExtensionPointHandler<JRPWidgetDecorator> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, JRPWidgetDecorator.class);
+		extensionPoint.addListener(new ExtensionPointListener<JRPWidgetDecorator>() {
+			
+			@Override
+			public void removeService(JRPWidgetDecorator decorator) {}
+			
+			@Override
+			public void addService(JRPWidgetDecorator decorator) {
+				RecordPlaybackHolder.getInstance().addDecorator(decorator);
 			}
-		);
+		});
 		bundleContext.registerService(RecordPlaybackHolder.class.getName(), RecordPlaybackHolder.getInstance(), null);
 	}
 

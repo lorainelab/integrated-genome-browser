@@ -1,6 +1,6 @@
 package com.affymetrix.igb.search;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -288,7 +288,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
-		List<ISearchMode> searchModes = ExtensionPointImplHolder.getInstance(ISearchMode.class).getExtensionPointImpls();
+		List<ISearchMode> searchModes = ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls();
 
 		for (ISearchMode searchMode : searchModes) {
 			searchCB.addItem(searchMode.getName());

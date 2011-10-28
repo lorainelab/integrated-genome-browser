@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -119,57 +118,11 @@ public class Activator implements BundleActivator {
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<TrackClickListener>() {
-				@Override
-				public void addService(TrackClickListener trackClickListener) {}
-				@Override
-				public void removeService(TrackClickListener trackClickListener) {}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<GlyphProcessor>() {
-				@Override
-				public void addService(GlyphProcessor glyphProcessor) {}
-				@Override
-				public void removeService(GlyphProcessor glyphProcessor) {}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<AnnotationOperator>() {
-				@Override
-				public void addService(AnnotationOperator annotationOperator) {}
-				@Override
-				public void removeService(AnnotationOperator annotationOperator) {}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<ExtendedMapViewGlyphFactoryI>() {
-				@Override
-				public void addService(ExtendedMapViewGlyphFactoryI extendedMapViewGlyphFactory) {
-					MapViewModeHolder.getInstance().addViewFactory(extendedMapViewGlyphFactory);
-				}
-				@Override
-				public void removeService(ExtendedMapViewGlyphFactoryI extendedMapViewGlyphFactory) {
-					MapViewModeHolder.getInstance().removeViewFactory(extendedMapViewGlyphFactory);
-				}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<GraphOperator>() {
-				@Override
-				public void addService(GraphOperator graphOperator) {}
-				@Override
-				public void removeService(GraphOperator graphOperator) {}
-			}
-		);
-		ExtensionPointHandler.addExtensionPoint(bundleContext,
-			new ExtensionPointHandler<ISearchMode>() {
-				@Override
-				public void addService(ISearchMode searchMode) {}
-				@Override
-				public void removeService(ISearchMode searchMode) {}
-			}
-		);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AnnotationOperator.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchMode.class);
 	}
 }

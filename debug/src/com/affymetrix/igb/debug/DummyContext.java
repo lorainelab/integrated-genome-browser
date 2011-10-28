@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.searchmodeidorprops.RemoteSearchI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.ISearchMode;
@@ -56,6 +57,7 @@ public class DummyContext implements BundleContext {
 	private static final String WIDGET_DECORATOR = "(objectClass=" + JRPWidgetDecorator.class.getName() + ")";
 	private static final String WINDOW_SERVICE_FILTER = "(objectClass=" + IWindowService.class.getName() + ")";
 	private static final String RPH_FILTER = "(objectClass=" + RecordPlaybackHolder.class.getName() + ")";
+	private static final String REMOTE_SEARCH = "(objectClass=" + RemoteSearchI.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -115,6 +117,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (RPH_FILTER.equals(filter)) {
 			return service instanceof RecordPlaybackHolder;
+		}
+		if (REMOTE_SEARCH.equals(filter)) {
+			return service instanceof RemoteSearchI;
 		}
 		if (filter == null) {
 			return true;

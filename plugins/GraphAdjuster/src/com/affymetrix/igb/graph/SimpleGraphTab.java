@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.graph;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -736,7 +736,7 @@ public final class SimpleGraphTab
 					}
 				}
 			);
-			floatTransformers.addAll(ExtensionPointImplHolder.getInstance(FloatTransformer.class).getExtensionPointImpls());
+			floatTransformers.addAll(ExtensionPointHandler.getExtensionPoint(FloatTransformer.class).getExtensionPointImpls());
 			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
 				transformationCB.addItem(transformer.getName());
@@ -754,7 +754,7 @@ public final class SimpleGraphTab
 					}
 				}
 			);
-			graphOperators.addAll(ExtensionPointImplHolder.getInstance(GraphOperator.class).getExtensionPointImpls());
+			graphOperators.addAll(ExtensionPointHandler.getExtensionPoint(GraphOperator.class).getExtensionPointImpls());
 			for (GraphOperator graphOperator : graphOperators) {
 				name2operator.put(graphOperator.getName(), graphOperator);
 				operationCB.addItem(graphOperator.getName());

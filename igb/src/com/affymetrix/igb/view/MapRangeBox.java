@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.common.ExtensionPointImplHolder;
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -407,7 +407,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 */
 	public void setRange(SeqMapView gview, String search_text) {
 		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
-		modes.addAll(ExtensionPointImplHolder.getInstance(ISearchMode.class).getExtensionPointImpls());
+		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls());
 		for (ISearchMode mode : modes) {
 			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null)) {
 				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());

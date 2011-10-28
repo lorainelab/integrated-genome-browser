@@ -12,7 +12,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public class LoadRefTrackAction extends AbstractLoadFileAction {
+public final class LoadRefTrackAction extends AbstractLoadFileAction {
 
 	private static final LoadRefTrackAction ACTION = new LoadRefTrackAction();
 

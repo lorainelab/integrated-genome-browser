@@ -29,6 +29,10 @@ public class ResidueTrackSymLoader extends SymLoader {
 		this.isInitialized = true;
 	}
 	
+	public void loadAsReferenceSequence(boolean bool){
+		this.isResidueLoader = bool;
+	}
+	
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
 		return symL.getLoadChoices();

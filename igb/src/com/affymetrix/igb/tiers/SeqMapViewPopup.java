@@ -12,14 +12,16 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
+
 import java.awt.event.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.*;
 import java.util.*;
-
 import javax.swing.*;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -36,6 +38,7 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.FeatureInfoAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
@@ -477,7 +480,28 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return "Change Font Size";
 		}
 	};
+	private final Action use_as_reference_seq_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
 
+		public void actionPerformed(ActionEvent e) {
+			try {
+				super.actionPerformed(e);
+				List<TierGlyph> current_tiers = handler.getSelectedTiers();
+				if (current_tiers.size() > 1) {
+					ErrorHandler.errorPanel("Must select only one track");
+				}
+				useTrackAsReferenceSequence(current_tiers.get(0));
+			} catch (Exception ex) {
+				Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+
+		@Override
+		public String getText() {
+			return "Use as Reference Sequence";
+		}
+	};
+	
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
@@ -1186,6 +1210,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					popup.add(mismatch_pileup_action);
 				}
 
+				if("fa".equalsIgnoreCase(file_type) || "fas".equalsIgnoreCase(file_type) || "fasta".equalsIgnoreCase(file_type) 
+						|| "2bit".equalsIgnoreCase(file_type) || "bnib".equalsIgnoreCase(file_type)){
+					popup.add(new JSeparator());
+					popup.add(use_as_reference_seq_action);
+				}
+				
 				if (feature.friendlyURL != null) {
 					popup.add(new JSeparator());
 					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
@@ -1222,6 +1252,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gviewer.dataRemoved();	// refresh
 	}
 
+	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception{
+		ITrackStyleExtended style = tier.getAnnotStyle();
+		GenericFeature feature = style.getFeature();
+		GeneralLoadView.getLoadView().useAsRefSequence(feature);
+	}
+	
 	// purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {

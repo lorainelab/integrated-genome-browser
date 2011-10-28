@@ -22,10 +22,15 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithResidues;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.SymWithResidues;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -330,6 +335,38 @@ public final class GeneralLoadView {
 		}
 	}
 
+	public void useAsRefSequence(GenericFeature feature) throws Exception {
+		if (feature != null && feature.symL != null) {
+			QuickLoad quickload = (QuickLoad) feature.symL;
+			if (quickload.getSymLoader() instanceof ResidueTrackSymLoader) {
+				SymWithProps sym;
+				SeqSymmetry child;
+				SimpleSymWithResidues rchild;
+
+				for (BioSeq seq : feature.symL.getChromosomeList()) {
+					sym = seq.getAnnotation(feature.getURI().toString());
+					if (sym != null) {
+
+						//Clear previous sequence
+						seq.setComposition(null);
+
+						for (int i = 0; i < sym.getChildCount(); i++) {
+							child = sym.getChild(i);
+							if (child instanceof SimpleSymWithResidues) {
+								rchild = (SimpleSymWithResidues) child;
+								BioSeq.addResiduesToComposition(seq, rchild.getResidues(), rchild.getSpan(seq));
+							}
+						}
+						seq.removeAnnotation(sym);
+					}
+				}
+
+				((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
+				gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+			}
+		}
+	}
+	
 	public void refreshTreeView() {
 
 		ThreadUtils.runOnEventQueue(new Runnable() {

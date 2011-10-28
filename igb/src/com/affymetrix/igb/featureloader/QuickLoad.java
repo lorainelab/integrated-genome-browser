@@ -81,7 +81,15 @@ public final class QuickLoad extends SymLoader {
 		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, "No symloader found.");
 		return super.getLoadChoices();
 	}
-			
+	
+	@Override
+	public boolean isResidueLoader(){
+		if(symL != null)
+			return symL.isResidueLoader();
+		
+		return isResidueLoader;
+	}
+	
 	public static String detemineFriendlyName(URI uri) {
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);

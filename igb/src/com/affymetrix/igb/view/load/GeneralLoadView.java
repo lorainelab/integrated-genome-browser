@@ -335,34 +335,54 @@ public final class GeneralLoadView {
 		}
 	}
 
-	public void useAsRefSequence(GenericFeature feature) throws Exception {
+	public void useAsRefSequence(final GenericFeature feature) throws Exception {
 		if (feature != null && feature.symL != null) {
-			QuickLoad quickload = (QuickLoad) feature.symL;
+			final QuickLoad quickload = (QuickLoad) feature.symL;
 			if (quickload.getSymLoader() instanceof ResidueTrackSymLoader) {
-				SymWithProps sym;
-				SeqSymmetry child;
-				SimpleSymWithResidues rchild;
 
-				for (BioSeq seq : feature.symL.getChromosomeList()) {
-					sym = seq.getAnnotation(feature.getURI().toString());
-					if (sym != null) {
+				final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.featureName) {
 
-						//Clear previous sequence
-						seq.setComposition(null);
+					@Override
+					protected Void runInBackground() {
+						try {
+							SymWithProps sym;
+							SeqSymmetry child;
+							SimpleSymWithResidues rchild;
 
-						for (int i = 0; i < sym.getChildCount(); i++) {
-							child = sym.getChild(i);
-							if (child instanceof SimpleSymWithResidues) {
-								rchild = (SimpleSymWithResidues) child;
-								BioSeq.addResiduesToComposition(seq, rchild.getResidues(), rchild.getSpan(seq));
+							for (BioSeq seq : feature.symL.getChromosomeList()) {
+								sym = seq.getAnnotation(feature.getURI().toString());
+								if (sym != null) {
+
+									//Clear previous sequence
+									seq.setComposition(null);
+
+									for (int i = 0; i < sym.getChildCount(); i++) {
+										child = sym.getChild(i);
+										if (child instanceof SimpleSymWithResidues) {
+											rchild = (SimpleSymWithResidues) child;
+											BioSeq.addResiduesToComposition(seq, rchild.getResidues(), rchild.getSpan(seq));
+										}
+									}
+									seq.removeAnnotation(sym);
+								}
 							}
-						}
-						seq.removeAnnotation(sym);
-					}
-				}
 
-				((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
-				gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+							((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
+							TrackView.updateDependentData();
+
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+						return null;
+					}
+
+					@Override
+					protected void finished() {
+						gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+					}
+				};
+			
+				worker.execute();
 			}
 		}
 	}

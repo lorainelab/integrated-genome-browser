@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.action;
 
+import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.List;
 import java.io.File;
@@ -109,6 +110,11 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 				BUNDLE.getString("menuItemHasDialog"),
 				BUNDLE.getString("openFile"));
 	}
+
+	@Override
+	public int getMnemonic() {
+		return KeyEvent.VK_O;
+	} 	 
 
 	@Override
 	protected String getID() {

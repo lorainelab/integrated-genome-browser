@@ -40,6 +40,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.action.FeatureInfoAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
@@ -1153,6 +1154,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 
+		popup.add(CenterAtHairlineAction.getAction());
 
 		popup.add(customize_action);
 		popup.add(new JSeparator());
@@ -1221,6 +1223,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
 				}
 			}
+		}
+		if(gviewer.getAutoLoad() != null){
+			popup.add(new JSeparator());
+			popup.add(new JMenuItem(gviewer.getAutoLoad()));
 		}
 
 		if (DEBUG) {

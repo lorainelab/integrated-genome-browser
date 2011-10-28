@@ -578,7 +578,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 *  objects (which may add items to the menu), then displays the popup
 	 *  (if it isn't empty).
 	 */
-	private void doPopup(MouseEvent e) {
+	public void doPopup(MouseEvent e) {
 		popup.removeAll();
 
 		setPopuptitle();

@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
+import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.Adjustable;
@@ -80,7 +81,7 @@ final class AltSpliceSeqMapView extends SeqMapView {
 
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
-		popup.add(centerMI);
+		popup.add(CenterAtHairlineAction.getAction());
 	}
 
 	protected final Executor setSliceBuffer(int bases) {

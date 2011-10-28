@@ -159,8 +159,6 @@ final class SeqMapViewActionListener implements ActionListener {
 		if (command.equals(gviewer.selectParentMI.getText())) {
 			gviewer.selectParents();
 
-		} else if (command.equals(gviewer.centerMI.getText())) {
-			gviewer.centerAtHairline();
 		} else if (command.equals(ZOOM_OUT_FULLY)) {
 			Adjustable adj = seqmap.getZoomer(NeoMap.X);
 			adj.setValue(adj.getMinimum());

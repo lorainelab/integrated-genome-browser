@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
@@ -208,7 +207,6 @@ public class SeqMapView extends JPanel
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
 	//JMenuItem zoomtoMI = empty_menu_item;
-	JMenuItem centerMI = empty_menu_item;
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
 //	JMenu seqViewerOptions = new JMenu("Show genomic sequence for ..");
@@ -288,7 +286,6 @@ public class SeqMapView extends JPanel
 		}
 	};
 
-	@SuppressWarnings("serial")
 	public SeqMapView(boolean add_popups, String id) {
 		super();
 		this.id = id;
@@ -449,6 +446,7 @@ public class SeqMapView extends JPanel
 
 	protected Adjustable getXZoomer(String id){
 		return new RPAdjustableJSlider(id + "_xzoomer", Adjustable.HORIZONTAL) {
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void paint(Graphics g) {
@@ -547,8 +545,6 @@ public class SeqMapView extends JPanel
 	private void setupPopups() {
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)
-
-		centerMI = setUpMenuItem(sym_popup, "Center at zoom stripe");
 
 //		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
@@ -1540,7 +1536,7 @@ public class SeqMapView extends JPanel
 		seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, y);
 	}
 
-	private JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
+	public JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
@@ -1719,6 +1715,12 @@ public class SeqMapView extends JPanel
 		sym_popup.setVisible(false); // in case already showing
 		sym_popup.removeAll();
 
+		if (getSelectedSyms().isEmpty()) { // if no syms selected, use regular popup
+			sym_popup.setVisible(true);
+			getTierManager().doPopup(nevt);
+			return;
+		}
+
 		preparePopup(sym_popup, nevt);
 
 		if (sym_popup.getComponentCount() > 0) {
@@ -1772,7 +1774,6 @@ public class SeqMapView extends JPanel
 //		if (!selected_glyphs.isEmpty()) {
 //			popup.add(zoomtoMI);
 //		}
-		popup.add(centerMI);
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(selectParentMI);
@@ -1807,10 +1808,6 @@ public class SeqMapView extends JPanel
 			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
 				popup.add(new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature)));
 			}
-		}
-		if(getAutoLoad() != null){
-			popup.add(new JSeparator());
-			popup.add(new JMenuItem(getAutoLoad()));
 		}
 	}
 

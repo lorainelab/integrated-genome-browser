@@ -146,7 +146,6 @@ public class SeqMapView extends JPanel
 	private JRPToggleButton select_mode_button;
 	private JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
-	private GraphSelectionManager graph_manager;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
@@ -330,6 +329,7 @@ public class SeqMapView extends JPanel
 			// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
 			//tier_manager.addPopupListener(new GraphSelectionManager(this));
 			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
+			tier_manager.addPopupListener(new GraphSelectionManager(this));
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
 			seqviewer = ViewGenomicSequenceInSeqViewerAction.getAction();
@@ -364,10 +364,6 @@ public class SeqMapView extends JPanel
 
 		SmartDragScrollMonitor sdsm = new SmartDragScrollMonitor(this);
 		seqmap.setDragScrollMonitor(sdsm);
-
-		graph_manager = new GraphSelectionManager(this);
-		seqmap.addMouseListener(graph_manager);
-		this.addPopupListener(graph_manager);
 
 		setupPopups();
 		this.setLayout(new BorderLayout());

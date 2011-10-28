@@ -25,6 +25,11 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		if (handler != this.handler) {
 			throw new RuntimeException("");
 		}
+		List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
+		boolean all_are_annotations = areAllAnnotations(labels);
+		if (labels.size() == 0 || !all_are_annotations) {
+			return;
+		}
 		JMenu combineMenu = new JMenu("Track Operations...");
 		for (AnnotationOperator annotationOperator : ExtensionPointHandler.getExtensionPoint(AnnotationOperator.class).getExtensionPointImpls()) {
 			String name = annotationOperator.getName();
@@ -35,9 +40,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			);
 			combineMenu.add(operatorMI);
 		}
-		List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selected = labels.size();
-		boolean all_are_annotations = areAllAnnotations(labels);
 
 		combineMenu.setEnabled(all_are_annotations && num_selected > 0);
 		for (int i = 0; i < combineMenu.getItemCount(); i++) {

@@ -21,6 +21,7 @@ import java.awt.Component;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -568,6 +569,9 @@ public final class GraphSelectionManager
       // for left-click on the TierLabelGlyph's
 
       List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
+      if (labels.size() == 0 || !areAllGraphs(labels)) {
+        return;
+      }
       List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
 		List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
@@ -581,5 +585,14 @@ public final class GraphSelectionManager
 
       this.popupNotify(popup, graph_syms, primary_sym);
     }
+
+    private boolean areAllGraphs(List<TierLabelGlyph> labels) {
+		for (TierLabelGlyph tlg : labels) {
+			if (!tlg.getReferenceTier().getAnnotStyle().isGraphTier()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
 

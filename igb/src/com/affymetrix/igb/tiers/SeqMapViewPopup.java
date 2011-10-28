@@ -14,6 +14,7 @@ package com.affymetrix.igb.tiers;
 
 
 import java.awt.event.*;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
@@ -40,6 +41,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.action.FeatureInfoAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
@@ -62,14 +64,15 @@ import com.affymetrix.igb.view.load.DataManagementTable;
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private static final boolean DEBUG = false;
+	private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final SeqMapView gviewer;
 	private final TierLabelManager handler;
-	private final JMenu showMenu = new JMenu("Show...");
-	private final JMenu changeMenu = new JMenu("Change...");
-	private final JMenu strandsMenu = new JMenu("Strands...");
-	private final JMenu viewModeMenu = new JMenu("View Mode...");
-	private final JMenu summaryMenu = new JMenu("Make Annotation Depth Graph");
+	private final JMenu showMenu = new JMenu(BUNDLE.getString("showMenu"));
+	private final JMenu changeMenu = new JMenu(BUNDLE.getString("changeMenu"));
+	private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
+	private final JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
+	private final JMenu summaryMenu = new JMenu(BUNDLE.getString("summaryMenu"));
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
@@ -83,7 +86,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Select All Tracks";
+			return BUNDLE.getString("selectAllTiersAction");
 		}
 	};
 	private final Action rename_action = new GenericAction() {
@@ -93,7 +96,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() != 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			renameTier(current_tier);
@@ -102,7 +105,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Change Display Name";
+			return BUNDLE.getString("renameAction");
 		}
 	};
 	private final Action customize_action = new GenericAction() {
@@ -115,7 +118,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Customize";
+			return BUNDLE.getString("customizeAction");
 		}
 	};
 	private final Action expand_action = new GenericAction() {
@@ -129,7 +132,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Expand";
+			return BUNDLE.getString("expandAction");
 		}
 	};
 	private final Action expand_all_action = new GenericAction() {
@@ -143,7 +146,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Expand All";
+			return BUNDLE.getString("expandAllAction");
 		}
 	};
 	private final Action collapse_action = new GenericAction() {
@@ -157,7 +160,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Collapse";
+			return BUNDLE.getString("collapseAction");
 		}
 	};
 	private final Action collapse_all_action = new GenericAction() {
@@ -171,7 +174,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Collapse All";
+			return BUNDLE.getString("collapseAllAction");
 		}
 	};
 	private final Action hide_action = new GenericAction() {
@@ -185,7 +188,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Hide";
+			return BUNDLE.getString("hideAction");
 		}
 	};
 	private final Action show_all_action = new GenericAction() {
@@ -198,7 +201,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Show All Types";
+			return BUNDLE.getString("showAllAction");
 		}
 	};
 	private final Action change_color_action = new GenericAction() {
@@ -213,7 +216,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Change FG Color";
+			return BUNDLE.getString("changeColorAction");
 		}
 	};
 	private final Action change_bg_color_action = new GenericAction() {
@@ -227,7 +230,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Change BG Color";
+			return BUNDLE.getString("changeBGColorAction");
 		}
 	};
 	private final Action color_by_score_on_action = new GenericAction() {
@@ -241,7 +244,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Color By Score ON";
+			return BUNDLE.getString("colorByScoreONAction");
 		}
 	};
 	private final Action color_by_score_off_action = new GenericAction() {
@@ -255,7 +258,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Color By Score OFF";
+			return BUNDLE.getString("colorByScoreOFFAction");
 		}
 	};
 	private final Action show_two_tiers = new GenericAction() {
@@ -269,7 +272,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Show 2 tracks (+) and (-)";
+			return BUNDLE.getString("showTwoTiersAction");
 		}
 	};
 	private final Action show_single_tier = new GenericAction() {
@@ -283,7 +286,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Show 1 track (+/-)";
+			return BUNDLE.getString("showSingleTierAction");
 		}
 	};
 	private final Action sym_summarize_single_action = new GenericAction() {
@@ -293,7 +296,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			addSymSummaryTier(current_tier, false);
@@ -311,7 +314,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			addSymSummaryTier(current_tier, true);
@@ -329,7 +332,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			addMisMatchTier(current_tier, "mismatch");
@@ -337,7 +340,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Make Mismatch Graph";
+			return BUNDLE.getString("mismatchAction");
 		}
 	};
 	private final Action mismatch_pileup_action = new GenericAction() {
@@ -347,7 +350,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
@@ -355,7 +358,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Make Mismatch Pileup Graph";
+			return BUNDLE.getString("mismatchPileupAction");
 		}
 	};
 	private final Action save_bed_action = new GenericAction() {
@@ -365,7 +368,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			saveAsBedFile(current_tier);
@@ -373,7 +376,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Save track as BED file";
+			return BUNDLE.getString("saveBEDAction");
 		}
 	};
 	private final Action save_wig_action = new GenericAction() {
@@ -383,7 +386,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
 			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel("Must select only one track");
+				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 			}
 			TierGlyph current_tier = current_tiers.get(0);
 			saveAsWigFile(current_tier);
@@ -391,7 +394,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Save graph as WIG file";
+			return BUNDLE.getString("saveWIGAction");
 		}
 	};
 	private final Action maximize_track_action = new GenericAction() {
@@ -405,7 +408,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Focus on Track";
+			return BUNDLE.getString("maximizeTrackAction");
 		}
 	};
 	private final Action repack_tracks_action = new GenericAction() {
@@ -418,7 +421,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Repack Tracks";
+			return BUNDLE.getString("repackTracksAction");
 		}
 	};
 	private final Action change_expand_max_action = new GenericAction() {
@@ -432,7 +435,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Adjust Max Stack Depth";
+			return BUNDLE.getString("changeExpandMaxAction");
 		}
 	};
 	private final Action change_expand_max_all_action = new GenericAction() {
@@ -446,7 +449,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Adjust Max Stack Depth All";
+			return BUNDLE.getString("changeExpandMaxAllAction");
 		}
 	};
 	private final Action delete_action = new GenericAction() {
@@ -456,15 +459,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			BioSeq seq = gmodel.getSelectedSeq();
 
-			if (IGB.confirmPanel("Really remove selected tracks?\n"
-					+ "Data and their tracks will be removed from " + seq.getID() + " on this genome.")) {
+			if (IGB.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmDelete"), seq.getID()))) {
 				removeTiers(handler.getSelectedTierLabels());
 			}
 		}
 
 		@Override
 		public String getText() {
-			return "Remove Data from Selected Tracks";
+			return BUNDLE.getString("deleteAction");
 		}
 	};
 	private final Action change_font_size_action = new GenericAction() {
@@ -478,7 +480,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Change Font Size";
+			return BUNDLE.getString("changeFontSizeAction");
 		}
 	};
 	private final Action use_as_reference_seq_action = new GenericAction() {
@@ -489,7 +491,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				super.actionPerformed(e);
 				List<TierGlyph> current_tiers = handler.getSelectedTiers();
 				if (current_tiers.size() > 1) {
-					ErrorHandler.errorPanel("Must select only one track");
+					ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 				}
 				useTrackAsReferenceSequence(current_tiers.get(0));
 			} catch (Exception ex) {
@@ -499,7 +501,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Use as Reference Sequence";
+			return BUNDLE.getString("useAsReferenceSeqAction");
 		}
 	};
 	
@@ -560,7 +562,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 
-		Object input = JOptionPane.showInputDialog(null, "Select font size", "Change Selected Track Font Size", JOptionPane.PLAIN_MESSAGE, null,
+		Object input = JOptionPane.showInputDialog(null, BUNDLE.getString("selectFontSize"), BUNDLE.getString("changeSelectedTrackFontSize"), JOptionPane.PLAIN_MESSAGE, null,
 				TrackConstants.SUPPORTED_SIZE, initial_value);
 
 		if (input == null) {
@@ -599,8 +601,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		String input =
 				(String) JOptionPane.showInputDialog(null,
-				"Enter new maximum track height, 0 for unlimited",
-				"Change Selected Tracks Max Height", JOptionPane.PLAIN_MESSAGE,
+						BUNDLE.getString("maxHeight"),
+				BUNDLE.getString("changeMaxHeight"), JOptionPane.PLAIN_MESSAGE,
 				null, null, initial_value);
 
 		if (input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
@@ -826,7 +828,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		ITrackStyle style = tier.getAnnotStyle();
 
-		String new_label = JOptionPane.showInputDialog("Label: ", style.getTrackName());
+		String new_label = JOptionPane.showInputDialog(BUNDLE.getString("label") + ": ", style.getTrackName());
 		if (new_label != null && new_label.length() > 0) {
 			style.setTrackName(new_label);
 			tier.setLabel(new_label);
@@ -979,7 +981,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//}
 
 		BioSeq aseq = gmodel.getSelectedSeq();
-		String human_name = "depth: " + atier.getLabel();
+		String human_name = BUNDLE.getString("depth") + ": " + atier.getLabel();
 		String id = TrackStyle.getUniqueName(human_name);
 		DependentData dd = null;
 		String method = atier.getAnnotStyle().getMethodName();

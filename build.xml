@@ -422,6 +422,8 @@
 		<java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main">
 			<jvmarg line="${igb.jvmargs}" />
 			<jvmarg value="-Xms32m" />
+			<!--<jvmarg value="-Dsun.java2d.opengl=true"/> -->
+			 <!-- <jvmarg value="-Dsun.java2d.trace=log"/>-->
 <!--			<jvmarg value="-splash:${jnlp.splashicon.path}" />-->
 			<jvmarg line="${apple.jvmargs}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
@@ -467,7 +469,7 @@
 			</classpath>
 		</java>
 	</target>
-
+	
 	<target name="debug-nb-protannot" depends="compile" description="debug protannot" >
         <nbjpdastart addressproperty="jpda.address" name="protannot" transport="dt_socket">
             <classpath>
@@ -686,4 +688,39 @@
 		</sequential>
 	</macrodef>
 
+   <!--
+   This target produces javadoc with UML graphs on the top of each documenation page
+   The visualization helps track the relationship among classes and interfaces.
+   More about the tool can be found at:   http://www.umlgraph.org/index.html
+  
+   This tool uses dot.  to install on Ubuntu do:
+   sudo apt-get install graphviz
+   More info for other platforms at:  http://www.graphviz.org/
+   -->
+   <target name="umljavadocs" depends="jar">
+	   <path id="uml.source.path">
+           <pathelement path="${basedir}/igb/src/"/>
+           <pathelement path="${basedir}/genoviz_sdk/src/"/>
+		   <pathelement path="${basedir}/genometryImpl/src/"/>
+		   <pathelement path="${basedir}/main/src/"/>
+		   <pathelement path="${basedir}/common/src/"/>
+       </path>
+        <javadoc sourcepathref="uml.source.path" packagenames="*" destdir="doc" 
+                 private="true">
+                <doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${basedir}/ext/UmlGraph-5.4.jar">
+                        <param name="-inferrel"/>
+                        <param name="-inferdep"/>
+                        <param name="-hide" value="java.*"/>
+                        <param name="-collpackages" value="java.util.*"/>
+                        <param name="-qualify"/>
+                        <param name="-postfixpackage"/>
+                        <param name="-nodefontsize" value="9"/>
+                        <param name="-nodefontpackagesize" value="7"/>
+                        <param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+                        <param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+                </doclet>
+        </javadoc>
+</target>
+
 </project>
+

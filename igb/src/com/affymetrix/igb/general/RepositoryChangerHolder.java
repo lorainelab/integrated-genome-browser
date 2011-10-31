@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
@@ -91,9 +90,9 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 * display the Bundle Repository tab of the Preferences page
 	 */
 	public void displayRepositoryPreferences() {
-		if (IGB.TAB_PLUGIN_PREFS != -1) {
+		if (PreferencesPanel.TAB_PLUGIN_PREFS != -1) {
 			PreferencesPanel pv = PreferencesPanel.getSingleton();
-			pv.setTab(IGB.TAB_PLUGIN_PREFS);	// Repository preferences tab
+			pv.setTab(PreferencesPanel.TAB_PLUGIN_PREFS);	// Repository preferences tab
 			JFrame f = pv.getFrame();
 			f.setVisible(true);
 		} else {

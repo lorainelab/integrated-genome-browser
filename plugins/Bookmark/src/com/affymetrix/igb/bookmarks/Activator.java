@@ -50,7 +50,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		}
 
 		// assuming last file menu item is Exit, leave it there
-		JRPMenu file_menu = igbService.getFileMenu();
+		JRPMenu file_menu = igbService.getMenu("file");
 		int index = file_menu.getItemCount() - 1;
 		file_menu.insertSeparator(index);
 		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", new SaveSessionAction(igbService)), index);

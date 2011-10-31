@@ -88,7 +88,6 @@ public final class IGB extends Application
 				implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";
-	public static int TAB_PLUGIN_PREFS = -1;
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JToolBar tool_bar;
@@ -289,8 +288,6 @@ public final class IGB extends Application
 
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 
-		final PreferencesPanel pp = PreferencesPanel.getSingleton();
-		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 	}
@@ -501,18 +498,6 @@ public final class IGB extends Application
 	    	}
 	    }
 	    return null;
-	}
-
-	public JRPMenu getFileMenu() {
-		return getMenu("file");
-	}
-
-	public JRPMenu getViewMenu() {
-		return getMenu("view");
-	}
-
-	public JRPMenu getHelpMenu() {
-		return getMenu("help");
 	}
 
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {

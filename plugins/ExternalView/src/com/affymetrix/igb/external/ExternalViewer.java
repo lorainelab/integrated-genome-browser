@@ -41,7 +41,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 		
 		ucscViewAction = new UCSCViewAction(igbService);
 		menuItem = new JRPMenuItem("ExternalViewer_ucscView", ucscViewAction);
-		MenuUtil.insertIntoMenu(igbService.getViewMenu(), menuItem, VIEW_MENU_POS);
+		MenuUtil.insertIntoMenu(igbService.getMenu("view"), menuItem, VIEW_MENU_POS);
 
 		final UCSCView ucsc = new UCSCView(ucscBox, igbService, ucscViewAction);
 		add(ucsc, ucsc.getViewName());
@@ -59,7 +59,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	}
 
 	public void removeViewer() {
-		MenuUtil.removeFromMenu(igbService.getViewMenu(), menuItem);
+		MenuUtil.removeFromMenu(igbService.getMenu("view"), menuItem);
 	}
 
 	@Override

@@ -72,20 +72,10 @@ public interface IGBService {
 	 */
 	public void addStopRoutine(IStopRoutine routine);
 	/**
-	 * get the file menu of the application
-	 * @return the file menu of the IGB application
+	 * get the given menu of the application
+	 * @return the given menu of the IGB application
 	 */
-	public JRPMenu getFileMenu();
-	/**
-	 * get the view menu of the application
-	 * @return the view menu of the IGB application
-	 */
-	public JRPMenu getViewMenu();
-	/**
-	 * get the help menu of the application
-	 * @return the help menu of the IGB application
-	 */
-	public JRPMenu getHelpMenu();
+	public JRPMenu getMenu(String menuName);
 
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();

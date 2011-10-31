@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.view.BundleRepositoryPrefsView;
 import com.affymetrix.igb.view.TierPrefsViewGUI;
 import com.affymetrix.igb.tiers.TrackDefaultViewGUI;
 
@@ -33,6 +34,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public final class PreferencesPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
+  public static int TAB_PLUGIN_PREFS = -1;
   private static final String WINDOW_NAME = "Preferences Window";
   private static final String HELP_WINDOW_NAME = "Preferences Help Window";
 
@@ -92,6 +94,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(new OtherOptionsView());
+		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(new BundleRepositoryPrefsView());
 	
 		return singleton;
 	}

@@ -59,7 +59,7 @@ public class Activator implements BundleActivator {
 	private void handleIGBService(ServiceReference<?> igbServiceReference) {
         try {
         	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-    		final JRPMenu help_menu = igbService.getHelpMenu();
+    		final JRPMenu help_menu = igbService.getMenu("help");
 
     		ServiceReference<?> windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
             if (windowServiceReference != null)

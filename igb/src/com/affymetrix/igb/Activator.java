@@ -11,6 +11,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
@@ -21,6 +22,8 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -124,5 +127,16 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchMode.class);
+		ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
+		preferencesExtensionPoint.addListener(
+			new ExtensionPointListener<IPrefEditorComponent>() {
+				@Override
+				public void removeService(IPrefEditorComponent prefs) {	/*cannot remove*/ }
+				@Override
+				public void addService(IPrefEditorComponent prefs) {
+					PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
+				}
+			}
+		);
 	}
 }

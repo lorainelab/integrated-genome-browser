@@ -123,21 +123,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public JRPMenu getFileMenu() {
+	public JRPMenu getMenu(String menuName) {
 		IGB igb = (IGB)IGB.getSingleton();
-		return igb.getFileMenu();
-	}
-
-	@Override
-	public JRPMenu getViewMenu() {
-		IGB igb = (IGB)IGB.getSingleton();
-		return igb.getViewMenu();
-	}
-
-	@Override
-	public JRPMenu getHelpMenu() {
-		IGB igb = (IGB)IGB.getSingleton();
-		return igb.getHelpMenu();
+		return igb.getMenu(menuName);
 	}
 
 	@Override

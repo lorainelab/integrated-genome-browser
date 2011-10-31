@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="C:/workspace_IGB/Integrated_Genome_Browser/ext/junit.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/felix.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/affx_fusion.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/picard.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/image4j.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-net-2.0.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-codec-1.4.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

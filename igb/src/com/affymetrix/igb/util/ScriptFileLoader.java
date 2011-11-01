@@ -284,7 +284,7 @@ public class ScriptFileLoader {
 				// base filename upon organism and timestamp
 				String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default" :
 					GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
-				snapShot(exportMode,new File(id + System.currentTimeMillis() + ".png"));
+				snapShot(exportMode,new File(id + System.currentTimeMillis() + ".gif"));
 			}
 		}
 	}

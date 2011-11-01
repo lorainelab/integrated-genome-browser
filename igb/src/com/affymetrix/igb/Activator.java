@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
@@ -122,7 +123,8 @@ public class Activator implements BundleActivator {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
+		ExtensionPointHandler<GlyphProcessor> glyphProcessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
+		glyphProcessorExtensionPoint.addExtensionPointImpl(new MismatchPileupGlyphProcessor());
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AnnotationOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);

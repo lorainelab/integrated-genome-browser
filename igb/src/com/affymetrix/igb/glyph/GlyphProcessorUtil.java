@@ -14,7 +14,6 @@ public class GlyphProcessorUtil {
 	
 	private GlyphProcessorUtil() {
 		super();
-		ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).addExtensionPointImpl(new MismatchPileupGlyphProcessor());
 	}
 	
 	public static GlyphProcessorUtil getInstance() {

@@ -314,12 +314,12 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		sequenceViewerItems.setType(type);
 
 		if (cdsMin >= 0 && cdsMax >= 0) {
-			if ((cdsMin >= span.getStart() && cdsMin < span.getEnd()) || (cdsMin < span.getStart() && cdsMin >= span.getEnd())) {
+			if ((cdsMin >= span.getStart() && cdsMin <= span.getEnd()) || (cdsMin <= span.getStart() && cdsMin >= span.getEnd())) {
 				sequenceViewerItems.setCdsStart(Math.abs(cdsMin - span.getStart()));
 				sequenceViewerItems.setReverseCdsStart(Math.abs(span.getEnd() - cdsMin));
 				sequenceViewerItems.setIsCDS(true);
 			}
-			if ((cdsMax >= span.getStart() && cdsMax < span.getEnd()) || (cdsMax < span.getStart() && cdsMax >= span.getEnd())) {
+			if ((cdsMax >= span.getStart() && cdsMax <= span.getEnd()) || (cdsMax <= span.getStart() && cdsMax >= span.getEnd())) {
 				sequenceViewerItems.setCdsEnd(Math.abs(cdsMax - span.getStart()));
 				sequenceViewerItems.setReverseCdsEnd(Math.abs(span.getEnd() - cdsMax));
 				sequenceViewerItems.setIsCDS(true);

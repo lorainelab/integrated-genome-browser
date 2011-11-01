@@ -1711,7 +1711,7 @@ public class SeqMapView extends JPanel
 		sym_popup.setVisible(false); // in case already showing
 		sym_popup.removeAll();
 
-		if (getSelectedSyms().isEmpty()) { // if no syms selected, use regular popup
+		if (seqmap.getSelected().isEmpty()) { // if no glyphs selected, use regular popup
 			sym_popup.setVisible(true);
 			getTierManager().doPopup(nevt);
 			return;

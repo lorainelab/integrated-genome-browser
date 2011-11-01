@@ -89,6 +89,8 @@ public class Activator implements BundleActivator {
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
 	private void run(ServiceReference<?> windowServiceReference) {
+		ExtensionPointHandler<GlyphProcessor> glyphProcessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
+		glyphProcessorExtensionPoint.addExtensionPointImpl(new MismatchPileupGlyphProcessor());
     	GenericActionHolder.getInstance().addGenericActionListener(
     		new GenericActionListener() {
 				@Override
@@ -123,8 +125,6 @@ public class Activator implements BundleActivator {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
 		}
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
-		ExtensionPointHandler<GlyphProcessor> glyphProcessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
-		glyphProcessorExtensionPoint.addExtensionPointImpl(new MismatchPileupGlyphProcessor());
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AnnotationOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);

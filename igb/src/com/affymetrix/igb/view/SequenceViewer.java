@@ -320,7 +320,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	
 	private void addFormattedResidues() {
 		Color[] cols = getColorScheme();
-		int i = 0;
 		int start = 0, end = 0;
 		Iterator<CreateValueSet> it_working = null;
 		seqview.setResidues("");
@@ -331,6 +330,11 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		}
 		while (it_working.hasNext()) {
 			CreateValueSet cv = it_working.next();
+			if(showcDNASwitch){
+				if(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
+					continue;
+				}
+			}
 			String residues = cv.getSi().getResidues();
 			String reverse_residues = cv.getSi().getReverseResidues();
 			int cdsStart = cv.getSi().getCdsStart();
@@ -364,11 +368,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 				}
 			}
 			start += cv.getSi().getResidues().length();
-			i++;
-			if(showcDNASwitch){
-				if(it_working.hasNext())
-					it_working.next();
-			}
 		}
 	}
 /* This method calls all the important methods to start sequence viewer

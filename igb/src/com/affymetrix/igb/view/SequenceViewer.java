@@ -241,7 +241,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 							working_list = new ArrayList<CreateValueSet>(reverse_bundle);
 						} else {
 							working_list = new ArrayList<CreateValueSet>(bundle);
-						}
+	}
 					}
 				}
 				else
@@ -286,6 +286,18 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			addSequenceViewerItems(SeqUtils.getIntronSym(residues_sym, aseq), SequenceViewerItems.TYPE.INTRON.ordinal(), aseq);
 		}
 		Collections.sort(bundle);
+		
+		if (!bundle.isEmpty()) {
+			SeqSpan span = residues_sym.getSpan(aseq);
+			if (!span.isForward()) {
+				Collections.reverse(bundle);
+				working_list = new ArrayList<CreateValueSet>(bundle);
+			} else {
+				working_list = new ArrayList<CreateValueSet>(bundle);
+			}
+			reverse_complement = new ArrayList<CreateValueSet>(working_list);
+			Collections.reverse(reverse_complement);
+		}
 	}
 
 	private void addSequenceViewerItems(SeqSymmetry sym, int type, BioSeq aseq) {
@@ -377,7 +389,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		this.getNeoSeqInstance();
 		createItemListForSequenceviewer(residues_sym, aseq);
 		customFormatting(residues_sym);
-		this.createAllLists();
+		//this.createAllLists();
 		addFormattedResidues();
 
 		mapframe.pack();

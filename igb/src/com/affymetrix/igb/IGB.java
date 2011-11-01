@@ -85,7 +85,7 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
  * @version $Id$
  */
 public final class IGB extends Application
-				implements GroupSelectionListener, SeqSelectionListener {
+		implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";
 	private JFrame frm;
@@ -110,6 +110,7 @@ public final class IGB extends Application
 	public JFrame getFrame() {
 		return frm;
 	}
+
 	private static void loadSynonyms(String file, SynonymLookup lookup) {
 		InputStream istr = null;
 		try {
@@ -178,7 +179,7 @@ public final class IGB extends Application
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates
 		// when connecting to server over HTTPS
-	  initCustomTrustManager();
+		initCustomTrustManager();
 
 		// Configure HTTP User agent
 		System.setProperty("http.agent", USER_AGENT);
@@ -234,17 +235,18 @@ public final class IGB extends Application
 		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
 		MenuUtil.setAccelerators(
-			new AbstractMap<String, KeyStroke>() {
-				@Override
-				public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
-					return null;
-				}
-				@Override
-			    public KeyStroke get(Object action_command) {
-					return PreferenceUtils.getAccelerator((String)action_command);
-				}
-			}
-		);
+				new AbstractMap<String, KeyStroke>() {
+
+					@Override
+					public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
+						return null;
+					}
+
+					@Override
+					public KeyStroke get(Object action_command) {
+						return PreferenceUtils.getAccelerator((String) action_command);
+					}
+				});
 		map_view = new SeqMapView(true, "SeqMapView");
 		gmodel.addSeqSelectionListener(map_view);
 		gmodel.addGroupSelectionListener(map_view);
@@ -253,7 +255,7 @@ public final class IGB extends Application
 		loadMenu();
 
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
-						new Rectangle(0, 0, 1100, 650)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
+				new Rectangle(0, 0, 1100, 650)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
 		PreferenceUtils.setWindowSize(frm, frame_bounds);
 
 		// Show the frame before loading the plugins.  Thus any error panel
@@ -269,14 +271,8 @@ public final class IGB extends Application
 
 				if (confirmPanel(message, PreferenceUtils.getTopNode(), PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
 					TrackStyle.autoSaveUserStylesheet();
-					WebLink.autoSave();
 					Persistence.saveCurrentView(map_view);
-					if (windowService != null) {
-						windowService.shutdown();
-					}
-					for (IStopRoutine stopRoutine : stopRoutines) {
-						stopRoutine.stop();
-					}
+					defaultCloseOperations();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -292,6 +288,16 @@ public final class IGB extends Application
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 	}
 
+	public void defaultCloseOperations() {
+		WebLink.autoSave();
+		if (windowService != null) {
+			windowService.shutdown();
+		}
+		for (IStopRoutine stopRoutine : stopRoutines) {
+			stopRoutine.stop();
+		}
+	}
+
 	/**
 	 * This will instantiate a custom trust manager to handle untrusted
 	 * certificates when connecting to a DAS/2 server over HTTPS.  (In
@@ -299,35 +305,36 @@ public final class IGB extends Application
 	 * this code is not invoked.)
 	 */
 	private void initCustomTrustManager() {
-    TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-        return null;
-      }
+		TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
-      public void checkClientTrusted(
-          java.security.cert.X509Certificate[] certs, String authType) {
-      }
+		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
 
-      public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-        for (int i = 0; i < certs.length; i++) {
-          int response = JOptionPane.showConfirmDialog(null, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?");
-          if (response != JOptionPane.OK_OPTION) {
-            throw new RuntimeException("Untrusted certificate.");
-          }
-        }
-      }
-    } };
+		public void checkClientTrusted(
+				java.security.cert.X509Certificate[] certs, String authType) {
+		}
 
-    try {
-      SSLContext sc = SSLContext.getInstance("SSL");
-      sc.init(null, trustAllCerts, new java.security.SecureRandom());
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
+		public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			for (int i = 0; i < certs.length; i++) {
+				int response = JOptionPane.showConfirmDialog(null, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?");
+				if (response != JOptionPane.OK_OPTION) {
+					throw new RuntimeException("Untrusted certificate.");
+				}
+			}
+		}
+	}};
 
-  }
+		try {
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+	}
 
 	public IGBTabPanel[] setWindowService(final IWindowService windowService) {
 		this.windowService = windowService;
@@ -352,8 +359,7 @@ public final class IGB extends Application
 			for (String childMenu : mainMenuPrefs.childrenNames()) {
 				loadTopMenu(mainMenuPrefs.node(childMenu));
 			}
-		}
-		catch (BackingStoreException x) {
+		} catch (BackingStoreException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
@@ -366,8 +372,7 @@ public final class IGB extends Application
 			for (String childMenu : menuPrefs.childrenNames()) {
 				loadMenuItem(menu, menuPrefs.node(childMenu));
 			}
-		}
-		catch (BackingStoreException x) {
+		} catch (BackingStoreException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
@@ -375,14 +380,11 @@ public final class IGB extends Application
 	private void loadMenuItem(JRPMenu menu, Preferences menuItemPrefs) {
 		if (menuItemPrefs.get("separator", null) != null) {
 			menu.addSeparator();
-		}
-		else if (menuItemPrefs.get("menu", null) != null) {
+		} else if (menuItemPrefs.get("menu", null) != null) {
 			loadSubMenu(menu, menuItemPrefs);
-		}
-		else if (menuItemPrefs.get("item", null) != null) {
+		} else if (menuItemPrefs.get("item", null) != null) {
 			loadLeafItem(menu, menuItemPrefs);
-		}
-		else {
+		} else {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error in menu preferences definition");
 		}
 	}
@@ -395,8 +397,7 @@ public final class IGB extends Application
 			for (String childMenu : menuPrefs.childrenNames()) {
 				loadMenuItem(submenu, menuPrefs.node(childMenu));
 			}
-		}
-		catch (BackingStoreException x) {
+		} catch (BackingStoreException x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
@@ -407,17 +408,15 @@ public final class IGB extends Application
 		try {
 			Class<?> clazz = Class.forName(className);
 			Method m = clazz.getDeclaredMethod("getAction");
-			GenericAction action = (GenericAction)m.invoke(null);
+			GenericAction action = (GenericAction) m.invoke(null);
 			String id = menu.getId() + "_" + menuItemPrefs.get("item", "???");
 			JMenuItem item = action.isToggle() ? new JRPCheckBoxMenuItem(id, action) : new JRPMenuItem(id, action);
 			if (action.usePrefixInMenu()) {
 				MenuUtil.addToMenu(menu, item, menu.getText());
-			}
-			else {
+			} else {
 				MenuUtil.addToMenu(menu, item);
 			}
-		}
-		catch (Exception x) {
+		} catch (Exception x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
@@ -435,8 +434,9 @@ public final class IGB extends Application
 	 */
 	public Image getIcon() {
 		ImageIcon imageIcon = CommonUtils.getInstance().getIcon("images/igb.gif");
-		if(imageIcon != null)
+		if (imageIcon != null) {
 			return imageIcon.getImage();
+		}
 		return null;
 	}
 
@@ -456,6 +456,7 @@ public final class IGB extends Application
 		}
 		prev_selected_seq = selected_seq;
 	}
+
 	public void addStopRoutine(IStopRoutine routine) {
 		stopRoutines.add(routine);
 	}
@@ -476,8 +477,8 @@ public final class IGB extends Application
 			gl.setInfo(props);
 			gl.setColor(hitColor);
 			double pos = forward ? 10 : 15;
-				gl.setCoords(start, pos, end - start, 10);
-				axis_tier.addChild(gl);
+			gl.setCoords(start, pos, end - start, 10);
+			axis_tier.addChild(gl);
 			glyphs.add(gl);
 			hit_count++;
 		}
@@ -490,14 +491,14 @@ public final class IGB extends Application
 
 	public JRPMenu getMenu(String menuId) {
 		String id = "Main_" + menuId + "Menu";
-	    int num_menus = mbar.getMenuCount();
-	    for (int i=0; i<num_menus; i++) {
-	    	JRPMenu menu_i = (JRPMenu)mbar.getMenu(i);
-	    	if (id.equals(menu_i.getId())) {
-	    		return menu_i;
-	    	}
-	    }
-	    return null;
+		int num_menus = mbar.getMenuCount();
+		for (int i = 0; i < num_menus; i++) {
+			JRPMenu menu_i = (JRPMenu) mbar.getMenu(i);
+			if (id.equals(menu_i.getId())) {
+				return menu_i;
+			}
+		}
+		return null;
 	}
 
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {

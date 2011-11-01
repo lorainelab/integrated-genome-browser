@@ -4,12 +4,14 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
+import com.affymetrix.igb.bookmarks.BookmarkManagerView;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public abstract class AddBookmarkAction extends GenericAction {
 
@@ -36,33 +38,26 @@ public abstract class AddBookmarkAction extends GenericAction {
 		editor.run();
 	}
 
-	public JRPMenuItem addBookmark(Bookmark bm) {
-		JRPMenuItem markMI = null;
-		JRPMenu parent_menu = (JRPMenu) BookmarkActionManager.getInstance().getComponentHash().get(BookmarkActionManager.getInstance().getMainBookmarkList());
-		if (parent_menu == null) {
-			ErrorHandler.errorPanel("Couldn't add bookmark. Lost reference to menu");
-			return null;
-		}
-		addBookmarkMI(parent_menu, bm);
-		BookmarkList bl = BookmarkActionManager.getInstance().getMainBookmarkList().addBookmark(bm);
-
-		BookmarkActionManager.getInstance().updateBookmarkManager();
-		if (BookmarkActionManager.getInstance().getBookmarkManagerViewGUI() != null) {
-			BookmarkActionManager.getInstance().getBookmarkManagerViewGUI().getBookmarkManagerView().addBookmarkToHistory(bl);
-		}
-		return markMI;
+	public void addBookmarkFolder() {
+		BookmarkList bl = new BookmarkList("Folder");
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		addNode(node);
 	}
 
-	private JRPMenuItem addBookmarkMI(JRPMenu parent_menu, Bookmark bm) {
-		JRPMenuItem markMI = (JRPMenuItem) BookmarkActionManager.getInstance().getComponentHash().get(bm);
-		if (markMI != null) {
-			return markMI;
-		}
-		markMI = new BookmarkJMenuItem(getIdFromName(bm.getName()), bm);
-		BookmarkActionManager.getInstance().getComponentHash().put(bm, markMI);
-		parent_menu.add(markMI);
-		markMI.addActionListener(this);
-		return markMI;
+	public void addBookmark(Bookmark bm) {
+		BookmarkList parent_list = BookmarkManagerView.getSingleton().thing.selected_bl;
+		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);// need changed
+
+		BookmarkList bl = new BookmarkList(bm);
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		addNode(node);
+	}
+
+	private void addNode(DefaultMutableTreeNode node) {
+		JTree tree = BookmarkManagerView.getSingleton().tree;
+		TreePath path = tree.getSelectionModel().getSelectionPath();
+		BookmarkManagerView.getSingleton().insert(tree, path, new DefaultMutableTreeNode[]{node});
+		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	private String getIdFromName(String name) {
@@ -75,6 +70,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 	}
 
 	class BookmarkEditor {
+
 		Bookmark bookmark;
 		javax.swing.JTextField nameField;
 		javax.swing.JTextArea commentField = new javax.swing.JTextArea("", 5, 8);
@@ -91,7 +87,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 			javax.swing.JOptionPane op = new javax.swing.JOptionPane(
 					msg,
 					javax.swing.JOptionPane.PLAIN_MESSAGE,
-					javax.swing.JOptionPane.OK_CANCEL_OPTION,
+					javax.swing.JOptionPane.CANCEL_OPTION,
 					null,
 					null);
 
@@ -103,9 +99,14 @@ public abstract class AddBookmarkAction extends GenericAction {
 			dialog.setResizable(true);
 			dialog.pack();
 
-			int result = javax.swing.JOptionPane.OK_OPTION;
+			int result = JOptionPane.CANCEL_OPTION;
 
-			if (result == javax.swing.JOptionPane.OK_OPTION) {
+			if(op.getValue() != null)
+			{
+				result = (Integer) op.getValue();
+			}
+			
+			if (result == JOptionPane.OK_OPTION) {
 				String name;
 				String comment;
 				name = nameField.getText();

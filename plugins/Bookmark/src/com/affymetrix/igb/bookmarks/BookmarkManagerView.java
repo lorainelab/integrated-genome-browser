@@ -18,22 +18,16 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.DragDropTree;
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.FileTracker;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.*;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -57,9 +51,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public final Action import_action;
 	public final Action export_action;
 	public final Action delete_action;
-	public final Action add_separator_action;
-	public final Action add_folder_action;
-	public final Action add_bookmark_action;
 	public final Action forward_action;
 	public final Action backward_action;
 	private List<TreePath> bookmark_history;
@@ -83,12 +74,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
-		JScrollPane scroll_pane = new JScrollPane(tree);
-
 		thing = new BottomThing(tree);
 		thing.setIGBService(igbService);
 		tree.addTreeSelectionListener(thing);
-
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 		tree.setRootVisible(true);
 		tree.setShowsRootHandles(true);
@@ -102,11 +90,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		export_action = makeExportAction();
 		import_action = makeImportAction();
 		delete_action = makeDeleteAction();
-		add_separator_action = makeAddAction(tree, 0);
-		add_folder_action = makeAddAction(tree, 1);
-		add_bookmark_action = makeAddAction(tree, 2);
 		forward_action = makeForwardAction();
-		backward_action = makeBackwardAction();
+		backward_action = makeBackwardAction();		
 		forward_action.setEnabled(false);
 		backward_action.setEnabled(false);
 
@@ -115,7 +100,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree.addTreeSelectionListener(this);
 	}
 
-	private boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
+	public boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
 		if (tree_path == null) {
 			return false;
 		}
@@ -159,9 +144,10 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 	public void setBList(BookmarkList blist) {
 		tree_model.setRoot(blist);
+		
 		// selecting, then clearing the selection, makes sure that valueChanged() gets called.
 		tree.setSelectionRow(0);
-		tree.clearSelection();
+	//	tree.clearSelection();
 	}
 
 	private static void setAccelerator(Action a) {
@@ -180,7 +166,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public javax.swing.JTextArea comment_text_area = new javax.swing.JTextArea();
 		BookmarkListEditor bl_editor;
 		TreePath selected_path = null;
-		BookmarkList selected_bl = null;
+		public BookmarkList selected_bl = null;
 		BookmarkList previousSelected_bl = null;
 		private final JTree tree;
 		private IGBService igbService = null;
@@ -205,7 +191,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					if ((e.getKeyCode() == KeyEvent.VK_DELETE)) {
-						deleteAction();
+						deleteAction();						
 					}
 					if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
 						goToAction();
@@ -397,7 +383,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public Action getGoToAction() {
 			return goto_action;
 		}
-
+		
+		
+		
 		private Action makeGoToAction() {
 			Action a = new GenericAction() {
 
@@ -411,11 +399,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				@Override
 				public String getText() {
 					return "Go To";
-				}
-
-				@Override
-				public String getIconPath() {
-					return "images/play16.png";
 				}
 
 				@Override
@@ -450,10 +433,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 		int selections = tree.getSelectionCount();
 		delete_action.setEnabled(selections != 0);
-		add_separator_action.setEnabled(selections != 0);
-		add_folder_action.setEnabled(selections != 0);
-		add_bookmark_action.setEnabled(selections != 0);
-		//  the "properties" and "go to" actions belong to the BottomThing and it will enable or disable them
 	}
 
 	private void setUpPopupMenu() {
@@ -669,6 +648,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				deleteAction();
+				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
 			}
 
 			@Override
@@ -678,7 +658,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			@Override
 			public String getIconPath() {
-				return "images/removeBookmark16.png";
+				return "images/removeBookmark.png";
 			}
 
 			@Override
@@ -696,17 +676,17 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	private void deleteAction() {
-		TreePath[] paths = tree.getSelectionPaths();
-		if (paths == null) {
+		TreePath[] selectionPaths = tree.getSelectionPaths();
+		if (selectionPaths == null) {
 			return;
 		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
 		int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-				+ paths.length + " selected bookmarks?", "Delete?",
+				+ selectionPaths.length + " selected bookmarks?", "Delete?",
 				JOptionPane.YES_NO_OPTION);
 		if (yes == JOptionPane.YES_OPTION) {
-			for (int i = 0; i < paths.length; i++) {
-				TreePath path = paths[i];
+			for (int i = 0; i < selectionPaths.length; i++) {
+				TreePath path = selectionPaths[i];
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 				if (node.getParent() != null) {
 					tree_model.removeNodeFromParent(node);
@@ -758,92 +738,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	private Action makeAddAction(final JTree tree, final int type) {
-		final String title;
-		final String iconPath;
-		final String tool_tip;
-		final int mnemonic;
-		if (type == 0) {
-			title = "New Separator";
-			// "RowDelete" looks vaguely like a separator...
-			iconPath = "images/separator16.png";
-			tool_tip = "New Separator";
-			mnemonic = KeyEvent.VK_S;
-		} else if (type == 1) {
-			title = "New Folder";
-			// the "Open" icon looks like a folder...
-			iconPath = "images/addFolder.png";
-			tool_tip = "New Folder";
-			mnemonic = KeyEvent.VK_F;
-		} else if (type == 2) {
-			title = "New Bookmark";
-			iconPath = "images/addBookmark.png";
-			tool_tip = "New Bookmark";
-			mnemonic = KeyEvent.VK_N;
-		} else {
-			title = "New ???";
-			iconPath = null;
-			tool_tip = null;
-			mnemonic = KeyEvent.VK_EXCLAMATION_MARK;
-		}
-
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				TreePath path = tree.getSelectionModel().getSelectionPath();
-				if (path == null) {
-					Logger.getLogger(BookmarkManagerView.class.getName()).log(
-							Level.SEVERE, "No selection");
-					return;
-				}
-				BookmarkList bl = null;
-				if (type == 0) {
-					Separator s = new Separator();
-					bl = new BookmarkList(s);
-				} else if (type == 1) {
-					bl = new BookmarkList("Folder");
-				} else if (type == 2) {
-					try {
-						Bookmark b = new Bookmark("Bookmark", "",
-								Bookmark.constructURL(Collections.<String, String[]>emptyMap()));
-						bl = new BookmarkList(b);
-					} catch (MalformedURLException mue) {
-						mue.printStackTrace();
-					}
-				}
-				if (bl != null) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
-					insert(tree, path, new DefaultMutableTreeNode[]{node});
-				}
-			}
-
-			@Override
-			public String getText() {
-				return title;
-			}
-
-			@Override
-			public String getIconPath() {
-				return iconPath;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return Integer.valueOf(mnemonic);
-			}
-
-			@Override
-			public String getTooltip() {
-				return tool_tip;
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
 	/**
 	 * Action to move forward in the Bookmark History
 	 * 
@@ -875,7 +769,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			@Override
 			public String getIconPath() {
-				return "images/forward16.png";
+				return "images/forward.png";
 			}
 
 			@Override
@@ -923,7 +817,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			@Override
 			public String getIconPath() {
-				return "images/backward16.png";
+				return "images/backward.png";
 			}
 
 			@Override

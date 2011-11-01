@@ -25,7 +25,7 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Bookmarks16.gif";
+		return "images/addBookmark16.png";
 	}
 
 	@Override

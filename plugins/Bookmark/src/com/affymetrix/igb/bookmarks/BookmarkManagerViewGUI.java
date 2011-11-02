@@ -10,6 +10,8 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.awt.Rectangle;
 import java.util.ResourceBundle;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
@@ -349,11 +351,31 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	}//GEN-LAST:event_addFolderButtonActionPerformed
 
 	private void backwardActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardActionButtonActionPerformed
-		bmv.forward_action.actionPerformed(evt);
+		if (bmv.history_pointer > 0) {
+			bmv.history_pointer--;
+			TreePath path = bmv.bookmark_history.get(bmv.history_pointer);
+			bmv.tree.setSelectionPath(path);
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			if (node.getUserObject() instanceof Bookmark) {
+				Bookmark bm = (Bookmark) node.getUserObject();
+				BookmarkController.viewBookmark(bmv.thing.igbService, bm);
+				backwardActionButton.setEnabled(bmv.history_pointer > 0);
+				forwardActionButton.setEnabled(true);
+			}
+		}
 	}//GEN-LAST:event_backwardActionButtonActionPerformed
 
 	private void forwardActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardActionButtonActionPerformed
-		bmv.backward_action.actionPerformed(evt);
+		if (bmv.history_pointer < bmv.bookmark_history.size() - 1) {
+			bmv.history_pointer++;
+			TreePath path = bmv.bookmark_history.get(bmv.history_pointer);
+			bmv.tree.setSelectionPath(path);
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Bookmark bm = (Bookmark) node.getUserObject();
+			BookmarkController.viewBookmark(bmv.thing.igbService, bm);
+			forwardActionButton.setEnabled(bmv.history_pointer < bmv.bookmark_history.size() - 1);
+			backwardActionButton.setEnabled(true);
+		}
 	}//GEN-LAST:event_forwardActionButtonActionPerformed
 
 	private void jScrollPane1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseDragged

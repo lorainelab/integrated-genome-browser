@@ -51,16 +51,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public final Action import_action;
 	public final Action export_action;
 	public final Action delete_action;
-	public final Action forward_action;
-	public final Action backward_action;
 	public javax.swing.JButton forwardButton = new javax.swing.JButton();
 	public javax.swing.JButton backwardButton = new javax.swing.JButton();
 	public javax.swing.JButton addBookmarkButton = new javax.swing.JButton();
 	public javax.swing.JButton addDataAndPositionBookmarkButton = new javax.swing.JButton();
 	public javax.swing.JButton addSeparatorButton = new javax.swing.JButton();
 	public javax.swing.JButton addFolderButton = new javax.swing.JButton();
-	private List<TreePath> bookmark_history;
-	private int history_pointer = -1;
+	public List<TreePath> bookmark_history;
+	public int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
@@ -96,11 +94,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		export_action = makeExportAction();
 		import_action = makeImportAction();
 		delete_action = makeDeleteAction();
-		forward_action = makeForwardAction();
-		backward_action = makeBackwardAction();
-		forward_action.setEnabled(false);
 		forwardButton.setEnabled(false);
-		backward_action.setEnabled(false);
 		backwardButton.setEnabled(false);
 
 		setUpPopupMenu();
@@ -145,13 +139,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				// Cancelled by user
 				return false;
 			}
-		}		
+		}
 		return true;
 	}
 
 	public void setBList(BookmarkList blist) {
 		tree_model.setRoot(blist);
 		tree.setSelectionRow(0);
+		tree.clearSelection();
 	}
 
 	private static void setAccelerator(Action a) {
@@ -173,7 +168,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public BookmarkList selected_bl = null;
 		BookmarkList previousSelected_bl = null;
 		private final JTree tree;
-		private IGBService igbService = null;
+		public IGBService igbService = null;
 		public final DefaultTreeModel def_tree_model;
 		Action properties_action;
 		Action goto_action;
@@ -726,9 +721,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 		bookmark_history.add(tp);
 		history_pointer = bookmark_history.size() - 1;
-		forward_action.setEnabled(false);
-		forwardButton.setEnabled(false);
-		backward_action.setEnabled(bookmark_history.size() > 1);
+		forwardButton.setEnabled(true);
 		backwardButton.setEnabled(bookmark_history.size() > 1);
 	}
 
@@ -742,111 +735,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				history_pointer--;
 			}
 			bookmark_history.remove(remove_pos);
-			forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
 			forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
-			backward_action.setEnabled(history_pointer > 0);
 			backwardButton.setEnabled(history_pointer > 0);
 		}
-	}
-
-	/**
-	 * Action to move forward in the Bookmark History
-	 * 
-	 * @return the Action forward
-	 */
-	public Action makeForwardAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				if (history_pointer < bookmark_history.size() - 1) {
-					history_pointer++;
-					TreePath path = bookmark_history.get(history_pointer);
-					tree.setSelectionPath(path);
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-					Bookmark bm = (Bookmark) node.getUserObject();
-					BookmarkController.viewBookmark(thing.igbService, bm);
-					forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
-					forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
-					backward_action.setEnabled(true);
-					backwardButton.setEnabled(true);
-				}
-			}
-
-			@Override
-			public String getText() {
-				return "Forward";
-			}
-
-			@Override
-			public String getIconPath() {
-				return "images/forward.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_F;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Forward";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	/**
-	 * Action to move backward in the Bookmark History
-	 * 
-	 * @return the Action backward
-	 */
-	public Action makeBackwardAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				if (history_pointer > 0) {
-					history_pointer--;
-					TreePath path = bookmark_history.get(history_pointer);
-					tree.setSelectionPath(path);
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-					Bookmark bm = (Bookmark) node.getUserObject();
-					BookmarkController.viewBookmark(thing.igbService, bm);
-					forward_action.setEnabled(true);
-					forwardButton.setEnabled(true);
-					backward_action.setEnabled(history_pointer > 0);
-					backwardButton.setEnabled(history_pointer > 0);
-				}
-			}
-
-			@Override
-			public String getText() {
-				return "Backward";
-			}
-
-			@Override
-			public String getIconPath() {
-				return "images/backward.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_B;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Backward";
-			}
-		};
-		setAccelerator(a);
-		return a;
 	}
 
 	public File getLoadDirectory() {

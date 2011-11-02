@@ -368,7 +368,7 @@ public abstract class SymLoader {
 
 	public List<? extends SeqSymmetry> parse(InputStream is, boolean annotate_seq)
 		throws Exception {
-		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(extension);
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI("."+extension);
 		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
 	}
 }

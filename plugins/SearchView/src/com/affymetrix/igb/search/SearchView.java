@@ -8,8 +8,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -235,12 +233,13 @@ public final class SearchView extends IGBTabPanel implements
 	private void initTable() {
 		
 		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 //		setModel(SearchModeHolder.getInstance().getSearchModes().get(0).getEmptyTableModel());
 		table.setRowSelectionAllowed(true);
 		table.setEnabled(true);
+		
+		table.addMouseListener(list_selection_listener);
 	}
 
 	private void setModel(SearchResultsTableModel model){
@@ -261,20 +260,30 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 
-	/** This is called when the user selects a row of the table. */
-	private final ListSelectionListener list_selection_listener = new ListSelectionListener() {
+	/** This is called when the user double click a row of the table. */
+	private final MouseListener list_selection_listener = new MouseListener() {
 
-		public void valueChanged(ListSelectionEvent evt) {
-			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && table.getModel().getRowCount() > 0) {
-				int srow = table.getSelectedRow();
-				srow = table.convertRowIndexToModel(srow);
-				if (srow < 0) {
-					return;
+		public void mouseClicked(MouseEvent e) {
+				if (e.getComponent().isEnabled()
+						&& e.getButton() == MouseEvent.BUTTON1
+						&& e.getClickCount() == 2) {
+					int srow = table.getSelectedRow();
+					srow = table.convertRowIndexToModel(srow);
+					if (srow < 0) {
+						return;
+					}
+					selectedSearchMode.valueChanged(
+							(SearchResultsTableModel) table.getModel(), srow, glyphs);
 				}
-
-				selectedSearchMode.valueChanged((SearchResultsTableModel)table.getModel(), srow, glyphs);
 			}
-		}
+
+		public void mousePressed(MouseEvent me) {}
+
+		public void mouseReleased(MouseEvent me) {}
+
+		public void mouseEntered(MouseEvent me) {}
+
+		public void mouseExited(MouseEvent me) {}
 	};
 
 	// remove the previous search results from the map.

@@ -77,11 +77,13 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseEntered(MouseEvent evt) {
-		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+		ToolTipManager.sharedInstance().setDismissDelay(dismissdelay);
 	}
 
 	public void mouseExited(MouseEvent evt) {
-		ToolTipManager.sharedInstance().setDismissDelay(dismissdelay);
+		if (evt.getSource() == map) {
+			ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+		} 
 	}
 
 	public void mouseClicked(MouseEvent evt) {

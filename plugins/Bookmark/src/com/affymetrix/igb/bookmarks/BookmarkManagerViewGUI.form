@@ -223,6 +223,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="backwardActionButton.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.backwardButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="forwardActionButton">
@@ -245,6 +246,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="forwardActionButton.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.forwardButton"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -315,6 +317,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addFolderButton.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addFolderButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="addBookmarkActionButton">
@@ -336,6 +339,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addBookmarkActionButton.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addBookmarkButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="removeBookmarkActionButton">
@@ -419,6 +423,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addSeparator.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addSeparatorButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="addDataAndBookmarkAction">
@@ -440,6 +445,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addDataAndBookmarkAction.setBorder(null);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addDataAndPositionBookmarkButton"/>
           </AuxValues>
         </Component>
       </SubComponents>

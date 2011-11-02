@@ -64,16 +64,16 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentTextArea = bmv.thing.comment_text_area;
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        backwardActionButton = new javax.swing.JButton();
-        forwardActionButton = new javax.swing.JButton();
+        backwardActionButton = bmv.backwardButton;
+        forwardActionButton = bmv.forwardButton;
         jPanel3 = new javax.swing.JPanel();
-        addFolderButton = new javax.swing.JButton();
-        addBookmarkActionButton = new javax.swing.JButton();
+        addFolderButton = bmv.addFolderButton;
+        addBookmarkActionButton = bmv.addBookmarkButton;
         removeBookmarkActionButton = new javax.swing.JButton();
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
-        addSeparator = new javax.swing.JButton();
-        addDataAndBookmarkAction = new javax.swing.JButton();
+        addSeparator = bmv.addSeparatorButton;
+        addDataAndBookmarkAction = bmv.addDataAndPositionBookmarkButton;
 
         jScrollPane1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {

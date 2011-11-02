@@ -53,6 +53,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public final Action delete_action;
 	public final Action forward_action;
 	public final Action backward_action;
+	public javax.swing.JButton forwardButton = new javax.swing.JButton();
+	public javax.swing.JButton backwardButton = new javax.swing.JButton();
+	public javax.swing.JButton addBookmarkButton = new javax.swing.JButton();
+	public javax.swing.JButton addDataAndPositionBookmarkButton = new javax.swing.JButton();
+	public javax.swing.JButton addSeparatorButton = new javax.swing.JButton();
+	public javax.swing.JButton addFolderButton = new javax.swing.JButton();
 	private List<TreePath> bookmark_history;
 	private int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
@@ -91,9 +97,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		import_action = makeImportAction();
 		delete_action = makeDeleteAction();
 		forward_action = makeForwardAction();
-		backward_action = makeBackwardAction();		
+		backward_action = makeBackwardAction();
 		forward_action.setEnabled(false);
+		forwardButton.setEnabled(false);
 		backward_action.setEnabled(false);
+		backwardButton.setEnabled(false);
 
 		setUpPopupMenu();
 
@@ -137,17 +145,13 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				// Cancelled by user
 				return false;
 			}
-		}
-
+		}		
 		return true;
 	}
 
 	public void setBList(BookmarkList blist) {
 		tree_model.setRoot(blist);
-		
-		// selecting, then clearing the selection, makes sure that valueChanged() gets called.
 		tree.setSelectionRow(0);
-	//	tree.clearSelection();
 	}
 
 	private static void setAccelerator(Action a) {
@@ -191,7 +195,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					if ((e.getKeyCode() == KeyEvent.VK_DELETE)) {
-						deleteAction();						
+						deleteAction();
 					}
 					if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
 						goToAction();
@@ -383,9 +387,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public Action getGoToAction() {
 			return goto_action;
 		}
-		
-		
-		
+
 		private Action makeGoToAction() {
 			Action a = new GenericAction() {
 
@@ -433,6 +435,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 		int selections = tree.getSelectionCount();
 		delete_action.setEnabled(selections != 0);
+		addSeparatorButton.setEnabled(selections != 0);
+		addDataAndPositionBookmarkButton.setEnabled(selections != 0);
+		addBookmarkButton.setEnabled(selections != 0);
+		addFolderButton.setEnabled(selections != 0);
+		//  the "properties" and "go to" actions belong to the BottomThing and it will enable or disable them
 	}
 
 	private void setUpPopupMenu() {
@@ -720,7 +727,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		bookmark_history.add(tp);
 		history_pointer = bookmark_history.size() - 1;
 		forward_action.setEnabled(false);
+		forwardButton.setEnabled(false);
 		backward_action.setEnabled(bookmark_history.size() > 1);
+		backwardButton.setEnabled(bookmark_history.size() > 1);
 	}
 
 	public void removeBookmarkFromHistory(TreePath tp) {
@@ -734,7 +743,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			}
 			bookmark_history.remove(remove_pos);
 			forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
+			forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
 			backward_action.setEnabled(history_pointer > 0);
+			backwardButton.setEnabled(history_pointer > 0);
 		}
 	}
 
@@ -758,7 +769,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					Bookmark bm = (Bookmark) node.getUserObject();
 					BookmarkController.viewBookmark(thing.igbService, bm);
 					forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
+					forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
 					backward_action.setEnabled(true);
+					backwardButton.setEnabled(true);
 				}
 			}
 
@@ -806,7 +819,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					Bookmark bm = (Bookmark) node.getUserObject();
 					BookmarkController.viewBookmark(thing.igbService, bm);
 					forward_action.setEnabled(true);
+					forwardButton.setEnabled(true);
 					backward_action.setEnabled(history_pointer > 0);
+					backwardButton.setEnabled(history_pointer > 0);
 				}
 			}
 

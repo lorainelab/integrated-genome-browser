@@ -55,7 +55,13 @@ public abstract class AddBookmarkAction extends GenericAction {
 
 	private void addNode(DefaultMutableTreeNode node) {
 		JTree tree = BookmarkManagerView.getSingleton().tree;
-		TreePath path = tree.getSelectionModel().getSelectionPath();
+		TreePath path;
+		if (tree.getSelectionCount() > 0) {
+			path = tree.getSelectionModel().getSelectionPath();
+		} else {
+			tree.setSelectionRow(0);
+			path = tree.getSelectionModel().getSelectionPath();
+		}
 		BookmarkManagerView.getSingleton().insert(tree, path, new DefaultMutableTreeNode[]{node});
 		BookmarkActionManager.getInstance().rebuildMenus();
 	}
@@ -101,11 +107,10 @@ public abstract class AddBookmarkAction extends GenericAction {
 
 			int result = JOptionPane.CANCEL_OPTION;
 
-			if(op.getValue() != null)
-			{
+			if (op.getValue() != null) {
 				result = (Integer) op.getValue();
 			}
-			
+
 			if (result == JOptionPane.OK_OPTION) {
 				String name;
 				String comment;

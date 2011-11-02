@@ -783,7 +783,7 @@ public final class SimpleGraphTab
 				combo_style = new SimpleTrackStyle("Joined Graphs", true);
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
-				combo_style.setCollapsed(true);
+			//	combo_style.setCollapsed(true);
 				combo_style.setBackground(igbService.getDefaultBackgroundColor());
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
 			}

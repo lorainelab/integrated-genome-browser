@@ -14,6 +14,8 @@ package com.affymetrix.igb.glyph;
 
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -22,21 +24,21 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.BioSeq;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlineContGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
+import com.affymetrix.genoviz.glyph.OutlinedPointedGlyph;
 
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 
 /**
@@ -115,14 +117,18 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 		if (meth != null) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			if(style.getTrackName() != null || style.getTrackName().length() == 0 || style.getTrackName().contains(NETAFFX_CONSENSUS)){
-				style.setTrackName(human_name);
-			}
-			label_field = style.getLabelField();
+			try {
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+				if(style.getTrackName() != null || style.getTrackName().length() == 0 || style.getTrackName().contains(NETAFFX_CONSENSUS)){
+					style.setTrackName(human_name);
+				}
+				label_field = style.getLabelField();
 
-			TierGlyph[] tiers = gviewer.getTiers(false, style, true);
-			addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+				TierGlyph[] tiers = gviewer.getTiers(false, style, true);
+				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+			} catch (Exception ex) {
+				Logger.getLogger(ProbeSetDisplayGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 
@@ -138,7 +144,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private void addLeafsToTier(SeqSymmetry sym,
 			TierGlyph ftier, TierGlyph rtier,
-			int depth_of_consensuses) {
+			int depth_of_consensuses) throws InstantiationException, IllegalAccessException {
 		int depth = SeqUtils.getDepth(sym);
 		if (depth > depth_of_consensuses) {
 			for (int i = 0; i < sym.getChildCount(); i++) {
@@ -157,7 +163,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	 *      probe set alignments
 	 *      includes transformations used by slice view and other alternative coordinate systems
 	 */
-	private GlyphI addToTier(SeqSymmetry consensus_sym, TierGlyph forward_tier, TierGlyph reverse_tier) {
+	private GlyphI addToTier(SeqSymmetry consensus_sym, TierGlyph forward_tier, TierGlyph reverse_tier) throws InstantiationException, IllegalAccessException {
 
 		if (SeqUtils.getDepth(consensus_sym) != glyph_depth) {
 			System.out.println("ProbeSetDisplayGlyphFactory: at wrong depth!");
@@ -225,21 +231,19 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			if (cspan == null) {
 				outside_children.add(child);
 			} else {
-				GlyphI cglyph;
-				if (cspan.getLength() == 0) {
-					cglyph = new DeletionGlyph();
-				} else {
-					cglyph = new EfficientOutlinedRectGlyph();
-				}
-
+				GlyphI cglyph = getChild(cspan, cspan.getMin() == pspan.getMin(), cspan.getMax() == pspan.getMax(), direction_type);
 				cglyph.setCoords(cspan.getMin(), child_y + child_height / 4, cspan.getLength(), child_height / 2);
 				cglyph.setColor(consensus_color);
 				pglyph.addChild(cglyph);
 				gviewer.setDataModelFromOriginalSym(cglyph, child);
+				if(cglyph instanceof DirectedGlyph){
+					((DirectedGlyph)cglyph).setForward(cspan.isForward());
+				}
 			}
 		}
 		
-		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, child_y + child_height / 4, child_height/2, true);
+		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
+				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
@@ -259,6 +263,17 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		return pglyph;
 	}
 
+	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
+			throws InstantiationException, IllegalAccessException{
+		
+		if (cspan.getLength() == 0) 
+			return new DeletionGlyph();
+		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
+				(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH))
+			return new OutlinedPointedGlyph();
+			
+		return new EfficientOutlinedRectGlyph();
+	}
 	
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style, boolean isForward, DIRECTION_TYPE direction_type) {
 		if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){

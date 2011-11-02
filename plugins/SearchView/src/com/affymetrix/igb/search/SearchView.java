@@ -9,8 +9,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -47,17 +45,21 @@ import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public final class SearchView extends IGBTabPanel implements 
+public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener, IStatus {
-	
+
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
 	private static final int TAB_POSITION = 2;
 
 	public class SearchModeAction extends GenericAction {
+
 		private static final long serialVersionUID = 1L;
+
 		@Override
-		public String getText() { return null; }
+		public String getText() {
+			return null;
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
@@ -88,9 +90,13 @@ public final class SearchView extends IGBTabPanel implements
 	private SearchModeAction searchModeAction = new SearchModeAction();
 
 	public class SearchAction extends GenericAction {
+
 		private static final long serialVersionUID = 1L;
+
 		@Override
-		public String getText() { return null; }
+		public String getText() {
+			return null;
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
@@ -102,16 +108,18 @@ public final class SearchView extends IGBTabPanel implements
 				enableComp(false);
 				clearResults();
 				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
+
 					@Override
 					protected Object runInBackground() {
 						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), remoteSearchCheckBox.isSelected(), SearchView.this, glyphs);
 					}
+
 					@Override
 					protected void finished() {
 						selectedSearchMode.finished(chrfilter);
 						enableComp(true);
 						try {
-							SearchResultsTableModel model = (SearchResultsTableModel)get();
+							SearchResultsTableModel model = (SearchResultsTableModel) get();
 							if (model != null) {
 								setModel(model);
 							}
@@ -128,10 +136,15 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	private SearchAction searchAction = new SearchAction();
+
 	public class ClearAction extends GenericAction {
+
 		private static final long serialVersionUID = 1L;
+
 		@Override
-		public String getText() { return null; }
+		public String getText() {
+			return null;
+		}
 
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
@@ -140,11 +153,9 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 	private ClearAction clearAction = new ClearAction();
-
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
 	private static final String FORLABELTEXT = "for ";
@@ -156,7 +167,6 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String REMOTESERVERSEARCH2 = " server)";
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
-	
 	private final JRPTextField searchTF = new JRPTextField("SearchView_searchTF", 10);
 	private final JPanel pan1 = new JPanel();
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
@@ -166,7 +176,6 @@ public final class SearchView extends IGBTabPanel implements
 	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
 	private final CancelButton cancel = new CancelButton("SearchView_CancelButton", igbService.getIcon("x_icon.gif"));
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
-
 	private JRPTable table = new JRPTable("SearchView_table");
 	private JLabel status_bar = new JLabel("0 results");
 	private TableRowSorter<SearchResultsTableModel> sorter;
@@ -180,7 +189,7 @@ public final class SearchView extends IGBTabPanel implements
 	public SearchView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
 		igbService.getSeqMapView().addToRefreshList(this);
-		
+
 		group = gmodel.getSelectedSeqGroup();
 
 		this.setLayout(new BorderLayout());
@@ -204,16 +213,16 @@ public final class SearchView extends IGBTabPanel implements
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.FORLABELTEXT));
 		pan1.add(searchTF);
-		
+
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 
 		pan1.add(searchButton);
 		pan1.add(clearButton);
-		
+
 		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
 		pan1.add(remoteSearchCheckBox);
-		
+
 		if (group == null) {
 			searchCB.setEnabled(false);
 			searchTF.setEnabled(false);
@@ -226,7 +235,7 @@ public final class SearchView extends IGBTabPanel implements
 
 		this.add("North", pan1);
 
-		
+
 		JScrollPane scroll_pane = new JScrollPane(table);
 		this.add(scroll_pane, BorderLayout.CENTER);
 
@@ -257,6 +266,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	private void initSequenceCB() {
 		ThreadUtils.runOnEventQueue(new Runnable() {
+
 			public void run() {
 				// set up the sequence combo_box
 				sequenceCB.removeAllItems();
@@ -303,8 +313,7 @@ public final class SearchView extends IGBTabPanel implements
 				searchCB.setSelectedIndex(0);
 				saveSearchMode = searchCB.getSelectedItem();
 			}
-		}
-		else {
+		} else {
 			searchCB.setSelectedItem(saveSearchMode);
 		}
 		initSequenceCB();
@@ -313,36 +322,37 @@ public final class SearchView extends IGBTabPanel implements
 	private void initComponents() {
 		searchTF.setVisible(true);
 		searchTF.setEnabled(true);
-		searchTF.setMinimumSize(new Dimension(125,50));
+		searchTF.setMinimumSize(new Dimension(125, 50));
 
 		initRemoteServerCheckBox(null);
 
 		searchButton.setToolTipText("Search");
 		searchButton.setEnabled(true);
-		
+
 		clearButton.setToolTipText("Clear");
 		cancel.setEnabled(false);
 	}
 
 	private void initTable() {
-		
+
 		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 //		setModel(SearchModeHolder.getInstance().getSearchModes().get(0).getEmptyTableModel());
 		table.setRowSelectionAllowed(true);
 		table.setEnabled(true);
+
+		table.addMouseListener(list_selection_listener);
 	}
 
-	private void setModel(SearchResultsTableModel model){
+	private void setModel(SearchResultsTableModel model) {
 		sorter = new TableRowSorter<SearchResultsTableModel>(model);
 		table.setModel(model);
 		table.setRowSorter(sorter);
 
-		for(int i=0; i<model.getColumnWidth().length; i++){
+		for (int i = 0; i < model.getColumnWidth().length; i++) {
 			int colPer = model.getColumnWidth()[i];
-			int colWidth = table.getWidth() * colPer/100;
+			int colWidth = table.getWidth() * colPer / 100;
 			TableColumn column = table.getColumnModel().getColumn(i);
 			column.setPreferredWidth(colWidth);
 
@@ -352,21 +362,32 @@ public final class SearchView extends IGBTabPanel implements
 			column.setCellRenderer(dtcr);
 		}
 	}
+	
+	/** This is called when the user double click a row of the table. */
+	private final MouseListener list_selection_listener = new MouseListener() {
 
-	/** This is called when the user selects a row of the table. */
-	private final ListSelectionListener list_selection_listener = new ListSelectionListener() {
-
-		public void valueChanged(ListSelectionEvent evt) {
-			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && table.getModel().getRowCount() > 0) {
-				int srow = table.getSelectedRow();
-				srow = table.convertRowIndexToModel(srow);
-				if (srow < 0) {
-					return;
+		public void mouseClicked(MouseEvent e) {
+				if (e.getComponent().isEnabled()
+						&& e.getButton() == MouseEvent.BUTTON1
+						&& e.getClickCount() == 2) {
+					int srow = table.getSelectedRow();
+					srow = table.convertRowIndexToModel(srow);
+					if (srow < 0) {
+						return;
+					}
+					selectedSearchMode.valueChanged(
+							(SearchResultsTableModel) table.getModel(), srow, glyphs);
+					System.out.println("print");
 				}
-
-				selectedSearchMode.valueChanged((SearchResultsTableModel)table.getModel(), srow, glyphs);
 			}
-		}
+
+		public void mousePressed(MouseEvent me) {}
+
+		public void mouseReleased(MouseEvent me) {}
+
+		public void mouseEntered(MouseEvent me) {}
+
+		public void mouseExited(MouseEvent me) {}
 	};
 
 	// remove the previous search results from the map.
@@ -375,18 +396,18 @@ public final class SearchView extends IGBTabPanel implements
 			glyphs.clear();
 			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
 		}
-		
+
 		clearTable();
 	}
 
 	private void clearTable() {
 		if (table.getModel() instanceof SearchResultsTableModel) {
-			((SearchResultsTableModel)table.getModel()).clear();
+			((SearchResultsTableModel) table.getModel()).clear();
 		}
-		((AbstractTableModel)table.getModel()).fireTableDataChanged();
+		((AbstractTableModel) table.getModel()).fireTableDataChanged();
 	}
 
-	public void enableComp(boolean enabled){
+	public void enableComp(boolean enabled) {
 		searchTF.setEnabled(enabled);
 		sequenceCB.setEnabled(enabled);
 		searchCB.setEnabled(enabled);
@@ -410,7 +431,7 @@ public final class SearchView extends IGBTabPanel implements
 	public void genericServerInit(GenericServerInitEvent evt) {
 		initRemoteServerCheckBox(group);
 	}
-	
+
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 		clearResults();
@@ -429,7 +450,7 @@ public final class SearchView extends IGBTabPanel implements
 		this.searchButton.setEnabled(newGroup != null);
 		this.searchTF.setEnabled(newGroup != null);
 		setStatus("");
-		
+
 		// only re-initialize the combobox if the group or seqs have changed
 		if (newGroup != group || seqCount != newSeqCount) {
 			group = newGroup;
@@ -457,30 +478,31 @@ public final class SearchView extends IGBTabPanel implements
 	@Override
 	public boolean isEmbedded() {
 		return true;
+
+
 	}
-	
+
 	@SuppressWarnings("serial")
-	private class CancelButton extends JRPButton implements CThreadListener, ActionListener{
-		
-		public CancelButton(String id, ImageIcon icon){
+	private class CancelButton extends JRPButton implements CThreadListener, ActionListener {
+
+		public CancelButton(String id, ImageIcon icon) {
 			super(id, icon);
 			setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 			addActionListener(this);
 		}
-		
+
 		public void heardThreadEvent(CThreadEvent cte) {
-			if(cte.getState() == CThreadEvent.STARTED){
+			if (cte.getState() == CThreadEvent.STARTED) {
 				setEnabled(true);
-			}else{
+			} else {
 				setEnabled(false);
 			}
 		}
 
 		public void actionPerformed(ActionEvent ae) {
-			if(worker != null && !worker.isCancelled() && !worker.isDone()){
+			if (worker != null && !worker.isCancelled() && !worker.isDone()) {
 				worker.cancel(true);
 			}
 		}
-		
 	}
 }

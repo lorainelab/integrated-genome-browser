@@ -13,7 +13,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;

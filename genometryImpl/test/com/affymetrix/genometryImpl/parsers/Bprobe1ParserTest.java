@@ -6,9 +6,9 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
-import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.EfficientProbesetSymA;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -13,9 +13,9 @@
 
 package com.affymetrix.igb.graph;
 
+import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

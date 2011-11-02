@@ -3,8 +3,8 @@ package com.affymetrix.igb.shared;
 import java.awt.Graphics;
 import java.util.BitSet;
 
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
 
 /**

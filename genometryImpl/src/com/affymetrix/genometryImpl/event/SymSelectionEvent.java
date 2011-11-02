@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.event;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;

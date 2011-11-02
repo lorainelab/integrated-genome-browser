@@ -6,17 +6,15 @@
  */
 package com.affymetrix.genometryImpl.parsers.das;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.io.*;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import javax.xml.stream.XMLStreamException;
 

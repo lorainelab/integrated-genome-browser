@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.operator.annotation;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  *  A simple interface for arbitrary operations of annotation glyphs.

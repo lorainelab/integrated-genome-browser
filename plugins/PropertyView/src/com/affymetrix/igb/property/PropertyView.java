@@ -1,8 +1,6 @@
 package com.affymetrix.igb.property;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
@@ -10,6 +8,8 @@ import com.affymetrix.genometryImpl.event.PropertyHolder;
 import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.osgi.service.IGBService;

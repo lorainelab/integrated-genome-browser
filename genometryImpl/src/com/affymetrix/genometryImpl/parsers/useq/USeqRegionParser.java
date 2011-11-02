@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.useq;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
@@ -8,10 +7,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SymWithProps;
 import java.util.regex.*;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
@@ -32,6 +28,10 @@ import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/

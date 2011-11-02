@@ -13,8 +13,9 @@
 package com.affymetrix.genometryImpl.das2;
 
 import java.util.*;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.TypedSym;
+
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
 
 public final class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
 	String id;

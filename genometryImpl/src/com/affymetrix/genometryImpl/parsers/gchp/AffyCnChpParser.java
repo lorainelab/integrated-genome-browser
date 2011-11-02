@@ -15,9 +15,9 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.Parser;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.io.*;
 import java.util.*;

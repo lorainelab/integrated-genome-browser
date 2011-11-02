@@ -1,10 +1,10 @@
 package com.affymetrix.genometryImpl.das2;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  *  

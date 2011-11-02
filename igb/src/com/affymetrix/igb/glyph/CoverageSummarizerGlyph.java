@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
-import com.affymetrix.genometryImpl.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.NeoConstants;

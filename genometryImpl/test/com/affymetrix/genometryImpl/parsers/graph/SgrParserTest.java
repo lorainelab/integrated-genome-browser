@@ -5,8 +5,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.symloader.Sgr;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 
 import java.io.*;
 import java.util.*;

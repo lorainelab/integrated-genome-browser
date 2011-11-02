@@ -1,8 +1,9 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+
 import java.util.ArrayList;
 import java.util.List;
 

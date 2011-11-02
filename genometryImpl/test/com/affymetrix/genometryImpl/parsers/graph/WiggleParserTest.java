@@ -10,13 +10,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
+import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+
 import java.io.*;
 import java.util.*;
 

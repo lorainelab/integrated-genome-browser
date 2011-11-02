@@ -1,6 +1,5 @@
 package com.affymetrix.igb.osgi.service;
 
-import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,6 +13,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;

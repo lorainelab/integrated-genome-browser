@@ -6,8 +6,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.UcscGffSym;
+import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscGffSym;
+
 import java.io.*;
 import java.util.*;
 

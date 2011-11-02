@@ -3,12 +3,13 @@ package com.affymetrix.igb.action;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.igb.view.SeqMapView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

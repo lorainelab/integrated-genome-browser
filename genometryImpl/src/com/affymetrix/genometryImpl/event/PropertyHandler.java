@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.event;
 
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public interface PropertyHandler {
 	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder);

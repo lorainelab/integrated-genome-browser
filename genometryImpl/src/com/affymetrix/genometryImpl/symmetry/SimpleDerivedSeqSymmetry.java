@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl.symmetry;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 
 public final class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry 
 	implements DerivedSeqSymmetry  {

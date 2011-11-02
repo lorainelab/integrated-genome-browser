@@ -2,16 +2,16 @@ package org.bioviz.protannot;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.ArrayList;
@@ -229,8 +229,8 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.MutableSeqSpan
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
@@ -291,7 +291,7 @@ final class Xml2GenometryParser {
      * Adds description from elem to sym.
      * @param   elem    Source from which description is to added.
      * @param   sym     Target to which description is added.
-     * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
      */
     private static void addDescriptors(Element elem, SimpleSymWithProps sym) {
 
@@ -322,10 +322,10 @@ final class Xml2GenometryParser {
      * @param   query_seq
      * @param   elem
      * @return  SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
      */
     private static SeqSymmetry processSimSpan(BioSeq query_seq, Element elem) {
         int start = Integer.parseInt(elem.getAttribute("query_start"));
@@ -419,11 +419,11 @@ final class Xml2GenometryParser {
      * @param   genomic
      * @param   elem
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
@@ -593,7 +593,7 @@ final class Xml2GenometryParser {
      * @param   hit_inserts
      * @param   genomic
      * @param   mrna
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
@@ -667,8 +667,8 @@ final class Xml2GenometryParser {
      * @return  SymWithProps
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      */
     private SymWithProps processExon(BioSeq genomic, Element elem) {
          // should not be any nodes underneath exon tags (at least in current pseudo-DTD
@@ -707,10 +707,10 @@ final class Xml2GenometryParser {
      * @param   mrna
      * @param   protein_id
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */

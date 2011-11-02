@@ -15,8 +15,6 @@ package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 
 import java.util.*;
 

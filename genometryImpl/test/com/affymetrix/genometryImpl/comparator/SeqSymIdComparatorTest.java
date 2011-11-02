@@ -1,12 +1,12 @@
 package com.affymetrix.genometryImpl.comparator;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 
 /**

@@ -10,10 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genometryImpl.symloader.GFF3;
+import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+
 import java.io.*;
 import java.util.*;
 

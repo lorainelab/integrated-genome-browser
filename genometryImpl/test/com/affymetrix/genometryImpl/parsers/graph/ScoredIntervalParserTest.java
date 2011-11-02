@@ -2,10 +2,11 @@ package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

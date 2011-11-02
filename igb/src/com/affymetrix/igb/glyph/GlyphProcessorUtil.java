@@ -3,8 +3,8 @@ package com.affymetrix.igb.glyph;
 import java.util.List;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.GraphGlyph;

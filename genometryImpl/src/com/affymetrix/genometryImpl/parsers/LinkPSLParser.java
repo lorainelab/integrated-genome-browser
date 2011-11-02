@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public final class LinkPSLParser extends AbstractPSLParser {
 	@Override

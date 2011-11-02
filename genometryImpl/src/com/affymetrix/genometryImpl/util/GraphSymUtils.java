@@ -2,22 +2,22 @@ package com.affymetrix.genometryImpl.util;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
 import java.net.URL;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.CompositeGraphSym;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.symmetry.CompositeGraphSym;
+import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public final class GraphSymUtils {
 

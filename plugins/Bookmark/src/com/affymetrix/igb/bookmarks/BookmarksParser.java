@@ -12,14 +12,14 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 import java.net.MalformedURLException;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**

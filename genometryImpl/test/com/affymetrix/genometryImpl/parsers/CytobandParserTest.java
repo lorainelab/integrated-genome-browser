@@ -3,11 +3,12 @@
  * and open the template in the editor.
  */
 package com.affymetrix.genometryImpl.parsers;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.Arm;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -1,13 +1,13 @@
 package org.bioviz.protannot;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
@@ -328,8 +328,8 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 	 * previously. This allows ProtAnnot to redraw the Glyphs using a new
 	 * color scheme without changing the zoom level.
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genoviz.widget.Shadow
@@ -451,9 +451,9 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * Make a Glyph to represent the given mRNA object.
      * @param   mrna2genome	a data model representing an mRNA, a set of exons
      * @param   path2view	"view seq" symmetry enclosed in an array
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
@@ -581,10 +581,10 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * @param   tier - tier where glyphs will be added
      * @param   trans_parent - parent glyph
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
@@ -719,11 +719,11 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * @param   path2view - "view seq" symmetry enclosed in an array appended with annot2mrna
      * @param   tier
      * @see     com.affymetrix.genometryImpl.BioSeq
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
@@ -795,7 +795,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * Returns color for given propertied object
      * @param   propertied
      * @return  Color
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      */
     private static Color pick_color_for_domain(Object propertied, Map<String,Color> prefs_hash) {
         Color to_return = col_domain;
@@ -936,8 +936,8 @@ final public class GenomeView extends JPanel implements MouseListener, Component
     /**
      * Shows properties (meta-data about selected items) in the property table
 	 * at the bottom of the display.
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
      * @see     com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
@@ -1062,8 +1062,8 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * @param   gList
      * @param   glyphs
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
-     * @see     com.affymetrix.genometryImpl.SymWithProps
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      */
     private void filterGlyphs(List<GlyphI> gList, List<GlyphI> glyphs) {
         for (GlyphI g : glyphs) {
@@ -1157,8 +1157,8 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * Note that this clears all previous data from the MutableSeqSymmetry.
      * @param   sym Source parameter to copy from.
      * @param   mut Target parameter to copy to.
-     * @see     com.affymetrix.genometryImpl.SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
+     * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan
      */

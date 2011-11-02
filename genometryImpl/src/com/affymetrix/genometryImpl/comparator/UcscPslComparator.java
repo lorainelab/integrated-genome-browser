@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.comparator;
 
-import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
+
 import java.io.Serializable;
 import java.util.Comparator;
 

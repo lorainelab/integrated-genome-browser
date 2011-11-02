@@ -1,8 +1,9 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;

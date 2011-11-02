@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl;
 
 
+
 public interface MutableSeqSpan extends SeqSpan  {
 
 	public void set(int start, int end, BioSeq seq);

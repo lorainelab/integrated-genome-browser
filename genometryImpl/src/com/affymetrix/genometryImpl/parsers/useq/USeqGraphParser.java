@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.parsers.useq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
@@ -12,6 +11,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 /**For parsing USeq graph data into GenoViz graph objects

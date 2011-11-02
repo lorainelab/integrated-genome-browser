@@ -14,11 +14,11 @@ package com.affymetrix.genometryImpl.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.Parser;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.io.*;
 import java.util.*;

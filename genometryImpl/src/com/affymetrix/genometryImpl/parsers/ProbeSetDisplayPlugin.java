@@ -4,9 +4,9 @@ import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.SymWithProps;
 
 public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	public static final String CONSENSUS_TYPE = "netaffx consensus";

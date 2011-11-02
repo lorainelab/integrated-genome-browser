@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 
 public interface MapViewGlyphFactoryI  {

@@ -13,6 +13,9 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypedSym;
+
 /**
  *  Top-level annots attached to a BioSeq.
  */

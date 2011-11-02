@@ -14,8 +14,8 @@
 package com.affymetrix.genometryImpl.span;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
 
 public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpan {
 

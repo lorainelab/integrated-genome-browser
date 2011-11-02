@@ -12,11 +12,11 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public final class PSLParser extends AbstractPSLParser implements AnnotationWriter, IndexWriter, Parser {
 	@Override

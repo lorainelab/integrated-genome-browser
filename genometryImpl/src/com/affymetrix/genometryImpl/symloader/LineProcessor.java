@@ -6,7 +6,7 @@ import java.util.List;
 import org.broad.tribble.readers.LineReader;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  * file types that use tabix/bin search must implement this interface

@@ -13,7 +13,8 @@
 
 package com.affymetrix.genometryImpl.event;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+
 import javax.swing.JPopupMenu;
 import java.util.List;
 

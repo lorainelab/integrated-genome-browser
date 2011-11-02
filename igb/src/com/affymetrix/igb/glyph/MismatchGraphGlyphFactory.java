@@ -3,10 +3,10 @@ package com.affymetrix.igb.glyph;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
 

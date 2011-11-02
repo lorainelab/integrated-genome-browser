@@ -9,6 +9,9 @@ package com.affymetrix.genometryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
+
 import static org.junit.Assert.*;
 
 public class GFF3SymTest {

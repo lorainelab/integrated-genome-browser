@@ -3,10 +3,11 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symloader.Gr;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+
 import java.io.*;
 import java.util.List;
 

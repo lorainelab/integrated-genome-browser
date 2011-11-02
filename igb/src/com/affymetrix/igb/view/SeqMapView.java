@@ -1996,11 +1996,7 @@ public class SeqMapView extends JPanel
 			props.append(" : </b>");
 			if (prop.getValue() != null) {
 				value = prop.getValue().toString();
-				int vallen = value.length();
-				props.append(value.substring(0, Math.min(40, vallen)));
-				if (vallen > 40) {
-					props.append(" ...");
-				}
+				props.append(value);
 			}
 			props.append("<br>");
 		}

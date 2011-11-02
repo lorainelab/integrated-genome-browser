@@ -377,7 +377,6 @@ public final class SearchView extends IGBTabPanel implements
 					}
 					selectedSearchMode.valueChanged(
 							(SearchResultsTableModel) table.getModel(), srow, glyphs);
-					System.out.println("print");
 				}
 			}
 

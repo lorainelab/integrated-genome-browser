@@ -199,7 +199,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		if (isGenomicRequest) {
 			title = residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1) + " : " + version + " : " + this.aseq;
 //			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-			showcDNAButton.setEnabled(false);
 		} else {
 			if (residues_sym.getID() != null) {
 				id = residues_sym.getID();
@@ -382,12 +381,26 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			start += cv.getSi().getResidues().length();
 		}
 	}
+	
+	private void enableShowCDNA(){
+		showcDNAButton.setEnabled(false);
+		if(!bundle.isEmpty()){
+			for(CreateValueSet b : bundle){
+				if(b.getSi().getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
+					showcDNAButton.setEnabled(true);
+					break;
+				}
+			}
+		}
+	}
+	
 /* This method calls all the important methods to start sequence viewer
  *
  */
 	protected void getGoing(SeqSymmetry residues_sym) {
 		this.getNeoSeqInstance();
 		createItemListForSequenceviewer(residues_sym, aseq);
+		enableShowCDNA();
 		customFormatting(residues_sym);
 		//this.createAllLists();
 		addFormattedResidues();

@@ -33,16 +33,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 public final class RestrictionControlView extends IGBTabPanel
-				implements ListSelectionListener, ActionListener {
-	private static final long serialVersionUID = 0;
+		implements ListSelectionListener, ActionListener {
 
+	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
 	private static final int TAB_POSITION = 8;
-	private final Map<String,String> site_hash = new HashMap<String,String>();
+	private final Map<String, String> site_hash = new HashMap<String, String>();
 	private JList siteList;
 	private JPanel labelP;
 	private final List<String> sites = new ArrayList<String>();
@@ -55,10 +54,9 @@ public final class RestrictionControlView extends IGBTabPanel
 		Color.blue,
 		Color.gray,
 		Color.pink};//Distinct Colors for View/Print Ease
-	private JLabel labels[];
+	private ArrayList<JLabel> labelList = new ArrayList<JLabel>();
 	private JRPButton actionB;
 	private JRPButton clearB;
-
 	/**
 	 *  keep track of added glyphs
 	 */
@@ -70,12 +68,12 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		String rest_file = "/rest_enzymes";
 		InputStream file_input_str =
-						RestrictionControlView.class.getResourceAsStream(rest_file);
-		
+				RestrictionControlView.class.getResourceAsStream(rest_file);
+
 		if (file_input_str == null) {
 			ErrorHandler.errorPanel("Cannot open restriction enzyme file",
-							"Cannot find restriction enzyme file '" + rest_file + "'.\n" +
-							"Restriction mapping will not be available.");
+					"Cannot find restriction enzyme file '" + rest_file + "'.\n"
+					+ "Restriction mapping will not be available.");
 		}
 
 		BufferedReader d = null;
@@ -102,8 +100,8 @@ public final class RestrictionControlView extends IGBTabPanel
 				}
 			} catch (Exception ex) {
 				load_success = false;
-				ErrorHandler.errorPanel("Problem loading restriction site file, aborting load\n" +
-								ex.toString());
+				ErrorHandler.errorPanel("Problem loading restriction site file, aborting load\n"
+						+ ex.toString());
 			} finally {
 				GeneralUtils.safeClose(d);
 				GeneralUtils.safeClose(file_input_str);
@@ -112,20 +110,11 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		if (load_success) {
 			siteList = new JList(sites.toArray());
+
 			JScrollPane scrollPane = new JScrollPane(siteList);
 			labelP = new JPanel();
 			labelP.setBackground(Color.white);
 			labelP.setLayout(new GridLayout(sites.size(), 1));
-
-			labels = new JLabel[sites.size()];
-			JLabel label;
-			for (int i = 0; i < labels.length; i++) {//Make a label for the selected pane for each restriction enzyme
-				label = new JLabel();
-				label.setForeground(colors[i%colors.length]);//We're repeating the colors..deal with it, users.
-				label.setText("           ");
-				labelP.add(label);
-				labels[i] = label;
-			}
 
 			this.setLayout(new BorderLayout());
 			scrollPane.setPreferredSize(new Dimension(100, 100));
@@ -160,12 +149,67 @@ public final class RestrictionControlView extends IGBTabPanel
 		Object src = evt.getSource();
 		if (src == siteList) {
 			Object[] selected_names = siteList.getSelectedValues();
-			for (int i = 0; i < labels.length; i++) {
-				if (i < selected_names.length) {
-					labels[i].setText((String) (selected_names[i]));
+	
+			removeUnselectedItem(selected_names);
+			addSelectedItem(selected_names);
+			labelP.updateUI();
+			labelP.repaint();
+		}
+	}
+
+	/*
+	 * Iterate to labelList, delete unselected item
+	 * @param selected_names selected items in JList
+	 */
+	private void removeUnselectedItem(Object[] selected_names) {
+		boolean isContained = false;
+
+		Iterator it = labelList.iterator();
+		while (it.hasNext()) {
+			JLabel label = (JLabel) it.next();
+			for (int i = 0; i < selected_names.length; i++) {
+				if (label.getText().equals(selected_names[i].toString())) {
+					isContained = true;
+					break;
 				} else {
-					labels[i].setText("");
+					isContained = false;
 				}
+			}
+
+			if (!isContained) {
+				labelP.remove(label);
+				it.remove();
+			}
+		}
+	}
+
+	/*
+	 * Iterate to selected item list, add new item to labelList
+	 * @param selected_names selected items in JList
+	 */
+	private void addSelectedItem(Object[] selected_names) {
+		boolean isContained = false;
+
+		for (int i = 0; i < selected_names.length; i++) {
+			for (JLabel label : labelList) {
+				if (label.getText().equals(selected_names[i].toString())) {
+					isContained = true;
+					break;
+				} else {
+					isContained = false;
+				}
+			}
+
+			if (!isContained) {
+				JLabel label = new JLabel();
+				int index = 0;
+				if (!labelList.isEmpty()) {
+					index = labelList.size() % colors.length;
+				}
+				label.setForeground(colors[index]);//We're repeating the colors..deal with it, users.
+				label.setText(selected_names[i].toString());
+				labelP.add(label);
+				labelList.add(label);
 			}
 		}
 	}
@@ -173,6 +217,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private void clearAll() {
 		clearGlyphs();
 		siteList.clearSelection();
+		labelList.clear();
 	}
 
 	private void clearGlyphs() {
@@ -195,41 +240,41 @@ public final class RestrictionControlView extends IGBTabPanel
 			return;
 		}
 
-		final SeqSpan span = igbService.getSeqMapView().getVisibleSpan();	
+		final SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
 		boolean loadResidue = false;
-		
-		if(!vseq.isAvailable(span)){
+
+		if (!vseq.isAvailable(span)) {
 			loadResidue = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");
 			if (!loadResidue) {
 				return;
 			}
 		}
-		
+
 		ThreadUtils.getPrimaryExecutor(this).execute(new Thread(new GlyphifyMatchesThread(vseq, span, loadResidue)));
+
+
 	}
 
-	
-	private class GlyphifyMatchesThread implements Runnable
-	{
+	private class GlyphifyMatchesThread implements Runnable {
+
 		final SeqSpan span;
 		final boolean loadResidues;
 		final BioSeq vseq;
-		
-		GlyphifyMatchesThread(BioSeq vseq, SeqSpan span, boolean loadResidues){
+
+		GlyphifyMatchesThread(BioSeq vseq, SeqSpan span, boolean loadResidues) {
 			this.vseq = vseq;
 			this.span = span;
 			this.loadResidues = loadResidues;
 		}
-		
-		public void run()
-		{
-			try{
-				if(loadResidues){
+
+		public void run() {
+			try {
+				if (loadResidues) {
 					igbService.loadResidues(span, true);
 					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 				}
-				
+
 				igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 				if (vseq == null || !vseq.isAvailable(span)) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
@@ -240,8 +285,9 @@ public final class RestrictionControlView extends IGBTabPanel
 				// Search for reverse complement of query string
 				String rev_searchstring = DNAUtils.reverseComplement(residues);
 
-				for (int i = 0; i < labels.length; i++) {
-					String site_name = labels[i].getText();
+				int i = 0;
+				for (JLabel label : labelList) {
+					String site_name = label.getText();
 					// done when hit first non-labelled JLabel
 					if (site_name == null || site_name.equals("")) {
 						break;
@@ -272,13 +318,14 @@ public final class RestrictionControlView extends IGBTabPanel
 
 					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 					igbService.getSeqMap().updateWidget();
+					i++;
 				}
-			}finally{
+			} finally {
 				igbService.removeNotLockedUpMsg("Finding Restriction Sites... ");
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isEmbedded() {
 		return true;

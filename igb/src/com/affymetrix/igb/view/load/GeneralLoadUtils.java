@@ -850,7 +850,7 @@ public final class GeneralLoadUtils {
 					setLastRefreshStatus(feature, result);
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-							Level.SEVERE, null, "Unable to get refresh action result.");
+							Level.SEVERE, "Unable to get refresh action result.", ex);
 				}
 
 				//Update LoadModeTableModel

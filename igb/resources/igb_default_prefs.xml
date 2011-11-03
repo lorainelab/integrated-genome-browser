@@ -181,4 +181,10 @@
     url="http://www.phytozome.net/genePage.php?crown&amp;method=0&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
 
+  <annotation_url annot_type_regex="S. cerevisiae genes"
+    name="SGD"
+    url="http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=$$" 
+  />
+
+
 </prefs>

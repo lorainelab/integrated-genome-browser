@@ -719,10 +719,20 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		if (tp == null) {
 			return;
 		}
-		bookmark_history.add(tp);
-		history_pointer = bookmark_history.size() - 1;
-		forwardButton.setEnabled(true);
-		backwardButton.setEnabled(bookmark_history.size() > 1);
+		int lastEntryIndex = bookmark_history.size() - 1;
+		if (!bookmark_history.isEmpty()) {
+			if (!bookmark_history.get(lastEntryIndex).equals(tp)) {
+				bookmark_history.add(tp);
+				history_pointer = bookmark_history.size() - 1;
+				forwardButton.setEnabled(true);
+				backwardButton.setEnabled(bookmark_history.size() > 1);
+			}
+		} else if (bookmark_history.isEmpty()) {
+			bookmark_history.add(tp);
+			history_pointer = bookmark_history.size() - 1;
+			forwardButton.setEnabled(true);
+			backwardButton.setEnabled(bookmark_history.size() > 1);
+		}
 	}
 
 	public void removeBookmarkFromHistory(TreePath tp) {

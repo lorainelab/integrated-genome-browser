@@ -68,6 +68,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private Object[] temp;
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
+	private String[] sequenceFormats = {"2bit", "fa", "fasta", "bnib"};
 	private ArrayList<String> list = new ArrayList<String>();
 	private String allowedTrackDefaults;
 	private String AddButtonTitle = "Add Track Default";
@@ -76,22 +77,22 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private JRPButton addTrackDefaultButton;
 	private JRPCheckBox arrowCheckBox;
 	private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
-	private JRPCheckBox  collapsedCheckBox;
-	private JRPCheckBox  colorCheckBox;
-	private JRPCheckBox  connectedCheckBox;
+	private JRPCheckBox collapsedCheckBox;
+	private JRPCheckBox colorCheckBox;
+	private JRPCheckBox connectedCheckBox;
 	private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
 	private javax.swing.JComboBox labelFieldComboBox;
 	private javax.swing.JTextField maxDepthTextField;
 	private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
 	private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
 	private JRPButton removeTrackDefaultButton;
-	private JRPCheckBox  show2TracksCheckBox;
+	private JRPCheckBox show2TracksCheckBox;
 	private javax.swing.JTable table;
 	private javax.swing.JTextField trackDefaultTextField;
 	private javax.swing.JComboBox trackNameSizeComboBox;
 	private javax.swing.JLabel labelFieldTip;
 	private static TrackDefaultView singleton;
-	
+
 	public static void init() {
 		singleton = new TrackDefaultView();
 	}
@@ -119,7 +120,10 @@ public final class TrackDefaultView implements ListSelectionListener {
 				allowedTrackDefaults = allowedTrackDefaults.replace("[", "");
 				allowedTrackDefaults = allowedTrackDefaults.replace("]", "");
 				allowedTrackDefaults = allowedTrackDefaults.trim();
-				list.add(allowedTrackDefaults);
+				if (!Arrays.asList(sequenceFormats).contains(allowedTrackDefaults)) {
+					list.add(allowedTrackDefaults);
+				}
+
 			}
 		}
 		Collections.sort(list);
@@ -229,7 +233,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		fgColorComboBox.setColorValueVisible(false);
 		fgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
 		fgColorComboBox.setStretchToFit(true);
-		
+
 		labelFieldComboBox.setEditable(true);
 		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
@@ -584,7 +588,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 	public javax.swing.JLabel getLabelFieldTip() {
 		return labelFieldTip;
 	}
-
 
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
 

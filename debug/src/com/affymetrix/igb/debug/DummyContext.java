@@ -3,6 +3,7 @@ package com.affymetrix.igb.debug;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -24,42 +25,13 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
-import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
-import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.searchmodeidorprops.RemoteSearchI;
-import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.ISearchMode;
-import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.igb.window.service.IWindowService;
-
 public class DummyContext implements BundleContext {
+	private static final String FILTER_PREFIX = "(objectClass=";
+	private static final String FILTER_SUFFIX = ")";
 	private Map<String, List<Object>> servicesMap = new HashMap<String, List<Object>>();
 	private Set<BundleListener> bundleListeners = new HashSet<BundleListener>();
 	private Set<ServiceListener> serviceListeners = new HashSet<ServiceListener>();
 	private Map<String, Set<ServiceListener>> filteredServiceListeners = new HashMap<String, Set<ServiceListener>>();
-	private static final String IGB_SERVICE_FILTER = "(objectClass=" + IGBService.class.getName() + ")";
-	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
-	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
-	private static final String GRAPH_OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
-	private static final String ANNOTATION_OPERATOR_SERVICE_FILTER = "(objectClass=" + AnnotationOperator.class.getName() + ")";
-	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
-	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TrackClickListener.class.getName() + ")";
-	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
-	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
-	private static final String MAP_VIEW_GLYPH_FACTORY_FILTER = "(objectClass=" + ExtendedMapViewGlyphFactoryI.class.getName() + ")";
-	private static final String WIDGET_DECORATOR = "(objectClass=" + JRPWidgetDecorator.class.getName() + ")";
-	private static final String WINDOW_SERVICE_FILTER = "(objectClass=" + IWindowService.class.getName() + ")";
-	private static final String RPH_FILTER = "(objectClass=" + RecordPlaybackHolder.class.getName() + ")";
-	private static final String REMOTE_SEARCH = "(objectClass=" + RemoteSearchI.class.getName() + ")";
-	private static final String PREFS_FILTER = "(objectClass=" + IPrefEditorComponent.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -74,62 +46,15 @@ public class DummyContext implements BundleContext {
 	}
 
 	private boolean filterMatches(String filter, Object service) {
-/*
-		if (filter.startsWith("(objectClass=") && filter.endsWith(")")) {
-			String className = filter.substring("(objectClass=".length(), filter.length() - 1);
-			Class<?> clazz = Class.forName(className);
-			return (service instanceof clazz);
+		if (filter.startsWith(FILTER_PREFIX) && filter.endsWith(FILTER_SUFFIX)) {
+			String className = filter.substring(FILTER_PREFIX.length(), filter.length() - FILTER_SUFFIX.length());
+			try {
+				Class<?> clazz = Class.forName(className);
+				return (clazz.isAssignableFrom(service.getClass()) || Arrays.asList(service.getClass().getInterfaces()).contains(clazz));
+			}
+			catch (ClassNotFoundException x) {}
 		}
-*/
-		if (IGB_SERVICE_FILTER.equals(filter)) {
-			return service instanceof IGBService;
-		}
-		if (TAB_SERVICE_FILTER.equals(filter)) {
-			return service instanceof IGBTabPanel;
-		}
-		if (TRANSFORMER_SERVICE_FILTER.equals(filter)) {
-			return service instanceof FloatTransformer;
-		}
-		if (GRAPH_OPERATOR_SERVICE_FILTER.equals(filter)) {
-			return service instanceof GraphOperator;
-		}
-		if (ANNOTATION_OPERATOR_SERVICE_FILTER.equals(filter)) {
-			return service instanceof AnnotationOperator;
-		}
-		if (FILETYPEHANDLER_FACTORY_SERVICE_FILTER.equals(filter)) {
-			return service instanceof FileTypeHandler;
-		}
-		if (TRACK_CLICK_LISTENER_FILTER.equals(filter)) {
-			return service instanceof TrackClickListener;
-		}
-		if (GLYPH_PROCESSOR_FILTER.equals(filter)) {
-			return service instanceof GlyphProcessor;
-		}
-		if (SEARCH_MODE_FILTER.equals(filter)) {
-			return service instanceof ISearchMode;
-		}
-		if (MAP_VIEW_GLYPH_FACTORY_FILTER.equals(filter)) {
-			return service instanceof ExtendedMapViewGlyphFactoryI;
-		}
-		if (WIDGET_DECORATOR.equals(filter)) {
-			return service instanceof JRPWidgetDecorator;
-		}
-		if (WINDOW_SERVICE_FILTER.equals(filter)) {
-			return service instanceof IWindowService;
-		}
-		if (RPH_FILTER.equals(filter)) {
-			return service instanceof RecordPlaybackHolder;
-		}
-		if (REMOTE_SEARCH.equals(filter)) {
-			return service instanceof RemoteSearchI;
-		}
-		if (PREFS_FILTER.equals(filter)) {
-			return service instanceof IPrefEditorComponent;
-		}
-		if (filter == null) {
-			return true;
-		}
-		throw new RuntimeException("not implemented");
+		return false;
 	}
 ////////////////////////////////////////////
 	@Override

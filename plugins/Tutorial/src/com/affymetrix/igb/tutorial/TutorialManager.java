@@ -31,7 +31,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private final TutorialNavigator tutorialNavigator;
 	private boolean tutorialDisplayed = false;
 	private TutorialStep[] tutorial = null;
-	private String waitAction = null;
+	private String waitFor = null;
 	private Map<String, TutorialStep[]> triggers = new HashMap<String, TutorialStep[]>();
 	private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<String, AbstractComponentDecorator>();
 	private MenuListener menuListener = new MenuListener() {
@@ -146,20 +146,20 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			}
 			catch (InterruptedException x) {}
 		}
-		else if (step.getWaitAction() == null) {
-			waitAction = TutorialNextAction.class.getSimpleName(); // default
+		else if (step.getWaitFor() == null) {
+			waitFor = TutorialNextAction.class.getSimpleName(); // default
 //			highlightWidget("TutorialNavigator_next");
 			return false;
 		}
 		else {
-			waitAction = step.getWaitAction();
+			waitFor = step.getWaitFor();
 			return false;
 		}
 		return true;
 	}
 
 	public void runTutorial(TutorialStep[] tutorial) {
-		waitAction = null;
+		waitFor = null;
 		stepIndex = 0;
 		this.tutorial = tutorial;
 		nextStep();
@@ -189,13 +189,13 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (step.getHighlight() != null) {
 			unhighlightWidget(step.getHighlight());
 		}
-		waitAction = null;
+		waitFor = null;
 		stepIndex++;
 		nextStep();
 	}
 
 	public void tutorialDone() {
-		waitAction = null;
+		waitFor = null;
 		stepIndex = 0;
 		tutorial = null;
 		tutorialNavigator.setVisible(false);
@@ -233,7 +233,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
 	@Override
 	public void notifyGenericAction(String id) {
-		if (id.equals(waitAction)) {
+		if (id.equals(waitFor)) {
 			advanceStep();
 		}
 		else {

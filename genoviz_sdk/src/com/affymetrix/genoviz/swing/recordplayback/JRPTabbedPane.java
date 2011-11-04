@@ -1,10 +1,15 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
+import java.awt.Component;
+import java.awt.Rectangle;
+
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class JRPTabbedPane extends JTabbedPane implements JRPWidget {
+import com.affymetrix.common.Idable;
+
+public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget {
 	private static final long serialVersionUID = 1L;
 	private final String id;
 
@@ -42,5 +47,22 @@ public class JRPTabbedPane extends JTabbedPane implements JRPWidget {
     @Override
 	public boolean consecutiveOK() {
 		return true;
+	}
+
+	public SubRegionFinder getSubRegionFinder(String subId) {
+		int index = -1;
+		for (int i = 0; i < getComponentCount() && index == -1; i++) {
+			Component comp = getComponentAt(i);
+			if (comp instanceof Idable && subId.equals(((Idable)comp).getId())) {
+				index = i;
+			}
+		}
+		final int tabIndex = index;
+		return new SubRegionFinder() {
+			@Override
+			public Rectangle getRegion() {
+				return getBoundsAt(tabIndex);
+			}
+		};
 	}
 }

@@ -11,11 +11,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.affymetrix.common.Idable;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 
-public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget {
+public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget, Idable {
 	private static final long serialVersionUID = 1L;
 	public static final int DEFAULT_TAB_POSITION = Integer.MAX_VALUE - 1;
 

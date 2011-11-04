@@ -81,7 +81,6 @@ public class SymLoaderTabix extends SymLoader {
 						new Object[]{featureName});
 			return;
 		}
-		super.init();
 		lineProcessor.init(uri);
 		for (String seqID : tabixLineReader.getSequenceNames()) {
 			BioSeq seq = group.getSeq(seqID);

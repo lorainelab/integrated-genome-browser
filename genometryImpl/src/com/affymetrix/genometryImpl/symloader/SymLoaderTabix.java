@@ -43,16 +43,6 @@ public class SymLoaderTabix extends SymLoader {
 	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor){
 		super(uri, featureName, group);
 		this.lineProcessor = lineProcessor;
-		try {
-			String uriString = uri.toString();
-			if (uriString.startsWith(FILE_PREFIX)) {
-				uriString = uri.getPath();
-			}
-			this.tabixLineReader = new TabixLineReader(uriString);
-		}
-		catch (Exception x) {
-			this.tabixLineReader = null;
-		}
 	}
 
 	@Override
@@ -75,8 +65,22 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		if (this.isInitialized){
 			return;
+		}		
+		try {
+			String uriString = uri.toString();
+			if (uriString.startsWith(FILE_PREFIX)) {
+				uriString = uri.getPath();
+			}
+			this.tabixLineReader = new TabixLineReader(uriString);
+			super.init();
 		}
-		super.init();
+		catch (Exception x) {
+			this.tabixLineReader = null;
+			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE,
+						"Could not initialize tabix line reader for {0}.",
+						new Object[]{featureName});
+			return;
+		}
 		lineProcessor.init(uri);
 		for (String seqID : tabixLineReader.getSequenceNames()) {
 			BioSeq seq = group.getSeq(seqID);

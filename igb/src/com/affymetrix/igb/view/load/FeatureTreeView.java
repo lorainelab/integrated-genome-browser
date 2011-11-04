@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.common.Idable;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -695,7 +696,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 					if (tn.genericObject instanceof GenericFeature) {
 						GenericFeature feature = (GenericFeature) tn.genericObject;
-						extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + ":" + feature.featureName;
+						extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
 					}
 				}
 				return extraInfo;
@@ -777,7 +778,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		return null;
 	}
 
-	private final static class TreeNodeUserInfo {
+	private final static class TreeNodeUserInfo implements Idable {
 
 		private final Object genericObject;
 		private boolean checked;
@@ -798,6 +799,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		public void setChecked(boolean newValue) {
 			checked = newValue;
+		}
+
+		public String getId() {
+			if (genericObject instanceof GenericServer) {
+				return ((GenericServer)genericObject).serverType + ":" + ((GenericServer)genericObject).serverName;
+			}
+			else if (genericObject instanceof GenericFeature) {
+				return ((GenericFeature)genericObject).featureName;
+			}
+			return null;
 		}
 	}
 

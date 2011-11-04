@@ -1,10 +1,11 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
-import java.util.Arrays;
+import java.awt.Rectangle;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -83,34 +84,46 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 		return true;
 	}
 
-    private Object getLoopSubObject(String[] ids, DefaultMutableTreeNode node) {
+    private DefaultMutableTreeNode getSubNode(DefaultMutableTreeNode node, String id) {
     	for (int i = 0; i < node.getChildCount(); i++) {
     		DefaultMutableTreeNode subNode = (DefaultMutableTreeNode)node.getChildAt(i);
        		Idable idable = (Idable)subNode.getUserObject();
-       		if (idable != null && idable.getId().equals(ids[0])) {
-       			if (subNode.isLeaf()) {
-       				return idable;
-       			}
-       			else {
-       				String[] subIds = Arrays.copyOfRange(ids, 1, ids.length);
-       				return getLoopSubObject(subIds, subNode);
-       			}
+       		if (idable != null && idable.getId().equals(id)) {
+       			return subNode;
        		}
     	}
 		return null;
     }
    
-	public Object getSubObject(String subId) {
-    	String[] ids = subId.split("\\");
+    private TreePath getTreePath(String subId) {
+    	String[] ids = subId.split("\\.");
+    	DefaultMutableTreeNode[] nodes = new DefaultMutableTreeNode[ids.length + 1];
     	DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)getModel().getRoot();
-    	return getLoopSubObject(ids, rootNode);
+    	nodes[0] = rootNode;
+    	for (int i = 0; i < ids.length; i++) {
+    		nodes[i + 1] = getSubNode(nodes[i], ids[i]);
+    		if (nodes[i + 1] == null) {
+    			return null;
+    		}
+    	}
+    	return new TreePath(nodes);
 	}
 
 	@Override
-	public JComponent getSubComponent(String subId) {
-    	String[] ids = subId.split("\\");
-    	TreePath path = new TreePath(ids);
+	public SubRegionFinder getSubRegionFinder(String subId) {
+    	final TreePath path = getTreePath(subId);
+    	if (path == null) {
+    		Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error sub path " + subId + "for JTree " + getClass().getName() + " was not found");
+    		return null;
+    	}
     	expandPath(path);
-		return null;
+		return new SubRegionFinder() {
+			@Override
+			public Rectangle getRegion() {
+				int row = getRowForPath(path);
+				return getRowBounds(row);
+			}
+			
+		};
 	}
 }

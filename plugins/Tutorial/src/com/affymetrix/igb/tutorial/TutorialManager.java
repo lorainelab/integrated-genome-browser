@@ -10,10 +10,14 @@ import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.JRPHierarchicalWidget;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -21,6 +25,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWrapper;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.SubRegionFinder;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -61,6 +66,23 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		tutorialNavigator.setVisible(false);
 		tutorialDisplayed = false;
 		TweeningZoomAction.getAction();
+		GenometryModel.getGenometryModel().addGroupSelectionListener(
+			new GroupSelectionListener() {
+				@Override
+				public void groupSelectionChanged(GroupSelectionEvent evt) {
+					AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+					String species = "";
+					if (group != null && group.getOrganism() != null) {
+						species = "." + group.getOrganism();
+					}
+					String version = "";
+					if (group != null && group.getID() != null) {
+						version = "." + group.getID();
+					}
+					doWaitFor("groupSelectionChanged" + species + version);
+				}
+			}
+		);
 	}
 
 	public void setTutorialDisplayed(boolean tutorialDisplayed) {
@@ -72,9 +94,19 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (pos == -1) {
 			return (JComponent)RecordPlaybackHolder.getInstance().getWidget(widgetId);
 		}
-		String mainWidgetId = widgetId.substring(0, pos);
-		JComponent mainWidget = (JComponent)RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
+		else {
+			String mainWidgetId = widgetId.substring(0, pos);
+			return (JComponent)RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
+		}
+	}
+
+	private SubRegionFinder getSubRegionFinder(String widgetId) {
+		JComponent mainWidget = getWidget(widgetId);
 		if (mainWidget == null) {
+			return null;
+		}
+		int pos = widgetId.indexOf('.');
+		if (pos == -1) {
 			return null;
 		}
 		if (!(mainWidget instanceof JRPHierarchicalWidget)) {
@@ -82,7 +114,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			return null;
 		}
 		String subId = widgetId.substring(pos + 1);
-		return ((JRPHierarchicalWidget)mainWidget).getSubComponent(subId);
+		return ((JRPHierarchicalWidget)mainWidget).getSubRegionFinder(subId);
 	}
 
 	private boolean highlightWidget(String widgetId) {
@@ -90,7 +122,8 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (widget == null) {
 			return false;
 		}
-		Marquee m = new Marquee(widget);
+		SubRegionFinder subRegionFinder = getSubRegionFinder(widgetId);
+		Marquee m = new Marquee(widget, subRegionFinder);
 		decoratorMap.put(widgetId, m);
 //		saveBackgroundColor = widget.getBackground();
 //		widget.setBackground(HIGHLIGHT_COLOR);
@@ -251,8 +284,12 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	public void notifyGenericAction(GenericAction genericAction) {
 		String id = genericAction.getId();
 		if (genericAction.getExtraInfo() != null) {
-			id += "\\" + genericAction.getExtraInfo();
+			id += "." + genericAction.getExtraInfo();
 		}
+		doWaitFor(id);
+	}
+
+	private void doWaitFor(String id) {
 		if (id.equals(waitFor)) {
 			advanceStep();
 		}

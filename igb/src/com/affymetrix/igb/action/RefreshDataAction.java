@@ -29,6 +29,7 @@ public class RefreshDataAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent ae) {
+		super.actionPerformed(ae);
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
 	}
 

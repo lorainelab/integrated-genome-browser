@@ -11,6 +11,7 @@
                     <node name="tutorials">
                         <map>
                             <entry key="Genentech" value="http://research-pub.gene.com/igb_tutorials"/>
+                            <entry key="test" value="http://localhost/tutorials"/>
                         </map>
                     </node>
                 </node>

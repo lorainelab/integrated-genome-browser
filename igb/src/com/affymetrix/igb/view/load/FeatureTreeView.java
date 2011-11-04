@@ -531,7 +531,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		private static final long serialVersionUID = 1L;
 		private static final Insets insets = new Insets(0, 0, 0, 0);
-		private final JRPCheckBox leafCheckBox = new JRPCheckBox() {
+		private final JRPCheckBox leafCheckBox = new JRPCheckBox("FeatureTreeView_FeatureTreeCellRenderer") {
 			private static final long serialVersionUID = 1L;
 
 			@Override

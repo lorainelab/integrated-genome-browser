@@ -11,10 +11,6 @@ public class JRPCheckBox extends JCheckBox implements JRPWidget {
 	private static final long serialVersionUID = 1L;
 	private String id;
 
-	public JRPCheckBox() {
-		super();
-		init();
-	}
 	public JRPCheckBox(String id) {
 		super();
 		this.id = id;

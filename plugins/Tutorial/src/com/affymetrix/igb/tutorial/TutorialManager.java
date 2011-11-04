@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genoviz.swing.recordplayback.JRPHierarchicalWidget;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
@@ -67,7 +68,21 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	private JComponent getWidget(String widgetId) {
-		return (JComponent)RecordPlaybackHolder.getInstance().getWidget(widgetId);
+		int pos = widgetId.indexOf('.');
+		if (pos == -1) {
+			return (JComponent)RecordPlaybackHolder.getInstance().getWidget(widgetId);
+		}
+		String mainWidgetId = widgetId.substring(0, pos);
+		JComponent mainWidget = (JComponent)RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
+		if (mainWidget == null) {
+			return null;
+		}
+		if (!(mainWidget instanceof JRPHierarchicalWidget)) {
+			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, widget " + widgetId + " is incorrect, not hierarchical.");
+			return null;
+		}
+		String subId = widgetId.substring(pos + 1);
+		return ((JRPHierarchicalWidget)mainWidget).getSubComponent(subId);
 	}
 
 	private boolean highlightWidget(String widgetId) {
@@ -120,15 +135,6 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			action.addDoneCallback(this);
 			action.actionPerformed(null);
 		}
-		if (step.getWaitMenu() != null) {
-			JRPWidget widget = RecordPlaybackHolder.getInstance().getWidget(step.getWaitMenu());
-			if (widget instanceof JRPMenu) {
-				((JRPMenu)widget).addMenuListener(menuListener);
-			}
-			if (widget instanceof JRPMenuItem) {
-				((JRPMenuItem)widget).addActionListener(menuItemListener);
-			}
-		}
 		if (step.getTrigger() != null) {
 			if (step.getSubTutorial() == null) {
 				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, no sub tutorial for trigger " + step.getTrigger());
@@ -152,7 +158,17 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			return false;
 		}
 		else {
-			waitFor = step.getWaitFor();
+			String waitForItem = step.getWaitFor();
+			JRPWidget widget = RecordPlaybackHolder.getInstance().getWidget(waitForItem);
+			if (widget instanceof JRPMenu) {
+				((JRPMenu)widget).addMenuListener(menuListener);
+			}
+			else if (widget instanceof JRPMenuItem) {
+				((JRPMenuItem)widget).addActionListener(menuItemListener);
+			}
+			else {
+				waitFor = waitForItem;
+			}
 			return false;
 		}
 		return true;

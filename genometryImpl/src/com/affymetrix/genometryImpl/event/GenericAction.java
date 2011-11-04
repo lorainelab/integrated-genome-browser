@@ -64,4 +64,7 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 			doneCallback.actionDone(this);
 		}
 	}
+	public Object getExtraInfo() {
+		return null;
+	}
 }

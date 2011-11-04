@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -568,7 +569,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		}
 
-		public JCheckBox getLeafFeatureRenderer() {
+		public JRPCheckBox getLeafFeatureRenderer() {
 			return leafCheckBox;
 		}
 
@@ -651,9 +652,56 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
-
 		private static final long serialVersionUID = 1L;
-		FeatureTreeCellRenderer renderer = new FeatureTreeCellRenderer();
+		public class FeatureLoadAction extends GenericAction {
+			private static final long serialVersionUID = 1L;
+			private final JRPCheckBox checkbox;
+			private FeatureLoadAction(JRPCheckBox checkbox) {
+				super();
+				this.checkbox = checkbox;
+			}
+			@Override
+			public String getText() {
+				return null;
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				super.actionPerformed(e);
+				Object nodeData = editedNode.getUserObject();
+				if (nodeData instanceof TreeNodeUserInfo) {
+					((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
+					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+					if (tn.genericObject instanceof GenericFeature) {
+						GenericFeature feature = (GenericFeature) tn.genericObject;
+						if (checkbox.isSelected()) {
+							GeneralLoadView.getLoadView().addFeature(feature);
+						} else {
+							String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
+							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+								GeneralLoadView.getLoadView().removeFeature(feature, true);
+							} else {
+								tn.setChecked(true);
+							}
+						}
+					}
+				}
+			}
+			@Override
+			public Object getExtraInfo() {
+				String extraInfo = "";
+				Object nodeData = editedNode.getUserObject();
+				if (nodeData instanceof TreeNodeUserInfo) {
+					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+					if (tn.genericObject instanceof GenericFeature) {
+						GenericFeature feature = (GenericFeature) tn.genericObject;
+						extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + ":" + feature.featureName;
+					}
+				}
+				return extraInfo;
+			}
+		}
+		FeatureTreeCellRenderer renderer;
 		DefaultMutableTreeNode editedNode;
 
 		@Override
@@ -676,6 +724,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						Rectangle r = thetree.getPathBounds(path);
 						int x = mouseEvent.getX() - r.x;
 
+						if (renderer == null) {
+							renderer = new FeatureTreeCellRenderer();
+							final JRPCheckBox checkbox = renderer.getLeafFeatureRenderer();
+							checkbox.addActionListener(new FeatureLoadAction(checkbox));
+						}
 						JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 						checkbox.setText("");
 
@@ -706,27 +759,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 
 		public Object getCellEditorValue() {
-			JCheckBox checkbox = renderer.getLeafFeatureRenderer();
-			Object nodeData = editedNode.getUserObject();
-			if (nodeData instanceof TreeNodeUserInfo) {
-				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
-				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-				if (tn.genericObject instanceof GenericFeature) {
-					GenericFeature feature = (GenericFeature) tn.genericObject;
-					if (checkbox.isSelected()) {
-						GeneralLoadView.getLoadView().addFeature(feature);
-					} else {
-						String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
-						if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-								PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-							GeneralLoadView.getLoadView().removeFeature(feature, true);
-						} else {
-							tn.setChecked(true);
-						}
-					}
-				}
-			}
-			return nodeData;
+			return editedNode.getUserObject();
 		}
 	}
 	

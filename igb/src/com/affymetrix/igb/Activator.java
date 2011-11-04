@@ -111,7 +111,7 @@ public class Activator implements BundleActivator {
 					}
 				}
 				@Override
-				public void notifyGenericAction(String actionClassName) {}
+				public void notifyGenericAction(GenericAction genericAction) {}
 			}
     	);
         IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);

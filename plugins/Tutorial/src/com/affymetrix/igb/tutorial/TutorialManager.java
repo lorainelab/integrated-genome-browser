@@ -248,7 +248,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	public void onCreateGenericAction(GenericAction genericAction) {}
 
 	@Override
-	public void notifyGenericAction(String id) {
+	public void notifyGenericAction(GenericAction genericAction) {
+		String id = genericAction.getId();
+		if (genericAction.getExtraInfo() != null) {
+			id += "\\" + genericAction.getExtraInfo();
+		}
 		if (id.equals(waitFor)) {
 			advanceStep();
 		}

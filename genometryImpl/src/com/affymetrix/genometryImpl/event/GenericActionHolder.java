@@ -51,9 +51,8 @@ public class GenericActionHolder {
 	}
 
 	public void notifyActionPerformed(GenericAction action) {
-		String id = action.getId();
 		for (GenericActionListener listener : listeners) {
-			listener.notifyGenericAction(id);
+			listener.notifyGenericAction(action);
 		}
 	}
 }

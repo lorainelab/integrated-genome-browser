@@ -60,19 +60,15 @@ public class SymLoaderTabix extends SymLoader {
 
 	@Override
 	public void init() throws Exception  {
-		if (!isValid()) {
-			throw new IllegalStateException("tabix file does not exist or was not read");
-		}
 		if (this.isInitialized){
 			return;
-		}		
+		}
 		try {
 			String uriString = uri.toString();
 			if (uriString.startsWith(FILE_PREFIX)) {
 				uriString = uri.getPath();
 			}
 			this.tabixLineReader = new TabixLineReader(uriString);
-			super.init();
 		}
 		catch (Exception x) {
 			this.tabixLineReader = null;
@@ -81,12 +77,17 @@ public class SymLoaderTabix extends SymLoader {
 						new Object[]{featureName});
 			return;
 		}
+		
+		if (!isValid()) {
+			throw new IllegalStateException("tabix file does not exist or was not read");
+		}
+		
 		lineProcessor.init(uri);
 		for (String seqID : tabixLineReader.getSequenceNames()) {
 			BioSeq seq = group.getSeq(seqID);
 			if (seq == null) {
 				int length = 1000000000;
-				seq = group.addSeq(seqID, length, uri.toString());
+				seq = group.addSeq(seqID, length);
 				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
 						"Sequence not found. Adding {0} with default length {1}",
 						new Object[]{seqID,length});

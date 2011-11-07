@@ -19,4 +19,16 @@ public interface Constants {
 	//Cached Server filenames
 	public static final String serverMapping = "serverMapping.txt";
 	public static final String xml_ext = ".xml";
+	/**
+	 * The species.txt file maps the scientific name to the data set name and other data set synonyms<br>
+	 * 
+	 * It handles species name to common names and also subspecies <br>
+	 * 
+	 * When present in a quickload archive, the information is appended to the SpeciesLookup map 
+	 * data structure. <br>
+	 * <br>
+	 * Example:<br>
+	 * [Arabidopsis thaliana]->[Thale cress] -> A_thaliana 
+	 */
+	public static final String speciesTxt = "species.txt";
 }

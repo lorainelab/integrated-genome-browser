@@ -44,6 +44,10 @@ public final class QuickLoadServerModel {
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	private final String root_url;
+	/**
+	 * Stores the names of the data set name.  For example A_thaliana_Jun_2008
+	 * populated by loadGenomeNames()
+	 */
 	private final List<String> genome_names = new ArrayList<String>();
 	private final Map<String, String> genome_dir = new HashMap<String, String>();
 	/** A set containing initialized genomes */
@@ -345,7 +349,11 @@ public final class QuickLoadServerModel {
 		}
 		return success;
 	}
-
+	/**
+	 * 
+	 * loads data sets from contents.txt into the data structure genome_names.
+	 * 
+	 */
 	private synchronized void loadGenomeNames() {
 		String contentsTxt = Constants.contentsTxt;
 		InputStream istr = null;
@@ -462,6 +470,36 @@ public final class QuickLoadServerModel {
 
 	private boolean isLoadingFromPrimary(){
 		return (primary_url != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+	}
+	/**
+	 * Returns a stream of the file species.txt at the quickload server or null 
+	 * if the file is not present.
+	 * 
+	 * @return stream of the text file or null if file not present.
+	 */
+	public InputStream getSpeciesTxt( ){
+		InputStream stream = null;
+		try {
+			stream = getInputStream( Constants.speciesTxt, false, true );
+		} catch (IOException ex) {
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return stream;
+	}
+	/**
+	 * Returns true if the quickload server has a species.txt file.
+	 * 
+	 * 
+	 * @return true if the quickload server has a species.txt file
+	 */
+	public boolean hasSpeciesTxt(){
+		InputStream stream;
+		try {
+			stream = getInputStream( Constants.speciesTxt, false, true );
+		} catch (IOException ex) {
+			return false;
+		}
+		return  stream != null;
 	}
 
 	private String getLoadURL(){

@@ -315,6 +315,14 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 
+		//update species.txt with information from the server.
+		if( quickloadServer.hasSpeciesTxt()){
+			try {
+				SpeciesLookup.load(quickloadServer.getSpeciesTxt());
+			} catch (IOException ex) {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "No species.txt found at this quickload server.", ex);
+			}
+		}
 		for (String genomeID : genomeList) {
 			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
 			String versionName, speciesName;

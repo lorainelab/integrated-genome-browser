@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.common.Idable;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -12,6 +11,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
+import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;

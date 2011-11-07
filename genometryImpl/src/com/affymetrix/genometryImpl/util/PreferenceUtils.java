@@ -495,7 +495,7 @@ public abstract class PreferenceUtils {
 
 			public void preferenceChange(PreferenceChangeEvent evt) {
 				if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-					if (!combo_box.getSelectedItem().equals(evt.getNewValue())) {
+					if (!combo_box.getSelectedItem().equals(evt.getNewValue()) && evt.getNewValue() != null) {
 						// Note: checking that selection differs from new value prevents infinite loop.
 						combo_box.setSelectedItem((evt.getNewValue()).intern());
 					}

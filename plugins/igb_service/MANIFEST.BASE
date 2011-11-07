@@ -13,6 +13,7 @@ Import-Package: javax.swing,
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.genoviz.util,
  com.affymetrix.genoviz.widget,
  org.osgi.framework
 Export-Package: com.affymetrix.igb.osgi.service

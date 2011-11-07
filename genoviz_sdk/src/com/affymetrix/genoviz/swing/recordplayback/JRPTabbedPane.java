@@ -7,7 +7,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.affymetrix.common.Idable;
+import com.affymetrix.genoviz.util.Idable;
+
 
 public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget {
 	private static final long serialVersionUID = 1L;

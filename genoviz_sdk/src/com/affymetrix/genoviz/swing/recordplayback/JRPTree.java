@@ -14,7 +14,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import com.affymetrix.common.Idable;
+import com.affymetrix.genoviz.util.Idable;
 
 public class JRPTree extends JTree implements JRPHierarchicalWidget {
 	private static final long serialVersionUID = 1L;

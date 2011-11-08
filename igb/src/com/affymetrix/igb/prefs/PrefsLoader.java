@@ -1,13 +1,12 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
-tils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.util.ReplaceInputStreamimport com.affymetrix.igb.util.ReplaceInputStream;
-;
+import com.affymetrix.igb.util.ReplaceInputStream;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.File;

@@ -14,7 +14,7 @@ public class SimpleGraphTabGUI extends IGBTabPanel {
 
 	/** Creates new form SimpleGraphTab1 */
 	public SimpleGraphTabGUI(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true, TAB_POSITION);
+		super(_igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
 
 		SimpleGraphTab.init(igbService);
 		sgt = SimpleGraphTab.getSingleton();

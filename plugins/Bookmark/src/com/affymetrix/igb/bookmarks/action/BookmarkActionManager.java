@@ -66,9 +66,6 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddPositionBookmarkAction.getAction()));
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_data", AddPositionAndDataBookmarkAction.getAction()));
 		bm_menu.addSeparator();
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_manage_bookmarks", ManageBookmarksAction.getAction()));
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_open_bookmark_tab", OpenBookmarkTabAction.getAction()));
-		bm_menu.addSeparator();
 
 		main_bm_menu = bm_menu;
 		component_hash.put(main_bookmark_list, main_bm_menu);

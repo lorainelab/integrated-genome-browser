@@ -46,6 +46,11 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		initComponents();
 	}
 
+	@Override
+	public TabState getDefaultState() {
+		return TabState.COMPONENT_STATE_RIGHT_TAB;
+	}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is

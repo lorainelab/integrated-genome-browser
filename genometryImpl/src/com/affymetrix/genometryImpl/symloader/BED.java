@@ -30,27 +30,25 @@ import org.broad.tribble.readers.LineReader;
  *
  * @author hiralv
  */
-public class BED extends SymLoader implements LineProcessor{
+public class BED extends SymLoader implements LineProcessor {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	private static final List<String> pref_list = new ArrayList<String>();
+
 	static {
 		pref_list.add("bed");
 	}
-
 	private static final boolean DEBUG = false;
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern comma_regex = Pattern.compile(",");
-
 	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	private final Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+	private final Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<BioSeq, Map<String, SeqSymmetry>>();
 	private boolean annotate_seq = true;
 	private boolean create_container_annot = false;
 	private String default_type = null;
-
 	private final TrackLineParser track_line_parser = new TrackLineParser();
-
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -58,14 +56,14 @@ public class BED extends SymLoader implements LineProcessor{
 		strategyList.add(LoadStrategy.GENOME);
 	}
 
-	public BED(URI uri, String featureName, AnnotatedSeqGroup group){
+	public BED(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, featureName, group);
-		
+
 		default_type = uri.toString();
 //		if (default_type.endsWith(".bed")) {
 //			default_type = default_type.substring(0, default_type.lastIndexOf(".bed"));
 //		}
-			
+
 		annotate_seq = false;
 		create_container_annot = false;
 	}
@@ -74,54 +72,52 @@ public class BED extends SymLoader implements LineProcessor{
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
 	}
-	
+
 	@Override
-	public void init() throws Exception   {
+	public void init() throws Exception {
 		if (this.isInitialized) {
 			return;
 		}
-		
-		if(buildIndex()){
+
+		if (buildIndex()) {
 			sortCreatedFiles();
 			super.init();
 		}
-		
+
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList() throws Exception   {
+	public List<BioSeq> getChromosomeList() throws Exception {
 		init();
 		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
-		Collections.sort(chromosomeList,new BioSeqComparator());
+		Collections.sort(chromosomeList, new BioSeqComparator());
 		return chromosomeList;
 	}
 
 	@Override
-	public List<SeqSymmetry> getGenome() throws Exception   {
+	public List<SeqSymmetry> getGenome() throws Exception {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
 		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
-		for(BioSeq seq : allSeq){
+		for (BioSeq seq : allSeq) {
 			retList.addAll(getChromosome(seq));
 		}
 		return retList;
 	}
 
-
 	@Override
-	public List<SeqSymmetry> getChromosome(BioSeq seq) throws Exception   {
+	public List<SeqSymmetry> getChromosome(BioSeq seq) throws Exception {
 		init();
-		return parse(seq,seq.getMin(),seq.getMax());
+		return parse(seq, seq.getMin(), seq.getMax());
 	}
 
-
 	@Override
-	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception   {
+	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		return parse(span.getBioSeq(),span.getMin(),span.getMax());
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
-	private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception   {
+	private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
 		InputStream istr = null;
 		try {
 			File file = chrList.get(seq);
@@ -132,7 +128,7 @@ public class BED extends SymLoader implements LineProcessor{
 			}
 			istr = new FileInputStream(file);
 			return parse(istr, isSorted, min, max);
-		} catch (Exception ex){
+		} catch (Exception ex) {
 			throw ex;
 		} finally {
 			GeneralUtils.safeClose(istr);
@@ -140,7 +136,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 
 	private List<SeqSymmetry> parse(InputStream istr, boolean isSorted, int min, int max)
-		throws IOException {
+			throws IOException {
 		/*
 		 *  seq2types is hash for making container syms (if create_container_annot == true)
 		 *  each entry in hash is: BioSeq ==> type2psym hash
@@ -149,12 +145,11 @@ public class BED extends SymLoader implements LineProcessor{
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		
+
 		BufferedInputStream bis;
 		if (istr instanceof BufferedInputStream) {
-			bis = (BufferedInputStream)istr;
-		}
-		else {
+			bis = (BufferedInputStream) istr;
+		} else {
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
@@ -164,7 +159,7 @@ public class BED extends SymLoader implements LineProcessor{
 	}
 
 	private void parse(DataInputStream dis, boolean isSorted, int min, int max)
-		throws IOException  {
+			throws IOException {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
 		}
@@ -195,8 +190,43 @@ public class BED extends SymLoader implements LineProcessor{
 				throw new UnsupportedOperationException();
 			}
 		};
-				
+
 		parse(it, isSorted, min, max);
+	}
+
+	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
+		seq2types.clear();
+		symlist.clear();
+		String line;
+		String type = default_type;
+		boolean use_item_rgb = false;
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		Thread thread = Thread.currentThread();
+		while ((line = it.next()) != null && (!thread.isInterrupted())) {
+			if (line.length() == 0) {
+				continue;
+			}
+			char firstChar = line.charAt(0);
+			if (firstChar == '#') {  // skip comment lines
+				continue;
+			} else if (firstChar == 't' && line.startsWith("track")) {
+				track_line_parser.parseTrackLine(line);
+				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
+				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
+				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				continue;
+			} else if (firstChar == 'b' && line.startsWith("browser")) {
+				// currently take no action for browser lines
+			} else {
+				if (DEBUG) {
+					System.out.println(line);
+				}
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
+					break;
+				}
+			}
+		}
 	}
 
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
@@ -229,44 +259,6 @@ public class BED extends SymLoader implements LineProcessor{
 		return symlist;
 	}
 
-	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
-		seq2types.clear();
-		symlist.clear();
-		String line;
-		String type = default_type;
-		boolean use_item_rgb = false;
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		Thread thread = Thread.currentThread();
-		while ((line = it.next()) != null && (! thread.isInterrupted())) {
-			if (line.length() == 0) {
-				continue;
-			}
-			char firstChar = line.charAt(0);
-			if (firstChar == '#') {  // skip comment lines
-				continue;
-			}
-			else if (firstChar == 't' && line.startsWith("track")) {
-				track_line_parser.parseTrackLine(line);
-				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
-				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
-				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
-				continue;
-			}
-			else if (firstChar == 'b' && line.startsWith("browser")) {
-				// currently take no action for browser lines
-			}
-			else {
-				if (DEBUG) {
-					System.out.println(line);
-				}
-				if(!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted){
-					break;
-				}
-			}
-		}
-	}
-	
 	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum) {
 		String[] fields = line_regex.split(line);
 		int field_count = fields.length;
@@ -293,12 +285,12 @@ public class BED extends SymLoader implements LineProcessor{
 			findex++;
 		}
 		seq_name = fields[findex++]; // seq id field
-		
+
 		int beg = Integer.parseInt(fields[findex++]); // start field
 		int end = Integer.parseInt(fields[findex++]); // stop field
 		if (field_count >= 4) {
 			annot_name = parseName(fields[findex++]);
-			if(annot_name == null || annot_name.length() == 0){
+			if (annot_name == null || annot_name.length() == 0) {
 				annot_name = group.getID();
 			}
 		}
@@ -313,13 +305,14 @@ public class BED extends SymLoader implements LineProcessor{
 		min = Math.min(beg, end);
 		max = Math.max(beg, end);
 
-		if(!checkRange(min,max,minimum,maximum)){
-			if(max > maximum) 
+		if (!checkRange(min, max, minimum, maximum)) {
+			if (max > maximum) {
 				return false;
-			
+			}
+
 			return true;
 		}
-		
+
 		BioSeq seq = group.getSeq(seq_name);
 		if ((seq == null) && (seq_name.indexOf(';') > -1)) {
 			// if no seq found, try and split up seq_name by ";", in case it is in format
@@ -349,7 +342,7 @@ public class BED extends SymLoader implements LineProcessor{
 			seq = group.addSeq(seq_name, 0, uri.toString());
 		}
 
-		
+
 		if (field_count >= 8) {
 			thick_min = Integer.parseInt(fields[findex++]); // thickStart field
 			thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
@@ -421,10 +414,9 @@ public class BED extends SymLoader implements LineProcessor{
 		if (annot_name != null) {
 			group.addToIndex(annot_name, bedline_sym);
 		}
-		
+
 		return true;
 	}
-
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
 	private static float parseScore(String s) {
@@ -469,12 +461,11 @@ public class BED extends SymLoader implements LineProcessor{
 		}
 	}
 
-
 	public static int[] parseIntArray(String int_array) {
 		String[] intstrings = comma_regex.split(int_array);
 		int count = intstrings.length;
 		int[] results = new int[count];
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			int val = Integer.parseInt(intstrings[i]);
 			results[i] = val;
 		}
@@ -489,24 +480,23 @@ public class BED extends SymLoader implements LineProcessor{
 	public static int[] makeBlockMins(int min, int[] blockStarts) {
 		int count = blockStarts.length;
 		int[] blockMins = new int[count];
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			blockMins[i] = blockStarts[i] + min;
 		}
 		return blockMins;
 	}
 
-	public static int[] makeBlockMaxs(int[] blockMins, int[] blockSizes)  {
+	public static int[] makeBlockMaxs(int[] blockMins, int[] blockSizes) {
 		int count = blockMins.length;
 		int[] blockMaxs = new int[count];
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			blockMaxs[i] = blockMins[i] + blockSizes[i];
 		}
 		return blockMaxs;
 	}
 
-
 	public static void writeBedFormat(DataOutputStream out, List<SeqSymmetry> syms, BioSeq seq)
-		throws IOException  {
+			throws IOException {
 		for (SeqSymmetry sym : syms) {
 			writeSymmetry(out, sym, seq);
 		}
@@ -518,7 +508,7 @@ public class BED extends SymLoader implements LineProcessor{
 	 *     a span on the seq given as an argument.
 	 */
 	public static void writeSymmetry(DataOutputStream out, SeqSymmetry sym, BioSeq seq)
-		throws IOException {
+			throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
 		}
@@ -542,7 +532,6 @@ public class BED extends SymLoader implements LineProcessor{
 
 		writeOutFile(out, seq, span, sym, propsym);
 	}
-
 
 	private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
 		out.write(seq.getID().getBytes());
@@ -583,8 +572,6 @@ public class BED extends SymLoader implements LineProcessor{
 		out.write('\n');
 	}
 
-
-
 	private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
@@ -622,15 +609,13 @@ public class BED extends SymLoader implements LineProcessor{
 		}
 	}
 
-
-
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "BED" format.
 	 **/
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
-		if (DEBUG){
+		if (DEBUG) {
 			System.out.println("in BedParser.writeAnnotations()");
 		}
 		DataOutputStream dos = null;
@@ -641,8 +626,7 @@ public class BED extends SymLoader implements LineProcessor{
 			}
 			dos.flush();
 			return true;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return false;
@@ -677,24 +661,23 @@ public class BED extends SymLoader implements LineProcessor{
 		return pref_list;
 	}
 
-
 	/** Returns "text/bed". */
 	public String getMimeType() {
 		return "text/bed";
 	}
 
-	private static boolean checkRange(int start, int end, int min, int max){
+	private static boolean checkRange(int start, int end, int min, int max) {
 
 		//getChromosome && getRegion
-		if(end < min || start > max){
+		if (end < min || start > max) {
 			return false;
 		}
 
 		return true;
 	}
-	
+
 	@Override
-	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception    {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -709,7 +692,7 @@ public class BED extends SymLoader implements LineProcessor{
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				counter++;
-				
+
 				if (line.length() == 0) {
 					continue;
 				}
@@ -735,7 +718,7 @@ public class BED extends SymLoader implements LineProcessor{
 
 					boolean includes_bin_field = false;
 
-					if(fields.length > 6){
+					if (fields.length > 6) {
 						firstChar = fields[6].charAt(0);
 						includes_bin_field = (firstChar == '+' || firstChar == '-' || firstChar == '.');
 					}
@@ -757,36 +740,37 @@ public class BED extends SymLoader implements LineProcessor{
 					if (!chrTrack.containsKey(seq_name)) {
 						chrTrack.put(seq_name, true);
 
-						if(trackLine != null)
+						if (trackLine != null) {
 							bw.write(trackLine + "\n");
+						}
 					}
 					bw.write(line + "\n");
 
-					if (max > chrLength.get(seq_name))
+					if (max > chrLength.get(seq_name)) {
 						chrLength.put(seq_name, max);
+					}
 
 				}
 			}
 
 			return !thread.isInterrupted();
 
-		} catch (Exception ex){
+		} catch (Exception ex) {
 			throw ex;
-		} finally{
+		} finally {
 			for (BufferedWriter b : chrs.values()) {
 				GeneralUtils.safeClose(b);
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-		
+
 	}
 
-
 	@Override
-	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
+		for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
 			String seq_name = bioseq.getKey();
 			BioSeq seq = group.getSeq(seq_name);
 			if ((seq == null) && (seq_name.indexOf(';') > -1)) {
@@ -816,10 +800,11 @@ public class BED extends SymLoader implements LineProcessor{
 				//System.out.println("seq not recognized, creating new seq: " + seq_name);
 				seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
 			}
-			
+
 			chrList.put(seq, chrFiles.get(seq_name));
 		}
 	}
 
-	public void init(URI uri) {	}
+	public void init(URI uri) {
+	}
 }

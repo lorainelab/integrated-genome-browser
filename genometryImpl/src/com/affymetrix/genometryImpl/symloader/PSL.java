@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.symmetry.Psl3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetryConverter;

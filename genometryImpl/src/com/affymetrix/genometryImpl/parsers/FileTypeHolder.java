@@ -100,6 +100,49 @@ public class FileTypeHolder {
 				}
 			}
 		);
+//		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);
+		addFileTypeHandler(
+				new FileTypeHandler() {
+				String[] extensions = new String[]{"gff3"};
+				@Override
+				public String getName() { return "GFF"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+					return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
+				}
+				@Override
+				public GFF3Parser getParser() { return new GFF3Parser(); }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return null;
+				}
+			});
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				String[] extensions = new String[]{"gff", "gtf"};
+				@Override
+				public String getName() { return "GFF"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+//					if (com.affymetrix.genometryImpl.symloader.GFF3.isGFF3(uri)) {
+//						return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
+//					}
+//					else {
+						return SymLoaderTabix.getSymLoader(new SymLoaderInstNC(uri, featureName, group));
+					//}
+				}
+				@Override
+				public Parser getParser() { return new GFFParser(); }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return null;
+				}
+			}
+		);
 		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);
 		addFileTypeHandler("Graph", new String[] {"bgr"}, BgrParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Binary", new String[]{"bp1", "bp2"}, Bprobe1Parser.class, SymLoaderInst.class);
@@ -141,31 +184,6 @@ public class FileTypeHolder {
 			);
 		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FishClonesParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, null, Genbank.class);
-		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);
-		addFileTypeHandler(
-			new FileTypeHandler() {
-				String[] extensions = new String[]{"gff", "gtf"};
-				@Override
-				public String getName() { return "GFF"; }
-				@Override
-				public String[] getExtensions() { return extensions; }
-				@Override
-				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-					if (com.affymetrix.genometryImpl.symloader.GFF3.isGFF3(uri)) {
-						return new GFF3(uri, featureName, group);
-					}
-					else {
-						return new SymLoaderInstNC(uri, featureName, group);
-					}
-				}
-				@Override
-				public Parser getParser() { return new GFFParser(); }
-				@Override
-				public IndexWriter getIndexWriter(String stream_name) {
-					return null;
-				}
-			}
-		);
 		addFileTypeHandler("Graph", new String[]{"gr"}, GrParser.class, Gr.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {

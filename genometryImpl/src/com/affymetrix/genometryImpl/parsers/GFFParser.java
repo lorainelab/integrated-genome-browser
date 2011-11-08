@@ -320,7 +320,8 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 						} else {
 							// The "#gff-version 3" pragma is *required* to be on the first line.
 							GFF3Parser gff3_parser = new GFF3Parser();
-							return gff3_parser.parse(br, default_source, seq_group, annotate_seq);
+							gff3_parser.parse(br, default_source, seq_group, annotate_seq);
+							return gff3_parser.symlist;
 						}
 					} else {
 						continue;

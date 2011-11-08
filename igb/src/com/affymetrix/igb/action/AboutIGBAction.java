@@ -2,9 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.CommonUtils;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -33,6 +36,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  */
 public class AboutIGBAction extends GenericAction {
+
 	private static final long serialVersionUID = 1l;
 	private static final AboutIGBAction ACTION = new AboutIGBAction();
 
@@ -45,19 +49,18 @@ public class AboutIGBAction extends GenericAction {
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
 		about_text.setEditable(false);
-		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n" +
-						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
-						"which develops interactive visualization software for genomics.\n\n" +
-						"If you use IGB to create images for publication, please cite the IGB\n" +
-						"Applications Note:\n\n" +
-						"Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE.\n" +
-						"The Integrated Genome Browser: free software for distribution and exploration of\n" +
-						"genome-scale datasets.\n"+
-						"Bioinformatics. 2009 Oct 15;25(20):2730-1.\n\n"+
-
-						"For more details, including license information, see:\n" +
-						"\thttp://www.bioviz.org/igb\n" +
-						"\thttp://genoviz.sourceforge.net\n\n" ;
+		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n"
+				+ "IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n"
+				+ "which develops interactive visualization software for genomics.\n\n"
+				+ "If you use IGB to create images for publication, please cite the IGB\n"
+				+ "Applications Note:\n\n"
+				+ "Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE.\n"
+				+ "The Integrated Genome Browser: free software for distribution and exploration of\n"
+				+ "genome-scale datasets.\n"
+				+ "Bioinformatics. 2009 Oct 15;25(20):2730-1.\n\n"
+				+ "For more details, including license information, see:\n"
+				+ "\thttp://www.bioviz.org/igb\n"
+				+ "\thttp://genoviz.sourceforge.net\n\n";
 		about_text.append(text);
 		String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
 		File cache_file = new File(cache_root);
@@ -68,15 +71,47 @@ public class AboutIGBAction extends GenericAction {
 		String data_dir = PreferenceUtils.getAppDataDirectory();
 		if (data_dir != null) {
 			File data_dir_f = new File(data_dir);
-			about_text.append("\nApplication data stored in: \n  " +
-							data_dir_f.getAbsolutePath() + "\n");
+			about_text.append("\nApplication data stored in: \n  "
+					+ data_dir_f.getAbsolutePath() + "\n");
 		}
 
 		message_pane.add(new JScrollPane(about_text));
 		JRPButton igb_paper = new JRPButton("AboutIGBAction_igb_paper", "View IGB Paper");
 		JRPButton bioviz_org = new JRPButton("AboutIGBAction_bioviz_org", "Visit Bioviz.org");
+		JRPButton noticesButton = new JRPButton("Notices", "View Notices");
 		// vikram JButton request_feature = new JButton("Request a Feature");
 		// vikram JButton report_bug = new JButton("Report a Bug");
+		noticesButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent evt) {
+				String contents;
+				try {
+					contents = readFile("NOTICES.txt");
+				} catch (IOException ex) {
+					contents = "";
+				}
+				JTextArea textBox = new javax.swing.JTextArea("", 20, 50);
+				textBox.setLineWrap(true);
+				textBox.setText(contents);
+				javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(textBox);
+				scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				Object[] msg = {"Details:", scrollpane};
+				javax.swing.JOptionPane op = new javax.swing.JOptionPane(
+						msg,
+						javax.swing.JOptionPane.PLAIN_MESSAGE,
+						javax.swing.JOptionPane.PLAIN_MESSAGE,
+						null,
+						null);
+				javax.swing.JDialog dialog = op.createDialog("Notices.txt");
+				dialog.setVisible(true);
+				dialog.setPreferredSize(new java.awt.Dimension(650, 650));
+				dialog.setDefaultCloseOperation(javax.swing.JDialog.HIDE_ON_CLOSE);
+				dialog.setAlwaysOnTop(true);
+				dialog.setResizable(true);
+				dialog.pack();
+			}
+		});
+
 		igb_paper.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
@@ -89,17 +124,31 @@ public class AboutIGBAction extends GenericAction {
 				GeneralUtils.browse("http://www.bioviz.org");
 			}
 		});
-			
-		JPanel buttonP = new JPanel(new GridLayout(1, 2));
+
+		JPanel buttonP = new JPanel(new GridLayout(1, 3));
 		buttonP.add(igb_paper);
 		buttonP.add(bioviz_org);
-	
+		buttonP.add(noticesButton);
+
 		message_pane.add(buttonP);
 
 		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
-						JOptionPane.DEFAULT_OPTION);
+				JOptionPane.DEFAULT_OPTION);
 		final JDialog dialog = pane.createDialog(IGB.getSingleton().getFrame(), MessageFormat.format(BUNDLE.getString("about"), APP_NAME));
 		dialog.setVisible(true);
+	}
+
+	static void showDir(int indent, File file) throws IOException {
+		for (int i = 0; i < indent; i++) {
+			System.out.print('-');
+		}
+		System.out.println(file.getName());
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				showDir(indent + 4, files[i]);
+			}
+		}
 	}
 
 	@Override
@@ -107,8 +156,8 @@ public class AboutIGBAction extends GenericAction {
 		return MessageFormat.format(
 				BUNDLE.getString("menuItemHasDialog"),
 				MessageFormat.format(
-					BUNDLE.getString("about"),
-					APP_NAME));
+				BUNDLE.getString("about"),
+				APP_NAME));
 	}
 
 	@Override
@@ -119,5 +168,17 @@ public class AboutIGBAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_A;
+	}
+
+	private String readFile(String file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		String line = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		String ls = System.getProperty("line.separator");
+		while ((line = reader.readLine()) != null) {
+			stringBuilder.append(line);
+			stringBuilder.append(ls);
+		}
+		return stringBuilder.toString();
 	}
 }

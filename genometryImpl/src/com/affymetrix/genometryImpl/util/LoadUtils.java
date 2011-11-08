@@ -3,9 +3,9 @@ package com.affymetrix.genometryImpl.util;
 public final class LoadUtils {
 	public static enum LoadStrategy {
 		NO_LOAD ("Don't Load"),
-		VISIBLE ("Region In View"),
-		CHROMOSOME ("Whole Chromosome"),
-		GENOME ("Whole Genome"),
+		VISIBLE ("Region"),
+		CHROMOSOME ("Chromosome"),
+		GENOME ("Genome"),
 		AUTOLOAD ("Auto Load");
 
 		private String name;

@@ -9,6 +9,7 @@ import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -35,7 +36,6 @@ public abstract class AddBookmarkAction extends GenericAction {
 		}
 
 		BookmarkEditor editor = new BookmarkEditor(bookmark);
-		editor.run();
 	}
 
 	public void addBookmarkFolder() {
@@ -79,14 +79,18 @@ public abstract class AddBookmarkAction extends GenericAction {
 
 		Bookmark bookmark;
 		javax.swing.JTextField nameField;
-		javax.swing.JTextArea commentField = new javax.swing.JTextArea("", 5, 8);
+		JTextArea commentField;
+		
 
 		public BookmarkEditor(Bookmark b) {
 			bookmark = b;
-			nameField = new javax.swing.JTextField(b.getName());
+			init(); 
 		}
 
-		void run() {
+		void init() {
+			nameField = new javax.swing.JTextField(bookmark.getName());
+			commentField = new javax.swing.JTextArea("", 5, 8);
+			commentField.setLineWrap(true);
 			javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(commentField);
 			scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			Object[] msg = {"Name:", nameField, "Comment:", scrollpane};

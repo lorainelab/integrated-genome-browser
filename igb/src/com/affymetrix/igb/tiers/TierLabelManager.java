@@ -317,16 +317,13 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 		
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put("feature name", feature.featureName);
-		props.put("description", feature.description());
+		props.put("Name", feature.featureName);
+		props.put("Description", feature.description());
 		if (feature.friendlyURL != null) {
-			props.put("feature url", feature.friendlyURL);
+			props.put("url", feature.friendlyURL);
 		}
-		props.put("loadmode", feature.getLoadStrategy().toString());
 		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
-		props.put("server", server);
-		props.put("server url", "<html> <a href='" + feature.gVersion.gServer.friendlyURL + "'>" +
-						feature.gVersion.gServer.friendlyURL + "</a> </html>)");
+		props.put("Server", server);
 
 		return props;
 	}

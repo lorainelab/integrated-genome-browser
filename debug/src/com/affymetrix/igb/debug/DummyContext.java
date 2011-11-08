@@ -46,6 +46,9 @@ public class DummyContext implements BundleContext {
 	}
 
 	private boolean filterMatches(String filter, Object service) {
+		if (filter == null) {
+			return true;
+		}
 		if (filter.startsWith(FILTER_PREFIX) && filter.endsWith(FILTER_SUFFIX)) {
 			String className = filter.substring(FILTER_PREFIX.length(), filter.length() - FILTER_SUFFIX.length());
 			try {

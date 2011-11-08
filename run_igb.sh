@@ -31,7 +31,7 @@ fi
 PREFIX=`dirname $PREFIX`
 
 # File Locations
-ICON="$PREFIX/igb/resources/com/affymetrix/igb/igb.gif"
+ICON="$PREFIX/common/resources/images/igb.gif"
 
 # Do our best to find java
 test -z "$JAVACMD" -a -n "$JAVA_HOME" && JAVACMD=$JAVA_HOME/bin/java

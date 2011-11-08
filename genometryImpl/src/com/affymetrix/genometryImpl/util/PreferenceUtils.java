@@ -55,6 +55,7 @@ import com.affymetrix.common.CommonUtils;
  */
 public abstract class PreferenceUtils {
 
+	public static final String DEFAULT_PREFS_MODE = "igb";
 	public static final String SLASH_STANDIN = "%";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
@@ -65,7 +66,8 @@ public abstract class PreferenceUtils {
 	public static final boolean default_confirm_before_delete = true;
 	public static final boolean default_auto_load = true;
 	public static final boolean default_confirm_before_load = true;
-	
+
+	static String prefs_mode = DEFAULT_PREFS_MODE;
 	static JFileChooser static_chooser = null;
 	static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
 	static String app_dir = null;
@@ -81,7 +83,7 @@ public abstract class PreferenceUtils {
 	 * @return
 	 */
 	public static Preferences getTopNode() {
-		return Preferences.userRoot().node("/com/affymetrix/igb");
+		return Preferences.userRoot().node("/com/affymetrix/" + prefs_mode);
 	}
 
 	public static Preferences getKeystrokesNode() {
@@ -577,5 +579,9 @@ public abstract class PreferenceUtils {
 
 		// window already exists, but may not be visible
 		return frame;
+	}
+
+	public static void setPrefsMode(String mode) {
+		prefs_mode = mode;
 	}
 }

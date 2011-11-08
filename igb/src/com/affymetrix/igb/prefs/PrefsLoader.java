@@ -1,11 +1,13 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+tils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.util.ReplaceInputStreamimport com.affymetrix.igb.util.ReplaceInputStream;
+;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.File;
@@ -59,21 +61,22 @@ public abstract class PrefsLoader {
 			return;
 		}
 
+		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", main_args);
 		String def_prefs_url = get_default_prefs_url(main_args);
 		String[] prefs_list = get_prefs_list(main_args);
 
-		LoadDefaultPrefsFromJar();
-		LoadDefaultAPIPrefsFromJar();
-		LoadDefaultMenuPrefsFromJar();
-		LoadWebPrefs(def_prefs_url);
-		LoadFileOrURLPrefs(prefs_list);
+		LoadDefaultPrefsFromJar(prefsMode);
+		LoadDefaultAPIPrefsFromJar(prefsMode);
+		LoadDefaultMenuPrefsFromJar(prefsMode);
+		LoadWebPrefs(def_prefs_url, prefsMode);
+		LoadFileOrURLPrefs(prefs_list, prefsMode);
 		ServerList.getServerInstance().loadServerPrefs();
 		ServerList.getRepositoryInstance().loadServerPrefs();
 
 		prefsLoaded = true;
 	}
 
-	private static void LoadDefaultPrefsFromJar() {
+	private static void LoadDefaultPrefsFromJar(String prefsMode) {
 		/**  first load default prefs from jar (with XmlPrefsParser)*/
 		InputStream default_prefs_stream = null;
 		try {
@@ -83,6 +86,7 @@ public abstract class PrefsLoader {
 				return;
 			}
 			System.out.println("loading default prefs from: " + IGBConstants.default_prefs_resource);
+			default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
 			XmlPrefsParser.parse(default_prefs_stream);
 		} catch (IOException ex) {
 			System.out.println("Problem parsing prefs from: " + IGBConstants.default_prefs_resource);
@@ -92,7 +96,7 @@ public abstract class PrefsLoader {
 		}
 	}
 
-	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName) {
+	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName, String prefsMode) {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
 			if ((PreferenceUtils.getTopNode()).nodeExists(aNodeName)) {
@@ -106,6 +110,7 @@ public abstract class PrefsLoader {
 		try {
 			default_prefs_stream = IGB.class.getResourceAsStream(fileName);
 			System.out.println("loading default User preferences from: " + fileName);
+			default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
@@ -116,15 +121,15 @@ public abstract class PrefsLoader {
 		}
 	}
 
-	private static void LoadDefaultMenuPrefsFromJar() {
-		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_MENU_RESOURCE, "main_menu");
+	private static void LoadDefaultMenuPrefsFromJar(String prefsMode) {
+		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_MENU_RESOURCE, "main_menu", prefsMode);
 	}
 
-	private static void LoadDefaultAPIPrefsFromJar() {
-		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_API_RESOURCE, "keystrokes");
+	private static void LoadDefaultAPIPrefsFromJar(String prefsMode) {
+		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_API_RESOURCE, "keystrokes", prefsMode);
 	}
 
-	private static void LoadWebPrefs(String def_prefs_url) {
+	private static void LoadWebPrefs(String def_prefs_url, String prefsMode) {
 		// If a particular web prefs file was specified, then load it.
 		// Otherwise try to load the web-based-default prefs file. (But
 		// only load it if it is cached, then later update the cache on
@@ -132,15 +137,16 @@ public abstract class PrefsLoader {
 		if (def_prefs_url != null) {
 			//	loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
 			//} else {
-			LoadPreferencesFromURL(def_prefs_url);
+			LoadPreferencesFromURL(def_prefs_url, prefsMode);
 		}
 	}
 
-	private static void LoadPreferencesFromURL(String prefs_url) {
+	private static void LoadPreferencesFromURL(String prefs_url, String prefsMode) {
 		InputStream prefs_url_stream = null;
 		try {
 			prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
 			System.out.println("loading prefs from url: " + prefs_url);
+			prefs_url_stream = getPrefsModeInputStream(prefs_url_stream, prefsMode);
 			XmlPrefsParser.parse(prefs_url_stream);
 		} catch (IOException ex) {
 			System.out.println("Problem parsing prefs from url: " + prefs_url);
@@ -150,7 +156,7 @@ public abstract class PrefsLoader {
 		}
 	}
 
-	private static void LoadFileOrURLPrefs(String[] prefs_list) {
+	private static void LoadFileOrURLPrefs(String[] prefs_list, String prefsMode) {
 		if (prefs_list == null || prefs_list.length == 0) {
 			return;
 		}
@@ -165,14 +171,16 @@ public abstract class PrefsLoader {
 				if (fil.exists()) {
 					System.out.println("loading user prefs from: " + fileOrURL);
 					strm = new FileInputStream(fil);
+					strm = getPrefsModeInputStream(strm, prefsMode);
 					XmlPrefsParser.parse(strm);
 				} else if (fileOrURL.startsWith("http:")) {
 					System.out.println("loading user prefs from: " + fileOrURL);
-					LoadPreferencesFromURL(fileOrURL);
+					LoadPreferencesFromURL(fileOrURL, prefsMode);
 				} else if (fileOrURL.startsWith("file:")) {
 					fil = new File(new URI(fileOrURL));
 					System.out.println("loading user prefs from: " + fileOrURL);
 					strm = new FileInputStream(fil);
+					strm = getPrefsModeInputStream(strm, prefsMode);
 					XmlPrefsParser.parse(strm);
 				} else {
 					/*
@@ -281,6 +289,19 @@ public abstract class PrefsLoader {
 					Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
+		}
+	}
+
+	private static InputStream getPrefsModeInputStream(InputStream is, String prefsMode) {
+		if (prefsMode == null) {
+			return is;
+		}
+		try {
+			return new ReplaceInputStream(is, "<node name=\"igb\">", "<node name=\"" + prefsMode + "\">");
+		}
+		catch (IOException x) {
+			Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, "unable to set prefs mode for " + prefsMode, x);
+			return is;
 		}
 	}
 }

@@ -60,13 +60,14 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		BookmarkActionManager.init(igbService, bookmark_menu);
 		bmark_action = BookmarkActionManager.getInstance();
-		igbService.addStopRoutine(
+		bundleContext.registerService(IStopRoutine.class.getName(), 
 			new IStopRoutine() {
 				@Override
 				public void stop() {
 					bmark_action.autoSaveBookmarks();
 				}
-			}
+			},
+			null
 		);
 		BookmarkManagerViewGUI.init(igbService);
 		bmark_action.setBmv(BookmarkManagerViewGUI.getSingleton());

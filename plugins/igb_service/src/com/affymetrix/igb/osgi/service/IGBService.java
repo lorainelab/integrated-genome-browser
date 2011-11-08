@@ -66,12 +66,6 @@ public interface IGBService {
 	 */
 	public ImageIcon getIcon(String name);
 	/**
-	 * add a routine to the list of routines that will run when
-	 * the program shuts down
-	 * @param routine the routine to run
-	 */
-	public void addStopRoutine(IStopRoutine routine);
-	/**
 	 * get the given menu of the application
 	 * @return the given menu of the IGB application
 	 */

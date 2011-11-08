@@ -43,7 +43,6 @@ import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
@@ -114,12 +113,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public ImageIcon getIcon(String name) {
 		return CommonUtils.getInstance().getIcon("images/" + name);
-	}
-
-	@Override
-	public void addStopRoutine(IStopRoutine routine) {
-		IGB igb = (IGB)IGB.getSingleton();
-		igb.addStopRoutine(routine);
 	}
 
 	@Override

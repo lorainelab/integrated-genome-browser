@@ -15,6 +15,7 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
@@ -85,6 +86,15 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading IGBTabPanels", x.getMessage());
 		}
+		bundleContext.registerService(IStopRoutine.class.getName(), 
+			new IStopRoutine() {
+				@Override
+				public void stop() {
+					windowServiceDefaultImpl.shutdown();
+				}
+			},
+			null
+		);
 	}
 
 	@Override

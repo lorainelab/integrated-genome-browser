@@ -286,6 +286,7 @@
     		<fail unless="igb_exe.exists">Please run ant exe first</fail>
 		<java fork="true" jar="${igb.jar.name}.jar" >
 			<arg value="-clrprf" />
+			<arg value="-exit" />
 		</java>
 	</target>
 

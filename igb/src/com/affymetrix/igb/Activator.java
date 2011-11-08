@@ -23,8 +23,10 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -46,17 +48,23 @@ public class Activator implements BundleActivator {
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
         	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
-			if ("-convert".equals(args[0])) {
+    		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
+    		if (prefsMode != null) {
+    			PreferenceUtils.setPrefsMode(prefsMode);
+    		}
+    		if (CommonUtils.getInstance().getArg("-convert", args) != null) {
 				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
 				NibbleResiduesParser.main(runArgs);
 				System.exit(0);
-			}
-			else if ("-clrprf".equals(args[0])) {
+    		}
+    		if (CommonUtils.getInstance().getArg("-clrprf", args) != null) {
 				PreferenceUtils.clearPreferences();
 				XmlStylesheetParser.removeUserStylesheetFile();
 				System.out.println("preferences cleared");
+    		}
+    		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
 				System.exit(0);
-			}
+    		}
         }
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
@@ -129,6 +137,17 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchMode.class);
+		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
+		stopRoutineExtensionPoint.addListener(
+			new ExtensionPointListener<IStopRoutine>() {
+				@Override
+				public void removeService(IStopRoutine routine) {	/*cannot remove*/ }
+				@Override
+				public void addService(IStopRoutine routine) {
+					igb.addStopRoutine(routine);
+				}
+			}
+		);
 		ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
 		preferencesExtensionPoint.addListener(
 			new ExtensionPointListener<IPrefEditorComponent>() {
@@ -139,6 +158,15 @@ public class Activator implements BundleActivator {
 					PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
 				}
 			}
+		);
+		bundleContext.registerService(IStopRoutine.class.getName(), 
+			new IStopRoutine() {
+				@Override
+				public void stop() {
+					WebLink.autoSave();
+				}
+			},
+			null
 		);
 	}
 }

@@ -288,11 +288,11 @@ public final class IGB extends Application
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 	}
 
+	public void addStopRoutine(IStopRoutine routine) {
+		stopRoutines.add(routine);
+	}
+
 	public void defaultCloseOperations() {
-		WebLink.autoSave();
-		if (windowService != null) {
-			windowService.shutdown();
-		}
 		for (IStopRoutine stopRoutine : stopRoutines) {
 			stopRoutine.stop();
 		}
@@ -455,10 +455,6 @@ public final class IGB extends Application
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_seq = selected_seq;
-	}
-
-	public void addStopRoutine(IStopRoutine routine) {
-		stopRoutines.add(routine);
 	}
 
 	public int searchForRegexInResidues(

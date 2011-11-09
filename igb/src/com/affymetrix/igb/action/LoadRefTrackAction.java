@@ -13,7 +13,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author hiralv
  */
 public final class LoadRefTrackAction extends AbstractLoadFileAction {
-
+	private static final long serialVersionUID = 1L;
 	private static final LoadRefTrackAction ACTION = new LoadRefTrackAction();
 
 	public static LoadRefTrackAction getAction() {

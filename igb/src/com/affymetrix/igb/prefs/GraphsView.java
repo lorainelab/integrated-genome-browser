@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
  *  A panel that shows the preferences for graph properties.
  */
 public class GraphsView extends IPrefEditorComponent {
+	private static final long serialVersionUID = 1L;
 	private final String urlString = "Use file URL as graph name";
 	private final String makeGraphString = "Make graphs from scored interval ('egr' and 'sin') files";
 	

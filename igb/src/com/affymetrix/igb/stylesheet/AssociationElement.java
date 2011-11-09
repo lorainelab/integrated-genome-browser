@@ -94,7 +94,7 @@ public final class AssociationElement implements DrawableElement {
   }
 
   MapViewGlyphFactoryI getFactoryByClassname(String name) {
-    Class factory_class = null;
+    Class<?> factory_class = null;
 
     try {
       factory_class = Class.forName(styleName);

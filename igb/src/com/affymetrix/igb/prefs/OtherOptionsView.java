@@ -19,7 +19,6 @@ import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JOptionPane;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;

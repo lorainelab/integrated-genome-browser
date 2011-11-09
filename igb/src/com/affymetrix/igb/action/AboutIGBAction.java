@@ -4,7 +4,6 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.common.CommonUtils;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedReader;

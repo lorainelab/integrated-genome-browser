@@ -10,8 +10,8 @@
                     <map/>
                     <node name="keystrokes">
                         <map>
-                            <entry key="About Integrated Genome Browser..." value=""/>
-                            <entry key="SCROLL_DOWN" value=""/>
+                            <entry key="About Integrated Genome Browser..." value="ctrl shift A"/>
+                            <entry key="SCROLL_DOWN" value="alt DOWN"/>
                             <entry key="Clear All" value=""/>
                             <entry key="Manage Bookmarks" value=""/>
                             <entry key="Toggle Shrink Wrapping" value="ctrl E"/>
@@ -25,45 +25,45 @@
                             <entry key="Find Annotations For Loaded Data..." value="ctrl F"/>
                             <entry key="Open file" value="ctrl O"/>
                             <entry key="Web Links Manager / Export ..." value=""/>
-                            <entry key="SCROLL_LEFT" value=""/>
+                            <entry key="SCROLL_LEFT" value="alt LEFT"/>
                             <entry key="Open Current Left Tab in New Window" value=""/>
                             <entry key="Open Current Bottom Tab in New Window" value=""/>
                             <entry key="Open Current Right Tab in New Window" value=""/>
-                            <entry key="SCROLL_RIGHT" value=""/>
-                            <entry key="ZOOM_IN_Y" value=""/>
+                            <entry key="SCROLL_RIGHT" value="alt RIGHT"/>
+                            <entry key="ZOOM_IN_Y" value="ctrl shift UP"/>
                             <entry key="Center at selected" value=""/>
                             <entry key="Set AutoLoad Threshold to Current View" value="" />
-                            <entry key="Select parent" value="ctrl A"/>
-                            <entry key="ZOOM_OUT_X" value=""/>
+                            <entry key="Select parent" value="ctrl P"/>
+                            <entry key="ZOOM_OUT_X" value="ctrl shift LEFT"/>
                             <entry key="Web Links Manager / Edit..." value=""/>
-                            <entry key="Add Position Bookmark" value="ctrl B"/>
-                            <entry key="SCROLL_UP" value=""/>
+                            <entry key="Add Position Bookmark" value="ctrl shift B"/>
+                            <entry key="SCROLL_UP" value="alt UP"/>
                             <entry key="Main View (With Labels)" value=""/>
                             <entry key="Clamp To View" value=""/>
                             <entry key="Sliced View (With Labels)" value=""/>
                             <entry key="Exit" value="ctrl Q"/>
                             <entry key="Close Sequence Viewer" value="ctrl W" />
                             <entry key="Web Links Manager / Configure Web Links" value=""/>
-                            <entry key="Zoom to selected" value="ctrl Z"/>
+                            <entry key="Zoom to selected" value="ctrl PAGE_UP"/>
                             <entry key="Adjust edge match fuzziness" value=""/>
                             <entry key="Unclamp" value=""/>
                             <entry key="Open Left Tabbed Panes in New Window" value=""/>
                             <entry key="Open Bottom Tabbed Panes in New Window" value=""/>
                             <entry key="Open Right Tabbed Panes in New Window" value=""/>
-                            <entry key="Show Console..." value=""/>
-                            <entry key="ZOOM_OUT_FULLY" value="ctrl 0"/>
+                            <entry key="Show Console..." value="ctrl shift C"/>
+                            <entry key="ZOOM_OUT_FULLY" value="ctrl shift HOME"/>
                             <entry key="Web Links Manager / Add..." value=""/>
                             <entry key="Preferences Window / Export" value=""/>
-                            <entry key="ZOOM_OUT_Y" value=""/>
+                            <entry key="ZOOM_OUT_Y" value="ctrl shift DOWN"/>
                             <entry key="Web Links Manager / Import ..." value=""/>
                             <entry key="Copy Selected Residues to Clipboard" value="ctrl C"/>
                             <entry key="Toggle Edge Matching" value="ctrl M"/>
                             <entry key="Preferences Window / Help" value=""/>
                             <entry key="Main View" value=""/>
                             <entry key="View Region in UCSC Browser" value="ctrl U"/>
-                            <entry key="ZOOM_IN_X" value=""/>
+                            <entry key="ZOOM_IN_X" value="ctrl shift RIGHT"/>
                             <entry key="Web Links Manager / Delete ..." value=""/>
-                            <entry key="Add Position &amp; Graphs Bookmark" value=""/>
+                            <entry key="Add Position &amp; Graphs Bookmark" value="ctrl B"/>
                             <entry key="Clear Graphs" value=""/>
                             <entry key="Preferences Window / Import" value=""/>
                             <entry key="Refresh Data" value="ctrl R"/>

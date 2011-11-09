@@ -183,19 +183,19 @@ final class SeqMapViewActionListener implements ActionListener {
 			//map.updateWidget();
 		} else if (command.equals(SCROLL_LEFT)) {
 			int[] visible = seqmap.getVisibleRange();
-			seqmap.scroll(NeoAbstractWidget.X, visible[0] + (visible[1] - visible[0]) / 10);
+			seqmap.scroll(NeoAbstractWidget.X, visible[0] - (visible[1] - visible[0]) / 10);
 			seqmap.updateWidget();
 		} else if (command.equals(SCROLL_RIGHT)) {
 			int[] visible = seqmap.getVisibleRange();
-			seqmap.scroll(NeoAbstractWidget.X, visible[0] - (visible[1] - visible[0]) / 10);
+			seqmap.scroll(NeoAbstractWidget.X, visible[0] + (visible[1] - visible[0]) / 10);
 			seqmap.updateWidget();
 		} else if (command.equals(SCROLL_UP)) {
 			int[] visible = seqmap.getVisibleOffset();
-			seqmap.scroll(NeoAbstractWidget.Y, visible[0] + (visible[1] - visible[0]) / 10);
+			seqmap.scroll(NeoAbstractWidget.Y, visible[0] - (visible[1] - visible[0]) / 10);
 			seqmap.updateWidget();
 		} else if (command.equals(SCROLL_DOWN)) {
 			int[] visible = seqmap.getVisibleOffset();
-			seqmap.scroll(NeoAbstractWidget.Y, visible[0] - (visible[1] - visible[0]) / 10);
+			seqmap.scroll(NeoAbstractWidget.Y, visible[0] + (visible[1] - visible[0]) / 10);
 			seqmap.updateWidget();
 		}
 	}

@@ -12,6 +12,7 @@ import org.freehep.util.export.ExportDialog;
 import org.freehep.util.export.ExportFileType;
 
 import com.affymetrix.igb.shared.FileTracker;
+import org.freehep.graphicsio.exportchooser.ImageExportFileType;
 
 /**
  * Prints a component to a file.
@@ -27,6 +28,7 @@ public final class ComponentWriter {
 	static {
 		fileTypes = new ArrayList<ExportFileType>();
 		fileTypes.add(new org.freehep.graphicsio.emf.EMFExportFileType());
+		fileTypes.add(new PNGExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.gif.GIFExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.raw.RawExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.ppm.PPMExportFileType());
@@ -34,7 +36,6 @@ public final class ComponentWriter {
 		fileTypes.add(new org.freehep.graphicsio.ps.EPSExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.ps.PSExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.svg.SVGExportFileType());
-		fileTypes.add(new org.freehep.graphicsio.swf.SWFExportFileType());
 	}
 	
 	/** Show the export dialog that allows exporting in a variety of graphics
@@ -129,4 +130,11 @@ public final class ComponentWriter {
 			return fileName;
 		}
 	}
+}
+
+class PNGExportFileType extends ImageExportFileType {
+
+    public PNGExportFileType() {
+        super("png");
+    }
 }

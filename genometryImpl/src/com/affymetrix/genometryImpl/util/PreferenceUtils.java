@@ -211,8 +211,8 @@ public abstract class PreferenceUtils {
 	/**
 	 * Saves the state of a component.
 	 *
-	 * @param name 
-	 * @param state must be one of enum TabState
+	 * @param name name of tray or tab
+	 * @param state state of tray or tab
 	 */
 	public static void saveComponentState(String name, String state) {
 		if (state == null) {
@@ -226,32 +226,57 @@ public abstract class PreferenceUtils {
 	/**
 	 * Returns the previously-stored state of a component.
 	 *
-	 * @param name
-	 * @return one of enum TabState
+	 * @param name name of tray or tab
+	 * @return state of tray or tab
 	 */
 	public static String getComponentState(String name) {
 		return getWindowPrefsNode().get(name + " state", null);
 	}
 
 	/**
+	 * Saves the selected tab of a tray.
+	 *
+	 * @param tray name of the tray 
+	 * @param tab name of selected tab
+	 */
+	public static void saveSelectedTab(String tray, String tab) {
+		if (tab == null) {
+			getWindowPrefsNode().remove(tray + " selected");
+		}
+		else {
+			getWindowPrefsNode().put(tray + " selected", tab);
+		}
+	}
+
+	/**
+	 * Returns the selected tab of a tray.
+	 *
+	 * @param tray name of the tray 
+	 * @return name of selected tab
+	 */
+	public static String getSelectedTab(String tray) {
+		return getWindowPrefsNode().get(tray + " selected", null);
+	}
+
+	/**
 	 * Saves the divider location of a tray as a percentage.
 	 *
-	 * @param title name of the tray 
+	 * @param tray name of the tray 
 	 * @param dividerProportionalLocation the location of the divider in extended state
 	 * as a percentage
 	 */
-	public static void saveDividerLocation(String title, double dividerProportionalLocation) {
-		getWindowPrefsNode().put(title + " dvdrloc", String.valueOf(dividerProportionalLocation));
+	public static void saveDividerLocation(String tray, double dividerProportionalLocation) {
+		getWindowPrefsNode().put(tray + " dvdrloc", String.valueOf(dividerProportionalLocation));
 	}
 
 	/**
 	 * Returns the previously-stored divider location of a tray.
 	 *
-	 * @param name
-	 * @return one of enum TabState
+	 * @param tray name of the tray 
+	 * @return the location of the divider in extended state as a percentage
 	 */
-	public static double getDividerLocation(String title) {
-		String locString = getWindowPrefsNode().get(title + " dvdrloc", null);
+	public static double getDividerLocation(String tray) {
+		String locString = getWindowPrefsNode().get(tray + " dvdrloc", null);
 		double dividerLocation = -1;
 		try {
 			dividerLocation = Double.parseDouble(locString);

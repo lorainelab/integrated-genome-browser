@@ -248,6 +248,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		catch (Exception x) {}
 		setTabState(tabPanel, tabState);
+		TabHolder tabHolder = tabHolders.get(tabState);
+		if (PreferenceUtils.getSelectedTab(tabHolder.getName()) == null && tabPanel.isFocus()) {
+			tabHolder.selectTab(tabPanel);
+		}
+		else if (tabPanel.getName().equals(PreferenceUtils.getSelectedTab(tabHolder.getName()))) {
+			tabHolder.selectTab(tabPanel);
+		}
 		JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + tabPanel.getName().replaceAll(" ", "_"), tabPanel.getDisplayName());
 		tabMenus.put(tabPanel, pluginMenu);
 		tabMenuPositions.put(pluginMenu, tabPanel.getPosition());

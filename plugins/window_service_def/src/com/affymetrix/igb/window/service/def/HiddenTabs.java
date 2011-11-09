@@ -44,4 +44,9 @@ public class HiddenTabs implements TabHolder {
 
 	@Override
 	public void selectTab(IGBTabPanel panel) {}
+
+	@Override
+	public String getName() {
+		return "Hidden";
+	}
 }

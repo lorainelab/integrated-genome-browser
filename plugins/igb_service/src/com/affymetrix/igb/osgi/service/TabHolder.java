@@ -8,6 +8,11 @@ import java.util.Set;
  */
 public interface TabHolder {
 	/**
+	 * get the name of the tab holder
+	 * @return name of the TabHolder
+	 */
+	public String getName();
+	/**
 	 * get all the tab panes that this holder contains
 	 * @return all the tab panes
 	 */

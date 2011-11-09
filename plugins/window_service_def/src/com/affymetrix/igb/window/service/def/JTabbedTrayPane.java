@@ -374,9 +374,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		if (tab_pane.getTabCount() == 1) {
 			initTray();
 		}
-		if (plugin.isFocus()) {
-			tab_pane.setSelectedComponent(plugin);
-		}
 		tab_pane.validate();
 	}
 
@@ -518,6 +515,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		else if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
 		}
+		if (getSelectedIGBTabPanel() == null) {
+			PreferenceUtils.saveSelectedTab(title, null);
+		}
+		else {
+			PreferenceUtils.saveSelectedTab(title, getSelectedIGBTabPanel().getName());
+		}
 		PreferenceUtils.saveDividerLocation(title, saveDividerProportionalLocation);
 	}
 
@@ -529,4 +532,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     		initialized = true;
     	}
     }
+
+	@Override
+	public String getName() {
+		return title;
+	}
 }

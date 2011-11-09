@@ -132,4 +132,9 @@ public class WindowTabs implements TabHolder {
 
 	@Override
 	public void selectTab(IGBTabPanel panel) {}
+
+	@Override
+	public String getName() {
+		return "Window";
+	}
 }

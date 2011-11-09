@@ -294,8 +294,4 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 	public SeqSpan getVisibleSpan() {
 		return igbService.getSeqMapView().getVisibleSpan();
 	}
-
-	public void setTabState(TabState tabState) {
-		igbService.setTabStateAndMenu(bmvGUI, tabState);
-	}
 }

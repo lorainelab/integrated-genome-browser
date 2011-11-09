@@ -497,10 +497,6 @@ public final class IGB extends Application
 		return null;
 	}
 
-	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
-		windowService.setTabStateAndMenu(igbTabPanel, tabState);
-	}
-
 	public Set<IGBTabPanel> getTabs() {
 		return windowService.getPlugins();
 	}

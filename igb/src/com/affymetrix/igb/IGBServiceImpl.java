@@ -44,7 +44,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
@@ -170,11 +169,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public Color getDefaultForegroundColor() {
 		return TrackStyle.getDefaultInstance().getForeground();
-	}
-
-	@Override
-	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
-		((IGB)IGB.getSingleton()).setTabStateAndMenu(igbTabPanel, tabState);
 	}
 
 	@Override

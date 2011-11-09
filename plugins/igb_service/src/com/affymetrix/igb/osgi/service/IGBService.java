@@ -81,13 +81,6 @@ public interface IGBService {
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();
-	/**
-	 * set the state of the given tab to the given state and update
-	 * the view menu to the new value
-	 * @param igbTabPanel the tab to change
-	 * @param tabState the new state
-	 */
-	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState);
 	// for RestrictionSites/SearchView
 	/**
 	 * get a count of the number of hits that match the specified regular

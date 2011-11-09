@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
  */
 public abstract class PrefsLoader {
 
-	private static final int CURRENT_PREF_VERSION = 2;
+	private static final int CURRENT_PREF_VERSION = 3;
 	private static boolean prefsLoaded = false;
 	private static final String user_dir = System.getProperty("user.dir");
 	private static final String user_home = System.getProperty("user.home");
@@ -66,7 +66,6 @@ public abstract class PrefsLoader {
 
 		LoadDefaultPrefsFromJar(prefsMode);
 		LoadDefaultAPIPrefsFromJar(prefsMode);
-		LoadDefaultMenuPrefsFromJar(prefsMode);
 		LoadWebPrefs(def_prefs_url, prefsMode);
 		LoadFileOrURLPrefs(prefs_list, prefsMode);
 		ServerList.getServerInstance().loadServerPrefs();
@@ -98,7 +97,7 @@ public abstract class PrefsLoader {
 	private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName, String prefsMode) {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
-			if ((PreferenceUtils.getTopNode()).nodeExists(aNodeName)) {
+			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName)) {
 				return;
 			}
 		} catch (BackingStoreException ex) {
@@ -118,10 +117,6 @@ public abstract class PrefsLoader {
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
-	}
-
-	private static void LoadDefaultMenuPrefsFromJar(String prefsMode) {
-		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_MENU_RESOURCE, "main_menu", prefsMode);
 	}
 
 	private static void LoadDefaultAPIPrefsFromJar(String prefsMode) {
@@ -230,6 +225,7 @@ public abstract class PrefsLoader {
 	 * Checks the version of the preferences file.  This function is also
 	 * responsible for updating older preference files to the current version.
 	 */
+	public static final String V3_PREFS_MENU_RESOURCE = "/igb_v3_menu_prefs.xml";
 	@SuppressWarnings("fallthrough")
 	private static void checkPrefsVersion() {
 		int version = PreferenceUtils.getTopNode().getInt("version", 0);
@@ -245,11 +241,14 @@ public abstract class PrefsLoader {
 				ServerList.getServerInstance().updateServerURLsInPrefs();
 
 				/* continue */
+			case 2:
+				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 2 to version 3");
 
+				LoadDefaultExtraPrefsFromJar(V3_PREFS_MENU_RESOURCE, null, null);
 				/* add future version checks here */
 
 				/* this always should occur in version n-1 */
-				version = 2; /* change this number to current prefs version */
+				version = CURRENT_PREF_VERSION; /* change this number to current prefs version */
 				PreferenceUtils.getTopNode().putInt("version", version);
 				break;
 			default:

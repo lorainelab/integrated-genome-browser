@@ -55,8 +55,7 @@ import com.affymetrix.common.CommonUtils;
  */
 public abstract class PreferenceUtils {
 
-	public static final String DEFAULT_PREFS_MODE = "igb";
-	public static final String SLASH_STANDIN = "%";
+	public static final String PREFS_MAIN = "/com/affymetrix";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
 	public static final String CONFIRM_BEFORE_DELETE = "Confirm before delete";
@@ -67,10 +66,11 @@ public abstract class PreferenceUtils {
 	public static final boolean default_auto_load = true;
 	public static final boolean default_confirm_before_load = true;
 
-	static String prefs_mode = DEFAULT_PREFS_MODE;
-	static JFileChooser static_chooser = null;
-	static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
-	static String app_dir = null;
+	private static final String DEFAULT_PREFS_MODE = "igb";
+	private static final String SLASH_STANDIN = "%";
+	private static String prefs_mode = DEFAULT_PREFS_MODE;
+	private static JFileChooser static_chooser = null;
+	private static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
 
 	/**
 	 * Returns the top preferences node for the "com/affymetrix/igb" package.
@@ -83,7 +83,7 @@ public abstract class PreferenceUtils {
 	 * @return
 	 */
 	public static Preferences getTopNode() {
-		return Preferences.userRoot().node("/com/affymetrix/" + prefs_mode);
+		return Preferences.userRoot().node(PREFS_MAIN + "/" + prefs_mode);
 	}
 
 	public static Preferences getKeystrokesNode() {
@@ -328,6 +328,30 @@ public abstract class PreferenceUtils {
 	 */
 	public static void clearPreferences() throws BackingStoreException {
 		getTopNode().removeNode();
+	}
+
+	/**
+	 * clear all preferences for all preference modes.
+	 * @throws BackingStoreException
+	 */
+	public static void clearAllPreferences() throws BackingStoreException {
+		Preferences.userRoot().node(PREFS_MAIN).removeNode();
+	}
+
+	/**
+	 * print preferences in xml format
+	 * @throws BackingStoreException
+	 */
+	public static void printPreferences() throws BackingStoreException, IOException {
+		getTopNode().exportSubtree(System.out);
+	}
+
+	/**
+	 * print all preferences for all preference modes in xml format.
+	 * @throws BackingStoreException
+	 */
+	public static void printAllPreferences() throws BackingStoreException, IOException {
+		Preferences.userRoot().node(PREFS_MAIN).exportSubtree(System.out);
 	}
 
 	public static Collection<String> getKeystrokesNodeNames() {

@@ -1,5 +1,8 @@
 package com.affymetrix.igb;
 
+import static com.affymetrix.igb.IGBConstants.APP_NAME;
+import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
+
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
@@ -48,6 +51,24 @@ public class Activator implements BundleActivator {
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
         	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+    		if (CommonUtils.getInstance().getArg("-h", args) != null ||
+    			CommonUtils.getInstance().getArg("-help", args) != null) { // display all command options
+    			System.out.println(APP_NAME + " " + APP_VERSION_FULL);
+				System.out.println("Options:");
+				System.out.println("-offline - set the URL caching to offline");
+				System.out.println("-scriptfile - load a script file");
+				System.out.println("-convert - convert the fasta file to bnib");
+				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
+				System.out.println("-clrprf - clear the preferences");
+				System.out.println("-clrallprf - clear all the preferences for all preferences modes");
+				System.out.println("-exit - exit the program after completing above functions");
+				System.out.println("Advanced options:");
+				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
+				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
+				System.out.println("-pntprf - print the preferences in xml format");
+				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
+				System.exit(0);
+    		}
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
     		if (prefsMode != null) {
     			PreferenceUtils.setPrefsMode(prefsMode);
@@ -61,6 +82,17 @@ public class Activator implements BundleActivator {
 				PreferenceUtils.clearPreferences();
 				XmlStylesheetParser.removeUserStylesheetFile();
 				System.out.println("preferences cleared");
+    		}
+    		if (CommonUtils.getInstance().getArg("-clrallprf", args) != null) {
+				PreferenceUtils.clearAllPreferences();
+				XmlStylesheetParser.removeUserStylesheetFile();
+				System.out.println("all preferences cleared");
+    		}
+    		if (CommonUtils.getInstance().getArg("-pntprf", args) != null) {
+				PreferenceUtils.printPreferences();
+    		}
+    		if (CommonUtils.getInstance().getArg("-pntallprf", args) != null) {
+				PreferenceUtils.printAllPreferences();
     		}
     		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
 				System.exit(0);

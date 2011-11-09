@@ -104,17 +104,16 @@ public final class BookmarksParser {
 			int ind_b = str_uc.indexOf('=', ind_a);
 			int ind_c = str_uc.indexOf('"', ind_b);
 			int ind_d = str_uc.indexOf('"', ind_c + 1);
-			if (ind_c > -1 && ind_d > ind_c) {
+			if (ind_a > -1 && ind_d > ind_c) {
 				url = str.substring(ind_c + 1, ind_d);
 			}
 
-			int ind_a1 = str_uc.indexOf("COMMENT");
-			int ind_b1 = str_uc.indexOf('=', ind_a1);
-			int ind_c1 = str_uc.indexOf('"', ind_b1);
-			int ind_d1 = str_uc.indexOf('"', ind_c1 + 1);
-			if (ind_c1 > -1 && ind_d1 > ind_c1) {
-				comment = formatComment(str.substring(ind_c1 + 1, ind_d1));
-
+			ind_a = str_uc.indexOf("COMMENT");
+			ind_b = str_uc.indexOf('=', ind_a);
+			ind_c = str_uc.indexOf('"', ind_b);
+			ind_d = str_uc.indexOf('"', ind_c + 1);
+			if (ind_a > -1 && ind_d > ind_c) {
+				comment = formatComment(str.substring(ind_c + 1, ind_d));
 			}
 
 			// Now get the Name
@@ -122,6 +121,11 @@ public final class BookmarksParser {
 			int ind2 = str_uc.indexOf("</A", ind1);
 			if (ind1 > -1 && ind2 > ind1) {
 				name = str.substring(ind1, ind2);
+			}
+			
+			if(ind_a == -1)
+			{
+				comment = name; //Old bookmark format doesn't include comment
 			}
 		}
 

@@ -24,7 +24,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="selectTrackDefaultPanel" alignment="0" pref="499" max="32767" attributes="2"/>
+                  <Component id="selectTrackDefaultPanel" alignment="0" pref="500" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="propertiesPanel" min="-2" pref="372" max="-2" attributes="1"/>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -42,7 +42,7 @@
               <Component id="selectTrackDefaultPanel" pref="279" max="32767" attributes="1"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="propertiesPanel" min="-2" pref="183" max="-2" attributes="0"/>
+                  <Component id="propertiesPanel" min="-2" pref="185" max="-2" attributes="0"/>
                   <Component id="showStrandPanel" min="-2" pref="104" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -199,7 +199,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="447" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="448" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="addTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -312,7 +312,7 @@
                               <Component id="labelFieldComboBox" linkSize="2" alignment="0" min="-2" pref="87" max="-2" attributes="1"/>
                               <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="1">

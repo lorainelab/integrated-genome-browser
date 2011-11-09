@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -351,9 +352,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				buf.append(",").append(String.valueOf(i - row));
 			}
 		}
-		
+
 		buf.append(":");
-		
+
 		for (int i = 0; i < rowCount; i++) {
 			TreePath path = tree.getPathForRow(i);
 			if (!tree.isExpanded(path)) {
@@ -366,15 +367,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	public void restoreState(String state) {
 		int colon = state.indexOf(":");
 		String expand = state.substring(0, colon);
-		String collapse = state.substring(colon+1,state.length());
-		
+		String collapse = state.substring(colon + 1, state.length());
+
 		// Collapse
 		StringTokenizer stok = new StringTokenizer(collapse, ",");
 		while (stok.hasMoreTokens()) {
 			int token = Integer.parseInt(stok.nextToken());
 			tree.collapseRow(token);
 		}
-		
+
 		// Expand
 		stok = new StringTokenizer(expand, ",");
 		while (stok.hasMoreTokens()) {
@@ -382,8 +383,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			tree.expandRow(token);
 		}
 	}
-	
-	
+
 	private class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -534,6 +534,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		private static final long serialVersionUID = 1L;
 		private static final Insets insets = new Insets(0, 0, 0, 0);
 		private final JRPCheckBox leafCheckBox = new JRPCheckBox("FeatureTreeView_FeatureTreeCellRenderer") {
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -613,11 +614,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			leafCheckBox.setId("FeatureTreeView_" + featureText.replaceAll(" ", "_"));
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
-				java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
-				if (imgURL != null) {
-					ImageIcon infoIcon = new ImageIcon(imgURL);
-					featureText += " <img src='" + infoIcon + "' width='10' height='10'/>";
-				}
+				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/help.png");
+				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
 			leafCheckBox.setText(featureText);
 			leafCheckBox.setToolTipText(gFeature.description());
@@ -653,18 +651,24 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+
 		private static final long serialVersionUID = 1L;
+
 		public class FeatureLoadAction extends GenericAction {
+
 			private static final long serialVersionUID = 1L;
 			private final JRPCheckBox checkbox;
+
 			private FeatureLoadAction(JRPCheckBox checkbox) {
 				super();
 				this.checkbox = checkbox;
 			}
+
 			@Override
 			public String getText() {
 				return null;
 			}
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				super.actionPerformed(e);
@@ -688,6 +692,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					}
 				}
 			}
+
 			@Override
 			public Object getExtraInfo() {
 				String extraInfo = "";
@@ -763,7 +768,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			return editedNode.getUserObject();
 		}
 	}
-	
+
 	public JTree getTree() {
 		if (tree != null) {
 			return tree;
@@ -803,10 +808,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		public String getId() {
 			if (genericObject instanceof GenericServer) {
-				return ((GenericServer)genericObject).serverType + ":" + ((GenericServer)genericObject).serverName;
-			}
-			else if (genericObject instanceof GenericFeature) {
-				return ((GenericFeature)genericObject).featureName;
+				return ((GenericServer) genericObject).serverType + ":" + ((GenericServer) genericObject).serverName;
+			} else if (genericObject instanceof GenericFeature) {
+				return ((GenericFeature) genericObject).featureName;
 			}
 			return null;
 		}
@@ -848,6 +852,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	private class FeatureTree extends JRPTree implements DragSourceListener, DragGestureListener {
+
 		private static final long serialVersionUID = 1L;
 		private final DragSource source;
 
@@ -920,17 +925,17 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	public GenericFeature isLoaded(URI uri) {
 		List<GenericFeature> gFeatureList = GeneralLoadView.getLoadView().getLoadModeDataTableModel().features;
-		
+
 		if (gFeatureList == null) {
 			return null;
 		}
-		
+
 		for (GenericFeature gFeature : gFeatureList) {
 			if (gFeature.getURI().equals(uri)) {
 				return gFeature;
 			}
 		}
-		
+
 		return null;
 	}
 

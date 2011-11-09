@@ -48,7 +48,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         JLabel iconLabel;
         BufferedImage image = null;
         try {
-            image = ImageIO.read(this.getClass().getResource("info_icon.gif"));
+            image = ImageIO.read(this.getClass().getResource("help.png"));
             ImageIcon infoIcon = new ImageIcon(image);
             iconLabel = new JLabel(infoIcon);
         } catch (IOException e) {
@@ -72,7 +72,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         };
         JLabel iconLabel2;
         try {
-            image = ImageIO.read(this.getClass().getResource("info_icon.gif"));
+            image = ImageIO.read(this.getClass().getResource("help.png"));
             ImageIcon infoIcon = new ImageIcon(image);
             iconLabel2 = new JLabel(infoIcon);
         } catch (IOException e) {
@@ -105,10 +105,10 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         Box box0 = new Box(BoxLayout.X_AXIS);
         box0.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
-        //java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
+        //java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("help.png");
         BufferedImage image = null;
         try {
-            image = ImageIO.read(this.getClass().getResource("info_icon.gif"));
+            image = ImageIO.read(this.getClass().getResource("help.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -157,7 +157,7 @@ public class TierPrefsView implements ListSelectionListener {
 
 		applyToAllTip = new javax.swing.JLabel();
 		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
-		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
+		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/help.png"));
 
 		// Add a "refresh map" button, if there is an instance of IGB
 		if (smv != null) {

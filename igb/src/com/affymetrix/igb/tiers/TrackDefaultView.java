@@ -244,7 +244,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		collapsedCheckBox.setText("Collapsed");
 
 		labelFieldTip.setToolTipText("Type or choose label field.");
-		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
+		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/help.png"));
 		labelFieldTip.setText(" ");
 	}
 

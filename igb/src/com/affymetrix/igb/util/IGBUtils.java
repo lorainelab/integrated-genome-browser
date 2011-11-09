@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 public class IGBUtils {
 
 	public static JPanel setInfoLabel(JComponent component, String tooltip){
-		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("images/info_icon.gif"));
+		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("images/help.png"));
 		infolabel.setToolTipText(tooltip);
 		
 		JPanel pane = new JPanel();

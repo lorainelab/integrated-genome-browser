@@ -64,7 +64,6 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.shared.TransformTierGlyph;

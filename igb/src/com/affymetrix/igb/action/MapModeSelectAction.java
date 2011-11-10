@@ -31,7 +31,7 @@ public class MapModeSelectAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "images/arrow.gif";
+		return "images/arrow.png";
 	}
 
 	@Override

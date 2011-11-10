@@ -95,12 +95,12 @@ final class LinkControl implements ContextualPopupListener {
 				}
 
 				JMenuItem mi = makeMenuItem(name, url);
-				mi.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
+				mi.setIcon(MenuUtil.getIcon("images/search.png"));
 				popup.add(mi);
 			}
 		} else {
 			JMenu linkMenu = new JMenu("Get more info");
-			linkMenu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
+			linkMenu.setIcon(MenuUtil.getIcon("images/search.png"));
 			popup.add(linkMenu);
 
 			for (Map.Entry<String, String> entry : urls.entrySet()) {

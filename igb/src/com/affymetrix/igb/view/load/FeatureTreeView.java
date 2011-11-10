@@ -614,7 +614,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			leafCheckBox.setId("FeatureTreeView_" + featureText.replaceAll(" ", "_"));
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
-				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/help.png");
+				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
 				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
 			leafCheckBox.setText(featureText);

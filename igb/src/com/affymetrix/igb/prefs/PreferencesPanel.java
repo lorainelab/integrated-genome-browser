@@ -170,10 +170,10 @@ public final class PreferencesPanel extends JPanel {
         PreferenceUtils.setWindowSize(frame, pos);
       }
 
-		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
-		if (icon != null) {
-			frame.setIconImage(icon.getImage());
-		}
+//		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
+//		if (icon != null) {
+//			frame.setIconImage(icon.getImage());
+//		}
     }    
 
 	singleton.tpvGUI.refresh();	// update component list
@@ -315,7 +315,7 @@ public final class PreferencesPanel extends JPanel {
 			return "Export Preferences ...";
 		}
 		public String getIconPath() {
-			return "toolbarButtonGraphics/general/Export16.gif";
+			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_E; }
 	  };
@@ -356,7 +356,7 @@ public final class PreferencesPanel extends JPanel {
 			return "Import Preferences ...";
 		}
 		public String getIconPath() {
-			return "toolbarButtonGraphics/general/Import16.gif";
+			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_I; }
       };
@@ -379,7 +379,7 @@ public final class PreferencesPanel extends JPanel {
 			return "General Help";
 		}
 		public String getIconPath() {
-			return "toolbarButtonGraphics/general/Help16.gif";
+			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_G; }
       };
@@ -402,7 +402,7 @@ public final class PreferencesPanel extends JPanel {
 			return BUNDLE.getString("HelpForCurrentTab");
 		}
 		public String getIconPath() {
-			return "toolbarButtonGraphics/general/ContextualHelp16.gif";
+			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_C; }
       };

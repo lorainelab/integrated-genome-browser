@@ -41,11 +41,11 @@ public final class DataManagementTable {
 
 	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
-	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("toolbarButtonGraphics/general/Refresh16.gif");
+	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
-	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.gif");
+	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.png");
 	static final int INFO_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int REFRESH_FEATURE_COLUMN = 2;

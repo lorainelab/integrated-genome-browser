@@ -60,7 +60,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			text = new JLabel(bundle.getSymbolicName() + " ");
 			add(text);
 			if (bundle.getHeaders().get(Constants.BUNDLE_DOCURL) != null) {
-				icon = new JLabel(pluginsHandler.getIcon("help.png"));
+				icon = new JLabel(pluginsHandler.getIcon("info.png"));
 				add(icon);
 			}
 			else {

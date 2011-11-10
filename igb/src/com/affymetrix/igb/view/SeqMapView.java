@@ -369,7 +369,7 @@ public class SeqMapView extends JPanel
 		this.setLayout(new BorderLayout());
 
 		xzoombox = Box.createHorizontalBox();
-		ImageIcon searchIcon = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
+		ImageIcon searchIcon = MenuUtil.getIcon("images/search.png");
 		JLabel searchLabel = new JLabel(searchIcon);
 		xzoombox.add(searchLabel);
 
@@ -436,7 +436,7 @@ public class SeqMapView extends JPanel
 	protected void addRefreshButton(String id) {
 		JRPButton refresh_button = new JRPButton(id + "_refresh_button", refreshDataAction);
 //		refresh_button.setText("");
-		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+		refresh_button.setIcon(MenuUtil.getIcon("images/refresh16.png"));
 		xzoombox.add(refresh_button);
 	}
 

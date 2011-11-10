@@ -43,6 +43,7 @@ public abstract class RefreshAFeatureAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Refresh16.gif";
+		//return "images/refresh16.png";
+		return null;
 	}
 }

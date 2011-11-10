@@ -122,6 +122,6 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/development/WebComponent16.gif";
+		return null;
 	}
 }

@@ -41,9 +41,7 @@ class Actions {
 	static AbstractAction getLoadAction(){
 		 AbstractAction load_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("openFile")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")) {
-
+					BUNDLE.getString("openFile"))){
             public void actionPerformed(ActionEvent e) {
                     ProtAnnotMain.getInstance().doLoadFile();
             }
@@ -56,8 +54,7 @@ class Actions {
 	static AbstractAction getAddServerAction(){
 		AbstractAction add_server = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("addServer")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Add16.gif")){
+					BUNDLE.getString("addServer"))){
 			public void actionPerformed(ActionEvent e){
 				ProtAnnotMain.getInstance().addServer();
 			}
@@ -70,9 +67,7 @@ class Actions {
 	static AbstractAction getLoadFromServerAction() {
 		final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
 				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("serverLoad")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/History16.gif")) {
-
+				BUNDLE.getString("serverLoad"))){
 			public void actionPerformed(ActionEvent e) {
 				ProtAnnotMain.getInstance().loadFromServer();
 			}
@@ -86,9 +81,7 @@ class Actions {
 	static AbstractAction getPrintAction(){
 		AbstractAction print_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("print")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif")){
-
+					BUNDLE.getString("print"))){
             public void actionPerformed(ActionEvent e) {
                 ProtAnnotMain.getInstance().print();
             }
@@ -101,9 +94,7 @@ class Actions {
 	static AbstractAction getExportAction(){
 		AbstractAction export_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("export")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif")){
-
+					BUNDLE.getString("export"))){
             public void actionPerformed(ActionEvent e) {
                 ProtAnnotMain.getInstance().export();
             }
@@ -116,9 +107,7 @@ class Actions {
 	static AbstractAction getPreferencesAction(){
 		AbstractAction preference_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("preferences")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif")){
-
+					BUNDLE.getString("preferences"))){
             public void actionPerformed(ActionEvent e) {
                 ProtAnnotMain.getInstance().colorChooser();
             }
@@ -131,9 +120,7 @@ class Actions {
 	static AbstractAction getExitAction(){
 		AbstractAction quit_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("exit")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Stop16.gif")){
-
+					BUNDLE.getString("exit"))){
             public void actionPerformed(ActionEvent e) {
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
 				new WindowEvent(ProtAnnotMain.getInstance().getFrame(),
@@ -147,9 +134,7 @@ class Actions {
 
 	static AbstractAction getCopyAction(){
 		final AbstractAction copy_action = new AbstractAction(
-					BUNDLE.getString("copy"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif")){
-
+					BUNDLE.getString("copy")){
             public void actionPerformed(ActionEvent e) {
 				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
 				Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -187,7 +172,7 @@ class Actions {
 		final StringBuilder url = new StringBuilder();
 
 		final AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif")){
+				MenuUtil.getIcon("images/search.png")){
 
 			public void actionPerformed(ActionEvent e) {
 				if (url.length() > 0) {
@@ -231,8 +216,7 @@ class Actions {
 	*/
 	static AbstractAction getZoomToFeatureAction(){
 
-		final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif")) {
+		final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature")){
 
 			public void actionPerformed(ActionEvent e) {
 				ProtAnnotMain.getInstance().getGenomeView().zoomToSelection();
@@ -321,9 +305,8 @@ class Actions {
 					BUNDLE.getString("menuItemHasDialog"),
 					MessageFormat.format(
 						BUNDLE.getString("about"),
-						APP_NAME)),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif")){
-
+						APP_NAME))){
+							
             public void actionPerformed(ActionEvent e) {
                JPanel message_pane = new JPanel();
 				message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
@@ -385,9 +368,8 @@ class Actions {
 	static AbstractAction getShowConsoleAction(){
 		AbstractAction show_console_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("showConsole")),
-				MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif")){
-
+					BUNDLE.getString("showConsole"))){
+						
             public void actionPerformed(ActionEvent e) {
 				ConsoleView.showConsole(APP_NAME);
             }

@@ -32,6 +32,6 @@ public class FeatureInfoAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Information16.gif";
+		return null;
 	}
 }

@@ -362,7 +362,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				@Override
 				public String getIconPath() {
-					return "images/properties16.png";
+				//	return "images/properties16.png";
+					return null;
 				}
 
 				@Override
@@ -508,7 +509,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Refresh16.gif";
+				return "images/refresh16.png";
 			}
 
 			@Override
@@ -660,7 +661,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			@Override
 			public String getIconPath() {
-				return "images/removeBookmark.png";
+				//return "images/removeBookmark.png";
+				return null;
 			}
 
 			@Override

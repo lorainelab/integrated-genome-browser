@@ -25,6 +25,6 @@ public class TutorialCancelAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Stop16.gif";
+		return "images/stop.png";
 	}
 }

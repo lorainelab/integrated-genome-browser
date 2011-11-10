@@ -13,7 +13,7 @@ import com.affymetrix.igb.util.ThreadHandler;
 public final class StatusBar extends JPanel{
 	private static final long serialVersionUID = 1l;
 	
-	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/x_icon.gif");
+	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;

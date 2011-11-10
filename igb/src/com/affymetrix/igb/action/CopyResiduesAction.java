@@ -41,7 +41,7 @@ public abstract class CopyResiduesAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Copy16.gif";
+		return null;
 	}
 
 	@Override

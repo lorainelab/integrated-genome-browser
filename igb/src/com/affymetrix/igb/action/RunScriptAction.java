@@ -121,7 +121,7 @@ public final class RunScriptAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
+		return null;
 	}
 
 	@Override

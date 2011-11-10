@@ -151,8 +151,8 @@ public final class ConsoleView {
   private static JFrame createFrame(final String TITLE) {
     final JFrame frame = new JFrame(TITLE);
 
-    ImageIcon icon = getIcon("toolbarButtonGraphics/development/Host16.gif");
-    if (icon != null) { frame.setIconImage(icon.getImage()); }
+  //  ImageIcon icon = getIcon("toolbarButtonGraphics/development/Host16.gif");
+  //  if (icon != null) { frame.setIconImage(icon.getImage()); }
 
     frame.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {

@@ -148,7 +148,7 @@ public class AboutIGBAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/About16.gif";
+		return null;
 	}
 
 	@Override

@@ -101,6 +101,6 @@ public final class LoadURLAction extends OpenURIAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
+		return null;
 	}
 }

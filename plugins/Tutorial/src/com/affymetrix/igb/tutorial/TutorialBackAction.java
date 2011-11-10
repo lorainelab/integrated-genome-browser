@@ -25,6 +25,6 @@ public class TutorialBackAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/navigation/Back16.gif";
+		return "images/left.png";
 	}
 }

@@ -224,7 +224,7 @@ public final class WebLinksView extends JPanel {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Import16.gif";
+				return null;
 			}
 
 			@Override
@@ -258,7 +258,7 @@ public final class WebLinksView extends JPanel {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Export16.gif";
+				return null;
 			}
 
 			@Override
@@ -294,7 +294,7 @@ public final class WebLinksView extends JPanel {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Delete16.gif";
+				return null;
 			}
 
 			@Override
@@ -347,7 +347,7 @@ public final class WebLinksView extends JPanel {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/development/WebComponentAdd16.gif";
+				return null;
 			}
 
 			@Override
@@ -400,7 +400,7 @@ public final class WebLinksView extends JPanel {
 
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/development/WebComponent16.gif";
+				return null;
 			}
 
 			@Override
@@ -494,11 +494,11 @@ public final class WebLinksView extends JPanel {
 		if (static_frame == null) {
 			static_frame = PreferenceUtils.createFrame("Web Links",
 					getManager());
-			ImageIcon icon = MenuUtil
-					.getIcon("toolbarButtonGraphics/general/Search16.gif");
-			if (icon != null) {
-				static_frame.setIconImage(icon.getImage());
-			}
+//			ImageIcon icon = MenuUtil
+//					.getIcon("images/search.png");
+//			if (icon != null) {
+//				static_frame.setIconImage(icon.getImage());
+//			}
 		}
 		DisplayUtils.bringFrameToFront(static_frame);
 		return static_frame;

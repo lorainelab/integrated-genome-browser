@@ -25,7 +25,8 @@ public class AddPositionAndDataBookmarkAction extends AddBookmarkAction {
 
 	@Override
 	public String getIconPath() {
-		return "images/addPositionDataBookmark16.png";
+		//return "images/addPositionDataBookmark16.png";
+		return null;
 	}
 
 	@Override

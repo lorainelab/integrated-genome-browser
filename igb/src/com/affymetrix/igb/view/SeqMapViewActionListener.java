@@ -61,7 +61,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/ZoomOut16.gif";
+				return null;
 			}
 		};
 		new GenericAction() {
@@ -76,7 +76,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/ZoomIn16.gif";
+				return null;
 			}
 		};
 		new GenericAction() {
@@ -91,7 +91,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/ZoomOut16.gif";
+				return null;
 			}
 		};
 		new GenericAction() {
@@ -106,7 +106,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/ZoomIn16.gif";
+				return null;
 			}
 		};
 		new GenericAction() {
@@ -122,7 +122,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/navigation/Home16.gif";
+				return null;
 			}
 			@Override
 			public String getTooltip() {
@@ -141,7 +141,7 @@ final class SeqMapViewActionListener implements ActionListener {
 			}
 			@Override
 			public String getIconPath() {
-				return "toolbarButtonGraphics/general/Zoom16.gif";
+				return null;
 			}
 		};
 	}

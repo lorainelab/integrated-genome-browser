@@ -32,7 +32,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
  * @author hiralv
  */
 public class ThreadHandler implements ActionListener, CThreadListener{
-	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/x_icon.gif");
+	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
 	private static ThreadHandler singleton;
 	private final Set<CThreadListener> listeners;

@@ -31,7 +31,7 @@ public class MapModeScrollAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "images/open_hand.gif";
+		return "images/open_hand.png";
 	}
 
 	@Override

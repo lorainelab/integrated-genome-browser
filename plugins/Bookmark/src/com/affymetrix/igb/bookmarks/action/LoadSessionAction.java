@@ -59,7 +59,7 @@ public class LoadSessionAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Import16.gif";
+		return null;
 	}
 
 	@Override

@@ -229,7 +229,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/media/Movie16.gif";
+		return null;
 	}
 
 	@Override

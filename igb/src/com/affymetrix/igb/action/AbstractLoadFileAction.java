@@ -118,7 +118,7 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
+		return null;
 	}
 
 	protected abstract void addSupportedFiles();

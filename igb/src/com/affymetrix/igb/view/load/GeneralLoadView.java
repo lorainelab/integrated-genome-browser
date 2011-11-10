@@ -124,7 +124,7 @@ public final class GeneralLoadView {
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
 		refresh_dataB.setFont(font);
-		refresh_dataB.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+		refresh_dataB.setIcon(MenuUtil.getIcon("images/refresh22.png"));
 		refresh_dataB.setText("Load Data");
 	}
 

@@ -66,7 +66,7 @@ public class SaveScriptAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Export16.gif";
+		return null;
 	}
 
 	@Override

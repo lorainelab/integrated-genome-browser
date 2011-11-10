@@ -116,6 +116,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentTextArea.setColumns(20);
         commentTextArea.setLineWrap(true);
         commentTextArea.setRows(5);
+        commentTextArea.setWrapStyleWord(true);
         commentTextArea.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 commentTextAreaFocusLost(evt);
@@ -156,7 +157,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                 .add(4, 4, 4)
                 .add(jLabel1)
                 .add(4, 4, 4)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
                 .add(0, 0, 0))
         );
 

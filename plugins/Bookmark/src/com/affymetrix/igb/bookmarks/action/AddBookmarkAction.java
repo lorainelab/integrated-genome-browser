@@ -91,6 +91,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 			nameField = new javax.swing.JTextField(bookmark.getName());
 			commentField = new javax.swing.JTextArea("", 5, 8);
 			commentField.setLineWrap(true);
+			commentField.setWrapStyleWord(true);
 			javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(commentField);
 			scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			Object[] msg = {"Name:", nameField, "Comment:", scrollpane};

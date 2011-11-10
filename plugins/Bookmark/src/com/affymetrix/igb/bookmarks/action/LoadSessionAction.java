@@ -35,7 +35,7 @@ public class LoadSessionAction extends GenericAction {
 				PreferenceUtils.importPreferences(f);
 				igbService.loadState();
 				String url = URLDecoder.decode(PreferenceUtils.getSessionPrefsNode().get("bookmark", ""), Bookmark.ENC);
-				if (url != null) {
+				if (url != null && url.trim().length() > 0) {
 			        BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
 				}
 				PreferenceUtils.getSessionPrefsNode().removeNode();

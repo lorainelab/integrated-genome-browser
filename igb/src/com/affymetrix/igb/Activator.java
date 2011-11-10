@@ -58,15 +58,15 @@ public class Activator implements BundleActivator {
 				System.out.println("-offline - set the URL caching to offline");
 				System.out.println("-scriptfile - load a script file");
 				System.out.println("-convert - convert the fasta file to bnib");
-				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
 				System.out.println("-clrprf - clear the preferences");
 				System.out.println("-exit - exit the program after completing above functions");
 				System.out.println("Advanced options:");
-				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
-				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
+				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
 				System.out.println("-clrallprf - clear all the preferences for all preferences modes");
 				System.out.println("-pntprf - print the preferences for this preferences mode in xml format");
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
+				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
+				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
 				System.exit(0);
     		}
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);

@@ -229,6 +229,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * this happens when there are not tabs in the tray
 	 */
 	private void hideTray() {
+		if (trayState == TrayState.HIDDEN) {
+			return;
+		}
 		if (trayState == TrayState.WINDOW) {
 			unWindow();
 		}
@@ -348,6 +351,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @param newState the new state for the tray
 	 */
 	public void invokeTrayState(TrayState newState) {
+		if (trayState == newState) {
+			return;
+		}
 		switch (newState) {
 		case HIDDEN:
 			hideTray();
@@ -482,10 +488,31 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 	}
 
+	private IGBTabPanel getTabPanel(String tabName) {
+		IGBTabPanel tabPanel = null;
+		for (IGBTabPanel loopPanel : getPlugins()) {
+			if (loopPanel.getName().equals(tabName)) {
+				tabPanel = loopPanel;
+				break;
+			}
+		}
+		return tabPanel;
+	}
+
 	@Override
 	public void restoreState() {
-		saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
-		invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(title)));
+		double dividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
+		if (dividerProportionalLocation >= 0) {
+			saveDividerProportionalLocation = dividerProportionalLocation;
+		}
+		String trayState = PreferenceUtils.getComponentState(title);
+		if (trayState != null) {
+			invokeTrayState(TrayState.valueOf(trayState));
+		}
+		String selectedTabPanelName = PreferenceUtils.getSelectedTab(title);
+		if (selectedTabPanelName != null) {
+			selectTab(getTabPanel(selectedTabPanelName));
+		}
 	}
 
 	@Override

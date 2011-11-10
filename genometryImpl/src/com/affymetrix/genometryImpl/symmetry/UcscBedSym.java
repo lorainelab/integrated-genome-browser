@@ -321,15 +321,16 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithPr
 							out.write(Integer.toString(blockMins[i]-txMin).getBytes());
 							out.write(',');
 						}
+						outputAdditional(out);
 					}
-						}
+				}
 			}
 		}
 		out.write('\n');
 
 	}
 
-
+	protected void outputAdditional(DataOutputStream out) throws IOException  {}
 }
 
 

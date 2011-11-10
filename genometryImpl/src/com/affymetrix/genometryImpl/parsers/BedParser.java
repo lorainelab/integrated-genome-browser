@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.Scored;
@@ -89,6 +90,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	}
 
 	private static final boolean DEBUG = false;
+	private static final Pattern tab_regex = Pattern.compile("\\t");
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern comma_regex = Pattern.compile(",");
 
@@ -145,6 +147,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		}
 		String line;
 		String type = default_type;
+		String bedType = null;
 		boolean use_item_rgb = false;
 
 		Thread thread = Thread.currentThread();
@@ -159,6 +162,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				continue;
 			}
 			else if (line.startsWith("browser")) {
@@ -168,16 +172,24 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				parseLine(line, seq_group, gmodel, type, use_item_rgb);
+				parseLine(line, seq_group, gmodel, type, use_item_rgb, bedType);
 			}
 		}
 	}
 
 
-	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb)
+	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, String bedType)
 			throws NumberFormatException, IOException {
-		String[] fields = line_regex.split(line);
+		boolean bedDetail = "bedDetail".equals(bedType);
+		String detailId = null;
+		String detailDescription = null;
+		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
 		int field_count = fields.length;
+		if (bedDetail) {
+			detailId = fields[field_count - 2];
+			detailDescription = fields[field_count - 1];
+			field_count -= 2;
+		}
 		if (field_count < 3) {
 			return;
 		}
@@ -299,7 +311,10 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 		}
 		SymWithProps bedline_sym = null;
-		bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+		bedline_sym = bedDetail ?
+			new UcscBedDetailSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailId, detailDescription)
+			:
+			new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
 		if (use_item_rgb && itemRgb != null) {
 			java.awt.Color c = null;
 			try {

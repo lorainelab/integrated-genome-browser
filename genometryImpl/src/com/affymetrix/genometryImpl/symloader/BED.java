@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.Scored;
@@ -40,6 +41,7 @@ public class BED extends SymLoader implements LineProcessor {
 	}
 	private static final boolean DEBUG = false;
 	private static final Pattern line_regex = Pattern.compile("\\s+");
+	private static final Pattern tab_regex = Pattern.compile("\\t");
 	private static final Pattern comma_regex = Pattern.compile(",");
 	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
 	private final Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<BioSeq, Map<String, SeqSymmetry>>();
@@ -199,6 +201,7 @@ public class BED extends SymLoader implements LineProcessor {
 		symlist.clear();
 		String line;
 		String type = default_type;
+		String bedType = null;
 		boolean use_item_rgb = false;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
@@ -215,6 +218,7 @@ public class BED extends SymLoader implements LineProcessor {
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				bedType = track_line_parser.getCurrentTrackHash().get("type");
 				continue;
 			} else if (firstChar == 'b' && line.startsWith("browser")) {
 				// currently take no action for browser lines
@@ -222,7 +226,7 @@ public class BED extends SymLoader implements LineProcessor {
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				if (!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted) {
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max, bedType) && isSorted) {
 					break;
 				}
 			}
@@ -259,9 +263,17 @@ public class BED extends SymLoader implements LineProcessor {
 		return symlist;
 	}
 
-	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum) {
-		String[] fields = line_regex.split(line);
+	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum, String bedType) {
+		boolean bedDetail = "bedDetail".equals(bedType);
+		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
+		String detailId = null;
+		String detailDescription = null;
 		int field_count = fields.length;
+		if (bedDetail) {
+			detailId = fields[field_count - 2];
+			detailDescription = fields[field_count - 1];
+			field_count -= 2;
+		}
 		if (field_count < 3) {
 			return true;
 		}
@@ -395,7 +407,10 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		}
 		SymWithProps bedline_sym = null;
-		bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+		bedline_sym = bedDetail ?
+				new UcscBedDetailSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailId, detailDescription)
+				:
+				new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
 		if (use_item_rgb && itemRgb != null) {
 			java.awt.Color c = null;
 			try {

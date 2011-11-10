@@ -26,6 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -340,6 +343,30 @@ public abstract class PreferenceUtils {
 			Preferences.importPreferences(fis);
 		} finally {
 			GeneralUtils.safeClose(fis);
+		}
+	}
+
+	/**
+	 * Imports and merges preferences from a file.
+	 * It is not possible to limit the effects of this action
+	 * to only preferences in the "com.affymetrix.igb" subtree.
+	 * Any preferences in the file will be read and merged into the
+	 * user's preferences.
+	 *
+	 * @param f
+	 * @throws IOException
+	 * @throws InvalidPreferencesFormatException
+	 * @see Preferences#importPreferences(InputStream)
+	 */
+	public static void importPreferences(URL url)
+			throws IOException, InvalidPreferencesFormatException {
+		InputStream is = null;
+		try {
+			URLConnection uc = url.openConnection();
+			is = uc.getInputStream();
+			Preferences.importPreferences(is);
+		} finally {
+			GeneralUtils.safeClose(is);
 		}
 	}
 

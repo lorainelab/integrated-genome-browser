@@ -35,6 +35,7 @@ import furbelow.AbstractComponentDecorator;
 public class TutorialManager implements GenericActionListener, GenericActionDoneCallback {
 
 	private final TutorialNavigator tutorialNavigator;
+	private final IGBService igbService;
 	private boolean tutorialDisplayed = false;
 	private TutorialStep[] tutorial = null;
 	private String waitFor = null;
@@ -62,6 +63,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		super();
 		addRecordPlayback(igbService);
 		this.tutorialNavigator = new TutorialNavigator(new TutorialBackAction(this), new TutorialNextAction(this), new TutorialCancelAction(this));
+		this.igbService = igbService;
 		windowService.setTopComponent1(tutorialNavigator);
 		tutorialNavigator.setVisible(false);
 		tutorialDisplayed = false;
@@ -305,5 +307,9 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	public void actionDone(GenericAction action) {
 		advanceStep();
 		action.removeDoneCallback(this);
+	}
+
+	public void loadState() {
+		igbService.loadState();
 	}
 }

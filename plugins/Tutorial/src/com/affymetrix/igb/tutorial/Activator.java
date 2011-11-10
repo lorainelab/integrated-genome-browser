@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
 				while (tutorialNames.hasMoreElements()) {
 					String name = (String)tutorialNames.nextElement();
 					String description = (String)tutorials.get(name);
-					RunTutorialAction rta = new RunTutorialAction(tutorialManager, name + " - " + description, tutorialUri + "/" + name + ".txt");
+					RunTutorialAction rta = new RunTutorialAction(tutorialManager, name + " - " + description, tutorialUri + "/" + name);
 					JMenuItem item = new JMenuItem(rta);
 					tutorialMenu.add(item);
 				}

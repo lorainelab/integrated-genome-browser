@@ -14,9 +14,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public class RunTutorialAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
+	private static final String TUTORIAL_EXT = "txt";
+	private static final String SESSION_EXT = "xml";
 	private final TutorialManager tutorialManager;
 	private String name;
 	private String uri;
@@ -37,8 +40,16 @@ public class RunTutorialAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
-			URL url = new URL(uri);
-			BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+			URL sessionUrl = new URL(uri + "." + SESSION_EXT);
+			PreferenceUtils.importPreferences(sessionUrl);
+			tutorialManager.loadState();
+		}
+		catch (Exception x) {
+			// OK if session not loaded
+		}
+		try {
+			URL tutorialUrl = new URL(uri + "." + TUTORIAL_EXT);
+			BufferedReader rdr = new BufferedReader(new InputStreamReader(tutorialUrl.openStream()));
 			if (rdr != null) {
 				TutorialStep[] tutorial = loadTutorial(rdr);
 				if (tutorial != null) {

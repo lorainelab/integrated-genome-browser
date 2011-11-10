@@ -97,5 +97,7 @@ Import-Package: affymetrix.calvin.data,
  org.w3c.dom,
  org.xml.sax,
  sun.reflect;resolution:=optional,
- org.jdesktop.layout
-
+ org.jdesktop.layout,
+ be.pwnt.jflow,
+ be.pwnt.jflow.event,
+ be.pwnt.jflow.shape

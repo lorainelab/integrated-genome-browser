@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.view.load.MainWorkspaceManager;
+import com.affymetrix.igb.view.load.WelcomePage;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import java.awt.Color;
 import java.awt.Image;
@@ -338,7 +340,10 @@ public final class IGB extends Application
 	public IGBTabPanel[] setWindowService(final IWindowService windowService) {
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
-		windowService.setSeqMapView(getMapView());
+		
+		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(getMapView() );
+		windowService.setSeqMapView( MainWorkspaceManager.getWorkspaceManager() );
+		
 		windowService.setStatusBar(status_bar);
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();

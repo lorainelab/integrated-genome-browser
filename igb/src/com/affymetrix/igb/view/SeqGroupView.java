@@ -41,6 +41,8 @@ import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.view.load.MainWorkspaceManager;
+import com.affymetrix.igb.view.load.WelcomePage;
 import com.affymetrix.igb.view.load.Welcome;
 import com.jidesoft.utils.SwingWorker;
 
@@ -896,7 +898,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCB.setEnabled(true);
 		speciesCB.addItemListener(this);
 		versionCB.addItemListener(this);
-		speciesCB.addItemListener(Welcome.getWelcome());
+		//speciesCB.addItemListener(Welcome.getWelcome());
+		speciesCB.addItemListener( MainWorkspaceManager.getWorkspaceManager());
 	}
 
 	public JRPTable getTable() {

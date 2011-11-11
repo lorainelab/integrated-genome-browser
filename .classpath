@@ -78,5 +78,6 @@
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="ext/felix.jar"/>
+	<classpathentry kind="lib" path="ext/be.pwnt.jflow_1.0.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

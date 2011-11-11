@@ -40,7 +40,6 @@ public final class WebLinksAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		//return "images/search.png";
 		return null;
 	}
 

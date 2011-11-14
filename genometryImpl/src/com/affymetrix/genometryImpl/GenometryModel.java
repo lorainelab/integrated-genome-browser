@@ -252,7 +252,7 @@ public final class GenometryModel {
 			if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
 				BioSeq seq = null;
 				if (! seqs_with_selections.isEmpty()) {
-					seq = (BioSeq) seqs_with_selections.get(0);
+					seq = seqs_with_selections.get(0);
 				}
 				setSelectedSeq(seq, src);
 			}

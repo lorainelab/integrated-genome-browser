@@ -590,7 +590,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
-
+		private static final long serialVersionUID = 1L;
 		private List<TrackStyle> tier_styles;
 		private AssociationElement element;
 		private Entry[] file2types;

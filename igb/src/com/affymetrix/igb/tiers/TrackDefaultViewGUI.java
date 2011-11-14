@@ -8,6 +8,7 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
  * @author lorainelab
  */
 public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapRefreshed {
+	private static final long serialVersionUID = 1L;
 
 	/** Creates new form FileTypeViewNew */
 	public TrackDefaultViewGUI() {

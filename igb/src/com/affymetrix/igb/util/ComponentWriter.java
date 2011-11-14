@@ -111,6 +111,7 @@ public final class ComponentWriter {
 	
 	
 	private static class Export extends ExportDialog{
+		private static final long serialVersionUID = 1L;
 		private static final String rootKey = ExportDialog.class.getName();
 		private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
 		private static final String prefix = "/export";

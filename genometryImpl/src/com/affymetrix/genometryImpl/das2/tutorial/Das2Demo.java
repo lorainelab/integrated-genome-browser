@@ -6,9 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
@@ -23,7 +21,7 @@ public class Das2Demo {
 
 	//server info
 	private String genoPubDas2UrlString = "http://bioserver.hci.utah.edu:8080/DAS2DB/genome";
-	private String classicDas2UrlString = "http://netaffxdas.affymetrix.com/das2/genome";
+//	private String classicDas2UrlString = "http://netaffxdas.affymetrix.com/das2/genome";
 	private String name = "UofUBioInfoCore";
 	private String userName = "guest";
 	private String password = "guest";	

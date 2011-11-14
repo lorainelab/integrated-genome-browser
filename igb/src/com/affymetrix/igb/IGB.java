@@ -13,7 +13,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.view.load.MainWorkspaceManager;
-import com.affymetrix.igb.view.load.WelcomePage;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import java.awt.Color;
 import java.awt.Image;

@@ -10,30 +10,17 @@
  */
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqGroupView;
-import java.awt.CardLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import be.pwnt.jflow.JFlowPanel;
-import be.pwnt.jflow.event.ShapeEvent;
-import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.common.CommonUtils;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import javax.swing.JOptionPane;
 
 /**
  * 
@@ -43,8 +30,7 @@ import javax.swing.JOptionPane;
  * @author jfvillal
  */
 public class WelcomePage extends javax.swing.JPanel {
-	
-	
+	private static final long serialVersionUID = 1L;
 	/** Creates new form MainWorkspaceManager2 */
 	public WelcomePage( JPanel cover_flow) {
 		initComponents();

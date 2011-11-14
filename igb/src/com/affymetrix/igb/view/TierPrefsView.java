@@ -669,8 +669,6 @@ public class TierPrefsView implements ListSelectionListener {
 		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			TrackStyle style;
-			style = tier_styles.get(row);
 			if (column == COL_TRACK_NAME) {
 				return false;
 			}

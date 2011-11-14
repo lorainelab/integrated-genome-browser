@@ -42,8 +42,6 @@ import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.load.MainWorkspaceManager;
-import com.affymetrix.igb.view.load.WelcomePage;
-import com.affymetrix.igb.view.load.Welcome;
 import com.jidesoft.utils.SwingWorker;
 
 import java.awt.Dimension;
@@ -81,7 +79,6 @@ import javax.swing.JComboBox;
 public class SeqGroupView implements ItemListener, ListSelectionListener,
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
-	private static final long serialVersionUID = 1L;
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 	private static final boolean DEBUG_EVENTS = false;
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};

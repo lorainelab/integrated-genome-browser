@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -59,7 +58,6 @@ import javax.swing.table.TableCellRenderer;
  */
 public final class GeneralLoadView {
 
-	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	public static int TAB_DATALOAD_PREFS = -1;

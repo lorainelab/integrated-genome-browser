@@ -26,7 +26,7 @@ import javax.swing.UIManager;
  * customize the paint method to allow hyper link styled text to be appended to end.
  */
 public class CustomTitleBorder extends AbstractBorder {
-
+	private static final long serialVersionUID = 1L;
 	protected String title;
 	protected String linkText;
 	protected Border border;
@@ -95,7 +95,6 @@ public class CustomTitleBorder extends AbstractBorder {
 		int ascent = fm.getAscent();
 		int diff;
 		int stringWidth = fm.stringWidth(getTitle() + linkText);
-		int titleWidth = fm.stringWidth(getTitle());
 		Insets insets;
 
 		if (border != null) {

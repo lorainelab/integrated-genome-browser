@@ -15,8 +15,6 @@ package com.affymetrix.igb.view;
 
 import java.awt.event.*;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 

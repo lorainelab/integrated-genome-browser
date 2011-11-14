@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
 
 /**
  * This class manages the cover flow visualization.  It has a card layout where
@@ -35,6 +34,7 @@ import javax.swing.JOptionPane;
  * @author jfvillal
  */
 public class MainWorkspaceManager extends JPanel implements ItemListener{
+	private static final long serialVersionUID = 1L;
 	public static final String WELCOME_PANE = "WelcomePane";
 	public static final String SEQ_MAP_PANE = "SeqMapPane";
 	private static final MainWorkspaceManager singleton = new MainWorkspaceManager();

@@ -56,7 +56,6 @@ import java.util.regex.Pattern;
  */
 public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
 
-	private static final long serialVersionUID = 1l;
 	private final NeoMap map;
 	private final SeqMapView gview;
 	public final JRPTextField range_box;

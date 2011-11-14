@@ -52,7 +52,6 @@ import javax.swing.event.MenuListener;
 
 public class SequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
 
-	private static final long serialVersionUID = 1L;
 	private SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private JFrame mapframe;
@@ -220,6 +219,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
  * working_list - this is a copy of bundle, reverse_bundle, or a reverse of either of them.
  * reverse_complement - i am creating reverse complement of the final working list to use for reverse complement
  */
+/*
 	private void createAllLists() {
 		Iterator<CreateValueSet> it = bundle.listIterator();
 		if (it.hasNext()) {
@@ -252,7 +252,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			Collections.reverse(reverse_complement);
 		}
 	}
-
+*/
 	public static class CreateValueSet implements Comparable<CreateValueSet>{
 		static final SeqSpanComparator spanCompare = new SeqSpanComparator();
 		public SeqSpan span;

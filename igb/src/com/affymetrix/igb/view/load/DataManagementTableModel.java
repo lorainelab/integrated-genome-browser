@@ -422,7 +422,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
 			List<TierGlyph> tiers = smv.getSeqMap().getTiers();
 			Iterator<TierGlyph> titer = tiers.iterator();
-			int i = 0;
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();

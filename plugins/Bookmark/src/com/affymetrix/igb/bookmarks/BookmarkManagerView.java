@@ -105,35 +105,31 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		if (tree_path == null) {
 			return false;
 		}
+
 		DefaultMutableTreeNode tree_node = (DefaultMutableTreeNode) tree_path.getLastPathComponent();
+
 		if (tree_node == null) {
 			return false;
 		}
 
-		// Highlight the drop location while we perform the drop
-		tree.setSelectionPath(tree_path);
-
-		DefaultMutableTreeNode parent = null;
+		DefaultMutableTreeNode parent;
 		int row = tree.getRowForPath(tree_path);
 		if (tree_node.getAllowsChildren() && dropInto(row)) {
 			parent = tree_node;
 		} else {
 			parent = (DefaultMutableTreeNode) tree_node.getParent();
 		}
-		int my_index = 0;
-		if (parent != null) {
-			my_index = parent.getIndex(tree_node);
-		} else if (tree_node.isRoot()) {
-			parent = tree_node;
-			my_index = -1;
-		}
+		
+		int index = parent.getChildCount();
 
 		// Copy or move each source object to the target
-		// if we count backwards, we can always add new nodes at (my_index + 1)
 		for (int i = nodes.length - 1; i >= 0; i--) {
 			DefaultMutableTreeNode node = nodes[i];
 			try {
-				((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, my_index + 1);
+				((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
+				TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
+				
+				tree.setSelectionPath(path);
 			} catch (IllegalStateException e) {
 				// Cancelled by user
 				return false;
@@ -430,7 +426,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		if (tree.getSelectionCount() > 0) {
-			if (tree.getSelectionRows()[0] == 0) {
+			if (tree.isRowSelected(0)) {
 				deleteBookmarkButton.setEnabled(false);
 			} else {
 				deleteBookmarkButton.setEnabled(true);
@@ -758,7 +754,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			into = true;
 		} else {
 			TreeNode node = (TreeNode) path.getLastPathComponent();
-			if (node.getAllowsChildren() && node.getChildCount() == 0) {
+			if (node.getAllowsChildren()) {
 				into = true;
 			}
 		}

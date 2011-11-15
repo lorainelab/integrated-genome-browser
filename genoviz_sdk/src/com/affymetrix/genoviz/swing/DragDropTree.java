@@ -22,9 +22,10 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	private DefaultMutableTreeNode oldNode;
 	private final boolean DEBUG = false;
 	private int margin = 12;
+
 	public DragDropTree() {
 		super();
-		
+
 		source = new DragSource();
 		this.setDropTarget(new DropTarget(this, this));
 		source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
@@ -61,7 +62,7 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	public void dropActionChanged(DragSourceDragEvent dsde) {
-		if(DEBUG){
+		if (DEBUG) {
 			System.out.println("Action: " + dsde.getDropAction());
 			System.out.println("Target Action: " + dsde.getTargetActions());
 			System.out.println("User Action: " + dsde.getUserAction());
@@ -69,10 +70,10 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {
-		if(DEBUG){
+		if (DEBUG) {
 			System.out.println("Drop Action: " + dsde.getDropAction());
 		}
-		
+
 		if (dsde.getDropSuccess() && (dsde.getDropAction() == DnDConstants.ACTION_MOVE)) {
 			((DefaultTreeModel) getModel()).removeNodeFromParent(oldNode);
 		}
@@ -82,7 +83,6 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	/*
 	 * Target Drag Event Handlers
 	 */
-
 	public void dragEnter(DropTargetDragEvent dtde) {
 		dtde.acceptDrag(dtde.getDropAction());
 	}
@@ -104,7 +104,6 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		TreePath parentpath = tree.getClosestPathForLocation(pt.x, pt.y);
 		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) parentpath.getLastPathComponent();
 
-
 		try {
 			Transferable tr = dtde.getTransferable();
 			DataFlavor[] flavors = tr.getTransferDataFlavors();
@@ -114,14 +113,17 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 					TreePath p = (TreePath) tr.getTransferData(flavors[i]);
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) p.getLastPathComponent();
 					DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-					if(parent.isLeaf()){
+					if (parent.isLeaf()) {
 						MutableTreeNode actualparent = (MutableTreeNode) parent.getParent();
 						int index = model.getIndexOfChild(actualparent, parent);
 						model.insertNodeInto(node, actualparent, index + 1);
-						dtde.dropComplete(true);
-						return;
+					} else {
+						model.insertNodeInto(node, parent, 0);
 					}
-					model.insertNodeInto(node, parent, 0);
+					
+					//Keep the selection after moving node
+					TreePath path = new TreePath(model.getPathToRoot(node));
+					tree.setSelectionPath(path);
 					dtde.dropComplete(true);
 					return;
 				}
@@ -134,22 +136,22 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	public void autoscroll(Point p) {
-      int realrow = getRowForLocation(p.x, p.y);
-      Rectangle outer = getBounds();
-      realrow = (p.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
-          : realrow < getRowCount() - 1 ? realrow + 1 : realrow);
-      scrollRowToVisible(realrow);
-    }
+		int realrow = getRowForLocation(p.x, p.y);
+		Rectangle outer = getBounds();
+		realrow = (p.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
+				: realrow < getRowCount() - 1 ? realrow + 1 : realrow);
+		scrollRowToVisible(realrow);
+	}
 
-    public Insets getAutoscrollInsets() {
-      Rectangle outer = getBounds();
-      Rectangle inner = getParent().getBounds();
-      return new Insets(inner.y - outer.y + margin, inner.x - outer.x
-          + margin, outer.height - inner.height - inner.y + outer.y
-          + margin, outer.width - inner.width - inner.x + outer.x
-          + margin);
-    }
-	
+	public Insets getAutoscrollInsets() {
+		Rectangle outer = getBounds();
+		Rectangle inner = getParent().getBounds();
+		return new Insets(inner.y - outer.y + margin, inner.x - outer.x
+				+ margin, outer.height - inner.height - inner.y + outer.y
+				+ margin, outer.width - inner.width - inner.x + outer.x
+				+ margin);
+	}
+
 	//TransferableTreeNode.java
 	//A Transferable TreePath to be used with Drag & Drop applications.
 	//
@@ -181,4 +183,3 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		}
 	}
 }
-

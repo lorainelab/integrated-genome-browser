@@ -74,7 +74,7 @@ public final class GeneralLoadView {
 	private static JRPButton partial_residuesB;
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
-	private static Font font = new Font ("SansSerif", Font.BOLD, 16);
+	private static Font font = new Font("SansSerif", Font.BOLD, 16);
 
 	public static void init(IGBService _igbService) {
 		singleton = new GeneralLoadView(_igbService);
@@ -162,7 +162,7 @@ public final class GeneralLoadView {
 			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 		}
 	}
-	 
+
 	/**
 	 * Handles clicking of partial residue, all residue, and refresh data buttons.
 	 * @param evt
@@ -313,7 +313,7 @@ public final class GeneralLoadView {
 		}
 
 		GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-		
+
 		return true;
 	}
 
@@ -379,12 +379,12 @@ public final class GeneralLoadView {
 						gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
 					}
 				};
-			
+
 				worker.execute();
 			}
 		}
 	}
-	
+
 	public void refreshTreeView() {
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
@@ -402,7 +402,7 @@ public final class GeneralLoadView {
 		}
 		feature_tree_view.initOrRefreshTree(features);
 	}
-	
+
 	public void refreshTreeViewAndRestore() {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
@@ -413,14 +413,14 @@ public final class GeneralLoadView {
 			}
 		});
 	}
-	
+
 	/**
 	 * Create the table with the list of features and their status.
 	 */
 	public List<GenericFeature> createFeaturesTable() {
 		String versionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-		
+
 		if (DEBUG_EVENTS) {
 			BioSeq curSeq = gmodel.getSelectedSeq();
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
@@ -444,13 +444,14 @@ public final class GeneralLoadView {
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(135);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(150);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(80);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(80);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(160);
+				//dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
+				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
 				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
@@ -488,7 +489,7 @@ public final class GeneralLoadView {
 		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
 		return visibleFeatures;
 	}
-	
+
 	/**
 	 * Check if it is necessary to disable buttons.
 	 * @return
@@ -564,31 +565,30 @@ public final class GeneralLoadView {
 
 	public void addFeature(final GenericFeature feature) {
 		feature.setVisible();
-		
+
 		List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.GENOME);
-		
-		if(!loadFeature(loadStrategies, feature, null)){
+
+		if (!loadFeature(loadStrategies, feature, null)) {
 			addFeatureTier(feature);
 		}
-		
+
 		createFeaturesTable();
 
 	}
-	
-	public void addFeatureTier(final GenericFeature feature){
-		ThreadUtils.runOnEventQueue(new Runnable(){
+
+	public void addFeatureTier(final GenericFeature feature) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer);
-			gviewer.getSeqMap().packTiers(true, true, false, false);
-			gviewer.getSeqMap().stretchToFit(false, true);
-			gviewer.getSeqMap().updateWidget();
+				gviewer.getSeqMap().packTiers(true, true, false, false);
+				gviewer.getSeqMap().stretchToFit(false, true);
+				gviewer.getSeqMap().updateWidget();
 			}
-			
 		});
 	}
-	
+
 	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
 		if (feature == null) {
 			return null;

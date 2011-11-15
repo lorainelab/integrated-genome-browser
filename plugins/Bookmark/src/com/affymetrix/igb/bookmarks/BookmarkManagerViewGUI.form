@@ -384,6 +384,7 @@
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="removeBookmarkActionButton.setBorder(null);"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.deleteBookmarkButton"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="importButton">

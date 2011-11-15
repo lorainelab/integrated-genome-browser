@@ -49,7 +49,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 
 	public void addBookmark(Bookmark bm) {
 		BookmarkList parent_list = BookmarkManagerView.getSingleton().thing.selected_bl;
-		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);// need changed
+		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
 
 		BookmarkList bl = new BookmarkList(bm);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;

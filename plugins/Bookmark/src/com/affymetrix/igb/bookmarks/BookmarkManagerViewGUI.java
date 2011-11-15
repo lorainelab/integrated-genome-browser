@@ -77,7 +77,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         jPanel3 = new javax.swing.JPanel();
         addFolderButton = bmv.addFolderButton;
         addBookmarkActionButton = bmv.addBookmarkButton;
-        removeBookmarkActionButton = new javax.swing.JButton();
+        removeBookmarkActionButton = bmv.deleteBookmarkButton;
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
         addSeparator = bmv.addSeparatorButton;

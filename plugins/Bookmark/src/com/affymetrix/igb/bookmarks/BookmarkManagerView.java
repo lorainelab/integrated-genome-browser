@@ -53,9 +53,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public javax.swing.JButton forwardButton = new javax.swing.JButton();
 	public javax.swing.JButton backwardButton = new javax.swing.JButton();
 	public javax.swing.JButton addBookmarkButton = new javax.swing.JButton();
-	public javax.swing.JButton addDataAndPositionBookmarkButton = new javax.swing.JButton();
 	public javax.swing.JButton addSeparatorButton = new javax.swing.JButton();
 	public javax.swing.JButton addFolderButton = new javax.swing.JButton();
+	public javax.swing.JButton deleteBookmarkButton = new javax.swing.JButton();
 	public List<TreePath> bookmark_history;
 	public int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
@@ -361,7 +361,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				@Override
 				public String getIconPath() {
-				//	return "images/properties16.png";
+					//	return "images/properties16.png";
 					return null;
 				}
 
@@ -428,12 +428,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		if (e.getSource() != tree) {
 			return;
 		}
-		int selections = tree.getSelectionCount();
-		delete_action.setEnabled(selections != 0);
-		addSeparatorButton.setEnabled(selections != 0);
-		addDataAndPositionBookmarkButton.setEnabled(selections != 0);
-		addBookmarkButton.setEnabled(selections != 0);
-		addFolderButton.setEnabled(selections != 0);
+
+		if (tree.getSelectionCount() > 0) {
+			if (tree.getSelectionRows()[0] == 0) {
+				deleteBookmarkButton.setEnabled(false);
+			} else {
+				deleteBookmarkButton.setEnabled(true);
+			}
+		}
 	}
 
 	private void setUpPopupMenu() {
@@ -489,6 +491,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		};
 		tree.addMouseListener(mouse_adapter);
 	}
+
 	/**
 	 *  Tries to import bookmarks into Unibrow.
 	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.

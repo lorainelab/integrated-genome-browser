@@ -54,7 +54,7 @@ public class AddSeparatorAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return "images/separator16.png";
+		return null;
 	}
 
 	@Override

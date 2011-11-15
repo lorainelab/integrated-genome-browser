@@ -23,7 +23,7 @@ public class AddFolderAction extends AddBookmarkAction {
 
 	@Override
 	public String getText() {
-		return BUNDLE.getString("addPosition&DataBookmark");
+		return BUNDLE.getString("addBookmarkFolder");
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class AddFolderAction extends AddBookmarkAction {
 
 	@Override
 	public String getIconPath() {
-		return "images/addFolder16.png";
+		return null;
 	}
 
 	@Override

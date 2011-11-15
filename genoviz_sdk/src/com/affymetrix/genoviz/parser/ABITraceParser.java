@@ -96,12 +96,12 @@ public class ABITraceParser implements ContentParser {
 		byte[] b = new byte[bufsize];
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int len = 0;
-		int totlen = 0;
+//		int totlen = 0;
 		while (true) {
 			len = theInput.read(b,0,bufsize);
 			if (len > 0) {
 				out.write(b, 0, len);
-				totlen += len;
+//				totlen += len;
 			}
 			else {
 				break;

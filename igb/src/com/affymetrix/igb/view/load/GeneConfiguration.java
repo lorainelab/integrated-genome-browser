@@ -30,6 +30,12 @@ import javax.imageio.ImageIO;
  * This configuration class can control multiple setting on the cover flow component
  * Refer to the parent class for more information.
  * 
+ * The class reads a resource file at $IGB_HOME/common/display_species.txt 
+ * to configure the data sets displayed on the welcome screen.<br>
+ * The file should be of the form<br>
+ * [image file][tab][Data set to load upon click][tab][Name to display on tag]
+ * An example is next:<br>
+ * a_lyrata.png	A_lyrata_Apr_2011	A. lyrata
  * 
  * @author jfvillal
  */

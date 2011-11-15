@@ -4,3 +4,4 @@ m_musculus.png	M_musculus_Jul_2007	M. Musculus
 a_thaliana.png	A_thaliana_Jun_2009	A. Thaliana
 d_melanogaster.png	D_melanogaster_Apr_2006	D. Melanogaster
 a_mellifera.png	A_mellifera_Jan_2005	A. Mellifera
+horse_pic_here	E_caballus_Sep_2007	E. Caballus

@@ -24,7 +24,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 
 import java.awt.Container;
-import java.awt.Image;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;

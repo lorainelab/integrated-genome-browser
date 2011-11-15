@@ -58,7 +58,7 @@ public class WelcomePage extends javax.swing.JPanel {
 		UIManager.put ("Button.select", Color.TRANSLUCENT ) ; 
 		try {
 			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/right.png")
+					CommonUtils.class.getClassLoader().getResource("images/wright.png")
 					);
 			RightSlide.setIcon( icon );
 			ImageIcon icon2 = createImageIcon(
@@ -87,7 +87,7 @@ public class WelcomePage extends javax.swing.JPanel {
 		
 		try {
 			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/left.png")
+					CommonUtils.class.getClassLoader().getResource("images/wleft.png")
 					);
 			LeftSlide.setIcon( icon);
 			

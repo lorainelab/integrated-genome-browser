@@ -327,26 +327,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
-					if (selected_bl == null || selected_bl.getUserObject() instanceof Separator) {
-						setEnabled(false);
-					} else {
-						ImageIcon icon = CommonUtils.getInstance().getIcon("images/properties16.png");
-						Image image = null;
-
-						if (icon == null) {
-							JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-							if (frame != null) {
-								image = frame.getIconImage();
-							}
-						} else {
-							image = icon.getImage();
-						}
-
-						if (image != null) {
-							bl_editor.setIconImage(image);
-						}
-
+					if (selected_bl != null || 
+							selected_bl.getUserObject() instanceof Bookmark) {
 						bl_editor.openDialog(selected_bl);
+					} else {
+						setEnabled(false);
 					}
 				}
 
@@ -357,7 +342,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				@Override
 				public String getIconPath() {
-					//	return "images/properties16.png";
 					return null;
 				}
 

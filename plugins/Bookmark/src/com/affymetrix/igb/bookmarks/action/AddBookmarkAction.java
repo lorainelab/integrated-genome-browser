@@ -8,6 +8,7 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
+import com.affymetrix.igb.bookmarks.Separator;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -52,6 +53,14 @@ public abstract class AddBookmarkAction extends GenericAction {
 		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
 
 		BookmarkList bl = new BookmarkList(bm);
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		addNode(node);
+	}
+	
+	public void addSeparator()
+	{
+		Separator s = new Separator();
+		BookmarkList bl = new BookmarkList(s);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
 		addNode(node);
 	}

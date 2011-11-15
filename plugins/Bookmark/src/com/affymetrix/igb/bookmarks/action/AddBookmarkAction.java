@@ -8,24 +8,26 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+/**
+ *
+ * @author Nick & David
+ */
 public abstract class AddBookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 
-	protected void bookmarkCurrentPosition(boolean include_sym_and_props) {
-		if (include_sym_and_props && !BookmarkController.hasSymmetriesOrGraphs()) {
+	protected void bookmarkCurrentPosition() {
+		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
 			return;
 		}
 		Bookmark bookmark = null;
 		try {
-			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, BookmarkActionManager.getInstance().getVisibleSpan());
+			bookmark = BookmarkController.getCurrentBookmark(false, BookmarkActionManager.getInstance().getVisibleSpan());
 		} catch (MalformedURLException m) {
 			ErrorHandler.errorPanel("Couldn't add bookmark", m);
 			return;
@@ -36,6 +38,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 		}
 
 		BookmarkEditor editor = new BookmarkEditor(bookmark);
+		editor.initDialog();
 	}
 
 	public void addBookmarkFolder() {
@@ -78,34 +81,40 @@ public abstract class AddBookmarkAction extends GenericAction {
 	class BookmarkEditor {
 
 		Bookmark bookmark;
-		javax.swing.JTextField nameField;
+		JTextField nameField;
 		JTextArea commentField;
-		
+		JRadioButton positionOnlyB;
+		JRadioButton positionDataB;
+		ButtonGroup group;
 
 		public BookmarkEditor(Bookmark b) {
 			bookmark = b;
-			init(); 
+			init();
 		}
 
 		void init() {
-			nameField = new javax.swing.JTextField(bookmark.getName());
-			commentField = new javax.swing.JTextArea("", 5, 8);
+			nameField = new JTextField(bookmark.getName());
+			commentField = new JTextArea("", 5, 8);
 			commentField.setLineWrap(true);
 			commentField.setWrapStyleWord(true);
-			javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(commentField);
-			scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			Object[] msg = {"Name:", nameField, "Comment:", scrollpane};
-			javax.swing.JOptionPane op = new javax.swing.JOptionPane(
-					msg,
-					javax.swing.JOptionPane.PLAIN_MESSAGE,
-					javax.swing.JOptionPane.CANCEL_OPTION,
-					null,
-					null);
+			positionOnlyB = new JRadioButton("Position Only", true);
+			positionDataB = new JRadioButton("Position and Data");
+			group = new ButtonGroup();
+			group.add(positionOnlyB);
+			group.add(positionDataB);
+		}
 
-			javax.swing.JDialog dialog = op.createDialog("Enter Bookmark Information...");
+		public void initDialog() {
+			JScrollPane scrollpane = new JScrollPane(commentField);
+			scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			Object[] msg = {"Name:", nameField, "Comment:", scrollpane, positionOnlyB, positionDataB};
+			JOptionPane op = new JOptionPane(msg, JOptionPane.PLAIN_MESSAGE,
+					JOptionPane.CANCEL_OPTION, null, null);
+
+			JDialog dialog = op.createDialog("Enter Bookmark Information...");
 			dialog.setVisible(true);
 			dialog.setPreferredSize(new java.awt.Dimension(250, 250));
-			dialog.setDefaultCloseOperation(javax.swing.JDialog.HIDE_ON_CLOSE);
+			dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 			dialog.setAlwaysOnTop(true);
 			dialog.setResizable(true);
 			dialog.pack();
@@ -117,10 +126,17 @@ public abstract class AddBookmarkAction extends GenericAction {
 			}
 
 			if (result == JOptionPane.OK_OPTION) {
-				String name;
-				String comment;
-				name = nameField.getText();
-				comment = commentField.getText();
+				if (positionDataB.isSelected()) {
+					try {
+						bookmark = BookmarkController.getCurrentBookmark(true, BookmarkActionManager.getInstance().getVisibleSpan());
+					} catch (MalformedURLException m) {
+						ErrorHandler.errorPanel("Couldn't add bookmark", m);
+						return;
+					}
+				}
+
+				String name = nameField.getText();
+				String comment = commentField.getText();
 
 				if (name.trim().length() == 0) {
 					name = bookmark.getName();
@@ -130,6 +146,7 @@ public abstract class AddBookmarkAction extends GenericAction {
 				bookmark.setComment(comment);
 				addBookmark(bookmark);
 			}
+
 		}
 	}
 }

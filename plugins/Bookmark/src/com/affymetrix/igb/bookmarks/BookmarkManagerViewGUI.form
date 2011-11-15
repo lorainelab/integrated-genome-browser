@@ -185,7 +185,7 @@
                   <Component id="jScrollPane1" alignment="1" pref="388" max="32767" attributes="1"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="135" max="32767" attributes="0"/>
+                      <EmptySpace pref="164" max="32767" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -302,10 +302,6 @@
                           </Group>
                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="addDataAndBookmarkAction" linkSize="14" pref="28" max="32767" attributes="1"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -316,8 +312,6 @@
                           <Component id="addSeparator" linkSize="18" min="-2" pref="25" max="-2" attributes="1"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Component id="addBookmarkActionButton" linkSize="18" min="-2" pref="24" max="-2" attributes="1"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="addDataAndBookmarkAction" linkSize="18" min="-2" pref="24" max="-2" attributes="1"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="removeBookmarkActionButton" linkSize="18" min="-2" pref="24" max="-2" attributes="1"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
@@ -355,7 +349,7 @@
                       <Connection code="CommonUtils.getInstance().getIcon(&quot;images/addBookmark.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="&quot;Add a New Position Bookmark&quot;" type="code"/>
+                      <Connection code="&quot;Add a new Bookmark&quot;" type="code"/>
                     </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -453,28 +447,6 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addSeparator.setBorder(null);"/>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addSeparatorButton"/>
-                  </AuxValues>
-                </Component>
-                <Component class="javax.swing.JButton" name="addDataAndBookmarkAction">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/addPositionDataBookmark.png&quot;)" type="code"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="&quot;Add a New Position and Data Bookmark&quot;" type="code"/>
-                    </Property>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
-                        <BevelBorder/>
-                      </Border>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataAndBookmarkActionActionPerformed"/>
-                  </Events>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addDataAndBookmarkAction.setBorder(null);"/>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addDataAndPositionBookmarkButton"/>
                   </AuxValues>
                 </Component>
               </SubComponents>

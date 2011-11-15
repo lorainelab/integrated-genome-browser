@@ -63,7 +63,6 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		igbService = _igbService;
 		bookmark_menu = bm_menu;
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddPositionBookmarkAction.getAction()));
-		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_data", AddPositionAndDataBookmarkAction.getAction()));
 		bm_menu.addSeparator();
 
 		main_bm_menu = bm_menu;

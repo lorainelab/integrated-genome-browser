@@ -2,7 +2,6 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.bookmarks.action.AddFolderAction;
-import com.affymetrix.igb.bookmarks.action.AddPositionAndDataBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
@@ -17,7 +16,7 @@ import javax.swing.undo.CannotUndoException;
 
 /**
  *
- * @author lorainelab
+ * @author Nick & David
  */
 public class BookmarkManagerViewGUI extends IGBTabPanel {
 
@@ -82,7 +81,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
         addSeparator = bmv.addSeparatorButton;
-        addDataAndBookmarkAction = bmv.addDataAndPositionBookmarkButton;
 
         jSplitPane1.setDividerLocation(390);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -225,7 +223,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         });
 
         addBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("images/addBookmark.png"));
-        addBookmarkActionButton.setToolTipText("Add a New Position Bookmark");
+        addBookmarkActionButton.setToolTipText("Add a new Bookmark");
         addBookmarkActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addBookmarkActionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,15 +268,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        addDataAndBookmarkAction.setIcon(CommonUtils.getInstance().getIcon("images/addPositionDataBookmark.png"));
-        addDataAndBookmarkAction.setToolTipText("Add a New Position and Data Bookmark");
-        addDataAndBookmarkAction.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        addDataAndBookmarkAction.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addDataAndBookmarkActionActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -296,12 +285,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                     .add(importButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .add(exportButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
                 .add(0, 0, 0))
-            .add(jPanel3Layout.createSequentialGroup()
-                .add(addDataAndBookmarkAction, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                .add(0, 0, 0))
         );
 
-        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addDataAndBookmarkAction, addFolderButton, addSeparator, exportButton, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, exportButton, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -311,8 +297,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                 .add(addSeparator, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(4, 4, 4)
                 .add(addBookmarkActionButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(addDataAndBookmarkAction, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(removeBookmarkActionButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(4, 4, 4)
@@ -321,7 +305,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                 .add(exportButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addDataAndBookmarkAction, addFolderButton, addSeparator, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         addFolderButton.setBorder(null);
         addBookmarkActionButton.setBorder(null);
@@ -329,7 +313,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         importButton.setBorder(null);
         exportButton.setBorder(null);
         addSeparator.setBorder(null);
-        addDataAndBookmarkAction.setBorder(null);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -347,7 +330,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 135, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 164, Short.MAX_VALUE)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -446,13 +429,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		bmv.thing.updateBookmarkData();
 	}//GEN-LAST:event_commentTextAreaFocusLost
 
-	private void addDataAndBookmarkActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataAndBookmarkActionActionPerformed
-		AddPositionAndDataBookmarkAction.getAction().actionPerformed(evt);
-	}//GEN-LAST:event_addDataAndBookmarkActionActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PropertiesPanel;
     private javax.swing.JButton addBookmarkActionButton;
-    private javax.swing.JButton addDataAndBookmarkAction;
     private javax.swing.JButton addFolderButton;
     private javax.swing.JButton addSeparator;
     private javax.swing.JButton backwardActionButton;

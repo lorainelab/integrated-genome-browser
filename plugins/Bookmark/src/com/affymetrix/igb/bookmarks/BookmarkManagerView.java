@@ -41,7 +41,6 @@ import javax.swing.undo.UndoManager;
 public final class BookmarkManagerView implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 1L;
-	//private static final int TAB_POSITION = 9;
 	private static JFileChooser static_chooser = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	public JTree tree;
@@ -435,7 +434,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		addDataAndPositionBookmarkButton.setEnabled(selections != 0);
 		addBookmarkButton.setEnabled(selections != 0);
 		addFolderButton.setEnabled(selections != 0);
-		//  the "properties" and "go to" actions belong to the BottomThing and it will enable or disable them
 	}
 
 	private void setUpPopupMenu() {
@@ -491,41 +489,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		};
 		tree.addMouseListener(mouse_adapter);
 	}
-
-	Action makeRefreshAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				tree_model.reload();
-			}
-
-			@Override
-			public String getText() {
-				return "Refresh";
-			}
-
-			@Override
-			public String getIconPath() {
-				return "images/refresh16.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_R;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Refresh";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
 	/**
 	 *  Tries to import bookmarks into Unibrow.
 	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.

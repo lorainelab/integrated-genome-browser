@@ -15,17 +15,16 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 
 	@Override
 	public String getText() {
-		return BUNDLE.getString("addPositionBookmark");
+		return BUNDLE.getString("addBookmark");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	     bookmarkCurrentPosition(false);
+	     bookmarkCurrentPosition();
 	}
 
 	@Override
 	public String getIconPath() {
-		//return "images/addBookmark16.png";
 		return null;
 	}
 

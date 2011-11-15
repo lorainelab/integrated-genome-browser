@@ -437,16 +437,18 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
 		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
 
-		int line_count = 0;
+//		int line_count = 0;
 		String line = null;
 		int childcount = 0;
+		@SuppressWarnings("unused")
 		int total_annot_count = 0;
+		@SuppressWarnings("unused")
 		int total_child_count = 0;
 		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
 //		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				line_count++;
+//				line_count++;
 				// Ignore psl header lines
 				if(line.trim().length() == 0)
 					continue;
@@ -961,5 +963,10 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	 **/
 	public String getMimeType() {
 		return "text/plain";
+	}
+
+	@Override
+	public SeqSpan getSpan(String line) {
+		return null; // not used yet
 	}
 }

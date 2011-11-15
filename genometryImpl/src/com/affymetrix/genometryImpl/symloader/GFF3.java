@@ -269,4 +269,9 @@ public class GFF3 extends SymLoader implements LineProcessor {
 
 	public void init(URI uri) {
 	}
+
+	@Override
+	public SeqSpan getSpan(String line) {
+		return null; // not used yet
+	}
 }

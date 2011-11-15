@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -306,11 +307,18 @@ public abstract class SymLoader {
 			return;
 		}
 		if (filteredFeats.get(0) instanceof GraphSym) {
-			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-			for(SeqSymmetry feat : filteredFeats) {
-				//grafs.add((GraphSym)feat);
-				if (feat instanceof GraphSym) {
-					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+			GraphSym graphSym = (GraphSym)filteredFeats.get(0);
+			if (filteredFeats.size() == 1 && graphSym.getProperty(SimpleSymWithProps.MAIN_GRAPH_PROP) == Boolean.TRUE) {
+				BioSeq seq = graphSym.getGraphSeq();
+				seq.addAnnotation(graphSym);
+			}
+			else {
+				// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
+				for(SeqSymmetry feat : filteredFeats) {
+					//grafs.add((GraphSym)feat);
+					if (feat instanceof GraphSym) {
+						GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+					}
 				}
 			}
 

@@ -18,6 +18,7 @@ import net.sf.samtools.util.CloseableIterator;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -189,5 +190,10 @@ public class SAM extends XAM implements LineProcessor{
 		@Override
 		public int peek() { return -1; }
 
+	}
+
+	@Override
+	public SeqSpan getSpan(String line) {
+		return null; // not used yet
 	}
 }

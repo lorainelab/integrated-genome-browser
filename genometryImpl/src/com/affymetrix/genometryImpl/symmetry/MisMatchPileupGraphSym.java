@@ -9,16 +9,24 @@ import com.affymetrix.genometryImpl.BioSeq;
 public class MisMatchPileupGraphSym extends MisMatchGraphSym {
 	private float min_totalycoord = Float.POSITIVE_INFINITY;
 	private float max_totalycoord = Float.NEGATIVE_INFINITY;
+	private char[] bases;
+
+	public MisMatchPileupGraphSym(int[] x, int[] w, float[] y, int[] a,
+			int[] t, int[] g, int[] c, int[] n, String id, BioSeq seq, char[] bases) {
+		super(x, w, y, a, t, g, c, n, id, seq);
+		this.bases = bases;
+	}
 
 	public MisMatchPileupGraphSym(int[] x, int[] w, float[] y, int[] a,
 			int[] t, int[] g, int[] c, int[] n, String id, BioSeq seq) {
-		super(x, w, y, a, t, g, c, n, id, seq);
+		this(x, w, y, a, t, g, c, n, id, seq, null);
 	}
 
 	@Override
 	void setAllResidues(int[] a, int[] t, int[] g, int[] c, int[] n) {
 		super.setAllResidues(a, t, g, c, n);
 		setVisibleTotalYRange(residuesTot);
+		bases = null;
 	}
 
 	@Override
@@ -30,6 +38,7 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
 	protected File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {
 		File file = super.index(graphName, a, t, g, c, n);
 		setVisibleTotalYRange(residuesTot);
+		bases = null;
 		return file;
 	}
 
@@ -37,6 +46,7 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
 	protected synchronized void readIntoBuffers(int start) {
 		super.readIntoBuffers(start);
 		setVisibleTotalYRange(residuesTot);
+		bases = null;
 	}
 
 	@Override
@@ -107,5 +117,13 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
 			tempCoords[i] = coords.get(i);
 		}
 		return tempCoords;
+	}
+
+	public boolean hasReferenceSequence() {
+		return bases != null;
+	}
+
+	public char getReferenceBase(int i) {
+		return bases[i];
 	}
 }

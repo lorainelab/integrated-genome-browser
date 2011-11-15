@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 public final class MismatchPileupGlyph extends GraphGlyph {
@@ -54,7 +54,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
 			GraphType graph_style, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
 		setBaseColor();
-		MisMatchGraphSym mmgs = (MisMatchGraphSym)graphSym;
+		MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym)graphSym;
 		Color saveColor = g.getColor();
 //		Point p = new Point();
 //		view.transformToPixels(new Point2D.Double(1,1), p);
@@ -63,8 +63,9 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		view.transformToPixels(new Rectangle2D.Double(1,1,1,1), r);
 		int width = Math.max(1, (int)Math.round(r.getWidth()));
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
-
+		if (!mmgs.hasReferenceSequence()) {
+			seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
+		}
 		// need to draw coverage first, then mismatches so that the mismatches are not covered up
 		g.setColor(MATCH_COLOR);
 		super.bigDrawLoop(
@@ -80,7 +81,9 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 			x_plus_width2D.x = xtemp + 1;
 			int savey = zero_point.y;
-			char referenceBase = seq.getResidues(xtemp,xtemp + 1).toUpperCase().charAt(0);
+			char referenceBase = mmgs.hasReferenceSequence() ?
+				  mmgs.getReferenceBase(i)
+				: seq.getResidues(xtemp,xtemp + 1).toUpperCase().charAt(0);
 			float y_accum = 0;
 			int[] barOrder = BAR_ORDERS.get(referenceBase);
 			if (barOrder == null) {

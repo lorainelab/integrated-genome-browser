@@ -25,6 +25,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	 *  as a glyph.
 	 */
 	public static final String CONTAINER_PROP = "container sym";
+	public static final String MAIN_GRAPH_PROP = "main graph";
 
 	protected Map<String,Object> props;
 

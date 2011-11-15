@@ -6,6 +6,7 @@ import java.util.List;
 import org.broad.tribble.readers.LineReader;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -33,4 +34,6 @@ public interface LineProcessor {
 	 * @return the pref list (file extensions) 
 	 */
 	public List<String> getFormatPrefList();
+
+	public SeqSpan getSpan(String line);
 }

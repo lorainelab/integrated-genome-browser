@@ -111,7 +111,7 @@ public class GeneConfiguration extends Configuration {
 					//g.fillRect( 0 , img.getHeight() - 40 , img.getWidth(), 40);
 					
 					//TODO find cross-platform font
-					Font f = new Font("Arial", Font.BOLD, 26);
+					Font f = new Font("Arial", Font.PLAIN, 30);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color( 0xd4d4d4 ));

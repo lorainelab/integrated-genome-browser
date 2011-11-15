@@ -63,7 +63,7 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	public JPanel getWelcomePane(){
 		//return new JPanel();
 		final JFlowPanel panel = new JFlowPanel(new GeneConfiguration());
-		panel.setPreferredSize(new Dimension(600, 200));
+		panel.setPreferredSize(new Dimension(700, 200));
 		panel.addListener(new ShapeListener() {
 			@Override
 			public void shapeClicked(ShapeEvent e) {

@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
@@ -20,8 +20,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -136,24 +134,22 @@ public final class GraphGlyphUtils {
 	 * @param operator the GraphOperator
 	 * @param graph_glyphs the Graph Glyph operands
 	 * @param gviewer the SeqMapView
-	 * @return if the operation was performed
+	 * @return GraphSym
 	 */
-	public static boolean doOperateGraphs(GraphOperator operator, List<GraphGlyph> graph_glyphs, SeqMapView gviewer) {
+	public static GraphSym doOperateGraphs(GraphOperator operator, List<GraphGlyph> graph_glyphs) {
+		GraphSym newsym = null;
 		if (graph_glyphs.size() >= operator.getOperandCountMin() && graph_glyphs.size() <= operator.getOperandCountMax()) {
-			GraphSym newsym = performOperation(graph_glyphs, operator);
+			newsym = performOperation(graph_glyphs, operator);
 
 			if (newsym != null) {
 				BioSeq aseq = newsym.getGraphSeq();
 				aseq.addAnnotation(newsym);
-				gviewer.setAnnotatedSeq(aseq, true, true);
-				//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-				return true;
 			}
 		}
 		else {
 			ErrorHandler.errorPanel("ERROR", getOperandMessage(graph_glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 		}
-		return false;
+		return newsym;
 	}
 
 	/**
@@ -279,18 +275,9 @@ public final class GraphGlyphUtils {
 		BioSeq aseq = ((GraphSym) graphs.get(0).getInfo()).getGraphSeq();
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
 		// create the new graph from the results
-		int[] x = new int[xList.size()];
-		for (int i = 0; i < xList.size(); i++) {
-			x[i] = xList.get(i);
-		}
-		int[] w = new int[wList.size()];
-		for (int i = 0; i < wList.size(); i++) {
-			w[i] = wList.get(i);
-		}
-		float[] y = new float[yList.size()];
-		for (int i = 0; i < yList.size(); i++) {
-			y[i] = yList.get(i);
-		}
+		int[] x = intListToArray(xList);
+		int[] w = intListToArray(wList);
+		float[] y =floatListToArray(yList);
 		if (x.length == 0) { // if no data, just create a dummy zero span
 			x = new int[]{xCoords.get(0).get(0)};
 			y = new float[]{0};
@@ -320,5 +307,21 @@ public final class GraphGlyphUtils {
 			width = widths.get(index);
 		}
 		return width;
+	}
+
+	public static int[] intListToArray(List<Integer> list) {
+		int[] array = new int[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			array[i] = list.get(i);
+		}
+		return array;
+	}
+
+	public static float[] floatListToArray(List<Float> list) {
+		float[] array = new float[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			array[i] = list.get(i);
+		}
+		return array;
 	}
 }

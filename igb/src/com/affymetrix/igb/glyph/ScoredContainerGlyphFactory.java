@@ -37,9 +37,9 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {

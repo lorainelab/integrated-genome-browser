@@ -48,11 +48,11 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
@@ -368,9 +368,9 @@ public final class GraphSelectionManager
   public void mousePressed(MouseEvent evt) {
     if (evt instanceof NeoMouseEvent) {
       NeoMouseEvent nevt = (NeoMouseEvent)evt;
-      List selected = nevt.getItems();
+      List<GlyphI> selected = nevt.getItems();
       for (int i=selected.size()-1; i >=0; i--) {
-        GlyphI gl = (GlyphI)selected.get(i);
+        GlyphI gl = selected.get(i);
         // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
         if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
           GraphGlyph gr = (GraphGlyph)gl;
@@ -508,7 +508,7 @@ public final class GraphSelectionManager
     return result;
   }
 
-  public void popupNotify(JPopupMenu the_popup, List selected_syms, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu the_popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
     
     if (current_source == null) {
       // if there is no NeoAbstractWidget set for the current_source, then we cannot convert
@@ -522,9 +522,9 @@ public final class GraphSelectionManager
     second_current_graph = null;
 
     // convert the selected syms to a list of selected graph glyphs
-    Iterator iter = selected_syms.iterator();
+    Iterator<SeqSymmetry> iter = selected_syms.iterator();
     while (iter.hasNext()) {
-      SeqSymmetry sym = (SeqSymmetry)iter.next();
+      SeqSymmetry sym = iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
       if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add((GraphGlyph)g);
@@ -550,7 +550,10 @@ public final class GraphSelectionManager
     	      new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs, gviewer);
+					GraphSym sym = GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs);
+					if (sym != null) {
+						gviewer.setAnnotatedSeq(sym.getGraphSeq(), true, true);
+					}
 				}
     	      }
     	  );
@@ -574,13 +577,13 @@ public final class GraphSelectionManager
       }
       List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
-		List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
+		List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>(graph_glyphs.size());
 		for (GraphGlyph glyph : graph_glyphs) {
 			graph_syms.add((GraphSym) glyph.getInfo()); // It will be a GraphSym object
 		}
 		GraphSym primary_sym = null;
 		if (!graph_syms.isEmpty()) {
-			primary_sym = graph_syms.get(0);
+			primary_sym = (GraphSym)graph_syms.get(0);
 		}
 
       this.popupNotify(popup, graph_syms, primary_sym);

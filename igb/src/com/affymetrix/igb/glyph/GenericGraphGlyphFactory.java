@@ -13,9 +13,9 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 

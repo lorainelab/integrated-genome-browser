@@ -46,13 +46,13 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqMapView;
@@ -299,7 +299,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
-		return GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs, (SeqMapView)getSeqMapView());
+		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs);
+		if (graphSym != null) {
+			getSeqMapView().setAnnotatedSeq(graphSym.getGraphSeq(), true, true);
+		}
+		return graphSym != null;
 	}
 
 	@Override

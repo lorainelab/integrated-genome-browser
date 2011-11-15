@@ -154,7 +154,7 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 
 		if(glyphs == null || glyphs.isEmpty())
 			return;
-
+		//obj is the group
 		Object obj = glyphs.get(0).getInfo();
 
 		if(obj == null)

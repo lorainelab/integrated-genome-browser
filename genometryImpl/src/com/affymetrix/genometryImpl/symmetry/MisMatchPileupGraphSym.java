@@ -126,4 +126,9 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
 	public char getReferenceBase(int i) {
 		return bases[i];
 	}
+
+	@Override
+	public boolean isSpecialGraph() {
+		return true;
+	}
 }

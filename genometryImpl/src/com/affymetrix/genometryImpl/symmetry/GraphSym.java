@@ -544,4 +544,12 @@ public class GraphSym extends SimpleSymWithProps {
 		xCoords = null;
 		bufFile = null;
 	}
+
+	/**
+	 * @return if this is a special graph that should be handled separately
+	 * (not combined into a composite graph)
+	 */
+	public boolean isSpecialGraph() {
+		return false;
+	}
 }

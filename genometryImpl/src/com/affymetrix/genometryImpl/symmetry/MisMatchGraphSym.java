@@ -32,7 +32,6 @@ public class MisMatchGraphSym extends GraphSym {
 			int[] a, int[] t, int[] g, int[] c, int[] n, 
 			String id, BioSeq seq){
 		super(x,w,y,id,seq);
-		this.setProperty(MAIN_GRAPH_PROP, Boolean.TRUE);
 		if(a.length != t.length || t.length != g.length || g.length != c.length || c.length != n.length){
 			throw new IllegalArgumentException("All arrays should have same length.");
 		}

@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -308,7 +307,7 @@ public abstract class SymLoader {
 		}
 		if (filteredFeats.get(0) instanceof GraphSym) {
 			GraphSym graphSym = (GraphSym)filteredFeats.get(0);
-			if (filteredFeats.size() == 1 && graphSym.getProperty(SimpleSymWithProps.MAIN_GRAPH_PROP) == Boolean.TRUE) {
+			if (filteredFeats.size() == 1 && graphSym.isSpecialGraph()) {
 				BioSeq seq = graphSym.getGraphSeq();
 				seq.addAnnotation(graphSym);
 			}

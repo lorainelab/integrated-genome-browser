@@ -45,11 +45,10 @@ public class BookmarkEditor {
 				JOptionPane.CANCEL_OPTION, null, null);
 
 		JDialog dialog = op.createDialog("Enter Bookmark Information...");
-		dialog.setVisible(true);
-		dialog.setPreferredSize(new java.awt.Dimension(250, 250));
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.setAlwaysOnTop(true);
 		dialog.setResizable(true);
+		dialog.setVisible(true);
 		dialog.pack();
 
 		int result = JOptionPane.CANCEL_OPTION;

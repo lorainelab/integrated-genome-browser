@@ -73,11 +73,6 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		if (DEBUG) {
 			System.out.println("Drop Action: " + dsde.getDropAction());
 		}
-
-		if (dsde.getDropSuccess() && (dsde.getDropAction() == DnDConstants.ACTION_MOVE)) {
-			((DefaultTreeModel) getModel()).removeNodeFromParent(oldNode);
-		}
-
 	}
 
 	/*
@@ -102,13 +97,16 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		DropTargetContext dtc = dtde.getDropTargetContext();
 		JTree tree = (JTree) dtc.getComponent();
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-		
+
 		TreePath parentPath = tree.getClosestPathForLocation(pt.x, pt.y);
 		TreePath rootPath = tree.getPathForRow(0);
-		TreePath dragedPath = tree.getSelectionPath();
-		
+		TreePath[] selectedPaths = this.getSelectionPaths();
+		TreePath selectedPath;
+		TreePath[] newPaths = new TreePath[selectedPaths.length];
+		TreePath newPath;
+
 		int parentRow = tree.getRowForPath(parentPath);
-		int dragedRow = tree.getRowForPath(dragedPath);;
+		int selectedRow;
 
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
 		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) rootPath.getLastPathComponent();
@@ -120,22 +118,35 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 			for (int i = 0; i < flavors.length; i++) {
 				if (tr.isDataFlavorSupported(flavors[i])) {
 					dtde.acceptDrop(dtde.getDropAction());
-					dragedPath = (TreePath) tr.getTransferData(flavors[i]);
-					dragNode = (DefaultMutableTreeNode) dragedPath.getLastPathComponent();
-				
-					if (parentNode.isLeaf()) {
-						MutableTreeNode actualparent = (MutableTreeNode) parentNode.getParent();
-						int index = model.getIndexOfChild(actualparent, parentNode);
-						model.insertNodeInto(dragNode, actualparent, index + 1);
-					} else if (parentRow == dragedRow){
-						model.insertNodeInto(dragNode, rootNode, rootNode.getChildCount());
-					} else {
-						model.insertNodeInto(dragNode, parentNode, 0);
+
+					// Support multiple items drag and drop
+					for (int j = selectedPaths.length; j > 0; j--) {
+						selectedPath = selectedPaths[j - 1];
+						selectedRow = tree.getRowForPath(selectedPath);
+
+						dragNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+
+						model.removeNodeFromParent(dragNode);
+
+						if (parentNode.isLeaf()) {
+							MutableTreeNode actualparent = (MutableTreeNode) parentNode.getParent();
+							if (actualparent != null) {
+								int index = model.getIndexOfChild(actualparent, parentNode);
+								model.insertNodeInto(dragNode, actualparent, index + 1);
+							} else {
+								model.insertNodeInto(dragNode, rootNode, rootNode.getChildCount());
+							}
+						} else if (parentRow == selectedRow) {
+							model.insertNodeInto(dragNode, rootNode, rootNode.getChildCount());
+						} else {
+							model.insertNodeInto(dragNode, parentNode, 0);
+						}
+
+						newPath = new TreePath(model.getPathToRoot(dragNode));
+						newPaths[j - 1] = newPath;
 					}
 
-					//Keep the selection after moving node
-					TreePath path = new TreePath(model.getPathToRoot(dragNode));
-					tree.setSelectionPath(path);
+					tree.setSelectionPaths(newPaths);
 					dtde.dropComplete(true);
 					return;
 				}

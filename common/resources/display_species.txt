@@ -1,7 +1,7 @@
-a_lyrata.png	A_lyrata_Apr_2011	A. lyrata
-h_sapiens.png	H_sapiens_Feb_2009	H. Sapiens
-m_musculus.png	M_musculus_Jul_2007	M. Musculus
-a_thaliana.png	A_thaliana_Jun_2009	A. Thaliana
-d_melanogaster.png	D_melanogaster_Apr_2006	D. Melanogaster
-a_mellifera.png	A_mellifera_Jan_2005	A. Mellifera
-horse_pic_here	E_caballus_Sep_2007	E. Caballus
+a_lyrata.png	A_lyrata_Apr_2011	A. lyrata	0x000000
+h_sapiens.png	H_sapiens_Feb_2009	H. sapiens	#fbf0de
+m_musculus.png	M_musculus_Jul_2007	M. musculus	#fbf0de
+a_thaliana.png	A_thaliana_Jun_2009	A. thaliana	#fbf0de
+d_melanogaster.png	D_melanogaster_Apr_2006	D. melanogaster	#000000
+a_mellifera.png	A_mellifera_Jan_2005	A. mellifera	#fbf0de
+horse_pic_here	E_caallus_Sep_2007	E. caballus	#000000

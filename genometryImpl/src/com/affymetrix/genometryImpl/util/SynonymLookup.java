@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  *
  * @version $Id$
  */
-public final class SynonymLookup {
+public class SynonymLookup {
 	/**
 	 * Default behaviour of case sensitivity for synonym lookups. If true,
 	 * searches will be cases sensitive.  The default is {@value}.
@@ -45,7 +45,7 @@ public final class SynonymLookup {
 	private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
 	
 	/** Hash to map every synonym to all equivalent synonyms. */
-	private final LinkedHashMap<String, Set<String>> lookupHash = new LinkedHashMap<String, Set<String>>();
+	protected final LinkedHashMap<String, Set<String>> lookupHash = new LinkedHashMap<String, Set<String>>();
 
 	private final Set<String> preferredNames = new HashSet<String>();
 

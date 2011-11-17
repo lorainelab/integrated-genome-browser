@@ -30,7 +30,7 @@ public final class SpeciesLookup {
 
 
 	/** lookup of generic species names */
-	private static final SynonymLookup speciesLookup = new SynonymLookup();
+	private static final SpeciesSynonymsLookup speciesLookup = new SpeciesSynonymsLookup();
 
 	private static final SpeciesLookup singleton = new SpeciesLookup();
 

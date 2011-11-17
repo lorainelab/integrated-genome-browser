@@ -41,7 +41,6 @@ public final class DasSource {
 
 	public final static String ENTRY_POINTS = "entry_points";
 	public final static String TYPES = "types";
-	private final static String XML = ".xml";
 	
 	private final URL server;
 	private final URL master;
@@ -65,6 +64,9 @@ public final class DasSource {
 
 	static String getID(URL master) {
 		String path = master.getPath();
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
 		return path.substring(1 + path.lastIndexOf('/'), path.length());
 	}
 

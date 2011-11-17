@@ -67,7 +67,6 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.FeatureLoading;
@@ -242,6 +241,15 @@ public final class GeneralLoadUtils {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		URL primaryURL = getServerDirectory(gServer.URL);
+		if (primaryURL == null) {
+			try {
+				primaryURL = new URL(gServer.URL);
+				primaryServer = null;
+			}
+			catch (MalformedURLException x) {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, "cannot load URL " + gServer.URL + " for DAS server " + gServer.serverName, x);
+			}
+		}
 		Map<String, DasSource> sources = server.getDataSources(primaryURL, primaryServer);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -1181,7 +1189,7 @@ public final class GeneralLoadUtils {
 					return true;
 				} catch (Exception ex) {
 					((QuickLoad) gFeature.symL).logException(ex);
-					if (Application.getSingleton().confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
+					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
 						if (gFeature.gVersion.removeFeature(gFeature)) {
 							SeqGroupView.getInstance().refreshTable();
 						}

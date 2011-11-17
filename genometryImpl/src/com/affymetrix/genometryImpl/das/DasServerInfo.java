@@ -171,6 +171,9 @@ public final class DasServerInfo {
 		if (mastertext != null) {
 			master_url = mastertext.getData();
 		}
+		if (master_url == null || "null".equals(master_url)) {
+			return;
+		}
 		try {
 			URL masterURL = new URL(master_url);
 			if (DasSource.getID(masterURL).isEmpty()) {
@@ -187,7 +190,7 @@ public final class DasServerInfo {
 				das_source.add(sourceid);
 			}
 		} catch (MalformedURLException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "", ex);
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "MalformedURLException in DasServerInfo.parseDSNElement() " + ex.getMessage());
 		}
 		if (REPORT_SOURCES) {
 			System.out.println("sourceid = " + sourceid + ", mapmaster = " + master_url);

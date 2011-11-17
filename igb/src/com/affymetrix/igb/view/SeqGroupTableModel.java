@@ -31,13 +31,15 @@ final class SeqGroupTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int col) {
 		if (group != null) {
 			BioSeq seq = group.getSeq(row);
-			if (col == 0) {
-				return seq.getID();
-			} else if (col == 1) {
-				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
-					return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
+			if (seq != null) {
+				if (col == 0) {
+					return seq.getID();
+				} else if (col == 1) {
+					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+						return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
+					}
+					return Long.toString((long) seq.getLengthDouble());
 				}
-				return Long.toString((long) seq.getLengthDouble());
 			}
 		}
 		return null;

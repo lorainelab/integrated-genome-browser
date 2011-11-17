@@ -59,7 +59,12 @@ public class GeneConfiguration extends Configuration {
 	};*/
 	
 	public GeneConfiguration( ) {
-		this.SlowSystem = true;
+		String os = System.getProperty("os.name");
+		if(os.equals("Mac OS X") || os.equals("Mac OS")){
+			this.SlowSystem = true;
+		}else{
+			this.SlowSystem = false;
+		}
 		BufferedReader stream = null;
 		try {
 			//load the messge class from a configuration file.

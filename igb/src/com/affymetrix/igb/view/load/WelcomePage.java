@@ -70,6 +70,7 @@ public class WelcomePage extends javax.swing.JPanel {
 			RightSlide.setRolloverIcon(icon2);
 			RightSlide.setBorderPainted(false);
 			RightSlide.setFocusPainted(false);
+			RightSlide.setContentAreaFilled(false);
 			RightSlide.addActionListener(new ActionListener(){
 
 				public void actionPerformed(ActionEvent e) {
@@ -100,6 +101,7 @@ public class WelcomePage extends javax.swing.JPanel {
 			LeftSlide.setRolloverIcon(icon2);
 			LeftSlide.setBorderPainted(false);
 			LeftSlide.setFocusPainted(false);
+			LeftSlide.setContentAreaFilled(false);
 			ImageIcon icon3 = createImageIcon(
 					CommonUtils.class.getClassLoader().getResource("images/left_more_selected.png")
 					);

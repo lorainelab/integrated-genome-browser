@@ -33,9 +33,9 @@ import javax.imageio.ImageIO;
  * The class reads a resource file at $IGB_HOME/common/display_species.txt 
  * to configure the data sets displayed on the welcome screen.<br>
  * The file should be of the form<br>
- * [image file][tab][Data set to load upon click][tab][Name to display on tag]
+ * [image file][tab][Data set to load upon click][tab][Name to display on tag][tab][color]
  * An example is next:<br>
- * a_lyrata.png	A_lyrata_Apr_2011	A. lyrata
+ * a_lyrata.png	A_lyrata_Apr_2011	A. lyrata #000000
  * 
  * @author jfvillal
  */
@@ -59,6 +59,7 @@ public class GeneConfiguration extends Configuration {
 	};*/
 	
 	public GeneConfiguration( ) {
+		this.SlowSystem = true;
 		BufferedReader stream = null;
 		try {
 			//load the messge class from a configuration file.
@@ -78,10 +79,14 @@ public class GeneConfiguration extends Configuration {
 						continue;
 					}
 					String[] vals = line.split("\t");
-					list.add(new Message( vals[0], vals[1], vals[2], FONT_SIZE_3 , COLOR_2 ));
+					list.add(new Message( vals[0], vals[1], vals[2], FONT_SIZE_3 , Color.decode( vals[3] ) ) );
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
+			} catch (IndexOutOfBoundsException e){
+				System.err.println("The display_species.txt may not comply with specification.  make sure it has \n"
+						+ "[image file][tab][Data set to load upon click][tab][Name to display on tag][tab][color (example #122322]");
+				e.printStackTrace();
 			}
 			DisplaySpecies = new Message[list.size()];
 			for( int i = 0; i < list.size() ; i++){
@@ -111,17 +116,21 @@ public class GeneConfiguration extends Configuration {
 					//g.fillRect( 0 , img.getHeight() - 40 , img.getWidth(), 40);
 					
 					//TODO find cross-platform font
-					Font f = new Font("Arial", Font.PLAIN, 30);
+					Font f = new Font("Sans Serif", Font.PLAIN, 30);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color( 0xd4d4d4 ));
-					g.setFont(f );
+					g.setFont( f );
 					int num = metrics.stringWidth(DisplaySpecies[i].str);
 					/**
 					 * create a soft shaddow around the text in case the picture has 
 					 * a white background
 					 */
-					g.setColor(new Color( 0x000000 ));
+					if(  getGrayScale( DisplaySpecies[i].color ) > 0.5){
+						g.setColor(new Color( 0x000000 ));
+					}else{
+						g.setColor(new Color( 0xFFFFFF ));
+					}
 					g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2 - 2  , img.getHeight() - 22);
 					for( int e = 0 ; e < 10; e++){
 						for( int k = 10; k < img.getWidth() - 10; k++){
@@ -142,7 +151,7 @@ public class GeneConfiguration extends Configuration {
 					}
 					
 					//draw the label
-					g.setColor(new Color( 0xFFFFFF ));
+					g.setColor( DisplaySpecies[i].color );
 					g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2  , img.getHeight() - 20);
 					
 					CargoPicture n = new CargoPicture(img);
@@ -162,6 +171,13 @@ public class GeneConfiguration extends Configuration {
 				Logger.getLogger(GeneConfiguration.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
+	}
+	public double getGrayScale( Color col ){
+		int g = col.getGreen();
+		int b = col.getBlue();
+		int r = col.getRed();
+		double gray_scale = (double)(g+r+b)/3.0;
+		return gray_scale;
 	}
 	
 	/**

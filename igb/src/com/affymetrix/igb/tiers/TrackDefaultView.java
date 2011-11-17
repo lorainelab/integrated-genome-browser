@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import javax.swing.table.AbstractTableModel;
@@ -248,7 +249,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		labelFieldTip.setText(" ");
 	}
 
-	public void possitiveColorComboBoxActionPerformed() {
+	public void possitiveColorComboBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
@@ -256,7 +257,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void negativeColorComboBoxActionPerformed() {
+	public void negativeColorComboBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
@@ -264,13 +265,13 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void trackDefaultTextFieldActionPerformed() {
+	public void trackDefaultTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(trackDefaultTextField.getText(), selectedRows[0], COL_TRACK_DEFAULT);
 		}
 	}
 
-	public void bgColorComboBoxActionPerformed() {
+	public void bgColorComboBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[i], COL_BACKGROUND);
@@ -278,7 +279,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void trackNameSizeComboBoxActionPerformed() {
+	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable && !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
 			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
 			for (int i = 0; i < selectedRows.length; i++) {
@@ -287,7 +288,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void fgColorComboBoxActionPerformed() {
+	public void fgColorComboBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[i], COL_FOREGROUND);
@@ -295,7 +296,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void labelFieldComboBoxActionPerformed() {
+	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[i], COL_LABEL_FIELD);
@@ -303,7 +304,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void maxDepthTextFieldActionPerformed() {
+	public void maxDepthTextField() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(maxDepthTextField.getText(), selectedRows[i], COL_MAX_DEPTH);
@@ -311,7 +312,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void show2TracksCheckBoxActionPerformed() {
+	public void show2TracksCheckBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], Col_Show_2_Tracks);
@@ -319,7 +320,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void connectedCheckBoxActionPerformed() {
+	public void connectedCheckBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
@@ -327,7 +328,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void collapsedCheckBoxActionPerformed() {
+	public void collapsedCheckBox() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[i], COL_COLLAPSED);
@@ -335,7 +336,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void addTrackDefaultButtonActionPerformed() {
+	public void addTrackDefaultButton() {
 		initializeFileTypes();
 		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
 				JOptionPane.PLAIN_MESSAGE, null, trackDefaults, trackDefaults[0]);
@@ -356,12 +357,14 @@ public final class TrackDefaultView implements ListSelectionListener {
 			element.getPropertyMap().putAll(props);
 		}
 
-		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, element);
+		Map<String, AssociationElement> elements = XmlStylesheetParser.getUserFileTypeAssociation();
+		elements.put(selectedTrackDefaultType, element);
+		model.file2types = elements.entrySet().toArray(new Entry[elements.size()]);
 		model.addElement(selectedTrackDefaultType, element);
 		model.fireTableDataChanged();
 	}
 
-	public void arrowCheckBoxActionPerformed() {
+	public void arrowCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -387,7 +390,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void colorCheckBoxActionPerformed() {
+	public void colorCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -413,7 +416,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void removeTrackDefaultButtonActionPerformed() {
+	public void removeTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
 			selectedStyle = model.tier_styles.get(table.getSelectedRow());
 			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
@@ -590,6 +593,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
+
 		private static final long serialVersionUID = 1L;
 		private List<TrackStyle> tier_styles;
 		private AssociationElement element;
@@ -608,7 +612,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 			return this.tier_styles;
 		}
 
-		private void setElements(java.util.Map<String, AssociationElement> elements) {
+		private void setElements(Map<String, AssociationElement> elements) {
 			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
 			tier_styles.add(default_annot_style);
 			for (Entry entries : file2types) {

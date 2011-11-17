@@ -368,78 +368,63 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     }// </editor-fold>//GEN-END:initComponents
 
 	private void addTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrackDefaultButtonActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().addTrackDefaultButtonActionPerformed();
+		TrackDefaultView.getTrackDefaultView().addTrackDefaultButton();
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
 
 	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().removeTrackDefaultButtonActionPerformed();
+		TrackDefaultView.getTrackDefaultView().removeTrackDefaultButton();
 	}//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
 
 	private void trackDefaultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackDefaultTextFieldActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBox();
 	}//GEN-LAST:event_trackDefaultTextFieldActionPerformed
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().bgColorComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().bgColorComboBox();
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().fgColorComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().fgColorComboBox();
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBox();
 	}//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
 
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().labelFieldComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().labelFieldComboBox();
 	}//GEN-LAST:event_labelFieldComboBoxActionPerformed
 
 	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().maxDepthTextFieldActionPerformed();
+		TrackDefaultView.getTrackDefaultView().maxDepthTextField();
 	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
 
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().show2TracksCheckBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
 	private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().connectedCheckBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().connectedCheckBox();
 	}//GEN-LAST:event_connectedCheckBoxActionPerformed
 
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().collapsedCheckBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().collapsedCheckBox();
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().arrowCheckBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().arrowCheckBox();
 	}//GEN-LAST:event_arrowCheckBoxActionPerformed
 
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().colorCheckBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().colorCheckBox();
 	}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().possitiveColorComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().possitiveColorComboBox();
 	}//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
-		// TODO add your handling code here:
-		TrackDefaultView.getTrackDefaultView().negativeColorComboBoxActionPerformed();
+		TrackDefaultView.getTrackDefaultView().negativeColorComboBox();
 	}//GEN-LAST:event_negativeColorComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;

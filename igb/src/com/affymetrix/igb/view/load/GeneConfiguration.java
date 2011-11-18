@@ -10,7 +10,9 @@ import com.affymetrix.common.CommonUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -60,10 +62,19 @@ public class GeneConfiguration extends Configuration {
 	
 	public GeneConfiguration( ) {
 		String os = System.getProperty("os.name");
-		if(os.equals("Mac OS X") || os.equals("Mac OS")){
+		
+		this.zoomFactor = 0.1;
+		this.zoomScale = 2.0;
+		this.shapeRotation = 0.0;
+		this.shapeSpacing = 1.2/3.0;
+		this.shadingFactor = 0.5;
+		if(os.equals("Mac OS X") || os.equals("Mac OS") ){
 			this.SlowSystem = true;
+			this.reflectionOpacity = 0.0;
+			this.highQuality = false;
 		}else{
 			this.SlowSystem = false;
+			this.highQuality = true;
 		}
 		BufferedReader stream = null;
 		try {
@@ -158,8 +169,12 @@ public class GeneConfiguration extends Configuration {
 					//draw the label
 					g.setColor( DisplaySpecies[i].color );
 					g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2  , img.getHeight() - 20);
-					
-					CargoPicture n = new CargoPicture(img);
+					CargoPicture n = null;
+					if( !this.SlowSystem ){
+						n = new CargoPicture( img );
+					}else{
+						n = new CargoPicture( scaleImage( img , 120 ));
+					}
 					n.setCargo( DisplaySpecies[i].group);
 					shapes[i] = n;
 					
@@ -177,6 +192,33 @@ public class GeneConfiguration extends Configuration {
 			}
 		}
 	}
+	/**
+	 * from http://stackoverflow.com/questions/1324106/jai-change-jpeg-resolution
+	 * @param sourceImage
+	 * @param scaledWidth
+	 * @return 
+	 */
+	BufferedImage scaleImage(BufferedImage sourceImage, int scaledWidth) {
+	   float scale = scaledWidth / (float) sourceImage.getWidth();
+	   int scaledHeight = (int) (sourceImage.getHeight() * scale);
+	   Image scaledImage = sourceImage.getScaledInstance(
+		  scaledWidth, 
+		  scaledHeight, 
+		  Image.SCALE_AREA_AVERAGING
+	   );
+
+	   BufferedImage bufferedImage = new BufferedImage(
+		  scaledImage.getWidth(null), 
+		  scaledImage.getHeight(null), 
+		  BufferedImage.TYPE_INT_RGB
+	   );
+	   Graphics g = bufferedImage.createGraphics();
+	   g.drawImage(scaledImage, 0, 0, null);
+	   g.dispose();
+
+	   return bufferedImage;
+	}
+	
 	public double getGrayScale( Color col ){
 		int g = col.getGreen();
 		int b = col.getBlue();

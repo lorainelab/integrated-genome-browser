@@ -74,7 +74,7 @@ public class WelcomePage extends javax.swing.JPanel {
 			RightSlide.addActionListener(new ActionListener(){
 
 				public void actionPerformed(ActionEvent e) {
-					flow_panel.shiftBy( JFlowPanel.SCROLL_BY  );
+					flow_panel.shiftBy( SHIFT_BY  );
 				}
 			});;
 			ImageIcon icon3 = createImageIcon(
@@ -109,7 +109,7 @@ public class WelcomePage extends javax.swing.JPanel {
 			LeftSlide.addActionListener(new ActionListener(){
 
 				public void actionPerformed(ActionEvent e) {
-					flow_panel.shiftBy( -JFlowPanel.SCROLL_BY  );
+					flow_panel.shiftBy( -SHIFT_BY  );
 				}
 			});
 		} catch (IOException ex) {
@@ -121,6 +121,8 @@ public class WelcomePage extends javax.swing.JPanel {
 		
 		
 	}
+	
+	static final double SHIFT_BY = 0.3333333333333333;
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected ImageIcon createImageIcon(URL imgURL )throws IOException {
 		if (imgURL != null) {
@@ -185,7 +187,7 @@ public class WelcomePage extends javax.swing.JPanel {
             .addGap(0, 244, Short.MAX_VALUE)
         );
 
-        WelcomePane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        WelcomePane.setBorder(null);
         WelcomePane.setEditable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));

@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
@@ -103,7 +104,7 @@ public final class SearchView extends IGBTabPanel implements
 			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
 			selectedSearchMode = searchModeMap.get(searchMode);
 			String chrStr = (String) SearchView.this.sequenceCB.getSelectedItem();
-			final BioSeq chrfilter = igbService.getGenomeSeqId().equals(chrStr) ? null : group.getSeq(chrStr);
+			final BioSeq chrfilter = Constants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
 			if (selectedSearchMode.checkInput(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString())) {
 				enableComp(false);
 				clearResults();
@@ -272,10 +273,10 @@ public final class SearchView extends IGBTabPanel implements
 				sequenceCB.removeAllItems();
 				if (group != null) {
 					if (selectedSearchMode != null && selectedSearchMode.useGenomeInSeqList()) {
-						sequenceCB.addItem(igbService.getGenomeSeqId()); // put this at top of list
+						sequenceCB.addItem(Constants.GENOME_SEQ_ID); // put this at top of list
 					}
 					for (BioSeq seq : group.getSeqList()) {
-						if (seq.getID().equals(igbService.getGenomeSeqId())) {
+						if (seq.getID().equals(Constants.GENOME_SEQ_ID)) {
 							continue;
 						}
 						sequenceCB.addItem(seq.getID());
@@ -287,7 +288,7 @@ public final class SearchView extends IGBTabPanel implements
 					sequenceCB.setEnabled(false);
 				}
 
-				sequenceCB.setSelectedItem(igbService.getGenomeSeqId());
+				sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
 				sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
 			}
 		});

@@ -202,11 +202,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public String getGenomeSeqId() {
-		return IGBConstants.GENOME_SEQ_ID;
-	}
-
-	@Override
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial) {
 		return GeneralLoadView.getLoadView().loadResidues(viewspan, partial);
 	}

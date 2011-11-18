@@ -104,11 +104,6 @@ public interface IGBService {
 	 */
 	public SeqMapViewI getSeqMapView();
 	// for SearchView
-	/**
-	 * get the constant value for GenomeSeqId
-	 * @return the constant value for the GenomeSeqId
-	 */
-	public String getGenomeSeqId();
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
 	// for Graph Adjuster
 	/**

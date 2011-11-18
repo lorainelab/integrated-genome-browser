@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
@@ -31,7 +32,6 @@ import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ParserController;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -170,7 +170,7 @@ public final class QuickLoad extends SymLoader {
 		}
 
 		//Do not not anything in case of genome. Just refresh.
-		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
+		if (Constants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
 			return false;
 		}
 

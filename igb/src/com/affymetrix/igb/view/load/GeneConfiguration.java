@@ -68,14 +68,14 @@ public class GeneConfiguration extends Configuration {
 		this.shapeRotation = 0.0;
 		this.shapeSpacing = 1.2/3.0;
 		this.shadingFactor = 0.5;
-		if(os.equals("Mac OS X") || os.equals("Mac OS") ){
+		/*if(os.equals("Mac OS X") || os.equals("Mac OS") ){
 			this.SlowSystem = true;
 			this.reflectionOpacity = 0.0;
 			this.highQuality = false;
-		}else{
+		}else{*/
 			this.SlowSystem = false;
 			this.highQuality = true;
-		}
+		//}
 		BufferedReader stream = null;
 		try {
 			//load the messge class from a configuration file.

@@ -16,7 +16,11 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
+import com.affymetrix.igb.stylesheet.Stylesheet.WrappedStyleElement;
+
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -33,10 +37,12 @@ public final class XmlStylesheetParser {
 	private Stylesheet stylesheet = new Stylesheet();
 	private static Stylesheet system_stylesheet = null;
 	private static Stylesheet user_stylesheet = null;
+	private static Stylesheet added_stylesheets = null;
 
 	// This resource should in the top-level igb source directory, or top level of jar file
 	private static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
 	private static final String user_stylesheet_resource_name = "user_stylesheet.xml";
+	private static final Map<String, Stylesheet> added_stylesheet_map = new HashMap<String, Stylesheet>();
 
 	/** Set the system stylesheet to null, so that the next call to getSystemStylesheet()
 	 *  will re-load it from storage.
@@ -116,6 +122,31 @@ public final class XmlStylesheetParser {
 			}
 		}
 		return user_stylesheet;
+	}
+
+	/** Set the added stylesheet to null, so that the next call to getAddedStylesheets()
+	 *  will re-load it from storage.
+	 */
+	public static synchronized void refreshAddedStylesheet() {
+		added_stylesheets = null;
+	}
+
+	public static synchronized Stylesheet getAddedStylesheets() {
+		if (added_stylesheets == null) {
+			for (String name : added_stylesheet_map.keySet()) {
+				Stylesheet stylesheet = added_stylesheet_map.get(name);
+				if (added_stylesheets == null) {
+					added_stylesheets = stylesheet;
+				}
+				else {
+					added_stylesheets.merge(stylesheet);
+				}
+			}
+			if (added_stylesheets == null) {
+				added_stylesheets = new Stylesheet();
+			}
+		}
+		return added_stylesheets;
 	}
 
 	public static java.util.Map<String, AssociationElement> getSystemFileTypeAssociation() {
@@ -506,5 +537,32 @@ public final class XmlStylesheetParser {
 		if (value != null && value.trim().length() > 0) {
 			sb.append(" ").append(name).append("='").append(escapeXML(value)).append("'");
 		}
+	}
+
+	private static synchronized Stylesheet getStylesheet(String name, InputStream istr) {
+		Stylesheet stylesheet = null;
+		XmlStylesheetParser parser = new XmlStylesheetParser();
+		try {
+			Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+				"Loading stylesheet: " + name);
+			stylesheet = parser.parse(istr);
+		}catch (Exception e) {
+			System.out.println("ERROR: Couldn't initialize stylesheet " + name);
+			e.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+		return stylesheet;
+	}
+	
+	public static void addStyleSheet(String name, InputStream istr) {
+		Stylesheet stylesheet = getStylesheet(name, istr);
+		added_stylesheet_map.put(name, stylesheet);
+		refreshAddedStylesheet();
+	}
+
+	public static void removeStyleSheet(String name) {
+		added_stylesheet_map.remove(name);
+		refreshAddedStylesheet();
 	}
 }

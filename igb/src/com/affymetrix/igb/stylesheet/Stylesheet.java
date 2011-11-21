@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.symmetry.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -76,7 +77,14 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     }
   }
 
-
+  public void merge(Stylesheet stylesheet) {
+	  meth2association.putAll(stylesheet.meth2association);
+	  regex2association.putAll(stylesheet.regex2association);
+	  type2association.putAll(stylesheet.type2association);
+	  filetype2association.putAll(stylesheet.filetype2association);
+	  stylename2styleElement.putAll(stylesheet.stylename2styleElement);
+  }
+  
   /**
    *  Tries to find a styleElement for the given seq symmetry.
    *  First looks for a styleElement stored in sym.getProperty(SYM_TO_STYLE_PROPERTY_KEY).

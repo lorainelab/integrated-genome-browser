@@ -10,11 +10,12 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
-import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.PropertyMap;
+import com.affymetrix.igb.stylesheet.Stylesheet;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,6 +176,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		// File defaults panel user stylesheet
 		stylesheet = XmlStylesheetParser.getUserStylesheet();
+		assel = stylesheet.getAssociationForFileType(file_type);
+		if (assel != null) {
+			PropertyMap props = assel.getPropertyMap();
+			if (props != null) {
+				initFromPropertyMap(props);
+			}
+		}
+
+		// File added stylesheets
+		stylesheet = XmlStylesheetParser.getAddedStylesheets();
 		assel = stylesheet.getAssociationForFileType(file_type);
 		if (assel != null) {
 			PropertyMap props = assel.getPropertyMap();

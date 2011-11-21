@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.io.InputStream;
 import java.net.URI;
 
 import javax.swing.ImageIcon;
@@ -48,6 +49,7 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -348,5 +350,14 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public String getSelectedSpecies(){
 		return GeneralLoadView.getLoadView().getSelectedSpecies();
+	}
+
+	@Override
+	public void addStyleSheet(String name, InputStream istr) {
+		XmlStylesheetParser.addStyleSheet(name, istr);
+	}
+
+	public void removeStyleSheet(String name) {
+		XmlStylesheetParser.removeStyleSheet(name);
 	}
 }

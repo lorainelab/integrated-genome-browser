@@ -19,6 +19,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+
+import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -145,4 +147,8 @@ public interface IGBService {
 	// Open Uri
 	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack);
 	public String getSelectedSpecies();
+
+	public void addStyleSheet(String name, InputStream istr);
+	public void removeStyleSheet(String name);
+
 }

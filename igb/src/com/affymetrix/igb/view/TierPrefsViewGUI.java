@@ -65,6 +65,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         jScrollPane1 = new javax.swing.JScrollPane();
         table = tpv.table;
         jButton1 = new javax.swing.JButton();
+        restoreToDefaultTip = tpv.restoreToDefaultTip;
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -75,7 +76,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         viewModelPanel = new javax.swing.JPanel();
         viewModeCB = tpv.viewModeCB;
         refreshButton = tpv.refreshButton;
-        autoRefreshCheckBox = tpv.autoRefreshCheckBox;
+        autoRefreshCheckBox = new javax.swing.JCheckBox();
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -276,6 +277,8 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             }
         });
 
+        restoreToDefaultTip.setText(" ");
+
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
         selectTrackPanelLayout.setHorizontalGroup(
@@ -283,16 +286,21 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             .add(selectTrackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1)
-                    .add(jButton1))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                    .add(selectTrackPanelLayout.createSequentialGroup()
+                        .add(jButton1)
+                        .add(0, 0, 0)
+                        .add(restoreToDefaultTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                 .add(0, 0, 0)
-                .add(jButton1))
+                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jButton1)
+                    .add(restoreToDefaultTip)))
         );
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
@@ -345,8 +353,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(colorCheckBox)
-                    .add(arrowCheckBox)
                     .add(showStrandPanelLayout.createSequentialGroup()
                         .add(8, 8, 8)
                         .add(possitiveLabel)
@@ -355,8 +361,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(colorCheckBox)
+                    .add(arrowCheckBox))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -370,7 +378,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(negativeLabel)
                     .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
@@ -408,10 +416,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 375, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(18, 18, 18)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(autoRefreshCheckBox)
                             .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(autoRefreshCheckBox)
                             .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -422,8 +430,8 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(5, 5, 5)
+                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(autoRefreshCheckBox)
@@ -526,6 +534,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private javax.swing.JLabel possitiveLabel;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JLabel restoreToDefaultTip;
     private javax.swing.JPanel selectTrackPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
     private javax.swing.JPanel showStrandPanel;

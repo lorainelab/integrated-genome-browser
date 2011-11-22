@@ -94,6 +94,7 @@ public class TierPrefsView implements ListSelectionListener {
 	public JRPComboBox trackNameSizeComboBox;
 	public JRPComboBox viewModeCB;
 	public JLabel applyToAllTip;
+	public JLabel restoreToDefaultTip;
 
 	public static void init() {
 		singleton = new TierPrefsView();
@@ -155,10 +156,16 @@ public class TierPrefsView implements ListSelectionListener {
 		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
 		viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.VIEWMODE));
 
+		ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
+		
 		applyToAllTip = new javax.swing.JLabel();
 		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
-		applyToAllTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
-
+		applyToAllTip.setIcon(infoIcon);
+		
+		restoreToDefaultTip = new javax.swing.JLabel();
+		restoreToDefaultTip.setToolTipText("Restore selected tracks to default setting.");
+		restoreToDefaultTip.setIcon(infoIcon);
+		
 		// Add a "refresh map" button, if there is an instance of IGB
 		if (smv != null) {
 			refreshButton.addActionListener(new ActionListener() {

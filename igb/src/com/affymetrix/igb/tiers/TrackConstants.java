@@ -34,6 +34,7 @@ public interface TrackConstants {
 	static final boolean default_show = true;
 	static final boolean default_connected = true;
 	static final boolean default_collapsed = false;
+	static final boolean default_show2tracks = true;
 	static final boolean default_expandable = true;
 	static final boolean default_show_summary = false;
 	static final boolean default_draw_collapse_icon = true;

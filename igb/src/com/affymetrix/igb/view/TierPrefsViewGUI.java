@@ -41,7 +41,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        refreshButton = tpv.refreshButton;
         propertiesPanel = new javax.swing.JPanel();
         displayNameLabel = new javax.swing.JLabel();
         displayNameTextField = tpv.displayNameTextField;
@@ -65,7 +64,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = tpv.table;
-        autoRefreshCheckBox = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -75,8 +74,8 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         arrowCheckBox = tpv.arrowCheckBox;
         viewModelPanel = new javax.swing.JPanel();
         viewModeCB = tpv.viewModeCB;
-
-        refreshButton.setText("Refresh");
+        refreshButton = tpv.refreshButton;
+        autoRefreshCheckBox = tpv.autoRefreshCheckBox;
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -265,10 +264,17 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         applyToAllButton.setToolTipText("Apply background, foreground, and Name Size to all selected tracks.");
 
-        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track"));
+        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track List"));
 
         jScrollPane1.setViewportView(table);
         tpv.refreshList();
+
+        jButton1.setText("Restore to default");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
@@ -276,17 +282,18 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(selectTrackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1)
+                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1)
+                    .add(jButton1))
                 .addContainerGap())
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .add(0, 0, 0)
+                .add(jButton1))
         );
-
-        autoRefreshCheckBox.setText("Auto Refresh");
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
 
@@ -385,6 +392,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
+        refreshButton.setText("Refresh");
+
+        autoRefreshCheckBox.setText("Auto Refresh");
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -408,80 +419,85 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(10, 10, 10)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(layout.createSequentialGroup()
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(5, 5, 5)
                         .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(autoRefreshCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(refreshButton)))
-                .add(24, 24, 24))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(refreshButton))
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		tpv.show2TracksCheckBoxActionPerformed();
+		tpv.show2TracksCheckBox();
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
     private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		tpv.connectedCheckBoxActionPerformed();
+		tpv.connectedCheckBox();
     }//GEN-LAST:event_connectedCheckBoxActionPerformed
 
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
-		tpv.collapsedCheckBoxActionPerformed();
+		tpv.collapsedCheckBox();
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
 	private void displayNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayNameTextFieldActionPerformed
-		tpv.displayNameTextFieldActionPerformed();
+		tpv.displayNameTextField();
 	}//GEN-LAST:event_displayNameTextFieldActionPerformed
 
 	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		tpv.maxDepthTextFieldActionPerformed();
+		tpv.maxDepthTextField();
 	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
 
 	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
-		tpv.trackNameSizeComboBoxActionPerformed();
+		tpv.trackNameSizeComboBox();
 }//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		tpv.fgColorComboBoxActionPerformed();
+		tpv.fgColorComboBox();
 }//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		tpv.bgColorComboBoxActionPerformed();
+		tpv.bgColorComboBox();
 }//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void applyToAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyToAllButtonActionPerformed
-		tpv.applyToAllButtonActionPerformed();
+		tpv.applyToAllButton();
 	}//GEN-LAST:event_applyToAllButtonActionPerformed
 
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-		tpv.labelFieldComboBoxActionPerformed();
+		tpv.labelFieldComboBox();
 }//GEN-LAST:event_labelFieldComboBoxActionPerformed
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
-		tpv.possitiveColorComboBoxActionPerformed();
+		tpv.possitiveColorComboBox();
 }//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
-		tpv.negativeColorComboBoxActionPerformed();
+		tpv.negativeColorComboBox();
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		tpv.colorCheckBoxActionPerformed();
+		tpv.colorCheckBox();
 }//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		tpv.arrowCheckBoxActionPerformed();
+		tpv.arrowCheckBox();
 }//GEN-LAST:event_arrowCheckBoxActionPerformed
 
 	private void viewModeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewModeCBActionPerformed
-		tpv.viewModeCBActionPerformed();
+		tpv.viewModeCB();
 	}//GEN-LAST:event_viewModeCBActionPerformed
+
+	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		tpv.restoreToDefault();
+	}//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyToAllButton;
     private javax.swing.JLabel applyToAllTip;
@@ -496,6 +512,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private javax.swing.JTextField displayNameTextField;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

@@ -45,6 +45,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private boolean show = default_show;
 	private boolean connected = default_connected;
 	private boolean collapsed = default_collapsed;
+	private boolean show2tracks = default_show2tracks;
 	private boolean expandable = default_expandable;
 	private int max_depth = default_max_depth;
 	private Color foreground = default_foreground;
@@ -106,6 +107,35 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return style;
 	}
 
+	public void restoreToDefault() {
+		TrackStyle template = getDefaultInstance();
+
+		if (template != null) {
+			// calling initFromTemplate should take care of A) and B)
+			initFromTemplate(template);
+		}
+
+		// Hidden default file type pref. from system stylesheet
+		Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
+		AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
+		if (assel != null) {
+			PropertyMap props = assel.getPropertyMap();
+			if (props != null) {
+				initFromPropertyMap(props);
+			}
+		}
+
+		// File defaults panel user stylesheet
+		stylesheet = XmlStylesheetParser.getUserStylesheet();
+		assel = stylesheet.getAssociationForFileType(file_type);
+		if (assel != null) {
+			PropertyMap props = assel.getPropertyMap();
+			if (props != null) {
+				initFromPropertyMap(props);
+			}
+		}
+	}
+
 	/** Returns all (persistent and temporary) instances of AnnotStyle. */
 	public static List<TrackStyle> getAllLoadedInstances() {
 		return new ArrayList<TrackStyle>(static_map.values());
@@ -127,7 +157,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		method_name = null;
 	}
 
-	public TrackStyle(PropertyMap props){
+	public TrackStyle(PropertyMap props) {
 		this();
 		initFromPropertyMap(props);
 	}
@@ -199,7 +229,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			initFromPropertyMap(properties);
 		}
 
-		// Saved settings
+		// Saved settings ????
 		assel = stylesheet.getAssociationForType(name);
 		if (assel == null) {
 			assel = stylesheet.getAssociationForMethod(name);
@@ -237,8 +267,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name);
 		}
 		track_name = node.get(PREF_TRACK_NAME, this.track_name);
+		show2tracks = node.getBoolean(PREF_SHOW2TRACKS, this.getSeparate());
 
-		connected = node.getBoolean(PREF_CONNECTED, this.getSeparate());
+		int glyph = node.getInt(PREF_CONNECTED, this.getGlyphDepth());
+		if (glyph == 1) {
+			connected = false;
+		} else {
+			connected = true;
+		}
+
 		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
 		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
@@ -283,60 +320,63 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
 			System.out.println("             props: " + props);
 		}
+		
 		Color col = props.getColor(PROP_COLOR);
 		if (col == null) {
 			col = props.getColor(PROP_FOREGROUND);
 		}
 		if (col != null) {
-			foreground = col;
+			this.setForeground(col);
 		}
-		Color bgcol = props.getColor(PROP_BACKGROUND);
-		if (bgcol != null) {
-			background = bgcol;
-		}
-
-		Color stcol = props.getColor(PROP_START_COLOR);
-		if (stcol != null) {
-			start_color = stcol;
+		col = props.getColor(PROP_BACKGROUND);
+		if (col != null) {
+			this.setBackground(col);
 		}
 
-		Color edcol = props.getColor(PROP_END_COLOR);
-		if (edcol != null) {
-			end_color = edcol;
+		col = props.getColor(PROP_START_COLOR);
+		if (col != null) {
+			this.setForwardColor(col);
+		}
+
+		col = props.getColor(PROP_END_COLOR);
+		if (col != null) {
+			this.setReverseColor(col);
 		}
 
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null) {
 			int prev_glyph_depth = glyph_depth;
 			try {
-				glyph_depth = Integer.parseInt(gdepth_string);
+				this.setGlyphDepth(Integer.parseInt(gdepth_string));
 			} catch (Exception ex) {
-				glyph_depth = prev_glyph_depth;
+				this.setGlyphDepth(prev_glyph_depth);
 			}
 		}
+		
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
 		if (labfield != null) {
-			label_field = labfield;
+			this.setLabelField(labfield);
 		}
 
 		String mdepth_string = (String) props.getProperty(PROP_MAX_DEPTH);
 		if (mdepth_string != null) {
 			int prev_max_depth = max_depth;
 			try {
-				max_depth = Integer.parseInt(mdepth_string);
+				this.setMaxDepth(Integer.parseInt(mdepth_string));
 			} catch (Exception ex) {
-				max_depth = prev_max_depth;
+				this.setMaxDepth(prev_max_depth);
 			}
 		}
 
 		String sepstring = (String) props.getProperty(PROP_SEPARATE);
 		if (sepstring != null) {
 			if (sepstring.equalsIgnoreCase(FALSE)) {
-				connected = false;
+				this.setSeparate(false);
 			} else if (sepstring.equalsIgnoreCase(TRUE)) {
-				connected = true;
+				this.setSeparate(true);
 			}
 		}
+		
 		String showstring = (String) props.getProperty(PROP_SHOW);
 		if (showstring != null) {
 			if (showstring.equalsIgnoreCase(FALSE)) {
@@ -345,30 +385,31 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				show = true;
 			}
 		}
+		
 		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
 		if (collapstring != null) {
 			if (collapstring.equalsIgnoreCase(FALSE)) {
-				collapsed = false;
+				this.setCollapsed(false);
 			} else if (collapstring.equalsIgnoreCase(TRUE)) {
-				collapsed = true;
+				this.setCollapsed(true);
 			}
 		}
 		String fontstring = (String) props.getProperty(PROP_FONT_SIZE);
 		if (fontstring != null) {
 			float prev_font_size = track_name_size;
 			try {
-				track_name_size = Float.parseFloat(fontstring);
+				this.setTrackNameSize(Float.parseFloat(fontstring));
 			} catch (Exception ex) {
-				track_name_size = prev_font_size;
+				this.setTrackNameSize(prev_font_size);
 			}
 		}
 		String directionstring = (String) props.getProperty(PROP_DIRECTION_TYPE);
 		if (directionstring != null) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
 			try {
-				direction_type = DIRECTION_TYPE.valueFor(directionstring);
+				this.setDirectionType(DIRECTION_TYPE.valueFor(directionstring));
 			} catch (Exception ex) {
-				direction_type = prev_direction_type;
+				this.setDirectionType(prev_direction_type);
 			}
 		}
 		String viewmodestring = (String) props.getProperty(PROP_VIEW_MODE);
@@ -385,36 +426,36 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private void initFromPropertyMap(Map<String, String> props) {
 		String fgString = props.get("foreground");
 		if (fgString != null && !"".equals(fgString)) {
-			foreground = Color.decode("0x" + fgString);
+			this.setForeground(Color.decode("0x" + fgString));
 		}
 
 		String bgString = props.get("background");
 		if (bgString != null && !"".equals(bgString)) {
-			background = Color.decode("0x" + bgString);
+			this.setBackground(Color.decode("0x" + bgString));
 		}
 
 		String startColorString = props.get("positive_strand_color");
 		if (startColorString != null && !"".equals(startColorString)) {
-			start_color = Color.decode("0x" + startColorString);
+			this.setForwardColor(Color.decode("0x" + startColorString));
 		}
 
 		String endColorString = props.get("negative_strand_color");
 		if (endColorString != null && !"".equals(endColorString)) {
-			end_color = Color.decode("0x" + endColorString);
+			this.setReverseColor(Color.decode("0x" + endColorString));
 		}
 
 		String labfield = props.get("label_field");
 		if (labfield != null && !"".equals(labfield) && label_field != null) {
-			label_field = labfield;
+			this.setLabelField(labfield);
 		}
 
 		String mDepthString = props.get("max_depth");
 		if (mDepthString != null && !"".equals(mDepthString)) {
 			int prev_max_depth = max_depth;
 			try {
-				max_depth = Integer.parseInt(mDepthString);
+				this.setMaxDepth(Integer.parseInt(mDepthString));
 			} catch (Exception ex) {
-				max_depth = prev_max_depth;
+				this.setMaxDepth(prev_max_depth);
 			}
 		}
 
@@ -422,36 +463,36 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (nameSizeString != null && !"".equals(nameSizeString)) {
 			float prev_font_size = track_name_size;
 			try {
-				track_name_size = Float.parseFloat(nameSizeString);
+				this.setTrackNameSize(Float.parseFloat(nameSizeString));
 			} catch (Exception ex) {
-				track_name_size = prev_font_size;
+				this.setTrackNameSize(prev_font_size);
 			}
 		}
 
 		String connectedString = props.get("connected");
 		if (connectedString != null && !"".equals(connectedString)) {
 			if (connectedString.equalsIgnoreCase(FALSE)) {
-				glyph_depth = 1;
+				this.setGlyphDepth(1);
 			} else if (connectedString.equalsIgnoreCase(TRUE)) {
-				glyph_depth = 2;
+				this.setGlyphDepth(2);
 			}
 		}
 
 		String collapsedString = props.get("collapsed");
 		if (collapsedString != null && !"".equals(collapsedString)) {
 			if (collapsedString.equalsIgnoreCase(FALSE)) {
-				collapsed = false;
+				this.setCollapsed(false);
 			} else if (collapsedString.equalsIgnoreCase(TRUE)) {
-				collapsed = true;
+				this.setCollapsed(true);
 			}
 		}
 
 		String show2tracksString = props.get("show2tracks");
 		if (show2tracksString != null && !"".equals(show2tracksString)) {
 			if (show2tracksString.equalsIgnoreCase(FALSE)) {
-				connected = false;
+				this.setSeparate(false);
 			} else if (show2tracksString.equalsIgnoreCase(TRUE)) {
-				connected = true;
+				this.setSeparate(true);
 			}
 		}
 
@@ -459,9 +500,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (directionstring != null) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
 			try {
-				direction_type = DIRECTION_TYPE.valueFor(directionstring);
+				this.setDirectionType(DIRECTION_TYPE.valueFor(directionstring));
 			} catch (Exception ex) {
-				direction_type = prev_direction_type;
+				this.setDirectionType(prev_direction_type);
 			}
 		}
 
@@ -475,19 +516,20 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// these copied values.
 	// human_name and factory_instance are not modified
 	private void initFromTemplate(TrackStyle template) {
-		connected = template.getSeparate();
-		show = template.getShow();
-		collapsed = template.getCollapsed();
-		max_depth = template.getMaxDepth();  // max stacking of annotations
-		foreground = template.getForeground();
-		background = template.getBackground();
-		label_field = template.getLabelField();
-		glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
-		track_name_size = template.getTrackNameSize();
-		start_color = template.getForwardColor();
-		end_color = template.getReverseColor();
-		view_mode = template.getViewMode();
-		direction_type = template.direction_type;
+		this.setGlyphDepth(template.getGlyphDepth());
+		this.setSeparate(template.getSeparate());
+		this.setShow(template.getShow());
+		this.setCollapsed(template.getCollapsed());
+		this.setMaxDepth(template.getMaxDepth());  // max stacking of annotations
+		this.setForeground(template.getForeground());
+		this.setBackground(template.getBackground());
+		this.setLabelField(template.getLabelField());
+		this.setGlyphDepth(template.getGlyphDepth());  // depth of visible glyph tree
+		this.setTrackNameSize(template.getTrackNameSize());
+		this.setForwardColor(template.getForwardColor());
+		this.setReverseColor(template.getReverseColor());
+		this.setViewMode(template.getViewMode());
+		this.setDirectionType(template.getDirectionName());
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.
@@ -532,13 +574,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.track_name;
 	}
 
-	public void setTrackName(String human_name) {
-		this.track_name = human_name;
+	public void setTrackName(String track_name) {
+		this.track_name = track_name;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setHumanName(): " + human_name);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setTrackName(): " + track_name);
 			}
-			getNode().put(PREF_TRACK_NAME, human_name);
+			getNode().put(PREF_TRACK_NAME, track_name);
 		}
 	}
 
@@ -555,16 +597,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	/** Whether PLUS and MINUS strand should be in separate tiers. */
 	//Show2Tracks
 	public boolean getSeparate() {
-		return connected;
+		return show2tracks;
 	}
 
 	public void setSeparate(boolean b) {
-		this.connected = b;
+		this.show2tracks = b;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setSeparate(): " + track_name + ", " + b);
 			}
-			getNode().putBoolean(PREF_CONNECTED, b);
+			getNode().putBoolean(PREF_SHOW2TRACKS, b);
 		}
 	}
 
@@ -709,7 +751,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				if (DEBUG_NODE_PUTS) {
 					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + track_name + ", " + i);
 				}
-				getNode().putInt(PREF_SHOW2TRACKS, i);
+				getNode().putInt(PREF_CONNECTED, i);
 			}
 		}
 	}
@@ -760,7 +802,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + track_name + ", " + direction_type);
 			}
-			getNode().putInt(PREF_DIRECTION_TYPE, direction_type.ordinal());
+			getNode().putInt(PREF_DIRECTION_TYPE, type.ordinal());
 		}
 	}
 
@@ -885,13 +927,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			s = default_view_mode;
 		}
 		view_mode = s;
-//		Making View Mode non persistent.
-//		if (getNode() != null) {
-//			if (DEBUG_NODE_PUTS) {
-//				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
-//			}
-//			getNode().put(PREF_VIEW_MODE, s);
-//		}
+
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
+			}
+			getNode().put(PREF_VIEW_MODE, s);
+		}
 	}
 
 	public String getViewMode() {
@@ -910,7 +952,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	public boolean drawCollapseControl() {
-		return (draw_collapse_icon && getExpandable() 
+		return (draw_collapse_icon && getExpandable()
 				&& (view_mode == null || view_mode.equals(default_view_mode)));
 	}
 

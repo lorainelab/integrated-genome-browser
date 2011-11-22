@@ -77,23 +77,23 @@ public class TierPrefsView implements ListSelectionListener {
 	public JRPButton applyToAllButton;
 	public JRPCheckBox arrowCheckBox;
 	public JCheckBox autoRefreshCheckBox;
-	public com.jidesoft.combobox.ColorComboBox bgColorComboBox;
+	public ColorComboBox bgColorComboBox;
 	public JRPCheckBox collapsedCheckBox;
 	public JRPCheckBox colorCheckBox;
 	public JRPCheckBox connectedCheckBox;
 	public JRPTextField displayNameTextField;
-	public com.jidesoft.combobox.ColorComboBox fgColorComboBox;
+	public ColorComboBox fgColorComboBox;
 	public JRPComboBox labelFieldComboBox;
 	public JRPTextField maxDepthTextField;
-	public com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
-	public com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
+	public ColorComboBox negativeColorComboBox;
+	public ColorComboBox possitiveColorComboBox;
 	public JRPButton refreshButton;
 	public JRPCheckBox show2TracksCheckBox;
-	public javax.swing.ButtonGroup showStrandButtonGroup;
-	public javax.swing.JTable table;
+	public ButtonGroup showStrandButtonGroup;
+	public JTable table;
 	public JRPComboBox trackNameSizeComboBox;
 	public JRPComboBox viewModeCB;
-	public javax.swing.JLabel applyToAllTip;
+	public JLabel applyToAllTip;
 
 	public static void init() {
 		singleton = new TierPrefsView();
@@ -118,8 +118,8 @@ public class TierPrefsView implements ListSelectionListener {
 		initTable();
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
-		fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		fgColorComboBox = new ColorComboBox();
+		bgColorComboBox = new ColorComboBox();
 		trackNameSizeComboBox = new JRPComboBox("TierPrefsView_trackNameSizeComboBox");
 		maxDepthTextField = new JRPTextField("TierPrefsView_maxDepthTextField");
 		labelFieldComboBox = new JRPComboBox("TierPrefsView_labelFieldComboBox");
@@ -127,8 +127,8 @@ public class TierPrefsView implements ListSelectionListener {
 		connectedCheckBox = new JRPCheckBox("TierPrefsView_connectedCheckBox");
 		collapsedCheckBox = new JRPCheckBox("TierPrefsView_collapsedCheckBox");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
-		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		possitiveColorComboBox = new ColorComboBox();
+		negativeColorComboBox = new ColorComboBox();
 		colorCheckBox = new JRPCheckBox("TierPrefsView_colorCheckBox");
 		arrowCheckBox = new JRPCheckBox("TierPrefsView_arrowCheckBox");
 		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
@@ -505,37 +505,37 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void show2TracksCheckBoxActionPerformed() {
+	public void show2TracksCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
 		}
 	}
 
-	public void connectedCheckBoxActionPerformed() {
+	public void connectedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
 		}
 	}
 
-	public void collapsedCheckBoxActionPerformed() {
+	public void collapsedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
 		}
 	}
 
-	public void displayNameTextFieldActionPerformed() {
+	public void displayNameTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
 		}
 	}
 
-	public void maxDepthTextFieldActionPerformed() {
+	public void maxDepthTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
 		}
 	}
 
-	public void trackNameSizeComboBoxActionPerformed() {
+	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
 			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
@@ -543,19 +543,19 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void fgColorComboBoxActionPerformed() {
+	public void fgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
 		}
 	}
 
-	public void bgColorComboBoxActionPerformed() {
+	public void bgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
 		}
 	}
 
-	public void applyToAllButtonActionPerformed() {
+	public void applyToAllButton() {
 		selectedRow = table.getSelectedRow();
 		ITrackStyle style;
 		for (int i = 0; i < table.getRowCount(); i++) {
@@ -575,25 +575,25 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void labelFieldComboBoxActionPerformed() {
+	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
 		}
 	}
 
-	public void possitiveColorComboBoxActionPerformed() {
+	public void possitiveColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
 		}
 	}
 
-	public void negativeColorComboBoxActionPerformed() {
+	public void negativeColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
 		}
 	}
 
-	public void colorCheckBoxActionPerformed() {
+	public void colorCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -615,7 +615,7 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void arrowCheckBoxActionPerformed() {
+	public void arrowCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -637,13 +637,75 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void viewModeCBActionPerformed() {
+	public void viewModeCB() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(viewModeCB.getSelectedItem(),
 						selectedRows[i], COL_VIEW_MODE);
 			}
 		}
+	}
+
+	public void restoreToDefault() {
+		int row;
+		TrackStyle style;
+		int[] previousSelectedRows = selectedRows;
+		for (int i = 0; i < selectedRows.length; i++) {
+			row = selectedRows[i];
+			style = model.getStyles().get(row);
+			style.restoreToDefault();
+
+			displayNameTextField.setText(style.getTrackName());
+			fgColorComboBox.setSelectedColor(style.getForeground());
+			bgColorComboBox.setSelectedColor(style.getBackground());
+			trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
+			maxDepthTextField.setText(Integer.toString(style.getMaxDepth()));
+			labelFieldComboBox.setSelectedItem(style.getLabelField());
+			show2TracksCheckBox.setSelected(style.getSeparate());
+
+			int glyph = style.getGlyphDepth();
+			if (glyph == 1) {
+				connectedCheckBox.setSelected(false);
+			} else {
+				connectedCheckBox.setSelected(true);
+			}
+
+			collapsedCheckBox.setSelected(style.getCollapsed());
+			possitiveColorComboBox.setSelectedItem(style.getForwardColor());
+			negativeColorComboBox.setSelectedItem(style.getReverseColor());
+
+			DIRECTION_TYPE direction = style.getDirectionName();
+			switch (direction) {
+				case NONE:
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(false);
+					break;
+				case ARROW:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(false);
+					break;
+				case COLOR:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(false);
+					break;
+				case BOTH:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(true);
+					break;
+				default:
+					System.out.println("Wrong Direction Type");
+			}
+
+			viewModeCB.setSelectedItem(style.getViewMode());
+		}
+
+		model.fireTableDataChanged();
+
+		for (int i : previousSelectedRows) {
+			table.setRowSelectionInterval(i, i);
+		}
+
+		applyChanges();
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {
@@ -731,8 +793,7 @@ public class TierPrefsView implements ListSelectionListener {
 			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
-					TrackStyle style;
-					style = tier_styles.get(row);
+					TrackStyle style = tier_styles.get(row);
 					switch (col) {
 						case COL_TRACK_NAME:
 							//Test prevents a bug allowing Coordinate track to be renamed when multi-selecting
@@ -779,11 +840,9 @@ public class TierPrefsView implements ListSelectionListener {
 							break;
 						case COL_POS_STRAND_COLOR:
 							style.setForwardColor((Color) value);
-							possitiveColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_NEG_STRAND_COLOR:
 							style.setReverseColor((Color) value);
-							negativeColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_VIEW_MODE:
 							style.setViewMode((String) value);

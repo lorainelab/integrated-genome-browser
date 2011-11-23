@@ -64,6 +64,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String track_name;
+	private String original_track_name;
 	final private String method_name;
 	private Preferences node;
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
@@ -100,7 +101,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			static_map.put(unique_name.toLowerCase(), style);
 
 			if (force_human_name) {
-				style.track_name = human_name;
+				style.original_track_name = human_name;
 			}
 		}
 
@@ -133,6 +134,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			if (props != null) {
 				initFromPropertyMap(props);
 			}
+		}
+
+		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			this.setTrackName(original_track_name);
 		}
 	}
 
@@ -268,14 +273,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		track_name = node.get(PREF_TRACK_NAME, this.track_name);
 		show2tracks = node.getBoolean(PREF_SHOW2TRACKS, this.getSeparate());
-
-		int glyph = node.getInt(PREF_CONNECTED, this.getGlyphDepth());
-		if (glyph == 1) {
-			connected = false;
-		} else {
-			connected = true;
-		}
-
+		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
+		connected = node.getBoolean(PREF_CONNECTED, this.getConnected());
 		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
 		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
@@ -284,7 +283,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
 
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
-		glyph_depth = node.getInt(PREF_SHOW2TRACKS, this.getGlyphDepth());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
 		view_mode = node.get(PREF_VIEW_MODE, this.getViewMode());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
@@ -300,6 +298,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		props.put(PROP_GLYPH_DEPTH, String.valueOf(getGlyphDepth()));
 		props.put(PROP_LABEL_FIELD, getLabelField());
 		props.put(PROP_MAX_DEPTH, String.valueOf(getMaxDepth()));
+		props.put(PROP_CONNECTED, String.valueOf(getConnected()));
 		props.put(PROP_SEPARATE, String.valueOf(getSeparate()));
 		props.put(PROP_SHOW, String.valueOf(getShow()));
 		props.put(PROP_COLLAPSED, String.valueOf(getCollapsed()));
@@ -320,7 +319,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
 			System.out.println("             props: " + props);
 		}
-		
+
 		Color col = props.getColor(PROP_COLOR);
 		if (col == null) {
 			col = props.getColor(PROP_FOREGROUND);
@@ -352,7 +351,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setGlyphDepth(prev_glyph_depth);
 			}
 		}
-		
+
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
 		if (labfield != null) {
 			this.setLabelField(labfield);
@@ -376,7 +375,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setSeparate(true);
 			}
 		}
-		
+
 		String showstring = (String) props.getProperty(PROP_SHOW);
 		if (showstring != null) {
 			if (showstring.equalsIgnoreCase(FALSE)) {
@@ -385,7 +384,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				show = true;
 			}
 		}
-		
+
 		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
 		if (collapstring != null) {
 			if (collapstring.equalsIgnoreCase(FALSE)) {
@@ -516,7 +515,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// these copied values.
 	// human_name and factory_instance are not modified
 	private void initFromTemplate(TrackStyle template) {
-		this.setGlyphDepth(template.getGlyphDepth());
 		this.setSeparate(template.getSeparate());
 		this.setShow(template.getShow());
 		this.setCollapsed(template.getCollapsed());
@@ -740,6 +738,20 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	public boolean getConnected() {
+		return connected;
+	}
+
+	public void setConnected(boolean b) {
+		connected = b;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setConnected(): " + track_name + ", " + b);
+			}
+			getNode().putBoolean(PREF_CONNECTED, b);
+		}
+	}
+
 	public int getGlyphDepth() {
 		return glyph_depth;
 	}
@@ -751,8 +763,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				if (DEBUG_NODE_PUTS) {
 					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + track_name + ", " + i);
 				}
-				getNode().putInt(PREF_CONNECTED, i);
+				getNode().putInt(PREF_GLYPH_DEPTH, i);
 			}
+		}
+
+		if (glyph_depth == 1) {
+			setConnected(false);
+		} else {
+			setConnected(true);
 		}
 	}
 

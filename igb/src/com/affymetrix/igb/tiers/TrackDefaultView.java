@@ -478,20 +478,13 @@ public final class TrackDefaultView implements ListSelectionListener {
 				possitiveColorComboBox.setEnabled(false);
 				negativeColorComboBox.setEnabled(false);
 			} else {
-				int connected = selectedStyle.getGlyphDepth();
-				boolean isConnected = true;
-				if (connected == 1) {
-					isConnected = false;
-				} else if (connected == 2) {
-					isConnected = true;
-				}
 				possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 				negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 				trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 				labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 				maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
 				show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-				connectedCheckBox.setSelected(isConnected);
+				connectedCheckBox.setSelected(selectedStyle.getConnected());
 				collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
 
 				switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {

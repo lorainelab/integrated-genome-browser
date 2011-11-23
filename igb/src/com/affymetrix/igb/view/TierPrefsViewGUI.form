@@ -21,8 +21,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackPanel" alignment="0" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="propertiesPanel" min="-2" pref="375" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <Component id="propertiesPanel" min="-2" pref="365" max="-2" attributes="1"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="refreshButton" min="-2" pref="111" max="-2" attributes="0"/>
                           <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="1"/>
@@ -42,13 +42,13 @@
               <Component id="selectTrackPanel" max="32767" attributes="2"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" alignment="0" attributes="1">
+                  <Group type="102" attributes="1">
                       <Component id="showStrandPanel" min="-2" pref="107" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="viewModelPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="autoRefreshCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="refreshButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="propertiesPanel" alignment="0" min="-2" max="-2" attributes="1"/>
@@ -86,11 +86,7 @@
                           </Group>
                           <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="applyToAllButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                                  <Component id="applyToAllTip" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="applyToAllButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                                   <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
@@ -101,8 +97,8 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="displayNameLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="displayNameTextField" min="-2" pref="260" max="-2" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="displayNameTextField" min="-2" pref="251" max="-2" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="maxDepthLabel" min="-2" max="-2" attributes="0"/>
@@ -114,7 +110,7 @@
                           <Component id="labelFieldComboBox" min="-2" pref="85" max="-2" attributes="1"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="3" max="32767" attributes="0"/>
               </Group>
               <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                   <Component id="jSeparator1" linkSize="1" alignment="0" max="32767" attributes="1"/>
@@ -158,7 +154,6 @@
                       <Component id="applyToAllButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="applyToAllTip" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="11" max="-2" attributes="0"/>
@@ -338,21 +333,13 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyToAllButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="applyToAllButton.setToolTipText(&quot;Apply background, foreground, and Name Size to all selected tracks.&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="applyToAllButton.setToolTipText(&quot;Apply Background, Foreground, and Name Size to all tracks.&quot;);"/>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.applyToAllButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator2">
-        </Component>
-        <Component class="javax.swing.JLabel" name="applyToAllTip">
-          <Properties>
-            <Property name="text" type="java.lang.String" value=" "/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.applyToAllTip"/>
-          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -371,12 +358,8 @@
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" pref="457" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                          <Component id="restoreToDefaultTip" min="-2" pref="14" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jScrollPane1" pref="447" max="32767" attributes="0"/>
+                      <Component id="restoreToDefaultButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -385,12 +368,9 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="jScrollPane1" pref="216" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="218" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="restoreToDefaultTip" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="restoreToDefaultButton" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -418,20 +398,15 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="restoreToDefaultButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Restore to default"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="restoreToDefaultButtonActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="restoreToDefaultTip">
-          <Properties>
-            <Property name="text" type="java.lang.String" value=" "/>
-          </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.restoreToDefaultTip"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="restoreToDefaultButton.setToolTipText(&quot;Restore selected tracks to default setting.&quot;);"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -616,6 +591,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Auto Refresh"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.autoRefreshCheckBox"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

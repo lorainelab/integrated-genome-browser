@@ -3127,18 +3127,24 @@ public class GenoPubServlet extends HttpServlet {
 				if (dataFile.canRead() == false || dataFile.canWrite() == false) {
 					errors.append("Cannot find/modify file -> " + line+" . \n");
 				}
-				//check file extension
-				String fileName = dataFile.toString();
-				if (Util.isValidAnnotationFileType(fileName) == false) {
-					errors.append("Unsupported file type ->  " + line+" . \n");
-				}
-				//bam or bai?
-				if (fileName.endsWith(".bam") || fileName.endsWith(".bai")) bamBaiFiles.add(name+"__"+fileName);
-				
-				//check bam file
-				if (fileName.endsWith(".bam")) {
-					String log = checkBamFile(dataFile);
-					if (log != null) errors.append("Problems were found with this bam file ->  " + line+" . "+log);
+				//check live file
+				else {
+					//check file extension
+					String fileName = dataFile.toString();
+					if (Util.isValidAnnotationFileType(fileName) == false) {
+						errors.append("Unsupported file type ->  " + line+" . \n");
+					}
+					else {
+						//too many lines in txt file?
+						if (Util.tooManyLines(dataFile)) errors.append("Too many lines in file ->  " + line+" . Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html).\n");
+						//bam or bai?
+						if (fileName.endsWith(".bam") || fileName.endsWith(".bai")) bamBaiFiles.add(name+"__"+fileName);
+						//check bam file
+						if (fileName.endsWith(".bam")) {
+							String log = checkBamFile(dataFile);
+							if (log != null) errors.append("Problems were found with this bam file ->  " + line+" . "+log);
+						}
+					}
 				}
 			}
 
@@ -3178,7 +3184,7 @@ public class GenoPubServlet extends HttpServlet {
 	 * @author davidnix*/
 	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
 	throws Exception  {
-		
+
 		//validate upload file
 		String errors = validateBulkUploadFile(spreadSheet);
 		if (errors != null) throw new BulkFileUploadException (errors);
@@ -3227,7 +3233,7 @@ public class GenoPubServlet extends HttpServlet {
 						//System.out.println("Dir "+dir.canWrite()+" | "+dir.exists());
 						//System.out.println("DataFile "+dataFile.canWrite()+" | "+dataFile.exists());
 						throw new BulkFileUploadException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
-						
+
 					}
 				}
 				//make new annotation cloning current annotation

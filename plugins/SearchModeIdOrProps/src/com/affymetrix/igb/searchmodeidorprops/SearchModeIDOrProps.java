@@ -254,6 +254,9 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 		List<SeqSymmetry> tableRows = filterBySeq(localSymList, chrFilter);
 		Collections.sort(tableRows, new Comparator<SeqSymmetry>() {
 			public int compare(SeqSymmetry s1, SeqSymmetry s2) {
+				if (s1.getID() == null || s2.getID() == null) {
+					return 0;
+				}
 				return s1.getID().compareTo(s2.getID());
 			}
 		});

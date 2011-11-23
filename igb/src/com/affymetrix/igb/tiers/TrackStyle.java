@@ -75,19 +75,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private boolean customizable = true;
 	private GenericFeature feature = null;
 
-	public static TrackStyle getInstance(String name, String human_name, String file_type, Map<String, String> props) {
-		return getInstance(name, human_name, file_type, true, true, props);
+	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
+		return getInstance(unique_name, track_name, file_type, true, true, props);
 	}
 
-	public static TrackStyle getInstance(String name, String human_name, String file_type) {
-		return getInstance(name, human_name, file_type, true, true, null);
+	public static TrackStyle getInstance(String unique_name, String track_name, String file_type) {
+		return getInstance(unique_name, track_name, file_type, true, true, null);
 	}
 
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
 		return getInstance(unique_name, null, null, persistent, false, null);
 	}
 
-	private static TrackStyle getInstance(String unique_name, String human_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
+	private static TrackStyle getInstance(String unique_name, String track_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (DEBUG) {
@@ -97,12 +97,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			TrackStyle template = getDefaultInstance();
 			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
 			// apply any stylesheet stuff...
-			style = new TrackStyle(unique_name, file_type, persistent, template, props);
+			style = new TrackStyle(unique_name, track_name, file_type, persistent, template, props);
 			static_map.put(unique_name.toLowerCase(), style);
-
-			if (force_human_name) {
-				style.original_track_name = human_name;
-			}
 		}
 
 		return style;
@@ -178,18 +174,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 *
 	 *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
 	 */
-	private TrackStyle(String name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
-		this.method_name = name;
-		this.track_name = name; // this is the default human name, and is not lower case
+	private TrackStyle(String unique_ame, String track_name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
+		this.method_name = unique_ame;
+		this.track_name = track_name; // this is the default human name, and is not lower case
+		this.original_track_name = track_name;
 		this.file_type = file_type;
-		this.unique_name = name.toLowerCase();
+		this.unique_name = unique_ame.toLowerCase();
 		this.is_persistent = is_persistent;
 
 		if (is_persistent) {
-			if (unique_name.endsWith("/")) {
-				unique_name = unique_name.substring(0, unique_name.length() - 1);
+			if (this.unique_name.endsWith("/")) {
+				this.unique_name = this.unique_name.substring(0, this.unique_name.length() - 1);
 			}
-			unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
+			this.unique_name = multiple_slashes.matcher(this.unique_name).replaceAll("/");
 			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
 			//   is now handled within PreferenceUtils.getSubnod() call
 		}
@@ -235,9 +232,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 
 		// Saved settings ????
-		assel = stylesheet.getAssociationForType(name);
+		assel = stylesheet.getAssociationForType(unique_ame);
 		if (assel == null) {
-			assel = stylesheet.getAssociationForMethod(name);
+			assel = stylesheet.getAssociationForMethod(unique_ame);
 		}
 		if (assel != null) {
 			PropertyMap props = assel.getPropertyMap();
@@ -543,7 +540,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public static TrackStyle getDefaultInstance() {
 		if (default_instance == null) {
 			// Use a temporary variable here to avoid possible synchronization problems.
-			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
+			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
 			instance.setTrackName("");
 			instance.setShow(true);
 			default_instance = instance;

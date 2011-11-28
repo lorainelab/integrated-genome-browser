@@ -29,7 +29,6 @@ import java.awt.event.MouseEvent;
  * the welcome screen falls out to the background, and the SeqMapView is brought to 
  * the foreground.  
  * 
- * TODO.  another card to show a loading process could be added.
  * 
  * @author jfvillal
  */

@@ -20,21 +20,58 @@ import javax.swing.ImageIcon;
  * @version $Id$
  */
 public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
-
+	/**
+	 * Stores this servers settings on Java Preferences
+	 */
 	private final Preferences node;
-	public final String serverName;						// name of the server.
-	public final String URL;							// URL/file that points to the server.
-	public final ServerType serverType;					// DAS, DAS2, QuickLoad, Unknown (local file)
-	private String login = "";							// to be used by DAS/2 authentication
-	private String password = "";						// to be used by DAS/2 authentication
-	private boolean enabled = true;						// Is this server enabled?
-//	private final boolean referenceOnly;				// Is this only a reference (no annotations) server?
-	public final Object serverObj;						// Das2ServerInfo, DasServerInfo, ..., QuickLoad?
-	public final URL friendlyURL;						// friendly URL that users may look at.
-	private ImageIcon friendlyIcon = null;				// friendly icon that users may look at.
-	private boolean friendlyIconAttempted = false;		// Don't keep on searching for friendlyIcon
-	private ServerStatus serverStatus = 
-			ServerStatus.NotInitialized;				// Is this server initialized?
+	/**
+	 * Name of the server.
+	 */
+	public final String serverName;						
+	/**
+	 * URL/file that points to the server.
+	 */
+	public final String URL;							
+	/**
+	 * DAS, DAS2, QuickLoad, Unknown (local file)
+	 */
+	public final ServerType serverType;					
+	/**
+	 * to be used by DAS/2 authentication
+	 */
+	private String login = "";							
+	/**
+	 * to be used by DAS/2 authentication
+	 */
+	private String password = "";						
+	/**
+	 * Is this server enabled?
+	 */
+	private boolean enabled = true;						
+	/**
+	 * Is this only a reference (no annotations) server?
+	 */
+	//	private final boolean referenceOnly;				 
+	/**
+	 * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
+	 */
+	public final Object serverObj;						 
+	/**
+	 * friendly URL that users may look at.
+	 */
+	public final URL friendlyURL;						
+	/**
+	 * friendly icon that users may look at.
+	 */
+	private ImageIcon friendlyIcon = null;				 
+	/**
+	 * Don't keep on searching for friendlyIcon
+	 */
+	private boolean friendlyIconAttempted = false;		
+	/**
+	 * Is this server initialized?
+	 */
+	private ServerStatus serverStatus = ServerStatus.NotInitialized;
 	private final boolean primary;
 
 	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, boolean primary) {
@@ -44,8 +81,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
-									 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node( getHash(URL) ) :
+									 PreferenceUtils.getServersNode().node( getHash(URL)),
 				serverObj, primary);
 	}
 
@@ -56,15 +93,15 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
-					 				 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node( getHash(URL)) :
+					 				 PreferenceUtils.getServersNode().node( getHash(URL)),
 				serverObj, false);
 	}
 
 	public GenericServer(Preferences node, Object serverObj, ServerType serverType) {
 		this(
-				node.get("name", "Unknown"),
-				GeneralUtils.URLDecode(node.name()),
+				node.get(GenericServerPref.NAME, "Unknown"),
+				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
 				serverType,
 				true,
 				false,
@@ -72,10 +109,22 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverObj, false);
 	}
 
+	/**
+	 * returns the positive has of the string.  For this class, the String is a 
+	 * URI for a local or network path.
+	 * @param str path on the network or local space
+	 * @return a hash that should be unique enough to create a Preference node where the
+	 *	servers preferences can be stored.
+	 */
+	public static String getHash( String str ){
+		return Long.toString(((long)str.hashCode()+(long)Integer.MAX_VALUE));
+	}
+	
+	
 	private GenericServer(
 			String serverName, String URL, ServerType serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
 		this.serverName = serverName;
-		this.URL = URL;
+		this.URL = URL;	
 		this.serverType = serverType;
 		this.enabled = enabled;
 		this.node = node;
@@ -83,9 +132,9 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 //		this.referenceOnly = referenceOnly;
 
-		this.setEnabled(this.node.getBoolean("enabled", enabled));
-		this.setLogin(this.node.get("login", ""));
-		this.setPassword(decrypt(this.node.get("password", "")));
+		this.setEnabled(this.node.getBoolean(GenericServerPref.ENABLED, enabled));
+		this.setLogin(this.node.get(GenericServerPref.LOGIN, ""));
+		this.setPassword(decrypt(this.node.get(GenericServerPref.PASSWORD, "")));
 
 		this.node.addPreferenceChangeListener(this);
 		this.primary = primary;
@@ -137,7 +186,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setEnabled(boolean enabled) {
-		node.putBoolean("enabled", enabled);
+		node.putBoolean( GenericServerPref.ENABLED, enabled);
 		this.enabled = enabled;
 	}
 
@@ -150,7 +199,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setLogin(String login) {
-		node.put("login", login);
+		node.put(GenericServerPref.LOGIN, login);
 		this.login = login;
 	}
 
@@ -159,12 +208,12 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setEncryptedPassword(String password) {
-		node.put("password", password);
+		node.put(GenericServerPref.PASSWORD, password);
 		this.password = decrypt(password);
 	}
 
 	public void setPassword(String password) {
-		node.put("password", encrypt(password));
+		node.put(GenericServerPref.PASSWORD, encrypt(password));
 		this.password = password;
 	}
 
@@ -208,13 +257,13 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		final String key = evt.getKey();
 
-		if (key.equals("name") || key.equals("type")) {
+		if (key.equals(GenericServerPref.NAME) || key.equals(GenericServerPref.TYPE)) {
 			/* Ignore */
-		} else if (key.equals("login")) {
+		} else if (key.equals(GenericServerPref.LOGIN)) {
 			this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
-		} else if (key.equals("password")) {
+		} else if (key.equals(GenericServerPref.PASSWORD)) {
 			this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
-		} else if (key.equals("enabled")) {
+		} else if (key.equals(GenericServerPref.ENABLED)) {
 			this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
 		}
 	}

@@ -713,7 +713,7 @@ public final class LocalUrlCacher {
 	}
 	
 	public static boolean isValidURI(URI uri){
-		
+
 		String scheme = uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			File f = new File(uri);

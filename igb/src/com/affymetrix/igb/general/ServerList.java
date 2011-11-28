@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -96,7 +97,7 @@ public final class ServerList {
 
 	private int getServerOrder(GenericServer server) {
 		String url = GeneralUtils.URLEncode(ServerUtils.formatURL(server.URL, server.serverType));
-		return Integer.parseInt(PreferenceUtils.getServersNode().node(url).get("order", "0"));
+		return Integer.parseInt(PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).get(GenericServerPref.ORDER, "0"));
 	}
 
 	public synchronized Collection<GenericServer> getAllServers() {
@@ -183,16 +184,16 @@ public final class ServerList {
 	}
 
 	public GenericServer addServer(Preferences node) {
-		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.name()));
+		GenericServer server = url2server.get(GeneralUtils.URLDecode( node.get(GenericServerPref.URL, "" ) ) );
 		String url;
 		String name;
 		ServerType serverType;
 		Object info;
 
 		if (server == null) {
-			url = GeneralUtils.URLDecode(node.name());
-			name = node.get("name", "Unknown");
-			String type = node.get("type", hasTypes() ? ServerType.LocalFiles.name() : null);
+			url = GeneralUtils.URLDecode(node.get( GenericServerPref.URL, "" ));
+			name = node.get(GenericServerPref.NAME, "Unknown");
+			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerType.LocalFiles.name() : null);
 			serverType = type == null ? null : ServerType.valueOf(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = ServerUtils.getServerInfo(serverType, url, name);
@@ -229,11 +230,34 @@ public final class ServerList {
 		Preferences node;
 
 		try {
+			//serverURL not an actual url now, it is a long hash instead.
 			for (String serverURL : getPreferencesNode().childrenNames()) {
 				node = getPreferencesNode().node(serverURL);
+				//this check for the old preference format which used the url as the key
+				//the new one uses a long integer hash, so if the key is not a long
+				//we have the old format.  We can convert the old format to the new one
+				//without loss of data.
+				if( !isLong( serverURL ) ){
+					
+					String url = GeneralUtils.URLDecode( node.name() );
+					System.out.println("Converting old standard server preferences to new standard ("+ url +").");
+					Preferences n_node = getPreferencesNode().node( GenericServer.getHash( url ));
+					n_node.put( GenericServerPref.URL, node.name() );
+					n_node.put( GenericServerPref.LOGIN, node.get(GenericServerPref.LOGIN, ""));
+					n_node.put( GenericServerPref.PASSWORD, node.get(GenericServerPref.PASSWORD, ""));
+					n_node.put( GenericServerPref.NAME, node.get(GenericServerPref.NAME, ""));
+					n_node.put( GenericServerPref.ORDER, node.get(GenericServerPref.ORDER, ""));
+					if( node.get(GenericServerPref.TYPE, null) != null){
+						n_node.put( GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
+					}
+					n_node.put( GenericServerPref.ENABLED, node.get(GenericServerPref.ENABLED, "true"));
+					node.removeNode();
+					node = n_node;
+				}
+				
 				serverType = null;
-				if (node.get("type", null) != null) {
-					serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+				if (node.get(GenericServerPref.TYPE, null) != null) {
+					serverType = ServerType.valueOf(node.get(GenericServerPref.TYPE, ServerType.LocalFiles.name()));
 				}
 
 				if (serverType == ServerType.LocalFiles) {
@@ -247,6 +271,16 @@ public final class ServerList {
 		}
 	}
 
+	public boolean isLong( String input ){  
+	   try{  
+		  Long.parseLong( input );  
+		  return true;  
+	   }catch( NumberFormatException e )  
+	   {  
+		  return false;  
+	   }  
+	}  
+	
 	/**
 	 * Update the old-style preference nodes to the newer format.  This is now
 	 * called by the PrefsLoader when checking/updating the preferences version.
@@ -258,16 +292,17 @@ public final class ServerList {
 			try {
 				if (getPreferencesNode().nodeExists(type.toString())) {
 					Preferences prefServers = getPreferencesNode().node(type.toString());
-					String name, login, password;
+					String name, login, password, real_url;
 					boolean enabled;
+					//in here, again, the url is actually a hash of type long
 					for (String url : prefServers.keys()) {
-						name        = prefServers.get(url, "Unknown");
-						login       = prefServers.node("login").get(url, "");
-						password    = prefServers.node("password").get(url, "");
-						enabled     = Boolean.parseBoolean(prefServers.node("enabled").get(url, "true"));
+						name        = prefServers.node(GenericServerPref.NAME).get(url, "Unknown");
+						login       = prefServers.node(GenericServerPref.LOGIN).get(url, "");
+						password    = prefServers.node(GenericServerPref.PASSWORD).get(url, "");
+						enabled     = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
+						real_url	= prefServers.node(GenericServerPref.URL).get(url, ""); 
 
-
-						server = addServerToPrefs(GeneralUtils.URLDecode(url), name, type);
+						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
 						server.setEnabled(enabled);
@@ -334,12 +369,15 @@ public final class ServerList {
 	 */
 	private GenericServer addServerToPrefs(String url, String name, ServerType type) {
 		url = ServerUtils.formatURL(url, type);
-		Preferences node = getPreferencesNode().node(GeneralUtils.URLEncode(ServerUtils.formatURL(url, type)));
+		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
+		
+		node.put(GenericServerPref.NAME,  name);
+		node.put(GenericServerPref.TYPE, type.toString());
+		//Added url to preferences.
+		//long url was bugging the node name since it only accepts 80 char names
+		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url) );
 
-		node.put("name",  name);
-		node.put("type", type.toString());
-
-		return new GenericServer(node, null, ServerType.valueOf(node.get("type", ServerType.LocalFiles.name())));
+		return new GenericServer(node, null, ServerType.valueOf(node.get(GenericServerPref.TYPE, ServerType.LocalFiles.name())));
 	}
 
 	/**
@@ -351,9 +389,10 @@ public final class ServerList {
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
 	private GenericServer addRepositoryToPrefs(String url, String name) {
-		Preferences node = PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(url));
+		Preferences node = PreferenceUtils.getRepositoriesNode().node( GenericServer.getHash( url ) );
 
-		node.put("name",  name);
+		node.put( GenericServerPref.URL, name);
+		node.put( GenericServerPref.URL, GeneralUtils.URLEncode(url));
 
 		return new GenericServer(node, null, null);
 	}
@@ -381,14 +420,14 @@ public final class ServerList {
 	 */
 	public void removeServerFromPrefs(String url) {
 		try {
-			getPreferencesNode().node(GeneralUtils.URLEncode(url)).removeNode();
+			getPreferencesNode().node( GenericServer.getHash(url) ).removeNode();
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
 	public void setServerOrder(String url, int order) {
-		getPreferencesNode().node(GeneralUtils.URLEncode(url)).put("order", "" + order);
+		getPreferencesNode().node(GenericServer.getHash(url)).put( GenericServerPref.ORDER, "" + order);
 	}
 
 	/**

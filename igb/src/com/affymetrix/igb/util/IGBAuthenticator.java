@@ -171,7 +171,7 @@ public class IGBAuthenticator extends Authenticator {
 
 		if (serverObject != null) {
 			url = serverObject.URL;
-			serverNode = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url));
+			serverNode = PreferenceUtils.getServersNode().node( GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
 			authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
 			if (serverObject.getLogin() != null) {
 				userFromPrefs = serverObject.getLogin();
@@ -314,7 +314,7 @@ public class IGBAuthenticator extends Authenticator {
 	}
 
 	public static void resetAuth(String url) {
-		Preferences serverNode = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url));
+		Preferences serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
 		serverNode.put(PREF_AUTH_TYPE, AuthType.ASK.toString());
 	}
 }

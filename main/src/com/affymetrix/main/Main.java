@@ -25,16 +25,11 @@ public final class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-//	        OSGiHandler.getInstance().startOSGi(args);
 			JarClassLoader jcl = new JarClassLoader();
-	        try {
-	            jcl.invokeMain("com.affymetrix.main.OSGiHandler", args);
-	        } catch (Throwable e) {
-	            e.printStackTrace();
-	        }
+	        jcl.invokeMain("com.affymetrix.main.OSGiHandler", args);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (Throwable t) {
+			t.printStackTrace();
 			System.exit(1);
 		}
 	}

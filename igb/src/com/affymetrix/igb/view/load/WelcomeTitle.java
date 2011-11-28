@@ -13,7 +13,9 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 /**
- *
+ * This class manages the JPanel component using Graphics2D to better handle the 
+ * look of the header on IGB's Welcome page.  The title and subtitle are 
+ * kept centered on the main screen (top left screen) for different windown sizes.
  * @author jfvillal
  */
 public class WelcomeTitle extends JPanel {

@@ -35,7 +35,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 	protected IGBService igbService;
 
 	@SuppressWarnings("serial")
-	public class SymSearchResultsTableModel extends SearchResultsTableModel {
+	public static class SymSearchResultsTableModel extends SearchResultsTableModel {
 		private final int[] colWidth = {};
 		private final int[] colAlign = {};
 		

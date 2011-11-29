@@ -373,6 +373,28 @@ public class FileTypeHolder {
 		return fileTypeHandlerMap.get(extension);
 	}
 
+	public String getExtensionForURI(String uri) {
+		String extension = null;
+		String lc = GeneralUtils.stripEndings(uri).toLowerCase();
+		extension = lc;
+		int position = lc.lastIndexOf('.');
+		if (position > -1) {
+			extension = lc.substring(position + 1);
+			String prefix = lc.substring(0, Math.max(0,position - 1));
+			position = prefix.lastIndexOf('.');
+			if (position > -1) {
+				String tryExtension = lc.substring(position + 1);
+				if (getFileTypeHandler(tryExtension) != null) {
+					extension = tryExtension;
+				}
+			}
+		}
+		if (getFileTypeHandler(extension) == null) {
+			extension = null;
+		}
+		return extension;
+	}
+
 	/**
 	 * find the appropriate FileTypeHandler for the URI, look at last
 	 * two . for extension for double extensions like .link.psl

@@ -127,7 +127,7 @@ public class SymLoaderTabix extends SymLoader {
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
 		init();
 		String seqID = seqs.get(seq);
-		return lineProcessor.processLines(seq, tabixLineReader.query(seqID, 0, Integer.MAX_VALUE));
+		return lineProcessor.processLines(seq, tabixLineReader.query(seqID, 1, Integer.MAX_VALUE / 2));
 	}
 
 	@Override

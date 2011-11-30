@@ -22,19 +22,24 @@ import javax.swing.DefaultListModel;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
+
 /**
  *
  * @version $Id$
  */
 public final class WebLink {
 
-	public enum RegexType { TYPE, ID };
+	public enum RegexType {
+
+		TYPE, ID
+	};
 	private static final boolean DEBUG = false;
 	private String url = null;
 	private String name = "";
 	private String species = "";
 	private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
 	private String original_regex = null;
+	private String type = null; // null implies from server or local weblink
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
@@ -94,9 +99,9 @@ public final class WebLink {
 		}
 		weblink_list.add(wl);
 		Collections.sort(weblink_list, webLinkComp);
-		
+
 		webLinkListModel.clear();
-		for(WebLink w: weblink_list) {
+		for (WebLink w : weblink_list) {
 			webLinkListModel.addElement(w);
 		}
 	}
@@ -123,6 +128,7 @@ public final class WebLink {
 	public static DefaultListModel getWebLinkListModel() {
 		return webLinkListModel;
 	}
+
 	/** Get all web-link patterns for the given method name.
 	 *  These can come from regular-expression matching from the semi-obsolete
 	 *  XML-based preferences file, or from UCSC-style track lines in the
@@ -152,35 +158,36 @@ public final class WebLink {
 			System.out.println("method is : " + method);
 			System.out.println("ID is : " + sym.getID());
 		}
-		
+
 		List<WebLink> webLinks = getWebLink(sym, method);
-		
-		if(webLinks.isEmpty()){
-			if(style.getFeature() != null){
+
+		if (webLinks.isEmpty()) {
+			if (style.getFeature() != null) {
 				webLinks = getWebLink(sym, style.getFeature().featureName);
 			}
 		}
-		
-		if(!webLinks.isEmpty()){
+
+		if (!webLinks.isEmpty()) {
 			results.addAll(webLinks);
 		}
-		
+
 		return results;
 	}
 
 	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
 		List<WebLink> results = new ArrayList<WebLink>();
-			
+
 		for (WebLink link : weblink_list) {
 			if (link.url == null) {
 				continue;
 			}
-			if(link.getSpeciesName().length() > 0){
+			if (link.getSpeciesName().length() > 0) {
 				String current_version = GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
 				String current_species = SpeciesLookup.getSpeciesName(current_version);
-				boolean isSynonym = SpeciesLookup.isSynonym(current_species,link.getSpeciesName());
-				if(!isSynonym)
+				boolean isSynonym = SpeciesLookup.isSynonym(current_species, link.getSpeciesName());
+				if (!isSynonym) {
 					continue;
+				}
 			}
 			if (link.getIDField() != null) {
 				// Allow matching of arbitrary id_field
@@ -188,7 +195,7 @@ public final class WebLink {
 				if (!(sym instanceof SymWithProps)) {
 					continue;
 				}
-				String property = (String)((SymWithProps)sym).getProperty(link.getIDField());
+				String property = (String) ((SymWithProps) sym).getProperty(link.getIDField());
 				if (property != null && link.matches(property)) {
 					if (DEBUG) {
 						System.out.println("link " + link + " matches property:" + property);
@@ -213,7 +220,7 @@ public final class WebLink {
 
 		return results;
 	}
-	
+
 	/** Returns the list of WebLink items. */
 	public static List<WebLink> getWebList() {
 		return weblink_list;
@@ -234,15 +241,16 @@ public final class WebLink {
 	public void setIDField(String IDField) {
 		this.id_field_name = IDField;
 	}
+
 	public String getIDField() {
 		return this.id_field_name;
 	}
 
-	public String getSpeciesName(){
+	public String getSpeciesName() {
 		return this.species;
 	}
 
-	public void setSpeciesName(String name){
+	public void setSpeciesName(String name) {
 		if (name == null || "null".equals(name)) {
 			this.species = "";
 		} else {
@@ -298,13 +306,21 @@ public final class WebLink {
 		this.url = url;
 	}
 
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public void setRegexType(RegexType regexType) {
 		this.regexType = regexType;
 	}
 
 	private boolean matches(String s) {
-		return (pattern == null ||
-						pattern.matcher(s).matches());
+		return (pattern == null
+				|| pattern.matcher(s).matches());
 	}
 
 	/**
@@ -371,7 +387,7 @@ public final class WebLink {
 		}
 
 		if (field_value == null) {
-			Logger.getLogger(WebLink.class.getName()).log(Level.WARNING, 
+			Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
 					"Selected item has no value for property ''{0}'' which is needed to construct the web link.", id_field_name);
 			return replacePlaceholderWithId(getUrl(), "");
 		}
@@ -380,11 +396,11 @@ public final class WebLink {
 
 	@Override
 	public String toString() {
-		return "WebLink: name=" + name +
-						", regex=" + getRegex() +
-						", regexType=" + this.regexType.toString() + 
-						", url=" + url +
-						", id_field_name=" + id_field_name;
+		return "WebLink: name=" + name
+				+ ", regex=" + getRegex()
+				+ ", regexType=" + this.regexType.toString()
+				+ ", url=" + url
+				+ ", id_field_name=" + id_field_name;
 	}
 
 	/**
@@ -427,9 +443,11 @@ public final class WebLink {
 			bw.write(separator);
 
 			for (WebLink link : weblink_list) {
-				String xml = link.toXML();
-				bw.write(xml);
-				bw.write(separator);
+				if (link.type.equals("local")) {
+					String xml = link.toXML();
+					bw.write(xml);
+					bw.write(separator);
+				}
 			}
 
 			bw.write("</prefs>");
@@ -442,7 +460,7 @@ public final class WebLink {
 	}
 
 	private String toXML() {
-		String annotRegexString = (this.regexType == RegexType.TYPE) ?  "annot_type_regex" : "annot_id_regex";
+		String annotRegexString = (this.regexType == RegexType.TYPE) ? "annot_type_regex" : "annot_id_regex";
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<annotation_url ").append(separator);
@@ -455,7 +473,8 @@ public final class WebLink {
 			sb.append(" id_field=\"").append(escapeXML(id_field_name)).
 					append("\"").append(separator);
 		}
-		sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator).append("/>");
+		sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
+		sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator).append("/>");
 		return sb.toString();
 	}
 

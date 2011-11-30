@@ -1,131 +1,107 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.view.WebLinkEditorPanel;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.DisplayUtils;
 
+import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.igb.shared.FileTracker;
+import java.util.List;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.AbstractTableModel;
 
 /**
- * A panel for viewing and editing weblinks.
+ *
+ * @modified by nick
  */
-public final class WebLinksView extends JPanel {
+public final class WebLinksView implements ListSelectionListener {
+
 	private static final long serialVersionUID = 1L;
-
-	private JList webLinks;
-	private JScrollPane scroll_pane;
-
-	private final Action import_action;
-	private final Action export_action;
-	private final Action delete_action;
-	private final Action edit_action;
-	private final Action add_action;
-
-	private final WebLinkEditorPanel edit_panel;
-	private static JFrame static_frame = null;
-
+	private static WebLinksView singleton;
+	public JTable table;
+	public WebLinksTableModel model;
+	public ListSelectionModel lsm;
 	private static JFileChooser static_chooser = null;
+	public static final String LINK_NAME = "Name";
+	public static final String URL = "URL";
+	public final static String[] col_headings = {
+		LINK_NAME,
+		URL
+	};
+	public static final int COL_LINK_NAME = 0;
+	public static final int COL_URL = 1;
+	public static final int COL_REGEX = 2;
+	public int[] selectedRows;
+	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
+	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
+	public JTextField nameTextField;
+	public JTextField urlTextField;
+	public JTextField regexTextField;
+	public JRadioButton allTiersRadioButton;
+	public JRadioButton matchTierRadioButton;
+	private final ButtonGroup button_group = new ButtonGroup();
+	private final WebLinkEditorPanel edit_panel;
+	private int previousSelectedRow;
+	private String previousName;
+	private String previousUrl;
+	private String previousRegex;
 
 	// initialize the static_panel early, because this will cause the
 	// accelerator
 	// key-strokes to be configured early through the PreferenceUtils and thus
 	// for them to be visible in the KeyStrokesView
-	private static WebLinksView static_panel = new WebLinksView();
-
-	public static WebLinksView getInstance() {
-		return static_panel;
+	public static synchronized WebLinksView getSingleton() {
+		if (singleton == null) {
+			singleton = new WebLinksView();
+		}
+		return singleton;
 	}
 
-	/** Creates a new instance of Class */
 	private WebLinksView() {
 		super();
 
-		webLinks = createJList();
+		table = new JTable();
+		model = new WebLinksTableModel();
+		model.addTableModelListener(new javax.swing.event.TableModelListener() {
 
-		scroll_pane = new JScrollPane(webLinks);
+			public void tableChanged(javax.swing.event.TableModelEvent e) {
+				// do nothing.
+			}
+		});
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(this);
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		this.setLayout(new BorderLayout());
-		scroll_pane.setMinimumSize(new Dimension(50, 50));
-		this.add(scroll_pane, BorderLayout.CENTER);
+		table.setModel(model);
+		table.setRowSelectionAllowed(true);
+		table.getColumnModel().getColumn(COL_LINK_NAME).setPreferredWidth(200);
+		table.getColumnModel().getColumn(COL_LINK_NAME).setMaxWidth(400);
+		model.setLinks(WebLink.getWebList());
 
-		export_action = makeExportAction();
-		import_action = makeImportAction();
+		Font f = new Font("SansSerif", Font.BOLD, 12);
+		table.getTableHeader().setFont(f);
 
-		delete_action = makeDeleteAction();
-		add_action = makeAddAction();
-		edit_action = makeEditAction();
-
-		setUpMenuBar();
-		setUpButtons();
-		setUpPopupMenu();
-
-		enableActions();
-		this.validate();
-
+		nameTextField = new JTextField();
+		urlTextField = new JTextField();
+		regexTextField = new JTextField();
+		allTiersRadioButton = new JRadioButton();
+		matchTierRadioButton = new JRadioButton();
+		button_group.add(allTiersRadioButton);
+		button_group.add(matchTierRadioButton);
+		allTiersRadioButton.setSelected(true);
+		regexTextField.setText("Display link for all tiers (uneditable)");
+		regexTextField.setEnabled(false);
+		matchTierRadioButton.setSelected(false);
 		edit_panel = new WebLinkEditorPanel();
-	}
-
-	private final ListCellRenderer list_renderer = new DefaultListCellRenderer() {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			WebLink wl = (WebLink) value;
-			String name = wl.getName();
-			String regex = "All Tiers";
-			if (wl.getRegex() != null) {
-				regex = wl.getRegex();
-				if (regex.startsWith("(?i)")) {
-					regex = regex.substring(4);
-				}
-			}
-			String msg = "<html><b>'" + name
-					+ "'</b>:&nbsp;&nbsp;&nbsp;&nbsp;<font color=red>" + regex
-					+ "</font>";
-
-			return super.getListCellRendererComponent(list, msg, index,
-					isSelected, cellHasFocus);
-		}
-	};
-
-	private final ListSelectionListener list_listener = new ListSelectionListener() {
-		public void valueChanged(ListSelectionEvent e) {
-			if (!e.getValueIsAdjusting()) {
-				enableActions();
-			}
-		}
-	};
-
-	private JList createJList() {
-		JList j_list = new JList(WebLink.getWebLinkListModel());
-
-		j_list.setCellRenderer(list_renderer);
-		j_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		j_list.addListSelectionListener(list_listener);
-
-		return j_list;
-	}
-
-	private void enableActions() {
-		int num_selections = webLinks.getSelectedValues().length;
-
-		import_action.setEnabled(true);
-		export_action.setEnabled(webLinks.getModel().getSize() > 0);
-
-		delete_action.setEnabled(num_selections > 0);
-		edit_action.setEnabled(num_selections == 1);
-		add_action.setEnabled(true);
 	}
 
 	private static void setAccelerator(Action a) {
@@ -134,294 +110,118 @@ public final class WebLinksView extends JPanel {
 		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
-	private void setUpMenuBar() {
-		JMenuBar menu_bar = new JMenuBar();
-		JMenu links_menu = new JMenu("Web Links") {
-			private static final long serialVersionUID = 1L;
+	public void localDelete() throws HeadlessException {
+		selectedRows = table.getSelectedRows();//.getSelectedValues();
+		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
-			@Override
-			public JMenuItem add(Action a) {
-				JMenuItem menu_item = super.add(a);
-				menu_item.setToolTipText(null);
-				return menu_item;
-			}
-		};
-		links_menu.setMnemonic('L');
-
-		links_menu.add(edit_action);
-		links_menu.add(add_action);
-		links_menu.add(delete_action);
-		links_menu.addSeparator();
-		links_menu.add(import_action);
-		links_menu.add(export_action);
-
-		menu_bar.add(links_menu);
-		this.add(menu_bar, BorderLayout.NORTH);
-	}
-
-	private void setUpPopupMenu() {
-		final JPopupMenu popup = new JPopupMenu() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public JMenuItem add(Action a) {
-				JMenuItem menu_item = super.add(a);
-				menu_item.setToolTipText(null);
-				return menu_item;
-			}
-		};
-		popup.add(edit_action);
-		popup.add(add_action);
-		popup.add(delete_action);
-		popup.addSeparator();
-		popup.add(import_action);
-		popup.add(export_action);
-		MouseAdapter mouse_adapter = new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (popup.isPopupTrigger(e)) {
-					popup.show(webLinks, e.getX(), e.getY());
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				if (popup.isPopupTrigger(e)) {
-					popup.show(webLinks, e.getX(), e.getY());
-				}
-			}
-		};
-		webLinks.addMouseListener(mouse_adapter);
-	}
-
-	private void setUpButtons() {
-		JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
-		tool_bar.setFloatable(false);
-
-		tool_bar.add(new JRPButton("WebLinksView_edit_action", edit_action));
-		tool_bar.addSeparator();
-		tool_bar.add(new JRPButton("WebLinksView_add_action", add_action));
-		tool_bar.addSeparator();
-		tool_bar.add(new JRPButton("WebLinksView_delete_action", delete_action));
-		this.add(tool_bar, BorderLayout.SOUTH);
-	}
-
-	private Action makeImportAction() {
-		Action a = new GenericAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				importWebLinks();
-			}
-
-			@Override
-			public String getText() {
-				return "Import ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_I;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Import Web Links";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private Action makeExportAction() {
-		Action a = new GenericAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				exportWebLinks();
-			}
-
-			@Override
-			public String getText() {
-				return "Export ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_E;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Export Web Links";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private Action makeDeleteAction() {
-		Action a = new GenericAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				if (localDelete()) {
-					return;
-				}
-			}
-
-			@Override
-			public String getText() {
-				return "Delete ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_D;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Delete Selected Link(s)";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private boolean localDelete() throws HeadlessException {
-		Object[] selections = webLinks.getSelectedValues();
-		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class,
-				webLinks);
-		if (selections.length == 0) {
-			this.setEnabled(false);
-			return true;
-		}
-		int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-				+ selections.length + " selected link(s)?", "Delete?",
-				JOptionPane.YES_NO_OPTION);
-		if (yes == JOptionPane.YES_OPTION) {
-			for (int i = 0; i < selections.length; i++) {
-				WebLink.removeWebLink((WebLink) selections[i]);
+		boolean isLocalType = false;
+		for (int i : selectedRows) {
+			WebLink link = model.webLinks.get(i);
+			if (link.getType().equalsIgnoreCase("local")) {
+				isLocalType = true;
 			}
 		}
-		return false;
+
+		if (isLocalType) {
+			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
+					+ selectedRows.length + " selected link(s)?", "Delete?",
+					JOptionPane.YES_NO_OPTION);
+
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i : selectedRows) {
+					WebLink link = model.webLinks.get(i);
+					WebLink.removeWebLink(link);
+				}
+			}
+
+			refreshList();
+		} else {
+			JOptionPane.showConfirmDialog(frame, "Can't delete system default web link!", "Error!",
+					JOptionPane.OK_CANCEL_OPTION);
+		}
 	}
 
-	private Action makeAddAction() {
-		Action a = new GenericAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				localAdd();
-			}
-
-			@Override
-			public String getText() {
-				return "Add ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_A;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Add New Web Link";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private void localAdd() {
+	public void localAdd() {
 		WebLink link = new WebLink();
 		edit_panel.setWebLink(link);
-		boolean ok = edit_panel.showDialog((JFrame) SwingUtilities
-				.getAncestorOfClass(JFrame.class, webLinks));
+		boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null));
 		if (ok) {
 			edit_panel.setLinkPropertiesFromGUI();
+			link.setType("local");
 			WebLink.addWebLink(link);
+		}
+
+		refreshList();
+	}
+
+	private static boolean isEmpty(String s) {
+		return (s == null || s.trim().length() == 0);
+	}
+
+	private void refreshList() {
+		previousSelectedRow = table.getSelectedRow();
+		model.setLinks(WebLink.getWebList());
+		model.fireTableDataChanged();
+		if (table.getRowCount() > 0 && previousSelectedRow < table.getRowCount()
+				&& previousSelectedRow != -1) {
+			table.setRowSelectionInterval(previousSelectedRow, previousSelectedRow);
 		}
 	}
 
-	private Action makeEditAction() {
-		Action a = new GenericAction() {
-			private static final long serialVersionUID = 1L;
+	public void nameTextField() {
+		if (!settingValueFromTable) {
+			if (isEmpty(nameTextField.getText())) {
+				ErrorHandler.errorPanel("The name cannot be blank");
+				nameTextField.setText(previousName);
+				nameTextField.grabFocus();
+			} else {
+				model.setValueAt(nameTextField.getText(), selectedRows[0], COL_LINK_NAME);
+			}
+		}
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				WebLink link = (WebLink) webLinks.getSelectedValue();
-				edit_panel.setWebLink(link);
-				boolean ok = edit_panel.showDialog((JFrame) SwingUtilities
-						.getAncestorOfClass(JFrame.class, webLinks));
-				if (ok) {
-					edit_panel.setLinkPropertiesFromGUI();
-					webLinks.invalidate();
-					webLinks.repaint();
+	public void urlTextField() {
+		if (!settingValueFromTable) {
+			if (isEmpty(urlTextField.getText())) {
+				ErrorHandler.errorPanel("The URL cannot be blank");
+				urlTextField.setText(previousUrl);
+				urlTextField.grabFocus();
+			} else {
+				try {
+					new URL(urlTextField.getText());
+					model.setValueAt(urlTextField.getText(), selectedRows[0], COL_URL);
+				} catch (MalformedURLException e) {
+					ErrorHandler.errorPanel("Malformed URL",
+							"The given URL appears to be invalid.\n" + e.getMessage(),
+							urlTextField);
+					urlTextField.setText(previousUrl);
+					urlTextField.grabFocus();
 				}
 			}
+		}
+	}
 
-			@Override
-			public String getText() {
-				return "Edit ...";
+	public void regexTextField() {
+		if (!settingValueFromTable) {
+			if (matchTierRadioButton.isSelected()) {
+				try {
+					Pattern.compile(regexTextField.getText());
+					model.setValueAt(regexTextField.getText(), selectedRows[0], COL_REGEX);
+				} catch (PatternSyntaxException pse) {
+					ErrorHandler.errorPanel("Bad Regular Expression",
+							"Error in regular expression:\n" + pse.getMessage(), regexTextField);
+					regexTextField.setText(previousRegex);
+					regexTextField.grabFocus();
+				}
 			}
-
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_E;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Edit Selected Web Link";
-			}
-		};
-		setAccelerator(a);
-		return a;
+		}
 	}
 
 	/** Gets a static re-usable file chooser that prefers "html" files. */
 	private static JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
 			static_chooser = UniFileChooser.getFileChooser("XML file", "xml");
-			static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER
-					.getFile());
+			static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		}
 		static_chooser.rescanCurrentDirectory();
 		return static_chooser;
@@ -430,11 +230,10 @@ public final class WebLinksView extends JPanel {
 	/**
 	 * Tries to import weblinks.
 	 */
-	private void importWebLinks() {
+	public void importWebLinks() {
 		JFileChooser chooser = getJFileChooser();
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class,
-				webLinks);
+		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 		int option = chooser.showOpenDialog(frame);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
@@ -445,19 +244,19 @@ public final class WebLinksView extends JPanel {
 				ErrorHandler.errorPanel(
 						"Error",
 						"Error importing web links: File Not Found "
-								+ fil.getAbsolutePath(), webLinks, fe);
+						+ fil.getAbsolutePath(), null, fe);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Error", "Error importing web links",
-						webLinks, ex);
+						null, ex);
 			}
 		}
-		enableActions();
+
+		refreshList();
 	}
 
-	private void exportWebLinks() {
-		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class,
-				webLinks);
-		if (webLinks.getModel().getSize() == 0) {
+	public void exportWebLinks() {
+		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+		if (table.getRowCount() == 0) {
 			ErrorHandler.errorPanel("Error", "No web links to save", frame);
 			return;
 		}
@@ -466,8 +265,7 @@ public final class WebLinksView extends JPanel {
 		int option = chooser.showSaveDialog(frame);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
-				FileTracker.DATA_DIR_TRACKER.setFile(chooser
-						.getCurrentDirectory());
+				FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
 				File fil = chooser.getSelectedFile();
 				String full_path = fil.getCanonicalPath();
 
@@ -482,25 +280,146 @@ public final class WebLinksView extends JPanel {
 		}
 	}
 
-	private synchronized WebLinksView getManager() {
-		if (static_panel == null) {
-			static_panel = new WebLinksView();
+	/** Called when the user selects a row of the table.
+	 *  @param evt
+	 */
+	public void valueChanged(ListSelectionEvent evt) {
+		setEnabled(true);
+
+		selectedRows = table.getSelectedRows();
+
+		initializationDetector = true;
+
+		if (table.getRowCount() == 0) {
+			setEnabled(false);
+			return;
+		} else if (selectedRows.length == 1) {
+			WebLink selectedLink = model.getLinks().get(selectedRows[0]);
+
+			previousName = selectedLink.getName();
+			nameTextField.setText(previousName);
+			previousUrl = selectedLink.getUrl();
+			urlTextField.setText(previousUrl);
+			String regex = selectedLink.getRegex();
+			previousRegex = regex;
+			if (regex == null) {
+				regexTextField.setText("Display link for all tiers (uneditable)");
+				allTiersRadioButton.setSelected(true);
+				regexTextField.setEnabled(false);
+			} else {
+				if (regex.startsWith("(?i)")) {
+					regex = regex.substring(4);
+				}
+				regexTextField.setText(regex);
+				matchTierRadioButton.setSelected(true);
+			}
+
+			if (!selectedLink.getType().equalsIgnoreCase("local")) {
+				nameTextField.setText(selectedLink.getName()
+						+ "   (" + selectedLink.getType() + " web link - uneditable)");
+				setEnabled(false);
+			}
+		} else {
+			setEnabled(false);
 		}
-		return static_panel;
+
+		initializationDetector = false;
 	}
 
-	public synchronized JFrame showManager() {
-		if (static_frame == null) {
-			static_frame = PreferenceUtils.createFrame("Web Links",
-					getManager());
-//			ImageIcon icon = MenuUtil
-//					.getIcon("images/search.png");
-//			if (icon != null) {
-//				static_frame.setIconImage(icon.getImage());
-//			}
-		}
-		DisplayUtils.bringFrameToFront(static_frame);
-		return static_frame;
+	private void setEnabled(boolean b) {
+		nameTextField.setEnabled(b);
+		urlTextField.setEnabled(b);
+		regexTextField.setEnabled(b);
+		allTiersRadioButton.setEnabled(b);
+		matchTierRadioButton.setEnabled(b);
 	}
 
+	class WebLinksTableModel extends AbstractTableModel {
+
+		private static final long serialVersionUID = 1L;
+		List<WebLink> webLinks;
+
+		WebLinksTableModel() {
+			this.webLinks = Collections.<WebLink>emptyList();
+		}
+
+		public void setLinks(List<WebLink> webLinks) {
+			this.webLinks = webLinks;
+		}
+
+		public List<WebLink> getLinks() {
+			return this.webLinks;
+		}
+
+		@Override
+		public Class<?> getColumnClass(int c) {
+			Object tempObject = getValueAt(0, c);
+			if (tempObject == null) {
+				return Object.class;
+			} else {
+				return tempObject.getClass();
+			}
+		}
+
+		@Override
+		public String getColumnName(int columnIndex) {
+			return col_headings[columnIndex];
+		}
+
+		public Object getValueAt(int row, int column) {
+			WebLink webLink;
+			webLink = webLinks.get(row);
+			switch (column) {
+				case COL_LINK_NAME:
+					return webLink.getName();
+				case COL_URL:
+					return webLink.getUrl();
+				default:
+					return null;
+			}
+		}
+
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			settingValueFromTable = true;
+			if (value != null && !initializationDetector) {
+				try {
+					WebLink webLink = webLinks.get(row);
+					switch (col) {
+						case COL_LINK_NAME:
+							webLink.setName((String) value);
+							nameTextField.setText((String) value);
+							break;
+						case COL_URL:
+							webLink.setUrl((String) value);
+							urlTextField.setText((String) value);
+							break;
+						case COL_REGEX:
+							if (matchTierRadioButton.isSelected()) {
+								webLink.setRegex((String) value);
+							}
+							break;
+						default:
+							System.out.println("Unknown column selected: " + col);
+					}
+					fireTableCellUpdated(row, col);
+				} catch (Exception e) {
+					// exceptions should not happen, but must be caught if they do
+					System.out.println("Exception in WebLinksView.setValueAt(): " + e);
+				}
+
+				refreshList();
+
+			}
+			settingValueFromTable = false;
+		}
+
+		public int getRowCount() {
+			return webLinks.size();
+		}
+
+		public int getColumnCount() {
+			return col_headings.length;
+		}
+	};
 }

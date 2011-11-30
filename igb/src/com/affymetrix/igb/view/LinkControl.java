@@ -9,9 +9,15 @@ import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 final class LinkControl implements ContextualPopupListener {
+
 	public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
 		if (primary_sym == null || selected_syms.size() != 1) {
 			return;
@@ -85,30 +91,45 @@ final class LinkControl implements ContextualPopupListener {
 			return;
 		}
 
+		String name, url;
+		JMenuItem mi;
 		if (urls.size() == 1) {
 			for (Map.Entry<String, String> entry : urls.entrySet()) {
-				String url = entry.getKey();
-				String name = entry.getValue();
+				url = entry.getKey();
+				name = entry.getValue();
 				if (name == null || name.equals(url)) {
 					name = "Get more info";
 				}
 
-				JMenuItem mi = makeMenuItem(name, url);
-			//	mi.setIcon(MenuUtil.getIcon("images/search.png"));
+				mi = makeMenuItem(name, url);
+
+				if (!isInternetReachable()) {
+					name += " (No Internet)";
+					mi = makeMenuItem(name, url);
+					mi.setEnabled(false);
+				}
+
+				mi.setIcon(MenuUtil.getIcon("images/search.png"));
 				popup.add(mi);
 			}
 		} else {
-			JMenu linkMenu = new JMenu("Get more info");
-		//	linkMenu.setIcon(MenuUtil.getIcon("images/search.png"));
+			name = "Get more info";
+			JMenu linkMenu = new JMenu(name);
+			linkMenu.setIcon(MenuUtil.getIcon("images/search.png"));
+			if (!isInternetReachable()) {
+				name += " (No Internet)";
+				linkMenu = new JMenu(name);
+				linkMenu.setEnabled(false);
+			}
 			popup.add(linkMenu);
 
 			for (Map.Entry<String, String> entry : urls.entrySet()) {
-				String url = entry.getKey();
-				String name = entry.getValue();
+				url = entry.getKey();
+				name = entry.getValue();
 				if (name == null || name.equals(url)) {
 					name = "Unnamed link to web";
 				}
-				JMenuItem mi = makeMenuItem(name, url);
+				mi = makeMenuItem(name, url);
 				linkMenu.add(mi);
 			}
 		}
@@ -125,5 +146,25 @@ final class LinkControl implements ContextualPopupListener {
 			});
 		}
 		return linkMI;
+	}
+
+	private static boolean isInternetReachable() {
+		try {
+			//make a URL to a known source
+			URL url = new URL("http://bioviz.org/igb/");
+
+			//open a connection to that source
+			HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+
+			//trying to retrieve data from the source. If there
+			//is no connection, this line will fail
+			Object objData = urlConnect.getContent();
+
+		} catch (UnknownHostException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 }

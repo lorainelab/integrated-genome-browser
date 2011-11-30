@@ -19,8 +19,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		this.setName("Tracks");
 		this.setToolTipText("Set Track Properties");
 
-		TierPrefsView.init();
-		tpv = TierPrefsView.getTierPrefsView();
+		tpv = TierPrefsView.getSingleton();
 
 		Application igb = Application.getSingleton();
 		if (igb != null) {

@@ -29,16 +29,16 @@ public final class WebLinkEditorPanel extends JPanel {
 		Box container = Box.createVerticalBox();
 
 		Box row1 = Box.createHorizontalBox();
-		JLabel name_l = new JLabel("Displayed Name of Link");
+		JLabel name_l = new JLabel("Name:");
 		row1.add(name_l);
 		row1.add(Box.createRigidArea(new Dimension(6, 0)));
 		row1.add(name_tf);
 		name_tf.setPreferredSize(new Dimension(500, name_tf.getPreferredSize().height));
 
 		Box row2 = Box.createHorizontalBox();
-		JLabel url_l = new JLabel("Link to URL");
+		JLabel url_l = new JLabel("URL:");
 		row2.add(url_l);
-		row2.add(Box.createRigidArea(new Dimension(6, 0)));
+		row2.add(Box.createRigidArea(new Dimension(18, 0)));
 		row2.add(url_tf);
 
 		Box row3 = Box.createHorizontalBox();
@@ -52,11 +52,11 @@ public final class WebLinkEditorPanel extends JPanel {
 		all_b.setSelected(true);
 		regex_b.setSelected(false);
 
-		container.add(row3);
+		container.add(row1);
 		container.add(Box.createRigidArea(new Dimension(0, 6)));
 		container.add(row2);
 		container.add(Box.createRigidArea(new Dimension(0, 6)));
-		container.add(row1);
+		container.add(row3);
 
 		all_b.addActionListener(new ActionListener() {
 
@@ -71,7 +71,7 @@ public final class WebLinkEditorPanel extends JPanel {
 			}
 		});
 
-		container.setBorder(new EmptyBorder(new java.awt.Insets(8, 8, 8, 8)));
+		container.setBorder(new EmptyBorder(new java.awt.Insets(1, 1, 1, 1)));
 		this.add(container);
 	}
 

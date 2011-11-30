@@ -190,12 +190,14 @@ public final class XmlPrefsParser {
 		String name = attmap.get("name");
 		String species = attmap.get("species");
 		String IDField = attmap.get("id_field");
+		String type = attmap.get("type");
 		try {
 			WebLink link = new WebLink();
 			link.setRegexType(type_regex);
 			link.setName(name);
 			link.setIDField(IDField);
 			link.setUrl(url);
+			link.setType(type);
 			link.setSpeciesName(species);
 			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);

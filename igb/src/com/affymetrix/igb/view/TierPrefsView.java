@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 public class TierPrefsView implements ListSelectionListener {
-	
+
 	public static final long serialVersionUID = 1l;
 	public static TierPrefsView singleton;
 	public static final String TRACK_NAME = "Display Name";
@@ -94,29 +94,28 @@ public class TierPrefsView implements ListSelectionListener {
 	public JRPComboBox trackNameSizeComboBox;
 	public JRPComboBox viewModeCB;
 	public JLabel applyToAllTip;
-	
-	public static void init() {
-		singleton = new TierPrefsView();
-	}
-	
-	public static synchronized TierPrefsView getTierPrefsView() {
+
+	public static synchronized TierPrefsView getSingleton() {
+		if (singleton == null) {
+			singleton = new TierPrefsView();
+		}
 		return singleton;
 	}
-	
+
 	public TierPrefsView() {
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
-		
+
 		initComponents();
 	}
-	
+
 	private void initComponents() {
 		model = new TierPrefsTableModel();
-		
+
 		initTable();
-		
+
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		fgColorComboBox = new ColorComboBox();
 		bgColorComboBox = new ColorComboBox();
@@ -134,7 +133,7 @@ public class TierPrefsView implements ListSelectionListener {
 		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
-		
+
 		displayNameTextField.setEnabled(false);
 		bgColorComboBox.setEnabled(false);
 		fgColorComboBox.setEnabled(false);
@@ -150,15 +149,15 @@ public class TierPrefsView implements ListSelectionListener {
 		negativeColorComboBox.setEnabled(false);
 		viewModeCB.setEnabled(false);
 		applyToAllButton.setEnabled(false);
-		
+
 		trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-		
+
 		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
-		
+
 		viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.VIEWMODE));
-		
+
 		ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
-		
+
 		applyToAllTip = new javax.swing.JLabel();
 		applyToAllTip.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
 		applyToAllTip.setIcon(infoIcon);
@@ -166,17 +165,17 @@ public class TierPrefsView implements ListSelectionListener {
 		// Add a "refresh map" button, if there is an instance of IGB
 		if (smv != null) {
 			refreshButton.addActionListener(new ActionListener() {
-				
+
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					refreshSeqMapView();
 				}
 			});
-			
+
 			autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH,
 					PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH,
 					default_auto_refresh);
 			autoRefreshCheckBox.addActionListener(new ActionListener() {
-				
+
 				public void actionPerformed(ActionEvent evt) {
 					if (refreshButton != null) {
 						refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
@@ -189,26 +188,26 @@ public class TierPrefsView implements ListSelectionListener {
 			refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
 		}
 	}
-	
+
 	private void initTable() {
-		table = new javax.swing.JTable();
+		table = new JTable();
 		model.addTableModelListener(new javax.swing.event.TableModelListener() {
-			
+
 			public void tableChanged(javax.swing.event.TableModelEvent e) {
 				// do nothing.
 			}
 		});
-		
+
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
+
 		table.setRowSelectionAllowed(true);
-		
+
 		ColorCellEditor cellEditor = new ColorCellEditor() {
-			
+
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			protected ColorComboBox createColorComboBox() {
 				final ColorComboBox combobox = new ColorComboBox();
@@ -225,7 +224,7 @@ public class TierPrefsView implements ListSelectionListener {
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
 		table.setModel(model);
-		
+
 		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
@@ -235,11 +234,11 @@ public class TierPrefsView implements ListSelectionListener {
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
-		
+
 		Font f = new Font("SansSerif", Font.BOLD, 12);
 		table.getTableHeader().setFont(f);
 	}
-	
+
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
 
@@ -250,7 +249,7 @@ public class TierPrefsView implements ListSelectionListener {
 		for (TierLabelGlyph tlg : selectedTiers) {
 			tier = (TierGlyph) tlg.getInfo();
 			style = tier.getAnnotStyle();
-			
+
 			for (int i = 0; i < table.getRowCount(); i++) {
 				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
 					table.addRowSelectionInterval(i, i);
@@ -266,20 +265,20 @@ public class TierPrefsView implements ListSelectionListener {
 		return PreferenceUtils.getBooleanParam(PREF_AUTO_REFRESH,
 				default_auto_refresh);
 	}
-	
+
 	public void refreshSeqMapView() {
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
 	}
-	
+
 	public void refreshList() {
 		if (currentStyles == null) {
 			currentStyles = new ArrayList<TrackStyle>();
 		}
-		
+
 		boolean isContained = true;
-		
+
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
@@ -287,18 +286,18 @@ public class TierPrefsView implements ListSelectionListener {
 			while (titer.hasNext()) {
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
-				
+
 				if (!currentStyles.contains(style)) {
 					isContained = false;
 				}
-				
+
 				if (style instanceof TrackStyle
 						&& style.getShow()
 						&& tier.getChildCount() > 0) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}
-			
+
 			currentStyles.clear();
 			currentStyles.addAll(stylemap.values());
 		}
@@ -312,7 +311,7 @@ public class TierPrefsView implements ListSelectionListener {
 				}
 			}
 		}
-		
+
 		if (!isContained) {
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
@@ -322,11 +321,11 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	public void applyChanges() {
 		refreshSeqMapView();
 	}
-	
+
 	public void externalChange() {
 		model.fireTableDataChanged();
 		if (table.getRowCount() != 0) {
@@ -357,9 +356,9 @@ public class TierPrefsView implements ListSelectionListener {
 		labelFieldComboBox.setEnabled(true);
 		maxDepthTextField.setEnabled(true);
 		selectedRows = table.getSelectedRows();
-		
+
 		initializationDetector = true;
-		
+
 		if (table.getRowCount() == 0) {
 			displayNameTextField.setEnabled(false);
 			viewModeCB.setEnabled(false);
@@ -380,7 +379,7 @@ public class TierPrefsView implements ListSelectionListener {
 			labelFieldComboBox.setEnabled(false);
 			maxDepthTextField.setEnabled(false);
 		}
-		
+
 		if (selectedRows.length > 1) {
 			displayNameTextField.setEnabled(false);
 			viewModeCB.setEnabled(false);
@@ -397,10 +396,10 @@ public class TierPrefsView implements ListSelectionListener {
 			possitiveColorComboBox.setSelectedColor(null);
 			negativeColorComboBox.setSelectedColor(null);
 		}
-		
+
 		if (selectedRows.length == 1) {
 			selectedStyle = model.getStyles().get(selectedRows[0]);
-			
+
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				displayNameTextField.setEnabled(false);
 				viewModeCB.setEnabled(false);
@@ -416,12 +415,12 @@ public class TierPrefsView implements ListSelectionListener {
 			} else {
 				initialLabelField();
 			}
-			
+
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
 			String file_type = selectedStyle.getFileType();
 			viewModeCB.removeAllItems();
-			
+
 			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
 				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));
 				String view_mode = selectedStyle.getViewMode();
@@ -431,7 +430,7 @@ public class TierPrefsView implements ListSelectionListener {
 					viewModeCB.setSelectedItem(view_mode);
 				}
 			}
-			
+
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -441,7 +440,7 @@ public class TierPrefsView implements ListSelectionListener {
 			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
 			connectedCheckBox.setSelected(selectedStyle.getConnected());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
-			
+
 			DIRECTION_TYPE direction = selectedStyle.getDirectionName();
 			switch (direction) {
 				case NONE:
@@ -464,10 +463,10 @@ public class TierPrefsView implements ListSelectionListener {
 					System.out.println("Wrong Direction Type");
 			}
 		}
-		
+
 		initializationDetector = false;
 	}
-	
+
 	private void initialLabelField() {
 		SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
 		if (sym != null && sym.getChildCount() > 0) {
@@ -475,7 +474,7 @@ public class TierPrefsView implements ListSelectionListener {
 			SeqSymmetry original = getMostOriginalSymmetry(child);
 			if (original instanceof SymWithProps) {
 				Map<String, Object> props = ((SymWithProps) original).getProperties();
-				
+
 				ArrayList<String> properties = new ArrayList<String>();
 				properties.add((String) TrackConstants.LABELFIELD[0]);
 				properties.addAll(props.keySet());
@@ -483,7 +482,7 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
 		if (sym instanceof DerivedSeqSymmetry) {
 			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
@@ -502,44 +501,44 @@ public class TierPrefsView implements ListSelectionListener {
 		// otherwise apply changes as needed.
 		if (!autoApplyChanges()) {
 			SwingUtilities.invokeLater(new Runnable() {
-				
+
 				public void run() {
 					applyChanges();
 				}
 			});
 		}
 	}
-	
+
 	public void show2TracksCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
 		}
 	}
-	
+
 	public void connectedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
 		}
 	}
-	
+
 	public void collapsedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
 		}
 	}
-	
+
 	public void displayNameTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
 		}
 	}
-	
+
 	public void maxDepthTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
 		}
 	}
-	
+
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
@@ -547,19 +546,19 @@ public class TierPrefsView implements ListSelectionListener {
 			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
 		}
 	}
-	
+
 	public void fgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
 		}
 	}
-	
+
 	public void bgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
 		}
 	}
-	
+
 	public void applyToAllButton() {
 		selectedRow = table.getSelectedRow();
 		ITrackStyle style;
@@ -579,25 +578,25 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
 		}
 	}
-	
+
 	public void possitiveColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
 		}
 	}
-	
+
 	public void negativeColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
 		}
 	}
-	
+
 	public void colorCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
@@ -619,7 +618,7 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	public void arrowCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
@@ -641,7 +640,7 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	public void viewModeCB() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
@@ -650,7 +649,7 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 	}
-	
+
 	public void restoreToDefault() {
 		int row;
 		TrackStyle style;
@@ -658,31 +657,31 @@ public class TierPrefsView implements ListSelectionListener {
 		for (int i = 0; i < selectedRows.length; i++) {
 			row = selectedRows[i];
 			style = model.getStyles().get(row);
-			style.restoreToDefault();			
+			style.restoreToDefault();
 		}
 
 		model.fireTableDataChanged();
 
 		applyChanges();
-		
+
 		table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 	}
-	
+
 	class TierPrefsTableModel extends AbstractTableModel {
-		
+
 		private static final long serialVersionUID = 1L;
 		List<TrackStyle> tier_styles;
 		private Object tempObject;
 		private int tempInt;
-		
+
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
 		}
-		
+
 		public void setStyles(List<TrackStyle> tier_styles) {
 			this.tier_styles = tier_styles;
 		}
-		
+
 		public List<TrackStyle> getStyles() {
 			return this.tier_styles;
 		}
@@ -696,7 +695,7 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 			return true;
 		}
-		
+
 		@Override
 		public Class<?> getColumnClass(int c) {
 			tempObject = getValueAt(0, c);
@@ -706,20 +705,20 @@ public class TierPrefsView implements ListSelectionListener {
 				return tempObject.getClass();
 			}
 		}
-		
+
 		public int getColumnCount() {
 			return col_headings.length;
 		}
-		
+
 		@Override
 		public String getColumnName(int columnIndex) {
 			return col_headings[columnIndex];
 		}
-		
+
 		public int getRowCount() {
 			return tier_styles.size();
 		}
-		
+
 		public Object getValueAt(int row, int column) {
 			TrackStyle style;
 			style = tier_styles.get(row);
@@ -736,10 +735,10 @@ public class TierPrefsView implements ListSelectionListener {
 					return null;
 			}
 		}
-		
+
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			
+
 			for (int i = 0; i < selectedRows.length; i++) {
 				if (i == selectedRows.length - 1) {
 					setValueAt(value, selectedRows[i], col, true);
@@ -748,7 +747,7 @@ public class TierPrefsView implements ListSelectionListener {
 				}
 			}
 		}
-		
+
 		public void setValueAt(Object value, int row, int col, boolean apply) {
 			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
@@ -816,7 +815,7 @@ public class TierPrefsView implements ListSelectionListener {
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
-				
+
 				if (autoApplyChanges() && apply) {
 					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
 							|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
@@ -829,13 +828,13 @@ public class TierPrefsView implements ListSelectionListener {
 								DataManagementTable.getModel().fireTableDataChanged();
 							}
 						}
-						
+
 						smv.getSeqMap().updateWidget();
 					} else {
 						applyChanges();
 					}
 				}
-				
+
 			}
 			settingValueFromTable = false;
 		}

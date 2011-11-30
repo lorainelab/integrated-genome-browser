@@ -40,33 +40,39 @@
   <annotation_url annot_id_regex="^DDB_G\d+$"
     name="DictyBase Gene"
     url="http://dictybase.org/gene/$$"
+	type="system default"
   />
 
   <annotation_url annot_id_regex="^DDB\d+$"
     name="DictyBase"
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
+	type="system default"
    />
 
 <!-- BioViz DAS data sets -->
   <annotation_url annot_type_regex="^EST (single map)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="^EST (multiple map)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="^EST (spliced, single map)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
+	type="system default"
   />
 
 <!-- Any RefSeq mRNA alignment -->
   <annotation_url annot_type_regex="(?i).*RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+	type="system default"
   />
 
 
@@ -74,12 +80,14 @@
 	<annotation_url annot_id_regex="^ENST\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
+	 type="system default"
   />
 
 <!--Regular expression to identify Ensembl Danio rerio gene transcript ids -->
 	<annotation_url annot_id_regex="^ENSDART\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Danio_rerio/geneview?gene=$$"
+	 type="server"
   />
 
 
@@ -87,6 +95,7 @@
 	<annotation_url annot_id_regex="^ENSRNOT\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Rattus_norvegicus/geneview?gene=$$"
+	 type="system default"
   />
 
    <!--Regular expression to identify Ensembl Gallus gallus gene transcript ids -->
@@ -94,6 +103,7 @@
 	<annotation_url annot_id_regex="^ENSGALT\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Gallus_gallus/geneview?gene=$$"
+	 type="system default"
   />
 
 <!-- Affymetrix Link-outs -->
@@ -101,50 +111,60 @@
   <annotation_url annot_type_regex="(?i).* netaffx consensus"
     name="NetAffx"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Probes$"
     name="NetAffx Probeset Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
+	type="system default"
   />
   <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Transcripts$"
     name="NetAffx Transcript Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
+	type="system default"
   />
   <annotation_url annot_type_regex="genbank:gene\S*"
     name="Entrez"
     url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
+	type="system default"
   />    
  <annotation_url annot_type_regex="(?i).*sanger_pombe$"
     name="GeneDB"
     url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
+	type="system default"
   />
 
   <!-- Match AGI gene models names. -->
   <annotation_url annot_id_regex="^AT[1-5CM]G\d{5,}\.\d+$"
     name="TAIR"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+	type="system default"
   />
 
   <!-- Match Arabidospis insertion lines, not yet used -->
   <annotation_url annot_type_regex="^insert$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/SeedSearcher?action=detail&amp;stock_number=$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="^NCBI EST (single map)$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="^NCBI EST (multiple map)$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="^NCBI EST (spliced, single map)$" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+	type="system default"
   />
 
 
@@ -153,14 +173,17 @@
   <annotation_url annot_id_regex="^FLYBASE:.*$" id_field="db_xref" 
     name="Flybase db_xref"
     url="http://flybase.org/.bin/fbidq.html?$$"
+	type="system default"
   />
   <annotation_url annot_id_regex="^dictyBase:.*$" id_field="db_xref" 
     name="DictyBase db_xref"
     url="http://dictybase.org/db/cgi-bin/search/search.pl?query=$$"
+	type="system default"
   />
   <annotation_url annot_id_regex="^GeneID:.*$" id_field="db_xref" 
     name="Entrez db_xref"
     url="http://www.ncbi.nlm.nih.gov/gene/$$"
+	type="system default"
   />
 
 
@@ -168,6 +191,7 @@
   <annotation_url annot_type_regex=".*gene models from Phytozome.*" 
     name="Phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=0&amp;search=1&amp;searchText=$$&amp;detail=1"
+	type="system default"
   />
 
   <!-- Zea mays gene models -->
@@ -175,16 +199,18 @@
   <annotation_url annot_type_regex=".*Maize Transcripts.*"
     name="MaizeSequence.org"
     url="http://www.maizesequence.org/Zea_mays/Transcript/Transcript?t=$$"
+	type="system default"
   />
   <annotation_url annot_type_regex=".*Maize Transcripts.*"
     name="Phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=0&amp;search=1&amp;searchText=$$&amp;detail=1"
+	type="system default"
   />
 
   <annotation_url annot_type_regex="S. cerevisiae genes"
     name="SGD"
     url="http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=$$" 
+	type="system default"
   />
-
-
+  
 </prefs>

@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.view.WebLinksView;
 import com.affymetrix.genometryImpl.event.GenericAction;
 
+import com.affymetrix.igb.view.WebLinksViewGUI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.event.*;
@@ -28,7 +28,7 @@ public final class WebLinksAction extends GenericAction {
 	@Override
     public void actionPerformed(ActionEvent evt) {
     	super.actionPerformed(evt);
-    	WebLinksView.getInstance().showManager();
+		WebLinksViewGUI.getSingleton().displayPanel();
     }
 
 	@Override

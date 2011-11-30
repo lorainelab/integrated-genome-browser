@@ -139,31 +139,18 @@ public final class WebLinksView implements ListSelectionListener {
 			selectedRows = localTable.getSelectedRows();
 			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
-			boolean isLocalType = false;
-			for (int i : selectedRows) {
-				WebLink link = localModel.webLinks.get(i);
-				if (link.getType().equalsIgnoreCase("local")) {
-					isLocalType = true;
+			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
+					+ selectedRows.length + " selected link(s)?", "Delete?",
+					JOptionPane.YES_NO_OPTION);
+
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i : selectedRows) {
+					WebLink link = localModel.webLinks.get(i);
+					WebLink.removeWebLink(link);
 				}
 			}
 
-			if (isLocalType) {
-				int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-						+ selectedRows.length + " selected link(s)?", "Delete?",
-						JOptionPane.YES_NO_OPTION);
-
-				if (yes == JOptionPane.YES_OPTION) {
-					for (int i : selectedRows) {
-						WebLink link = localModel.webLinks.get(i);
-						WebLink.removeWebLink(link);
-					}
-				}
-
-				refreshList();
-			} else {
-				JOptionPane.showConfirmDialog(frame, "Can't delete system default web link!", "Error!",
-						JOptionPane.OK_CANCEL_OPTION);
-			}
+			refreshList();
 		}
 	}
 
@@ -282,10 +269,12 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void exportWebLinks() {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+		
 		if (localTable.getRowCount() == 0) {
 			ErrorHandler.errorPanel("Error", "No web links to save", frame);
 			return;
 		}
+		
 		JFileChooser chooser = getJFileChooser();
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		int option = chooser.showSaveDialog(frame);

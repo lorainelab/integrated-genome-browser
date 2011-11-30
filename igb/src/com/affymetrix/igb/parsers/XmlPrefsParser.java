@@ -191,6 +191,9 @@ public final class XmlPrefsParser {
 		String species = attmap.get("species");
 		String IDField = attmap.get("id_field");
 		String type = attmap.get("type");
+		if (type == null) {
+			type = "local";
+		}
 		try {
 			WebLink link = new WebLink();
 			link.setRegexType(type_regex);

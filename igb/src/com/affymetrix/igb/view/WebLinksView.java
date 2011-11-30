@@ -27,8 +27,10 @@ public final class WebLinksView implements ListSelectionListener {
 
 	private static final long serialVersionUID = 1L;
 	private static WebLinksView singleton;
-	public JTable table;
-	public WebLinksTableModel model;
+	public JTable sysTable;
+	public JTable localTable;
+	public WebLinksTableModel sysModel;
+	public WebLinksTableModel localModel;
 	public ListSelectionModel lsm;
 	private static JFileChooser static_chooser = null;
 	public static final String LINK_NAME = "Name";
@@ -69,26 +71,27 @@ public final class WebLinksView implements ListSelectionListener {
 	private WebLinksView() {
 		super();
 
-		table = new JTable();
-		model = new WebLinksTableModel();
-		model.addTableModelListener(new javax.swing.event.TableModelListener() {
+		sysTable = new JTable();
+		localTable = new JTable();
+
+		sysModel = new WebLinksTableModel();
+		sysModel.addTableModelListener(new javax.swing.event.TableModelListener() {
 
 			public void tableChanged(javax.swing.event.TableModelEvent e) {
 				// do nothing.
 			}
 		});
-		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(this);
-		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.setModel(model);
-		table.setRowSelectionAllowed(true);
-		table.getColumnModel().getColumn(COL_LINK_NAME).setPreferredWidth(200);
-		table.getColumnModel().getColumn(COL_LINK_NAME).setMaxWidth(400);
-		model.setLinks(WebLink.getWebList());
+		localModel = new WebLinksTableModel();
+		localModel.addTableModelListener(new javax.swing.event.TableModelListener() {
 
-		Font f = new Font("SansSerif", Font.BOLD, 12);
-		table.getTableHeader().setFont(f);
+			public void tableChanged(javax.swing.event.TableModelEvent e) {
+				// do nothing.
+			}
+		});
+
+		initTable(sysTable);
+		initTable(localTable);
 
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
@@ -104,6 +107,27 @@ public final class WebLinksView implements ListSelectionListener {
 		edit_panel = new WebLinkEditorPanel();
 	}
 
+	private void initTable(JTable table) {
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(this);
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		if (table.equals(localTable)) {
+			table.setModel(localModel);
+			localModel.setLinks(WebLink.getLocalWebList());
+		} else {
+			table.setModel(sysModel);
+			sysModel.setLinks(WebLink.getSysWebList());
+		}
+
+		table.setRowSelectionAllowed(true);
+		table.getColumnModel().getColumn(COL_LINK_NAME).setPreferredWidth(200);
+		table.getColumnModel().getColumn(COL_LINK_NAME).setMaxWidth(400);
+
+		Font f = new Font("SansSerif", Font.BOLD, 12);
+		table.getTableHeader().setFont(f);
+	}
+
 	private static void setAccelerator(Action a) {
 		KeyStroke ks = PreferenceUtils.getAccelerator("Web Links Manager / "
 				+ a.getValue(Action.NAME));
@@ -111,33 +135,35 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void localDelete() throws HeadlessException {
-		selectedRows = table.getSelectedRows();//.getSelectedValues();
-		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+		if (localTable.isFocusOwner()) {
+			selectedRows = localTable.getSelectedRows();
+			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
-		boolean isLocalType = false;
-		for (int i : selectedRows) {
-			WebLink link = model.webLinks.get(i);
-			if (link.getType().equalsIgnoreCase("local")) {
-				isLocalType = true;
-			}
-		}
-
-		if (isLocalType) {
-			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-					+ selectedRows.length + " selected link(s)?", "Delete?",
-					JOptionPane.YES_NO_OPTION);
-
-			if (yes == JOptionPane.YES_OPTION) {
-				for (int i : selectedRows) {
-					WebLink link = model.webLinks.get(i);
-					WebLink.removeWebLink(link);
+			boolean isLocalType = false;
+			for (int i : selectedRows) {
+				WebLink link = localModel.webLinks.get(i);
+				if (link.getType().equalsIgnoreCase("local")) {
+					isLocalType = true;
 				}
 			}
 
-			refreshList();
-		} else {
-			JOptionPane.showConfirmDialog(frame, "Can't delete system default web link!", "Error!",
-					JOptionPane.OK_CANCEL_OPTION);
+			if (isLocalType) {
+				int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
+						+ selectedRows.length + " selected link(s)?", "Delete?",
+						JOptionPane.YES_NO_OPTION);
+
+				if (yes == JOptionPane.YES_OPTION) {
+					for (int i : selectedRows) {
+						WebLink link = localModel.webLinks.get(i);
+						WebLink.removeWebLink(link);
+					}
+				}
+
+				refreshList();
+			} else {
+				JOptionPane.showConfirmDialog(frame, "Can't delete system default web link!", "Error!",
+						JOptionPane.OK_CANCEL_OPTION);
+			}
 		}
 	}
 
@@ -159,12 +185,12 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	private void refreshList() {
-		previousSelectedRow = table.getSelectedRow();
-		model.setLinks(WebLink.getWebList());
-		model.fireTableDataChanged();
-		if (table.getRowCount() > 0 && previousSelectedRow < table.getRowCount()
+		previousSelectedRow = localTable.getSelectedRow();
+		localModel.setLinks(WebLink.getLocalWebList());
+		localModel.fireTableDataChanged();
+		if (localTable.getRowCount() > 0 && previousSelectedRow < localTable.getRowCount()
 				&& previousSelectedRow != -1) {
-			table.setRowSelectionInterval(previousSelectedRow, previousSelectedRow);
+			localTable.setRowSelectionInterval(previousSelectedRow, previousSelectedRow);
 		}
 	}
 
@@ -175,7 +201,7 @@ public final class WebLinksView implements ListSelectionListener {
 				nameTextField.setText(previousName);
 				nameTextField.grabFocus();
 			} else {
-				model.setValueAt(nameTextField.getText(), selectedRows[0], COL_LINK_NAME);
+				localModel.setValueAt(nameTextField.getText(), selectedRows[0], COL_LINK_NAME);
 			}
 		}
 	}
@@ -189,7 +215,7 @@ public final class WebLinksView implements ListSelectionListener {
 			} else {
 				try {
 					new URL(urlTextField.getText());
-					model.setValueAt(urlTextField.getText(), selectedRows[0], COL_URL);
+					localModel.setValueAt(urlTextField.getText(), selectedRows[0], COL_URL);
 				} catch (MalformedURLException e) {
 					ErrorHandler.errorPanel("Malformed URL",
 							"The given URL appears to be invalid.\n" + e.getMessage(),
@@ -206,7 +232,7 @@ public final class WebLinksView implements ListSelectionListener {
 			if (matchTierRadioButton.isSelected()) {
 				try {
 					Pattern.compile(regexTextField.getText());
-					model.setValueAt(regexTextField.getText(), selectedRows[0], COL_REGEX);
+					localModel.setValueAt(regexTextField.getText(), selectedRows[0], COL_REGEX);
 				} catch (PatternSyntaxException pse) {
 					ErrorHandler.errorPanel("Bad Regular Expression",
 							"Error in regular expression:\n" + pse.getMessage(), regexTextField);
@@ -256,7 +282,7 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void exportWebLinks() {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-		if (table.getRowCount() == 0) {
+		if (localTable.getRowCount() == 0) {
 			ErrorHandler.errorPanel("Error", "No web links to save", frame);
 			return;
 		}
@@ -285,6 +311,16 @@ public final class WebLinksView implements ListSelectionListener {
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
 		setEnabled(true);
+
+		JTable table;
+		WebLinksTableModel model;
+		if (localTable.isFocusOwner()) {
+			table = localTable;
+			model = localModel;
+		} else {
+			table = sysTable;
+			model = sysModel;
+		}
 
 		selectedRows = table.getSelectedRows();
 

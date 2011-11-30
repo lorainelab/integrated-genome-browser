@@ -2,6 +2,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.view.WebLinksView.WebLinksTableModel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -57,11 +58,14 @@ public class WebLinksViewGUI extends JPanel {
         urlTextField = wlv.urlTextField;
         webLinkListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        webLinkTable = wlv.table;
+        localTable = wlv.localTable;
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        sysTable = wlv.sysTable;
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -111,14 +115,14 @@ public class WebLinksViewGUI extends JPanel {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, nameLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
-                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)))
+                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(allTiersRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(matchTierRadioButton)
                 .add(5, 5, 5)
-                .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+                .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -137,9 +141,14 @@ public class WebLinksViewGUI extends JPanel {
                     .add(matchTierRadioButton)))
         );
 
-        webLinkListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Link List"));
+        webLinkListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local"));
 
-        jScrollPane1.setViewportView(webLinkTable);
+        localTable.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                localTableFocusGained(evt);
+            }
+        });
+        jScrollPane1.setViewportView(localTable);
 
         addButton.setText("Add");
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -177,22 +186,42 @@ public class WebLinksViewGUI extends JPanel {
                 .add(addButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(deleteButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 104, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 111, Short.MAX_VALUE)
                 .add(importButton)
                 .add(0, 0, 0)
                 .add(exportButton))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
         );
         webLinkListPanelLayout.setVerticalGroup(
             webLinkListPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, webLinkListPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(webLinkListPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addButton)
                     .add(deleteButton)
                     .add(exportButton)
                     .add(importButton)))
+        );
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("System Default"));
+
+        sysTable.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                sysTableFocusGained(evt);
+            }
+        });
+        jScrollPane2.setViewportView(sysTable);
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -202,14 +231,17 @@ public class WebLinksViewGUI extends JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -232,14 +264,17 @@ public class WebLinksViewGUI extends JPanel {
 	}//GEN-LAST:event_deleteButtonActionPerformed
 
 	private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
+		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.nameTextField();
 	}//GEN-LAST:event_nameTextFieldActionPerformed
 
 	private void urlTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_urlTextFieldActionPerformed
+		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.urlTextField();
 	}//GEN-LAST:event_urlTextFieldActionPerformed
 
 	private void regexTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regexTextFieldActionPerformed
+		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.regexTextField();
 	}//GEN-LAST:event_regexTextFieldActionPerformed
 
@@ -258,21 +293,32 @@ public class WebLinksViewGUI extends JPanel {
 		wlv.exportWebLinks();
 	}//GEN-LAST:event_exportButtonActionPerformed
 
+	private void localTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_localTableFocusGained
+		wlv.sysModel.fireTableDataChanged();   // Deselected table
+	}//GEN-LAST:event_localTableFocusGained
+
+	private void sysTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sysTableFocusGained
+		wlv.localModel.fireTableDataChanged(); // Deselected table
+	}//GEN-LAST:event_sysTableFocusGained
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JRadioButton allTiersRadioButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton exportButton;
     private javax.swing.JButton importButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable localTable;
     private javax.swing.JRadioButton matchTierRadioButton;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JTextField regexTextField;
+    private javax.swing.JTable sysTable;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JTextField urlTextField;
     private javax.swing.JPanel webLinkListPanel;
-    private javax.swing.JTable webLinkTable;
     // End of variables declaration//GEN-END:variables
 }

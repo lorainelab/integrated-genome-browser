@@ -105,7 +105,6 @@ public final class WebLink {
 			webLinkListModel.addElement(w);
 		}
 	}
-
 	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
 		private String sortString(WebLink wl) {
@@ -224,6 +223,28 @@ public final class WebLink {
 	/** Returns the list of WebLink items. */
 	public static List<WebLink> getWebList() {
 		return weblink_list;
+	}
+
+	public static List<WebLink> getSysWebList() {
+		List<WebLink> sysWeblink_list = new ArrayList<WebLink>();
+
+		for (WebLink weblink : weblink_list) {
+			if (!weblink.getType().equals("local")) {
+				sysWeblink_list.add(weblink);
+			}
+		}
+		return sysWeblink_list;
+	}
+
+	public static List<WebLink> getLocalWebList() {
+		List<WebLink> localWeblink_list = new ArrayList<WebLink>();
+
+		for (WebLink weblink : weblink_list) {
+			if (weblink.getType().equals("local")) {
+				localWeblink_list.add(weblink);
+			}
+		}
+		return localWeblink_list;
 	}
 
 	public String getName() {

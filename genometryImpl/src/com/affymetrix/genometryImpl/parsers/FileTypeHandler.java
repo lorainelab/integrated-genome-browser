@@ -35,4 +35,9 @@ public interface FileTypeHandler {
 	 * @return the IndexWriter
 	 */
 	public IndexWriter getIndexWriter(String stream_name);
+
+	/**
+	 * @return the category of this file type
+	 */
+	public FileTypeCategory getFileTypeCategory();
 }

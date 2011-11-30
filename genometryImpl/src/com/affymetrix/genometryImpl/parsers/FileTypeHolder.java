@@ -57,9 +57,8 @@ public class FileTypeHolder {
 	private FileTypeHolder() {
 		fileTypeHandlerMap = new HashMap<String, FileTypeHandler>();
 		// load all built in FileTypeHandlers
-		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, AffyCnChpParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("BAM", new String[]{"bam"}, null, BAM.class);
-//		addFileTypeHandler("SAM", new String[]{"sam"}, null, SAM.class);
+		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, FileTypeCategory.Annotation, AffyCnChpParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("BAM", new String[]{"bam"}, FileTypeCategory.Alignment, null, BAM.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				String[] extensions = new String[]{"sam"};
@@ -77,10 +76,13 @@ public class FileTypeHolder {
 				public IndexWriter getIndexWriter(String stream_name) {
 					return null;
 				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Alignment;
+				}
 			}
 		);
-		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
-//		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
+		addFileTypeHandler("Graph", new String[]{"bar"}, FileTypeCategory.Graph, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				String[] extensions = new String[]{"bed"};
@@ -98,9 +100,12 @@ public class FileTypeHolder {
 				public IndexWriter getIndexWriter(String stream_name) {
 					return (IndexWriter) getParser();
 				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Annotation;
+				}
 			}
 		);
-//		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);
 		addFileTypeHandler(
 				new FileTypeHandler() {
 				String[] extensions = new String[]{"gff3"};
@@ -117,6 +122,10 @@ public class FileTypeHolder {
 				@Override
 				public IndexWriter getIndexWriter(String stream_name) {
 					return null;
+				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Annotation;
 				}
 			});
 		addFileTypeHandler(
@@ -141,22 +150,25 @@ public class FileTypeHolder {
 				public IndexWriter getIndexWriter(String stream_name) {
 					return null;
 				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Annotation;
+				}
 			}
 		);
-		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);
-		addFileTypeHandler("Graph", new String[] {"bgr"}, BgrParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Binary", new String[]{"bp1", "bp2"}, Bprobe1Parser.class, SymLoaderInst.class);
-		addFileTypeHandler("Binary", new String[] {"bps"}, BpsParser.class, SymLoaderInst.class);
-		addFileTypeHandler("Binary", new String[]{"brpt"}, BrptParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Binary", new String[]{"brs"}, BrsParser.class, SymLoaderInst.class);
-		addFileTypeHandler("Binary", new String[]{"bsnp"}, BsnpParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Graph", new String[]{"chp"}, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
-		addFileTypeHandler("Copy Number", new String[]{"cnt"}, CntParser.class, SymLoaderInst.class);
-		addFileTypeHandler("Cytobands", new String[]{"cyt"}, CytobandParser.class, SymLoaderInst.class);
-		addFileTypeHandler("DAS", new String[]{Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, "das2feature", "das2xml", "x-das-feature"}, Das2FeatureSaxParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("DAS", new String[]{"das", "dasxml"}, DASFeatureParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Binary", new String[]{"ead"}, ExonArrayDesignParser.class, SymLoaderInstNC.class);
-//		addFileTypeHandler("FASTA", new String[]{"fa", "fas", "fasta"}, FastaParser.class, Fasta.class);
+		addFileTypeHandler("Binary", new String[]{"bgn"}, FileTypeCategory.Annotation, BgnParser.class, SymLoaderInst.class);
+		addFileTypeHandler("Graph", new String[] {"bgr"}, FileTypeCategory.Graph, BgrParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Binary", new String[]{"bp1", "bp2"}, FileTypeCategory.Annotation, Bprobe1Parser.class, SymLoaderInst.class);
+		addFileTypeHandler("Binary", new String[] {"bps"}, FileTypeCategory.Annotation, BpsParser.class, SymLoaderInst.class);
+		addFileTypeHandler("Binary", new String[]{"brpt"}, FileTypeCategory.Annotation, BrptParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Binary", new String[]{"brs"}, FileTypeCategory.Annotation, BrsParser.class, SymLoaderInst.class);
+		addFileTypeHandler("Binary", new String[]{"bsnp"}, FileTypeCategory.Annotation, BsnpParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Graph", new String[]{"chp"}, FileTypeCategory.Graph, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
+		addFileTypeHandler("Copy Number", new String[]{"cnt"}, FileTypeCategory.Graph, CntParser.class, SymLoaderInst.class);
+		addFileTypeHandler("Cytobands", new String[]{"cyt"}, FileTypeCategory.Annotation, CytobandParser.class, SymLoaderInst.class);
+		addFileTypeHandler("DAS", new String[]{Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, "das2feature", "das2xml", "x-das-feature"}, FileTypeCategory.Annotation, Das2FeatureSaxParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("DAS", new String[]{"das", "dasxml"}, FileTypeCategory.Annotation, DASFeatureParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Binary", new String[]{"ead"}, FileTypeCategory.Annotation, ExonArrayDesignParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler(
 				new FileTypeHandler() {
 					String[] extensions = new String[]{"fa", "fas", "fasta"};
@@ -180,11 +192,15 @@ public class FileTypeHolder {
 					public IndexWriter getIndexWriter(String stream_name) {
 						return null;
 					}
+					@Override
+					public FileTypeCategory getFileTypeCategory() {
+						return FileTypeCategory.Sequence;
+					}
 				}
 			);
-		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FishClonesParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, null, Genbank.class);
-		addFileTypeHandler("Graph", new String[]{"gr"}, GrParser.class, Gr.class);
+		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FileTypeCategory.Annotation, FishClonesParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, FileTypeCategory.Annotation, null, Genbank.class);
+		addFileTypeHandler("Graph", new String[]{"gr"}, FileTypeCategory.Graph, GrParser.class, Gr.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				String[] extensions = new String[]{"link.psl"};
@@ -217,9 +233,13 @@ public class FileTypeHolder {
 					parser.setCreateContainerAnnot(true);
 					return parser;
 				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Annotation;
+				}
 			}
 		);
-		addFileTypeHandler("Binary", new String[]{"bnib"}, NibbleResiduesParser.class, BNIB.class);
+		addFileTypeHandler("Binary", new String[]{"bnib"}, FileTypeCategory.Sequence, NibbleResiduesParser.class, BNIB.class);
 		addFileTypeHandler(
 				new FileTypeHandler() {
 					String[] extensions = new String[]{"psl", "psl3", "pslx"};
@@ -246,16 +266,20 @@ public class FileTypeHolder {
 						}
 						return iWriter;
 					}
+					@Override
+					public FileTypeCategory getFileTypeCategory() {
+						return FileTypeCategory.Annotation;
+					}
 				}
 			);
-		addFileTypeHandler("Scored Interval", new String[]{"sin", "egr", "egr.txt"}, ScoredIntervalParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Scored Map", new String[]{"map"}, ScoredMapParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Regions", new String[]{SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, SegmenterRptParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Graph", new String[]{"sgr"}, SgrParser.class, Sgr.class);
-		addFileTypeHandler(".2bit", new String[]{"2bit"}, TwoBitParser.class, TwoBit.class);
-		addFileTypeHandler("Binary", new String[]{"useq"}, USeqRegionParser.class, USeq.class);
-		addFileTypeHandler("Genomic Variation", new String[]{"var"}, VarParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Graph", new String[]{"wig"}, WiggleParser.class, Wiggle.class);
+		addFileTypeHandler("Scored Interval", new String[]{"sin", "egr", "egr.txt"}, FileTypeCategory.Graph, ScoredIntervalParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Scored Map", new String[]{"map"}, FileTypeCategory.Graph, ScoredMapParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Regions", new String[]{SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, FileTypeCategory.Annotation, SegmenterRptParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Graph", new String[]{"sgr"}, FileTypeCategory.Graph, SgrParser.class, Sgr.class);
+		addFileTypeHandler(".2bit", new String[]{"2bit"}, FileTypeCategory.Sequence, TwoBitParser.class, TwoBit.class);
+		addFileTypeHandler("Binary", new String[]{"useq"}, FileTypeCategory.Annotation, USeqRegionParser.class, USeq.class);
+		addFileTypeHandler("Genomic Variation", new String[]{"var"}, FileTypeCategory.Annotation, VarParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Graph", new String[]{"wig"}, FileTypeCategory.Graph, WiggleParser.class, Wiggle.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				String[] extensions = new String[]{"bedgraph"};
@@ -273,11 +297,15 @@ public class FileTypeHolder {
 				public IndexWriter getIndexWriter(String stream_name) {
 					return (IndexWriter) getParser();
 				}
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return FileTypeCategory.Graph;
+				}
 			}
 		);
 	}
 
-	private void addFileTypeHandler(final String name, final String[] extensions, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {
+	private void addFileTypeHandler(final String name, final String[] extensions, final FileTypeCategory category, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {
 		addFileTypeHandler(
 			new FileTypeHandler() {
 				@Override
@@ -329,6 +357,11 @@ public class FileTypeHolder {
 					}
 					return null;
 				}
+
+				@Override
+				public FileTypeCategory getFileTypeCategory() {
+					return category;
+				}
 			}
 		);
 	}
@@ -367,6 +400,9 @@ public class FileTypeHolder {
 	 * @return the appropriate Parser
 	 */
 	public FileTypeHandler getFileTypeHandler(String extension) {
+		if (extension == null) {
+			return null;
+		}
 		if (extension.startsWith("x-das-feature")) {
 			return fileTypeHandlerMap.get("das2xml");
 		}

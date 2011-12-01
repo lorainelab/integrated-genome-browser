@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 
@@ -53,7 +54,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         show2TracksCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getShow2TracksCheckBox();
         connectedCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getConnectedCheckBox();
         collapsedCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getCollapsedCheckBox();
-        labelFieldTip = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getLabelFieldTip();
+        labelFieldTip = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(540, 512));
 
@@ -133,7 +134,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        selectTrackDefaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track Default"));
+        selectTrackDefaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Default List"));
         selectTrackDefaultPanel.setPreferredSize(new java.awt.Dimension(600, 271));
 
         jScrollPane1.setViewportView(table);
@@ -157,14 +158,12 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         selectTrackDefaultPanelLayout.setHorizontalGroup(
             selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(selectTrackDefaultPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
-                    .add(selectTrackDefaultPanelLayout.createSequentialGroup()
-                        .add(addTrackDefaultButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(removeTrackDefaultButton)))
-                .addContainerGap())
+                .add(0, 0, 0)
+                .add(addTrackDefaultButton)
+                .add(0, 0, 0)
+                .add(removeTrackDefaultButton)
+                .addContainerGap(302, Short.MAX_VALUE))
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
         selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, removeTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -265,6 +264,8 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
+        labelFieldTip.setToolTipText("Type or choose label field.");
+        labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
         labelFieldTip.setText(" ");
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);

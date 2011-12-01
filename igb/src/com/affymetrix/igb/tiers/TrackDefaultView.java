@@ -91,7 +91,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private javax.swing.JTable table;
 	private javax.swing.JTextField trackDefaultTextField;
 	private javax.swing.JComboBox trackNameSizeComboBox;
-	private javax.swing.JLabel labelFieldTip;
 	private static TrackDefaultView singleton;
 
 	public static void init() {
@@ -148,7 +147,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 		show2TracksCheckBox = new JRPCheckBox("TrackDefaultView_show2TracksCheckBox");
 		connectedCheckBox = new JRPCheckBox("TrackDefaultView_connectedCheckBox");
 		collapsedCheckBox = new JRPCheckBox("TrackDefaultView_collapsedCheckBox");
-		labelFieldTip = new javax.swing.JLabel();
 
 		possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
 		possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
@@ -243,10 +241,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 		connectedCheckBox.setText("Connected");
 
 		collapsedCheckBox.setText("Collapsed");
-
-		labelFieldTip.setToolTipText("Type or choose label field.");
-		labelFieldTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
-		labelFieldTip.setText(" ");
 	}
 
 	public void possitiveColorComboBox() {
@@ -579,10 +573,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 	public javax.swing.JCheckBox getCollapsedCheckBox() {
 		return collapsedCheckBox;
-	}
-
-	public javax.swing.JLabel getLabelFieldTip() {
-		return labelFieldTip;
 	}
 
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {

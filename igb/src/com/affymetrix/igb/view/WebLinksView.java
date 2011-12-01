@@ -5,6 +5,7 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.igb.prefs.WebLink.RegexType;
 import com.affymetrix.igb.shared.FileTracker;
 import java.util.List;
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
@@ -48,8 +50,8 @@ public final class WebLinksView implements ListSelectionListener {
 	public JTextField nameTextField;
 	public JTextField urlTextField;
 	public JTextField regexTextField;
-	public JRadioButton allTiersRadioButton;
-	public JRadioButton matchTierRadioButton;
+	public JRadioButton nameRadioButton;
+	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
 	private final WebLinkEditorPanel edit_panel;
 	private int previousSelectedRow;
@@ -96,14 +98,10 @@ public final class WebLinksView implements ListSelectionListener {
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
 		regexTextField = new JTextField();
-		allTiersRadioButton = new JRadioButton();
-		matchTierRadioButton = new JRadioButton();
-		button_group.add(allTiersRadioButton);
-		button_group.add(matchTierRadioButton);
-		allTiersRadioButton.setSelected(true);
-		regexTextField.setText("Display link for all tiers (uneditable)");
-		regexTextField.setEnabled(false);
-		matchTierRadioButton.setSelected(false);
+		nameRadioButton = new JRadioButton();
+		idRadioButton = new JRadioButton();
+		button_group.add(nameRadioButton);
+		button_group.add(idRadioButton);
 		edit_panel = new WebLinkEditorPanel();
 	}
 
@@ -134,9 +132,10 @@ public final class WebLinksView implements ListSelectionListener {
 		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
-	public void localDelete() throws HeadlessException {
+	public void delete() throws HeadlessException {
 		if (localTable.getSelectedRow() != -1) {
-			selectedRows = localTable.getSelectedRows();
+			//	selectedRows = localTable.getSelectedRows();
+			int selectedRow = localTable.getSelectedRow();
 			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
 			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
@@ -144,24 +143,29 @@ public final class WebLinksView implements ListSelectionListener {
 					JOptionPane.YES_NO_OPTION);
 
 			if (yes == JOptionPane.YES_OPTION) {
-				for (int i : selectedRows) {
-					WebLink link = localModel.webLinks.get(i);
-					WebLink.removeLocalWebLink(link);
-				}
+//				for (int i : selectedRows) {
+//					WebLink link = localModel.webLinks.get(i);
+//					localModel.remove(link);
+//					WebLink.removeLocalWebLink(link);
+//				}
+
+				WebLink link = localModel.webLinks.get(selectedRow);
+				localModel.remove(link);
+				WebLink.removeLocalWebLink(link);
 			}
 
 			refreshList();
 		}
 	}
 
-	public void localAdd() {
+	public void add() {
 		WebLink link = new WebLink();
 		edit_panel.setWebLink(link);
 		boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null));
 		if (ok) {
 			edit_panel.setLinkPropertiesFromGUI();
-			link.setType("local");
-			WebLink.addLocalWebLink(link);
+			link.setType(WebLink.LOCAL);
+			WebLink.addWebLink(link);
 		}
 
 		refreshList();
@@ -216,16 +220,19 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void regexTextField() {
 		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
-			if (matchTierRadioButton.isSelected()) {
-				try {
-					Pattern.compile(regexTextField.getText());
-					localModel.setValueAt(regexTextField.getText(), selectedRows[0], COL_REGEX);
-				} catch (PatternSyntaxException pse) {
-					ErrorHandler.errorPanel("Bad Regular Expression",
-							"Error in regular expression:\n" + pse.getMessage(), regexTextField);
-					regexTextField.setText(previousRegex);
-					regexTextField.grabFocus();
-				}
+			if (isEmpty(regexTextField.getText())) {
+				ErrorHandler.errorPanel("The regular expression cannot be blank");
+				regexTextField.grabFocus();
+			}
+
+			try {
+				Pattern.compile(regexTextField.getText());
+				localModel.setValueAt(regexTextField.getText(), selectedRows[0], COL_REGEX);
+			} catch (PatternSyntaxException pse) {
+				ErrorHandler.errorPanel("Bad Regular Expression",
+						"Error in regular expression:\n" + pse.getMessage(), regexTextField);
+				regexTextField.setText(previousRegex);
+				regexTextField.grabFocus();
 			}
 		}
 	}
@@ -254,13 +261,10 @@ public final class WebLinksView implements ListSelectionListener {
 			try {
 				WebLink.importWebLinks(fil);
 			} catch (FileNotFoundException fe) {
-				ErrorHandler.errorPanel(
-						"Error",
-						"Error importing web links: File Not Found "
+				ErrorHandler.errorPanel("Importing web links: File Not Found "
 						+ fil.getAbsolutePath(), null, fe);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error importing web links",
-						null, ex);
+				ErrorHandler.errorPanel("Importing web links", null, ex);
 			}
 		}
 
@@ -269,12 +273,12 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void exportWebLinks() {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-		
+
 		if (localTable.getRowCount() == 0) {
 			ErrorHandler.errorPanel("Error", "No web links to save", frame);
 			return;
 		}
-		
+
 		JFileChooser chooser = getJFileChooser();
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		int option = chooser.showSaveDialog(frame);
@@ -303,7 +307,7 @@ public final class WebLinksView implements ListSelectionListener {
 
 		JTable table;
 		WebLinksTableModel model;
-		
+
 		if (localTable.getSelectedRow() != -1) {
 			table = localTable;
 			model = localModel;
@@ -327,20 +331,18 @@ public final class WebLinksView implements ListSelectionListener {
 			previousUrl = selectedLink.getUrl();
 			urlTextField.setText(previousUrl);
 			String regex = selectedLink.getRegex();
+			if (regex.startsWith("(?i)")) {
+				regex = regex.substring(4);
+			}
 			previousRegex = regex;
-			if (regex == null) {
-				regexTextField.setText("Display link for all tracks (uneditable)");
-				allTiersRadioButton.setSelected(true);
-				regexTextField.setEnabled(false);
-			} else {
-				if (regex.startsWith("(?i)")) {
-					regex = regex.substring(4);
-				}
-				regexTextField.setText(regex);
-				matchTierRadioButton.setSelected(true);
+			regexTextField.setText(regex);
+			if (selectedLink.getRegexType() == RegexType.TYPE) {
+				nameRadioButton.setSelected(true);
+			} else if (selectedLink.getRegexType() == RegexType.ID) {
+				idRadioButton.setSelected(true);
 			}
 
-			if (!selectedLink.getType().equalsIgnoreCase("local")) {
+			if (!selectedLink.getType().equals(WebLink.LOCAL)) {
 				nameTextField.setText(selectedLink.getName()
 						+ "   (" + selectedLink.getType() + " web link - uneditable)");
 				setEnabled(false);
@@ -356,8 +358,8 @@ public final class WebLinksView implements ListSelectionListener {
 		nameTextField.setEnabled(b);
 		urlTextField.setEnabled(b);
 		regexTextField.setEnabled(b);
-		allTiersRadioButton.setEnabled(b);
-		matchTierRadioButton.setEnabled(b);
+		nameRadioButton.setEnabled(b);
+		idRadioButton.setEnabled(b);
 	}
 
 	class WebLinksTableModel extends AbstractTableModel {
@@ -375,6 +377,16 @@ public final class WebLinksView implements ListSelectionListener {
 
 		public List<WebLink> getLinks() {
 			return this.webLinks;
+		}
+
+		public void remove(WebLink link) {
+			Iterator it = webLinks.iterator();
+			while (it.hasNext()) {
+				WebLink item = (WebLink) it.next();
+				if (link.equals(item)) {
+					it.remove();
+				}
+			}
 		}
 
 		@Override
@@ -421,9 +433,12 @@ public final class WebLinksView implements ListSelectionListener {
 							urlTextField.setText((String) value);
 							break;
 						case COL_REGEX:
-							if (matchTierRadioButton.isSelected()) {
-								webLink.setRegex((String) value);
+							if (idRadioButton.isSelected()) {
+								webLink.setRegexType(WebLink.RegexType.ID);
+							} else {
+								webLink.setRegexType(WebLink.RegexType.TYPE);
 							}
+							webLink.setRegex((String) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

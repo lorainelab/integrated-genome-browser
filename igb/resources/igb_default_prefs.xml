@@ -30,8 +30,8 @@
 
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
-         annot_type_regex:  a regular expression (case insensitive by default)
-         annot_id_regex:  a regular expression (case insensitive by default)
+         annot_type_regex: feature name and a regular expression (case insensitive by default)
+         annot_id_regex: annotation id and a regular expression (case insensitive by default)
          url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->

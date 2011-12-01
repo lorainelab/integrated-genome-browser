@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.WebLinksView.WebLinksTableModel;
@@ -52,10 +53,11 @@ public class WebLinksViewGUI extends JPanel {
         nameLabel = new javax.swing.JLabel();
         nameTextField = wlv.nameTextField;
         urlLabel = new javax.swing.JLabel();
-        allTiersRadioButton = wlv.allTiersRadioButton;
-        matchTierRadioButton = wlv.matchTierRadioButton;
+        nameRadioButton = wlv.nameRadioButton;
+        idRadioButton = wlv.idRadioButton;
         regexTextField = wlv.regexTextField;
         urlTextField = wlv.urlTextField;
+        matchTip = new javax.swing.JLabel();
         webLinkListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         localTable = wlv.localTable;
@@ -79,17 +81,17 @@ public class WebLinksViewGUI extends JPanel {
 
         urlLabel.setText("URL:");
 
-        allTiersRadioButton.setText("All Tiers");
-        allTiersRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        nameRadioButton.setText("Track Name");
+        nameRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allTiersRadioButtonActionPerformed(evt);
+                nameRadioButtonActionPerformed(evt);
             }
         });
 
-        matchTierRadioButton.setText("Match Tier");
-        matchTierRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        idRadioButton.setText("Annotation ID");
+        idRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                matchTierRadioButtonActionPerformed(evt);
+                idRadioButtonActionPerformed(evt);
             }
         });
 
@@ -105,6 +107,10 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
+        matchTip.setToolTipText("Choose different type for Matching.");
+        matchTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
+        matchTip.setText(" ");
+
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
@@ -115,14 +121,16 @@ public class WebLinksViewGUI extends JPanel {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, nameLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .add(nameRadioButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(idRadioButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(142, 142, 142))
                     .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(allTiersRadioButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(matchTierRadioButton)
-                .add(5, 5, 5)
-                .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
+                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                    .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -130,15 +138,17 @@ public class WebLinksViewGUI extends JPanel {
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameLabel)
                     .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(urlTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(urlLabel))
-                .add(5, 5, 5)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(allTiersRadioButton)
-                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(matchTierRadioButton)))
+                    .add(nameRadioButton)
+                    .add(idRadioButton)
+                    .add(matchTip))
+                .add(5, 5, 5)
+                .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         webLinkListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local"));
@@ -186,7 +196,7 @@ public class WebLinksViewGUI extends JPanel {
                 .add(addButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(deleteButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 111, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 102, Short.MAX_VALUE)
                 .add(importButton)
                 .add(0, 0, 0)
                 .add(exportButton))
@@ -231,9 +241,9 @@ public class WebLinksViewGUI extends JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -244,46 +254,44 @@ public class WebLinksViewGUI extends JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(webLinkListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-	private void allTiersRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allTiersRadioButtonActionPerformed
-		regexTextField.setText("Display link for all tiers (uneditable)");
-		regexTextField.setEnabled(false);
-	}//GEN-LAST:event_allTiersRadioButtonActionPerformed
+	private void nameRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameRadioButtonActionPerformed
+		if (regexTextField.getText() == null) {
+			regexTextField.setText("Type your regular expression here");
+		}
+		regexTextField.grabFocus();
+	}//GEN-LAST:event_nameRadioButtonActionPerformed
 
 	private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-		wlv.localAdd();
-		
+		wlv.add();
+
 	}//GEN-LAST:event_addButtonActionPerformed
 
 	private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-		wlv.localDelete();
+		wlv.delete();
 	}//GEN-LAST:event_deleteButtonActionPerformed
 
 	private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
-		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.nameTextField();
 	}//GEN-LAST:event_nameTextFieldActionPerformed
 
 	private void urlTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_urlTextFieldActionPerformed
-		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.urlTextField();
 	}//GEN-LAST:event_urlTextFieldActionPerformed
 
 	private void regexTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regexTextFieldActionPerformed
-		wlv.localModel = (WebLinksTableModel)localTable.getModel();
 		wlv.regexTextField();
 	}//GEN-LAST:event_regexTextFieldActionPerformed
 
-	private void matchTierRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchTierRadioButtonActionPerformed
-		regexTextField.setEnabled(true);
-		regexTextField.setText("Type your regular expression here");
-		regexTextField.selectAll();
-		regexTextField.requestFocusInWindow();
-	}//GEN-LAST:event_matchTierRadioButtonActionPerformed
+	private void idRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idRadioButtonActionPerformed
+		if (regexTextField.getText() == null) {
+			regexTextField.setText("Type your regular expression here");
+		}
+		regexTextField.grabFocus();
+	}//GEN-LAST:event_idRadioButtonActionPerformed
 
 	private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
 		wlv.importWebLinks();
@@ -294,25 +302,29 @@ public class WebLinksViewGUI extends JPanel {
 	}//GEN-LAST:event_exportButtonActionPerformed
 
 	private void localTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_localTableFocusGained
-		wlv.sysModel.fireTableDataChanged();   // Deselected table
+		if (sysTable.getRowCount() != 0) {
+			wlv.sysTable.removeRowSelectionInterval(0, sysTable.getRowCount() - 1);
+		}
 	}//GEN-LAST:event_localTableFocusGained
 
 	private void sysTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sysTableFocusGained
-		wlv.localModel.fireTableDataChanged(); // Deselected table
+		if (localTable.getRowCount() != 0) {
+			wlv.localTable.removeRowSelectionInterval(0, localTable.getRowCount() - 1);
+		}
 	}//GEN-LAST:event_sysTableFocusGained
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
-    private javax.swing.JRadioButton allTiersRadioButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton exportButton;
+    private javax.swing.JRadioButton idRadioButton;
     private javax.swing.JButton importButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable localTable;
-    private javax.swing.JRadioButton matchTierRadioButton;
+    private javax.swing.JLabel matchTip;
     private javax.swing.JLabel nameLabel;
+    private javax.swing.JRadioButton nameRadioButton;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JTextField regexTextField;

@@ -19,9 +19,9 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="propertiesPanel" alignment="0" max="32767" attributes="2"/>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                   <Component id="webLinkListPanel" alignment="0" max="32767" attributes="1"/>
-                  <Component id="propertiesPanel" alignment="0" max="32767" attributes="2"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -34,9 +34,8 @@
               <Component id="jPanel1" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="webLinkListPanel" max="32767" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -61,16 +60,18 @@
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="nameRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="idRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="matchTip" min="-2" pref="17" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="142" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="urlTextField" pref="391" max="32767" attributes="0"/>
                       <Component id="nameTextField" alignment="0" pref="391" max="32767" attributes="1"/>
+                      <Component id="regexTextField" alignment="0" pref="391" max="32767" attributes="0"/>
                   </Group>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="allTiersRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="matchTierRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="regexTextField" pref="254" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -81,17 +82,19 @@
                       <Component id="nameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="nameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="urlTextField" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="urlLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="allTiersRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="regexTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="matchTierRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="nameRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="idRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="matchTip" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Component id="regexTextField" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -115,26 +118,26 @@
             <Property name="text" type="java.lang.String" value="URL:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="allTiersRadioButton">
+        <Component class="javax.swing.JRadioButton" name="nameRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="All Tiers"/>
+            <Property name="text" type="java.lang.String" value="Track Name"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allTiersRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nameRadioButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.allTiersRadioButton"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.nameRadioButton"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="matchTierRadioButton">
+        <Component class="javax.swing.JRadioButton" name="idRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Match Tier"/>
+            <Property name="text" type="java.lang.String" value="Annotation ID"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="matchTierRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="idRadioButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.matchTierRadioButton"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.idRadioButton"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="regexTextField">
@@ -151,6 +154,14 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.urlTextField"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="matchTip">
+          <Properties>
+            <Property name="text" type="java.lang.String" value=" "/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose different type for Matching.&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -171,7 +182,7 @@
                   <Component id="addButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="111" max="32767" attributes="0"/>
+                  <EmptySpace pref="102" max="32767" attributes="0"/>
                   <Component id="importButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="exportButton" min="-2" max="-2" attributes="0"/>

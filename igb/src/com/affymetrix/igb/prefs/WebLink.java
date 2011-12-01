@@ -1,6 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -29,6 +28,7 @@ import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
  */
 public final class WebLink {
 
+	// TYPE is feature name, ID is annotation ID
 	public enum RegexType {
 
 		TYPE, ID
@@ -46,6 +46,7 @@ public final class WebLink {
 	private static final List<WebLink> local_weblink_list = new ArrayList<WebLink>();
 	private static final List<WebLink> sys_weblink_list = new ArrayList<WebLink>();
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
+	public static final String LOCAL = "local";
 	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
 	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
 
@@ -82,52 +83,18 @@ public final class WebLink {
 		return toComparisonString().hashCode();
 	}
 
-	public static void addWebLinkFromXML(WebLink wl) {
+	public static void addWebLink(WebLink wl) {
 		if (wl.getName() == null || wl.getName().trim().length() == 0) {
 			return;
 		}
-		if (!wl.getType().equals("local")) {
+
+		if (!wl.getType().equals(LOCAL)) {
 			sys_weblink_list.add(wl);
 			Collections.sort(sys_weblink_list, webLinkComp);
 		} else {
-			boolean contained = isContained(sys_weblink_list, wl.getUrl());
-			if (!contained) {
-				local_weblink_list.add(wl);
-				Collections.sort(local_weblink_list, webLinkComp);
-			}
+			local_weblink_list.add(wl);
+			Collections.sort(local_weblink_list, webLinkComp);
 		}
-	}
-
-	public static void addLocalWebLink(WebLink wl) {
-		if (wl.getName() == null || wl.getName().trim().length() == 0) {
-			return;
-		}
-
-		boolean contained = isContained(sys_weblink_list, wl.getUrl());
-		if (contained) {
-			ErrorHandler.errorPanel("The url is ");
-			return;
-		}
-
-		contained = isContained(local_weblink_list, wl.getUrl());
-		if (contained) {
-			ErrorHandler.errorPanel("The url cannot be duplicated");
-			return;
-		}
-
-		local_weblink_list.add(wl);
-		Collections.sort(local_weblink_list, webLinkComp);
-
-	}
-
-	private static boolean isContained(List<WebLink> list, String url) {
-		for (WebLink link : list) {
-			if (link.getUrl().equals(url)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
@@ -143,8 +110,14 @@ public final class WebLink {
 	/**
 	 *  Remove a WebLink from the static list.
 	 */
-	public static void removeLocalWebLink(WebLink wl) {
-		local_weblink_list.remove(wl);
+	public static void removeLocalWebLink(WebLink link) {
+		Iterator it = local_weblink_list.iterator();
+		while (it.hasNext()) {
+			WebLink item = (WebLink) it.next();
+			if (link.equals(item)) {
+				it.remove();
+			}
+		}
 	}
 
 	/** Get all web-link patterns for the given method name.
@@ -340,6 +313,10 @@ public final class WebLink {
 
 	public void setRegexType(RegexType regexType) {
 		this.regexType = regexType;
+	}
+
+	public RegexType getRegexType() {
+		return this.regexType;
 	}
 
 	private boolean matches(String s) {

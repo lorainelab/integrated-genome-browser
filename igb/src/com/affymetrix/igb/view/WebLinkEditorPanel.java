@@ -15,14 +15,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public final class WebLinkEditorPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
 
-	private WebLink selected_link = null;
+	private static final long serialVersionUID = 1L;
+	private WebLink webLink = null;
 	private JRPTextField name_tf = new JRPTextField("WebLinkEditorPanel_name_tf", "");
 	private JRPTextField url_tf = new JRPTextField("WebLinkEditorPanel_url_tf", "");
 	private JRPTextField regex_tf = new JRPTextField("WebLinkEditorPanel_regex_tf", "");
-	private final JRadioButton all_b = new JRadioButton("All Tiers");
-	private final JRadioButton regex_b = new JRadioButton("Match Tier");
+	private final JRadioButton name_b = new JRadioButton("Track Name");
+	private final JRadioButton id_b = new JRadioButton("Annotation ID");
 	private final ButtonGroup but_group_1 = new ButtonGroup();
 
 	public WebLinkEditorPanel() {
@@ -42,15 +42,14 @@ public final class WebLinkEditorPanel extends JPanel {
 		row2.add(url_tf);
 
 		Box row3 = Box.createHorizontalBox();
-		row3.add(all_b);
-		row3.add(regex_b);
+		row3.add(name_b);
+		row3.add(id_b);
 		row3.add(Box.createRigidArea(new Dimension(6, 0)));
 		row3.add(regex_tf);
 
-		but_group_1.add(all_b);
-		but_group_1.add(regex_b);
-		all_b.setSelected(true);
-		regex_b.setSelected(false);
+		but_group_1.add(name_b);
+		but_group_1.add(id_b);
+		name_b.setSelected(true);
 
 		container.add(row1);
 		container.add(Box.createRigidArea(new Dimension(0, 6)));
@@ -58,16 +57,16 @@ public final class WebLinkEditorPanel extends JPanel {
 		container.add(Box.createRigidArea(new Dimension(0, 6)));
 		container.add(row3);
 
-		all_b.addActionListener(new ActionListener() {
+		name_b.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				matchTypeSelected();
+				matchTypeSelected("Type your regular expression here");
 			}
 		});
-		regex_b.addActionListener(new ActionListener() {
+		id_b.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				matchTypeSelected();
+				matchTypeSelected("Type your regular expression here");
 			}
 		});
 
@@ -75,37 +74,18 @@ public final class WebLinkEditorPanel extends JPanel {
 		this.add(container);
 	}
 
-	public void setWebLink(WebLink link) {
-		this.selected_link = link;
-		if (selected_link == null) {
-			name_tf.setText("");
-			url_tf.setText("");
-			regex_tf.setText("");
-		} else {
-			name_tf.setText(selected_link.getName());
-			url_tf.setText(selected_link.getUrl());
-			String regex = selected_link.getRegex();
-			if (regex == null) {
-				regex_tf.setText("");
-				all_b.setSelected(true);
-			} else {
-				if (regex.startsWith("(?i)")) {
-					regex = regex.substring(4);
-				}
-				regex_tf.setText(regex);
-				regex_b.setSelected(true);
-			}
+	private void matchTypeSelected(String text) {
+		if (regex_tf.getText() == null) {
+			regex_tf.setText(text);
 		}
-		name_tf.setEnabled(selected_link != null);
-		url_tf.setEnabled(selected_link != null);
-		regex_tf.setEnabled(selected_link != null);
-		all_b.setEnabled(selected_link != null);
-		regex_b.setEnabled(selected_link != null);
-		matchTypeSelected();
+		regex_tf.grabFocus();
 	}
 
-	private void matchTypeSelected() {
-		regex_tf.setEnabled(regex_b.isSelected());
+	public void setWebLink(WebLink link) {
+		this.webLink = link;
+
+		name_tf.setText("");
+		url_tf.setText("");
 	}
 
 	private static boolean isEmpty(String s) {
@@ -129,13 +109,15 @@ public final class WebLinkEditorPanel extends JPanel {
 		if (isEmpty(name_tf.getText()) || isEmpty(url_tf.getText())) {
 			throw new IllegalArgumentException("Name and URL must not be blank.");
 		}
-		selected_link.setName(name_tf.getText());
-		selected_link.setUrl(url_tf.getText());
-		if (regex_b.isSelected()) {
-			selected_link.setRegex(regex_tf.getText());
+		webLink.setName(name_tf.getText());
+		webLink.setUrl(url_tf.getText());
+		if (id_b.isSelected()) {
+			webLink.setRegexType(WebLink.RegexType.ID);
 		} else {
-			selected_link.setRegex(null); // null regex implies that it applies to all SeqSyms.
+			webLink.setRegexType(WebLink.RegexType.TYPE);
 		}
+
+		webLink.setRegex(regex_tf.getText());
 	}
 
 	public boolean showDialog(JFrame frame) {
@@ -217,21 +199,19 @@ public final class WebLinkEditorPanel extends JPanel {
 			return false;
 		}
 
+		if (isEmpty(regex_tf.getText())) {
+			ErrorHandler.errorPanel("The regular expression cannot be blank");
+			regex_tf.grabFocus();
+			return false;
+		}
 
-		if (regex_b.isSelected()) {
-			if (isEmpty(regex_tf.getText())) {
-				all_b.setSelected(true);
-				matchTypeSelected();
-				return false;
-			}
-			try {
-				Pattern.compile(regex_tf.getText());
-			} catch (PatternSyntaxException pse) {
-				ErrorHandler.errorPanel("Bad Regular Expression",
-						"Error in regular expression:\n" + pse.getMessage(), regex_tf);
-				regex_tf.grabFocus();
-				return false;
-			}
+		try {
+			Pattern.compile(regex_tf.getText());
+		} catch (PatternSyntaxException pse) {
+			ErrorHandler.errorPanel("Bad Regular Expression",
+					"Error in regular expression:\n" + pse.getMessage(), regex_tf);
+			regex_tf.grabFocus();
+			return false;
 		}
 
 		return true;

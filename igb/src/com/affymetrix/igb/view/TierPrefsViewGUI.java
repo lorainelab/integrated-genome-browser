@@ -274,11 +274,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         selectTrackPanelLayout.setHorizontalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(selectTrackPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
-                    .add(restoreToDefaultButton))
-                .addContainerGap())
+                .add(0, 0, 0)
+                .add(restoreToDefaultButton)
+                .add(314, 314, 314))
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

@@ -192,7 +192,7 @@ public final class XmlPrefsParser {
 		String IDField = attmap.get("id_field");
 		String type = attmap.get("type");
 		if (type == null) {
-			type = "local";
+			type = WebLink.LOCAL;
 		}
 		try {
 			WebLink link = new WebLink();
@@ -208,7 +208,7 @@ public final class XmlPrefsParser {
 				link.setRegex(annot_regex_string);
 			}
 
-			WebLink.addWebLinkFromXML(link);
+			WebLink.addWebLink(link);
 		} catch (PatternSyntaxException pse) {
 			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}

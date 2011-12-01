@@ -35,6 +35,7 @@
 		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
 		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
+		<property name="SearchModeGeneric"   value="${basedir}/plugins/SearchModeGeneric" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
 		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />

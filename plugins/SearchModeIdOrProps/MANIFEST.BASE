@@ -19,6 +19,7 @@ Import-Package: com.affymetrix.common,
  com.affymetrix.genoviz.widget,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.search,
+ com.affymetrix.igb.searchmodegeneric,
  com.affymetrix.igb.shared,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"

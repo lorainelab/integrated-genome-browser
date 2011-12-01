@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/igb_service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genoviz"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeGeneric"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

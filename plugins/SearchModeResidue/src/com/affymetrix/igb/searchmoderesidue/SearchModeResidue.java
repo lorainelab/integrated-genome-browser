@@ -150,32 +150,29 @@ public class SearchModeResidue implements ISearchMode {
 
 	public boolean checkInput(String search_text, final BioSeq vseq, final String seq) {
 		if (vseq == null ) {
-			ErrorHandler.errorPanel(
-					"Residues for " + seq + " not available.  Please load residues before searching.");
+			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq));
 			return false;
 		}
 		if (search_text.length() < 3) {
-			ErrorHandler.errorPanel("Search must contain at least 3 characters");
+			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorShort"));
 			return false;
 		}
 		try {
 			Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
-			ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage()));
 			return false;
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem with regular expression...", ex);
+			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorRegex"), ex);
 			return false;
 		}
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
-			boolean confirm = igbService.confirmPanel("Sequence " + vseq.getID() +
-					" is not same as selected sequence " + igbService.getSeqMapView().getAnnotatedSeq().getID() +
-					". \nPlease select the sequence before proceeding." +
-					"\nDo you want to select sequence now ?");
-			if(!confirm)
+			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), igbService.getSeqMapView().getAnnotatedSeq().getID()));
+			if(!confirm) {
 				return false;
+			}
 			SeqSpan viewspan = igbService.getSeqMapView().getVisibleSpan();
 			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
 			int max = Math.min(viewspan.getMax(), vseq.getMax());
@@ -185,8 +182,7 @@ public class SearchModeResidue implements ISearchMode {
 		}
 
 		boolean isComplete = vseq.isComplete();
-		boolean confirm = isComplete ? true : igbService.confirmPanel("Residues for " + seq
-							+ " not loaded.  \nDo you want to load residues?");
+		boolean confirm = isComplete ? true : igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchConfirmLoad"), seq));
 		if (!confirm) {
 			return false;
 		}
@@ -220,7 +216,7 @@ public class SearchModeResidue implements ISearchMode {
 			return null;
 		}
 
-		statusHolder.setStatus(friendlySearchStr + ": Working...");
+		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchConfirmLoad"), friendlySearchStr));
 
 		int residuesLength = chrFilter.getLength();
 		int hit_count1 = 0;
@@ -245,7 +241,7 @@ public class SearchModeResidue implements ISearchMode {
 			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolor);
 		}
 
-		statusHolder.setStatus("Found " + ": " + hit_count1 + " forward and " + hit_count2 + " reverse strand hits. Click row to view hit.");
+		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchFound"), hit_count1, hit_count2));
 		igbService.getSeqMap().updateWidget();
 
 		Collections.sort(glyphs, new Comparator<GlyphI>() {

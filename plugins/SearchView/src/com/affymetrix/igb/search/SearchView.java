@@ -4,6 +4,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import java.awt.BorderLayout;
 import java.awt.event.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import javax.swing.*;
@@ -157,17 +158,14 @@ public final class SearchView extends IGBTabPanel implements
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final String SEARCHLABELTEXT = "Search ";
-	private static final String INLABELTEXT = "in ";
-	private static final String FORLABELTEXT = "for ";
 	private static final String CHOOSESEARCH = BUNDLE.getString("searchChooseSearch");
-	private static final String FINDANNOTS = "Search for annotations or sequence in ";
+	private static final String FINDANNOTS = BUNDLE.getString("findAnnots");
 	private static final String FINDANNOTSNULL = BUNDLE.getString("pleaseSelectGenome");
 	private static final String SEQUENCETOSEARCH = BUNDLE.getString("searchSequenceToSearch");
-	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
-	private static final String REMOTESERVERSEARCH2 = " server)";
-	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
-	private static final String REMOTESERVERSEARCH3 = " for IDs";
+	private static final String REMOTESERVERSEARCH = BUNDLE.getString("remoteServerSearch");
+	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("remoteServerSearchTT");
+	private static final String REMOTESERVERSEARCHSINGULAR = BUNDLE.getString("remoteServerSearchSingular");
+	private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
 	private final JRPTextField searchTF = new JRPTextField("SearchView_searchTF", 10);
 	private final JPanel pan1 = new JPanel();
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
@@ -178,7 +176,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("images/stop.png"));
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private JRPTable table = new JRPTable("SearchView_table");
-	private JLabel status_bar = new JLabel("0 results");
+	private JLabel status_bar = new JLabel(BUNDLE.getString("noResults"));
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
 	private AnnotatedSeqGroup group;
@@ -198,21 +196,21 @@ public final class SearchView extends IGBTabPanel implements
 		initSearchCB();
 
 		initComponents();
-		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID());
+		String annotsStr = (group == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, group.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		pan1.setLayout(new BoxLayout(pan1, BoxLayout.X_AXIS));
 
-		pan1.add(new JLabel(SearchView.SEARCHLABELTEXT));
+		pan1.add(new JLabel(BUNDLE.getString("searchLabelText")));
 		pan1.add(searchCB);
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
-		pan1.add(new JLabel(SearchView.INLABELTEXT));
+		pan1.add(new JLabel(BUNDLE.getString("inLabelText")));
 		sequenceCB.setMinimumSize(new Dimension(4, 0));
 		sequenceCB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequenceCB);
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
-		pan1.add(new JLabel(SearchView.FORLABELTEXT));
+		pan1.add(new JLabel(BUNDLE.getString("forLabelText")));
 		pan1.add(searchTF);
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
@@ -258,9 +256,9 @@ public final class SearchView extends IGBTabPanel implements
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
 		int remoteServerCount = getRemoteServerCount(group);
-		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCH2 : REMOTESERVERSEARCH2PLURAL;
-		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText);
-		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText + REMOTESERVERSEARCH3);
+		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
+		remoteSearchCheckBox.setText(MessageFormat.format(REMOTESERVERSEARCH, "" + remoteServerCount, remoteServerPluralText));
+		remoteSearchCheckBox.setToolTipText(MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + remoteServerCount, remoteServerPluralText));
 		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
 		remoteSearchCheckBox.setSelected(remoteServerCount > 0);
 	}
@@ -444,7 +442,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void groupOrSeqChange() {
 		AnnotatedSeqGroup newGroup = gmodel.getSelectedSeqGroup();
 		int newSeqCount = (group == null) ? 0 : group.getSeqCount();
-		String annotsStr = (newGroup == null) ? FINDANNOTSNULL : (FINDANNOTS + newGroup.getID());
+		String annotsStr = (newGroup == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, newGroup.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);

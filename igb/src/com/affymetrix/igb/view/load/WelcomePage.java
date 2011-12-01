@@ -219,6 +219,7 @@ public class WelcomePage extends javax.swing.JPanel {
         );
 
         RightSlide.setBackground(new java.awt.Color(0, 0, 0));
+        RightSlide.setToolTipText("Scroll genome version right");
         RightSlide.setBorder(null);
         RightSlide.setMaximumSize(new Dimension(20,40));
         RightSlide.setPreferredSize(new java.awt.Dimension(20, 40));
@@ -254,6 +255,7 @@ public class WelcomePage extends javax.swing.JPanel {
         );
 
         LeftSlide.setBackground(new java.awt.Color(0, 0, 0));
+        LeftSlide.setToolTipText("Scroll genome version left");
         LeftSlide.setBorder(null);
         LeftSlide.setMaximumSize(new java.awt.Dimension(20, 40));
         LeftSlide.setPreferredSize(new java.awt.Dimension(20, 40));

@@ -68,6 +68,7 @@ public class GeneConfiguration extends Configuration {
 		this.shapeRotation = 0.0;
 		this.shapeSpacing = 1.2/3.0;
 		this.shadingFactor = 1.3;
+		this.reflectionOpacity = 0.0;
 		/*if(os.equals("Mac OS X") || os.equals("Mac OS") ){
 			this.SlowSystem = true;
 			this.reflectionOpacity = 0.0;

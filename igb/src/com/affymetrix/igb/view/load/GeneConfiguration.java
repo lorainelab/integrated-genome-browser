@@ -88,14 +88,25 @@ public class GeneConfiguration extends Configuration {
 										 config_file_url.openStream()
 								 ) 
 							 )
-);			String line = "";
+			);			
+			String line = "";
 			try {
 				while( (line = stream.readLine() ) != null){
 					if( line.startsWith("#")){
 						continue;
 					}
 					String[] vals = line.split("\t");
-					list.add(new Message( vals[0], vals[1], vals[2], FONT_SIZE_3 , Color.decode( vals[3] ) ) );
+					//allocate array values to check display_species.txt is 
+					//correctly formated.
+					String val1 = vals[0];
+					String val2 = vals[1];
+					String val3 = vals[2];
+					String val4 = vals[3];
+					//tripple check no null message is being inserted into the list.
+					Message m = new Message( val1, val2, val3, FONT_SIZE_3 , Color.decode( val4 ) );
+					if( m != null){
+						list.add( m ) ;
+					}
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();

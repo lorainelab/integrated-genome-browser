@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -17,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.swing.DefaultListModel;
 
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
@@ -43,8 +43,8 @@ public final class WebLink {
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
-	private static final List<WebLink> weblink_list = new ArrayList<WebLink>();
-	static final DefaultListModel webLinkListModel = new DefaultListModel();
+	private static final List<WebLink> local_weblink_list = new ArrayList<WebLink>();
+	private static final List<WebLink> sys_weblink_list = new ArrayList<WebLink>();
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
 	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
 	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
@@ -82,28 +82,52 @@ public final class WebLink {
 		return toComparisonString().hashCode();
 	}
 
-	/**
-	 *  A a WebLink to the static list.  Multiple WebLinks with the same
-	 *  regular expressions are allowed, as long as they have different URLs.
-	 *  WebLinks that differ only in name are not allowed; the one added last
-	 *  will be the one that is kept, unless the one added first had a name and
-	 *  the one added later does not.
-	 */
-	public static void addWebLink(WebLink wl) {
+	public static void addWebLinkFromXML(WebLink wl) {
 		if (wl.getName() == null || wl.getName().trim().length() == 0) {
 			return;
 		}
-		int index = weblink_list.indexOf(wl);
-		if (index >= 0) {
-			weblink_list.remove(index);
+		if (!wl.getType().equals("local")) {
+			sys_weblink_list.add(wl);
+			Collections.sort(sys_weblink_list, webLinkComp);
+		} else {
+			boolean contained = isContained(sys_weblink_list, wl.getUrl());
+			if (!contained) {
+				local_weblink_list.add(wl);
+				Collections.sort(local_weblink_list, webLinkComp);
+			}
 		}
-		weblink_list.add(wl);
-		Collections.sort(weblink_list, webLinkComp);
+	}
 
-		webLinkListModel.clear();
-		for (WebLink w : weblink_list) {
-			webLinkListModel.addElement(w);
+	public static void addLocalWebLink(WebLink wl) {
+		if (wl.getName() == null || wl.getName().trim().length() == 0) {
+			return;
 		}
+
+		boolean contained = isContained(sys_weblink_list, wl.getUrl());
+		if (contained) {
+			ErrorHandler.errorPanel("The url is ");
+			return;
+		}
+
+		contained = isContained(local_weblink_list, wl.getUrl());
+		if (contained) {
+			ErrorHandler.errorPanel("The url cannot be duplicated");
+			return;
+		}
+
+		local_weblink_list.add(wl);
+		Collections.sort(local_weblink_list, webLinkComp);
+
+	}
+
+	private static boolean isContained(List<WebLink> list, String url) {
+		for (WebLink link : list) {
+			if (link.getUrl().equals(url)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
@@ -119,13 +143,8 @@ public final class WebLink {
 	/**
 	 *  Remove a WebLink from the static list.
 	 */
-	public static void removeWebLink(WebLink wl) {
-		weblink_list.remove(wl);
-		webLinkListModel.removeElement(wl);
-	}
-
-	public static DefaultListModel getWebLinkListModel() {
-		return webLinkListModel;
+	public static void removeLocalWebLink(WebLink wl) {
+		local_weblink_list.remove(wl);
 	}
 
 	/** Get all web-link patterns for the given method name.
@@ -175,8 +194,11 @@ public final class WebLink {
 
 	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
 		List<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> temp = new ArrayList<WebLink>();
+		temp.addAll(sys_weblink_list);
+		temp.addAll(local_weblink_list);
 
-		for (WebLink link : weblink_list) {
+		for (WebLink link : temp) {
 			if (link.url == null) {
 				continue;
 			}
@@ -220,31 +242,12 @@ public final class WebLink {
 		return results;
 	}
 
-	/** Returns the list of WebLink items. */
-	public static List<WebLink> getWebList() {
-		return weblink_list;
-	}
-
 	public static List<WebLink> getSysWebList() {
-		List<WebLink> sysWeblink_list = new ArrayList<WebLink>();
-
-		for (WebLink weblink : weblink_list) {
-			if (!weblink.getType().equals("local")) {
-				sysWeblink_list.add(weblink);
-			}
-		}
-		return sysWeblink_list;
+		return sys_weblink_list;
 	}
 
 	public static List<WebLink> getLocalWebList() {
-		List<WebLink> localWeblink_list = new ArrayList<WebLink>();
-
-		for (WebLink weblink : weblink_list) {
-			if (weblink.getType().equals("local")) {
-				localWeblink_list.add(weblink);
-			}
-		}
-		return localWeblink_list;
+		return local_weblink_list;
 	}
 
 	public String getName() {
@@ -463,12 +466,10 @@ public final class WebLink {
 			bw.write("<prefs>");
 			bw.write(separator);
 
-			for (WebLink link : weblink_list) {
-				if (link.type.equals("local")) {
-					String xml = link.toXML();
-					bw.write(xml);
-					bw.write(separator);
-				}
+			for (WebLink link : local_weblink_list) {
+				String xml = link.toXML();
+				bw.write(xml);
+				bw.write(separator);
 			}
 
 			bw.write("</prefs>");

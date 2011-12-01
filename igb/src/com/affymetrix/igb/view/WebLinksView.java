@@ -135,7 +135,7 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void localDelete() throws HeadlessException {
-		if (localTable.isFocusOwner()) {
+		if (localTable.getSelectedRow() != -1) {
 			selectedRows = localTable.getSelectedRows();
 			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
@@ -146,7 +146,7 @@ public final class WebLinksView implements ListSelectionListener {
 			if (yes == JOptionPane.YES_OPTION) {
 				for (int i : selectedRows) {
 					WebLink link = localModel.webLinks.get(i);
-					WebLink.removeWebLink(link);
+					WebLink.removeLocalWebLink(link);
 				}
 			}
 
@@ -161,7 +161,7 @@ public final class WebLinksView implements ListSelectionListener {
 		if (ok) {
 			edit_panel.setLinkPropertiesFromGUI();
 			link.setType("local");
-			WebLink.addWebLink(link);
+			WebLink.addLocalWebLink(link);
 		}
 
 		refreshList();
@@ -182,7 +182,7 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void nameTextField() {
-		if (!settingValueFromTable) {
+		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
 			if (isEmpty(nameTextField.getText())) {
 				ErrorHandler.errorPanel("The name cannot be blank");
 				nameTextField.setText(previousName);
@@ -194,7 +194,7 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void urlTextField() {
-		if (!settingValueFromTable) {
+		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
 			if (isEmpty(urlTextField.getText())) {
 				ErrorHandler.errorPanel("The URL cannot be blank");
 				urlTextField.setText(previousUrl);
@@ -215,7 +215,7 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void regexTextField() {
-		if (!settingValueFromTable) {
+		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
 			if (matchTierRadioButton.isSelected()) {
 				try {
 					Pattern.compile(regexTextField.getText());
@@ -303,7 +303,8 @@ public final class WebLinksView implements ListSelectionListener {
 
 		JTable table;
 		WebLinksTableModel model;
-		if (localTable.isFocusOwner()) {
+		
+		if (localTable.getSelectedRow() != -1) {
 			table = localTable;
 			model = localModel;
 		} else {
@@ -328,7 +329,7 @@ public final class WebLinksView implements ListSelectionListener {
 			String regex = selectedLink.getRegex();
 			previousRegex = regex;
 			if (regex == null) {
-				regexTextField.setText("Display link for all tiers (uneditable)");
+				regexTextField.setText("Display link for all tracks (uneditable)");
 				allTiersRadioButton.setSelected(true);
 				regexTextField.setEnabled(false);
 			} else {

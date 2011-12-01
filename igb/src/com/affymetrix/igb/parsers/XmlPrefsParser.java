@@ -208,7 +208,7 @@ public final class XmlPrefsParser {
 				link.setRegex(annot_regex_string);
 			}
 
-			WebLink.addWebLink(link);
+			WebLink.addWebLinkFromXML(link);
 		} catch (PatternSyntaxException pse) {
 			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}

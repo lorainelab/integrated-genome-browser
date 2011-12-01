@@ -96,7 +96,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 					if (sym instanceof UcscPslSym) {
 						return ((UcscPslSym) sym).getTargetSeq().getID();
 					}
-					return (span == null ? "" : span.getBioSeq().getID());
+					return ((span == null || span.getBioSeq() == null) ? "" : span.getBioSeq().getID());
 				case STRAND_COLUMN:
 					if (sym instanceof UcscPslSym) {
 						return (

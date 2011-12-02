@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -56,6 +57,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -357,7 +359,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		XmlStylesheetParser.addStyleSheet(name, istr);
 	}
 
+	@Override
 	public void removeStyleSheet(String name) {
 		XmlStylesheetParser.removeStyleSheet(name);
+	}
+
+	@Override
+	public void addTrack(SeqSymmetry sym, String method) {
+		TrackUtils.getInstance().addTrack(sym, method, null);
 	}
 }

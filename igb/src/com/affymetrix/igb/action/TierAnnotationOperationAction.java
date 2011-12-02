@@ -10,13 +10,13 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class TierAnnotationOperationAction extends GenericAction {
@@ -75,7 +75,7 @@ public class TierAnnotationOperationAction extends GenericAction {
 			for (TierGlyph tier : selected) {
 				meth.append(tier.getLabel()).append(", ");
 			}
-			addStyleAndAnnotation(result_sym, meth.toString(), aseq, preferredStyle);
+			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
 		}
 	}
 
@@ -88,33 +88,6 @@ public class TierAnnotationOperationAction extends GenericAction {
 		}
 	}
 	
-	private void addStyleAndAnnotation(SeqSymmetry sym, String method, BioSeq aseq, TrackStyle preferredStyle) {
-		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
-		aseq.addAnnotation(sym);
-		gviewer.setAnnotatedSeq(aseq, true, true);
-	}
-
-	private static TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, TrackStyle preferredStyle) {
-		// Needs a unique name so that if any later tier is produced with the same
-		// human name, it will not automatically get the same color, etc.
-		String unique_name = TrackStyle.getUniqueName(human_name);
-		sym.setProperty("method", unique_name);
-		if (sym.getProperty("id") == null) {
-			sym.setProperty("id", unique_name);
-		}
-		TrackStyle style = TrackStyle.getInstance(unique_name, false);
-		if (preferredStyle == null) {
-			style.setGlyphDepth(1);
-			style.setSeparate(false); // there are not separate (+) and (-) strands
-			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-		}
-		else {
-			style.copyPropertiesFrom(preferredStyle);
-		}
-		style.setTrackName(human_name);
-		return style;
-	}
-
 	public boolean isEnabled() {
 		List<TierLabelGlyph> labels = gviewer.getTierManager().getSelectedTierLabels();
 		int num_selected = labels.size();

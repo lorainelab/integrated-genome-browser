@@ -19,7 +19,7 @@ public abstract class FastaCommon extends SymLoader {
 		pref_list.add("fa");
 	}
 
-	protected final Set<BioSeq> chrSet = new HashSet<BioSeq>();
+	protected final List<BioSeq> chrSet = new ArrayList<BioSeq>();
 
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -50,7 +50,7 @@ public abstract class FastaCommon extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList() throws Exception {
 		init();
-		return new ArrayList<BioSeq>(chrSet);
+		return chrSet;
 	}
 
 	/**

@@ -58,11 +58,9 @@ public class FastaIdx extends FastaCommon {
 			BioSeq seq = group.getSeq(seqid);
 			int count = rec.getSequenceLength();
 			if (seq == null) {
-				chrSet.add(new BioSeq(seqid, "", count));
-			} else {
-				group.addSeq(seqid, count, uri.toString());
-				chrSet.add(seq);
+				seq = group.addSeq(seqid, count, uri.toString());
 			}
+			chrSet.add(seq);
 		}
 		return true;
 	}

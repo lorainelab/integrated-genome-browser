@@ -72,13 +72,9 @@ public class Fasta extends FastaCommon {
 					count += line.trim().length();
 				}
 				if (seq == null) {
-					seq = new BioSeq(seqid, "", count);
-					chrSet.add(seq);
-					group.addSeq(seqid, count, uri.toString());
-				} else {
-					group.addSeq(seqid, count, uri.toString());
-					chrSet.add(seq);	
-				}
+					seq = group.addSeq(seqid, count, uri.toString());
+				} 
+				chrSet.add(seq);
 			}
 
 			return !Thread.currentThread().isInterrupted();

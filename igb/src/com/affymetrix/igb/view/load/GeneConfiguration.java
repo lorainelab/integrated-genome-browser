@@ -159,7 +159,10 @@ public class GeneConfiguration extends Configuration {
 					}else{
 						g.setColor(new Color( 0xFFFFFF ));
 					}
-					g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2 - 2  , img.getHeight() - 22);
+					try {
+						g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2 - 2  , img.getHeight() - 22);
+					}
+					catch (Exception x) {} // ignore NPE
 					for( int e = 0 ; e < 10; e++){
 						for( int k = 10; k < img.getWidth() - 10; k++){
 							for( int j = img.getHeight() - 44 ; j < img.getHeight() - 10; j++){
@@ -180,7 +183,10 @@ public class GeneConfiguration extends Configuration {
 					
 					//draw the label
 					g.setColor( DisplaySpecies[i].color );
-					g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2  , img.getHeight() - 20);
+					try {
+						g.drawString( DisplaySpecies[i].str, img.getWidth()/2 - num/2  , img.getHeight() - 20);
+					}
+					catch (Exception x) {} // ignore NPE
 					CargoPicture n = null;
 					if( !this.SlowSystem ){
 						n = new CargoPicture( img );

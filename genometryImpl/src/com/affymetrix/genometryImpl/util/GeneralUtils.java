@@ -463,7 +463,7 @@ public final class GeneralUtils {
 		else if (fileName.startsWith("file:")) {
 			fixedFileName = fileName.substring("file:".length());
 		}
-		return fixedFileName;
+		return URLDecode(fixedFileName);
 	}
 
 	public static boolean urlExists(String url) {

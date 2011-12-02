@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -300,4 +301,10 @@ public class SearchModeResidue implements ISearchMode {
 	public int getZoomSpot(String search_text) {
 		return NO_ZOOM_SPOT;
 	}
+
+	@Override
+	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
+		return null;
+	}
+
 }

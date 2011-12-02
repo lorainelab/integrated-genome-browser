@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
@@ -91,6 +92,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		@Override public SearchResultsTableModel run(String search_text,
 				BioSeq chrFilter, String seq, boolean remote,
 				IStatus statusHolder, List<GlyphI> glyphs) { return null; }
+		@Override public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) { return null; }
 		@Override public void finished(BioSeq vseq) { }
 		@Override public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) { }
 		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }

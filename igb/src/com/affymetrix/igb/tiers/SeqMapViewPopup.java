@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -1214,8 +1215,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					popup.add(mismatch_pileup_action);
 				}
 
-				if("fa".equalsIgnoreCase(file_type) || "fas".equalsIgnoreCase(file_type) || "fasta".equalsIgnoreCase(file_type) 
-						|| "2bit".equalsIgnoreCase(file_type) || "bnib".equalsIgnoreCase(file_type)){
+				if(FileTypeHolder.getInstance().isSequence(file_type)){
 					popup.add(new JSeparator());
 					popup.add(use_as_reference_seq_action);
 				}

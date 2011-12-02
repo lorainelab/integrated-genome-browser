@@ -480,6 +480,17 @@ public class FileTypeHolder {
 		return nameToExtensionMap;
 	}
 	
+	public boolean isSequence(String extension){
+		for (FileTypeHandler fileTypeHandler : new HashSet<FileTypeHandler>(fileTypeHandlerMap.values())) {
+			for (String ext : fileTypeHandler.getExtensions()) {
+				if(ext.equalsIgnoreCase(extension)){
+					return fileTypeHandler.getFileTypeCategory() == FileTypeCategory.Sequence;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public Map<String, String[]> getSequenceToExtensionMap() {
 		Map<String, String[]> map = new TreeMap<String, String[]>();
 		map.put("Fasta", new String[]{"fa","fas","fasta"});

@@ -162,6 +162,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			topgl = nevt.getItems().get(nevt.getItems().size() - 1);
 			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
 			glyphs.add(topgl);
+			smv.getSeqMap().setCursor(SeqMapView.openHandCursor);
 			smv.setToolTip(glyphs);
 			return;
 		}
@@ -181,6 +182,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			}
 		}
 		
+		smv.getSeqMap().setCursor(smv.getMapMode().defCursor);
 		smv.setToolTip(glyphs);	// empty tooltip
 	}
 

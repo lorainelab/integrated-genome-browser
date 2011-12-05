@@ -113,7 +113,7 @@ public class SeqMapView extends JPanel
 	public static final boolean default_auto_change_view = false;
 	
 	private static final long serialVersionUID = 1L;
-	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
 
 	static {
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);

@@ -3079,14 +3079,14 @@ public class GenoPubServlet extends HttpServlet {
 			if (h.getSortOrder().compareTo(SAMFileHeader.SortOrder.coordinate) !=0) throw new Exception("Your bam file doesn't appear to be sorted by coordinate."); 
 			//check that their chromosomes aren't 1,2,3, should be chr1, chr2, chr3
 			List<SAMSequenceRecord> chroms = h.getSequenceDictionary().getSequences();
-			boolean badChroms = false;
+			StringBuilder badChroms = new StringBuilder();
 			boolean badMito = false;
 			for (SAMSequenceRecord r: chroms){
-				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms = true;
+				if (oneTwoDigit.matcher(r.getSequenceName()).matches()) badChroms.append(r.getSequenceName()+" ");
 				if (r.getSequenceName().equals("chrMT")) badMito = true;
 			}
-			if (badChroms) throw new Exception("Your bam file contains chromosomes that are 1-2 letters/ numbers long. For DAS compatibility they need to start with 'chr'.");
-			if (badMito) throw new Exception("Your bam file contains a chrMT chromosome. For DAS compatibility convert it to chrM.");
+			if (badChroms.length() !=0) throw new Exception("\nYour bam file contains chromosomes that are 1-2 letters/ numbers long. For DAS compatibility they should start with 'chr' for chromosomes and something longish for contigs/ unassembled segments, see -> "+badChroms+"\n");
+			if (badMito) throw new Exception("\nYour bam file contains a chrMT chromosome. For DAS compatibility convert it to chrM.");
 			//read an alignment
 			SAMRecordIterator it = reader.iterator();
 			if (it.hasNext()) it.next();

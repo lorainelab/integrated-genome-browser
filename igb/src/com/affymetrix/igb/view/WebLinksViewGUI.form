@@ -20,8 +20,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="propertiesPanel" alignment="0" max="32767" attributes="2"/>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="webLinkListPanel" alignment="0" max="32767" attributes="1"/>
+                  <Component id="defaultPanel" alignment="0" max="32767" attributes="0"/>
+                  <Component id="localPanel" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -31,9 +31,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel1" max="32767" attributes="0"/>
+              <Component id="defaultPanel" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="webLinkListPanel" max="32767" attributes="0"/>
+              <Component id="localPanel" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="propertiesPanel" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -161,12 +161,12 @@
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose different type for Matching.&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose between using the Track Name or the annotation ID as the identifier for your web link.&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
           </AuxValues>
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="webLinkListPanel">
+    <Container class="javax.swing.JPanel" name="localPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -182,7 +182,7 @@
                   <Component id="addButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="102" max="32767" attributes="0"/>
+                  <EmptySpace pref="111" max="32767" attributes="0"/>
                   <Component id="importButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="exportButton" min="-2" max="-2" attributes="0"/>
@@ -276,11 +276,11 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="defaultPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="System Default"/>
+            <TitledBorder title="Default"/>
           </Border>
         </Property>
       </Properties>

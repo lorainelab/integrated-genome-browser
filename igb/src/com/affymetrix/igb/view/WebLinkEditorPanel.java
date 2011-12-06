@@ -60,25 +60,18 @@ public final class WebLinkEditorPanel extends JPanel {
 		name_b.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				matchTypeSelected("Type your regular expression here");
+				regex_tf.grabFocus();
 			}
 		});
 		id_b.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				matchTypeSelected("Type your regular expression here");
+				regex_tf.grabFocus();
 			}
 		});
 
 		container.setBorder(new EmptyBorder(new java.awt.Insets(1, 1, 1, 1)));
 		this.add(container);
-	}
-
-	private void matchTypeSelected(String text) {
-		if (regex_tf.getText() == null) {
-			regex_tf.setText(text);
-		}
-		regex_tf.grabFocus();
 	}
 
 	public void setWebLink(WebLink link) {

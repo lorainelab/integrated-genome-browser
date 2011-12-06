@@ -14,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -61,10 +60,6 @@ public final class WebLinksView implements ListSelectionListener {
 	private String previousUrl;
 	private String previousRegex;
 
-	// initialize the static_panel early, because this will cause the
-	// accelerator
-	// key-strokes to be configured early through the PreferenceUtils and thus
-	// for them to be visible in the KeyStrokesView
 	public static synchronized WebLinksView getSingleton() {
 		if (singleton == null) {
 			singleton = new WebLinksView();
@@ -79,20 +74,7 @@ public final class WebLinksView implements ListSelectionListener {
 		localTable = new JTable();
 
 		sysModel = new WebLinksTableModel();
-		sysModel.addTableModelListener(new javax.swing.event.TableModelListener() {
-
-			public void tableChanged(javax.swing.event.TableModelEvent e) {
-				// do nothing.
-			}
-		});
-
 		localModel = new WebLinksTableModel();
-		localModel.addTableModelListener(new javax.swing.event.TableModelListener() {
-
-			public void tableChanged(javax.swing.event.TableModelEvent e) {
-				// do nothing.
-			}
-		});
 
 		initTable(sysTable);
 		initTable(localTable);
@@ -105,6 +87,12 @@ public final class WebLinksView implements ListSelectionListener {
 		button_group.add(nameRadioButton);
 		button_group.add(idRadioButton);
 		edit_panel = new WebLinkEditorPanel();
+		
+		if (localTable.getRowCount() > 0) {
+			localTable.setRowSelectionInterval(0, 0);
+		} else {
+			sysTable.setRowSelectionInterval(0, 0);
+		}
 	}
 
 	private void initTable(JTable table) {
@@ -144,16 +132,16 @@ public final class WebLinksView implements ListSelectionListener {
 					JOptionPane.YES_NO_OPTION);
 
 			if (yes == JOptionPane.YES_OPTION) {
-				List<WebLink> links = new ArrayList<WebLink>();				
-				for(int i : selectedRows){
+				List<WebLink> links = new ArrayList<WebLink>();
+				for (int i : selectedRows) {
 					links.add(localModel.webLinks.get(i));
 				}
-				
+
 				for (WebLink l : links) {
 					localModel.remove(l);
 					WebLink.removeLocalWebLink(l);
 				}
-				
+
 			}
 
 			refreshList();
@@ -250,7 +238,7 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	/**
-	 * Tries to import weblinks.
+	 * Tracks to import weblinks.
 	 */
 	public void importWebLinks() {
 		JFileChooser chooser = getJFileChooser();
@@ -333,11 +321,10 @@ public final class WebLinksView implements ListSelectionListener {
 			previousUrl = selectedLink.getUrl();
 			urlTextField.setText(previousUrl);
 			String regex = selectedLink.getRegex();
-			
-			if(	regex == null) {
+
+			if (regex == null) {
 				regex = "";
-			} 
-			else if (regex.startsWith("(?i)")) {
+			} else if (regex.startsWith("(?i)")) {
 				regex = regex.substring(4);
 			}
 			previousRegex = regex;

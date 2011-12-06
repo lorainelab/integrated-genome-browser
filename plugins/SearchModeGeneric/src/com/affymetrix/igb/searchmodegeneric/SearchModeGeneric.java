@@ -2,6 +2,7 @@ package com.affymetrix.igb.searchmodegeneric;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -15,6 +16,8 @@ import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public abstract class SearchModeGeneric implements ISearchMode {
 	private static final int MAX_HITS = 100000;
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodegeneric");
+	protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");
 	protected IGBService igbService;
 
 	protected SearchModeGeneric(IGBService igbService) {

@@ -209,7 +209,7 @@ public class SearchModeResidue implements ISearchMode {
 		if (!isComplete) {
 			igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
 		}
-		String friendlySearchStr = MessageFormat.format(FRIENDLY_PATTERN, search_text, chrFilter.getID());
+		String friendlySearchStr = MessageFormat.format(BUNDLE.getString("friendlyPattern"), search_text, chrFilter.getID());
 		Pattern regex = null;
 		try {
 			regex = Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);

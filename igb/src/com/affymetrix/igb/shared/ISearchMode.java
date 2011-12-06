@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public interface ISearchMode {
-	public static final String FRIENDLY_PATTERN = "Search for {0} on {1}";
 	public static final int NO_ZOOM_SPOT = -1;
 	public String getName();
 	public String getTooltip();

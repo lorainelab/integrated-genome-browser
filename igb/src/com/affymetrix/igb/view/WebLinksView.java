@@ -106,7 +106,7 @@ public final class WebLinksView implements ListSelectionListener {
 			localModel.setLinks(WebLink.getLocalWebList());
 		} else {
 			table.setModel(defaultModel);
-			defaultModel.setLinks(WebLink.getSysWebList());
+			defaultModel.setLinks(WebLink.getDefaultWebList());
 		}
 
 		table.getColumnModel().getColumn(COL_NAME).setPreferredWidth(200);

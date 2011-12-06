@@ -215,7 +215,7 @@ public final class WebLink {
 		return results;
 	}
 
-	public static List<WebLink> getSysWebList() {
+	public static List<WebLink> getDefaultWebList() {
 		return default_weblink_list;
 	}
 

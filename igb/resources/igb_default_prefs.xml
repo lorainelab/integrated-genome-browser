@@ -93,7 +93,7 @@
 	<annotation_url annot_id_regex="^ENSDART\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Danio_rerio/geneview?gene=$$"
-	 type="server"
+	 type="default"
   />
 
 

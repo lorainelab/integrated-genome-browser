@@ -55,7 +55,8 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 public final class DataLoadPrefsView extends ServerPrefsView {
 	private static final long serialVersionUID = 2l;
 
-	private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
+	private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
+	private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
 
 	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
 
@@ -190,36 +191,66 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static JPanel initSynonymsPanel(final JPanel parent) {
 		final JPanel synonymsPanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
-		final JLabel synonymsLabel= new JLabel("Synonyms File");
-		final JRPTextField synonymFile = new JRPTextField("DataLoadPrefsView_synonymFile", PreferenceUtils.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
-		final JRPButton openFile = new JRPButton("DataLoadPrefsView_openFile", "\u2026");
-		final ActionListener listener = new ActionListener() {
+		final JLabel vsynonymsLabel= new JLabel("Version Synonyms File");
+		final JLabel csynonymsLabel= new JLabel("Chromosome Synonyms File");
+		final JRPTextField vsynonymFile = new JRPTextField("DataLoadPrefsView_vsynonymFile", PreferenceUtils.getLocationsNode().get(PREF_VSYN_FILE_URL, ""));
+		final JRPTextField csynonymFile = new JRPTextField("DataLoadPrefsView_csynonymFile", PreferenceUtils.getLocationsNode().get(PREF_CSYN_FILE_URL, ""));
+		final JRPButton vopenFile = new JRPButton("DataLoadPrefsView_vopenFile", "\u2026");
+		final JRPButton copenFile = new JRPButton("DataLoadPrefsView_copenFile", "\u2026");
+		
+		final ActionListener vlistener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == openFile) {
+				if (e.getSource() == vopenFile) {
 					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
 					try {
 						if (file != null) {
-							synonymFile.setText(file.getCanonicalPath());
+							vsynonymFile.setText(file.getCanonicalPath());
 						}
 					} catch (IOException ex) {
 						Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
 					}
 				}
 
-				if (synonymFile.getText().isEmpty() || loadSynonymFile(synonymFile)) {
-					PreferenceUtils.getLocationsNode().put(PREF_SYN_FILE_URL, synonymFile.getText());
+				if (vsynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile)) {
+					PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
 				} else {
 					ErrorHandler.errorPanel(
-					"Unable to Load Synonyms",
-					"Unable to load personal synonyms from " + synonymFile.getText() + ".");
+					"Unable to Load Version Synonyms",
+					"Unable to load personal synonyms from " + vsynonymFile.getText() + ".");
 				}
 			}
 		};
 
-		openFile.setToolTipText("Open Local Directory");
-		openFile.addActionListener(listener);
-		synonymFile.addActionListener(listener);
+		final ActionListener clistener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == copenFile) {
+					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+					try {
+						if (file != null) {
+							csynonymFile.setText(file.getCanonicalPath());
+						}
+					} catch (IOException ex) {
+						Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
 
+				if (csynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile)) {
+					PreferenceUtils.getLocationsNode().put(PREF_CSYN_FILE_URL, csynonymFile.getText());
+				} else {
+					ErrorHandler.errorPanel(
+					"Unable to Load Chromosome Synonyms",
+					"Unable to load personal synonyms from " + csynonymFile.getText() + ".");
+				}
+			}
+		};
+		
+		vopenFile.setToolTipText("Open Local Directory");
+		vopenFile.addActionListener(vlistener);
+		vsynonymFile.addActionListener(vlistener);
+
+		copenFile.setToolTipText("Open Local Directory");
+		copenFile.addActionListener(clistener);
+		csynonymFile.addActionListener(clistener);
 
 
 		synonymsPanel.setLayout(layout);
@@ -227,18 +258,29 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addComponent(synonymsLabel)
-				.addComponent(synonymFile)
-				.addComponent(openFile));
+		layout.setHorizontalGroup(layout.createParallelGroup(LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(vsynonymsLabel)
+					.addComponent(vsynonymFile)
+					.addComponent(vopenFile))
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(csynonymsLabel)
+					.addComponent(csynonymFile)
+					.addComponent(copenFile)));
 
-		layout.setVerticalGroup(layout.createParallelGroup(BASELINE)
-				.addComponent(synonymsLabel)
-				.addComponent(synonymFile)
-				.addComponent(openFile));
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(BASELINE)
+					.addComponent(vsynonymsLabel)
+					.addComponent(vsynonymFile)
+					.addComponent(vopenFile))
+				.addGroup(layout.createParallelGroup(BASELINE)
+					.addComponent(csynonymsLabel)
+					.addComponent(csynonymFile)
+					.addComponent(copenFile)));
 
 		/* Load the synonym file from preferences on startup */
-		loadSynonymFile(synonymFile);
+		loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile);
+		loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile);
 
 		return synonymsPanel;
 	}
@@ -295,7 +337,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		return cachePanel;
 	}
 
-	private static boolean loadSynonymFile(JRPTextField synonymFile) {
+	private static boolean loadSynonymFile(SynonymLookup lookup, JRPTextField synonymFile) {
 		File file = new File(synonymFile.getText());
 
 		if (!file.isFile() || !file.canRead()) { return false; }
@@ -304,7 +346,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		try {
 			synonymFile.setText(file.getCanonicalPath());
 			fis = new FileInputStream(file);
-			SynonymLookup.getDefaultLookup().loadSynonyms(fis);
+			lookup.loadSynonyms(fis);
 		} catch (IOException ex) {
 			return false;
 		} finally {

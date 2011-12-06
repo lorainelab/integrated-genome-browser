@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -134,8 +136,7 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void delete() throws HeadlessException {
 		if (localTable.getSelectedRow() != -1) {
-			//	selectedRows = localTable.getSelectedRows();
-			int selectedRow = localTable.getSelectedRow();
+			selectedRows = localTable.getSelectedRows();
 			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
 			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
@@ -143,15 +144,16 @@ public final class WebLinksView implements ListSelectionListener {
 					JOptionPane.YES_NO_OPTION);
 
 			if (yes == JOptionPane.YES_OPTION) {
-//				for (int i : selectedRows) {
-//					WebLink link = localModel.webLinks.get(i);
-//					localModel.remove(link);
-//					WebLink.removeLocalWebLink(link);
-//				}
-
-				WebLink link = localModel.webLinks.get(selectedRow);
-				localModel.remove(link);
-				WebLink.removeLocalWebLink(link);
+				List<WebLink> links = new ArrayList<WebLink>();				
+				for(int i : selectedRows){
+					links.add(localModel.webLinks.get(i));
+				}
+				
+				for (WebLink l : links) {
+					localModel.remove(l);
+					WebLink.removeLocalWebLink(l);
+				}
+				
 			}
 
 			refreshList();
@@ -331,7 +333,11 @@ public final class WebLinksView implements ListSelectionListener {
 			previousUrl = selectedLink.getUrl();
 			urlTextField.setText(previousUrl);
 			String regex = selectedLink.getRegex();
-			if (regex.startsWith("(?i)")) {
+			
+			if(	regex == null) {
+				regex = "";
+			} 
+			else if (regex.startsWith("(?i)")) {
 				regex = regex.substring(4);
 			}
 			previousRegex = regex;

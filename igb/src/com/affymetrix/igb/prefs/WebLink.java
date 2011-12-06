@@ -111,13 +111,14 @@ public final class WebLink {
 	 *  Remove a WebLink from the static list.
 	 */
 	public static void removeLocalWebLink(WebLink link) {
-		Iterator it = local_weblink_list.iterator();
-		while (it.hasNext()) {
-			WebLink item = (WebLink) it.next();
-			if (link.equals(item)) {
-				it.remove();
-			}
-		}
+//		Iterator it = local_weblink_list.iterator();
+//		while (it.hasNext()) {
+//			WebLink item = (WebLink) it.next();
+//			if (link.equals(item)) {
+//				it.remove();
+//			}
+//		}
+		local_weblink_list.remove(link);
 	}
 
 	/** Get all web-link patterns for the given method name.

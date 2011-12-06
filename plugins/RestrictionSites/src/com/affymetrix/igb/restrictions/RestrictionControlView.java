@@ -14,6 +14,7 @@ package com.affymetrix.igb.restrictions;
 
 import java.awt.event.*;
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -71,9 +72,8 @@ public final class RestrictionControlView extends IGBTabPanel
 				RestrictionControlView.class.getResourceAsStream(rest_file);
 
 		if (file_input_str == null) {
-			ErrorHandler.errorPanel("Cannot open restriction enzyme file",
-					"Cannot find restriction enzyme file '" + rest_file + "'.\n"
-					+ "Restriction mapping will not be available.");
+			ErrorHandler.errorPanel(BUNDLE.getString("notFoundTitle"), 
+					MessageFormat.format(BUNDLE.getString("notFound"), rest_file));
 		}
 
 		BufferedReader d = null;
@@ -100,8 +100,7 @@ public final class RestrictionControlView extends IGBTabPanel
 				}
 			} catch (Exception ex) {
 				load_success = false;
-				ErrorHandler.errorPanel("Problem loading restriction site file, aborting load\n"
-						+ ex.toString());
+				ErrorHandler.errorPanel(MessageFormat.format("loadError", ex.toString()));
 			} finally {
 				GeneralUtils.safeClose(d);
 				GeneralUtils.safeClose(file_input_str);
@@ -164,9 +163,9 @@ public final class RestrictionControlView extends IGBTabPanel
 	private void removeUnselectedItem(Object[] selected_names) {
 		boolean isContained = false;
 
-		Iterator it = labelList.iterator();
+		Iterator<JLabel> it = labelList.iterator();
 		while (it.hasNext()) {
-			JLabel label = (JLabel) it.next();
+			JLabel label = it.next();
 			for (int i = 0; i < selected_names.length; i++) {
 				if (label.getText().equals(selected_names[i].toString())) {
 					isContained = true;
@@ -236,7 +235,7 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		final BioSeq vseq = igbService.getSeqMapView().getViewSeq();
 		if (vseq == null) {
-			ErrorHandler.errorPanel("No Sequence selected. Please select a seqeunce.");
+			ErrorHandler.errorPanel(BUNDLE.getString("noSeq"));
 			return;
 		}
 
@@ -244,8 +243,7 @@ public final class RestrictionControlView extends IGBTabPanel
 		boolean loadResidue = false;
 
 		if (!vseq.isAvailable(span)) {
-			loadResidue = igbService.confirmPanel("Residues for " + vseq.getID()
-					+ " not loaded.  \nDo you want to load residues?");
+			loadResidue = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmLoad"), vseq.getID()));
 			if (!loadResidue) {
 				return;
 			}
@@ -275,9 +273,9 @@ public final class RestrictionControlView extends IGBTabPanel
 					igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 				}
 
-				igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
+				igbService.addNotLockedUpMsg(BUNDLE.getString("findingSites"));
 				if (vseq == null || !vseq.isAvailable(span)) {
-					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
+					ErrorHandler.errorPanel(BUNDLE.getString("notAvail"));
 					return;
 				}
 				int residue_offset = vseq.getMin();
@@ -304,7 +302,7 @@ public final class RestrictionControlView extends IGBTabPanel
 						continue;
 					}
 
-					System.out.println("searching for occurrences of \"" + site_residues + "\" in sequence");
+					System.out.println(MessageFormat.format(BUNDLE.getString("searching"), site_residues));
 
 					residue_offset = vseq.getMin();
 					int hit_count1 = igbService.searchForRegexInResidues(
@@ -316,12 +314,12 @@ public final class RestrictionControlView extends IGBTabPanel
 					int hit_count2 = igbService.searchForRegexInResidues(
 							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
 
-					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
+					System.out.println(MessageFormat.format(BUNDLE.getString("found"), site_residues, "" + hit_count1, "" + hit_count2));
 					igbService.getSeqMap().updateWidget();
 					i++;
 				}
 			} finally {
-				igbService.removeNotLockedUpMsg("Finding Restriction Sites... ");
+				igbService.removeNotLockedUpMsg(BUNDLE.getString("findingSites"));
 			}
 		}
 	}

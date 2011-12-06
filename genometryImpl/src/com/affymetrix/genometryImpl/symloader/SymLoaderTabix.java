@@ -189,7 +189,7 @@ public class SymLoaderTabix extends SymLoader {
 				if (uriString.startsWith(FILE_PREFIX)) {
 					uriString = sym.uri.getPath();
 				}
-				if (isTabix(uriString)) {
+				if (isTabix(uriString) && sym instanceof LineProcessor) {
 					return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
 				}
 			}

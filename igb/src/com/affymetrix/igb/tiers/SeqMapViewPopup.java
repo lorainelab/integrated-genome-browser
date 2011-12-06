@@ -41,6 +41,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
@@ -460,7 +461,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			BioSeq seq = gmodel.getSelectedSeq();
 
-			if (IGB.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmDelete"), seq.getID()))) {
+			if (IGB.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmDelete"), seq.getID()), PreferenceUtils.getTopNode(),
+									PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 				removeTiers(handler.getSelectedTierLabels());
 			}
 		}

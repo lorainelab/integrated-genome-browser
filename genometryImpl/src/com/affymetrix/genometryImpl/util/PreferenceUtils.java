@@ -62,13 +62,15 @@ public abstract class PreferenceUtils {
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
 	public static final String CONFIRM_BEFORE_DELETE = "Confirm before delete";
+	public static final String CONFIRM_BEFORE_CLEAR = "Confirm before clear";
 	public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
 	public static final String AUTO_LOAD = "Auto Load Data";
 	public static final boolean default_ask_before_exiting = true;
 	public static final boolean default_confirm_before_delete = true;
-	public static final boolean default_auto_load = true;
+	public static final boolean default_confirm_before_clear = true;
 	public static final boolean default_confirm_before_load = true;
-
+	public static final boolean default_auto_load = true;
+	
 	private static final String DEFAULT_PREFS_MODE = "igb";
 	private static final String SLASH_STANDIN = "%";
 	private static String prefs_mode = DEFAULT_PREFS_MODE;

@@ -566,6 +566,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
 			GeneralLoadView.getLoadView().refreshTreeView();
+			refreshSpeciesCB();
 			return;
 		}
 

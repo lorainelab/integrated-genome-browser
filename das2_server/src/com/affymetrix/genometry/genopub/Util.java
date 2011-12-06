@@ -50,11 +50,11 @@ public class Util {
 		for (File f: files){
 			if (f.getName().equals("index.html")) continue;
 			if (f.lastModified() < cutoff) {
-				System.out.println("\nDeleting "+f);
-				System.out.println("\tCurr\t"+ System.currentTimeMillis());
-				System.out.println("\tCut \t"+(days * 24L* 60L * 1000L *60L));
-				System.out.println("\tDiff\t"+cutoff);
-				System.out.println("\tLast\t"+f.lastModified());
+				//System.out.println("\nDeleting "+f);
+				//System.out.println("\tCurr\t"+ System.currentTimeMillis());
+				//System.out.println("\tCut \t"+(days * 24L* 60L * 1000L *60L));
+				//System.out.println("\tDiff\t"+cutoff);
+				//System.out.println("\tLast\t"+f.lastModified());
 				deleteDirectory(f);
 			}
 		}

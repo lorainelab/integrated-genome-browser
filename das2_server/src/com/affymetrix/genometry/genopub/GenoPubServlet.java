@@ -127,6 +127,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String INSTITUTES_SAVE_REQUEST            = "institutesSave";
 	public static final String VERIFY_RELOAD_REQUEST              = "verifyReload";
 	public static final String MAKE_UCSC_LINKS_REQUEST            = "makeUCSCLink";
+	public static final String MAKE_URL_LINKS_REQUEST            = "makeURLLinks";
 
 	private GenoPubSecurity genoPubSecurity = null;
 
@@ -283,6 +284,8 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleVerifyReloadRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.MAKE_UCSC_LINKS_REQUEST)) {
 				this.handleMakeUCSCLinkRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.MAKE_URL_LINKS_REQUEST)) {
+				this.handleMakeURLLinksRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.INSTITUTES_REQUEST)) {
 				this.handleInstitutesRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.INSTITUTES_SAVE_REQUEST)) {
@@ -5145,9 +5148,31 @@ public class GenoPubServlet extends HttpServlet {
 			String url1 = urlsToLoad.get(0);
 			String url2 = "";
 			if (urlsToLoad.size() == 2) url2 = urlsToLoad.get(1);
-
+			
 			//post results with link urls
 			reportSuccess(res, "ucscURL1", url1, "ucscURL2", url2);
+
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			reportError(res, e.getMessage());
+		}
+	}
+	
+	private void handleMakeURLLinksRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		try {
+			
+			//make links fetching url(s)
+			ArrayList<String>  urlsToLink = makeURLLinks(request, res);
+			StringBuilder sb = new StringBuilder(urlsToLink.get(0));
+			for (int i=1; i< urlsToLink.size(); i++){
+				sb.append("\n\n");
+				sb.append(urlsToLink.get(i));
+			}
+			
+			//return results 
+			reportSuccess(res, "urlsToLink", sb.toString());
 
 
 		} catch (Exception e) {
@@ -5545,7 +5570,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	private File checkUCSCLinkDirectory(String xml_base) throws Exception{
-		File urlLinkDir = new File (genoPubWebAppDir, Constants.UCSC_URL_LINK_DIR_NAME);
+		File urlLinkDir = new File (genoPubWebAppDir, Constants.URL_LINK_DIR_NAME);
 		urlLinkDir.mkdirs();
 		if (urlLinkDir.exists() == false) throw new Exception("\nFailed to find and or make a directory to contain url softlinks for UCSC data distribution.\n");
 
@@ -5565,6 +5590,58 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
+	/**Returns all files and if needed converts useq files to bw and bb. Returns null if something bad happened.*/
+	private UCSCLinkFiles fetchURLLinkFiles(List<File> files) throws Exception{
+		//fetch hashSet
+		if (urlLinkFileExtensions == null){
+			urlLinkFileExtensions = new HashSet<String>();
+			for (String ext: Constants.FILE_EXTENSIONS_FOR_UCSC_LINKS) urlLinkFileExtensions.add(ext);
+		}
+		File useq = null;
+		File bigFile = null;
+		
+		ArrayList<File> filesAL = new ArrayList<File>();
+		for (File f: files){
+			int index = f.getName().lastIndexOf(".");
+			if (index > 0) {
+				String ext = f.getName().substring(index);			
+				if (ext.equals(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) useq = f;
+				else if (ext.equals(".bw") || ext.equals(".bb")) bigFile = f; 
+				filesAL.add(f);
+			}
+		}
+
+		//convert useq archive?  If a xxx.useq file is found and autoConvertUSeqArchives == true, then the file is converted using a separate thread.
+		ArrayList<File> convertedUSeqFiles = null;
+		if (bigFile == null && useq !=null && autoConvertUSeqArchives){
+			//this can consume alot of resources and take 1-10min
+			USeq2UCSCBig c = new USeq2UCSCBig(ucscWig2BigWigExe, ucscBed2BigBedExe, useq);
+			convertedUSeqFiles = c.fetchConvertedFileNames();
+			//converting = true;
+		
+			c.convert(); //same thread!
+			//c.start(); //separate thread!
+		}
+
+		if (filesAL.size() !=0){
+			//stranded?
+			boolean stranded = false;
+			if (convertedUSeqFiles != null) {
+				filesAL.addAll(convertedUSeqFiles);
+				if (convertedUSeqFiles.size() == 2){
+					String name = convertedUSeqFiles.get(0).getName();
+					if (name.endsWith("_Plus.bw") || name.endsWith("_Minus.bw")) stranded = true;
+				}
+			}
+			File[] toReturn = new File[filesAL.size()];
+			filesAL.toArray(toReturn);
+			
+			return new UCSCLinkFiles (toReturn, false, stranded);
+		}
+
+		//something bad happened.
+		return null;
+	}
 
 
 
@@ -5602,7 +5679,7 @@ public class GenoPubServlet extends HttpServlet {
 		//convert useq archive?  If a xxx.useq file is found and autoConvertUSeqArchives == true, then the file is converted using a separate thread.
 		if (filesAL.size()==0 && useq !=null && autoConvertUSeqArchives){
 			//this can consume alot of resources and take 1-10min
-			USeq2UCSCBig c = new USeq2UCSCBig(this.ucscWig2BigWigExe, this.ucscBed2BigBedExe, useq);
+			USeq2UCSCBig c = new USeq2UCSCBig(ucscWig2BigWigExe, ucscBed2BigBedExe, useq);
 			filesAL = c.fetchConvertedFileNames();
 			//converting = true;
 			c.convert(); //same thread!
@@ -5638,6 +5715,67 @@ public class GenoPubServlet extends HttpServlet {
 			return false;
 		}
 		return true;
+	}
+	
+	private ArrayList<String>  makeURLLinks(HttpServletRequest request, HttpServletResponse res) throws Exception {
+
+		Session sess = null;
+		ArrayList<String> urlsToLoad = new ArrayList<String>();
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+
+			//load annotation
+			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));		
+			String annotationName = Util.stripBadURLChars(annotation.getName(), "_") +"_"+annotation.getFileName()+"_";
+
+			//check genome has UCSC name
+			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, annotation.getIdGenomeVersion()));
+			String ucscGenomeVersionName = gv.getUcscName();
+
+			//pull all files and if needed auto convert xxx.useq to xxx.bb/.bw
+			UCSCLinkFiles link = fetchURLLinkFiles(annotation.getFiles(genometry_genopub_dir));
+			File[] filesToLink = link.getFilesToLink();
+			if (filesToLink== null)  throw new Exception ("No files to link?!");
+
+			//look and or make directory to hold softlinks to data, also removes old softlinks
+			String xml_base = getServletContext().getInitParameter("xml_base").replace("/genome", "/");
+			File urlLinkDir = checkUCSCLinkDirectory(xml_base);
+
+			//make randomWord 6 char long and append genome build names
+			String randomWord = UUID.randomUUID().toString();
+			if (randomWord.length() > 6) randomWord = randomWord.substring(0, 6) +"_"+gv.getName();
+			if (ucscGenomeVersionName != null && ucscGenomeVersionName.length() !=0) randomWord = randomWord+"_"+ ucscGenomeVersionName;
+
+			//create directory to hold links, need to do this so one can get the actual age of the links and not the age of the linked file
+			File dir = new File (urlLinkDir, randomWord);
+			dir.mkdir();
+
+			//for each file, there might be two for xxx.bam and xxx.bai files, possibly two for converted useq files, plus/minus strands.
+
+			for (File f: filesToLink){
+				File annoFile = new File(dir, annotationName+ Util.stripBadURLChars(f.getName(), "_"));
+				String annoString = annoFile.toString();
+
+				//make soft link
+				Util.makeSoftLinkViaUNIXCommandLine(f, annoFile);
+
+				//is it a bam index xxx.bai? If so then skip after making soft link.
+				if (annoString.endsWith(".bai")) continue;
+
+				//make URL to link
+				int index = annoString.indexOf(Constants.URL_LINK_DIR_NAME);
+				String annoPartialPath = annoString.substring(index);
+
+				urlsToLoad.add(xml_base+ annoPartialPath);
+			}
+
+		} catch (Exception e) {
+			throw e;			
+		} finally {
+			if (sess != null) sess.close();
+		}
+		return urlsToLoad;
+
 	}
 
 
@@ -5711,7 +5849,7 @@ public class GenoPubServlet extends HttpServlet {
 				String datasetName = "name=\""+annotation.getName()+ strand +" "+annotation.getFileName()+"\"";
 
 				//make bigData URL e.g. bigDataUrl=http://genome.ucsc.edu/goldenPath/help/examples/bigBedExample.bb
-				int index = annoString.indexOf(Constants.UCSC_URL_LINK_DIR_NAME);
+				int index = annoString.indexOf(Constants.URL_LINK_DIR_NAME);
 				String annoPartialPath = annoString.substring(index);
 				String bigDataUrl = "bigDataUrl="+ xml_base+ annoPartialPath;
 

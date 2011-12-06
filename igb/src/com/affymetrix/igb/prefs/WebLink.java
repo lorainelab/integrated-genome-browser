@@ -44,7 +44,7 @@ public final class WebLink {
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
 	private static final List<WebLink> local_weblink_list = new ArrayList<WebLink>();
-	private static final List<WebLink> sys_weblink_list = new ArrayList<WebLink>();
+	private static final List<WebLink> default_weblink_list = new ArrayList<WebLink>();
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
 	public static final String LOCAL = "local";
 	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
@@ -89,8 +89,8 @@ public final class WebLink {
 		}
 
 		if (!wl.getType().equals(LOCAL)) {
-			sys_weblink_list.add(wl);
-			Collections.sort(sys_weblink_list, webLinkComp);
+			default_weblink_list.add(wl);
+			Collections.sort(default_weblink_list, webLinkComp);
 		} else {
 			local_weblink_list.add(wl);
 			Collections.sort(local_weblink_list, webLinkComp);
@@ -111,14 +111,13 @@ public final class WebLink {
 	 *  Remove a WebLink from the static list.
 	 */
 	public static void removeLocalWebLink(WebLink link) {
-//		Iterator it = local_weblink_list.iterator();
-//		while (it.hasNext()) {
-//			WebLink item = (WebLink) it.next();
-//			if (link.equals(item)) {
-//				it.remove();
-//			}
-//		}
-		local_weblink_list.remove(link);
+		Iterator it = local_weblink_list.iterator();
+		while (it.hasNext()) {
+			WebLink item = (WebLink) it.next();
+			if (link == item) {
+				it.remove();
+			}
+		}
 	}
 
 	/** Get all web-link patterns for the given method name.
@@ -169,7 +168,7 @@ public final class WebLink {
 	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
 		List<WebLink> results = new ArrayList<WebLink>();
 		List<WebLink> temp = new ArrayList<WebLink>();
-		temp.addAll(sys_weblink_list);
+		temp.addAll(default_weblink_list);
 		temp.addAll(local_weblink_list);
 
 		for (WebLink link : temp) {
@@ -217,7 +216,7 @@ public final class WebLink {
 	}
 
 	public static List<WebLink> getSysWebList() {
-		return sys_weblink_list;
+		return default_weblink_list;
 	}
 
 	public static List<WebLink> getLocalWebList() {
@@ -270,7 +269,7 @@ public final class WebLink {
 	public void setRegex(String regex) throws PatternSyntaxException {
 		if (regex == null || ".*".equals(regex) || "(?i).*".equals(regex)) {
 			pattern = null;
-			original_regex = null;
+			original_regex = regex;
 			return;
 		}
 

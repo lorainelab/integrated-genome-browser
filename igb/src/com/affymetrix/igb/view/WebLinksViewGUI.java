@@ -57,6 +57,7 @@ public class WebLinksViewGUI extends JPanel {
         regexTextField = wlv.regexTextField;
         urlTextField = wlv.urlTextField;
         matchTip = new javax.swing.JLabel();
+        regexTip = new javax.swing.JLabel();
         localPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         localTable = wlv.localTable;
@@ -66,7 +67,7 @@ public class WebLinksViewGUI extends JPanel {
         exportButton = new javax.swing.JButton();
         defaultPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        sysTable = wlv.sysTable;
+        defaultTable = wlv.defaultTable;
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -106,30 +107,33 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
-        matchTip.setToolTipText("Choose between using the Track Name or the annotation ID as the identifier for your web link.");
+        matchTip.setToolTipText("Choose 'Track Name' or 'Annotation ID' as the identifier for web link.");
         matchTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
         matchTip.setText(" ");
+
+        regexTip.setToolTipText("Type regular expression for matching identifier.");
+        regexTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
+        regexTip.setText(" ");
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, urlLabel)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, nameLabel))
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(regexTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(urlLabel)
+                    .add(nameLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(nameRadioButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(idRadioButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(142, 142, 142))
-                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)))
+                        .add(idRadioButton))
+                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                    .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -147,14 +151,17 @@ public class WebLinksViewGUI extends JPanel {
                     .add(idRadioButton)
                     .add(matchTip))
                 .add(5, 5, 5)
-                .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(regexTip))
+                .add(0, 0, 0))
         );
 
         localPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local"));
 
-        localTable.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                localTableFocusGained(evt);
+        localTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                localTableMousePressed(evt);
             }
         });
         jScrollPane1.setViewportView(localTable);
@@ -195,16 +202,16 @@ public class WebLinksViewGUI extends JPanel {
                 .add(addButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(deleteButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 111, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 125, Short.MAX_VALUE)
                 .add(importButton)
                 .add(0, 0, 0)
                 .add(exportButton))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
         );
         localPanelLayout.setVerticalGroup(
             localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, localPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addButton)
@@ -215,22 +222,22 @@ public class WebLinksViewGUI extends JPanel {
 
         defaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Default"));
 
-        sysTable.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                sysTableFocusGained(evt);
+        defaultTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                defaultTableMousePressed(evt);
             }
         });
-        jScrollPane2.setViewportView(sysTable);
+        jScrollPane2.setViewportView(defaultTable);
 
         org.jdesktop.layout.GroupLayout defaultPanelLayout = new org.jdesktop.layout.GroupLayout(defaultPanel);
         defaultPanel.setLayout(defaultPanelLayout);
         defaultPanelLayout.setHorizontalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
         );
         defaultPanelLayout.setVerticalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -258,12 +265,11 @@ public class WebLinksViewGUI extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void nameRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameRadioButtonActionPerformed
-		regexTextField.grabFocus();
+		wlv.regexTextField();
 	}//GEN-LAST:event_nameRadioButtonActionPerformed
 
 	private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
 		wlv.add();
-
 	}//GEN-LAST:event_addButtonActionPerformed
 
 	private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
@@ -283,7 +289,7 @@ public class WebLinksViewGUI extends JPanel {
 	}//GEN-LAST:event_regexTextFieldActionPerformed
 
 	private void idRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idRadioButtonActionPerformed
-		regexTextField.grabFocus();
+		wlv.regexTextField();
 	}//GEN-LAST:event_idRadioButtonActionPerformed
 
 	private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
@@ -294,20 +300,24 @@ public class WebLinksViewGUI extends JPanel {
 		wlv.exportWebLinks();
 	}//GEN-LAST:event_exportButtonActionPerformed
 
-	private void localTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_localTableFocusGained
-		if (sysTable.getRowCount() != 0) {
-			wlv.sysTable.removeRowSelectionInterval(0, sysTable.getRowCount() - 1);
+	private void localTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_localTableMousePressed
+		if (defaultTable.getSelectedRow() != -1 
+				&& localTable.getSelectedRow() != -1) {
+			defaultTable.removeRowSelectionInterval(0, defaultTable.getRowCount() - 1);
 		}
-	}//GEN-LAST:event_localTableFocusGained
+	}//GEN-LAST:event_localTableMousePressed
 
-	private void sysTableFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_sysTableFocusGained
-		if (localTable.getRowCount() != 0) {
-			wlv.localTable.removeRowSelectionInterval(0, localTable.getRowCount() - 1);
+	private void defaultTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_defaultTableMousePressed
+		if (defaultTable.getSelectedRow() != -1 
+				&& localTable.getSelectedRow() != -1) {
+			localTable.removeRowSelectionInterval(0, localTable.getRowCount() - 1);
 		}
-	}//GEN-LAST:event_sysTableFocusGained
+	}//GEN-LAST:event_defaultTableMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JPanel defaultPanel;
+    private javax.swing.JTable defaultTable;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton exportButton;
     private javax.swing.JRadioButton idRadioButton;
@@ -322,7 +332,7 @@ public class WebLinksViewGUI extends JPanel {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JTextField regexTextField;
-    private javax.swing.JTable sysTable;
+    private javax.swing.JLabel regexTip;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables

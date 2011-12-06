@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
@@ -30,21 +29,23 @@ public final class WebLinksView implements ListSelectionListener {
 
 	private static final long serialVersionUID = 1L;
 	private static WebLinksView singleton;
-	public JTable sysTable;
+	public JTable defaultTable;
 	public JTable localTable;
-	public WebLinksTableModel sysModel;
+	public WebLinksTableModel defaultModel;
 	public WebLinksTableModel localModel;
 	public ListSelectionModel lsm;
 	private static JFileChooser static_chooser = null;
-	public static final String LINK_NAME = "Name";
+	public static final String NAME = "Name";
 	public static final String URL = "URL";
+	public static final String REGEX = "Regular Expression";
 	public final static String[] col_headings = {
-		LINK_NAME,
+		NAME,
+		REGEX,
 		URL
 	};
-	public static final int COL_LINK_NAME = 0;
-	public static final int COL_URL = 1;
-	public static final int COL_REGEX = 2;
+	public static final int COL_NAME = 0;
+	public static final int COL_REGEX = 1;
+	public static final int COL_URL = 2;
 	public int[] selectedRows;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
@@ -55,7 +56,7 @@ public final class WebLinksView implements ListSelectionListener {
 	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
 	private final WebLinkEditorPanel edit_panel;
-	private int previousSelectedRow;
+	public int previousSelectedRow;
 	private String previousName;
 	private String previousUrl;
 	private String previousRegex;
@@ -70,13 +71,13 @@ public final class WebLinksView implements ListSelectionListener {
 	private WebLinksView() {
 		super();
 
-		sysTable = new JTable();
+		defaultTable = new JTable();
 		localTable = new JTable();
 
-		sysModel = new WebLinksTableModel();
+		defaultModel = new WebLinksTableModel();
 		localModel = new WebLinksTableModel();
 
-		initTable(sysTable);
+		initTable(defaultTable);
 		initTable(localTable);
 
 		nameTextField = new JTextField();
@@ -87,11 +88,11 @@ public final class WebLinksView implements ListSelectionListener {
 		button_group.add(nameRadioButton);
 		button_group.add(idRadioButton);
 		edit_panel = new WebLinkEditorPanel();
-		
+
 		if (localTable.getRowCount() > 0) {
 			localTable.setRowSelectionInterval(0, 0);
 		} else {
-			sysTable.setRowSelectionInterval(0, 0);
+			defaultTable.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -104,16 +105,20 @@ public final class WebLinksView implements ListSelectionListener {
 			table.setModel(localModel);
 			localModel.setLinks(WebLink.getLocalWebList());
 		} else {
-			table.setModel(sysModel);
-			sysModel.setLinks(WebLink.getSysWebList());
+			table.setModel(defaultModel);
+			defaultModel.setLinks(WebLink.getSysWebList());
 		}
 
-		table.setRowSelectionAllowed(true);
-		table.getColumnModel().getColumn(COL_LINK_NAME).setPreferredWidth(200);
-		table.getColumnModel().getColumn(COL_LINK_NAME).setMaxWidth(400);
+		table.getColumnModel().getColumn(COL_NAME).setPreferredWidth(200);
+		table.getColumnModel().getColumn(COL_NAME).setMaxWidth(400);
+		table.getColumnModel().getColumn(COL_REGEX).setPreferredWidth(200);
+		table.getColumnModel().getColumn(COL_REGEX).setMaxWidth(400);
 
 		Font f = new Font("SansSerif", Font.BOLD, 12);
 		table.getTableHeader().setFont(f);
+
+		table.setCellSelectionEnabled(settingValueFromTable);
+		table.setRowSelectionAllowed(true);
 	}
 
 	private static void setAccelerator(Action a) {
@@ -122,6 +127,9 @@ public final class WebLinksView implements ListSelectionListener {
 		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
+	/*
+	 *  Only allow to delete local web links
+	 */
 	public void delete() throws HeadlessException {
 		if (localTable.getSelectedRow() != -1) {
 			selectedRows = localTable.getSelectedRows();
@@ -138,10 +146,9 @@ public final class WebLinksView implements ListSelectionListener {
 				}
 
 				for (WebLink l : links) {
-					localModel.remove(l);
 					WebLink.removeLocalWebLink(l);
 				}
-
+				
 			}
 
 			refreshList();
@@ -156,22 +163,37 @@ public final class WebLinksView implements ListSelectionListener {
 			edit_panel.setLinkPropertiesFromGUI();
 			link.setType(WebLink.LOCAL);
 			WebLink.addWebLink(link);
+		} else {
+			return;
 		}
 
 		refreshList();
+
+		int row = 0;
+		for (WebLink l : localModel.webLinks) {
+			if (l == link) {
+				break;
+			}
+			
+			row++;
+		}
+
+		resetRow(row);
 	}
 
-	private static boolean isEmpty(String s) {
+	private boolean isEmpty(String s) {
 		return (s == null || s.trim().length() == 0);
 	}
 
 	private void refreshList() {
-		previousSelectedRow = localTable.getSelectedRow();
 		localModel.setLinks(WebLink.getLocalWebList());
 		localModel.fireTableDataChanged();
-		if (localTable.getRowCount() > 0 && previousSelectedRow < localTable.getRowCount()
-				&& previousSelectedRow != -1) {
-			localTable.setRowSelectionInterval(previousSelectedRow, previousSelectedRow);
+	}
+
+	public void resetRow(int row) {
+		if (row < localTable.getRowCount()
+				&& row != -1) {
+			localTable.setRowSelectionInterval(row, row);
 		}
 	}
 
@@ -180,10 +202,11 @@ public final class WebLinksView implements ListSelectionListener {
 			if (isEmpty(nameTextField.getText())) {
 				ErrorHandler.errorPanel("The name cannot be blank");
 				nameTextField.setText(previousName);
-				nameTextField.grabFocus();
 			} else {
-				localModel.setValueAt(nameTextField.getText(), selectedRows[0], COL_LINK_NAME);
+				localModel.setValueAt(nameTextField.getText(), selectedRows[0], COL_NAME);
 			}
+
+			nameTextField.grabFocus();
 		}
 	}
 
@@ -192,7 +215,6 @@ public final class WebLinksView implements ListSelectionListener {
 			if (isEmpty(urlTextField.getText())) {
 				ErrorHandler.errorPanel("The URL cannot be blank");
 				urlTextField.setText(previousUrl);
-				urlTextField.grabFocus();
 			} else {
 				try {
 					new URL(urlTextField.getText());
@@ -202,9 +224,10 @@ public final class WebLinksView implements ListSelectionListener {
 							"The given URL appears to be invalid.\n" + e.getMessage(),
 							urlTextField);
 					urlTextField.setText(previousUrl);
-					urlTextField.grabFocus();
 				}
 			}
+
+			urlTextField.grabFocus();
 		}
 	}
 
@@ -212,7 +235,6 @@ public final class WebLinksView implements ListSelectionListener {
 		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
 			if (isEmpty(regexTextField.getText())) {
 				ErrorHandler.errorPanel("The regular expression cannot be blank");
-				regexTextField.grabFocus();
 			}
 
 			try {
@@ -222,8 +244,9 @@ public final class WebLinksView implements ListSelectionListener {
 				ErrorHandler.errorPanel("Bad Regular Expression",
 						"Error in regular expression:\n" + pse.getMessage(), regexTextField);
 				regexTextField.setText(previousRegex);
-				regexTextField.grabFocus();
 			}
+
+			regexTextField.grabFocus();
 		}
 	}
 
@@ -259,6 +282,7 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 
 		refreshList();
+		resetRow(0);
 	}
 
 	public void exportWebLinks() {
@@ -302,8 +326,8 @@ public final class WebLinksView implements ListSelectionListener {
 			table = localTable;
 			model = localModel;
 		} else {
-			table = sysTable;
-			model = sysModel;
+			table = defaultTable;
+			model = defaultModel;
 		}
 
 		selectedRows = table.getSelectedRows();
@@ -372,16 +396,6 @@ public final class WebLinksView implements ListSelectionListener {
 			return this.webLinks;
 		}
 
-		public void remove(WebLink link) {
-			Iterator it = webLinks.iterator();
-			while (it.hasNext()) {
-				WebLink item = (WebLink) it.next();
-				if (link.equals(item)) {
-					it.remove();
-				}
-			}
-		}
-
 		@Override
 		public Class<?> getColumnClass(int c) {
 			Object tempObject = getValueAt(0, c);
@@ -401,8 +415,10 @@ public final class WebLinksView implements ListSelectionListener {
 			WebLink webLink;
 			webLink = webLinks.get(row);
 			switch (column) {
-				case COL_LINK_NAME:
+				case COL_NAME:
 					return webLink.getName();
+				case COL_REGEX:
+					return webLink.getRegex();
 				case COL_URL:
 					return webLink.getUrl();
 				default:
@@ -417,13 +433,9 @@ public final class WebLinksView implements ListSelectionListener {
 				try {
 					WebLink webLink = webLinks.get(row);
 					switch (col) {
-						case COL_LINK_NAME:
+						case COL_NAME:
 							webLink.setName((String) value);
 							nameTextField.setText((String) value);
-							break;
-						case COL_URL:
-							webLink.setUrl((String) value);
-							urlTextField.setText((String) value);
 							break;
 						case COL_REGEX:
 							if (idRadioButton.isSelected()) {
@@ -433,17 +445,22 @@ public final class WebLinksView implements ListSelectionListener {
 							}
 							webLink.setRegex((String) value);
 							break;
+						case COL_URL:
+							webLink.setUrl((String) value);
+							urlTextField.setText((String) value);
+							break;
 						default:
 							System.out.println("Unknown column selected: " + col);
 					}
-					fireTableCellUpdated(row, col);
 				} catch (Exception e) {
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in WebLinksView.setValueAt(): " + e);
 				}
 
-				refreshList();
+				previousSelectedRow = localTable.getSelectedRow();
 
+				refreshList();
+				resetRow(previousSelectedRow);
 			}
 			settingValueFromTable = false;
 		}

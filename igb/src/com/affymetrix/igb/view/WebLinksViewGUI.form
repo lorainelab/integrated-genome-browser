@@ -54,7 +54,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="matchTip" min="-2" pref="17" max="-2" attributes="0"/>
+                      <Component id="regexTip" min="-2" pref="17" max="-2" attributes="0"/>
                       <Component id="urlLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="nameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -64,13 +66,10 @@
                           <Component id="nameRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="idRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="matchTip" min="-2" pref="17" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="142" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="urlTextField" pref="391" max="32767" attributes="0"/>
-                      <Component id="nameTextField" alignment="0" pref="391" max="32767" attributes="1"/>
-                      <Component id="regexTextField" alignment="0" pref="391" max="32767" attributes="0"/>
+                      <Component id="urlTextField" pref="405" max="32767" attributes="0"/>
+                      <Component id="nameTextField" alignment="0" pref="405" max="32767" attributes="1"/>
+                      <Component id="regexTextField" alignment="0" pref="405" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -94,7 +93,11 @@
                       <Component id="matchTip" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                  <Component id="regexTextField" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="regexTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="regexTip" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -161,7 +164,15 @@
             <Property name="text" type="java.lang.String" value=" "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose between using the Track Name or the annotation ID as the identifier for your web link.&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="matchTip.setToolTipText(&quot;Choose &apos;Track Name&apos; or &apos;Annotation ID&apos; as the identifier for web link.&quot;);&#xa;matchTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="regexTip">
+          <Properties>
+            <Property name="text" type="java.lang.String" value=" "/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="regexTip.setToolTipText(&quot;Type regular expression for matching identifier.&quot;);&#xa;regexTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -182,18 +193,18 @@
                   <Component id="addButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="111" max="32767" attributes="0"/>
+                  <EmptySpace pref="125" max="32767" attributes="0"/>
                   <Component id="importButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="exportButton" min="-2" max="-2" attributes="0"/>
               </Group>
-              <Component id="jScrollPane1" alignment="1" pref="441" max="32767" attributes="2"/>
+              <Component id="jScrollPane1" alignment="1" pref="455" max="32767" attributes="2"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="jScrollPane1" pref="110" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="100" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="addButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -234,7 +245,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="localTableFocusGained"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="localTableMousePressed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.localTable"/>
@@ -288,12 +299,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" alignment="0" pref="441" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" alignment="0" pref="455" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" pref="117" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" pref="107" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -305,7 +316,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="sysTable">
+            <Component class="javax.swing.JTable" name="defaultTable">
               <Properties>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0"/>
@@ -315,10 +326,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="sysTableFocusGained"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="defaultTableMousePressed"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.sysTable"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="wlv.defaultTable"/>
               </AuxValues>
             </Component>
           </SubComponents>

@@ -195,6 +195,11 @@ public final class WebLinksView implements ListSelectionListener {
 				&& row != -1) {
 			localTable.setRowSelectionInterval(row, row);
 		}
+		
+		if (defaultTable.getSelectedRow() != -1 
+				&& localTable.getSelectedRow() != -1) {
+			defaultTable.removeRowSelectionInterval(0, defaultTable.getRowCount() - 1);
+		}
 	}
 
 	public void nameTextField() {

@@ -50,15 +50,16 @@ import static javax.swing.JOptionPane.PLAIN_MESSAGE;
  * @version $Id$
  */
 public class IGBAuthenticator extends Authenticator {
-	private static enum AuthType { ASK, ANONYMOUS, AUTHENTICATE };
 
+	private static enum AuthType {
+
+		ASK, ANONYMOUS, AUTHENTICATE
+	};
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
-	
-	private static final String[] OPTIONS = { BUNDLE.getString("login"), BUNDLE.getString("cancel") };
+	private static final String[] OPTIONS = {BUNDLE.getString("login"), BUNDLE.getString("cancel")};
 	private static final String GUEST = "guest";
 	private static final String PREF_AUTH_TYPE = "authentication type";
 	private static final String PREF_REMEMBER = "remember authentication";
-
 	private final JFrame parent;
 
 	public IGBAuthenticator(JFrame parent) {
@@ -90,37 +91,12 @@ public class IGBAuthenticator extends Authenticator {
 		layout.setAutoCreateContainerGaps(true);
 		layout.linkSize(SwingConstants.HORIZONTAL, s, u, p);
 
-		layout.setHorizontalGroup(layout.createParallelGroup()
-				.addComponent(messageContainer)
-				.addComponent(anon)
-				.addComponent(auth)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(s)
-					.addComponent(server))
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(u)
-					.addComponent(username))
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(p)
-					.addComponent(password))
-				.addComponent(remember));
+		layout.setHorizontalGroup(layout.createParallelGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createSequentialGroup().addComponent(s).addComponent(server)).addGroup(layout.createSequentialGroup().addComponent(u).addComponent(username)).addGroup(layout.createSequentialGroup().addComponent(p).addComponent(password)).addComponent(remember));
 
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addComponent(messageContainer)
-				.addComponent(anon)
-				.addComponent(auth)
-				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-					.addComponent(s)
-					.addComponent(server))
-				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-					.addComponent(u)
-					.addComponent(username))
-				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-					.addComponent(p)
-					.addComponent(password))
-				.addComponent(remember));
+		layout.setVerticalGroup(layout.createSequentialGroup().addComponent(messageContainer).addComponent(anon).addComponent(auth).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(s).addComponent(server)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(u).addComponent(username)).addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(p).addComponent(password)).addComponent(remember));
 
 		ActionListener radioListener = new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				u.setEnabled(auth.isSelected());
 				p.setEnabled(auth.isSelected());
@@ -166,12 +142,12 @@ public class IGBAuthenticator extends Authenticator {
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.SEVERE, "Problem translating URL '" + this.getRequestingURL().toString() + "' to server", ex);
 		} catch (IllegalArgumentException ex) {
-			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.WARNING, "URL " +  this.getRequestingURL() + " was not in server list.");
+			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.WARNING, "URL " + this.getRequestingURL() + " was not in server list.");
 		}
 
 		if (serverObject != null) {
 			url = serverObject.URL;
-			serverNode = PreferenceUtils.getServersNode().node( GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
+			serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
 			authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
 			if (serverObject.getLogin() != null) {
 				userFromPrefs = serverObject.getLogin();
@@ -181,7 +157,7 @@ public class IGBAuthenticator extends Authenticator {
 			}
 		}
 
-		
+
 
 		if (authType == AuthType.AUTHENTICATE && !userFromPrefs.equals("") && !passFromPrefs.equals("")) {
 			return new PasswordAuthentication(userFromPrefs, passFromPrefs.toCharArray());
@@ -214,7 +190,7 @@ public class IGBAuthenticator extends Authenticator {
 		boolean authOptional = serverObject != null && serverObject.serverType == ServerType.DAS2;
 		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
 		JLabel server = new JLabel();
-		JRPTextField     username = new JRPTextField("IGBAuthenticator_username");
+		JRPTextField username = new JRPTextField("IGBAuthenticator_username");
 		JPasswordField password = new JPasswordField();
 		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
 		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
@@ -226,10 +202,10 @@ public class IGBAuthenticator extends Authenticator {
 		anon.setEnabled(authOptional);
 		auth.setSelected(!authOptional);
 		remember.setEnabled(serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true));
-		if(!remember.isEnabled() && !authOptional){
+		if (!remember.isEnabled() && !authOptional) {
 			remember.setSelected(true);
 		}
-		
+
 		int result = JOptionPane.showOptionDialog(parent, dialog, null, OK_CANCEL_OPTION, PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 
 		if (result == OK_OPTION) {
@@ -249,6 +225,9 @@ public class IGBAuthenticator extends Authenticator {
 				return doAnonymous();
 			}
 		}
+
+		serverNode.put(PREF_AUTH_TYPE, AuthType.ANONYMOUS.toString());
+		serverNode.parent().putBoolean(PREF_REMEMBER, true);
 
 		/* User cancelled or quit login prompt */
 		/*
@@ -271,8 +250,8 @@ public class IGBAuthenticator extends Authenticator {
 		JLabel current = new JLabel();
 		String[] message = StringUtils.wrap(
 				MessageFormat.format(
-					BUNDLE.getString(authOptional ?  "authOptional" : "authRequired"),
-					serverName),
+				BUNDLE.getString(authOptional ? "authOptional" : "authRequired"),
+				serverName),
 				current.getFontMetrics(current.getFont()),
 				500);
 
@@ -303,7 +282,7 @@ public class IGBAuthenticator extends Authenticator {
 		if (serverNode == null || serverObject == null) {
 			return;
 		}
-		
+
 		AuthType authType = anon ? AuthType.ANONYMOUS : AuthType.AUTHENTICATE;
 		serverNode.put(PREF_AUTH_TYPE, authType.toString());
 		serverNode.parent().putBoolean(PREF_REMEMBER, remember);

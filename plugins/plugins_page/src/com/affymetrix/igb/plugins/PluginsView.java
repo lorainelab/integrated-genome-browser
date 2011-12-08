@@ -456,37 +456,37 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return bundleFilter;
 	}
 
+	private static final Capability COMMON_CAPABILITY = new Capability() {
+		@Override
+		public String getName() {
+			return Capability.PACKAGE;
+		}
+
+		@Override
+		public Property[] getProperties() {
+			return new Property[]{new PropertyImpl("package", null, "com.affymetrix.common"), new PropertyImpl("version", Property.VERSION, CommonUtils.getInstance().getAppVersion())};
+		}
+
+		@Override
+		public Map<String, Object> getPropertiesAsMap() {
+			Map<String, Object> propertiesMap = new HashMap<String, Object>();
+			propertiesMap.put("package", "com.affymetrix.common");
+			propertiesMap.put("version", new Version(CommonUtils.getInstance().getAppVersion()));
+			return propertiesMap;
+		}
+	};
+	private static final CapabilityWrapper COMMON_CAPABILITY_WRAPPER = new CapabilityWrapper(COMMON_CAPABILITY);
 	private boolean checkRequirements(Requirement[] requirements) {
-		Capability capability = new Capability() {
-			@Override
-			public String getName() {
-				return Capability.PACKAGE;
-			}
-
-			@Override
-			public Property[] getProperties() {
-				return new Property[]{new PropertyImpl("package", Property.URI, "com.affymetrix.common"), new PropertyImpl("version", Property.VERSION, CommonUtils.getInstance().getAppVersion())};
-			}
-
-			@Override
-			public Map<String, Object> getPropertiesAsMap() {
-				Map<String, Object> propertiesMap = new HashMap<String, Object>();
-				propertiesMap.put("package", "com.affymetrix.common");
-				propertiesMap.put("version", new Version(CommonUtils.getInstance().getAppVersion()));
-				return propertiesMap;
-			}
-		};
-		CapabilityWrapper capabilityWrapper = new CapabilityWrapper(capability);
 		boolean checked = false;
 		for (Requirement requirement :requirements) {
-			checked |= requirement.isSatisfied(capabilityWrapper);
+			checked |= requirement.isSatisfied(COMMON_CAPABILITY_WRAPPER);
 		}
 		return checked;
 	}
 
 	/**
 	 * gets the full set of all bundles in all the bundle repositories
-	 * in the Preferences tab
+	 * in the Preferences tab, filter by IGB version
 	 */
 	private void setRepositoryBundles() {
 		Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");

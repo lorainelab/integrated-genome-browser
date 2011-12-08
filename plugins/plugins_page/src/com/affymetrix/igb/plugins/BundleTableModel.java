@@ -162,6 +162,31 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
+	columns.add(new BundleColumn() { // install
+		@Override
+		public String getTitle() { return PluginsView.BUNDLE.getString("installColumn"); }
+		@Override
+		public boolean isEditable() { return true; }
+		@Override
+		public Object getValue(Bundle bundle) { return bundle.getState() != Bundle.UNINSTALLED; }
+		@Override
+		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
+			if (bundle.getState() == Bundle.UNINSTALLED) {
+				pluginsHandler.installBundle(bundle);
+			}
+			else {
+				pluginsHandler.uninstallBundle(bundle);
+			}
+		}
+		@Override
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
+			tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
+			tc.setMinWidth(NARROW_COLUMN);
+			tc.setMaxWidth(NARROW_COLUMN);
+			tc.setPreferredWidth(NARROW_COLUMN);
+		}
+	});
 	columns.add(new BundleColumn() { // symbolic name
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME); }
@@ -210,31 +235,6 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public String getTitle() { return PluginsView.BUNDLE.getString("repository"); }
 		@Override
 		public Object getValue(Bundle bundle) { return pluginsHandler.getRepository(bundle);
-		}
-	});
-	columns.add(new BundleColumn() { // install
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("installColumn"); }
-		@Override
-		public boolean isEditable() { return true; }
-		@Override
-		public Object getValue(Bundle bundle) { return bundle.getState() != Bundle.UNINSTALLED; }
-		@Override
-		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
-			if (bundle.getState() == Bundle.UNINSTALLED) {
-				pluginsHandler.installBundle(bundle);
-			}
-			else {
-				pluginsHandler.uninstallBundle(bundle);
-			}
-		}
-		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
-			tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
-			tc.setMinWidth(NARROW_COLUMN);
-			tc.setMaxWidth(NARROW_COLUMN);
-			tc.setPreferredWidth(NARROW_COLUMN);
 		}
 	});
 	}

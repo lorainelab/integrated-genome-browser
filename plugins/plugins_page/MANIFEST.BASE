@@ -7,17 +7,18 @@ Bundle-Activator: com.affymetrix.igb.plugins.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/Plug-ins+Panel
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.plugins.PluginsView
-Import-Package: com.affymetrix.igb.osgi.service,
+Import-Package: com.affymetrix.common,
+ com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
+ com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.genoviz.util,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.util,
  javax.swing,
  javax.swing.border,
  javax.swing.event,
  javax.swing.plaf,
  javax.swing.table,
- com.affymetrix.genoviz.swing.recordplayback,
- com.affymetrix.genoviz.util,
- com.affymetrix.genometryImpl.event,
- com.affymetrix.genometryImpl.util,
  org.osgi.framework;version="1.3.0",
  org.osgi.framework.launch;version="1.0.0",
  org.osgi.util.tracker;version="1.4.0"

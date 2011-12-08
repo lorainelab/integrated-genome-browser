@@ -32,7 +32,11 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 
+import org.apache.felix.bundlerepository.Capability;
+import org.apache.felix.bundlerepository.Property;
+import org.apache.felix.bundlerepository.impl.PropertyImpl;
 import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
+import org.apache.felix.bundlerepository.impl.wrapper.CapabilityWrapper;
 import org.apache.felix.bundlerepository.impl.wrapper.RepositoryAdminWrapper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -46,6 +50,7 @@ import org.osgi.service.obr.Requirement;
 import org.osgi.service.obr.Resolver;
 import org.osgi.service.obr.Resource;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -451,6 +456,34 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return bundleFilter;
 	}
 
+	private boolean checkRequirements(Requirement[] requirements) {
+		Capability capability = new Capability() {
+			@Override
+			public String getName() {
+				return Capability.PACKAGE;
+			}
+
+			@Override
+			public Property[] getProperties() {
+				return new Property[]{new PropertyImpl("package", Property.URI, "com.affymetrix.common"), new PropertyImpl("version", Property.VERSION, CommonUtils.getInstance().getAppVersion())};
+			}
+
+			@Override
+			public Map<String, Object> getPropertiesAsMap() {
+				Map<String, Object> propertiesMap = new HashMap<String, Object>();
+				propertiesMap.put("package", "com.affymetrix.common");
+				propertiesMap.put("version", new Version(CommonUtils.getInstance().getAppVersion()));
+				return propertiesMap;
+			}
+		};
+		CapabilityWrapper capabilityWrapper = new CapabilityWrapper(capability);
+		boolean checked = false;
+		for (Requirement requirement :requirements) {
+			checked |= requirement.isSatisfied(capabilityWrapper);
+		}
+		return checked;
+	}
+
 	/**
 	 * gets the full set of all bundles in all the bundle repositories
 	 * in the Preferences tab
@@ -459,7 +492,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
 		List<Bundle> repositoryBundles = new ArrayList<Bundle>();
 		for (Resource resource : allResourceArray) {
-			repositoryBundles.add(new ResourceWrapper(resource));
+			if (checkRequirements(resource.getRequirements())) {
+				repositoryBundles.add(new ResourceWrapper(resource));
+			}
 		}
 		setRepositoryBundles(repositoryBundles);
 	}

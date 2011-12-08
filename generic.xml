@@ -26,6 +26,7 @@
 
 		<!-- Filters -->
 		<filter token="build.version"  value="${build.version}" />
+		<filter token="osgi.impl.file" value="${osgi.impl.file}" />
   </target>
 
   <target name="proj-lib-exists">

@@ -208,6 +208,7 @@ public class OSGiHandler {
 	}
 
 	private List<String> getJarFileNames() throws IOException {
+		String OSGiImplFile = ResourceBundle.getBundle("main").getString("OSGiImplFile");
         List<String> entries = new ArrayList<String>();
 		URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
 		if (codesource.toString().endsWith(".jar")) { // ant exe or webstart
@@ -238,6 +239,7 @@ public class OSGiHandler {
 			File dir = new File("bundles");
 			entries = Arrays.asList(dir.list());
 		}
+		entries.remove(OSGiImplFile); // don't install OSGiImpl as a bundle
         return entries;
 	}
 

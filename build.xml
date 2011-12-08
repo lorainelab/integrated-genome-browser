@@ -49,6 +49,7 @@
 		<property name="bundle.dir"  value="${basedir}/bundles" />
 		<property name="igb.ant.dir" value="${basedir}/plugins/ant" />
 
+		<property name="osgi.impl"   value="${osgi.impl.dir}${osgi.impl.file}"/>
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${common}/resources/common.properties"/>
 	</target>

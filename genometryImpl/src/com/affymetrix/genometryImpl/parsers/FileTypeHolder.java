@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.FastaIdx;
+import com.affymetrix.genometryImpl.symloader.GFF;
 import com.affymetrix.genometryImpl.symloader.GFF3;
 import com.affymetrix.genometryImpl.symloader.Genbank;
 import com.affymetrix.genometryImpl.symloader.Gr;
@@ -137,12 +138,12 @@ public class FileTypeHolder {
 				public String[] getExtensions() { return extensions; }
 				@Override
 				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-//					if (com.affymetrix.genometryImpl.symloader.GFF3.isGFF3(uri)) {
-//						return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
-//					}
-//					else {
-						return SymLoaderTabix.getSymLoader(new SymLoaderInstNC(uri, featureName, group));
-					//}
+					if (com.affymetrix.genometryImpl.symloader.GFF3.isGFF3(uri)) {
+						return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
+					}
+					else {
+						return SymLoaderTabix.getSymLoader(new GFF(uri, featureName, group));
+					}
 				}
 				@Override
 				public Parser getParser() { return new GFFParser(); }

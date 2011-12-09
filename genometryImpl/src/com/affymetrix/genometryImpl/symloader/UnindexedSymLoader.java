@@ -25,10 +25,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -37,7 +35,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * the same LineReader, but not use the .tbi index.
  */
 public abstract class UnindexedSymLoader extends SymLoader {
-
+	
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -104,6 +102,28 @@ public abstract class UnindexedSymLoader extends SymLoader {
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
+	protected LineReader getLineReader(final BufferedReader br, final int min, final int max) {
+
+		return (new LineReader() {
+
+			@Override
+			public String readLine() throws IOException {
+				String line = br.readLine();
+				if (line == null || lineProcessor.getSpan(line).getMin() >= max) {
+					return null;
+				}
+				while (line != null && lineProcessor.getSpan(line).getMax() <= min) {
+					line = br.readLine();
+				}
+				return line;
+			}
+
+			@Override
+			public void close() {
+			}
+		});
+	}
+	
 	private List<? extends SeqSymmetry> parse(BioSeq seq, final int min, final int max) throws Exception {
 		InputStream istr = null;
 		try {
@@ -114,23 +134,9 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			}
 			istr = new FileInputStream(file);
 			final BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-			LineReader lineReader = new LineReader() {
+			
+			LineReader lineReader = getLineReader(br, min, max);
 				
-				@Override
-				public String readLine() throws IOException {
-					String line = br.readLine();
-					if (line == null || lineProcessor.getSpan(line).getMin() >= max) {
-						return null;
-					}
-					while (line != null && lineProcessor.getSpan(line).getMax() <= min) {
-						line = br.readLine();
-					}
-					return line;
-				}
-				
-				@Override
-				public void close() {}
-			};
 			return lineProcessor.processLines(seq, lineReader);
 		} finally {
 			GeneralUtils.safeClose(istr);
@@ -161,11 +167,24 @@ public abstract class UnindexedSymLoader extends SymLoader {
 		Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		List<String> infoLines = new ArrayList<String>();
-		String line, seq_name = null;
+		String line, seq_name = null, trackLine = null;
+		char ch;
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+				
+				ch = line.charAt(0);
+				if (ch == 't' && line.startsWith("track")) {
+					trackLine = line;
+					chrTrack.clear();
+					continue;
+				}
+				
+				if(lineProcessor.processInfoLine(line, infoLines)){
+					continue;
+				}
+				
 				SeqSpan span = lineProcessor.getSpan(line);
 				seq_name = span.getBioSeq().getID(); // seq id field
 				int end = span.getMax();
@@ -178,9 +197,12 @@ public abstract class UnindexedSymLoader extends SymLoader {
 						bw.write(infoLine + "\n");
 					}
 				}
+				
 				if (!chrTrack.containsKey(seq_name)) {
 					chrTrack.put(seq_name, true);
+					bw.write(trackLine + "\n");
 				}
+				
 				bw.write(line + "\n");
 
 				if (end > chrLength.get(seq_name)) {

@@ -36,4 +36,6 @@ public interface LineProcessor {
 	public List<String> getFormatPrefList();
 
 	public SeqSpan getSpan(String line);
+
+	public boolean processInfoLine(String line, List<String> infoLines);
 }

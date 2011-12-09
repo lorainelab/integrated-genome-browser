@@ -196,4 +196,8 @@ public class SAM extends XAM implements LineProcessor{
 	public SeqSpan getSpan(String line) {
 		return null; // not used yet
 	}
+	
+	public boolean processInfoLine(String line, List<String> infoLines) {
+		return false; // not used yet
+	}
 }

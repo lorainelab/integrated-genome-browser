@@ -26,10 +26,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
+import net.sf.samtools.util.BlockCompressedInputStream;
+
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
 public final class GeneralUtils {
@@ -102,8 +105,7 @@ public final class GeneralUtils {
 		String lc_stream_name = stream_name.toLowerCase();
 		if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip") ||
 				lc_stream_name.endsWith(".z")) {
-			GZIPInputStream gzstr = new GZIPInputStream(istr);
-			//BlockCompressedInputStream gzstr = new BlockCompressedInputStream(istr);
+			InputStream gzstr = getGZipInputStream(stream_name, istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(gzstr, new_name, stripped_name);
 		} else if (stream_name.endsWith(".zip")) {
@@ -396,6 +398,44 @@ public final class GeneralUtils {
 		}
 
 		return file;
+	}
+
+	/**
+	 * this method will return an Input for a gzip, trying to determine
+	 * if this is a regular or blocked gzip file. If it cannot determine
+	 * the default is blocked gzip.
+	 * @param url the url (should be a url for a gzip file)
+	 * @param istr the raw (uncompressed) InputStream to wrap
+	 * @return BlockCompressedInputStream if this is a blocked gzip file, GZIPInputStream otherwise
+	 */
+	public static InputStream getGZipInputStream(String url, InputStream istr) throws IOException {
+		InputStream gzstr = null;
+		boolean blockedGZip = false;
+		GZIPInputStream gis = null;
+		try {
+			URLConnection conn = LocalUrlCacher.connectToUrl(url, null, -1);
+			gis = new GZIPInputStream(conn.getInputStream());
+			gis.read();
+		}
+		catch (ZipException x) {
+			blockedGZip = true;
+		}
+		catch (Exception x) {
+			blockedGZip = true; // default
+		}
+		finally {
+			try {
+				gis.close();
+			} catch (Exception e) {}
+		}
+		if (blockedGZip) {
+			gzstr = new BlockCompressedInputStream(istr);
+		}
+		else {
+			gzstr = new GZIPInputStream(istr);
+		}
+
+		return gzstr;
 	}
 
 	public static void unzipFile(File f, File f2) throws IOException {

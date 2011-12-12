@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
+
 import net.sf.samtools.util.SeekableStream;
 import net.sf.samtools.util.SeekableFileStream;
 import net.sf.samtools.util.SeekableHTTPStream;
@@ -266,7 +266,7 @@ public final class LocalUrlCacher {
 	}
 
 
-	private static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
+	public static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
 		URL theurl = new URL(url);
 		URLConnection conn = theurl.openConnection();
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -433,8 +433,7 @@ public final class LocalUrlCacher {
 		String contentEncoding = conn.getHeaderField("Content-Encoding");
 		boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
 		if (isGZipped) {
-			// unknown content length, stick with -1
-			connstr = new GZIPInputStream(conn.getInputStream());
+			connstr = GeneralUtils.getGZipInputStream(conn.getURL().toString(), conn.getInputStream());
 			if (DEBUG_CONNECTION) {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
 						"gzipped stream, so ignoring reported content length of {0}", conn.getContentLength());

@@ -28,6 +28,7 @@ import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -41,6 +42,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -210,6 +212,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return GeneralLoadView.getLoadView().loadResidues(viewspan, partial);
 	}
 
+	@Override
+	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial){
+		return new LoadResidueAction(viewspan, partial);
+	}
+	
 	@Override
 	public JFrame getFrame() {
 		return Application.getSingleton().getFrame();

@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -108,6 +109,8 @@ public interface IGBService {
 	public SeqMapViewI getSeqMapView();
 	// for SearchView
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
+	
+	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial);
 	// for Graph Adjuster
 	/**
 	 * get the main JFrame for the application

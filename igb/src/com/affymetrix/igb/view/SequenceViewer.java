@@ -11,6 +11,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
@@ -32,6 +34,7 @@ import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.jidesoft.utils.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,6 +45,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -158,26 +164,39 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		try {
 			if (this.errorMessage == null) {
 				this.aseq = seqmapview.getAnnotatedSeq();
+
+				final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
+
+					public void actionDone(GenericAction action) {
+						mapframe = new JFrame();
+						System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
+						getGoing(residues_sym);//next destination to start the sequence viewer
+					}
+				};
+
 				if (!isGenomicRequest) {
 
-					LoadResidueAction action = new LoadResidueAction();
-					action.loadResidue(residues_sym.getSpan(aseq), true);
-					//GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-					ThreadUtils.runOnEventQueue(new Runnable() {
+					final LoadResidueAction loadResidue = new LoadResidueAction(seqmapview);
+					SwingWorker worker = new SwingWorker() {
 
-						public void run() {
-							seqmapview.setAnnotatedSeq(aseq, true, true, true);
+						@Override
+						protected Object doInBackground() throws Exception {
+							loadResidue.addDoneCallback(doneback);
+							loadResidue.loadResidue(residues_sym.getSpan(aseq), true);
+							loadResidue.removeDoneCallback(doneback);
+							return null;
 						}
-					});
-
+					};
+					worker.execute();
+					
+				}else{
+					doneback.actionDone(null);
 				}
 			}
-			mapframe = new JFrame();
-			System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
-			getGoing(residues_sym);//next destination to start the sequence viewer
 		} catch (Exception e) {
-			if(this.errorMessage == null)
-			this.errorMessage = "Some error ocurred, Please raise a bug request";
+			if (this.errorMessage == null) {
+				this.errorMessage = "Some error ocurred, Please raise a bug request";
+			}
 		} finally {
 			if (errorMessage != null) {
 				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage);

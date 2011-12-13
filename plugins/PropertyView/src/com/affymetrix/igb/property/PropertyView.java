@@ -34,7 +34,7 @@ import javax.swing.table.TableRowSorter;
 
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 	private static final int TAB_POSITION = 1;
 
 	// the table showing name-value pairs
@@ -181,7 +181,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			Object id_obj = props[i].get("id");
 			String id;
 			if (id_obj == null) {
-				id = "no ID";
+				id = BUNDLE.getString("noID");
 			} else {
 				id = id_obj.toString();
 			} // in most cases the id already is a String

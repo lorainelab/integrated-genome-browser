@@ -92,7 +92,7 @@ public final class JTableCutPasteAdapter {
   }
   
   private static void showInvalidSelectionMessage() {
-    String msg = "Invalid selection";
+    String msg = PropertyView.BUNDLE.getString("invalidSelection");
     JOptionPane.showMessageDialog(null, msg, msg, JOptionPane.ERROR_MESSAGE);
   }
   
@@ -103,7 +103,7 @@ public final class JTableCutPasteAdapter {
     }
 	@Override
 	public String getText() {
-		return "Copy";
+		return PropertyView.BUNDLE.getString("copy");
 	}
   };
   
@@ -113,12 +113,12 @@ public final class JTableCutPasteAdapter {
       try {
         doPaste();
       } catch (Exception ex){
-        ErrorHandler.errorPanel("ERROR", ex);
+        ErrorHandler.errorPanel(PropertyView.BUNDLE.getString("ERROR"), ex);
       }
     }
 	@Override
 	public String getText() {
-		return "Paste";
+		return PropertyView.BUNDLE.getString("paste");
 	}
   };
   

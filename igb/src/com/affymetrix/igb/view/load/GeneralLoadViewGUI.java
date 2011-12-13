@@ -15,6 +15,7 @@ import javax.swing.JTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import java.awt.Cursor;
 import java.awt.Rectangle;
 
 /**
@@ -27,6 +28,13 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 	private static final int TAB_POSITION = Integer.MIN_VALUE;
 	private static DataManagementTableModel dataManagementTableModel;
 	private static GeneralLoadViewGUI singleton;
+	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+
+	static {
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+	}
 
 	public static void init(IGBService _igbService) {
 		GeneralLoadView.init(_igbService);
@@ -105,6 +113,11 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
                 jPanel1MouseClicked(evt);
             }
         });
+        jPanel1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                jPanel1MouseMoved(evt);
+            }
+        });
 
         tree.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Empty");
@@ -146,6 +159,15 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 			f.setVisible(true);
 		}
 	}//GEN-LAST:event_jPanel1MouseClicked
+
+	private void jPanel1MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseMoved
+		Rectangle bounds = new Rectangle(190, 5, 70, 12);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_jPanel1MouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton all_residuesB;
     private javax.swing.JTable dataManagementTable;

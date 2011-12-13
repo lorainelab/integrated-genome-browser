@@ -22,7 +22,6 @@ import javax.swing.event.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -258,65 +257,59 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		public void run() {
 
-			final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
-
-				public void actionDone(GenericAction action) {
-					try {
-						igbService.addNotLockedUpMsg(BUNDLE.getString("findingSites"));
-						if (vseq == null || !vseq.isAvailable(span)) {
-							ErrorHandler.errorPanel(BUNDLE.getString("notAvail"));
-							return;
-						}
-						int residue_offset = vseq.getMin();
-						String residues = vseq.getResidues();
-						// Search for reverse complement of query string
-						String rev_searchstring = DNAUtils.reverseComplement(residues);
-
-						int i = 0;
-						for (JLabel label : labelList) {
-							String site_name = label.getText();
-							// done when hit first non-labelled JLabel
-							if (site_name == null || site_name.equals("")) {
-								break;
-							}
-							String site_residues = site_hash.get(site_name);
-							if (site_residues == null) {
-								continue;
-							}
-							Pattern regex = null;
-							try {
-								regex = Pattern.compile(site_residues, Pattern.CASE_INSENSITIVE);
-							} catch (Exception ex) {
-								ex.printStackTrace();
-								continue;
-							}
-
-							System.out.println(MessageFormat.format(BUNDLE.getString("searching"), site_residues));
-
-							residue_offset = vseq.getMin();
-							int hit_count1 = igbService.searchForRegexInResidues(
-									true, regex, residues, residue_offset, glyphs, colors[i % colors.length]);
-
-							// Search for reverse complement of query string
-							//   flip searchstring around, and redo nibseq search...
-							residue_offset = vseq.getMax();
-							int hit_count2 = igbService.searchForRegexInResidues(
-									false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
-
-							System.out.println(MessageFormat.format(BUNDLE.getString("found"), site_residues, "" + hit_count1, "" + hit_count2));
-							igbService.getSeqMap().updateWidget();
-							i++;
-						}
-					} finally {
-						igbService.removeNotLockedUpMsg(BUNDLE.getString("findingSites"));
-					}
-				}
-			};
-
 			GenericAction loadResidue = igbService.loadResidueAction(span, true);
-			loadResidue.addDoneCallback(doneback);
 			loadResidue.actionPerformed(null);
-			loadResidue.removeDoneCallback(doneback);
+
+			try {
+				igbService.addNotLockedUpMsg(BUNDLE.getString("findingSites"));
+				if (vseq == null || !vseq.isAvailable(span)) {
+					ErrorHandler.errorPanel(BUNDLE.getString("notAvail"));
+					return;
+				}
+				int residue_offset = vseq.getMin();
+				String residues = vseq.getResidues();
+				// Search for reverse complement of query string
+				String rev_searchstring = DNAUtils.reverseComplement(residues);
+
+				int i = 0;
+				for (JLabel label : labelList) {
+					String site_name = label.getText();
+					// done when hit first non-labelled JLabel
+					if (site_name == null || site_name.equals("")) {
+						break;
+					}
+					String site_residues = site_hash.get(site_name);
+					if (site_residues == null) {
+						continue;
+					}
+					Pattern regex = null;
+					try {
+						regex = Pattern.compile(site_residues, Pattern.CASE_INSENSITIVE);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						continue;
+					}
+
+					System.out.println(MessageFormat.format(BUNDLE.getString("searching"), site_residues));
+
+					residue_offset = vseq.getMin();
+					int hit_count1 = igbService.searchForRegexInResidues(
+							true, regex, residues, residue_offset, glyphs, colors[i % colors.length]);
+
+					// Search for reverse complement of query string
+					//   flip searchstring around, and redo nibseq search...
+					residue_offset = vseq.getMax();
+					int hit_count2 = igbService.searchForRegexInResidues(
+							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
+
+					System.out.println(MessageFormat.format(BUNDLE.getString("found"), site_residues, "" + hit_count1, "" + hit_count2));
+					igbService.getSeqMap().updateWidget();
+					i++;
+				}
+			} finally {
+				igbService.removeNotLockedUpMsg(BUNDLE.getString("findingSites"));
+			}
+
 		}
 	}
 

@@ -387,8 +387,8 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		for (int i = 0; i < rowIndices.length; i++) {
 			Bundle bundle = getBundleAtRow(rowIndices[i]);
 			if (latest.get(bundle.getSymbolicName()) == null) {
-				System.out.println("isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
-				Logger.getLogger(getClass().getName()).log(Level.WARNING, "isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
+				System.out.println(MessageFormat.format(BUNDLE.getString("internalError1"), bundle.getSymbolicName()));
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, MessageFormat.format(BUNDLE.getString("internalError1"), bundle.getSymbolicName()));
 			}
 			if (isInstalled(bundle) && !bundle.equals(latest.get(bundle.getSymbolicName()))) {
 				updateSelectedBundlesExist = true;
@@ -421,7 +421,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	@Override
 	public synchronized Bundle getFilteredBundle(int index) {
 		if (index < 0 || index >= filteredBundles.size()) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "getFilteredBundle() error at index=" + index + ", filteredBundles.size()=" + filteredBundles.size());
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, MessageFormat.format(BUNDLE.getString("internalError2"), index, filteredBundles.size()));
 			return null;
 		}
 		return filteredBundles.get(index);
@@ -550,7 +550,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		if (resolver.resolve())
 		{
 		    resolver.deploy(true);
-		    igbService.setStatus("bundle " + bundle.getSymbolicName() + ";" + bundle.getVersion() + " installed");
+		    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
 		}
 		else
 		{
@@ -574,7 +574,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	public void uninstallBundle(Bundle bundle) {
 		try {
 			bundle.uninstall();
-		    igbService.setStatus("bundle " + bundle.getSymbolicName() + ";" + bundle.getVersion() + " uninstalled");
+		    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleUninstalled"), bundle.getSymbolicName(), bundle.getVersion()));
 		}
 		catch (BundleException bex) {
 			String msg = PluginsView.BUNDLE.getString("bundleUninstallError");
@@ -685,14 +685,14 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					reloadBundleTable();
 				}
 				catch (ConnectException x) {
-					displayError("plugin repository failed: " + url);
+					displayError(MessageFormat.format(BUNDLE.getString("repositoryFailError"), url));
 				}
 				catch (MalformedURLException x) {
-					displayError("Invalid plugin repository URL: " + url);
+					displayError(MessageFormat.format(BUNDLE.getString("invalidRepositoryError"), url));
 				}
 				catch (Exception x) {
 					igbService.getRepositoryChangerHolder().failRepository(url);
-					displayError("error loading repository: " + url);
+					displayError(MessageFormat.format(BUNDLE.getString("repositoryLoadError"), url));
 					x.printStackTrace();
 				}
 				return null;

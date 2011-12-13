@@ -176,13 +176,14 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 
 				if (!isGenomicRequest) {
 
-					final LoadResidueAction loadResidue = new LoadResidueAction(seqmapview);
 					SwingWorker worker = new SwingWorker() {
 
 						@Override
 						protected Object doInBackground() throws Exception {
+							LoadResidueAction loadResidue = new LoadResidueAction(residues_sym.getSpan(aseq), true);
+							
 							loadResidue.addDoneCallback(doneback);
-							loadResidue.loadResidue(residues_sym.getSpan(aseq), true);
+							loadResidue.actionPerformed(null);
 							loadResidue.removeDoneCallback(doneback);
 							return null;
 						}

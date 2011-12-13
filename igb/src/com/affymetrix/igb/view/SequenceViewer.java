@@ -29,6 +29,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
+import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.BorderLayout;
@@ -158,21 +159,16 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			if (this.errorMessage == null) {
 				this.aseq = seqmapview.getAnnotatedSeq();
 				if (!isGenomicRequest) {
-					if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
-						boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
-								+ " not loaded.  \nDo you want to load residues?");
-						if (!confirm) {
-							return;
+
+					LoadResidueAction action = new LoadResidueAction();
+					action.loadResidue(residues_sym.getSpan(aseq), true);
+					//GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
+					ThreadUtils.runOnEventQueue(new Runnable() {
+
+						public void run() {
+							seqmapview.setAnnotatedSeq(aseq, true, true, true);
 						}
-
-						GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-						ThreadUtils.runOnEventQueue(new Runnable() {
-
-							public void run() {
-								seqmapview.setAnnotatedSeq(aseq, true, true, true);
-							}
-						});
-					}
+					});
 
 				}
 			}

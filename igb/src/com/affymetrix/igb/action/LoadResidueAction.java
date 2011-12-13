@@ -2,6 +2,7 @@
 package com.affymetrix.igb.action;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -13,6 +14,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -21,10 +23,12 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  * @author hiralv
  */
 public class LoadResidueAction extends GenericAction {
-	final SeqMapView smv;
+	final SeqSpan span;
+	final boolean tryFull;
 	
-	public LoadResidueAction(SeqMapView smv){
-		this.smv = smv;
+	public LoadResidueAction(final SeqSpan span, boolean tryFull){
+		this.span = span;
+		this.tryFull = tryFull;
 	}
 	
 	@Override
@@ -32,12 +36,13 @@ public class LoadResidueAction extends GenericAction {
 		return "Load Residue";
 	}
 	
-	public boolean loadResidue(final SeqSpan span, boolean tryFull) {
-		
-		boolean new_residue_loaded = false;
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		
 		//Check if sequence is already loaded
 		if (!span.getBioSeq().isAvailable(span)) {
+			boolean new_residue_loaded = false;
 			Application app = Application.getSingleton();
 			JFrame frame = (app == null) ? null : app.getFrame();
 			final JDialog dialog = new JDialog(frame, "Loading...");
@@ -75,6 +80,7 @@ public class LoadResidueAction extends GenericAction {
 				ThreadUtils.runOnEventQueue(new Runnable() {
 
 					public void run() {
+						final SeqMapView smv = IGB.getSingleton().getMapView();
 						smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
 					}
 				});
@@ -82,7 +88,5 @@ public class LoadResidueAction extends GenericAction {
 		}
 
 		actionDone();
-
-		return new_residue_loaded;
 	}
 }

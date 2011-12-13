@@ -40,6 +40,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
@@ -53,8 +54,8 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final static DecimalFormat per_format;
 	private final static DecimalFormat shift_format;
 	private static String BLANK = "";
-	private static String ON = "On";
-	private static String OFF = "Off";
+	private static String ON = SimpleGraphTab.BUNDLE.getString("ON");
+	private static String OFF = SimpleGraphTab.BUNDLE.getString("OFF");
 	private static final int THRESH_TYPE_PERCENT = 1;
 	private static final int THRESH_TYPE_VALUE = 2;
 	private static int prev_thresh_type = THRESH_TYPE_VALUE;
@@ -74,7 +75,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final JRPTextField shift_startTF = new JRPTextField("GraphScoreThreshSetter_shift_startTF", "0", 5);
 	private final JRPTextField shift_endTF = new JRPTextField("GraphScoreThreshSetter_shift_endTF", "0", 5);
 	private final JRPComboBoxWithSingleListener threshCB = new JRPComboBoxWithSingleListener("GraphScoreThreshSetter_threshCB");
-	private final JRPButton tier_threshB = new JRPButton("GraphScoreThreshSetter_tier_threshB", "Make Track");
+	private final JRPButton tier_threshB = new JRPButton("GraphScoreThreshSetter_tier_threshB", SimpleGraphTab.BUNDLE.getString("makeTrack"));
 	private static final float sliders_per_percent = 10.0f;
 	private static final float percents_per_slider = 1.0f / sliders_per_percent;
 	private static final int total_val_sliders = 1000;
@@ -136,9 +137,9 @@ public final class GraphScoreThreshSetter extends JPanel
 		textP.setLayout(new BoxLayout(textP, BoxLayout.Y_AXIS));
 		slideP.setLayout(new BoxLayout(slideP, BoxLayout.Y_AXIS));
 
-		thresh_aboveB = new JRPRadioButton("GraphScoreThreshSetter_thresh_aboveB", "> thresh");
-		thresh_belowB = new JRPRadioButton("GraphScoreThreshSetter_thresh_belowB", "<= thresh");
-		thresh_unknownB = new JRPRadioButton("GraphScoreThreshSetter_thresh_unknownB", ">?< thresh"); // invisible button
+		thresh_aboveB = new JRPRadioButton("GraphScoreThreshSetter_thresh_aboveB", SimpleGraphTab.BUNDLE.getString("gtThresh"));
+		thresh_belowB = new JRPRadioButton("GraphScoreThreshSetter_thresh_belowB", SimpleGraphTab.BUNDLE.getString("leThresh"));
+		thresh_unknownB = new JRPRadioButton("GraphScoreThreshSetter_thresh_unknownB", SimpleGraphTab.BUNDLE.getString("lgThresh")); // invisible button
 		ButtonGroup pgroup = new ButtonGroup();
 		pgroup.add(thresh_aboveB);
 		pgroup.add(thresh_belowB);
@@ -147,14 +148,14 @@ public final class GraphScoreThreshSetter extends JPanel
 		thresh_belowB.setSelected(false);
 		thresh_unknownB.setSelected(true);
 		Box directionP = Box.createHorizontalBox();
-		directionP.add(new JLabel("Direction: "));
+		directionP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("direction")));
 		directionP.add(Box.createRigidArea(new Dimension(6, 0)));
 		directionP.add(thresh_aboveB);
 		directionP.add(Box.createRigidArea(new Dimension(6, 0)));
 		directionP.add(thresh_belowB);
 
-		labP.add(new JLabel("By Value:"));
-		labP.add(new JLabel("By Percentile:"));
+		labP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("byValue") + ":"));
+		labP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("byPercentile") + ":"));
 		textP.add(score_valT);
 		textP.add(score_perT);
 		slideP.add(score_val_slider);
@@ -178,17 +179,17 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		JPanel thresh_butP = new JPanel();
 		thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));
-		thresh_butP.add(new JLabel("Visibility  "));
+		thresh_butP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("visibility")));
 		thresh_butP.add(threshCB);
 		thresh_butP.add(Box.createRigidArea(new Dimension(6, 0)));
 		thresh_butP.add(tier_threshB);
 
 		JPanel thresh_shiftP = new JPanel();
-		thresh_shiftP.setBorder(new TitledBorder("Offsets for Thresholded Regions"));
+		thresh_shiftP.setBorder(new TitledBorder(SimpleGraphTab.BUNDLE.getString("offsetsThreshReg")));
 		thresh_shiftP.setLayout(new GridLayout(1, 4));
-		thresh_shiftP.add(new JLabel("Start  ", JLabel.RIGHT));
+		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("start"), JLabel.RIGHT));
 		thresh_shiftP.add(shift_startTF);
-		thresh_shiftP.add(new JLabel("End  ", JLabel.RIGHT));
+		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("end"), JLabel.RIGHT));
 		thresh_shiftP.add(shift_endTF);
 		thresh_shiftP.setMaximumSize(new Dimension(300, tf_max_ypix + 30));
 
@@ -223,7 +224,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		if (thresh_setter_frame == null) {
 			JPanel thresh_setter_panel = (JPanel) this;
-			thresh_setter_frame = new JFrame("Graph Thresholds");
+			thresh_setter_frame = new JFrame(SimpleGraphTab.BUNDLE.getString("graphThreshholds"));
 			thresh_setter_frame.getContentPane().add(thresh_setter_panel);
 			thresh_setter_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			thresh_setter_frame.pack();
@@ -603,7 +604,7 @@ public final class GraphScoreThreshSetter extends JPanel
 					sgg.setMaxScoreThreshold(val);
 					sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 				} else {
-					System.out.println("Threshold 'between' not yet implemented");
+					System.out.println(SimpleGraphTab.BUNDLE.getString("threshholdBetweenNotImplementedError"));
 				}
 			}
 			avg_per = avg_per / gcount;
@@ -661,7 +662,7 @@ public final class GraphScoreThreshSetter extends JPanel
 					sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 					sgg.setMaxScoreThreshold(val);
 				} else {
-					System.out.println("Threshold 'between' not yet implemented");
+					System.out.println(SimpleGraphTab.BUNDLE.getString("threshholdBetweenNotImplementedError"));
 				}
 			}
 			avg_val = avg_val / gcount;
@@ -725,18 +726,12 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		SimpleSymWithProps psym = new SimpleSymWithProps();
 		psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-		String meth = "threhold " + pickle_count;
+		String meth = "threshhold " + pickle_count;
 		String description =
-						"threshold, [" + nformat.format(sgg.getMinScoreThreshold()) +
-						" to " + nformat.format(sgg.getMaxScoreThreshold()) +
-						"]" +
-						" offsets: (" + nformat2.format(sgg.getThreshStartShift()) +
-						", " + nformat2.format(sgg.getThreshEndShift()) +
-						")" +
-						//    ", thresh_direction=" + sgg.getThresholdDirection() +
-						", max_gap=" + (int) sgg.getMaxGapThreshold() +
-						", min_run=" + (int) sgg.getMinRunThreshold() +
-						", graph: " + sgg.getLabel();
+			MessageFormat.format(SimpleGraphTab.BUNDLE.getString("description"),
+				nformat.format(sgg.getMinScoreThreshold()), nformat.format(sgg.getMaxScoreThreshold()),
+				nformat2.format(sgg.getThreshStartShift()), nformat2.format(sgg.getThreshEndShift()),
+				(int) sgg.getMaxGapThreshold(), (int) sgg.getMinRunThreshold(), sgg.getLabel());
 		pickle_count++;
 		ViewI view = ((NeoWidget)widg).getView();
 		sgg.drawThresholdedRegions(view, psym, aseq);
@@ -755,7 +750,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		//    Color col = Color.red;
 		igbService.setTrackStyle(meth, col, description);
 
-		System.out.println("Created threshold tier: " + description);
+		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + description);
 
 		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 	}

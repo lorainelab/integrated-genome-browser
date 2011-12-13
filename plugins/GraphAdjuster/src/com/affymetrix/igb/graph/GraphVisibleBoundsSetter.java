@@ -31,7 +31,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.GraphGlyph;
-import javax.swing.border.TitledBorder;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
@@ -48,8 +47,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	public JRPTextField max_perT;
 	public JRPTextField min_valT;
 	public JRPTextField max_valT;
-	public static final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", "By Value");
-	public static final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", "By Percentile");
+	public static final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", SimpleGraphTab.BUNDLE.getString("byValue"));
+	public static final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", SimpleGraphTab.BUNDLE.getString("byPercentile"));
 	private final JPanel valP = new JPanel();  // for adjust-by-value controls
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
 	private final static int max_chars = 8;
@@ -125,7 +124,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
 		glist.add(sgg);
 		thresher.setGraphs(glist);
-		JFrame frm = new JFrame("Graph Percentile Adjuster");
+		JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("graphPercentileAdjuster"));
 		Container cpane = frm.getContentPane();
 		cpane.setLayout(new BorderLayout());
 		cpane.add("Center", thresher);

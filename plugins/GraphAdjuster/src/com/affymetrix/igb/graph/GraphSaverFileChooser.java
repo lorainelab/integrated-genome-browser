@@ -28,11 +28,11 @@ import javax.swing.filechooser.FileFilter;
 public final class GraphSaverFileChooser extends UniFileChooser {
   private static final long serialVersionUID = 1L;
 
-  static public final UniFileFilter wig_filter = new UniFileFilter(new String[] {"wig"}, "Wiggle Graph");
-  static public final UniFileFilter egr_filter = new UniFileFilter(new String[] {"egr"}, "Scored Interval Graph");
-  static public final UniFileFilter gr_filter = new UniFileFilter(new String[] {"gr"}, "Text Graph");
-  static public final UniFileFilter sgr_filter = new UniFileFilter(new String[] {"sgr"}, "Text Graph with Sequence Names");
-  static public final UniFileFilter bgr_filter = new UniFileFilter(new String[] {"bgr"}, "Binary Graph");
+  static public final UniFileFilter wig_filter = new UniFileFilter(new String[] {"wig"}, SimpleGraphTab.BUNDLE.getString("wig"));
+  static public final UniFileFilter egr_filter = new UniFileFilter(new String[] {"egr"}, SimpleGraphTab.BUNDLE.getString("egr"));
+  static public final UniFileFilter gr_filter = new UniFileFilter(new String[] {"gr"}, SimpleGraphTab.BUNDLE.getString("gr"));
+  static public final UniFileFilter sgr_filter = new UniFileFilter(new String[] {"sgr"}, SimpleGraphTab.BUNDLE.getString("sgr"));
+  static public final UniFileFilter bgr_filter = new UniFileFilter(new String[] {"bgr"}, SimpleGraphTab.BUNDLE.getString("bgr"));
   
   public GraphSaverFileChooser(GraphSym sym) {
     super();

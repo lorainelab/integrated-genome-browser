@@ -260,7 +260,9 @@ public final class SearchView extends IGBTabPanel implements
 		remoteSearchCheckBox.setText(MessageFormat.format(REMOTESERVERSEARCH, "" + remoteServerCount, remoteServerPluralText));
 		remoteSearchCheckBox.setToolTipText(MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + remoteServerCount, remoteServerPluralText));
 		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
-		remoteSearchCheckBox.setSelected(remoteServerCount > 0);
+		
+		//Enable this to enable remote server automatically when a remote server is available.
+		//remoteSearchCheckBox.setSelected(remoteServerCount > 0);
 	}
 
 	private void initSequenceCB() {

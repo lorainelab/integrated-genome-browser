@@ -24,7 +24,9 @@ import org.freehep.graphicsio.exportchooser.ImageExportFileType;
 public final class ComponentWriter {
 	
 	static final List<ExportFileType> fileTypes;
-
+	static ExportDialog export = new Export("", false);
+	static boolean fileTypeLoaded = false;
+	
 	static {
 		fileTypes = new ArrayList<ExportFileType>();
 		fileTypes.add(new org.freehep.graphicsio.emf.EMFExportFileType());
@@ -37,18 +39,24 @@ public final class ComponentWriter {
 		fileTypes.add(new org.freehep.graphicsio.ps.PSExportFileType());
 		fileTypes.add(new org.freehep.graphicsio.svg.SVGExportFileType());
 	}
-	
+
 	/** Show the export dialog that allows exporting in a variety of graphics
 	 *  formats using the FreeHep libraries.
 	 */
 	public static void showExportDialog(Component c) {
-		ExportDialog  export = new Export(c.getName(),false);
-		for(ExportFileType type : fileTypes){
-			export.addExportFileType(type);
+		export.setName(c.getName());
+		
+		if (!fileTypeLoaded) {
+			for (ExportFileType type : fileTypes) {
+				export.addExportFileType(type);
+			}
+			Properties props = new Properties();
+			props.put(Export.SAVE_AS_FILE, FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + Export.prefix);
+			export.setUserProperties(props);
+			
+			fileTypeLoaded = true;
 		}
-		Properties props = new Properties();
-		props.put(Export.SAVE_AS_FILE, FileTracker.EXPORT_DIR_TRACKER.getFile().getPath()+Export.prefix);
-		export.setUserProperties(props);
+		
 		export.showExportDialog(c, "Export view as ...", c, "export");
 	}
 
@@ -59,13 +67,13 @@ public final class ComponentWriter {
 		ExportNoDialog exportNoDialog = new ExportNoDialog(f);
 		return exportNoDialog.exportIt(f, c, eft);
 	}
-
-	public static List<ExportFileType> getExportFileTypes(String extension){
+	
+	public static List<ExportFileType> getExportFileTypes(String extension) {
 		List<ExportFileType> ret = new ArrayList<ExportFileType>();
-
-		for(ExportFileType type: fileTypes){
-			for(String ext : type.getExtensions()){
-				if(ext.equalsIgnoreCase(extension)){
+		
+		for (ExportFileType type : fileTypes) {
+			for (String ext : type.getExtensions()) {
+				if (ext.equalsIgnoreCase(extension)) {
 					ret.add(type);
 					return ret;
 				}
@@ -75,13 +83,15 @@ public final class ComponentWriter {
 	}
 	
 	private final static class ExportNoDialog extends ExportDialog {
+		
 		private static final long serialVersionUID = 1L;
 		File f = null;
 		Properties props = new Properties();
+		
 		ExportNoDialog(File f) {
 			this.f = f;
 		}
-
+		
 		@Override
 		protected String selectFile() {
 			return f.getAbsolutePath();
@@ -98,6 +108,7 @@ public final class ComponentWriter {
 			//props.put(SAVE_AS_TYPE, currentType().getFileFilter().getDescription());
 			return true;
 		}
+		
 		boolean exportIt(File f, Component c, ExportFileType eft) {
 			try {
 				this.selectFile();
@@ -109,11 +120,11 @@ public final class ComponentWriter {
 		}
 	}
 	
-	
-	private static class Export extends ExportDialog{
+	private static class Export extends ExportDialog {
+		
 		private static final long serialVersionUID = 1L;
 		private static final String rootKey = ExportDialog.class.getName();
-		private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
+		private static final String SAVE_AS_FILE = rootKey + ".SaveAsFile";
 		private static final String prefix = "/export";
 		
 		private Export(String name, boolean b) {
@@ -121,9 +132,9 @@ public final class ComponentWriter {
 		}
 		
 		@Override
-		protected String selectFile(){
+		protected String selectFile() {
 			String fileName = super.selectFile();
-			if(fileName != null){
+			if (fileName != null) {
 				File file = new File(fileName);
 				FileTracker.EXPORT_DIR_TRACKER.setFile(file.getParentFile());
 			}
@@ -134,8 +145,8 @@ public final class ComponentWriter {
 }
 
 class PNGExportFileType extends ImageExportFileType {
-
-    public PNGExportFileType() {
-        super("png");
-    }
+	
+	public PNGExportFileType() {
+		super("png");
+	}
 }

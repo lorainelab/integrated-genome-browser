@@ -38,6 +38,9 @@ public class EmptyTierGlyphFactory {
 		// for other sequence.
 		if (!feature.getMethods().isEmpty()) {
 			for (String method : feature.getMethods()) {
+				if(method.endsWith(ProbeSetDisplayGlyphFactory.NETAFFX_PROBESETS)){
+					continue;
+				}
 				style = getStyle(method, feature);
 				addTierFor(style, gviewer, feature.getRequestSym());
 			}

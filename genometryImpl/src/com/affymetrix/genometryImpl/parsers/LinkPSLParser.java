@@ -17,6 +17,7 @@ public final class LinkPSLParser extends AbstractPSLParser {
 		// why is annotate_target parameter below set to false?
 		// If the name ends with ".link.psl" then assume it is a mapping
 		// of probe sets to consensus seqs to genome.
+		// Why is it using uri and nameType based on if it was annotate_seq? HV 12/12/11
 		return parse(is, annotate_seq ? uri : nameType, null, group, null, false, annotate_seq, false);
 	}
 }

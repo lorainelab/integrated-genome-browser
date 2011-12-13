@@ -77,6 +77,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	public static final String POLY_A_STACK_METHOD = "netaffx poly_a_stacks";
 	/** Any method name (track-line name) ending with this is taken as a consensus/exemplar sequence. */
 	public static final String NETAFFX_CONSENSUS = " netaffx consensus";
+	public static final String NETAFFX_PROBESETS = "netaffx probesets";
 	private static final Color ps_color = Color.PINK;
 	private static final Color poly_a_site_color = Color.BLUE;
 	private static final Color poly_a_stack_color = Color.CYAN;

@@ -19,14 +19,17 @@ public class BookmarkEditor {
 	private static JRadioButton positionOnlyB;
 	private static JRadioButton positionDataB;
 	private static ButtonGroup group;
+	private static JOptionPane op;
+	private static JScrollPane scrollpane;
+	private static JDialog dialog;
 
 	public static void init(Bookmark b) {
 		bookmark = b;
-		
+
 		if (singleton == null) {
 			singleton = new BookmarkEditor();
-			nameField = new JTextField(b.getName());
-			commentField = new JTextArea("", 5, 8);
+			nameField = new JTextField();
+			commentField = new JTextArea(5, 8);
 			commentField.setLineWrap(true);
 			commentField.setWrapStyleWord(true);
 			positionOnlyB = new JRadioButton("Position Only");
@@ -34,22 +37,30 @@ public class BookmarkEditor {
 			group = new ButtonGroup();
 			group.add(positionOnlyB);
 			group.add(positionDataB);
+			scrollpane = new JScrollPane(commentField);
+			scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE, 
+					JOptionPane.CANCEL_OPTION, null, null);
 		}
 	}
-
-	public static void run() {
-		JScrollPane scrollpane = new JScrollPane(commentField);
-		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		Object[] msg = {"Name:", nameField, "Comment:", scrollpane, positionOnlyB, positionDataB};
-		JOptionPane op = new JOptionPane(msg, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.CANCEL_OPTION, null, null);
-
-		JDialog dialog = op.createDialog("Enter Bookmark Information...");
+	
+	private static void initDialog()
+	{
+		nameField.setText(bookmark.getName());
+		commentField.setText("");
+		op.setMessage(new Object[]{
+					"Name:", nameField, "Comment:", scrollpane,
+					positionOnlyB, positionDataB});
+		dialog = op.createDialog("Enter Bookmark Information...");
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.setAlwaysOnTop(true);
 		dialog.setResizable(true);
 		dialog.setVisible(true);
 		dialog.pack();
+	}
+
+	public static void run() {
+		initDialog();
 
 		int result = JOptionPane.CANCEL_OPTION;
 
@@ -59,8 +70,11 @@ public class BookmarkEditor {
 
 		if (result == JOptionPane.OK_OPTION) {
 			if (positionDataB.isSelected()) {
+				// create a new bookmark includes position and data
+				// otherwise, the bookmark is just position only
 				try {
-					bookmark = BookmarkController.getCurrentBookmark(true, BookmarkActionManager.getInstance().getVisibleSpan());
+					bookmark = BookmarkController.getCurrentBookmark(true, 
+							BookmarkActionManager.getInstance().getVisibleSpan());
 				} catch (MalformedURLException m) {
 					ErrorHandler.errorPanel("Couldn't add bookmark", m);
 					return;

@@ -29,6 +29,7 @@ if [ $? -ne 0 ]; then
 fi
 
 PREFIX=`dirname $PREFIX`
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # File Locations
 ICON="$PREFIX/igb/resources/com/affymetrix/igb/igb.gif"
@@ -66,4 +67,4 @@ fi
 # Launch IGB
 IFS="
 "
-$JAVACMD ${VMARGS[*]} -jar $PREFIX/igb_exe.jar ${ARGS[*]}
+$JAVACMD ${VMARGS[*]} -jar $DIR/igb_exe.jar ${ARGS[*]}

@@ -25,7 +25,7 @@ public final class ComponentWriter {
 	
 	static final List<ExportFileType> fileTypes;
 	static ExportDialog export = new Export("", false);
-	static boolean fileTypeLoaded = false;
+	static boolean fileTypeLoaded = false; // it will allow export tool remember its previous settings
 	
 	static {
 		fileTypes = new ArrayList<ExportFileType>();

@@ -16,6 +16,8 @@ import javax.swing.SwingConstants;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -182,11 +184,11 @@ public class SearchModeResidue implements ISearchMode {
 			igbService.getSeqMapView().zoomTo(newspan);
 		}
 
-		boolean isComplete = vseq.isComplete();
-		boolean confirm = isComplete ? true : igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchConfirmLoad"), seq));
-		if (!confirm) {
-			return false;
-		}
+//		boolean isComplete = vseq.isComplete();
+//		boolean confirm = isComplete ? true : igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchConfirmLoad"), seq));
+//		if (!confirm) {
+//			return false;
+//		}
 		return true;
 	}
 
@@ -205,10 +207,14 @@ public class SearchModeResidue implements ISearchMode {
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
 	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
-		boolean isComplete = chrFilter.isComplete();
-		if (!isComplete) {
-			igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
-		}
+		GenericAction loadResidue = igbService.loadResidueAction(igbService.getSeqMapView().getVisibleSpan(), true);
+		loadResidue.actionPerformed(null);
+		
+//		boolean isComplete = chrFilter.isComplete();
+//		if (!isComplete) {
+//			igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
+//		}
+		
 		String friendlySearchStr = MessageFormat.format(BUNDLE.getString("friendlyPattern"), search_text, chrFilter.getID());
 		Pattern regex = null;
 		try {

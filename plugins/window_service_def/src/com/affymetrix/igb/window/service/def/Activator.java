@@ -3,7 +3,6 @@ package com.affymetrix.igb.window.service.def;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +19,6 @@ import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
 	private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
-	private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
 	private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
 	private static BundleContext bundleContext;
 
@@ -45,10 +43,10 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception {
 		Activator.bundleContext = _bundleContext;
 		final List<String> tabPanels = new ArrayList<String>();
-		Enumeration<String> bundleKeys = BUNDLE_PROPERTIES.getKeys();
+		Enumeration<String> bundleKeys = WindowServiceDefaultImpl.BUNDLE.getKeys();
 		while (bundleKeys.hasMoreElements()) {
 			String key = bundleKeys.nextElement();
-			String value = BUNDLE_PROPERTIES.getString(key);
+			String value = WindowServiceDefaultImpl.BUNDLE.getString(key);
 			if (value.contains(TAB_PANEL_CATEGORY)) {
 				for (String part : value.split(";")) {
 					if (part.startsWith(TAB_PANEL_CATEGORY)) {
@@ -84,7 +82,7 @@ public class Activator implements BundleActivator {
 			, SERVICE_FILTER);
 		}
 		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading IGBTabPanels", x.getMessage());
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, WindowServiceDefaultImpl.BUNDLE.getString("loadError"), x.getMessage());
 		}
 		bundleContext.registerService(IStopRoutine.class.getName(), 
 			new IStopRoutine() {

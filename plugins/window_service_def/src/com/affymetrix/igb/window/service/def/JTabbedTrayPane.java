@@ -170,7 +170,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 		MouseListener[] mouseListeners = tab_pane.getMouseListeners();
 		if (mouseListeners == null || mouseListeners.length != 1) {
-			System.out.println("Internal error in " + this.getClass().getName() + " constructor, mouseListeners");
+			System.out.println(MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("internalError"), this.getClass().getName()));
 		}
 		else {
 			final MouseListener originalMouseListener = mouseListeners[0];

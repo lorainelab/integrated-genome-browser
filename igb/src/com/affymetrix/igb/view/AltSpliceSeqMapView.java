@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -7,6 +8,7 @@ import javax.swing.JPopupMenu;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -18,13 +20,13 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import java.awt.Adjustable;
 
-final class AltSpliceSeqMapView extends SeqMapView {
+final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
 	private boolean slicing_in_effect = false;
 	/**
@@ -44,6 +46,7 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		}
 		report_hairline_position_in_status_bar = false;
 		report_status_in_status_bar = false;
+		IGB.getSingleton().getMapView().addToRefreshList(this);
 	}
 
 	@Override
@@ -173,6 +176,11 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		}
 	}
 	
+	public void mapRefresh() {
+		if(slicing_in_effect && slice_symmetry != null){
+			sliceAndDiceNow(slice_symmetry);
+		}
+	}
 	
 	/**
 	 *  Performs a genometry-based slice-and-dice.

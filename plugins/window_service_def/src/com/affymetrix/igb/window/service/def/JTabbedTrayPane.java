@@ -151,8 +151,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				IGBTabPanel sel = (IGBTabPanel)tab_pane.getSelectedComponent();
-				GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
-
+				if (sel != null) {
+					GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
+				}
 			}
 		});
 

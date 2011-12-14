@@ -52,7 +52,7 @@ public final class MinRunThresholder extends JPanel
 
   static MinRunThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MinRunThresholder dthresher = new MinRunThresholder(sgg, widg);
-    JFrame frm = new JFrame("Graph MinRun Threshold Control");
+    JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("minrunControl"));
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", dthresher);
@@ -86,7 +86,7 @@ public final class MinRunThresholder extends JPanel
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     this.add(Box.createRigidArea(new Dimension(6,0)));
-    this.add(new JLabel("Min Run > "));
+    this.add(new JLabel(SimpleGraphTab.BUNDLE.getString("minRun") + " > "));
     this.add(minrunTF);
     this.add(tslider);
 

@@ -58,6 +58,7 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -65,6 +66,8 @@ import javax.swing.event.*;
 
 public final class SimpleGraphTab
 		implements SeqSelectionListener, SymSelectionListener {
+
+	//System.out.println() statements do not show on the screen, they are not translated.
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
 	private static SimpleGraphTab singleton;
@@ -296,7 +299,7 @@ public final class SimpleGraphTab
 		}
 
 		if (num_glyphs == 0) {
-			selected_graphs_label.setText("No graphs selected");
+			selected_graphs_label.setText(SimpleGraphTab.BUNDLE.getString("noSelectError"));
 		} else if (num_glyphs == 1) {
 			GraphSym graf_0 = grafs.get(0);
 			selected_graphs_label.setText(graf_0.getGraphName());
@@ -307,7 +310,7 @@ public final class SimpleGraphTab
 			color = gl.getGraphState().getTierStyle().getForeground();
 			fgColorComboBox.setSelectedColor(color);
 		} else {
-			selected_graphs_label.setText(num_glyphs + " graphs selected");
+			selected_graphs_label.setText(MessageFormat.format(SimpleGraphTab.BUNDLE.getString("selected"), num_glyphs));
 			fgColorComboBox.setSelectedColor(null);
 			bgColorComboBox.setSelectedColor(null);
 		}
@@ -844,7 +847,7 @@ public final class SimpleGraphTab
 					updateViewer();
 				}
 			} else {
-				ErrorHandler.errorPanel(BUNDLE.getString("invalidParam") + " \"" + paramT.getText() + "\" for " + trans.getParamPrompt());
+				ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("invalidParam"), paramT.getText(), trans.getParamPrompt()));
 			}
 		}
 
@@ -965,7 +968,7 @@ public final class SimpleGraphTab
 		int gcount = grafs.size();
 		if (gcount > 1) {
 			// actually shouldn't get here, since save button is disabled if more than one graph
-			ErrorHandler.errorPanel("Can only save one graph at a time");
+			ErrorHandler.errorPanel(SimpleGraphTab.BUNDLE.getString("graphSaveError1"));
 		} else if (gcount == 1) {
 			GraphSym gsym = grafs.get(0);
 			try {
@@ -978,7 +981,7 @@ public final class SimpleGraphTab
 					GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getAbsolutePath());
 				}
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error saving graph", ex);
+				ErrorHandler.errorPanel(MessageFormat.format(SimpleGraphTab.BUNDLE.getString("graphSaveError1"), ex));
 			}
 		}
 	}

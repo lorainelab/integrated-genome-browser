@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.*;
+import java.text.MessageFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -42,6 +43,8 @@ public final class PercentThresholder extends JPanel
   private final JRPCheckBox syncCB;
   private boolean sync_min_max;
 
+  //System.out.println() statements do not show on the screen, they are not translated.
+  
   // info2pscores is a hash of GraphGlyphs' data model
   //   (usually a GraphSym if using genometry) to float[] arrays, each of length
   //   (sliders_per_percent * total_percent), and each value v at index i is
@@ -80,7 +83,7 @@ public final class PercentThresholder extends JPanel
     List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
     glist.add(sgg);
     thresher.setGraphs(glist);
-    JFrame frm = new JFrame("Graph Percentile Adjuster");
+    JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("graphPercentAdjuster"));
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", thresher);
@@ -157,7 +160,7 @@ public final class PercentThresholder extends JPanel
     this.add(textP);
     this.add(slideP);
 
-    syncCB = new JRPCheckBox("PercentThresholder_syncCB", "Sync Min/Max");
+    syncCB = new JRPCheckBox("PercentThresholder_syncCB", SimpleGraphTab.BUNDLE.getString("sync"));
 
     min_perT.addActionListener(this);
     max_perT.addActionListener(this);
@@ -168,7 +171,7 @@ public final class PercentThresholder extends JPanel
     graphs.clear();
 		for (GraphGlyph gl : newgraphs) {
       Object info = gl.getInfo();
-      if (info == null) { System.err.println("Graph has no info! " + gl); }
+      if (info == null) { System.err.println(MessageFormat.format(SimpleGraphTab.BUNDLE.getString("noInfoError"), gl)); }
       float[] p2score = info2pscores.get(info);
       if (p2score == null) {
 	p2score = calcPercents2Scores(gl);

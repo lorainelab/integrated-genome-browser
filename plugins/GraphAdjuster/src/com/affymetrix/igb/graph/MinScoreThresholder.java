@@ -47,7 +47,7 @@ public final class MinScoreThresholder extends JPanel
 
   static MinScoreThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MinScoreThresholder dthresher = new MinScoreThresholder(sgg, widg);
-    JFrame frm = new JFrame("Graph Score Threshold Control");
+    JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("scoreControl"));
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", dthresher);
@@ -78,7 +78,7 @@ public final class MinScoreThresholder extends JPanel
     minscoreTF = new JRPTextField("MinScoreThresholder_minscoreTF", 5);
     JPanel valpan = new JPanel();
     valpan.setLayout(new GridLayout(1, 2));
-    valpan.add(new JLabel("Score"));
+    valpan.add(new JLabel(SimpleGraphTab.BUNDLE.getString("score")));
     valpan.add(minscoreTF);
 
     this.setLayout(new BorderLayout());

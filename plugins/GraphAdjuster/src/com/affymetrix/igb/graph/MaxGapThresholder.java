@@ -53,7 +53,7 @@ public final class MaxGapThresholder extends JPanel
 
   static MaxGapThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MaxGapThresholder dthresher = new MaxGapThresholder(sgg, widg);
-    JFrame frm = new JFrame("Graph MaxGap Threshold Control");
+    JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("maxgapControl"));
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", dthresher);
@@ -87,7 +87,7 @@ public final class MaxGapThresholder extends JPanel
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     this.add(Box.createRigidArea(new Dimension(6,0)));
-    this.add(new JLabel("Max Gap <= "));
+    this.add(new JLabel(SimpleGraphTab.BUNDLE.getString("maxGap") + " <= "));
     this.add(maxgapTF);
     this.add(tslider);
 

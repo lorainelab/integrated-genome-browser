@@ -148,7 +148,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		thresh_belowB.setSelected(false);
 		thresh_unknownB.setSelected(true);
 		Box directionP = Box.createHorizontalBox();
-		directionP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("direction")));
+		directionP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("direction") + ": "));
 		directionP.add(Box.createRigidArea(new Dimension(6, 0)));
 		directionP.add(thresh_aboveB);
 		directionP.add(Box.createRigidArea(new Dimension(6, 0)));
@@ -179,7 +179,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		JPanel thresh_butP = new JPanel();
 		thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));
-		thresh_butP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("visibility")));
+		thresh_butP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("visibility") + "  "));
 		thresh_butP.add(threshCB);
 		thresh_butP.add(Box.createRigidArea(new Dimension(6, 0)));
 		thresh_butP.add(tier_threshB);
@@ -187,9 +187,9 @@ public final class GraphScoreThreshSetter extends JPanel
 		JPanel thresh_shiftP = new JPanel();
 		thresh_shiftP.setBorder(new TitledBorder(SimpleGraphTab.BUNDLE.getString("offsetsThreshReg")));
 		thresh_shiftP.setLayout(new GridLayout(1, 4));
-		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("start"), JLabel.RIGHT));
+		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("start") + "  ", JLabel.RIGHT));
 		thresh_shiftP.add(shift_startTF);
-		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("end"), JLabel.RIGHT));
+		thresh_shiftP.add(new JLabel(SimpleGraphTab.BUNDLE.getString("end") + "  ", JLabel.RIGHT));
 		thresh_shiftP.add(shift_endTF);
 		thresh_shiftP.setMaximumSize(new Dimension(300, tf_max_ypix + 30));
 
@@ -750,7 +750,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		//    Color col = Color.red;
 		igbService.setTrackStyle(meth, col, description);
 
-		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + description);
+		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + ": " + description);
 
 		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 	}

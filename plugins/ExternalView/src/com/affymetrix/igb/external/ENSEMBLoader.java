@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -39,9 +40,8 @@ class ENSEMBLoader extends BrowserLoader {
 						ExternalViewer.class.getResourceAsStream(urlfile);
 
 		if (file_input_str == null) {
-			ErrorHandler.errorPanel("Cannot open ensembl url mapping file",
-							"Cannot find ensembl url mapping file '" + urlfile + "'.\n" +
-							"ENSEMBL view will not be available.");
+			ErrorHandler.errorPanel(ExternalViewer.BUNDLE.getString("emsembleFileErrorTitle"),
+					MessageFormat.format(ExternalViewer.BUNDLE.getString("emsembleFileError"), urlfile));
 		}
 		BufferedReader d = null;
 	    
@@ -82,10 +82,10 @@ class ENSEMBLoader extends BrowserLoader {
 	
 	public String getUrlForView(Loc loc, int pixWidth) {
 		if (!urlMap.containsKey(loc.db)) {
-			return "Error: could not transpose the genome " + loc.db + " for ENSEMBL";
+			return MessageFormat.format(ExternalViewer.BUNDLE.getString("transposeError"), loc.db);
 		}
 		if( loc.length() >= 100000){
-			return "Error: the selected region is too large (>100000)";
+			return ExternalViewer.BUNDLE.getString("regionTooLargeError");
 		}
 		String chr = loc.chr.replaceAll("chr", "");
 		String url = urlMap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start+1) + "-" + loc.end; //ensembl = 1 based
@@ -108,7 +108,7 @@ class ENSEMBLoader extends BrowserLoader {
 			url = getUrlForView(loc, pixWidth);
 		}
 		catch(Exception e){
-			url = "Error: Could not translate UCSC query for ENSEMBL: " + loc;
+			url = MessageFormat.format(ExternalViewer.BUNDLE.getString("translateUCSCEnsembleError"), loc);
 		}
 		if(url.startsWith("http")){
 			String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
@@ -125,7 +125,7 @@ class ENSEMBLoader extends BrowserLoader {
 				}
 			}
 		}
-		return new ImageError(createErrorImage(url, pixWidth), "Error: " + url);
+		return new ImageError(createErrorImage(url, pixWidth), MessageFormat.format(ExternalViewer.BUNDLE.getString("Error"), url));
 	}
 }
 
@@ -158,7 +158,7 @@ class ENSEMBLURLFinder implements URLFinder {
 				}
 			}
 		}
-		return "Error: could not find image URL in page " + redirectedURL.toExternalForm();
+		return MessageFormat.format(ExternalViewer.BUNDLE.getString("findImageURLError"), redirectedURL.toExternalForm());
 	}
 }
 

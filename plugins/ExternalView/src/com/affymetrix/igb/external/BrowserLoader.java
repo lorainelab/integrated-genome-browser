@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,7 +70,7 @@ public abstract class BrowserLoader {
 		try {
 			request_con = getConnection(url, cookie);
 			if(request_con == null){
-				return ("Error: could not resolve connection");
+				return (ExternalViewer.BUNDLE.getString("connError"));
 			}
 			input_stream = request_con.getInputStream();
 			in = new BufferedReader(new InputStreamReader(input_stream));
@@ -77,10 +78,10 @@ public abstract class BrowserLoader {
 
 		} catch (SocketException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
-			return ("Error: the server was not able to return the answer in the appropriate time");
+			return (ExternalViewer.BUNDLE.getString("serverError"));
 		} catch (IOException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
-			return ("Error: " + e.getMessage());
+			return (MessageFormat.format(ExternalViewer.BUNDLE.getString("error"), e.getMessage()));
 		} finally {
 			GeneralUtils.safeClose(input_stream);
 			GeneralUtils.safeClose(in);

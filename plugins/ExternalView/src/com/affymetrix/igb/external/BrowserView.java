@@ -9,6 +9,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -70,8 +71,8 @@ public abstract class BrowserView extends JPanel {
 	public BrowserView(JComboBox selector,final IGBService igbService,final UCSCViewAction ucscViewAction) {
 		super();
 //		this.igbService = igbService;
-		update_button = new JRPButton(getClass().getSimpleName() + "_updateButton", "update");
-		settingsButton = new JRPButton(getClass().getSimpleName() + "_settingsButton", "settings");
+		update_button = new JRPButton(getClass().getSimpleName() + "_updateButton", ExternalViewer.BUNDLE.getString("update"));
+		settingsButton = new JRPButton(getClass().getSimpleName() + "_settingsButton", ExternalViewer.BUNDLE.getString("settings"));
 		this.ucscViewAction = ucscViewAction;
 		initializeCookies();
 		this.setLayout(new BorderLayout());
@@ -92,14 +93,14 @@ public abstract class BrowserView extends JPanel {
 		
 		
 
-		update_button.setToolTipText("update the view");
+		update_button.setToolTipText(ExternalViewer.BUNDLE.getString("updateViewTT"));
 		update_button.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				if (worker != null) {
 					worker.cancel(true);
 				}
-				final String msg = "Updating " + getViewName() + " View...";
+				final String msg = MessageFormat.format(ExternalViewer.BUNDLE.getString("updatingMessage"), getViewName());
 				igbService.addNotLockedUpMsg(msg);
 				final int pixWidth = scroll.getViewport().getWidth();
 				worker = new SwingWorker<Image, Void>() {
@@ -109,7 +110,7 @@ public abstract class BrowserView extends JPanel {
 						String ucscQuery = ucscViewAction.getUCSCQuery();
 						Loc loc = Loc.fromUCSCQuery(ucscQuery);
 						if(ucscQuery.equals("") || loc.db.equals("")){
-							return BrowserLoader.createErrorImage("could not resolve url for genome", pixWidth);
+							return BrowserLoader.createErrorImage(ExternalViewer.BUNDLE.getString("resolveError"), pixWidth);
 						}
 						return getImage(loc, pixWidth);
 					}
@@ -141,7 +142,7 @@ public abstract class BrowserView extends JPanel {
 			}
 		});
 
-		settingsButton.setToolTipText("personalize view");
+		settingsButton.setToolTipText(ExternalViewer.BUNDLE.getString("personalViewTT"));
 		settingsButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

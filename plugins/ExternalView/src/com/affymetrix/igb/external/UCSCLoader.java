@@ -3,6 +3,7 @@ package com.affymetrix.igb.external;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +51,7 @@ public class UCSCLoader extends BrowserLoader {
 					return "http://genome.ucsc.edu/trash/hgt/" + fileName;
 				}
 			}
-			return "Error: could not find image URL in page";
+			return MessageFormat.format(ExternalViewer.BUNDLE.getString("findImageURLError"), "");
 		}
 	}
 }

@@ -45,7 +45,7 @@ public class UCSCView extends BrowserView {
 
 	@Override
 	public JDialog getViewHelper(Window window) {
-		return new UCSCHelper(window, "Customize UCSC settings");
+		return new UCSCHelper(window, ExternalViewer.BUNDLE.getString("UCSCCustomize"));
 	}
 
 	@Override
@@ -74,8 +74,8 @@ public class UCSCView extends BrowserView {
 	 **/
 	public class UCSCHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JRPButton okButton = new JRPButton("UCSCView_okButton", "submit");
-		private final JRPButton ucscInfo = new JRPButton("UCSCView_ucscInfo", "UCSC info");
+		private final JRPButton okButton = new JRPButton("UCSCView_okButton", ExternalViewer.BUNDLE.getString("submit"));
+		private final JRPButton ucscInfo = new JRPButton("UCSCView_ucscInfo", ExternalViewer.BUNDLE.getString("UCSCinfo"));
 		private final JRPTextField userIdField = new JRPTextField("UCSCView_userIdField", getCookie(UCSCUSERID), 15);
 		private final Font font = okButton.getFont();
 	
@@ -103,7 +103,7 @@ public class UCSCView extends BrowserView {
 			panel.add(ucscInfo);
 			panel.add(Box.createHorizontalGlue());
 			panel.add(Box.createHorizontalStrut(5));
-			panel.add(new JLabel("UCSC user id (hguid):"));
+			panel.add(new JLabel(ExternalViewer.BUNDLE.getString("ucscUserId") + ":"));
 			panel.add(Box.createHorizontalStrut(5));
 			panel.add(userIdField);
 			panel.add(Box.createHorizontalStrut(5));
@@ -120,14 +120,14 @@ public class UCSCView extends BrowserView {
 					dispose();
 				}
 			});
-			okButton.setToolTipText("Set your UCSC id for the session");
+			okButton.setToolTipText(ExternalViewer.BUNDLE.getString("ucscUserIdTT"));
 			ucscInfo.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
 					GeneralUtils.browse("http://genome.ucsc.edu/cgi-bin/cartDump");
 				}
 			});
-			ucscInfo.setToolTipText("<html>Opens the browser with the UCSC user info from cookie.</br>Type the number at the bottom of the screen</br>where it says \"hguid=...\" into the text box and click submit.</html>");
+			ucscInfo.setToolTipText("<html>" + ExternalViewer.BUNDLE.getString("ucscTT1") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT2") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT3") + "</html>");
 			getContentPane().add("Center", pane);
 			getContentPane().add("South", panel);
 		}

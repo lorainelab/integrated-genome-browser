@@ -29,7 +29,7 @@ import javax.swing.JTextPane;
  */
 public class EnsemblView extends BrowserView {
 	private static final long serialVersionUID = 1L;
-	public static final String viewName = "Ensembl";
+	public static final String viewName = ExternalViewer.BUNDLE.getString("ensembl");
 	private static final String ENSEMBLSETTINGS = "ensemblSettings";
 	public static final String ENSEMBLSESSION = "ENSEMBL_WWW_SESSION";
 	public static final String ENSEMBLWIDTH = "ENSEMBL_WIDTH";
@@ -47,8 +47,8 @@ public class EnsemblView extends BrowserView {
 	public JDialog getViewHelper(Window window) {
 		Loc loc = getLoc();
 		String url = ensemblLoader.url(loc);
-		String helper = url != "" ? "<p>For this genome the url is:<a href="+url+">"+url+"</a></p>" : "<p>Unfortunately I could not map the current genome to an ENSEMBL URL</p>";
-		return new ENSEMBLHelper(window, "Customize Ensembl settings", helper);
+		String helper = url != "" ? "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlMessage") + ":<a href="+url+">"+url+"</a></p>" : "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlError") + "</p>";
+		return new ENSEMBLHelper(window, ExternalViewer.BUNDLE.getString("ensemblCustomize"), helper);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class EnsemblView extends BrowserView {
 	 **/
 	class ENSEMBLHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JRPButton okButton = new JRPButton("ExternalView_okButton", "submit");
+		private final JRPButton okButton = new JRPButton("ExternalView_okButton", ExternalViewer.BUNDLE.getString("submit"));
 		private final JRPTextField userIdField = new JRPTextField("ExternalView_userId", getCookie(ENSEMBLSESSION), 50);
 
 		public ENSEMBLHelper(Window window, String string, String helper) {
@@ -89,8 +89,8 @@ public class EnsemblView extends BrowserView {
 			final JTextPane pane = new JTextPane();
 			pane.setContentType("text/html");
 
-			String text = "<h1>Setting the ENSEMBL cookie</h1><p>With the ENSEMBL cookie value you can synchronize the Viewer settings with your browser.</p>";
-			text += "<p>ENSEMBL puts a cookie into your browser called ENSEMBL_WWW_SESSION.</p><p>You have to put its value into the textfield.</p>";
+			String text = "<h1>" + ExternalViewer.BUNDLE.getString("ensemblCookieHeader") + "</h1><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage1") + "</p>";
+			text += "<p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage2") + "</p><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage3") + "</p>";
 			text += helper;
 			pane.setText(text);
 			pane.setEditable(false);
@@ -98,7 +98,7 @@ public class EnsemblView extends BrowserView {
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 			panel.add(Box.createHorizontalGlue());
 			panel.add(Box.createHorizontalStrut(5));
-			panel.add(new JLabel("ENSEMBL cookie: (" + ENSEMBLSESSION + "):"));
+			panel.add(new JLabel(ExternalViewer.BUNDLE.getString("ensemblCookie") + ": (" + ENSEMBLSESSION + "):"));
 			panel.add(Box.createHorizontalStrut(5));
 			panel.add(userIdField);
 			panel.add(Box.createHorizontalStrut(5));
@@ -115,7 +115,7 @@ public class EnsemblView extends BrowserView {
 					dispose();
 				}
 			});
-			okButton.setToolTipText("Set your ENSEMBL id for the session");
+			okButton.setToolTipText(ExternalViewer.BUNDLE.getString("okTT"));
 
 			getContentPane().add("Center", pane);
 			getContentPane().add("South", panel);

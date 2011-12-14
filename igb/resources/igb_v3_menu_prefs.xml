@@ -79,16 +79,6 @@
                                     <entry key="item" value="PreferencesAction" />
                                 </map>
                             </node>
-                            <node name="m01_10_run_script">
-                                <map>
-                                    <entry key="item" value="RunScriptAction" />
-                                </map>
-                            </node>
-                            <node name="m01_11_save_script">
-                                <map>
-                                    <entry key="item" value="SaveScriptAction" />
-                                </map>
-                            </node>
                             <node name="m01_12_separator">
                                 <map>
                                     <entry key="separator" value="true" />

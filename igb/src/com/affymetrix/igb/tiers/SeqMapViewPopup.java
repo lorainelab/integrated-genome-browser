@@ -413,6 +413,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("maximizeTrackAction");
 		}
 	};
+/* not ready yet
 	private final Action repack_tracks_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -426,6 +427,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("repackTracksAction");
 		}
 	};
+*/
 	private final Action change_expand_max_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -1168,7 +1170,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (add_maximize) {
 			popup.add(maximize_track_action);
 		}
-		popup.add(repack_tracks_action);
+//		popup.add(repack_tracks_action);
 		popup.add(delete_action);
 		popup.add(show_all_action);
 

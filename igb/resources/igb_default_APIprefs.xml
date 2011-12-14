@@ -145,6 +145,7 @@
                                     <entry key="item" value="PreferencesAction" />
                                 </map>
                             </node>
+<!-- not ready yet
                             <node name="m01_10_run_script">
                                 <map>
                                     <entry key="item" value="RunScriptAction" />
@@ -155,6 +156,7 @@
                                     <entry key="item" value="SaveScriptAction" />
                                 </map>
                             </node>
+-->
                             <node name="m01_12_separator">
                                 <map>
                                     <entry key="separator" value="true" />

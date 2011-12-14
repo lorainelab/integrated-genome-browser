@@ -1,6 +1,7 @@
 package com.affymetrix.igb.window.service.def;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 
 import javax.swing.JComponent;
@@ -52,5 +53,11 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	@Override
 	protected void setTabComponent() {
 		setBottomComponent(tab_pane);
+	}
+
+	@Override
+	protected void setMinSize() {
+		tab_pane.setMinimumSize(new Dimension((int)tab_pane.getMinimumSize().getWidth(), MINIMUM_WIDTH));
+		_baseComponent.setMinimumSize(new Dimension((int)_baseComponent.getMinimumSize().getWidth(), MINIMUM_WIDTH));
 	}
 }

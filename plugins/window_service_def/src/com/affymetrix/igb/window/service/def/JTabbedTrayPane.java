@@ -41,6 +41,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private static final long serialVersionUID = 1L;
+	protected static final int MINIMUM_WIDTH = 40;
 
 	protected enum TrayState {
 		HIDDEN,
@@ -57,14 +58,16 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 	}
 
+	protected final JComponent _baseComponent;
 	private static final int DIVIDER_SIZE = 8;
-	protected double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
+	private double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
 	protected final JRPTabbedPane tab_pane;
 	private final TabState tabState;
 	private final List<TrayStateChangeListener> trayStateChangeListeners;
 	protected TrayState trayState;
 	private final String title;
 	private boolean retractDividerSet;
+	private boolean minSizeSet;
 	private JFrame frame;
 	private boolean initialized = false;
 
@@ -78,6 +81,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @return the full size of the tray
 	 */
 	protected abstract int getFullSize();
+	/**
+	 * set the minimum size of the two components
+	 */
+	protected abstract void setMinSize();
 	/**
 	 * return the width (or height) of the given tab panel
 	 * @param tabComponent the tab panel
@@ -123,6 +130,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	public JTabbedTrayPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(splitOrientation);
+		this._baseComponent = _baseComponent;
 		this.tabState = tabState;
 		retractDividerSet = false;
 		trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
@@ -482,6 +490,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private void initTray() {
 		if (trayState == TrayState.HIDDEN) {
 			invokeTrayState(TrayState.EXTENDED);
+		}
+		if (trayState == TrayState.EXTENDED && !minSizeSet) {
+			setMinSize();
+			minSizeSet = true;
 		}
 		if (trayState == TrayState.RETRACTED && !retractDividerSet) {
 			setDividerLocation(getRetractDividerLocation());

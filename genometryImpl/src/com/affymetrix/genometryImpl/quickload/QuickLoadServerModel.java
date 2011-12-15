@@ -216,7 +216,15 @@ public final class QuickLoadServerModel {
 			filename = getPath(genome_name, Constants.annotsTxt);
 			istr = getInputStream(filename, getCacheAnnots(), false);
 
-			return processAnnotsTxt(istr, annotList);
+			annots_found = processAnnotsTxt(istr, annotList);
+			
+			if(!annots_found){
+				ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
+					+ "file for requested genome version {1}. "
+					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
+			}
+			
+			return annots_found;
 
 		}catch (Exception ex) {
 			Logger.getLogger(QuickLoadServerModel.class.getName()).log(

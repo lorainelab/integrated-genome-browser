@@ -1,5 +1,6 @@
 package com.affymetrix.igb.osgi.service;
 
+import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.net.URL;
@@ -264,4 +265,8 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 			((TabHolder)getParent().getParent()).selectTab(this);
 		}
 	}
+
+	// dummy operations for GUIBuilder
+	public void setDefaultCloseOperation(int i) {} // ignore
+	public Container getContentPane() { return this; }
 }

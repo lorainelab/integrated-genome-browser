@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
@@ -283,8 +284,15 @@ public final class OrfAnalyzer extends JComponent
 
 	private void adjustMap() {
 		AffyTieredMap tiermap = smv.getSeqMap();
+		List<SeqSymmetry> syms = smv.getSelectedSyms();
+		if(!syms.isEmpty())
+			smv.select(new ArrayList<SeqSymmetry>(1), true);
+		
 		tiermap.repack();
 		tiermap.stretchToFit(false, true);
 		tiermap.updateWidget();
+		
+		if(!syms.isEmpty())
+			smv.select(syms, true);
 	}
 }

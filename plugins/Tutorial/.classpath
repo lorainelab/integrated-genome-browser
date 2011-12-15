@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/genoviz"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/igb_service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/window_service"/>
+	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

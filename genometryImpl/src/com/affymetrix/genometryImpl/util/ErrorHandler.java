@@ -18,7 +18,10 @@ import java.awt.Toolkit;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.*;
+
+import com.affymetrix.genometryImpl.event.GenericAction;
 
 /**
  * Simple routines for bringing-up an error message panel and also logging
@@ -50,7 +53,7 @@ public abstract class ErrorHandler {
 	}
 
 	public static void errorPanel(final String title, String message, final List<Throwable> errs) {
-		errorPanel((JFrame) null, title, message, errs);
+		errorPanel((JFrame) null, title, message, errs, null);
 	}
 
 	public static void errorPanel(String title, String message, Component c) {
@@ -66,7 +69,19 @@ public abstract class ErrorHandler {
 		if(e != null){
 			errs.add(e);
 		}
-		errorPanel((JFrame) null, title, message, errs);
+		errorPanel((JFrame) null, title, message, errs, null);
+	}
+
+	private static void processDialog(JOptionPane pane, JDialog dialog, List<GenericAction> actions) {
+		dialog.setVisible(true);
+		Object selectedValue = pane.getValue();
+		if (actions != null) {
+			for (GenericAction action : actions) {
+				if (selectedValue.equals(action.getText())) {
+					action.actionPerformed(null);
+				}
+			}
+		}
 	}
 
 	/** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
@@ -80,7 +95,7 @@ public abstract class ErrorHandler {
 	 *  the exception text will be appended to the message and
 	 *  a stack trace might be printed on standard error.
 	 */
-	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs) {
+	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch
@@ -120,17 +135,24 @@ public abstract class ErrorHandler {
 		Toolkit.getDefaultToolkit().beep();
 		final Component scroll_pane = makeScrollPane(message);
 
+		String[] options = null;
+		if (actions != null) {
+			options= new String[actions.size()];
+			for (int i = 0; i < actions.size(); i++) {
+				options[i] = actions.get(i).getText();
+			}
+		}
 		final JOptionPane pane = new JOptionPane(scroll_pane, JOptionPane.ERROR_MESSAGE, 
-				JOptionPane.DEFAULT_OPTION);
+				JOptionPane.DEFAULT_OPTION, null, options);
 		final JDialog dialog = pane.createDialog(frame, title);
 		dialog.setResizable(true);
 
 		if (SwingUtilities.isEventDispatchThread()) {
-			dialog.setVisible(true);
+			processDialog(pane, dialog, actions);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					dialog.setVisible(true);
+					processDialog(pane, dialog, actions);
 				}
 			});
 		}

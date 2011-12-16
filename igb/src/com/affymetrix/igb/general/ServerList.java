@@ -1,5 +1,6 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -11,16 +12,21 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.OKAction;
+import com.affymetrix.igb.action.ReportBugAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -28,6 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import javax.swing.JFrame;
 
 /**
  *
@@ -472,9 +480,21 @@ public final class ServerList {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
 
-			if(!removedManually)
-				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(1) + " " + server.serverName + " is not responding. Disabling it for this session.");
-			
+			if(!removedManually) {
+				String errorText;
+				List<GenericAction> actions = null;
+				if (server.serverType == ServerType.QuickLoad) {
+					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+					actions = new ArrayList<GenericAction>();
+					actions.add(OKAction.getAction());
+					actions.add(ReportBugAction.getAction());
+				}
+				else {
+					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
+					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
+				}
+				ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, new ArrayList<Throwable>(), actions);
+			}
 			if (server.serverType != ServerType.LocalFiles) {
 				if (server.serverType == null) {
 					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);

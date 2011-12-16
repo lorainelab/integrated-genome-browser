@@ -15,7 +15,8 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private int position;
-
+	private static final int placement = CENTER;
+	
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
@@ -144,8 +145,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				boundingPixelBox.y + boundingPixelBox.height);
 
 		int text_width = fm.stringWidth(label);
+		Direction direction = getReferenceTier() != null? getReferenceTier().direction: Direction.NONE;
 		if (text_width > pixelbox.width) {
-			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox);
+			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox, direction);
 		} else {
 			// if glyph's pixelbox wider than text, then center text
 			pixelbox.x += pixelbox.width / 2 - text_width / 2;
@@ -154,16 +156,29 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 
-	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox) {
+	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, Direction direction) {
 		int pbBuffer_x = 3;
 		int maxLines = (upperY - lowerY) / text_height;
-		if(maxLines == 0)  { return; }
+		if (maxLines == 0) {
+			return;
+		}
 		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
 		pixelbox.x += pbBuffer_x;
-		int height =  (upperY + lowerY - text_height*(lines.length - 2)) / 2;
+		int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
+
+		int text_width;
+		int x;
 		for (String line : lines) {
+			text_width = fm.stringWidth(line);
 			//Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
-			g.drawString(line, pixelbox.x, height-3);
+			if (placement == LEFT) {
+				x = pixelbox.x - text_width;
+			} else if (placement == RIGHT) {
+				x = pixelbox.x + pixelbox.width - text_width;
+			} else {
+				x = pixelbox.x + pixelbox.width / 2 - text_width / 2;
+			}
+			g.drawString(line, x, height - 3);
 			height += text_height;
 		}
 	}

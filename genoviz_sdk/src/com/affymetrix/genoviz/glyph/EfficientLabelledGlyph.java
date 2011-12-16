@@ -32,7 +32,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	static final Font[] ypix2fonts = new Font[max_char_ypix + 1];
 	// xpix2fonts: index is char width in pixels, entry is Font that gives that char width (or smaller)
 	static final Font[] xpix2fonts = new Font[max_char_xpix + 1];
-	static final int pixel_separation = 1;
+	static final int pixel_separation = 4;
 	protected boolean show_label = true;
 	protected boolean toggle_by_width = true;
 	protected boolean toggle_by_height = true;

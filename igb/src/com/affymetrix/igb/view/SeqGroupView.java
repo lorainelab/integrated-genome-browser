@@ -567,6 +567,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
 			GeneralLoadView.getLoadView().refreshTreeView();
 			refreshSpeciesCB();
+			checkToAddListener();
 			return;
 		}
 
@@ -580,8 +581,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			}
 		}
 
-		// Need to refresh species names
-		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
 		String speciesName = (String) this.speciesCB.getSelectedItem();
 		refreshSpeciesCB();
 
@@ -601,15 +600,27 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			}
 		}
 
-		if (speciesListener) {
-			this.speciesCB.addItemListener(this);
-		}
-
+		checkToAddListener();
+		
 		if (areAllServersInited) {
 			runBatchOrRestore();
 		}
 	}
 
+	private void checkToAddListener(){
+		// Need to refresh species names
+		boolean speciesListener = true;
+		for(ItemListener listener : this.speciesCB.getItemListeners()){
+			if(listener == this){
+				speciesListener = false;
+			}
+		}
+		
+		if (speciesListener) {
+			this.speciesCB.addItemListener(this);
+		}
+	}
+	
 	private void populateSpeciesData() {
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();

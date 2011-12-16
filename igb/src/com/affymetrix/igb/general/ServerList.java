@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
@@ -16,6 +17,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.OKAction;
 import com.affymetrix.igb.action.ReportBugAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -484,7 +486,10 @@ public final class ServerList {
 				String errorText;
 				List<GenericAction> actions = null;
 				if (server.serverType == ServerType.QuickLoad) {
-					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
+					errorText = siteOK ?
+						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName) :
+						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
 					actions = new ArrayList<GenericAction>();
 					actions.add(OKAction.getAction());
 					actions.add(ReportBugAction.getAction());

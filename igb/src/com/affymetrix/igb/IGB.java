@@ -58,6 +58,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -87,6 +88,7 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 public final class IGB extends Application
 		implements GroupSelectionListener, SeqSelectionListener {
 
+	private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
 	public static final String NODE_PLUGINS = "plugins";
 	private JFrame frm;
 	private JMenuBar mbar;
@@ -286,6 +288,14 @@ public final class IGB extends Application
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
+		checkInternetConnection();
+	}
+
+	private void checkInternetConnection() {
+		boolean connected = LocalUrlCacher.isValidURL(GUARANTEED_URL);
+		if (!connected) {
+			ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
+		}
 	}
 
 	public void addStopRoutine(IStopRoutine routine) {

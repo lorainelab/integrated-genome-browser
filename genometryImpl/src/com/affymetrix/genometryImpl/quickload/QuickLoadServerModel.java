@@ -144,7 +144,9 @@ public final class QuickLoadServerModel {
 	public List<String> getTypes(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		if (!initialized.contains(genome_name)) {
-			initGenome(genome_name);
+			if (!initGenome(genome_name)) {
+				return null;
+			}
 		}
 		if (getAnnotsMap(genome_name) == null) {
 			return Collections.<String>emptyList();
@@ -169,12 +171,13 @@ public final class QuickLoadServerModel {
 		return props;
 	}
 
-	private synchronized void initGenome(String genome_name) {
+	private synchronized boolean initGenome(String genome_name) {
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 				Level.FINE, "initializing data for genome: {0}", genome_name);
-		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
+		boolean metaOK = loadSeqInfo(genome_name);
+		if (metaOK && loadAnnotationNames(genome_name)) {
 			initialized.add(genome_name);
-			return;
+			return true;
 		}
 
 		// Clear the type list if something went wrong.
@@ -182,6 +185,7 @@ public final class QuickLoadServerModel {
 		if (annotList != null) {
 			annotList.clear();
 		}
+		return metaOK;
 	}
 
 	/**
@@ -350,11 +354,11 @@ public final class QuickLoadServerModel {
 			GeneralUtils.safeClose(lift_stream);
 			GeneralUtils.safeClose(cinfo_stream);
 		}
-		if(!success){
-			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "
-					+ "file for requested genome version {1}. "
-					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
-		}
+//		if(!success){
+//			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "
+//					+ "file for requested genome version {1}. "
+//					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
+//		}
 		return success;
 	}
 	/**

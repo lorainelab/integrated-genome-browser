@@ -6,7 +6,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -37,9 +36,7 @@ public class ExportMainViewAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("mainView"));
+		return BUNDLE.getString("mainView");
 	}
 
 	@Override
@@ -49,6 +46,11 @@ public class ExportMainViewAction extends GenericAction {
 
 	@Override
 	public boolean usePrefixInMenu() {
+		return true;
+	}
+
+	@Override
+	public boolean isPopup() {
 		return true;
 	}
 }

@@ -7,7 +7,6 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -39,9 +38,7 @@ public class ExportLabelledMainViewAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("mainViewWithLabels"));
+		return BUNDLE.getString("mainViewWithLabels");
 	}
 
 	@Override
@@ -51,6 +48,11 @@ public class ExportLabelledMainViewAction extends GenericAction {
 
 	@Override
 	public boolean usePrefixInMenu() {
+		return true;
+	}
+
+	@Override
+	public boolean isPopup() {
 		return true;
 	}
 }

@@ -5,7 +5,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
-import java.text.MessageFormat;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -36,13 +35,16 @@ public class ExportWholeFrameAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("wholeFrame"));
+		return BUNDLE.getString("wholeFrame");
 	}
 
 	@Override
 	public boolean usePrefixInMenu() {
+		return true;
+	}
+
+	@Override
+	public boolean isPopup() {
 		return true;
 	}
 }

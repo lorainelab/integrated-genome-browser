@@ -53,9 +53,7 @@ public class ExportSlicedViewAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("slicedViewWithLabels"));
+		return BUNDLE.getString("slicedViewWithLabels");
 	}
 
 	@Override
@@ -65,6 +63,11 @@ public class ExportSlicedViewAction extends GenericAction {
 
 	@Override
 	public boolean usePrefixInMenu() {
+		return true;
+	}
+
+	@Override
+	public boolean isPopup() {
 		return true;
 	}
 }

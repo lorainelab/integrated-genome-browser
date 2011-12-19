@@ -14,12 +14,14 @@ import com.affymetrix.common.CommonUtils;
 
 public abstract class GenericAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	private char POPUP_DIALOG = '\u2026';
+
 	private Set<GenericActionDoneCallback> doneCallbacks;
 
 	public GenericAction() {
 		super();
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
-		putValue(Action.NAME, getText());
+		putValue(Action.NAME, getText() + (isPopup() ? ("" + POPUP_DIALOG) : ""));
 		if (getIconPath() != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());
 			if (icon == null) {
@@ -51,6 +53,9 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		return false;
 	}
 	public boolean isToggle() {
+		return false;
+	}
+	public boolean isPopup() {
 		return false;
 	}
 	public void addDoneCallback(GenericActionDoneCallback doneCallback) {

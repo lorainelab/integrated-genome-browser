@@ -6,7 +6,6 @@ import com.affymetrix.igb.view.WebLinksViewGUI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.event.*;
-import java.text.MessageFormat;
 import javax.swing.*;
 
 /**
@@ -33,9 +32,7 @@ public final class WebLinksAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("configureWebLinks"));
+		return BUNDLE.getString("configureWebLinks");
 	}
 
 	@Override
@@ -46,5 +43,10 @@ public final class WebLinksAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_W;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

@@ -32,4 +32,9 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 	public int getMnemonic() {
 		return KeyEvent.VK_P;
 	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
+	}
 }

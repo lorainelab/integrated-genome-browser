@@ -47,4 +47,8 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 		return BUNDLE.getString("ViewGenomicSequenceInSeqViewer");
 	}
 
+	@Override
+	public boolean isPopup() {
+		return true;
+	}
 }

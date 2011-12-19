@@ -10,7 +10,6 @@ import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**

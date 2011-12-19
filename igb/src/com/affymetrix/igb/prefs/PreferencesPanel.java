@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -312,12 +311,17 @@ public final class PreferencesPanel extends JPanel {
 		  }
 		@Override
 		public String getText() {
-			return "Export Preferences ...";
+			return "Export Preferences";
 		}
 		public String getIconPath() {
 			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_E; }
+
+		@Override
+		public boolean isPopup() {
+			return true;
+		}
 	  };
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(EXPORT_ACTION_COMMAND));
@@ -353,12 +357,17 @@ public final class PreferencesPanel extends JPanel {
         }
 		@Override
 		public String getText() {
-			return "Import Preferences ...";
+			return "Import Preferences";
 		}
 		public String getIconPath() {
 			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_I; }
+
+		@Override
+		public boolean isPopup() {
+			return true;
+		}
       };
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
       import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
@@ -382,6 +391,11 @@ public final class PreferencesPanel extends JPanel {
 			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_G; }
+
+		@Override
+		public boolean isPopup() {
+			return true;
+		}
       };
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
       help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
@@ -405,6 +419,11 @@ public final class PreferencesPanel extends JPanel {
 			return null;
 		}
 		public int getMnemonic() { return KeyEvent.VK_C; }
+
+		@Override
+		public boolean isPopup() {
+			return true;
+		}
       };
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
       help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));

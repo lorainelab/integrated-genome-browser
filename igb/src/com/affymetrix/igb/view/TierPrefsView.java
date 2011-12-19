@@ -237,6 +237,8 @@ public class TierPrefsView implements ListSelectionListener {
 
 		Font f = new Font("SansSerif", Font.BOLD, 12);
 		table.getTableHeader().setFont(f);
+		table.setRowSelectionAllowed(false);
+		table.setCellSelectionEnabled(true);
 	}
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
@@ -690,9 +692,9 @@ public class TierPrefsView implements ListSelectionListener {
 		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			if (column == COL_TRACK_NAME) {
-				return false;
-			}
+//			if (column == COL_TRACK_NAME) {
+//				return false;
+//			}
 			return true;
 		}
 

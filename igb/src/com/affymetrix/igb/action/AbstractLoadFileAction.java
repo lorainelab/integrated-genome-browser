@@ -121,6 +121,11 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 		return null;
 	}
 
+	@Override
+	public boolean isPopup() {
+		return true;
+	}
+
 	protected abstract void addSupportedFiles();
 	
 	protected abstract String getID();

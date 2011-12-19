@@ -34,14 +34,17 @@ public class ForumHelpAction extends GenericAction {
 	@Override
 	public String getText() {
 		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				MessageFormat.format(
 					BUNDLE.getString("forumHelp"),
-					APP_NAME));
+					APP_NAME);
 	}
 
 	@Override
 	public String getIconPath() {
 		return null;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.net.URI;
 import java.net.URL;
-import java.text.MessageFormat;
 import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -94,13 +93,16 @@ public final class LoadURLAction extends OpenURIAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("openURL"));
+		return BUNDLE.getString("openURL");
 	}
 
 	@Override
 	public String getIconPath() {
 		return null;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

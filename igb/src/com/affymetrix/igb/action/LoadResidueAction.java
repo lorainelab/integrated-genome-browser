@@ -23,6 +23,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  * @author hiralv
  */
 public class LoadResidueAction extends GenericAction {
+	private static final long serialVersionUID = 1L;
 	final SeqSpan span;
 	final boolean tryFull;
 	

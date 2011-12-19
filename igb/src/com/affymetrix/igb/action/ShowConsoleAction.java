@@ -28,9 +28,7 @@ public class ShowConsoleAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("showConsole"));
+		return BUNDLE.getString("showConsole");
 	}
 
 	@Override
@@ -41,5 +39,10 @@ public class ShowConsoleAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_C;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

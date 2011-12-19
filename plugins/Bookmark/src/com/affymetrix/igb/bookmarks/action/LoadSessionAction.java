@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLDecoder;
-import java.text.MessageFormat;
 import java.util.prefs.InvalidPreferencesFormatException;
 
 import javax.swing.JFileChooser;
@@ -52,9 +51,7 @@ public class LoadSessionAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BookmarkManagerView.BUNDLE.getString("menuItemHasDialog"),
-				BookmarkManagerView.BUNDLE.getString("loadSession"));
+		return BookmarkManagerView.BUNDLE.getString("loadSession");
 	}
 
 	@Override
@@ -65,5 +62,10 @@ public class LoadSessionAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_L;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

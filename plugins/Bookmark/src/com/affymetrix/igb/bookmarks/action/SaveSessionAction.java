@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 
 import javax.swing.JFileChooser;
 
@@ -45,9 +44,7 @@ public class SaveSessionAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BookmarkManagerView.BUNDLE.getString("menuItemHasDialog"),
-				BookmarkManagerView.BUNDLE.getString("saveSession"));
+		return BookmarkManagerView.BUNDLE.getString("saveSession");
 	}
 
 	@Override
@@ -58,5 +55,10 @@ public class SaveSessionAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_S;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

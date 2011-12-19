@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -34,13 +33,16 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("requestAFeature"));
+		return BUNDLE.getString("requestAFeature");
 	}
 
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_R;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

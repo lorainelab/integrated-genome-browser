@@ -140,10 +140,8 @@ public class AboutIGBAction extends GenericAction {
 	@Override
 	public String getText() {
 		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				MessageFormat.format(
 				BUNDLE.getString("about"),
-				APP_NAME));
+				APP_NAME);
 	}
 
 	@Override
@@ -166,5 +164,10 @@ public class AboutIGBAction extends GenericAction {
 			stringBuilder.append(ls);
 		}
 		return stringBuilder.toString();
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

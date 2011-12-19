@@ -5,7 +5,6 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -28,9 +27,7 @@ public class PreferencesAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("preferences"));
+		return BUNDLE.getString("preferences");
 	}
 
 	@Override
@@ -41,5 +38,10 @@ public class PreferencesAction extends GenericAction {
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_E;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

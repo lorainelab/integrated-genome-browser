@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.text.MessageFormat;
 import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -222,9 +221,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("autoScroll"));
+		return BUNDLE.getString("autoScroll");
 	}
 
 	@Override
@@ -235,5 +232,10 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_A;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

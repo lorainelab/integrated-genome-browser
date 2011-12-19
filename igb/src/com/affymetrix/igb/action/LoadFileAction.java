@@ -18,7 +18,6 @@ import java.util.List;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.MessageFormat;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.swing.TransferHandler;
@@ -106,9 +105,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("openFile"));
+		return BUNDLE.getString("openFile");
 	}
 
 	@Override

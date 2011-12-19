@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -28,13 +27,16 @@ public class ReportBugAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("reportABug"));
+		return BUNDLE.getString("reportABug");
 	}
 
 	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_R;
+	}
+
+	@Override
+	public boolean isPopup() {
+		return true;
 	}
 }

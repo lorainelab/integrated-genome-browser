@@ -1,7 +1,6 @@
 package com.affymetrix.igb.action;
 
 import java.util.Map;
-import java.text.MessageFormat;
 
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -42,14 +41,16 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 
 	@Override
 	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("openRefTrackFile"));
+		return BUNDLE.getString("openRefTrackFile");
 	}
 
 	@Override
 	protected boolean loadSequenceAsTrack() {
 		return true;
 	}
-	
+
+	@Override
+	public boolean isPopup() {
+		return true;
+	}
 }

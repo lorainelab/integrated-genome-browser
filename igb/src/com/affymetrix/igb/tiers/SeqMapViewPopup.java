@@ -122,6 +122,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public String getText() {
 			return BUNDLE.getString("customizeAction");
 		}
+
+		@Override
+		public boolean isPopup() {
+			return true;
+		}
 	};
 	private final Action expand_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;

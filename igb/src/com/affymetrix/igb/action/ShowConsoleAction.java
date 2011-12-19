@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.util.ConsoleView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**

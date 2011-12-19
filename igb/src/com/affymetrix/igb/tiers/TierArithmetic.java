@@ -30,7 +30,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		if (labels.size() == 0 || !all_are_annotations) {
 			return;
 		}
-		JMenu combineMenu = new JMenu("Track Operations...");
+		JMenu combineMenu = new JMenu("Track Operations");
 		for (AnnotationOperator annotationOperator : ExtensionPointHandler.getExtensionPoint(AnnotationOperator.class).getExtensionPointImpls()) {
 			String name = annotationOperator.getName();
 			String title = name.substring(0, 1).toUpperCase() + name.substring(1);

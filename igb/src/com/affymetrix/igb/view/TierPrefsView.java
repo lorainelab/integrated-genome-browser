@@ -303,14 +303,15 @@ public class TierPrefsView implements ListSelectionListener {
 			currentStyles.clear();
 			currentStyles.addAll(stylemap.values());
 		}
+
 		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyles.size());
 		for (int i = 0; i < currentStyles.size(); i++) {
 			TrackStyle the_style = currentStyles.get(i);
 			if (the_style.getCustomizable()) {
 				// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
-				if ((!the_style.isGraphTier())) {
-					customizables.add(the_style);
-				}
+				//if ((!the_style.isGraphTier())) {
+				customizables.add(the_style);
+				//}
 			}
 		}
 
@@ -402,8 +403,11 @@ public class TierPrefsView implements ListSelectionListener {
 		if (selectedRows.length == 1) {
 			selectedStyle = model.getStyles().get(selectedRows[0]);
 
-			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-				displayNameTextField.setEnabled(false);
+			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
+					|| selectedStyle.isGraphTier()) {
+				if (!selectedStyle.isGraphTier()) {
+					displayNameTextField.setEnabled(false);
+				}
 				viewModeCB.setEnabled(false);
 				labelFieldComboBox.setEnabled(false);
 				maxDepthTextField.setEnabled(false);

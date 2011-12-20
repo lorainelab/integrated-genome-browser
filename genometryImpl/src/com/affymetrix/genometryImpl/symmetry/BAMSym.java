@@ -86,6 +86,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		@Override
 		public Map<String,Object> cloneProperties() {
 			HashMap<String,Object> tprops = new HashMap<String,Object>();
+			tprops.putAll(super.cloneProperties());
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
 			tprops.put("forward", this.isForward());
@@ -116,6 +117,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		@Override
 		public Map<String,Object> cloneProperties() {
 			HashMap<String,Object> tprops = new HashMap<String,Object>();
+			tprops.putAll(super.cloneProperties());
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
 			tprops.put("forward", this.isForward());

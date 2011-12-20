@@ -28,6 +28,7 @@ import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.IGBAuthenticator;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
@@ -72,7 +73,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		super(ServerList.getServerInstance());
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
-
+		
 		layout.setHorizontalGroup(layout.createParallelGroup()
 				.addComponent(sourcePanel)
 				.addComponent(synonymsPanel)
@@ -286,22 +287,37 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	}
 
 	private static JPanel initCachePanel() {
-		final JPanel cachePanel = new JPanel();
-		final GroupLayout layout = new GroupLayout(cachePanel);
+		
 		final JLabel usageLabel = new JLabel("Cache Behavior");
 		final JLabel emptyLabel = new JLabel();
+		final JLabel cacheCleared = new JLabel("Cache Cleared");
 		final JComboBox	cacheUsage = new JComboBox(CacheUsage.values());
 		final JRPButton clearCache = new JRPButton("DataLoadPrefsView_clearCache", "Empty Cache");
+		cacheCleared.setVisible(false);
+		cacheCleared.setForeground(Color.RED);
 		clearCache.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Action performed :"+Thread.currentThread().getId());
 				clearCache.setEnabled(false);
-				try {
-					Thread.sleep(300);
-				} catch (InterruptedException ex) {
-					Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-				}
 				LocalUrlCacher.clearCache();
 				clearCache.setEnabled(true);
+				cacheCleared.setVisible(true);
+				
+				new SwingWorker() {
+
+					@Override
+					protected Object doInBackground() throws Exception {
+						System.out.println("Runnable :"+Thread.currentThread().getId());
+						Thread.sleep(5000);
+						return null;
+					}
+					
+					@Override
+					public void done(){
+						cacheCleared.setVisible(false);
+					}
+				}.execute();
 			}
 		});
 
@@ -312,19 +328,22 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			}
 		});
 
+		final JPanel cachePanel = new JPanel();
+		final GroupLayout layout = new GroupLayout(cachePanel);
 		cachePanel.setLayout(layout);
 		cachePanel.setBorder(new TitledBorder("Cache Settings"));
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 		layout.linkSize(usageLabel, emptyLabel);
-
+		
 		layout.setHorizontalGroup(layout.createParallelGroup(LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(usageLabel)
 					.addComponent(cacheUsage))
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(emptyLabel)
-					.addComponent(clearCache)));
+					.addComponent(clearCache)
+					.addComponent(cacheCleared)));
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(BASELINE)
@@ -332,7 +351,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 					.addComponent(cacheUsage))
 				.addGroup(layout.createParallelGroup(BASELINE)
 					.addComponent(emptyLabel)
-					.addComponent(clearCache)));
+					.addComponent(clearCache)
+					.addComponent(cacheCleared)));
 
 		return cachePanel;
 	}
@@ -355,7 +375,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 		return true;
 	}
-
+	
 	@Override
 	protected String getViewName() {
 		return "Data Sources";

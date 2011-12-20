@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="6.0+" version="@jnlp.version@" codebase="@jnlp.codebase@" href="igb-large.jnlp">
+<jnlp spec="6.0+" version="@jnlp.version@" codebase="@jnlp.codebase@">
 	<information>
 		<title>IGB @jnlp.version@</title>
 		<vendor>Genoviz Project</vendor>
@@ -18,7 +18,8 @@
 	</security>
 	<resources>
 		<java version="1.6+" initial-heap-size="32m" max-heap-size="2048m"/>
-		<extension name="IGB" href="igb-base.jnlp" />
+		<jar href="igb_exe.jar" main="true" />
+		<jar href="igb-i18n.jar" />
 
 		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />
 	</resources>

@@ -26,6 +26,7 @@ public class LoadSessionAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		JFileChooser chooser = PreferenceUtils.getJFileChooser();
 		int option = chooser.showOpenDialog(igbService.getFrame().getContentPane());
 		if (option == JFileChooser.APPROVE_OPTION) {

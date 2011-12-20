@@ -4,7 +4,6 @@
  */
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -15,14 +14,14 @@ import java.awt.event.KeyEvent;
 public class AddSeparatorAction extends AddBookmarkAction {
 
 	private static final long serialVersionUID = 1L;
-	private static BookmarkManagerView bmv;
 	private static final AddSeparatorAction ACTION = new AddSeparatorAction();
 
 	public static AddSeparatorAction getAction() {
 		return ACTION;
 	}
 
-	public void actionPerformed(ActionEvent ae) {
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		addSeparator();
 	}
 

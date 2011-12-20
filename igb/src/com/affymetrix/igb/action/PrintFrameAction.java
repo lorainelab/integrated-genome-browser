@@ -23,6 +23,7 @@ public class PrintFrameAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		ComponentPagePrinter cprinter = new ComponentPagePrinter(IGB.getSingleton().getFrame());
 
 		try {

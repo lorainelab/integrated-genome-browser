@@ -22,6 +22,7 @@ public class DocumentationAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		GeneralUtils.browse("http://wiki.transvar.org/confluence/display/igbman");
 	}
 

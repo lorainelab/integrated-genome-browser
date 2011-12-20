@@ -25,6 +25,7 @@ public class SaveSessionAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		JFileChooser chooser = PreferenceUtils.getJFileChooser();
 		int option = chooser.showSaveDialog(igbService.getFrame().getContentPane());
 		if (option == JFileChooser.APPROVE_OPTION) {

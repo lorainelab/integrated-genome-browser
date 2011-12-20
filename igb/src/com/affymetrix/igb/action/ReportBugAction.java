@@ -22,6 +22,7 @@ public class ReportBugAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
 	}
 

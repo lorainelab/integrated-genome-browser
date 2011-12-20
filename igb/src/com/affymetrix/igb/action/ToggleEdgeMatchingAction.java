@@ -27,6 +27,7 @@ public class ToggleEdgeMatchingAction extends GenericAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		map_view.setEdgeMatching(!map_view.getEdgeMatching());
 		ACTION.putValue(AbstractAction.SELECTED_KEY, map_view.getEdgeMatching());
 	}

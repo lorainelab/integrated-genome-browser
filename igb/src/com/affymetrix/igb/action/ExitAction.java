@@ -24,6 +24,7 @@ public class ExitAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
 				new WindowEvent(
 					IGB.getSingleton().getFrame(),

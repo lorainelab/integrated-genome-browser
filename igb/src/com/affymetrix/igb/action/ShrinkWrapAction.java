@@ -27,6 +27,7 @@ public class ShrinkWrapAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		SeqMapView map_view = IGB.getSingleton().getMapView();
 		map_view.setShrinkWrap(!map_view.getShrinkWrap());
 	}

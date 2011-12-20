@@ -27,6 +27,7 @@ public class ClampViewAction extends GenericAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().toggleClamp();
 	}
 

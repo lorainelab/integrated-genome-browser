@@ -20,6 +20,7 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 	     bookmarkCurrentPosition();
 	}
 

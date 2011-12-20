@@ -22,6 +22,7 @@ public class PrintAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		try {
 			IGB.getSingleton().getMapView().getSeqMap().print();
 		} catch (Exception ex) {

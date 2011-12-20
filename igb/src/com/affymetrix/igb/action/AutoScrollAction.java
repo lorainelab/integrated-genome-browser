@@ -53,7 +53,8 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 
 	public static AutoScrollAction getAction() { return action; }
 
-	public void actionPerformed(ActionEvent ae) {
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		this.toggleAutoScroll();
 	}
 

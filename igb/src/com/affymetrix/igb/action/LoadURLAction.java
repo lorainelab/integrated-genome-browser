@@ -40,6 +40,7 @@ public final class LoadURLAction extends OpenURIAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		loadURL();
 	}
 

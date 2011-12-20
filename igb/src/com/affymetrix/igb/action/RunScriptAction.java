@@ -56,6 +56,7 @@ public final class RunScriptAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		loadFile(load_dir_tracker, gviewerFrame);
 	}
 

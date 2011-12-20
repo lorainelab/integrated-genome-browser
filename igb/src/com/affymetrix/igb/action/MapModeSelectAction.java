@@ -20,7 +20,8 @@ public class MapModeSelectAction extends GenericAction {
 		this.seqMapView = seqMapView;
 	}
 
-	public void actionPerformed(ActionEvent ae) {
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		seqMapView.setMapMode(MapMode.MapSelectMode);
 	}
 

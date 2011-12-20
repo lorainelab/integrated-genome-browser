@@ -22,6 +22,7 @@ public class PreferencesAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		PreferencesPanel.getSingleton().getFrame().setVisible(true);
 	}
 

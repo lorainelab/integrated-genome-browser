@@ -31,6 +31,7 @@ public class DrawCollapseControlAction extends GenericAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		boolean b = !TrackStyle.getDrawCollapseState();
 		TrackStyle.setDrawCollapseControl(b);
 		this.putValue(SELECTED_KEY, b);

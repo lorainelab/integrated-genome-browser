@@ -23,6 +23,7 @@ public class ClearAllAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear entire view?")) {
 			//IGB.getSingleton().getMapView().clear();
 		}

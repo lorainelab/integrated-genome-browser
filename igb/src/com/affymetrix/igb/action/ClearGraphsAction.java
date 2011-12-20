@@ -23,6 +23,7 @@ public class ClearGraphsAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear graphs?")) {
 			IGB.getSingleton().getMapView().clearGraphs();
 		}

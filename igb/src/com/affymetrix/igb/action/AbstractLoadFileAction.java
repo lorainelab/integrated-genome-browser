@@ -45,6 +45,7 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		loadFile(load_dir_tracker, gviewerFrame, getId(), loadSequenceAsTrack());
 	}
 	

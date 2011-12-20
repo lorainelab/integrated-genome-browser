@@ -34,6 +34,7 @@ public class ToggleToolTipAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		PreferenceUtils.getTopNode().putBoolean(
 				SeqMapView.PREF_SHOW_TOOLTIP,
 				IGB.getSingleton().getMapView().togglePropertiesTooltip());

@@ -44,6 +44,7 @@ public class AboutIGBAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();

@@ -22,6 +22,7 @@ public class ShowConsoleAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		ConsoleView.showConsole(IGBConstants.APP_NAME);
 	}
 

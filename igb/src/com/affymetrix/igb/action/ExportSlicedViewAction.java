@@ -30,6 +30,7 @@ public class ExportSlicedViewAction extends GenericAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 		Component slice_component = determineSlicedComponent();
 		if (slice_component == null) {
 			return;

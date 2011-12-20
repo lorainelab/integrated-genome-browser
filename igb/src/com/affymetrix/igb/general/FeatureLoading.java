@@ -6,22 +6,16 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.OKAction;
-import com.affymetrix.igb.action.ReportBugAction;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.swing.JFrame;
 
 /**
  *
@@ -91,10 +85,7 @@ public final class FeatureLoading {
 				List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
 				if (typeNames == null) {
 					String errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
-					List<GenericAction> actions = new ArrayList<GenericAction>();
-					actions.add(OKAction.getAction());
-					actions.add(ReportBugAction.getAction());
-					ErrorHandler.errorPanel((JFrame) null, gVersion.gServer.serverName, errorText, new ArrayList<Throwable>(), actions);
+					ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
 					return;
 				}
 				String organism_dir = quickloadServer.getOrganismDir(gVersion.versionName);

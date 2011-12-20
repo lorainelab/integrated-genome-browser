@@ -294,7 +294,7 @@
                             </node>
                             <node name="m05_03_report_bug">
                                 <map>
-                                    <entry key="item" value="ReportBugAction" />
+                                    <entry key="item" value="com.affymetrix.genometryImpl.event.ReportBugAction" />
                                 </map>
                             </node>
                             <node name="m05_04_request_feature">

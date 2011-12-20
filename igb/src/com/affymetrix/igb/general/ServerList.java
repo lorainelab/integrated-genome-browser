@@ -1,6 +1,5 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -14,8 +13,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.OKAction;
-import com.affymetrix.igb.action.ReportBugAction;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.net.URI;
@@ -28,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -484,21 +480,18 @@ public final class ServerList {
 
 			if(!removedManually) {
 				String errorText;
-				List<GenericAction> actions = null;
 				if (server.serverType == ServerType.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
 					errorText = siteOK ?
 						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName) :
 						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
-					actions = new ArrayList<GenericAction>();
-					actions.add(OKAction.getAction());
-					actions.add(ReportBugAction.getAction());
+					ErrorHandler.errorPanelWithReportBug(server.serverName, errorText);
 				}
 				else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
+					ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, null);
 				}
-				ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, new ArrayList<Throwable>(), actions);
 			}
 			if (server.serverType != ServerType.LocalFiles) {
 				if (server.serverType == null) {

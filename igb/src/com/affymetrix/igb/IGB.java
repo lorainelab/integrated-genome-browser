@@ -416,8 +416,10 @@ public final class IGB extends Application
 	}
 
 	private void loadLeafItem(JRPMenu menu, Preferences menuItemPrefs) {
-		String name = menuItemPrefs.get("item", null);
-		String className = "com.affymetrix.igb.action." + name;
+		String className = menuItemPrefs.get("item", null);
+		if (className.indexOf('.') == -1) {
+			className = "com.affymetrix.igb.action." + className; // default
+		}
 		try {
 			Class<?> clazz = Class.forName(className);
 			Method m = clazz.getDeclaredMethod("getAction");

@@ -22,6 +22,8 @@ import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.OKAction;
+import com.affymetrix.genometryImpl.event.ReportBugAction;
 
 /**
  * Simple routines for bringing-up an error message panel and also logging
@@ -82,6 +84,13 @@ public abstract class ErrorHandler {
 				}
 			}
 		}
+	}
+
+	public static void errorPanelWithReportBug(String title, String message) {
+		List<GenericAction> actions = new ArrayList<GenericAction>();
+		actions.add(OKAction.getAction());
+		actions.add(ReportBugAction.getAction());
+		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions);
 	}
 
 	/** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame

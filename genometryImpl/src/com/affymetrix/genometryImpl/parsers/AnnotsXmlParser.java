@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXParseException;
 
 /**
  * This class is specifically for parsing the annots.xml file used by IGB and the DAS/2 server.
@@ -19,7 +20,7 @@ public abstract class AnnotsXmlParser {
 	/**
 	 * @param istr - stream of annots file
 	 */
-	public static final void parseAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) {
+	public static final void parseAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException {
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -63,6 +64,8 @@ public abstract class AnnotsXmlParser {
 					annotList.add(annotMapElt);
 				}
 			}
+		} catch (SAXParseException e) {
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

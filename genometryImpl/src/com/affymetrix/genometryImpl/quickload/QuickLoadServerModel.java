@@ -35,6 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.xml.sax.SAXParseException;
+
 /**
  *
  * @version $Id$
@@ -210,7 +212,17 @@ public final class QuickLoadServerModel {
 		try{
 			filename = getPath(genome_name, Constants.annotsXml);
 			istr = getInputStream(filename, false, true);
-			boolean annots_found = processAnnotsXml(istr, annotList);
+			boolean annots_found = false;;
+			try {
+				annots_found = processAnnotsXml(istr, annotList);
+			}
+			catch (SAXParseException x) {
+				String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
+				String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
+				String title = "Invalid annots.xml file";
+				ErrorHandler.errorPanelWithReportBug(title, errorText);
+				return false;
+			}
 
 			if(annots_found)
 				return true;
@@ -223,7 +235,7 @@ public final class QuickLoadServerModel {
 			annots_found = processAnnotsTxt(istr, annotList);
 			
 			if(!annots_found){
-				ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
+				ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
 					+ "file for requested genome version {1}. "
 					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
 			}
@@ -248,7 +260,7 @@ public final class QuickLoadServerModel {
 	 * @param annotList
 	 * @return true or false
 	 */
-	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) {
+	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) throws SAXParseException {
 			if (istr == null) {
 				// Search failed.  That's fine, since there's a backup test for annots.txt.
 				return false;

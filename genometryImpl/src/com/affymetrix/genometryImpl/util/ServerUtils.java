@@ -53,6 +53,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.xml.sax.SAXParseException;
+
 /**
  * Utils for DAS/2 and other servers.
  */
@@ -241,6 +243,8 @@ public abstract class ServerUtils {
 					annots_map.put(genome, annotList);
 				}
 				AnnotsXmlParser.parseAnnotsXml(istr, annotList);
+			} catch (SAXParseException ex) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

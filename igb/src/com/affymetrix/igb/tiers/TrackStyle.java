@@ -596,6 +596,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	public void setSeparate(boolean b) {
+		if (is_graph && b) {
+			return;
+		}
 		this.show2tracks = b;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
@@ -876,6 +879,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 */
 	public void setGraphTier(boolean b) {
 		is_graph = b;
+		if (is_graph) {
+			setSeparate(false);
+		}
 	}
 
 	public Map<String, Object> getTransientPropertyMap() {

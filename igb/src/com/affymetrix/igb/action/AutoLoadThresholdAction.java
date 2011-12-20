@@ -141,6 +141,7 @@ public class AutoLoadThresholdAction extends GenericAction
 		update(zoomer);
 		PreferenceUtils.saveIntParam(PREFS_THRESHOLD, threshold);
 		zoomer.repaint();
+		loadData();
 	}
 
 	@Override

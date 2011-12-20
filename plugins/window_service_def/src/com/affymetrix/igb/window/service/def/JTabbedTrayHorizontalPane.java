@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -16,6 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
+	protected static final Icon LEFT_ICON = MenuUtil.getIcon("images/left.png");
+	protected static final Icon RIGHT_ICON = MenuUtil.getIcon("images/right.png");
 
 	public JTabbedTrayHorizontalPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(id, tabState, _baseComponent, orientation, splitOrientation, _saveDividerProportionalLocation);

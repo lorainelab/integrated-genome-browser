@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -44,10 +45,10 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 
 	@Override
 	protected boolean isOnTab(Point p) {
-		if (tab_pane.getTabCount() == 0) {
+		if (tab_pane.getTabCount() < 1) {
 			return false;
 		}
-		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
 		return p.getX() < getTabKnobWidth(tab_pane.getComponentAt(index));
 	}
 
@@ -60,5 +61,15 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 	protected void setMinSize() {
 		_baseComponent.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int)_baseComponent.getMinimumSize().getHeight()));
 		tab_pane.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int)tab_pane.getMinimumSize().getHeight()));
+	}
+
+	@Override
+	protected Icon getRetractIcon() {
+		return LEFT_ICON;
+	}
+
+	@Override
+	protected Icon getExtendIcon() {
+		return RIGHT_ICON;
 	}
 }

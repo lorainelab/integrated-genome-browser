@@ -239,6 +239,9 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 	@Override
 	public int compareTo(IGBTabPanel o) {
+		if (o == null) {
+			return 1;
+		}
 		int ret = Integer.valueOf(position).compareTo(o.position);
 		if (ret != 0) {
 			return ret;

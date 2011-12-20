@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
@@ -104,10 +105,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @return the retract state divider location
 	 */
 	private int getRetractDividerLocation() {
-		if (tab_pane.getTabCount() == 0) {
+		if (tab_pane.getTabCount() < 1) {
 			return -1;
 		}
-		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
 		return getTabWidth(tab_pane.getComponentAt(index));
 	}
 	/**
@@ -121,6 +122,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @return true if the point is on the tab, false otherwise
 	 */
 	protected abstract boolean isOnTab(Point p);
+	protected abstract Icon getRetractIcon();
+	protected abstract Icon getExtendIcon();
 	/**
 	 * save the divider location for the RETRACT tray state - as a percentage
 	 */
@@ -176,9 +179,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		tab_pane.setMinimumSize(new Dimension(0, 0));
 		setTabComponent();
+		tab_pane.addTab(null, null); // extend / retract
 
 		MouseListener[] mouseListeners = tab_pane.getMouseListeners();
-		if (mouseListeners == null || mouseListeners.length != 1) {
+		if (mouseListeners == null) {
 			System.out.println(MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("internalError"), this.getClass().getName()));
 		}
 		else {
@@ -190,12 +194,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						originalMouseListener.mouseReleased(e);
-						if (tab_pane.indexAtLocation(e.getX(), e.getY()) > -1) {
-							if (trayState == TrayState.EXTENDED && isOnTab(e.getPoint())) {
-				               	int afterIndex = tab_pane.getSelectedIndex();
-				               	if (beforeIndex == afterIndex) {
-									retractTray();
-				               	}
+						if (tab_pane.indexAtLocation(e.getX(), e.getY()) == 0) {
+							tab_pane.setSelectedIndex(beforeIndex);
+							if (trayState == TrayState.EXTENDED) {
+								retractTray();
 							}
 							else if (trayState == TrayState.RETRACTED) {
 				               	extendTray();
@@ -269,6 +271,11 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		trayState = TrayState.EXTENDED;
 		PreferenceUtils.saveComponentState(title, TrayState.EXTENDED.toString());
 		notifyTrayStateChangeListeners();
+		tab_pane.setIconAt(0, getRetractIcon());
+		tab_pane.setToolTipTextAt(0, "retract tray");
+		if (tab_pane.getSelectedIndex() < 1) {
+			tab_pane.setSelectedIndex(1);
+		}
 	}
 
 	/**
@@ -292,6 +299,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		trayState = TrayState.RETRACTED;
 		PreferenceUtils.saveComponentState(title, TrayState.RETRACTED.toString());
 		notifyTrayStateChangeListeners();
+		tab_pane.setIconAt(0, getExtendIcon());
+		tab_pane.setToolTipTextAt(0, "extend tray");
 	}
 
 	/**
@@ -386,7 +395,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			index++;
 		}
 		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
-		if (tab_pane.getTabCount() == 1) {
+		if (tab_pane.getTabCount() == 2) { //  first is extend / retract button
 			initTray();
 		}
 		tab_pane.validate();
@@ -396,13 +405,13 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	public void removeTab(final IGBTabPanel plugin) {
 		plugin.setTrayRectangle(plugin.getBounds());
 		String name = plugin.getName();
-		for (int i = 0; i < tab_pane.getTabCount(); i++) {
+		for (int i = 1; i < tab_pane.getTabCount(); i++) {
 			if (name.equals(((IGBTabPanel)tab_pane.getComponentAt(i)).getName())) {
 				tab_pane.remove(i);
 				tab_pane.validate();
 			}
 		}
-		if (tab_pane.getTabCount() == 0) {
+		if (tab_pane.getTabCount() == 1) {
 			hideTray();
 		}
 	}

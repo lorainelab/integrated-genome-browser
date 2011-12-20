@@ -4,10 +4,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
@@ -15,6 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
+	private static final Icon UP_ICON = MenuUtil.getIcon("images/up.png");
+	private static final Icon DOWN_ICON = MenuUtil.getIcon("images/down.png");
 	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.45;
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {
@@ -28,7 +32,7 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	}
 
 	private int getTabKnobHeight(Component tabComponent) {
-		return tab_pane.getHeight() - tabComponent.getHeight();
+		return tab_pane.getHeight() - ((tabComponent == null) ? 0 : tabComponent.getHeight());
 	}
 
 	@Override
@@ -43,10 +47,10 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 
 	@Override
 	protected boolean isOnTab(Point p) {
-		if (tab_pane.getTabCount() == 0) {
+		if (tab_pane.getTabCount() < 1) {
 			return false;
 		}
-		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
 		return p.getY() < getTabKnobHeight(tab_pane.getComponentAt(index));
 	}
 
@@ -59,5 +63,15 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	protected void setMinSize() {
 		tab_pane.setMinimumSize(new Dimension((int)tab_pane.getMinimumSize().getWidth(), MINIMUM_WIDTH));
 		_baseComponent.setMinimumSize(new Dimension((int)_baseComponent.getMinimumSize().getWidth(), MINIMUM_WIDTH));
+	}
+
+	@Override
+	protected Icon getRetractIcon() {
+		return DOWN_ICON;
+	}
+
+	@Override
+	protected Icon getExtendIcon() {
+		return UP_ICON;
 	}
 }

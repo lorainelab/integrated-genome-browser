@@ -16,14 +16,13 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration<ISearchMode> searchModePropsRegistration;
 	private ServiceRegistration<RemoteSearchI> remoteSearchDAS2Registration;
 
-	@SuppressWarnings("unchecked")
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-    		searchModeIDRegistration = (ServiceRegistration<ISearchMode>) bundleContext.registerService(ISearchMode.class.getName(), new SearchModeID(igbService), null);
-    		searchModePropsRegistration = (ServiceRegistration<ISearchMode>) bundleContext.registerService(ISearchMode.class.getName(), new SearchModeProps(igbService), null);
-    		remoteSearchDAS2Registration = (ServiceRegistration<RemoteSearchI>) bundleContext.registerService(RemoteSearchI.class.getName(), new RemoteSearchDAS2(), null);
+    		searchModeIDRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeID(igbService), null);
+    		searchModePropsRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeProps(igbService), null);
+    		remoteSearchDAS2Registration = bundleContext.registerService(RemoteSearchI.class, new RemoteSearchDAS2(), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -31,12 +30,11 @@ public class Activator implements BundleActivator {
         }
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, RemoteSearchI.class);
-    	ServiceReference<IGBService> igbServiceReference = (ServiceReference<IGBService>) bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)
         {
@@ -44,8 +42,8 @@ public class Activator implements BundleActivator {
         }
         else
         {
-        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
-        	    public Object addingService(ServiceReference igbServiceReference) {
+        	ServiceTracker<IGBService,Object> serviceTracker = new ServiceTracker<IGBService,Object>(bundleContext, IGBService.class.getName(), null) {
+        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
         	    	registerService(igbServiceReference);
         	        return super.addingService(igbServiceReference);
         	    }

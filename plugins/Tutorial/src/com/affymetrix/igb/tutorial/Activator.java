@@ -24,12 +24,12 @@ public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 	private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
 
-	private void handleWindowService(JRPMenu help_menu, ServiceReference<?> windowServiceReference) {
+	private void handleWindowService(JRPMenu help_menu, ServiceReference<IWindowService> windowServiceReference) {
 		loadDefaultTutorialPrefs();
 		try {
-	        IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
-	    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
-        	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
+	        IWindowService windowService = bundleContext.getService(windowServiceReference);
+	    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
+        	IGBService igbService = bundleContext.getService(igbServiceReference);
 	    	final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
 	    	GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
 			JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
@@ -56,21 +56,20 @@ public class Activator implements BundleActivator {
         }
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void handleIGBService(ServiceReference<?> igbServiceReference) {
+	private void handleIGBService(ServiceReference<IGBService> igbServiceReference) {
         try {
-        	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
+        	IGBService igbService = bundleContext.getService(igbServiceReference);
     		final JRPMenu help_menu = igbService.getMenu("help");
 
-    		ServiceReference<?> windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
+    		ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
             if (windowServiceReference != null)
             {
             	handleWindowService(help_menu, windowServiceReference);
             }
             else
             {
-            	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IWindowService.class.getName(), null) {
-            	    public Object addingService(ServiceReference windowServiceReference) {
+            	ServiceTracker<IWindowService,Object> serviceTracker = new ServiceTracker<IWindowService,Object>(bundleContext, IWindowService.class.getName(), null) {
+            	    public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
             	    	handleWindowService(help_menu, windowServiceReference);
             	        return super.addingService(windowServiceReference);
             	    }
@@ -84,18 +83,17 @@ public class Activator implements BundleActivator {
         }
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null) {
         	handleIGBService(igbServiceReference);
         }
         else {
-        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
-        	    public Object addingService(ServiceReference igbServiceReference) {
+        	ServiceTracker<IGBService,Object> serviceTracker = new ServiceTracker<IGBService,Object>(bundleContext, IGBService.class.getName(), null) {
+        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
         	    	handleIGBService(igbServiceReference);
         	        return super.addingService(igbServiceReference);
         	    }

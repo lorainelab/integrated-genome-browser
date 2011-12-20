@@ -11,13 +11,13 @@ import com.affymetrix.igb.shared.ISearchMode;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration<?> searchModeResidueRegistration;
+	private ServiceRegistration<ISearchMode> searchModeResidueRegistration;
 
-	private void registerService(ServiceReference<?> igbServiceReference) {
+	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
-        	IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-        	searchModeResidueRegistration = bundleContext.registerService(ISearchMode.class.getName(), new SearchModeResidue(igbService), null);
+        	IGBService igbService = bundleContext.getService(igbServiceReference);
+        	searchModeResidueRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeResidue(igbService), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -25,11 +25,10 @@ public class Activator implements BundleActivator {
         }
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-    	ServiceReference<?> igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)
         {
@@ -37,8 +36,8 @@ public class Activator implements BundleActivator {
         }
         else
         {
-        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
-        	    public Object addingService(ServiceReference igbServiceReference) {
+        	ServiceTracker<IGBService,Object> serviceTracker = new ServiceTracker<IGBService,Object>(bundleContext, IGBService.class.getName(), null) {
+        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
         	    	registerService(igbServiceReference);
         	        return super.addingService(igbServiceReference);
         	    }

@@ -43,35 +43,35 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
 	private void initTransforms() {
-		bundleContext.registerService(FloatTransformer.class.getName(), new IdentityTransform(), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(2.0), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(10.0), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(Math.E), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(2.0), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(10.0), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(Math.E), null);
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(), null);
+		bundleContext.registerService(FloatTransformer.class, new IdentityTransform(), null);
+		bundleContext.registerService(FloatTransformer.class, new LogTransform(2.0), null);
+		bundleContext.registerService(FloatTransformer.class, new LogTransform(10.0), null);
+		bundleContext.registerService(FloatTransformer.class, new LogTransform(Math.E), null);
+		bundleContext.registerService(FloatTransformer.class, new LogTransform(), null);
+		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(2.0), null);
+		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(10.0), null);
+		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(Math.E), null);
+		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(), null);
 	}
 
 	private void initGraphOperators() {
-		bundleContext.registerService(GraphOperator.class.getName(), new DiffOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new ProductOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new RatioOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new SumOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new MinOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new MaxOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new MeanOperator(), null);
-		bundleContext.registerService(GraphOperator.class.getName(), new MedianOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new DiffOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new ProductOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new RatioOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new SumOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new MinOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new MaxOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new MeanOperator(), null);
+		bundleContext.registerService(GraphOperator.class, new MedianOperator(), null);
 	}
 
 	private void initAnnotationOperators() {
-		bundleContext.registerService(AnnotationOperator.class.getName(), new ExclusiveAAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new ExclusiveBAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new IntersectionAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new NotAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new UnionAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new XorAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class.getName(), new CopyAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new ExclusiveAAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new ExclusiveBAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new IntersectionAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new NotAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new UnionAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new XorAnnotationOperator(), null);
+		bundleContext.registerService(AnnotationOperator.class, new CopyAnnotationOperator(), null);
 	}
 }

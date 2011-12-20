@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 				RecordPlaybackHolder.getInstance().addDecorator(decorator);
 			}
 		});
-		bundleContext.registerService(RecordPlaybackHolder.class.getName(), RecordPlaybackHolder.getInstance(), null);
+		bundleContext.registerService(RecordPlaybackHolder.class, RecordPlaybackHolder.getInstance(), null);
 	}
 
 	@Override

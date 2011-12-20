@@ -30,8 +30,8 @@ public class Activator implements BundleActivator {
 		return bundleContext;
 	}
 
-	private void addTab(ServiceReference<?> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
-		IGBTabPanel panel = (IGBTabPanel)bundleContext.getService(serviceReference);
+	private void addTab(ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
+		IGBTabPanel panel = bundleContext.getService(serviceReference);
 		windowServiceDefaultImpl.addTab(panel);
 		tabPanels.remove(panel.getName());
 		if (tabPanels.isEmpty()) {
@@ -59,9 +59,10 @@ public class Activator implements BundleActivator {
 		}
 		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, null);
-		ServiceReference<?>[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
+		@SuppressWarnings("unchecked")
+		ServiceReference<IGBTabPanel>[] serviceReferences = (ServiceReference<IGBTabPanel>[])bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
-			for (ServiceReference<?> serviceReference : serviceReferences) {
+			for (ServiceReference<IGBTabPanel> serviceReference : serviceReferences) {
 				addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
 			}
 		}
@@ -70,9 +71,10 @@ public class Activator implements BundleActivator {
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {
-						ServiceReference<?> serviceReference = event.getServiceReference();
+						@SuppressWarnings("unchecked")
+						ServiceReference<IGBTabPanel> serviceReference = (ServiceReference<IGBTabPanel>)event.getServiceReference();
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-							windowServiceDefaultImpl.removeTab((IGBTabPanel)bundleContext.getService(serviceReference));
+							windowServiceDefaultImpl.removeTab(bundleContext.getService(serviceReference));
 						}
 						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
 							addTab(serviceReference, windowServiceDefaultImpl, tabPanels);
@@ -84,7 +86,7 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, WindowServiceDefaultImpl.BUNDLE.getString("loadError"), x.getMessage());
 		}
-		bundleContext.registerService(IStopRoutine.class.getName(), 
+		bundleContext.registerService(IStopRoutine.class, 
 			new IStopRoutine() {
 				@Override
 				public void stop() {

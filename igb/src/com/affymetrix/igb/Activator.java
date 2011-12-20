@@ -101,7 +101,7 @@ public class Activator implements BundleActivator {
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 			"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-    	ServiceReference<?> windowServiceReference = bundleContext.getServiceReference(IWindowService.class.getName());
+    	ServiceReference<IWindowService> windowServiceReference = bundleContext.getServiceReference(IWindowService.class);
 
         if (windowServiceReference != null)
         {
@@ -109,8 +109,8 @@ public class Activator implements BundleActivator {
         }
         else
         {
-        	ServiceTracker<?, ?> serviceTracker = new ServiceTracker<Object, Object>(bundleContext, IWindowService.class.getName(), null) {
-        	    public Object addingService(ServiceReference<Object> windowServiceReference) {
+        	ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
+        	    public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
         	    	run(windowServiceReference);
         	        return super.addingService(windowServiceReference);
         	    }
@@ -128,7 +128,7 @@ public class Activator implements BundleActivator {
 	 * add any extension points handling here
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
-	private void run(ServiceReference<?> windowServiceReference) {
+	private void run(ServiceReference<IWindowService> windowServiceReference) {
 		ExtensionPointHandler<GlyphProcessor> glyphProcessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
 		glyphProcessorExtensionPoint.addExtensionPointImpl(new MismatchPileupGlyphProcessor());
     	GenericActionHolder.getInstance().addGenericActionListener(
@@ -154,12 +154,12 @@ public class Activator implements BundleActivator {
 				public void notifyGenericAction(GenericAction genericAction) {}
 			}
     	);
-        IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
+        IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
         igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
-		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), null);
+		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
 		// register tabs created in IGB itself - IGBTabPanel is an extension point
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
@@ -191,7 +191,7 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		bundleContext.registerService(IStopRoutine.class.getName(), 
+		bundleContext.registerService(IStopRoutine.class, 
 			new IStopRoutine() {
 				@Override
 				public void stop() {

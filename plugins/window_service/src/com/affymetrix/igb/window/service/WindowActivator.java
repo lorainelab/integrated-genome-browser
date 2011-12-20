@@ -39,12 +39,11 @@ public abstract class WindowActivator implements BundleActivator {
 	 * register it with OSGi, so that the tab can be added.
 	 * @param igbServiceReference the ServiceReference for the IGBService
 	 */
-	@SuppressWarnings("unchecked")
 	private void createPage(ServiceReference<IGBService> igbServiceReference) {
         try
         {
-        	final IGBService igbService = bundleContext.getService(igbServiceReference);
-        	serviceRegistration = (ServiceRegistration<IGBTabPanel>) bundleContext.registerService(IGBTabPanel.class.getName(), getPage(igbService), null);
+        	IGBService igbService = bundleContext.getService(igbServiceReference);
+        	serviceRegistration = bundleContext.registerService(IGBTabPanel.class, getPage(igbService), null);
         	bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -56,10 +55,9 @@ public abstract class WindowActivator implements BundleActivator {
 	 * waits (if necessary) for the igbService, and then calls createPage 
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void processCreatePage() throws Exception
 	{
-    	ServiceReference<IGBService> igbServiceReference = (ServiceReference<IGBService>) bundleContext.getServiceReference(IGBService.class.getName());
+    	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)
         {
@@ -67,8 +65,8 @@ public abstract class WindowActivator implements BundleActivator {
         }
         else
         {
-        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
-        	    public Object addingService(ServiceReference igbServiceReference) {
+        	ServiceTracker<IGBService,Object> serviceTracker = new ServiceTracker<IGBService,Object>(bundleContext, IGBService.class.getName(), null) {
+        	    public Object addingService(ServiceReference<IGBService> igbServiceReference) {
         	    	createPage(igbServiceReference);
         	        return super.addingService(igbServiceReference);
         	    }

@@ -51,6 +51,7 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -319,6 +320,15 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			allTierGlyphs.add(labelGlyph.getReferenceTier());
 		}
 		return allTierGlyphs;
+	}
+
+	@Override
+	public List<Glyph> getSelectedTierGlyphs() {
+		List<Glyph> selectedTierGlyphs = new ArrayList<Glyph>();
+		for (TierGlyph tierGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getSelectedTiers()) {
+			selectedTierGlyphs.add(tierGlyph);
+		}
+		return selectedTierGlyphs;
 	}
 
 	@Override

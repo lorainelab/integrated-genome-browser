@@ -139,6 +139,7 @@ public interface IGBService {
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
+	public List<Glyph> getSelectedTierGlyphs();
 	public RepositoryChangeHolderI getRepositoryChangerHolder();
 
 	// ServerList

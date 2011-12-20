@@ -50,7 +50,7 @@ public abstract class OpenURIAction extends GenericAction {
 	}
 
 	protected boolean openURI(URI uri) {
-		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
+		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 
 		if (!checkFriendlyName(friendlyName)) {

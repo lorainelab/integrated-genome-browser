@@ -52,6 +52,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
+	private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
 	private static final int TAB_POSITION = 2;
 
 	public class SearchModeAction extends GenericAction {
@@ -300,17 +301,35 @@ public final class SearchView extends IGBTabPanel implements
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
 		List<ISearchMode> searchModes = ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls();
+		// consistent order for search modes
+		Collections.sort(searchModes,
+			new Comparator<ISearchMode>() {
+				@Override
+				public int compare(ISearchMode o1, ISearchMode o2) {
+					return o1.getClass().getName().compareTo(o2.getClass().getName());
+				}
+			
+			}
+		);
 
+		ISearchMode defaultSearchMode = null;
 		for (ISearchMode searchMode : searchModes) {
 			searchCB.addItem(searchMode.getName());
 			searchModeMap.put(searchMode.getName(), searchMode);
 			if (searchMode == saveSearchMode) {
 				saveFound = true;
 			}
+			if (DEFAULT_SEARCH_MODE_CLASS.equals(searchMode.getClass().getSimpleName())) {
+				defaultSearchMode = searchMode;
+			}
 		}
 		searchCB.setToolTipText(CHOOSESEARCH);
 		if (saveSearchMode == null || !saveFound) {
-			if (searchCB.getItemCount() > 0) {
+			if (defaultSearchMode != null) {
+				searchCB.setSelectedItem(defaultSearchMode);
+				saveSearchMode = defaultSearchMode;
+			}
+			else if (searchCB.getItemCount() > 0) {
 				searchCB.setSelectedIndex(0);
 				saveSearchMode = searchCB.getSelectedItem();
 			}

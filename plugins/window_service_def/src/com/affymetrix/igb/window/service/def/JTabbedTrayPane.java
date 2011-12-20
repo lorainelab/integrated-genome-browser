@@ -420,7 +420,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	public Set<IGBTabPanel> getPlugins() {
 		Set<IGBTabPanel> plugins = new HashSet<IGBTabPanel>();
 		for (int i = 0; i < tab_pane.getTabCount(); i++) {
-			plugins.add((IGBTabPanel)tab_pane.getComponentAt(i));
+			IGBTabPanel panel = (IGBTabPanel)tab_pane.getComponentAt(i);
+			if (panel != null) {
+				plugins.add(panel);
+			}
 		}
 		return plugins;
 	}

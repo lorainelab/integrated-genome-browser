@@ -107,7 +107,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 	boolean USE_GROUPING = true;
 
 	//override the source in the GFF line and use default source
-	boolean useDefaultSource = false;
+	boolean useDefaultSource = true;
 	boolean use_standard_filters = false;
 	boolean gff_base1 = true;
 

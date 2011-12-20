@@ -63,6 +63,9 @@ public final class GFF3Parser implements Parser {
 	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
 	public final List<GFF3Sym> symlist = new ArrayList<GFF3Sym>();
 
+	//override the source in the GFF line and use default source
+	boolean useDefaultSource = true;
+	
 	static {
 		Set<String> types = new HashSet<String>();
 
@@ -144,7 +147,7 @@ public final class GFF3Parser implements Parser {
 		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
 		List<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
 		String track_name = null;
-
+		
 		Thread thread = Thread.currentThread();
 		while ((line = it.next()) != null && !thread.isInterrupted()) {
 			if (line == null) {
@@ -183,11 +186,9 @@ public final class GFF3Parser implements Parser {
 			}
 
 			String seq_name = fields[0].intern();
-			String source;
-			if (".".equals(fields[1])) {
+			String source = fields[1].intern();
+			if (useDefaultSource || ".".equals(source)) {
 				source = default_source;
-			} else {
-				source = fields[1].intern();
 			}
 			String feature_type = GFF3Sym.normalizeFeatureType(fields[2]);
 			int coord_a = Integer.parseInt(fields[3]);

@@ -77,9 +77,9 @@ public abstract class ErrorHandler {
 	private static void processDialog(JOptionPane pane, JDialog dialog, List<GenericAction> actions) {
 		dialog.setVisible(true);
 		Object selectedValue = pane.getValue();
-		if (actions != null) {
+		if (selectedValue != null && actions != null) {
 			for (GenericAction action : actions) {
-				if (selectedValue.equals(action.getText())) {
+				if (action != null && selectedValue.equals(action.getText())) {
 					action.actionPerformed(null);
 				}
 			}

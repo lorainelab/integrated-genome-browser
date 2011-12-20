@@ -103,7 +103,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
         confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
-        keepZoomStripeCheckBox = PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
+        keepZoomStripeCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe", PreferenceUtils.getTopNode(),
             UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view);
         confirmBeforeLoadingCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
@@ -293,15 +293,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                                     .add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, 326, Short.MAX_VALUE)
                                     .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(layout.createSequentialGroup()
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(keepZoomStripeCheckBox)
-                                    .add(showZoomStripLabelCheckBox)
-                                    .add(confirmBeforeDeleteCheckBox)
-                                    .add(confirmBeforeLoadingCheckBox)
-                                    .add(askBeforeExitCheckBox)
-                                    .add(autoChangeView))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 301, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(keepZoomStripeCheckBox)
+                            .add(showZoomStripLabelCheckBox)
+                            .add(confirmBeforeDeleteCheckBox)
+                            .add(confirmBeforeLoadingCheckBox)
+                            .add(askBeforeExitCheckBox)
+                            .add(autoChangeView)))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 326, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))

@@ -353,7 +353,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="keepZoomStripeCheckBox">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Keep zoom stripe in view&quot;, PreferenceUtils.getTopNode(),&#xa;      UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Show Zoom Stripe&quot;, PreferenceUtils.getTopNode(),&#xa;    UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="confirmBeforeLoadingCheckBox">

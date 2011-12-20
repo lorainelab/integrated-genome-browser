@@ -113,6 +113,7 @@ public final class XmlPrefsParser {
 		Node child;
 		String name;
 		Element el;
+		boolean isWebLinkXML = false;
 
 		for (int i = 0; i < children.getLength(); i++) {
 			child = children.item(i);
@@ -122,6 +123,7 @@ public final class XmlPrefsParser {
 				if (name.equalsIgnoreCase("annotation_style")) {
 					processAnnotStyle(el);
 				} else if (name.equalsIgnoreCase("annotation_url")) {
+					isWebLinkXML = true;
 					processLinkUrl(el);
 				} else if (name.equalsIgnoreCase("server")) {
 					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
@@ -129,6 +131,10 @@ public final class XmlPrefsParser {
 					processServer(el, ServerList.getRepositoryInstance(), null);
 				}
 			}
+		}
+
+		if (isWebLinkXML) {
+			WebLink.sortList();
 		}
 	}
 

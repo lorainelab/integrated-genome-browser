@@ -89,13 +89,31 @@ public final class WebLink {
 		}
 
 		if (!wl.getType().equals(LOCAL)) {
-			default_weblink_list.add(wl);
-			Collections.sort(default_weblink_list, webLinkComp);
+			if (!isContained(default_weblink_list, wl)) {
+				default_weblink_list.add(wl);
+			}
 		} else {
 			local_weblink_list.add(wl);
-			Collections.sort(local_weblink_list, webLinkComp);
 		}
 	}
+
+	public static void sortList() {
+		Collections.sort(default_weblink_list, webLinkComp);
+		Collections.sort(local_weblink_list, webLinkComp);
+	}
+
+	private static boolean isContained(List<WebLink> list, WebLink link) {
+		for (WebLink l : list) {
+			if (l.getName().equals(link.getName())
+					&& l.getUrl().equals(link.getUrl())
+					&& l.getRegex().equals(link.getRegex())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
 		private String sortString(WebLink wl) {

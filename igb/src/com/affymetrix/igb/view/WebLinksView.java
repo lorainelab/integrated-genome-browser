@@ -55,7 +55,6 @@ public final class WebLinksView implements ListSelectionListener {
 	public JRadioButton nameRadioButton;
 	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
-	private final WebLinkEditorPanel edit_panel;
 	public int previousSelectedRow;
 	private String previousName;
 	private String previousUrl;
@@ -87,7 +86,6 @@ public final class WebLinksView implements ListSelectionListener {
 		idRadioButton = new JRadioButton();
 		button_group.add(nameRadioButton);
 		button_group.add(idRadioButton);
-		edit_panel = new WebLinkEditorPanel();
 
 		if (localTable.getRowCount() > 0) {
 			localTable.setRowSelectionInterval(0, 0);
@@ -148,7 +146,7 @@ public final class WebLinksView implements ListSelectionListener {
 				for (WebLink l : links) {
 					WebLink.removeLocalWebLink(l);
 				}
-				
+
 			}
 
 			refreshList();
@@ -157,15 +155,11 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void add() {
 		WebLink link = new WebLink();
-		edit_panel.setWebLink(link);
-		boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null));
-		if (ok) {
-			edit_panel.setLinkPropertiesFromGUI();
-			link.setType(WebLink.LOCAL);
-			WebLink.addWebLink(link);
-		} else {
-			return;
-		}
+		link.setName("New Web Link");
+		link.setUrl("http://bioviz.org/igb/");
+		link.setRegex(".*");
+		link.setType(WebLink.LOCAL);
+		WebLink.addWebLink(link);
 
 		refreshList();
 
@@ -174,11 +168,15 @@ public final class WebLinksView implements ListSelectionListener {
 			if (l == link) {
 				break;
 			}
-			
+
 			row++;
 		}
 
 		resetRow(row);
+
+		setEnabled(true);
+		nameRadioButton.setSelected(true);
+		nameTextField.grabFocus();
 	}
 
 	private boolean isEmpty(String s) {
@@ -195,8 +193,8 @@ public final class WebLinksView implements ListSelectionListener {
 				&& row != -1) {
 			localTable.setRowSelectionInterval(row, row);
 		}
-		
-		if (defaultTable.getSelectedRow() != -1 
+
+		if (defaultTable.getSelectedRow() != -1
 				&& localTable.getSelectedRow() != -1) {
 			defaultTable.removeRowSelectionInterval(0, defaultTable.getRowCount() - 1);
 		}

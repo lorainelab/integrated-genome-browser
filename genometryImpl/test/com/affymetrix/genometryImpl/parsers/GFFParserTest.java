@@ -53,7 +53,7 @@ public class GFFParserTest {
 			assertEquals(200, sym.getEnd());
 			assertEquals(101, sym.getLength());
 			assertEquals(true, sym.isForward());
-			assertEquals("Testing", sym.getProperty("source"));
+			//assertEquals("Testing", sym.getProperty("source"));
 			assertEquals("Track A", sym.getProperty("method"));
 
 			if (sym.getChildCount() == 1) {
@@ -101,7 +101,7 @@ public class GFFParserTest {
 			sym = (SingletonSymWithProps) result.get(18);
 			assertEquals(1, sym.getChildCount());
 			assertEquals("Track B", sym.getProperty("method"));
-			assertEquals("sourceB", sym.getProperty("source"));
+			//assertEquals("sourceB", sym.getProperty("source"));
 
 		}
 

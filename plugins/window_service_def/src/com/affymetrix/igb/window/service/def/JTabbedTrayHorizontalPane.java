@@ -17,8 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
-	protected static final Icon LEFT_ICON = MenuUtil.getIcon("images/left.png");
-	protected static final Icon RIGHT_ICON = MenuUtil.getIcon("images/right.png");
+	protected static final Icon LEFT_ICON = MenuUtil.getIcon(getLeftIconString());
+	protected static final Icon RIGHT_ICON = MenuUtil.getIcon(getRightIconString());
 
 	public JTabbedTrayHorizontalPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(id, tabState, _baseComponent, orientation, splitOrientation, _saveDividerProportionalLocation);
@@ -59,5 +59,19 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 			return true;
 		}
 		return false;
+	}
+	
+	private static String getLeftIconString(){
+		if (isMac()) {
+			return "images/down.png";
+		}
+		return "images/left.png";
+	}
+	
+	private static String getRightIconString(){
+		if (isMac()) {
+			return "images/up.png";
+		}
+		return "images/right.png";
 	}
 }

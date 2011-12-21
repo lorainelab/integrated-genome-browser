@@ -25,7 +25,7 @@ public class WebLinksViewGUI extends JPanel {
 
 	public synchronized JFrame displayPanel() {
 		if (static_frame == null) {
-			static_frame = PreferenceUtils.createFrame("Web Links",
+			static_frame = PreferenceUtils.createFrame("Web Links Tool",
 					getSingleton());
 		}
 		DisplayUtils.bringFrameToFront(static_frame);
@@ -48,7 +48,14 @@ public class WebLinksViewGUI extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        propertiesPanel = new javax.swing.JPanel();
+        localPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        localTable = wlv.localTable;
+        createButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        importButton = new javax.swing.JButton();
+        exportButton = new javax.swing.JButton();
+        builderPanel = new javax.swing.JPanel();
         nameLabel = new javax.swing.JLabel();
         nameTextField = wlv.nameTextField;
         urlLabel = new javax.swing.JLabel();
@@ -57,19 +64,51 @@ public class WebLinksViewGUI extends JPanel {
         regexTextField = wlv.regexTextField;
         urlTextField = wlv.urlTextField;
         matchTip = new javax.swing.JLabel();
-        regexTip = new javax.swing.JLabel();
-        localPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        localTable = wlv.localTable;
-        addButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        importButton = new javax.swing.JButton();
-        exportButton = new javax.swing.JButton();
+        regexLabel = new javax.swing.JLabel();
+        saveButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
         defaultPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        defaultTable = wlv.defaultTable;
+        defaultTable = wlv.serverTable;
 
-        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+        localPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Added Web Link"));
+
+        localTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                localTableMousePressed(evt);
+            }
+        });
+        jScrollPane1.setViewportView(localTable);
+
+        createButton.setText("Create New");
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
+
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+
+        importButton.setText("Import");
+        importButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importButtonActionPerformed(evt);
+            }
+        });
+
+        exportButton.setText("Export");
+        exportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportButtonActionPerformed(evt);
+            }
+        });
+
+        builderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Link Builder"));
 
         nameLabel.setText("Name:");
 
@@ -107,120 +146,106 @@ public class WebLinksViewGUI extends JPanel {
             }
         });
 
-        matchTip.setToolTipText("Choose 'Track Name' or 'Annotation ID' as the identifier for web link.");
+        matchTip.setToolTipText("Choose for Regular Expression Matches");
         matchTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
         matchTip.setText(" ");
 
-        regexTip.setToolTipText("Type regular expression for matching identifier.");
-        regexTip.setIcon(CommonUtils.getInstance().getIcon("images/info.png"));
-        regexTip.setText(" ");
+        regexLabel.setText("Regular Expression:");
 
-        org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
-        propertiesPanel.setLayout(propertiesPanelLayout);
-        propertiesPanelLayout.setHorizontalGroup(
-            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(regexTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(urlLabel)
-                    .add(nameLabel))
+        saveButton.setText("Save and Apply");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+
+        clearButton.setText("Clear");
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout builderPanelLayout = new org.jdesktop.layout.GroupLayout(builderPanel);
+        builderPanel.setLayout(builderPanelLayout);
+        builderPanelLayout.setHorizontalGroup(
+            builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(builderPanelLayout.createSequentialGroup()
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, urlLabel)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, nameLabel)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, matchTip, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(builderPanelLayout.createSequentialGroup()
                         .add(nameRadioButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(idRadioButton))
-                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
-                    .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
-                    .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)))
+                        .add(idRadioButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 33, Short.MAX_VALUE)
+                        .add(saveButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(clearButton))
+                    .add(urlTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                    .add(builderPanelLayout.createSequentialGroup()
+                        .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(regexLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(regexTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))))
         );
-        propertiesPanelLayout.setVerticalGroup(
-            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(nameLabel)
-                    .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(5, 5, 5)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+        builderPanelLayout.setVerticalGroup(
+            builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(builderPanelLayout.createSequentialGroup()
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(regexLabel)
+                    .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(nameLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER, false)
                     .add(urlTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(urlLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(0, 0, 0)
+                .add(builderPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(matchTip)
                     .add(nameRadioButton)
                     .add(idRadioButton)
-                    .add(matchTip))
-                .add(5, 5, 5)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(regexTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(regexTip))
-                .add(0, 0, 0))
+                    .add(saveButton)
+                    .add(clearButton)))
         );
-
-        localPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Local"));
-
-        localTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                localTableMousePressed(evt);
-            }
-        });
-        jScrollPane1.setViewportView(localTable);
-
-        addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-
-        deleteButton.setText("Delete");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
-
-        importButton.setText("Import");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
-
-        exportButton.setText("Export");
-        exportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportButtonActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout localPanelLayout = new org.jdesktop.layout.GroupLayout(localPanel);
         localPanel.setLayout(localPanelLayout);
         localPanelLayout.setHorizontalGroup(
             localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
             .add(localPanelLayout.createSequentialGroup()
-                .add(addButton)
+                .add(createButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(deleteButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 185, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 167, Short.MAX_VALUE)
                 .add(importButton)
                 .add(0, 0, 0)
-                .add(exportButton))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                .add(exportButton)
+                .add(0, 0, 0))
+            .add(localPanelLayout.createSequentialGroup()
+                .add(builderPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(0, 0, 0))
         );
         localPanelLayout.setVerticalGroup(
             localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, localPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+            .add(localPanelLayout.createSequentialGroup()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(localPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(addButton)
+                    .add(createButton)
                     .add(deleteButton)
                     .add(exportButton)
-                    .add(importButton)))
+                    .add(importButton))
+                .add(builderPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        defaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Default"));
+        defaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Server Provided Web Link"));
 
         defaultTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -233,34 +258,26 @@ public class WebLinksViewGUI extends JPanel {
         defaultPanel.setLayout(defaultPanelLayout);
         defaultPanelLayout.setHorizontalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
         );
         defaultPanelLayout.setVerticalGroup(
             defaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, defaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, localPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .add(defaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, localPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+            .add(layout.createSequentialGroup()
                 .add(defaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(localPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(localPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -268,9 +285,9 @@ public class WebLinksViewGUI extends JPanel {
 		wlv.regexTextField();
 	}//GEN-LAST:event_nameRadioButtonActionPerformed
 
-	private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+	private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
 		wlv.add();
-	}//GEN-LAST:event_addButtonActionPerformed
+	}//GEN-LAST:event_createButtonActionPerformed
 
 	private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
 		wlv.delete();
@@ -314,8 +331,18 @@ public class WebLinksViewGUI extends JPanel {
 		}
 	}//GEN-LAST:event_defaultTableMousePressed
 
+	private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+		wlv.clear();
+	}//GEN-LAST:event_clearButtonActionPerformed
+
+	private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+		wlv.save();
+	}//GEN-LAST:event_saveButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
+    private javax.swing.JPanel builderPanel;
+    private javax.swing.JButton clearButton;
+    private javax.swing.JButton createButton;
     private javax.swing.JPanel defaultPanel;
     private javax.swing.JTable defaultTable;
     private javax.swing.JButton deleteButton;
@@ -330,9 +357,9 @@ public class WebLinksViewGUI extends JPanel {
     private javax.swing.JLabel nameLabel;
     private javax.swing.JRadioButton nameRadioButton;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JPanel propertiesPanel;
+    private javax.swing.JLabel regexLabel;
     private javax.swing.JTextField regexTextField;
-    private javax.swing.JLabel regexTip;
+    private javax.swing.JButton saveButton;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables

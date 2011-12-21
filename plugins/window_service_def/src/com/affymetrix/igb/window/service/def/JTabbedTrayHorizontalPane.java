@@ -17,8 +17,8 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
-	protected static final Icon LEFT_ICON = MenuUtil.getIcon(getLeftIconString());
-	protected static final Icon RIGHT_ICON = MenuUtil.getIcon(getRightIconString());
+	protected final Icon LEFT_ICON = MenuUtil.getIcon(getLeftIconString());
+	protected final Icon RIGHT_ICON = MenuUtil.getIcon(getRightIconString());
 
 	public JTabbedTrayHorizontalPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(id, tabState, _baseComponent, orientation, splitOrientation, _saveDividerProportionalLocation);
@@ -53,7 +53,7 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	 * determines if the OS is windows
 	 * @return true if the OS is windows, false for MacOS, Linux, etc.
 	 */
-	private static boolean isMac(){
+	protected static boolean isMac(){
 		String os = System.getProperty("os.name");
 		if (os != null && "Mac OS X".equals(os)) {
 			return true;
@@ -61,17 +61,8 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 		return false;
 	}
 	
-	private static String getLeftIconString(){
-		if (isMac()) {
-			return "images/down.png";
-		}
-		return "images/left.png";
-	}
+	protected abstract String getLeftIconString();
 	
-	private static String getRightIconString(){
-		if (isMac()) {
-			return "images/up.png";
-		}
-		return "images/right.png";
-	}
+	protected abstract String getRightIconString();
+		
 }

@@ -41,10 +41,12 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  * stacked.
  */
 public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
+
 	private static final long serialVersionUID = 1L;
 	protected static final int MINIMUM_WIDTH = 40;
 
 	protected enum TrayState {
+
 		HIDDEN,
 		RETRACTED,
 		EXTENDED,
@@ -58,7 +60,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			return HIDDEN;
 		}
 	}
-
 	protected final JComponent _baseComponent;
 	private static final int DIVIDER_SIZE = 8;
 	private double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
@@ -77,29 +78,34 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * different orientations
 	 */
 	protected abstract void setTabComponent();
+
 	/**
 	 * get the full size (width or height) of the tray
 	 * @return the full size of the tray
 	 */
 	protected abstract int getFullSize();
+
 	/**
 	 * set the minimum size of the two components
 	 */
 	protected abstract void setMinSize();
+
 	/**
 	 * return the width (or height) of the given tab panel
 	 * @param tabComponent the tab panel
 	 * @return the width or height of the tab panel
 	 */
 	protected abstract int getTabWidth(Component tabComponent);
+
 	/**
 	 * get the int / pixel value of the divider location for the EXTEND tray state
 	 * (it is saved as a percentage)
 	 * @return the extend state divider location
 	 */
 	private int getExtendDividerLocation() {
-		return (int)Math.round(getFullSize() * saveDividerProportionalLocation);
+		return (int) Math.round(getFullSize() * saveDividerProportionalLocation);
 	}
+
 	/**
 	 * get the int / pixel value of the divider location for the RETRACT tray state
 	 * @return the retract state divider location
@@ -111,24 +117,29 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
 		return getTabWidth(tab_pane.getComponentAt(index));
 	}
+
 	/**
 	 * get the int / pixel value of the divider location for the HIDDEN tray state
 	 * @return the hidden state divider location
 	 */
 	protected abstract int getHideDividerLocation();
+
 	/**
 	 * determines if the point is on the tab of a tabbed pane
 	 * @param p the point to check
 	 * @return true if the point is on the tab, false otherwise
 	 */
 	protected abstract boolean isOnTab(Point p);
+
 	protected abstract Icon getRetractIcon();
+
 	protected abstract Icon getExtendIcon();
+
 	/**
 	 * save the divider location for the RETRACT tray state - as a percentage
 	 */
 	private void saveDividerLocation() {
-		saveDividerProportionalLocation = (double)getDividerLocation() / (double)getFullSize();
+		saveDividerProportionalLocation = (double) getDividerLocation() / (double) getFullSize();
 	}
 
 	public JTabbedTrayPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
@@ -145,23 +156,28 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 		tab_pane = createTabbedPane(id, orientation);
 		tab_pane.addAncestorListener(
-			new AncestorListener() {
-				@Override
-				public void ancestorAdded(AncestorEvent event) {}
-				@Override
-				public void ancestorRemoved(AncestorEvent event) {}
-				@Override
-				public void ancestorMoved(AncestorEvent event) {
-					if (trayState == TrayState.EXTENDED && initialized) {
-						saveDividerLocation();
+				new AncestorListener() {
+
+					@Override
+					public void ancestorAdded(AncestorEvent event) {
 					}
-				}
-			}
-		);
+
+					@Override
+					public void ancestorRemoved(AncestorEvent event) {
+					}
+
+					@Override
+					public void ancestorMoved(AncestorEvent event) {
+						if (trayState == TrayState.EXTENDED && initialized) {
+							saveDividerLocation();
+						}
+					}
+				});
 		tab_pane.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				IGBTabPanel sel = (IGBTabPanel)tab_pane.getSelectedComponent();
+				IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
 				if (sel != null) {
 					GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
 				}
@@ -184,45 +200,51 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		MouseListener[] mouseListeners = tab_pane.getMouseListeners();
 		if (mouseListeners == null) {
 			System.out.println(MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("internalError"), this.getClass().getName()));
-		}
-		else {
+		} else {
 			final MouseListener originalMouseListener = mouseListeners[0];
 			tab_pane.removeMouseListener(originalMouseListener);
 			tab_pane.addMouseListener(
-				new MouseListener() {
-					private int beforeIndex = -1;
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						originalMouseListener.mouseReleased(e);
-						if (tab_pane.indexAtLocation(e.getX(), e.getY()) == 0) {
-							tab_pane.setSelectedIndex(beforeIndex);
-							if (trayState == TrayState.EXTENDED) {
-								retractTray();
-							}
-							else if (trayState == TrayState.RETRACTED) {
-				               	extendTray();
+					new MouseListener() {
+
+						private int beforeIndex = -1;
+
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							originalMouseListener.mouseReleased(e);
+							int index = tab_pane.indexAtLocation(e.getX(), e.getY());
+							if (index > -1) {
+								tab_pane.setSelectedIndex(index);
+								if (trayState == TrayState.EXTENDED) {
+									if (index == 0) {
+										retractTray();
+									}
+								} else if (trayState == TrayState.RETRACTED) {
+									extendTray();
+								}
 							}
 						}
-					}
-					@Override
-					public void mousePressed(MouseEvent e) {
-		               	beforeIndex = tab_pane.getSelectedIndex();
-						originalMouseListener.mousePressed(e);
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-						originalMouseListener.mouseExited(e);
-					}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						originalMouseListener.mouseEntered(e);
-					}
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						originalMouseListener.mouseClicked(e);
-					}
-				}
-			);
+
+						@Override
+						public void mousePressed(MouseEvent e) {
+							beforeIndex = tab_pane.getSelectedIndex();
+							originalMouseListener.mousePressed(e);
+						}
+
+						@Override
+						public void mouseExited(MouseEvent e) {
+							originalMouseListener.mouseExited(e);
+						}
+
+						@Override
+						public void mouseEntered(MouseEvent e) {
+							originalMouseListener.mouseEntered(e);
+						}
+
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							originalMouseListener.mouseClicked(e);
+						}
+					});
 		}
 	}
 
@@ -277,6 +299,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			tab_pane.setSelectedIndex(1);
 		}
 	}
+	
 
 	/**
 	 * put the tray in the RETRACT tray state
@@ -353,6 +376,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		};
 
 		frame.addWindowListener(new WindowAdapter() {
+
 			@Override
 			public void windowClosing(WindowEvent evt) {
 				SwingUtilities.invokeLater(return_panes_to_main_window);
@@ -373,25 +397,25 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			return;
 		}
 		switch (newState) {
-		case HIDDEN:
-			hideTray();
-			break;
-		case RETRACTED:
-			retractTray();
-			break;
-		case EXTENDED:
-			extendTray();
-			break;
-		case WINDOW:
-			windowTray();
-			break;
+			case HIDDEN:
+				hideTray();
+				break;
+			case RETRACTED:
+				retractTray();
+				break;
+			case EXTENDED:
+				extendTray();
+				break;
+			case WINDOW:
+				windowTray();
+				break;
 		}
 	}
 
 	@Override
 	public void addTab(final IGBTabPanel plugin) {
 		int index = 0;
-		while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel)tab_pane.getComponentAt(index)) > 0) {
+		while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel) tab_pane.getComponentAt(index)) > 0) {
 			index++;
 		}
 		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
@@ -406,7 +430,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		plugin.setTrayRectangle(plugin.getBounds());
 		String name = plugin.getName();
 		for (int i = 1; i < tab_pane.getTabCount(); i++) {
-			if (name.equals(((IGBTabPanel)tab_pane.getComponentAt(i)).getName())) {
+			if (name.equals(((IGBTabPanel) tab_pane.getComponentAt(i)).getName())) {
 				tab_pane.remove(i);
 				tab_pane.validate();
 			}
@@ -434,7 +458,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	}
 
 	public IGBTabPanel getSelectedIGBTabPanel() {
-		return (IGBTabPanel)tab_pane.getSelectedComponent();
+		return (IGBTabPanel) tab_pane.getSelectedComponent();
 	}
 
 	/**
@@ -443,7 +467,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * the JTabbedPane
 	 * @return the JTabbedPane
 	 */
-	protected JRPTabbedPane createTabbedPane(String id, int tabPlacement){
+	protected JRPTabbedPane createTabbedPane(String id, int tabPlacement) {
 		return new JRPTabbedPane(id, tabPlacement);
 	}
 
@@ -543,19 +567,19 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	@Override
 	public void resize() {
 		switch (trayState) {
-		case HIDDEN:
-			setDividerLocation(getHideDividerLocation());
-			break;
-		case RETRACTED:
-			int retractDividerLocation = getRetractDividerLocation();
-			if (retractDividerLocation != -1) {
-				setDividerLocation(retractDividerLocation);
-				retractDividerSet = true;
-			}
-			break;
-		case EXTENDED:
-			setDividerLocation(getExtendDividerLocation());
-			break;
+			case HIDDEN:
+				setDividerLocation(getHideDividerLocation());
+				break;
+			case RETRACTED:
+				int retractDividerLocation = getRetractDividerLocation();
+				if (retractDividerLocation != -1) {
+					setDividerLocation(retractDividerLocation);
+					retractDividerSet = true;
+				}
+				break;
+			case EXTENDED:
+				setDividerLocation(getExtendDividerLocation());
+				break;
 		}
 	}
 
@@ -563,27 +587,25 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	public void close() {
 		if (trayState == TrayState.WINDOW) {
 			PreferenceUtils.saveWindowLocation(frame, title);
-		}
-		else if (trayState == TrayState.EXTENDED) {
+		} else if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
 		}
 		if (getSelectedIGBTabPanel() == null) {
 			PreferenceUtils.saveSelectedTab(title, null);
-		}
-		else {
+		} else {
 			PreferenceUtils.saveSelectedTab(title, getSelectedIGBTabPanel().getName());
 		}
 		PreferenceUtils.saveDividerLocation(title, saveDividerProportionalLocation);
 	}
 
 	@Override
-    public void paint(Graphics g) {
-    	super.paint(g);
-    	if (!initialized) {
-    		resize();
-    		initialized = true;
-    	}
-    }
+	public void paint(Graphics g) {
+		super.paint(g);
+		if (!initialized) {
+			resize();
+			initialized = true;
+		}
+	}
 
 	@Override
 	public String getName() {

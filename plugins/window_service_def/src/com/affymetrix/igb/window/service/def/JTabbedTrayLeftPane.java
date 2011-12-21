@@ -15,6 +15,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  * JTabbedTrayPane that is on the left
  */
 public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
+
 	private static final long serialVersionUID = 1L;
 	private static final double LEFT_DIVIDER_PROPORTIONAL_LOCATION = 0.20;
 
@@ -59,18 +60,18 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 
 	@Override
 	protected void setMinSize() {
-		_baseComponent.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int)_baseComponent.getMinimumSize().getHeight()));
-		tab_pane.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int)tab_pane.getMinimumSize().getHeight()));
+		_baseComponent.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) _baseComponent.getMinimumSize().getHeight()));
+		tab_pane.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) tab_pane.getMinimumSize().getHeight()));
 	}
 
 	@Override
 	protected Icon getRetractIcon() {
-		return LEFT_ICON;
+		return RIGHT_ICON;
 	}
 
 	@Override
 	protected Icon getExtendIcon() {
-		return RIGHT_ICON;
+		return LEFT_ICON;
 	}
 	
 	protected String getLeftIconString(){

@@ -139,6 +139,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * save the divider location for the RETRACT tray state - as a percentage
 	 */
 	private void saveDividerLocation() {
+		if (getDividerLocation() == 0 || getFullSize() == 0) {
+			return;
+		}
 		saveDividerProportionalLocation = (double) getDividerLocation() / (double) getFullSize();
 	}
 
@@ -204,47 +207,48 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			final MouseListener originalMouseListener = mouseListeners[0];
 			tab_pane.removeMouseListener(originalMouseListener);
 			tab_pane.addMouseListener(
-					new MouseListener() {
+				new MouseListener() {
 
-						private int beforeIndex = -1;
+//					private int beforeIndex = -1;
 
-						@Override
-						public void mouseReleased(MouseEvent e) {
-							originalMouseListener.mouseReleased(e);
-							int index = tab_pane.indexAtLocation(e.getX(), e.getY());
-							if (index > -1) {
-								tab_pane.setSelectedIndex(index);
-								if (trayState == TrayState.EXTENDED) {
-									if (index == 0) {
-										retractTray();
-									}
-								} else if (trayState == TrayState.RETRACTED) {
-									extendTray();
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						originalMouseListener.mouseReleased(e);
+						int index = tab_pane.indexAtLocation(e.getX(), e.getY());
+						if (index > -1) {
+							tab_pane.setSelectedIndex(index);
+							if (trayState == TrayState.EXTENDED) {
+								if (index == 0) {
+									retractTray();
 								}
+							} else if (trayState == TrayState.RETRACTED) {
+								extendTray();
 							}
 						}
+					}
 
-						@Override
-						public void mousePressed(MouseEvent e) {
-							beforeIndex = tab_pane.getSelectedIndex();
-							originalMouseListener.mousePressed(e);
-						}
+					@Override
+					public void mousePressed(MouseEvent e) {
+//						beforeIndex = tab_pane.getSelectedIndex();
+						originalMouseListener.mousePressed(e);
+					}
 
-						@Override
-						public void mouseExited(MouseEvent e) {
-							originalMouseListener.mouseExited(e);
-						}
+					@Override
+					public void mouseExited(MouseEvent e) {
+						originalMouseListener.mouseExited(e);
+					}
 
-						@Override
-						public void mouseEntered(MouseEvent e) {
-							originalMouseListener.mouseEntered(e);
-						}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						originalMouseListener.mouseEntered(e);
+					}
 
-						@Override
-						public void mouseClicked(MouseEvent e) {
-							originalMouseListener.mouseClicked(e);
-						}
-					});
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						originalMouseListener.mouseClicked(e);
+					}
+				}
+			);
 		}
 	}
 

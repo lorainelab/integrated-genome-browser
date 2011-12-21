@@ -37,31 +37,33 @@ public abstract class AnnotsXmlParser {
 				}
 				Element fileElement = (Element) fileNode;
 				String filename = fileElement.getAttribute("name");
-				String title = fileElement.getAttribute("title");
-				String desc = fileElement.getAttribute("description");   // not currently used
-				String friendlyURL = fileElement.getAttribute("url");
-				String serverURL = fileElement.getAttribute("serverURL");
-				String load_hint = fileElement.getAttribute("load_hint");
-				String label_field = fileElement.getAttribute("label_field");
-				String foreground = fileElement.getAttribute("foreground");
-				String background = fileElement.getAttribute("background");
-				String max_depth = fileElement.getAttribute("max_depth");
-				String name_size = fileElement.getAttribute("name_size");
-				String connected = fileElement.getAttribute("connected");
-				String collapsed = fileElement.getAttribute("collapsed");
-				String show2tracks = fileElement.getAttribute("show2tracks");
-				String direction_type = fileElement.getAttribute("direction_type");
-				String positive_strand_color = fileElement.getAttribute("positive_strand_color");
-				String negative_strand_color = fileElement.getAttribute("negative_strand_color");
-				String view_mode =  fileElement.getAttribute("view_mode");
-
-				if (filename != null) {
-					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, 
-							friendlyURL, serverURL, load_hint, label_field, foreground,
-							background, max_depth, name_size, connected, collapsed,
-							show2tracks, direction_type, positive_strand_color,
-									negative_strand_color, view_mode);
-					annotList.add(annotMapElt);
+				if (FileTypeHolder.getInstance().getFileTypeHandlerForURI(filename) != null) {
+					String title = fileElement.getAttribute("title");
+					String desc = fileElement.getAttribute("description");   // not currently used
+					String friendlyURL = fileElement.getAttribute("url");
+					String serverURL = fileElement.getAttribute("serverURL");
+					String load_hint = fileElement.getAttribute("load_hint");
+					String label_field = fileElement.getAttribute("label_field");
+					String foreground = fileElement.getAttribute("foreground");
+					String background = fileElement.getAttribute("background");
+					String max_depth = fileElement.getAttribute("max_depth");
+					String name_size = fileElement.getAttribute("name_size");
+					String connected = fileElement.getAttribute("connected");
+					String collapsed = fileElement.getAttribute("collapsed");
+					String show2tracks = fileElement.getAttribute("show2tracks");
+					String direction_type = fileElement.getAttribute("direction_type");
+					String positive_strand_color = fileElement.getAttribute("positive_strand_color");
+					String negative_strand_color = fileElement.getAttribute("negative_strand_color");
+					String view_mode =  fileElement.getAttribute("view_mode");
+	
+					if (filename != null) {
+						AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, 
+								friendlyURL, serverURL, load_hint, label_field, foreground,
+								background, max_depth, name_size, connected, collapsed,
+								show2tracks, direction_type, positive_strand_color,
+										negative_strand_color, view_mode);
+						annotList.add(annotMapElt);
+					}
 				}
 			}
 		} catch (SAXParseException e) {

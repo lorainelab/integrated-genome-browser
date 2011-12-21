@@ -66,12 +66,12 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 
 	@Override
 	protected Icon getRetractIcon() {
-		return RIGHT_ICON;
+		return LEFT_ICON;
 	}
 
 	@Override
 	protected Icon getExtendIcon() {
-		return LEFT_ICON;
+		return RIGHT_ICON;
 	}
 	
 	protected String getLeftIconString(){

@@ -40,6 +40,8 @@ public final class SimpleBookmarkServer {
   private static int ports_to_try = 5;
   private int server_port;
   final static byte[] prompt = "igb >>> ".getBytes();
+  final static String http_response = 
+		  "HTTP/1.1 204 No Content\n\n";
 
   /** The basic localhost URL that starts a call to IGB; for backwards-compatibility
    *  with versions of IGB 4.56 and earlier, the old name {@link #SERVLET_NAME_OLD}
@@ -68,7 +70,8 @@ public final class SimpleBookmarkServer {
 			"Connection accepted " +
                   socket.getInetAddress() +
                   ":" + socket.getPort());
-		  socket.getOutputStream().write(prompt);
+		  socket.getOutputStream().write(http_response.getBytes());
+		  socket.getOutputStream().flush();
           BookmarkHttpRequestHandler request = new BookmarkHttpRequestHandler(igbService, socket);
           Thread thread = new Thread(request);
           thread.start();

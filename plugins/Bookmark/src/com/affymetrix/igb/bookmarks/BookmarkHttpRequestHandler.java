@@ -68,7 +68,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 					igbService.doSingleAction(line);
 				}
 
-				output.write(SimpleBookmarkServer.prompt);
+//				output.write(SimpleBookmarkServer.prompt);
 			}
 		} finally {
 

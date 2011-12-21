@@ -22,6 +22,8 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	private DefaultMutableTreeNode oldNode;
 	private final boolean DEBUG = false;
 	private int margin = 12;
+	private TreePath[] selectedPaths;
+	private TreePath selectedPath;
 
 	public DragDropTree() {
 		super();
@@ -79,10 +81,20 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	 * Target Drag Event Handlers
 	 */
 	public void dragEnter(DropTargetDragEvent dtde) {
+		selectedPaths = this.getSelectionPaths();
 		dtde.acceptDrag(dtde.getDropAction());
 	}
 
+	/*
+	 * Called when a drag operation is ongoing, while the mouse pointer is still 
+	 * over the operable part of the drop site for the DropTarget registered with this listener.
+	 */
 	public void dragOver(DropTargetDragEvent dtde) {
+		Point pt = dtde.getLocation();
+		DropTargetContext dtc = dtde.getDropTargetContext();
+		JTree tree = (JTree) dtc.getComponent();
+		TreePath dropPath = tree.getClosestPathForLocation(pt.x, pt.y);
+		tree.setSelectionPath(dropPath);
 		dtde.acceptDrag(dtde.getDropAction());
 	}
 
@@ -100,8 +112,7 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 
 		TreePath parentPath = tree.getClosestPathForLocation(pt.x, pt.y);
 		TreePath rootPath = tree.getPathForRow(0);
-		TreePath[] selectedPaths = this.getSelectionPaths();
-		TreePath selectedPath;
+		
 		TreePath[] newPaths = new TreePath[selectedPaths.length];
 		TreePath newPath;
 

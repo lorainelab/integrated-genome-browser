@@ -434,7 +434,9 @@ public final class GraphSymUtils {
 
 			if(PreferenceUtils.getGraphPrefsNode().getBoolean(PREF_USE_URL_AS_NAME,
 					default_use_url_as_name)){
-				pgraf.setGraphName(stream_name + " : " + name);
+				if(!name.contains(stream_name)){
+					pgraf.setGraphName(stream_name + " : " + name);
+				}
 			}
 		}
 		return pgraf;

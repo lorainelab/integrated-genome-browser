@@ -43,12 +43,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" alignment="1" pref="537" max="32767" attributes="2"/>
-              <Group type="102" alignment="0" attributes="0">
+              <Component id="jScrollPane1" alignment="1" pref="600" max="32767" attributes="2"/>
+              <Group type="102" alignment="1" attributes="0">
                   <Component id="createButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="167" max="32767" attributes="0"/>
+                  <EmptySpace pref="230" max="32767" attributes="0"/>
                   <Component id="importButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="exportButton" min="-2" max="-2" attributes="0"/>
@@ -66,10 +66,10 @@
                   <Component id="jScrollPane1" pref="177" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="createButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="deleteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="exportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="importButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="createButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deleteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="builderPanel" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -157,30 +157,33 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="nameRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="idRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                      <Component id="matchTip" min="-2" pref="17" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="saveButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="clearButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="urlLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="matchTip" alignment="1" min="-2" pref="17" max="-2" attributes="0"/>
+                          <Component id="nameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="urlLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="nameRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="idRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="33" max="32767" attributes="0"/>
-                              <Component id="saveButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Component id="clearButton" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="urlTextField" alignment="0" pref="475" max="32767" attributes="2"/>
+                          <Component id="urlTextField" alignment="0" pref="538" max="32767" attributes="2"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="nameTextField" min="-2" pref="156" max="-2" attributes="2"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="regexLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="regexTextField" pref="175" max="32767" attributes="0"/>
+                              <Component id="regexTextField" pref="238" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -191,22 +194,23 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="regexTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="regexLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameTextField" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="nameLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="nameTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="regexLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" max="-2" attributes="0">
-                          <Component id="urlTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="urlLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="urlLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="urlTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="matchTip" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="idRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="saveButton" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="clearButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="nameRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="idRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="matchTip" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -284,7 +288,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save and Apply"/>
+                <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveButtonActionPerformed"/>
@@ -297,6 +301,11 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearButtonActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Regular Expression Matches:"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>
@@ -314,7 +323,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" alignment="0" pref="537" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" alignment="0" pref="600" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

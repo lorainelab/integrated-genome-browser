@@ -38,7 +38,7 @@ public final class WebLinksView implements ListSelectionListener {
 	public static final String NAME = "Name";
 	public static final String URL = "URL Pattern";
 	public static final String REGEX = "Regular Expression";
-	public static final String TYPE = "Matches Type";
+	public static final String TYPE = "Matches";
 	public final static String[] col_headings = {
 		NAME,
 		REGEX,
@@ -116,8 +116,8 @@ public final class WebLinksView implements ListSelectionListener {
 		table.getColumnModel().getColumn(COL_NAME).setMaxWidth(400);
 		table.getColumnModel().getColumn(COL_REGEX).setPreferredWidth(130);
 		table.getColumnModel().getColumn(COL_REGEX).setMaxWidth(400);
-		table.getColumnModel().getColumn(COL_TYPE).setPreferredWidth(100);
-		table.getColumnModel().getColumn(COL_TYPE).setMaxWidth(100);
+		table.getColumnModel().getColumn(COL_TYPE).setPreferredWidth(90);
+		table.getColumnModel().getColumn(COL_TYPE).setMaxWidth(90);
 
 		Font f = new Font("SansSerif", Font.BOLD, 12);
 		table.getTableHeader().setFont(f);

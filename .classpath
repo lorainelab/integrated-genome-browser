@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="debug/src"/>
+	<classpathentry kind="src" path="plugins/ant/src"/>
 	<classpathentry kind="src" path="plugins/Tutorial/src"/>
 	<classpathentry kind="src" path="plugins/SearchModeResidue/src"/>
 	<classpathentry kind="src" path="plugins/SearchModeIdOrProps/src"/>
@@ -79,5 +80,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="ext/felix.jar"/>
 	<classpathentry kind="lib" path="ext/be.pwnt.jflow_1.0.0.jar"/>
+	<classpathentry kind="lib" path="plugins/ant/lib/ant.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

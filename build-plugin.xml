@@ -1,0 +1,53 @@
+<project>
+  <description>
+    build the plugin .jar file
+  </description>
+  <!-- set global properties for this build -->
+  <property environment="env"/>
+  <property name="src"   location="src"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+  <property name="lib"   location="lib"/>
+
+  <target name="compile" description="compile the source" >
+    <fail unless="env.IGB_WORKSPACE">Please set the IGB_WORKSPACE env variable to the IGB home directory</fail>
+    <fail unless="plugin">Please set the plugin variable to the plugin name</fail>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}">
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/build"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/genometryImpl/build"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/plugins/igb_service/build"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/plugins/window_service/build"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/ext/colt.jar"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/ext/felix.jar"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
+      <classpath location="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/ext/BigWig.jar"/>
+    </javac>
+  </target>
+
+  <target name="declare_igb_ant">
+    <taskdef name="getvrsn"
+      classname="com.affymetrix.igb.ant.GetVersion"
+      classpath="${env.IGB_WORKSPACE}/Integrated_Genome_Browser/plugins/ant/build;${env.IGB_WORKSPACE}/Integrated_Genome_Browser/ext/felix.jar"/>
+  </target>
+
+  <target name="dist" depends="clean,compile,declare_igb_ant" description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}"/>
+
+    <getvrsn manifestfile="META-INF/MANIFEST.MF" />
+    <!-- Put everything in ${build} into the plugin .jar file -->
+    <jar jarfile="${dist}/${plugin}-${Bundle-Version}.jar" manifest="META-INF/MANIFEST.MF">
+      <fileset dir="${build}" />
+      <fileset dir="." includes="**/*.jar"/>
+    </jar>
+  </target>
+
+  <target name="clean" description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>

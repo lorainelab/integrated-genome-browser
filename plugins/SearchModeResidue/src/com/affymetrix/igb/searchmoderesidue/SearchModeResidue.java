@@ -207,7 +207,8 @@ public class SearchModeResidue implements ISearchMode {
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
 	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
-		GenericAction loadResidue = igbService.loadResidueAction(igbService.getSeqMapView().getVisibleSpan(), true);
+		SeqSpan visibleSpan = igbService.getSeqMapView().getVisibleSpan();
+		GenericAction loadResidue = igbService.loadResidueAction(visibleSpan, true);
 		loadResidue.actionPerformed(null);
 		
 //		boolean isComplete = chrFilter.isComplete();
@@ -232,7 +233,7 @@ public class SearchModeResidue implements ISearchMode {
 		int residue_offset2 = chrFilter.getMax();
 		Thread current_thread = Thread.currentThread();
 		
-		for(int i=0; i<residuesLength; i+=MAX_RESIDUE_LEN_SEARCH){
+		for(int i=visibleSpan.getMin(); i<visibleSpan.getMax(); i+=MAX_RESIDUE_LEN_SEARCH){
 			if(current_thread.isInterrupted())
 				break;
 			

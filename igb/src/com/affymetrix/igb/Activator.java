@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -30,6 +31,7 @@ import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -117,6 +119,21 @@ public class Activator implements BundleActivator {
         	};
         	serviceTracker.open();
         }
+		// redisplay FeatureTreeView when FileTypeHandler added / removed
+		ExtensionPointHandler<FileTypeHandler> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
+		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
+			// note - the FileTypeHolder calls may happen before or after
+			// these, but the refreshTreeView() is a separate thread
+			@Override
+			public void removeService(FileTypeHandler fileTypeHandler) {
+				GeneralLoadView.getLoadView().refreshTreeView();
+			}
+			
+			@Override
+			public void addService(FileTypeHandler fileTypeHandler) {
+				GeneralLoadView.getLoadView().refreshTreeView();
+			}
+		});
 	}
 
 	@Override

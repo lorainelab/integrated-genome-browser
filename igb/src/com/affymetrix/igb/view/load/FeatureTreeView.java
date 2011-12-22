@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -235,6 +236,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		tree.expandPath(path);
 	}
 
+	private static boolean canHandleFeature(GenericFeature feature) {
+		ServerType serverType = feature.gVersion.gServer.serverType;
+		return (serverType == ServerType.DAS || serverType == ServerType.DAS2) || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
+	}
+
 	/**
 	 * Convert list of features into a tree.
 	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.
@@ -257,7 +263,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
 			for (GenericFeature feature : features) {
-				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server)) {
+				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server) && canHandleFeature(feature)) {
 					addOrFindNode(serverRoot, feature, feature.featureName);
 				}
 			}

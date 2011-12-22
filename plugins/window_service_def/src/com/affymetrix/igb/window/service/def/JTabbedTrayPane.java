@@ -159,23 +159,23 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 		tab_pane = createTabbedPane(id, orientation);
 		tab_pane.addAncestorListener(
-				new AncestorListener() {
+			new AncestorListener() {
 
-					@Override
-					public void ancestorAdded(AncestorEvent event) {
-					}
+				@Override
+				public void ancestorAdded(AncestorEvent event) {
+				}
 
-					@Override
-					public void ancestorRemoved(AncestorEvent event) {
-					}
+				@Override
+				public void ancestorRemoved(AncestorEvent event) {
+				}
 
-					@Override
-					public void ancestorMoved(AncestorEvent event) {
-						if (trayState == TrayState.EXTENDED && initialized) {
-							saveDividerLocation();
-						}
+				@Override
+				public void ancestorMoved(AncestorEvent event) {
+					if (trayState == TrayState.EXTENDED && initialized) {
+						saveDividerLocation();
 					}
-				});
+				}
+			});
 		tab_pane.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -209,14 +209,13 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			tab_pane.addMouseListener(
 				new MouseListener() {
 
-//					private int beforeIndex = -1;
+					private int beforeIndex = -1;
 
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						originalMouseListener.mouseReleased(e);
 						int index = tab_pane.indexAtLocation(e.getX(), e.getY());
 						if (index > -1) {
-							tab_pane.setSelectedIndex(index);
 							if (trayState == TrayState.EXTENDED) {
 								if (index == 0) {
 									retractTray();
@@ -225,11 +224,14 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 								extendTray();
 							}
 						}
+						if (index == 0) {
+							tab_pane.setSelectedIndex(beforeIndex);
+						}
 					}
 
 					@Override
 					public void mousePressed(MouseEvent e) {
-//						beforeIndex = tab_pane.getSelectedIndex();
+						beforeIndex = tab_pane.getSelectedIndex();
 						originalMouseListener.mousePressed(e);
 					}
 

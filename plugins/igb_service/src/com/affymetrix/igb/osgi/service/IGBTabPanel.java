@@ -272,4 +272,5 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	// dummy operations for GUIBuilder
 	public void setDefaultCloseOperation(int i) {} // ignore
 	public Container getContentPane() { return this; }
+	public void pack(){}
 }

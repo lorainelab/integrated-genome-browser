@@ -178,8 +178,7 @@ public final class DataManagementTable {
 
 	public static void updateVirtualFeatureList() {
 		if (jTable != null) {
-			DataManagementTableModel ftm = (DataManagementTableModel) jTable.getModel();
-			ftm.createVirtualFeatures(ftm.features);
+			GeneralLoadView.getLoadView().loadVisibleFeatures();
 		}
 	}
 

@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabHolder;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 
@@ -169,6 +170,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			right_pane.invokeTrayState(TrayState.getDefaultTrayState());
 		}
 		cpane.add("Center", right_pane);
+	}
+
+	@Override
+	public void setMenuCreator(IMenuCreator menuCreator) {
+		((WindowTabs)tabHolders.get(TabState.COMPONENT_STATE_WINDOW)).setMenuCreator(menuCreator);
 	}
 
 	@Override

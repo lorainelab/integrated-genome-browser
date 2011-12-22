@@ -22,6 +22,7 @@ import java.net.URI;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -59,6 +60,7 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
@@ -125,6 +127,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public JRPMenu getMenu(String menuName) {
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getMenu(menuName);
+	}
+
+	@Override
+	public JRPMenu addTopMenu(String id, String text) {
+		IGB igb = (IGB)IGB.getSingleton();
+		return igb.addTopMenu(id, text);
 	}
 
 	@Override

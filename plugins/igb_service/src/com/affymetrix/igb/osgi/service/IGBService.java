@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -73,6 +74,7 @@ public interface IGBService {
 	 * @return the given menu of the IGB application
 	 */
 	public JRPMenu getMenu(String menuName);
+	public JRPMenu addTopMenu(String id, String text);
 
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();

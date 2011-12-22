@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
@@ -297,20 +296,21 @@ final public class ProtAnnotMain implements WindowListener {
      * One of part in setting up the outer frame. Sets up menus.
      */
     private void setUpMenus() {
-        JMenuBar mbar = MenuUtil.getMainMenuBar();
-        JMenu menu = MenuUtil.getMenu(BUNDLE.getString("fileMenu"));
+//      JMenuBar mbar = MenuUtil.getMainMenuBar();
+        JMenuBar mbar = new JMenuBar();
+        JMenu menu = MenuUtil.getMenu(mbar, BUNDLE.getString("fileMenu"));
 		menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         addFileActions(menu);
 
-		menu = MenuUtil.getMenu(BUNDLE.getString("editMenu"));
+		menu = MenuUtil.getMenu(mbar, BUNDLE.getString("editMenu"));
 		menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
         addEditActions(menu);
 
-        menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
+        menu = MenuUtil.getMenu(mbar, BUNDLE.getString("viewMenu"));
 		menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         addViewActions(menu);
 
-		menu = MenuUtil.getMenu(BUNDLE.getString("helpMenu"));
+		menu = MenuUtil.getMenu(mbar, BUNDLE.getString("helpMenu"));
 		menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
         addHelpActions(menu);
 

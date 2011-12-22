@@ -20,8 +20,6 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +30,6 @@ import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
@@ -40,7 +37,6 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -53,9 +49,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -63,6 +57,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -71,11 +66,11 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
@@ -254,7 +249,9 @@ public final class IGB extends Application
 		gmodel.addGroupSelectionListener(map_view);
 		gmodel.addSymSelectionListener(map_view);
 
-		loadMenu();
+		mbar = new JMenuBar();
+		frm.setJMenuBar(mbar);
+		IGBUtils.loadMenu(mbar, "IGB");
 
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
 				new Rectangle(0, 0, 1100, 650)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
@@ -359,81 +356,21 @@ public final class IGB extends Application
 		}
 //		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(getMenu("view"));
+		windowService.setMenuCreator(
+			new IMenuCreator() {
+				@Override
+				public JMenuBar createMenu(String id) {
+					JMenuBar menubar = new JMenuBar();
+					IGBUtils.loadMenu(menubar, id);
+					return menubar;
+				}
+			}
+		);
 		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
-	private void loadMenu() {
-		mbar = MenuUtil.getMainMenuBar();
-		frm.setJMenuBar(mbar);
-		// load the menu from the Preferences
-
-		Preferences mainMenuPrefs = PreferenceUtils.getTopNode().node("main_menu");
-		try {
-			for (String childMenu : mainMenuPrefs.childrenNames()) {
-				loadTopMenu(mainMenuPrefs.node(childMenu));
-			}
-		} catch (BackingStoreException x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
-		}
-	}
-
-	private void loadTopMenu(Preferences menuPrefs) {
-		String key = menuPrefs.get("menu", "???");
-		JRPMenu menu = MenuUtil.getRPMenu("Main_" + key, BUNDLE.getString(key));
-		menu.setMnemonic(BUNDLE.getString(key + "Mnemonic").charAt(0));
-		try {
-			for (String childMenu : menuPrefs.childrenNames()) {
-				loadMenuItem(menu, menuPrefs.node(childMenu));
-			}
-		} catch (BackingStoreException x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
-		}
-	}
-
-	private void loadMenuItem(JRPMenu menu, Preferences menuItemPrefs) {
-		if (menuItemPrefs.get("separator", null) != null) {
-			menu.addSeparator();
-		} else if (menuItemPrefs.get("menu", null) != null) {
-			loadSubMenu(menu, menuItemPrefs);
-		} else if (menuItemPrefs.get("item", null) != null) {
-			loadLeafItem(menu, menuItemPrefs);
-		} else {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error in menu preferences definition");
-		}
-	}
-
-	private void loadSubMenu(JRPMenu menu, Preferences menuPrefs) {
-		String key = menuPrefs.get("menu", "???");
-		JRPMenu submenu = new JRPMenu("Main_" + key, BUNDLE.getString(key));
-		menu.add(submenu);
-		try {
-			for (String childMenu : menuPrefs.childrenNames()) {
-				loadMenuItem(submenu, menuPrefs.node(childMenu));
-			}
-		} catch (BackingStoreException x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
-		}
-	}
-
-	private void loadLeafItem(JRPMenu menu, Preferences menuItemPrefs) {
-		String className = menuItemPrefs.get("item", null);
-		if (className.indexOf('.') == -1) {
-			className = "com.affymetrix.igb.action." + className; // default
-		}
-		try {
-			Class<?> clazz = Class.forName(className);
-			Method m = clazz.getDeclaredMethod("getAction");
-			GenericAction action = (GenericAction) m.invoke(null);
-			String id = menu.getId() + "_" + menuItemPrefs.get("item", "???");
-			JMenuItem item = action.isToggle() ? new JRPCheckBoxMenuItem(id, action) : new JRPMenuItem(id, action);
-			if (action.usePrefixInMenu()) {
-				MenuUtil.addToMenu(menu, item, menu.getText());
-			} else {
-				MenuUtil.addToMenu(menu, item);
-			}
-		} catch (Exception x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "error loading menu preferences", x);
-		}
+	public JRPMenu addTopMenu(String id, String text) {
+		return MenuUtil.getRPMenu(mbar, id, text);
 	}
 
 	public void addToolbarButton(JRPButton button) {
@@ -501,7 +438,7 @@ public final class IGB extends Application
 	}
 
 	public JRPMenu getMenu(String menuId) {
-		String id = "Main_" + menuId + "Menu";
+		String id = "IGB_main_" + menuId + "Menu";
 		int num_menus = mbar.getMenuCount();
 		for (int i = 0; i < num_menus; i++) {
 			JRPMenu menu_i = (JRPMenu) mbar.getMenu(i);

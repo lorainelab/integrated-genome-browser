@@ -56,7 +56,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", new SaveSessionAction(igbService)), index);
 		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_loadSession", new LoadSessionAction(igbService)), index);
 
-		JRPMenu bookmark_menu = MenuUtil.getRPMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
+		JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		BookmarkActionManager.init(igbService, bookmark_menu);
 		bmark_action = BookmarkActionManager.getInstance();

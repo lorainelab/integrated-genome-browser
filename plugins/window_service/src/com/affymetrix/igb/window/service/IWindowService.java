@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
@@ -38,6 +39,7 @@ public interface IWindowService {
 	 * @param jPanel the JPanel that contains the main IGB view
 	 */
 	public void setSeqMapView(JPanel jPanel);
+	public void setMenuCreator(IMenuCreator menuCreator);
 	/**
 	 * pass in the view menu
 	 * @param view_menu the view menu

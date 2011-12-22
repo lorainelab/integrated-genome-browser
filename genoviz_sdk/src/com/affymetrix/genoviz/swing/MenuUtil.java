@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.swing;
 
-import java.awt.MediaTracker;
 import javax.swing.*;
 
 import com.affymetrix.common.CommonUtils;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 public abstract class MenuUtil {
 
-  private static JMenuBar main_menu_bar = new JMenuBar();
+//  private static JMenuBar main_menu_bar = new JMenuBar();
     
   private static Map<String, KeyStroke> accelerators = new HashMap<String, KeyStroke>();
   
@@ -62,14 +61,14 @@ public abstract class MenuUtil {
     return ks;
   }
 
-  public static final JMenuBar getMainMenuBar() {
-    return main_menu_bar;
-  }
+//  public static final JMenuBar getMainMenuBar() {
+//    return main_menu_bar;
+//  }
 
-  private static JMenu findMenu(String name) {
+  private static JMenu findMenu(JMenuBar main_menu_bar, String name) {
     int num_menus = main_menu_bar.getMenuCount();
     for (int i=0; i<num_menus; i++) {
-    	JRPMenu menu_i = (JRPMenu)main_menu_bar.getMenu(i);
+    	JMenu menu_i = main_menu_bar.getMenu(i);
       if (name.equals(menu_i.getText())) {
         menu_i.getName();
         return menu_i;
@@ -78,7 +77,7 @@ public abstract class MenuUtil {
     return null;
   }
 
-  private static void addMenu(JMenu new_menu) {
+  private static void addMenu(JMenuBar main_menu_bar, JMenu new_menu) {
 	int num_menus = main_menu_bar.getMenuCount();
     // Add the new menu, but keep the "Help" menu in last place
     if (num_menus > 0 && "Help".equals(main_menu_bar.getMenu(num_menus-1).getName())) {
@@ -88,25 +87,25 @@ public abstract class MenuUtil {
     }
   }
 
-  public static final JMenu getMenu(String name) {
-    JMenu new_menu = findMenu(name);
+  public static final JMenu getMenu(JMenuBar main_menu_bar, String name) {
+    JMenu new_menu = findMenu(main_menu_bar, name);
     if (new_menu != null) {
     	return new_menu;
     }
     new_menu = new JMenu(name);
     new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-    addMenu(new_menu);
+    addMenu(main_menu_bar, new_menu);
     return new_menu;
   }
   
-  public static final JRPMenu getRPMenu(String id, String name) {
-    JRPMenu new_menu = (JRPMenu)findMenu(name);
+  public static final JRPMenu getRPMenu(JMenuBar main_menu_bar, String id, String name) {
+    JRPMenu new_menu = (JRPMenu)findMenu(main_menu_bar, name);
     if (new_menu != null) {
     	return new_menu;
     }
     new_menu = new JRPMenu(id, name);
     new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-    addMenu(new_menu);
+    addMenu(main_menu_bar, new_menu);
     return new_menu;
   }
   

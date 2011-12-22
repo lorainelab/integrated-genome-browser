@@ -48,7 +48,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 		try {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			output = socket.getOutputStream();
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null && line.trim().length() > 0) {
 				// we need to process only the GET header line of the input, which will
 				// look something like this:
 				// 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
@@ -70,6 +70,8 @@ class BookmarkHttpRequestHandler implements Runnable {
 
 //				output.write(SimpleBookmarkServer.prompt);
 			}
+			output.write(SimpleBookmarkServer.http_response.getBytes());
+			output.flush();
 		} finally {
 
 			GeneralUtils.safeClose(output);

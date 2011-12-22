@@ -70,8 +70,6 @@ public final class SimpleBookmarkServer {
 			"Connection accepted " +
                   socket.getInetAddress() +
                   ":" + socket.getPort());
-		  socket.getOutputStream().write(http_response.getBytes());
-		  socket.getOutputStream().flush();
           BookmarkHttpRequestHandler request = new BookmarkHttpRequestHandler(igbService, socket);
           Thread thread = new Thread(request);
           thread.start();

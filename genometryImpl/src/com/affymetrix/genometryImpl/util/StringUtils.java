@@ -78,7 +78,7 @@ public final class StringUtils {
 		for (String word : getWords(toWrap)) {
 			wordWidth = metrics.stringWidth(word);
 
-			if (wordWidth > remainingWidth) {
+			if (wordWidth + spaceWidth > remainingWidth) {
 				/* Finished last line, add ellipsis and break*/
 				if (maxLines != 0 && maxLines - 1 == lines.size()) {
 					buffer.append(ELLIPSIS);

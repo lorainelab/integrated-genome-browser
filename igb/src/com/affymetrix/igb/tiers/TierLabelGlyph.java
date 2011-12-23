@@ -14,7 +14,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
-	private static int pbBuffer_x = 4;
+	private static int pbBuffer_x = 5;
 	private int position;
 	private static final int placement = CENTER;
 	
@@ -163,7 +163,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			return;
 		}
 		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - (pbBuffer_x * 2), maxLines);
-		pixelbox.x += pbBuffer_x;
+		//pixelbox.x += pbBuffer_x;
 		int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
 
 		int text_width;

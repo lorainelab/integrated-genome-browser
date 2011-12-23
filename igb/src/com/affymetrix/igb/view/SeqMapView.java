@@ -323,13 +323,17 @@ public class SeqMapView extends JPanel
 		MouseShortCut msc = new MouseShortCut(popup);
 
 		tier_manager.setDoGraphSelections(true);
+		
+		GraphSelectionManager gsm = new GraphSelectionManager(this);
+		seqmap.addMouseListener(gsm);
+		
 		if (add_popups) {
 			//NOTE: popup listeners are called in reverse of the order that they are added
 			// Must use separate instances of GraphSelectioManager if we want to use
 			// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
 			//tier_manager.addPopupListener(new GraphSelectionManager(this));
-			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
-			tier_manager.addPopupListener(new GraphSelectionManager(this));
+			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));	
+			tier_manager.addPopupListener(gsm);
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
 			seqviewer = ViewGenomicSequenceInSeqViewerAction.getAction();

@@ -785,7 +785,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;
-					Thread.sleep(1000);	// hack so event queue finishes
+					//Thread.sleep(1000);	// hack so event queue finishes
 					RestorePersistentGenome();
 				}
 			}
@@ -818,13 +818,16 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading previous genome " + versionName + " ...") {
+		final CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading previous genome " + versionName + " ...") {
 
 			@Override
 			protected Object runInBackground() {
 
 				initVersion(versionName);
 
+				if(Thread.currentThread().isInterrupted())
+					return null;
+				
 				gmodel.setSelectedSeqGroup(group);
 
 				List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
@@ -854,6 +857,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			protected void finished() {
 				try {
+					if(Thread.currentThread().isInterrupted())
+						return;
+					
 					gmodel.setSelectedSeq((BioSeq) get());
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
@@ -861,7 +867,18 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(worker, worker);
+		GroupSelectionListener listener = new GroupSelectionListener() {
+
+			public void groupSelectionChanged(GroupSelectionEvent evt) {
+				if(evt.getSelectedGroup() != group){
+					worker.cancel(true);
+				}
+				gmodel.removeGroupSelectionListener(this);
+			}
+		};
+		
+		gmodel.addGroupSelectionListener(listener);
+		worker.execute();
 	}
 
 	/**

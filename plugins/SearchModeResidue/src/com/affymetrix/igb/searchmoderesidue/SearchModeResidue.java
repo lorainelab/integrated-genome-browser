@@ -17,7 +17,10 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -28,11 +31,25 @@ import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public class SearchModeResidue implements ISearchMode {
+public class SearchModeResidue implements ISearchMode, 
+		SeqMapRefreshed, SeqSelectionListener {
+	
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
-	private static final Color hitcolor = Color.GREEN;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final Color hitcolors[] = {
+		Color.magenta,
+		new Color(0x00cd00),
+		Color.orange,
+		new Color(0x00d7d7),
+		new Color(0xb50000),
+		Color.blue,
+		Color.gray,
+		Color.pink};//Distinct Colors for View/Print Ease
+	
+	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private IGBService igbService;
+	private int color = 0;
 
 	@SuppressWarnings("serial")
 	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
@@ -149,8 +166,11 @@ public class SearchModeResidue implements ISearchMode {
 	public SearchModeResidue(IGBService igbService) {
 		super();
 		this.igbService = igbService;
+		igbService.getSeqMapView().addToRefreshList(this);
+		
+		gmodel.addSeqSelectionListener(this);
 	}
-
+	
 	public boolean checkInput(String search_text, final BioSeq vseq, final String seq) {
 		if (vseq == null ) {
 			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq));
@@ -169,8 +189,7 @@ public class SearchModeResidue implements ISearchMode {
 			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorRegex"), ex);
 			return false;
 		}
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-
+		
 		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
 			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), igbService.getSeqMapView().getAnnotatedSeq().getID()));
 			if(!confirm) {
@@ -206,7 +225,11 @@ public class SearchModeResidue implements ISearchMode {
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
+	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean overlay, IStatus statusHolder) {
+		if(!overlay){
+			clearResults();
+		}
+		
 		SeqSpan visibleSpan = igbService.getSeqMapView().getVisibleSpan();
 		GenericAction loadResidue = igbService.loadResidueAction(visibleSpan, true);
 		loadResidue.actionPerformed(null);
@@ -241,12 +264,12 @@ public class SearchModeResidue implements ISearchMode {
 			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);
 			
 			String residues = chrFilter.getResidues(start, end);
-			hit_count1 += igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), glyphs, hitcolor);
+			hit_count1 += igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), glyphs, hitcolors[color]);
 
 			// Search for reverse complement of query string
 			// flip searchstring around, and redo nibseq search...
 			String rev_searchstring = DNAUtils.reverseComplement(residues);
-			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolor);
+			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolors[color]);
 		}
 
 		statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchFound"), hit_count1, hit_count2));
@@ -257,9 +280,30 @@ public class SearchModeResidue implements ISearchMode {
 				return Integer.valueOf((int)g1.getCoordBox().x).compareTo((int)g2.getCoordBox().x);
 			}
 		});
+		color++;
 		return new GlyphSearchResultsTableModel(glyphs, chrFilter.getID());
 	}
 
+	public void clear(){
+		clearResults();
+	}
+	
+	public void mapRefresh() {
+		igbService.mapRefresh(glyphs);
+	}
+	
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		clearResults();
+	}
+	
+	private void clearResults() {
+		if (!glyphs.isEmpty()) {
+			glyphs.clear();
+			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
+		}
+		color = 0;
+	}
+		
 	@Override
 	public String getName() {
 		return BUNDLE.getString("searchRegexResidue");
@@ -271,7 +315,22 @@ public class SearchModeResidue implements ISearchMode {
 	}
 
 	@Override
-	public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) {
+	public String getOptionName(int i) {
+		return BUNDLE.getString("optionCheckBox");
+	}
+
+	@Override
+	public String getOptionTooltip(int i) {
+		return BUNDLE.getString("optionCheckBoxTT");
+	}
+	
+	@Override
+	public boolean getOptionEnable(int i) {
+		return hitcolors.length - 1 > color;
+	}
+		
+	@Override
+	public void valueChanged(SearchResultsTableModel model, int srow) {
 		GlyphI glyph = ((GlyphSearchResultsTableModel)model).get(srow);
 		for(GlyphI g : glyphs){
 			igbService.getSeqMap().deselect(g);
@@ -286,8 +345,8 @@ public class SearchModeResidue implements ISearchMode {
 	}
 
 	@Override
-	public boolean useRemote() {
-		return false;
+	public boolean useOption() {
+		return true;
 	}
 
 	@Override

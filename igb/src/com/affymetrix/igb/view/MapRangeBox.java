@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -85,16 +84,20 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		}
 		@Override public String getName() { return null; }
 		@Override public String getTooltip() { return null; }
-		@Override public boolean useRemote() { return false; }
+		@Override public String getOptionName(int i) { return null; }
+		@Override public String getOptionTooltip(int i) { return null; }
+		@Override public boolean getOptionEnable(int i) { return false; }
+		@Override public boolean useOption() { return false; }
 		@Override public boolean useDisplaySelected() { return false; }
 		@Override public boolean useGenomeInSeqList() { return true; }
 		@Override public SearchResultsTableModel getEmptyTableModel() { return null; }
 		@Override public SearchResultsTableModel run(String search_text,
 				BioSeq chrFilter, String seq, boolean remote,
-				IStatus statusHolder, List<GlyphI> glyphs) { return null; }
+				IStatus statusHolder) { return null; }
 		@Override public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) { return null; }
 		@Override public void finished(BioSeq vseq) { }
-		@Override public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) { }
+		@Override public void clear() {}
+		@Override public void valueChanged(SearchResultsTableModel model, int srow) { }
 		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
 		@Override public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
 	}

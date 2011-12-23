@@ -1,25 +1,30 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public class SearchModeID extends SearchModeIDOrProps implements ISearchMode {
+	private static final String REMOTESERVERSEARCH = BUNDLE.getString("optionCheckBox");
+	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
+	private static final String REMOTESERVERSEARCHSINGULAR = BUNDLE.getString("remoteServerSearchSingular");
+	private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
+	
 	public SearchModeID(IGBService igbService) {
 		super(igbService);
 	}
 
 	@Override
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, final boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
-		return run(search_text, chrFilter, seq, false, remote, statusHolder, glyphs);
+	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, final boolean remote, IStatus statusHolder) {
+		return run(search_text, chrFilter, seq, false, remote, statusHolder);
 	}
 
 	@Override
@@ -33,7 +38,24 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchMode {
 	}
 
 	@Override
-	public boolean useRemote() {
+	public String getOptionName(int i) {
+		String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
+		return MessageFormat.format(REMOTESERVERSEARCH, "" + i, remoteServerPluralText);
+	}
+
+	@Override
+	public String getOptionTooltip(int i) {
+		String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
+		return MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + i, remoteServerPluralText);
+	}
+	
+	@Override
+	public boolean getOptionEnable(int i) {
+		return i > 0;
+	}
+	
+	@Override
+	public boolean useOption() {
 		return true;
 	}
 

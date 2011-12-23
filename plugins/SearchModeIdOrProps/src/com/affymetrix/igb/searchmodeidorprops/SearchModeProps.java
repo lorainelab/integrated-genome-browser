@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
@@ -18,8 +17,8 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchMode 
 	}
 
 	@Override
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, final boolean remote, IStatus statusHolder, List<GlyphI> glyphs) {
-		return run(search_text, chrFilter, seq, true, remote, statusHolder, glyphs);
+	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, final boolean remote, IStatus statusHolder) {
+		return run(search_text, chrFilter, seq, true, remote, statusHolder);
 	}
 
 	@Override
@@ -32,8 +31,20 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchMode 
 		return BUNDLE.getString("searchRegexPropsTF");
 	}
 
+	public String getOptionName(int i) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getOptionTooltip(int i) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public boolean getOptionEnable(int i) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
 	@Override
-	public boolean useRemote() {
+	public boolean useOption() {
 		return false;
 	}
 

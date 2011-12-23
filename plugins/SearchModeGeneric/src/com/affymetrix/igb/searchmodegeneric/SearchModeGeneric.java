@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
@@ -30,7 +29,7 @@ public abstract class SearchModeGeneric implements ISearchMode {
 	}
 
 	@Override
-	public void valueChanged(SearchResultsTableModel model, int srow, List<GlyphI> glyphs) {
+	public void valueChanged(SearchResultsTableModel model, int srow) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		SeqSymmetry sym = ((SymSearchResultsTableModel)model).get(srow);

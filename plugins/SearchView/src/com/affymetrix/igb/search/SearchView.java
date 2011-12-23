@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import java.awt.Dimension;
-import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -21,7 +20,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -33,7 +31,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -48,7 +45,7 @@ import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public final class SearchView extends IGBTabPanel implements
-		GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener, IStatus {
+		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {
 
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
@@ -71,17 +68,13 @@ public final class SearchView extends IGBTabPanel implements
 			if (selectedSearchMode == null) {
 				return;
 			}
-			clearResults();
+			clearTable();
 			igbService.getSeqMap().updateWidget();
 
 			SearchView.this.initSequenceCB();
 			SearchView.this.searchTF.setEnabled(true);
 
-			boolean remoteEnabled = selectedSearchMode.useRemote();
-			SearchView.this.remoteSearchCheckBox.setEnabled(remoteEnabled);
-			if (!remoteEnabled) {
-				SearchView.this.remoteSearchCheckBox.setSelected(false);
-			}
+			initOptionCheckBox();
 
 			setModel(selectedSearchMode.getEmptyTableModel());
 
@@ -109,18 +102,19 @@ public final class SearchView extends IGBTabPanel implements
 			final BioSeq chrfilter = Constants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
 			if (selectedSearchMode.checkInput(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString())) {
 				enableComp(false);
-				clearResults();
+				clearTable();
 				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
 
 					@Override
 					protected Object runInBackground() {
-						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), remoteSearchCheckBox.isSelected(), SearchView.this, glyphs);
+						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), optionCheckBox.isSelected(), SearchView.this);
 					}
 
 					@Override
 					protected void finished() {
 						selectedSearchMode.finished(chrfilter);
 						enableComp(true);
+						initOptionCheckBox();
 						try {
 							SearchResultsTableModel model = (SearchResultsTableModel) get();
 							if (model != null) {
@@ -155,6 +149,7 @@ public final class SearchView extends IGBTabPanel implements
 			searchTF.setText("");
 		}
 	}
+	
 	private ClearAction clearAction = new ClearAction();
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -163,19 +158,14 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String FINDANNOTS = BUNDLE.getString("findAnnots");
 	private static final String FINDANNOTSNULL = BUNDLE.getString("pleaseSelectGenome");
 	private static final String SEQUENCETOSEARCH = BUNDLE.getString("searchSequenceToSearch");
-	private static final String REMOTESERVERSEARCH = BUNDLE.getString("remoteServerSearch");
-	private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("remoteServerSearchTT");
-	private static final String REMOTESERVERSEARCHSINGULAR = BUNDLE.getString("remoteServerSearchSingular");
-	private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
 	private final JRPTextField searchTF = new JRPTextField("SearchView_searchTF", 10);
 	private final JPanel pan1 = new JPanel();
 	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
 	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView_searchCB");
-	private final JRPCheckBox remoteSearchCheckBox = new JRPCheckBox("SearchView_remoteSearchCheckBox", "");
+	private final JRPCheckBox optionCheckBox = new JRPCheckBox("SearchView_optionCheckBox", "");
 	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("images/search.png"));
 	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("images/delete.png"));
 	private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("images/stop.png"));
-	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private JRPTable table = new JRPTable("SearchView_table");
 	private JLabel status_bar = new JLabel(BUNDLE.getString("noResults"));
 	private TableRowSorter<SearchResultsTableModel> sorter;
@@ -188,8 +178,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	public SearchView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
-		igbService.getSeqMapView().addToRefreshList(this);
-
+		
 		group = gmodel.getSelectedSeqGroup();
 
 		this.setLayout(new BorderLayout());
@@ -221,7 +210,7 @@ public final class SearchView extends IGBTabPanel implements
 
 		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
-		pan1.add(remoteSearchCheckBox);
+		pan1.add(optionCheckBox);
 
 		if (group == null) {
 			searchCB.setEnabled(false);
@@ -255,15 +244,27 @@ public final class SearchView extends IGBTabPanel implements
 		igbService.addServerInitListener(this);
 	}
 
-	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
-		int remoteServerCount = getRemoteServerCount(group);
-		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
-		remoteSearchCheckBox.setText(MessageFormat.format(REMOTESERVERSEARCH, "" + remoteServerCount, remoteServerPluralText));
-		remoteSearchCheckBox.setToolTipText(MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + remoteServerCount, remoteServerPluralText));
-		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
+	private void initOptionCheckBox() {
+		String searchMode = (String) searchCB.getSelectedItem();
+		selectedSearchMode = searchModeMap.get(searchMode);
 		
-		//Enable this to enable remote server automatically when a remote server is available.
-		//remoteSearchCheckBox.setSelected(remoteServerCount > 0);
+		if(selectedSearchMode == null)
+			return;
+		
+		if(selectedSearchMode.useOption()){
+			int remoteServerCount = getRemoteServerCount(group);
+			optionCheckBox.setText(selectedSearchMode.getOptionName(remoteServerCount));
+			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip(remoteServerCount));
+			boolean enabled = selectedSearchMode.getOptionEnable(remoteServerCount);
+			optionCheckBox.setEnabled(enabled);
+			if(!enabled){
+				optionCheckBox.setSelected(false);
+			}
+		}else{
+			optionCheckBox.setEnabled(false);
+			optionCheckBox.setSelected(false);
+		}
+		
 	}
 
 	private void initSequenceCB() {
@@ -344,8 +345,6 @@ public final class SearchView extends IGBTabPanel implements
 		searchTF.setEnabled(true);
 		searchTF.setMinimumSize(new Dimension(125, 50));
 
-		initRemoteServerCheckBox(null);
-
 		searchButton.setToolTipText("Search");
 		searchButton.setEnabled(true);
 
@@ -396,7 +395,7 @@ public final class SearchView extends IGBTabPanel implements
 						return;
 					}
 					selectedSearchMode.valueChanged(
-							(SearchResultsTableModel) table.getModel(), srow, glyphs);
+							(SearchResultsTableModel) table.getModel(), srow);
 				}
 			}
 
@@ -411,11 +410,11 @@ public final class SearchView extends IGBTabPanel implements
 
 	// remove the previous search results from the map.
 	private void clearResults() {
-		if (!glyphs.isEmpty()) {
-			glyphs.clear();
-			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
+		String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
+		selectedSearchMode = searchModeMap.get(searchMode);
+		if (selectedSearchMode != null) {
+			selectedSearchMode.clear();
 		}
-
 		clearTable();
 	}
 
@@ -448,9 +447,9 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
-		initRemoteServerCheckBox(group);
+		initOptionCheckBox();
 	}
-
+	
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 		clearResults();
@@ -475,8 +474,7 @@ public final class SearchView extends IGBTabPanel implements
 			group = newGroup;
 			seqCount = newSeqCount;
 			this.initSequenceCB();
-			initRemoteServerCheckBox(group);
-
+			initOptionCheckBox();
 		}
 	}
 
@@ -490,15 +488,10 @@ public final class SearchView extends IGBTabPanel implements
 		});
 	}
 
-	public void mapRefresh() {
-		igbService.mapRefresh(glyphs);
-	}
 
 	@Override
 	public boolean isEmbedded() {
 		return true;
-
-
 	}
 
 	@SuppressWarnings("serial")

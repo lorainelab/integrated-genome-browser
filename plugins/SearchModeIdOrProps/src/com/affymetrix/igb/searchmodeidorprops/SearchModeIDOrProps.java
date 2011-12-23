@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SearchUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.searchmodegeneric.SearchModeGeneric;
 import com.affymetrix.igb.searchmodegeneric.SymSearchResultsTableModel;
@@ -63,7 +62,7 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 		return new SymSearchResultsTableModel(Collections.<SeqSymmetry>emptyList());
 	}
 
-	protected SearchResultsTableModel run(final String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final boolean remote, final IStatus statusHolder, List<GlyphI> glyphs) {
+	protected SearchResultsTableModel run(final String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final boolean remote, final IStatus statusHolder) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		String text = search_text;
@@ -152,4 +151,6 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 	protected List<SeqSymmetry> getAltSymList() {
 		return remoteSymList;
 	}
+	
+	public void clear(){}
 }

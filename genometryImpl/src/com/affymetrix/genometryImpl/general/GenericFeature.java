@@ -211,14 +211,20 @@ public final class GenericFeature {
 	 * @param seq		Bioseq on which method should be deleted;
 	 */
 	public void clear(BioSeq seq){
-
+		List<SeqSymmetry> removeList = new ArrayList<SeqSymmetry>();
+		
 		for (int i = 0; i < requestSym.getChildCount(); i++) {
 			SeqSymmetry sym = requestSym.getChild(i);
 			if (sym.getSpan(seq) != null) {
-				requestSym.removeChild(sym);
+				removeList.add(sym);
 			}
 		}
 		
+		for(SeqSymmetry sym : removeList){
+			requestSym.removeChild(sym);
+		}
+		
+		removeList.clear();
 	}
 	
 	/**

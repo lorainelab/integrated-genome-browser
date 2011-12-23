@@ -367,7 +367,7 @@ public class TrackView {
 				
 				if(feature != null){
 					feature.clear(seq);
-					if(feature.getLoadStrategy() == LoadStrategy.GENOME){
+					if(feature.getLoadStrategy() == LoadStrategy.GENOME || feature.getLoadStrategy() == LoadStrategy.AUTOLOAD){
 						feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 					}
 				}

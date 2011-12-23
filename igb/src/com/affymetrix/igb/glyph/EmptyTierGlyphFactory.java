@@ -42,6 +42,10 @@ public class EmptyTierGlyphFactory {
 					continue;
 				}
 				style = getStyle(method, feature);
+				
+				if(style == null)
+					continue;
+				
 				addTierFor(style, gviewer, feature.getRequestSym());
 			}
 		} else {
@@ -56,6 +60,9 @@ public class EmptyTierGlyphFactory {
 		if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
 					method, feature.featureName, feature.getExtension());
+			
+			if(state.getFloatGraph())
+				return null;
 			
 			return state.getComboStyle() != null? state.getComboStyle(): state.getTierStyle();
 		}else{

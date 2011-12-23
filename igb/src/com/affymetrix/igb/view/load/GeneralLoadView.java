@@ -426,68 +426,71 @@ public final class GeneralLoadView {
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
 			System.out.println("features for " + versionName + ": " + visibleFeatures.toString());
 		}
-
-		int maxFeatureNameLength = 1;
-		for (GenericFeature feature : visibleFeatures) {
-			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
-		}
-		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
-
 		ThreadUtils.runOnEventQueue(new Runnable() {
-
 			public void run() {
-				dataManagementTableModel.createVirtualFeatures(visibleFeatures);
-
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(80);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(80);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
-				//dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(26);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(26);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(26);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
-				dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
-
-				dataManagementTable.getTableHeader().setReorderingAllowed(false);
-				TableCellRenderer renderer = dataManagementTable.getTableHeader().getDefaultRenderer();
-				JLabel label = (JLabel) renderer;
-				label.setHorizontalAlignment(JLabel.CENTER);
-				dataManagementTable.getTableHeader().setDefaultRenderer(renderer);
-
-				Font f = new Font("SansSerif", Font.BOLD, 12);
-				dataManagementTable.getTableHeader().setFont(f);
-				dataManagementTable.setRowSelectionAllowed(false);
-				dataManagementTable.setCellSelectionEnabled(true);
-
-				// Don't enable combo box for full genome sequence
-				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+				initDataManagementTable();
 			}
 		});
 
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
 		return visibleFeatures;
+	}
+	
+	
+	public void initDataManagementTable() {
+		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+		int maxFeatureNameLength = 1;
+		for (GenericFeature feature : visibleFeatures) {
+			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
+		}
+		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
+		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
+
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(80);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(80);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
+		//dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(26);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(26);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(26);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setPreferredWidth(20);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMinWidth(20);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.INFO_FEATURE_COLUMN).setMaxWidth(20);
+
+		dataManagementTable.getTableHeader().setReorderingAllowed(false);
+		TableCellRenderer renderer = dataManagementTable.getTableHeader().getDefaultRenderer();
+		JLabel label = (JLabel) renderer;
+		label.setHorizontalAlignment(JLabel.CENTER);
+		dataManagementTable.getTableHeader().setDefaultRenderer(renderer);
+
+		Font f = new Font("SansSerif", Font.BOLD, 12);
+		dataManagementTable.getTableHeader().setFont(f);
+		dataManagementTable.setRowSelectionAllowed(false);
+		dataManagementTable.setCellSelectionEnabled(true);
+
+		// Don't enable combo box for full genome sequence
+		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
+		DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
 	}
 
 	/**

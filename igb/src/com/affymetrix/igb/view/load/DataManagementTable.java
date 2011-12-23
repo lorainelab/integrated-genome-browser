@@ -178,7 +178,7 @@ public final class DataManagementTable {
 
 	public static void updateVirtualFeatureList() {
 		if (jTable != null) {
-			GeneralLoadView.getLoadView().createFeaturesTable();
+			GeneralLoadView.getLoadView().initDataManagementTable();
 		}
 	}
 

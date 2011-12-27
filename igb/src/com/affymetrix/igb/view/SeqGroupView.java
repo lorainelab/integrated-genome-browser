@@ -38,7 +38,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.load.MainWorkspaceManager;
@@ -81,8 +80,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 	private static final boolean DEBUG_EVENTS = false;
+	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
+	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
-	private final GenometryModel gmodel;
 	private final JRPTable seqtable;
 	private final ListSelectionModel lsm;
 	private BioSeq selected_seq = null;
@@ -93,8 +95,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private static SeqGroupView singleton;
 	private JComboBoxToolTipRenderer versionCBRenderer;
 	private JComboBoxToolTipRenderer speciesCBRenderer;
-	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
-	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private AnnotatedSeqGroup curGroup = null;
 	private volatile boolean lookForPersistentGenome = true;
 	private static SeqMapView gviewer;
@@ -105,7 +105,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
-		gmodel = GenometryModel.getGenometryModel();
 		gviewer = Application.getSingleton().getMapView();
 		seqtable = new JRPTable("SeqGroupView_seqtable") {
 			private static final long serialVersionUID = 1L;
@@ -131,8 +130,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		model = new SeqGroupTableModel(null);
 		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
 
-		gmodel.addGroupSelectionListener(this);
-		gmodel.addSeqSelectionListener(this);
 		lsm = seqtable.getSelectionModel();
 		lsm.addListSelectionListener(this);
 
@@ -158,12 +155,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
 		
 		populateSpeciesData();
-		addListeners();
 
 	}
 
 	static void init(IGBService _igbService) {
 		singleton = new SeqGroupView(_igbService);
+		addListeners();
 	}
 
 	public static SeqGroupView getInstance() {
@@ -919,17 +916,17 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 	}
 
-	private void addListeners() {
-		ServerList.getServerInstance().addServerInitListener(this);
-		gmodel.addGroupSelectionListener(this);
-		gmodel.addSeqSelectionListener(this);
+	private static void addListeners() {
+		ServerList.getServerInstance().addServerInitListener(singleton);
+		gmodel.addGroupSelectionListener(singleton);
+		gmodel.addSeqSelectionListener(singleton);
 		
-		speciesCB.setEnabled(true);
-		versionCB.setEnabled(true);
-		speciesCB.addItemListener(this);
-		versionCB.addItemListener(this);
+		singleton.speciesCB.setEnabled(true);
+		singleton.versionCB.setEnabled(true);
+		singleton.speciesCB.addItemListener(singleton);
+		singleton.versionCB.addItemListener(singleton);
 		//speciesCB.addItemListener(Welcome.getWelcome());
-		speciesCB.addItemListener( MainWorkspaceManager.getWorkspaceManager());
+		singleton.speciesCB.addItemListener( MainWorkspaceManager.getWorkspaceManager());
 	}
 
 	public JRPTable getTable() {

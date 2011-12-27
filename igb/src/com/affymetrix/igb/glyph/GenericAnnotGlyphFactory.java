@@ -50,6 +50,7 @@ import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 /**
  *
@@ -266,7 +267,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		// EfficientGlyph.pickTraversal() will only allow one to be chosen.
 		double pheight = the_style.getHeight() + 0.0001;
 		String label_field = the_style.getLabelField();
-		boolean use_label = label_field != null && (label_field.trim().length() > 0);
+		boolean use_label = label_field != null && !label_field.equals(TrackConstants.NO_LABEL) && (label_field.trim().length() > 0);
 		if (use_label) {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, label_field);

@@ -39,6 +39,7 @@ import com.affymetrix.genoviz.glyph.OutlinedPointedGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 
 /**
@@ -197,8 +198,8 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
 		Color consensus_color = getSymColor(consensus_sym, the_style, forward, direction_type);
 
-		boolean use_label = (label_field != null && (label_field.trim().length() > 0)
-				&& (consensus_sym instanceof SymWithProps));
+		boolean use_label = (label_field != null && !label_field.equals(TrackConstants.NO_LABEL) && 
+				(label_field.trim().length() > 0) && (consensus_sym instanceof SymWithProps));
 		GlyphI pglyph;
 		if (use_label) {
 			EfficientLabelledLineGlyph lglyph = new EfficientLabelledLineGlyph();

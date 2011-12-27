@@ -14,6 +14,7 @@ public interface TrackConstants {
 	static final Pattern multiple_slashes = Pattern.compile("/{2,}");
 	static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
 	static final String NAME_OF_COORDINATE_INSTANCE = "Coordinates";
+	static final String NO_LABEL = "* none *";
 	// The String constants named PREF_* are for use in the persistent preferences
 	// They are not displayed to users, and should never change
 	static final String PREF_CONNECTED = "Connected";
@@ -52,7 +53,7 @@ public interface TrackConstants {
 	static final float default_track_name_size = 12;
 	static final DIRECTION_TYPE default_direction_type = DIRECTION_TYPE.NONE;
 	public static final Object[] SUPPORTED_SIZE = {8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f};
-	public static final Object[] LABELFIELD = { "* none *", "id", "name", "score" };
+	public static final Object[] LABELFIELD = { NO_LABEL, "id", "name", "score" };
 	public static final Object[] VIEWMODE = { "default", "depth"};
 	
 	public static enum DIRECTION_TYPE{

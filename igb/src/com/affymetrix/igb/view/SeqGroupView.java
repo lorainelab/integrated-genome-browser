@@ -136,8 +136,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		lsm = seqtable.getSelectionModel();
 		lsm.addListSelectionListener(this);
 
-		ServerList.getServerInstance().addServerInitListener(this);
-
+		
 		speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
 		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));
@@ -818,10 +817,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		final CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading previous genome " + versionName + " ...") {
+		final CThreadWorker<BioSeq, Void> worker = new CThreadWorker<BioSeq, Void>("Loading previous genome " + versionName + " ...") {
 
 			@Override
-			protected Object runInBackground() {
+			protected BioSeq runInBackground() {
 
 				initVersion(versionName);
 
@@ -860,7 +859,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 					if(Thread.currentThread().isInterrupted())
 						return;
 					
-					gmodel.setSelectedSeq((BioSeq) get());
+					BioSeq seq = get();
+					if(seq != null){
+						gmodel.setSelectedSeq(seq);
+					}
+					
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -917,9 +920,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	private void addListeners() {
+		ServerList.getServerInstance().addServerInitListener(this);
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
-
+		
 		speciesCB.setEnabled(true);
 		versionCB.setEnabled(true);
 		speciesCB.addItemListener(this);

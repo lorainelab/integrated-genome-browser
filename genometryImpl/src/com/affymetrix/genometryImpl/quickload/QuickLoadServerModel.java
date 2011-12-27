@@ -364,6 +364,7 @@ public final class QuickLoadServerModel {
 			ErrorHandler.errorPanel("ERROR", "Error loading data for genome '" + genome_name + "'", ex);
 		} finally {
 			GeneralUtils.safeClose(lift_stream);
+			GeneralUtils.safeClose(ginfo_stream);
 			GeneralUtils.safeClose(cinfo_stream);
 		}
 //		if(!success){

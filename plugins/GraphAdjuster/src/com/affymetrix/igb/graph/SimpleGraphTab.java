@@ -799,7 +799,7 @@ public final class SimpleGraphTab
 				gstate.setFloatGraph(false); // ignored since combo_style is set
 				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
-			combo_style.setHeight(height);
+			combo_style.setHeight(height/i);
 
 			updateViewer();
 		}

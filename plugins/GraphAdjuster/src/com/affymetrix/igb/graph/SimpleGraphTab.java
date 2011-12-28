@@ -61,6 +61,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.*;
 
+import java.util.Map.Entry;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -776,19 +777,34 @@ public final class SimpleGraphTab
 			// because the glyph factory doesn't support floating combo graphs anyway.
 			ITrackStyleExtended combo_style = null;
 
+			Map<Color, Integer> colorMap = new HashMap<Color, Integer>();
 			// If any of them already has a combo style, use that one
 			for (int i = 0; i < gcount && combo_style == null; i++) {
 				GraphSym gsym = grafs.get(i);
 				combo_style = gsym.getGraphState().getComboStyle();
+				Color col = gsym.getGraphState().getTierStyle().getBackground();
+				int c = 0;
+				if(colorMap.containsKey(col)){
+					c = colorMap.get(col) + 1;
+				}
+				colorMap.put(col, c);
 			}
+			
 			// otherwise, construct a new combo style
 			if (combo_style == null) {
 				combo_style = new SimpleTrackStyle("Joined Graphs", true);
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 			//	combo_style.setCollapsed(true);
-				combo_style.setBackground(igbService.getDefaultBackgroundColor());
 				combo_style.setForeground(igbService.getDefaultForegroundColor());
+				Color background =igbService.getDefaultBackgroundColor();
+				int c = -1;
+				for(Entry<Color, Integer> color : colorMap.entrySet()){
+					if(color.getValue() > c){
+						background = color.getKey();
+					}
+				}
+				combo_style.setBackground(background);
 			}
 
 			// Now apply that combo style to all the selected graphs

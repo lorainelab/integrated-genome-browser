@@ -454,8 +454,8 @@ public class TierPrefsView implements ListSelectionListener {
 					arrowCheckBox.setSelected(false);
 					break;
 				case ARROW:
-					colorCheckBox.setSelected(true);
-					arrowCheckBox.setSelected(false);
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(true);
 					break;
 				case COLOR:
 					colorCheckBox.setSelected(true);

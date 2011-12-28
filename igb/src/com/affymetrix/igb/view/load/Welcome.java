@@ -61,9 +61,12 @@ public class Welcome implements ItemListener, ComponentListener, SymSelectionLis
 	private final TransformTierGlyph parent;
 	private final GenometryModel gmodel;
 
-	private static final Welcome singleton = new Welcome();
+	private static Welcome singleton;
 
 	public static Welcome getWelcome(){
+		if(singleton == null){
+			singleton = new Welcome();
+		}
 		return singleton;
 	}
 

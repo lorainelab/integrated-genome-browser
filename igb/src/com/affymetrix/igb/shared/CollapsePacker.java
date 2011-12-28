@@ -14,8 +14,9 @@ public final class CollapsePacker extends CollapsedTierPacker {
 	@Override
 	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
 		List<GlyphI> children = parent.getChildren();
-
+		
 		if (children != null) {
+			maxHeight = 0;
 			for (GlyphI child : children) {
 				maxHeight = Math.max(maxHeight, child.getCoordBox().height);
 			}

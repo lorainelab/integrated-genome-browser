@@ -494,7 +494,8 @@ public final class TierLabelManager implements PropertyHolder {
 				List<GraphGlyph> graphs = getContainedGraphs(tg);
 				double tier_height = style.getHeight();
 				for (GraphGlyph graph : graphs) {
-					graph.getGraphState().getTierStyle().setHeight(tier_height);
+					Rectangle2D.Double cbox = graph.getCoordBox();
+					graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
 				}
 			}
 			for (ViewI v : tg.getScene().getViews()) {

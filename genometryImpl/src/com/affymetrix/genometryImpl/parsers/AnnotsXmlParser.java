@@ -79,7 +79,7 @@ public abstract class AnnotsXmlParser {
 		public Map<String, String> props = new HashMap<String, String>();
 
 		public AnnotMapElt(String fileName, String title) {
-			this(fileName, title, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "","");
+			this(fileName, title, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 		}
 
 		public AnnotMapElt(String fileName, String title, String description, 
@@ -91,21 +91,67 @@ public abstract class AnnotsXmlParser {
 			this.fileName = fileName;
 			this.title = (title == null ? "" : title);
 			this.serverURL = (serverURL == null ? "" : serverURL);
-			this.props.put("description", description);
-			this.props.put("url", URL);
-			this.props.put("load_hint", load_hint);
-			this.props.put("label_field", label_field);
-			this.props.put("foreground", foreground);
-			this.props.put("background", background);
-			this.props.put("max_depth", max_depth);
-			this.props.put("name_size", name_size);
-			this.props.put("connected", connected);
-			this.props.put("collapsed", collapsed);
-			this.props.put("show2tracks", show2tracks);
-			this.props.put("direction_type", direction_type);
-			this.props.put("positive_strand_color", positive_strand_color);
-			this.props.put("negative_strand_color", negative_strand_color);
-			this.props.put("view_mode", view_mode);
+			
+			if(description != null && description.trim().length() > 0){
+				this.props.put("description", description);
+			}
+			
+			if(URL != null && URL.trim().length() > 0){
+				this.props.put("url", URL);
+			}
+			
+			if(load_hint != null && load_hint.trim().length() > 0){
+				this.props.put("load_hint", load_hint);
+			}
+			
+			if(label_field != null && label_field.trim().length() > 0){
+				this.props.put("label_field", label_field);
+			}
+			
+			if(foreground != null && foreground.trim().length() > 0){
+				this.props.put("foreground", foreground);
+			}
+			
+			if(background != null && background.trim().length() > 0){
+				this.props.put("background", background);
+			}
+			
+			if(max_depth != null && max_depth.trim().length() > 0){
+				this.props.put("max_depth", max_depth);
+			}
+			
+			if(name_size != null && name_size.trim().length() > 0){
+				this.props.put("name_size", name_size);
+			}
+			
+			if(connected != null && connected.trim().length() > 0){
+				this.props.put("connected", connected);
+			}
+			
+			if(collapsed != null && collapsed.trim().length() > 0){
+				this.props.put("collapsed", collapsed);
+			}
+			
+			if(show2tracks != null && show2tracks.trim().length() > 0){
+				this.props.put("show2tracks", show2tracks);
+			}
+			
+			if(direction_type != null && direction_type.trim().length() > 0){
+				this.props.put("direction_type", direction_type);
+			}
+			
+			if(positive_strand_color != null && positive_strand_color.trim().length() > 0){
+				this.props.put("positive_strand_color", positive_strand_color);
+			}
+			
+			if(negative_strand_color != null && negative_strand_color.trim().length() > 0){
+				this.props.put("negative_strand_color", negative_strand_color);
+			}
+			
+			if(view_mode != null && view_mode.trim().length() > 0){
+				this.props.put("view_mode", view_mode);
+			}
+						
 		}
 
 		public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {

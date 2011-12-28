@@ -36,15 +36,19 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	private static final long serialVersionUID = 1L;
 	public static final String WELCOME_PANE = "WelcomePane";
 	public static final String SEQ_MAP_PANE = "SeqMapPane";
-	private static final MainWorkspaceManager singleton = new MainWorkspaceManager();
+	private static MainWorkspaceManager singleton;
 	
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	
 	private final GenometryModel gmodel;
 	
 	public static MainWorkspaceManager getWorkspaceManager(){
+		if(singleton == null){
+			singleton = new MainWorkspaceManager();
+		}
 		return singleton;
 	}
+	
 	public MainWorkspaceManager(){
 		this.setLayout( new CardLayout());
 		add( new WelcomePage( getWelcomePane() ), WELCOME_PANE);
@@ -81,7 +85,7 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 					String groupStr = (String)obj;
 					AnnotatedSeqGroup group = gmodel.getSeqGroup(groupStr);
 
-					if(group == null){
+					if(group == null || group.getEnabledVersions().isEmpty()){
 						Application.getSingleton().setStatus(groupStr+" Not Available", true);
 						return;
 					}

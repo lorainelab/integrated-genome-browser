@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.PropertyListener;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -259,6 +260,12 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		// seems no longer needed
 		//map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
 		List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+		ITrackStyleExtended combo_style = null;
+		if (topgl != null && topgl instanceof GraphGlyph) {
+			GraphGlyph gg = (GraphGlyph)topgl;
+			combo_style = gg.getGraphState().getComboStyle();
+		}
+		
 		if (preserve_selections) {
 			for (int i = 0; i < hcount; i++) {
 				Object obj = hits.get(i);
@@ -266,21 +273,30 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 					graphs.add((GraphGlyph) obj);
 				}
 			}
-		} else {
+		} else if (combo_style != null) {
+			for (int i = 0; i < hcount; i++) {
+				Object obj = hits.get(i);
+				if (obj instanceof GraphGlyph && 
+						((GraphGlyph)obj).getGraphState().getComboStyle() == combo_style ) {
+					graphs.add((GraphGlyph) obj);
+				}
+			}
+		}else {
 			if (topgl != null && topgl instanceof GraphGlyph) {
 				graphs.add((GraphGlyph) topgl);
 			}
 		}
-		int gcount = graphs.size();
-
+		
 		if (topgl != null) {
 			boolean toggle_event = isToggleSelectionEvent(evt);
 			//      if (toggle_event && map.getSelected().contains(topgl)) {
 			if (toggle_event && topgl.isSelected()) {
 				map.deselect(topgl);
 			} else if(topgl != smv.getAxisGlyph() && topgl != smv.getSequnceGlyph()){
-					map.select(topgl);
-				}
+				map.select(topgl);
+			}
+			
+			int gcount = graphs.size();
 			for (int i = 0; i < gcount; i++) {
 				GraphGlyph gl = graphs.get(i);
 				if (gl != topgl) {  // if gl == topgl, already handled above...

@@ -6,13 +6,17 @@ import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.*;
 import java.awt.geom.Rectangle2D;
@@ -27,7 +31,9 @@ import java.awt.geom.Rectangle2D;
  */
 public class TierGlyph extends SolidGlyph {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
-
+	private static final float default_trans = 0.5f;
+    private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
+   
 	private boolean sorted = true;
 	private boolean ready_for_searching = false;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
@@ -392,8 +398,27 @@ public class TierGlyph extends SolidGlyph {
 	
 	@Override
 	public void drawChildren(ViewI view) {
-		super.drawChildren(view);
-		if(shouldDrawToolBar()){
+		if (children != null) {
+			GlyphI child;
+			int numChildren = children.size();
+			for (int i = 0; i < numChildren; i++) {
+				child = children.get(i);
+				// TransientGlyphs are usually NOT drawn in standard drawTraversal
+				if (!(child instanceof TransientGlyph) || drawTransients()) {
+					if (child.isOverlapped()) {
+						Graphics2D g = view.getGraphics();
+						Composite dac = g.getComposite();
+						g.setComposite(ac);
+						child.drawTraversal(view);
+						g.setComposite(dac);
+					} else {
+						child.drawTraversal(view);
+					}
+				}
+			}
+		}
+
+		if (shouldDrawToolBar()) {
 			drawExpandCollapse(view);
 		}
 	}

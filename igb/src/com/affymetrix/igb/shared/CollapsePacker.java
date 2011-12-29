@@ -19,6 +19,7 @@ public final class CollapsePacker extends CollapsedTierPacker {
 			maxHeight = 0;
 			for (GlyphI child : children) {
 				maxHeight = Math.max(maxHeight, child.getCoordBox().height);
+				child.setOverlapped(false);
 			}
 		}
 

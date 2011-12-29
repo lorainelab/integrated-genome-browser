@@ -4,9 +4,7 @@ import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -195,16 +193,8 @@ public class FasterExpandPacker extends ExpandPacker {
 
 					if (layeredChild == null) {
 						layeredChild = child;	// First child that could be layered
-					} else {
-						// indicate to user that we're layering the glyphs -- we do this by making the layered glyphs a darker color
-						recurseSetColor(child.getColor().darker(), child);
-						recurseSetPackerClipping(child);	// don't draw everything in the overlapped glyphs (for performance)
-						if (layeredChild.getColor() != child.getColor()) {
-							// first time through -- we haven't set the previous child's color yet.
-							recurseSetColor(layeredChild.getColor().darker(), layeredChild);
-							recurseSetPackerClipping(layeredChild);	// don't draw everything in the overlapped glyphs (for performance)
-						}
-					}
+					} 
+					child.setOverlapped(true);
 				} else {
 					slot_maxes.add(child_max);
 					int slot_index = slot_maxes.size() - 1;
@@ -260,28 +250,6 @@ public class FasterExpandPacker extends ExpandPacker {
 			max = Math.max(parent.getChild(i).getCoordBox().height, max);
 		}
 		return max;
-	}
-
-	private static void recurseSetColor(Color c, GlyphI glyph) {
-		glyph.setBackgroundColor(c);
-		glyph.setForegroundColor(c);
-		int count = glyph.getChildCount();
-		for (int i=0;i<count;i++) {
-			recurseSetColor(c, glyph.getChild(i));
-		}
-	}
-
-	private static void recurseSetPackerClipping(GlyphI glyph) {
-		if (glyph instanceof AlignedResidueGlyph) {
-			((AlignedResidueGlyph)glyph).packerClip = true;
-		}else if(glyph instanceof InsertionSeqGlyph){
-			((InsertionSeqGlyph)glyph).packerClip = true;
-		}
-		
-		int count = glyph.getChildCount();
-		for (int i=0;i<count;i++) {
-			recurseSetPackerClipping(glyph.getChild(i));
-		}
 	}
 
 	private static double determineYCoord(int moveType, int slot_index, double slot_height, double spacing) {

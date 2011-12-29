@@ -1,8 +1,10 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import javax.swing.*;
 
@@ -18,10 +20,13 @@ public class BookmarkEditor {
 	private static JTextArea commentField;
 	private static JRadioButton positionOnlyB;
 	private static JRadioButton positionDataB;
+	private static JCheckBox useDefaultName;
 	private static ButtonGroup group;
 	private static JOptionPane op;
 	private static JScrollPane scrollpane;
 	private static JDialog dialog;
+	public static final boolean defaultUseDefaultName = true;
+	public static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
 
 	public static void init(Bookmark b) {
 		bookmark = b;
@@ -34,21 +39,28 @@ public class BookmarkEditor {
 			commentField.setWrapStyleWord(true);
 			positionOnlyB = new JRadioButton("Position Only");
 			positionDataB = new JRadioButton("Position and Data", true);
+			useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME, PreferenceUtils.getTopNode(),
+					PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
+			useDefaultName.addActionListener(new java.awt.event.ActionListener() {
+
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					setNameField();
+				}
+			});
 			group = new ButtonGroup();
 			group.add(positionOnlyB);
 			group.add(positionDataB);
 			scrollpane = new JScrollPane(commentField);
 			scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE, 
+			op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE,
 					JOptionPane.CANCEL_OPTION, null, null);
 		}
 	}
-	
-	private static void initDialog()
-	{
-		nameField.setText(bookmark.getName());
+
+	private static void initDialog() {
+		setNameField();
 		commentField.setText("");
-		op.setMessage(new Object[]{
+		op.setMessage(new Object[]{"", useDefaultName,
 					"Name:", nameField, "Comment:", scrollpane,
 					positionOnlyB, positionDataB});
 		dialog = op.createDialog("Enter Bookmark Information...");
@@ -57,6 +69,14 @@ public class BookmarkEditor {
 		dialog.setResizable(true);
 		dialog.setVisible(true);
 		dialog.pack();
+	}
+
+	private static void setNameField() {
+		if (useDefaultName.isSelected()) {
+			nameField.setText(bookmark.getName());
+		} else {
+			nameField.setText("");
+		}
 	}
 
 	public static void run() {
@@ -73,7 +93,7 @@ public class BookmarkEditor {
 				// create a new bookmark includes position and data
 				// otherwise, the bookmark is just position only
 				try {
-					bookmark = BookmarkController.getCurrentBookmark(true, 
+					bookmark = BookmarkController.getCurrentBookmark(true,
 							BookmarkActionManager.getInstance().getVisibleSpan());
 				} catch (MalformedURLException m) {
 					ErrorHandler.errorPanel("Couldn't add bookmark", m);

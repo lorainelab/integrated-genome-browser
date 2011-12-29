@@ -824,8 +824,10 @@ public class TierPrefsView implements ListSelectionListener {
 
 				if (autoApplyChanges() && apply) {
 					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
-							|| col == COL_TRACK_NAME || col == COL_COLLAPSED) {
-						if (col == COL_TRACK_NAME || col == COL_COLLAPSED) {
+							|| col == COL_TRACK_NAME || col == COL_COLLAPSED
+							|| col == COL_MAX_DEPTH) {
+						if (col == COL_TRACK_NAME || col == COL_COLLAPSED
+								|| col == COL_MAX_DEPTH) {
 							smv.getSeqMap().setTierStyles();
 							smv.getSeqMap().repackTheTiers(true, true, false);
 						}

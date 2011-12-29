@@ -105,7 +105,7 @@ public class BookmarkEditor {
 			String comment = commentField.getText();
 
 			if (name.trim().length() == 0) {
-				name = bookmark.getName();
+				name = "IGB BOOKMARK";
 			}
 
 			bookmark.setName(name);

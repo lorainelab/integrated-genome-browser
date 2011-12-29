@@ -460,4 +460,8 @@ public interface GlyphI extends NeoConstants  {
 	public boolean getGlobalChildTransform(ViewI view, LinearTransform trans);
 
 	public boolean withinView(ViewI view);
+	
+	public boolean isOverlapped();
+	
+	public void setOverlapped(boolean overlapped);
 }

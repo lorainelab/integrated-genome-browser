@@ -58,6 +58,7 @@ public abstract class Glyph implements GlyphI  {
 	protected int draw_order = DRAW_SELF_FIRST;
 
 	protected boolean selectable = true;
+	protected boolean overlapped = false;
 
 	public Glyph()
 	{
@@ -543,7 +544,7 @@ public abstract class Glyph implements GlyphI  {
 	public Color getBackgroundColor()  {
 		return this.style.getBackgroundColor();
 	}
-
+	
 	/** Semi-deprecated. Use {@link #setBackgroundColor(Color)}. */
 	public void setColor(Color color)  {
 		this.setBackgroundColor( color );
@@ -552,6 +553,14 @@ public abstract class Glyph implements GlyphI  {
 	/** Semi-deprecated. Use {@link #getBackgroundColor}. */
 	public Color getColor()  {
 		return this.getBackgroundColor();
+	}
+
+	public boolean isOverlapped(){
+		return overlapped;
+	}
+	
+	public void setOverlapped(boolean overlapped){
+		this.overlapped = overlapped;
 	}
 
 	public void setFont(Font f) {

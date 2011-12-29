@@ -12,12 +12,11 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  */
 public class InsertionSeqGlyph extends SequenceGlyph {
 
-	public boolean packerClip = false;
 	private Color bgcolor = Color.white;
 
 	@Override
 	public void draw(ViewI view) {
-		if (packerClip) {
+		if (isOverlapped()) {
 			return;	// don't draw residues
 		}
 

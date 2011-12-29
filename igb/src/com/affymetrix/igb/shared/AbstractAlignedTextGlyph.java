@@ -33,7 +33,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 	
 	// default to true for backward compatability
 	private boolean hitable = true;
-	public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
+	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
 
 	public void setParentSeqStart(int beg) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -118,7 +118,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
-		if (packerClip || (residueMask.isEmpty() && getShowMask())) {
+		if (isOverlapped() || (residueMask.isEmpty() && getShowMask())) {
 			return;	// don't draw residues
 		}
 		Rectangle2D.Double coordclipbox = view.getCoordBox();

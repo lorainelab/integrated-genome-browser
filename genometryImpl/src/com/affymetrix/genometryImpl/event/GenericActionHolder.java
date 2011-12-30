@@ -23,9 +23,9 @@ public class GenericActionHolder {
 
 	public void addGenericAction(GenericAction genericAction) {
 		genericActions.put(genericAction.getId(), genericAction);
-		if (genericAction.getText() != null) {
-			PreferenceUtils.getAccelerator(genericAction.getText());
-		}
+//		if (genericAction.getText() != null) {
+//			PreferenceUtils.getAccelerator(genericAction.getText());
+//		}
 		for (GenericActionListener listener : listeners) {
 			listener.onCreateGenericAction(genericAction);
 		}

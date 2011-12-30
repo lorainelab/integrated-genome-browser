@@ -95,16 +95,11 @@
                               <Component id="trackNameSizeComboBox" alignment="0" min="-2" pref="59" max="-2" attributes="1"/>
                               <Component id="bgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="applyToAllButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                                  <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                          <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="displayNameLabel" min="-2" max="-2" attributes="0"/>
@@ -148,7 +143,6 @@
                   </Group>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="applyToAllButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -322,18 +316,6 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.collapsedCheckBox"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JButton" name="applyToAllButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Apply To All Tracks"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyToAllButtonActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="applyToAllButton.setToolTipText(&quot;Apply Background, Foreground, and Name Size to all tracks.&quot;);"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.applyToAllButton"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator2">
@@ -363,7 +345,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="jScrollPane1" pref="230" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="231" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="restoreToDefaultButton" min="-2" max="-2" attributes="0"/>
               </Group>

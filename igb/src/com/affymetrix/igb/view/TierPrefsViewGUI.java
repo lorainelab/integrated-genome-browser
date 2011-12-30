@@ -56,7 +56,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         show2TracksCheckBox = tpv.show2TracksCheckBox;
         connectedCheckBox = tpv.connectedCheckBox;
         collapsedCheckBox = tpv.collapsedCheckBox;
-        applyToAllButton = tpv.applyToAllButton;
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         selectTrackPanel = new javax.swing.JPanel();
@@ -159,13 +158,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             }
         });
 
-        applyToAllButton.setText("Apply To All Tracks");
-        applyToAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyToAllButtonActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
@@ -189,14 +181,11 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(18, 18, 18)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(applyToAllButton)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(9, 9, 9)
-                                .add(fgLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                        .add(27, 27, 27)
+                        .add(fgLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(55, 55, 55))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(displayNameLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -230,7 +219,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                         .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(10, 10, 10)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(applyToAllButton)
                     .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(trackNameSizeLabel))
                 .add(8, 8, 8)
@@ -247,8 +235,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                     .add(connectedCheckBox)
                     .add(collapsedCheckBox)))
         );
-
-        applyToAllButton.setToolTipText("Apply Background, Foreground, and Name Size to all tracks.");
 
         selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track List"));
 
@@ -276,7 +262,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(restoreToDefaultButton))
         );
@@ -453,10 +439,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		tpv.bgColorComboBox();
 }//GEN-LAST:event_bgColorComboBoxActionPerformed
 
-	private void applyToAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyToAllButtonActionPerformed
-		tpv.applyToAllButton();
-	}//GEN-LAST:event_applyToAllButtonActionPerformed
-
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
 		tpv.labelFieldComboBox();
 }//GEN-LAST:event_labelFieldComboBoxActionPerformed
@@ -486,7 +468,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 	}//GEN-LAST:event_restoreToDefaultButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyToAllButton;
     private javax.swing.JCheckBox arrowCheckBox;
     private javax.swing.JCheckBox autoRefreshCheckBox;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;

@@ -565,26 +565,6 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void applyToAllButton() {
-		selectedRow = table.getSelectedRow();
-		ITrackStyle style;
-		for (int i = 0; i < table.getRowCount(); i++) {
-			style = model.getStyles().get(i);
-			if (!style.getTrackName().equalsIgnoreCase(
-					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-				model.setValueAt(model.getStyles().get(selectedRow).getBackground(),
-						i, COL_BACKGROUND, true);
-				model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(),
-						i, COL_TRACK_NAME_SIZE, true);
-				model.setValueAt(model.getStyles().get(selectedRow).getForeground(),
-						i, COL_FOREGROUND, false);
-			}
-			if (i == table.getRowCount() - 1) {
-				applyChanges();
-			}
-		}
-	}
-
 	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);

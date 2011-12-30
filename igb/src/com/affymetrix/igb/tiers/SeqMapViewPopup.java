@@ -62,6 +62,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.load.DataManagementTable;
+import java.awt.Color;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -1014,6 +1015,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gsym.setGraphName(human_name);
 		gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 		gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
+		gsym.getGraphState().getTierStyle().setBackground(atier.getBackgroundColor());
 		gsym.getGraphState().getTierStyle().setFeature(atier.getAnnotStyle().getFeature());
 		gviewer.setAnnotatedSeq(aseq, true, true);
 //    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);

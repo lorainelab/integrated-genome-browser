@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.view.BundleRepositoryPrefsView;
 import com.affymetrix.igb.view.TierPrefsViewGUI;
@@ -181,18 +182,23 @@ public final class PreferencesPanel extends JPanel {
 		JMenuBar menu_bar = new JMenuBar();
 		JMenu prefs_menu = new JMenu(PREFERENCES);
 		prefs_menu.setMnemonic('P');
-
-		prefs_menu.add(ExportPreferencesAction.getAction());
-		prefs_menu.add(getImportAction());
-
+		
+		JMenuItem exp = new JMenuItem(ExportPreferencesAction.getAction());
+		JMenuItem imp = new JMenuItem(getImportAction());
+		MenuUtil.addToMenu(prefs_menu, exp, PREFERENCES);
+		MenuUtil.addToMenu(prefs_menu, imp, PREFERENCES);
+		
 		menu_bar.add(prefs_menu);
 
 		JMenu help_menu = new JMenu(HELP);
 		help_menu.setMnemonic('H');
+		
+		JMenuItem help = new JMenuItem(getHelpAction());
+		JMenuItem helpTab = new JMenuItem(getHelpTabAction());
+		MenuUtil.addToMenu(help_menu, help, PREFERENCES);
+		MenuUtil.addToMenu(help_menu, helpTab, PREFERENCES);
+		
 		menu_bar.add(help_menu);
-		help_menu.add(getHelpAction());
-		help_menu.add(getHelpTabAction());
-
 		return menu_bar;
 	}
 
@@ -339,7 +345,7 @@ public final class PreferencesPanel extends JPanel {
 				}
 			};
 			import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
-			import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
+//			import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
 		}
 		return import_action;
 	}
@@ -374,7 +380,7 @@ public final class PreferencesPanel extends JPanel {
 				}
 			};
 			help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
-			help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
+//			help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
 		}
 		return help_action;
 	}
@@ -409,7 +415,7 @@ public final class PreferencesPanel extends JPanel {
 				}
 			};
 			help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
-			help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));
+//			help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));
 		}
 		return help_for_tab_action;
 	}

@@ -17,11 +17,9 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.SourceTableModel;
@@ -29,7 +27,6 @@ import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.IGBAuthenticator;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Authenticator;
@@ -45,7 +42,6 @@ import javax.swing.border.TitledBorder;
 import static com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 
 /**
@@ -54,44 +50,41 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
  * @version $Id$
  */
 public final class DataLoadPrefsView extends ServerPrefsView {
-	private static final long serialVersionUID = 2l;
 
+	private static final long serialVersionUID = 2l;
 	private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
 	private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
-
+	private static DataLoadPrefsView singleton;
 	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
-
 	protected JRPButton editAuthButton;
 	protected JRPButton rankUpButton;
 	protected JRPButton rankDownButton;
-	// for add source dialog
-	private JLabel typeLabel;
-	private JRPButton openDir;
-	private JComboBox type;
+
+	public static synchronized DataLoadPrefsView getSingleton() {
+		if (singleton == null) {
+			singleton = new DataLoadPrefsView();
+		}
+		return singleton;
+	}
 
 	public DataLoadPrefsView() {
 		super(ServerList.getServerInstance());
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
-		
-		layout.setHorizontalGroup(layout.createParallelGroup()
-				.addComponent(sourcePanel)
-				.addComponent(synonymsPanel)
-				.addComponent(cachePanel));
 
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addComponent(sourcePanel)
-				.addComponent(synonymsPanel)
-				.addComponent(cachePanel));
+		layout.setHorizontalGroup(layout.createParallelGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
+
+		layout.setVerticalGroup(layout.createSequentialGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
 	}
 
 	@Override
 	protected JPanel initSourcePanel(String viewName) {
 		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authentication\u2026", new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-						((SourceTableModel)sourcesTable.getModel()).getColumnIndex(SourceColumn.URL));
+						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceColumn.URL));
 				try {
 					URL u = new URL((String) url);
 					IGBAuthenticator.resetAuth((String) url);
@@ -110,45 +103,45 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			}
 		});
 		editAuthButton.setEnabled(false);
-	    ImageIcon up_icon = MenuUtil.getIcon("images/up.png");
+		ImageIcon up_icon = MenuUtil.getIcon("images/up.png");
 		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
 		rankUpButton.setToolTipText("Increase sequence server priority");
 		rankUpButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int row = sourcesTable.getSelectedRow();
-					if (row >= 1 && row < sourcesTable.getRowCount()) {
-						((SourceTableModel)sourcesTable.getModel()).switchRows(row - 1);
-						sourcesTable.getSelectionModel().setSelectionInterval(row - 1, row - 1);
-						int column = ((SourceTableModel)sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
-						String URL = sourcesTable.getModel().getValueAt(row - 1, column).toString();
-						serverList.setServerOrder(URL, row - 1);
-						URL = sourcesTable.getModel().getValueAt(row, column).toString();
-						serverList.setServerOrder(URL, row);
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						int row = sourcesTable.getSelectedRow();
+						if (row >= 1 && row < sourcesTable.getRowCount()) {
+							((SourceTableModel) sourcesTable.getModel()).switchRows(row - 1);
+							sourcesTable.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+							int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
+							String URL = sourcesTable.getModel().getValueAt(row - 1, column).toString();
+							serverList.setServerOrder(URL, row - 1);
+							URL = sourcesTable.getModel().getValueAt(row, column).toString();
+							serverList.setServerOrder(URL, row);
+						}
 					}
-				}
-			}
-		);
+				});
 		rankUpButton.setEnabled(false);
-	    ImageIcon down_icon = MenuUtil.getIcon("images/down.png");
+		ImageIcon down_icon = MenuUtil.getIcon("images/down.png");
 		rankDownButton = new JRPButton("DataLoadPrefsView_rankDownButton", down_icon);
 		rankDownButton.setToolTipText("Decrease sequence server priority");
 		rankDownButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int row = sourcesTable.getSelectedRow();
-					if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
-						((SourceTableModel)sourcesTable.getModel()).switchRows(row);
-						sourcesTable.getSelectionModel().setSelectionInterval(row + 1, row + 1);
-						int column = ((SourceTableModel)sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
-						String URL = sourcesTable.getModel().getValueAt(row, column).toString();
-						serverList.setServerOrder(URL, row);
-						URL = sourcesTable.getModel().getValueAt(row + 1, column).toString();
-						serverList.setServerOrder(URL, row + 1);
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						int row = sourcesTable.getSelectedRow();
+						if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
+							((SourceTableModel) sourcesTable.getModel()).switchRows(row);
+							sourcesTable.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+							int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceColumn.URL);
+							String URL = sourcesTable.getModel().getValueAt(row, column).toString();
+							serverList.setServerOrder(URL, row);
+							URL = sourcesTable.getModel().getValueAt(row + 1, column).toString();
+							serverList.setServerOrder(URL, row + 1);
+						}
 					}
-				}
-			}
-		);
+				});
 		rankDownButton.setEnabled(false);
 		return super.initSourcePanel(viewName);
 	}
@@ -168,38 +161,26 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected Group addServerComponents(Group group1, Group group2) {
-		return group1
-		.addComponent(sourcesScrollPane)
-		.addComponent(autoload)
-		.addGroup(group2
-			.addComponent(rankUpButton)
-			.addComponent(rankDownButton)
-			.addComponent(addServerButton)
-			.addComponent(editAuthButton)
-			.addComponent(removeServerButton));
+		return group1.addComponent(sourcesScrollPane).addComponent(autoload).addGroup(group2.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editAuthButton).addComponent(removeServerButton));
 	}
 
 	@Override
 	protected Group getServerButtons(Group group) {
-		return group
-		.addComponent(rankUpButton)
-		.addComponent(rankDownButton)
-		.addComponent(addServerButton)
-		.addComponent(editAuthButton)
-		.addComponent(removeServerButton);
+		return group.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editAuthButton).addComponent(removeServerButton);
 	}
 
 	private static JPanel initSynonymsPanel(final JPanel parent) {
 		final JPanel synonymsPanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
-		final JLabel vsynonymsLabel= new JLabel("Version Synonyms File");
-		final JLabel csynonymsLabel= new JLabel("Chromosome Synonyms File");
+		final JLabel vsynonymsLabel = new JLabel("Version Synonyms File");
+		final JLabel csynonymsLabel = new JLabel("Chromosome Synonyms File");
 		final JRPTextField vsynonymFile = new JRPTextField("DataLoadPrefsView_vsynonymFile", PreferenceUtils.getLocationsNode().get(PREF_VSYN_FILE_URL, ""));
 		final JRPTextField csynonymFile = new JRPTextField("DataLoadPrefsView_csynonymFile", PreferenceUtils.getLocationsNode().get(PREF_CSYN_FILE_URL, ""));
 		final JRPButton vopenFile = new JRPButton("DataLoadPrefsView_vopenFile", "\u2026");
 		final JRPButton copenFile = new JRPButton("DataLoadPrefsView_copenFile", "\u2026");
-		
+
 		final ActionListener vlistener = new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == vopenFile) {
 					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
@@ -216,13 +197,14 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 					PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
 				} else {
 					ErrorHandler.errorPanel(
-					"Unable to Load Version Synonyms",
-					"Unable to load personal synonyms from " + vsynonymFile.getText() + ".");
+							"Unable to Load Version Synonyms",
+							"Unable to load personal synonyms from " + vsynonymFile.getText() + ".");
 				}
 			}
 		};
 
 		final ActionListener clistener = new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == copenFile) {
 					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
@@ -239,12 +221,12 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 					PreferenceUtils.getLocationsNode().put(PREF_CSYN_FILE_URL, csynonymFile.getText());
 				} else {
 					ErrorHandler.errorPanel(
-					"Unable to Load Chromosome Synonyms",
-					"Unable to load personal synonyms from " + csynonymFile.getText() + ".");
+							"Unable to Load Chromosome Synonyms",
+							"Unable to load personal synonyms from " + csynonymFile.getText() + ".");
 				}
 			}
 		};
-		
+
 		vopenFile.setToolTipText("Open Local Directory");
 		vopenFile.addActionListener(vlistener);
 		vsynonymFile.addActionListener(vlistener);
@@ -259,25 +241,9 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		layout.setHorizontalGroup(layout.createParallelGroup(LEADING)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(vsynonymsLabel)
-					.addComponent(vsynonymFile)
-					.addComponent(vopenFile))
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(csynonymsLabel)
-					.addComponent(csynonymFile)
-					.addComponent(copenFile)));
+		layout.setHorizontalGroup(layout.createParallelGroup(LEADING).addGroup(layout.createSequentialGroup().addComponent(vsynonymsLabel).addComponent(vsynonymFile).addComponent(vopenFile)).addGroup(layout.createSequentialGroup().addComponent(csynonymsLabel).addComponent(csynonymFile).addComponent(copenFile)));
 
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(BASELINE)
-					.addComponent(vsynonymsLabel)
-					.addComponent(vsynonymFile)
-					.addComponent(vopenFile))
-				.addGroup(layout.createParallelGroup(BASELINE)
-					.addComponent(csynonymsLabel)
-					.addComponent(csynonymFile)
-					.addComponent(copenFile)));
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(BASELINE).addComponent(vsynonymsLabel).addComponent(vsynonymFile).addComponent(vopenFile)).addGroup(layout.createParallelGroup(BASELINE).addComponent(csynonymsLabel).addComponent(csynonymFile).addComponent(copenFile)));
 
 		/* Load the synonym file from preferences on startup */
 		loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile);
@@ -287,34 +253,34 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	}
 
 	private static JPanel initCachePanel() {
-		
+
 		final JLabel usageLabel = new JLabel("Cache Behavior");
 		final JLabel emptyLabel = new JLabel();
 		final JLabel cacheCleared = new JLabel("Cache Cleared");
-		final JComboBox	cacheUsage = new JComboBox(CacheUsage.values());
+		final JComboBox cacheUsage = new JComboBox(CacheUsage.values());
 		final JRPButton clearCache = new JRPButton("DataLoadPrefsView_clearCache", "Empty Cache");
 		cacheCleared.setVisible(false);
 		cacheCleared.setForeground(Color.RED);
 		clearCache.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Action performed :"+Thread.currentThread().getId());
+				System.out.println("Action performed :" + Thread.currentThread().getId());
 				clearCache.setEnabled(false);
 				LocalUrlCacher.clearCache();
 				clearCache.setEnabled(true);
 				cacheCleared.setVisible(true);
-				
+
 				new SwingWorker() {
 
 					@Override
 					protected Object doInBackground() throws Exception {
-						System.out.println("Runnable :"+Thread.currentThread().getId());
+						System.out.println("Runnable :" + Thread.currentThread().getId());
 						Thread.sleep(5000);
 						return null;
 					}
-					
+
 					@Override
-					public void done(){
+					public void done() {
 						cacheCleared.setVisible(false);
 					}
 				}.execute();
@@ -323,8 +289,9 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 		cacheUsage.setSelectedItem(LocalUrlCacher.getCacheUsage(LocalUrlCacher.getPreferredCacheUsage()));
 		cacheUsage.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
-				LocalUrlCacher.setPreferredCacheUsage(((CacheUsage)cacheUsage.getSelectedItem()).usage);
+				LocalUrlCacher.setPreferredCacheUsage(((CacheUsage) cacheUsage.getSelectedItem()).usage);
 			}
 		});
 
@@ -335,24 +302,10 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 		layout.linkSize(usageLabel, emptyLabel);
-		
-		layout.setHorizontalGroup(layout.createParallelGroup(LEADING)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(usageLabel)
-					.addComponent(cacheUsage))
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(emptyLabel)
-					.addComponent(clearCache)
-					.addComponent(cacheCleared)));
 
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(BASELINE)
-					.addComponent(usageLabel)
-					.addComponent(cacheUsage))
-				.addGroup(layout.createParallelGroup(BASELINE)
-					.addComponent(emptyLabel)
-					.addComponent(clearCache)
-					.addComponent(cacheCleared)));
+		layout.setHorizontalGroup(layout.createParallelGroup(LEADING).addGroup(layout.createSequentialGroup().addComponent(usageLabel).addComponent(cacheUsage)).addGroup(layout.createSequentialGroup().addComponent(emptyLabel).addComponent(clearCache).addComponent(cacheCleared)));
+
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(BASELINE).addComponent(usageLabel).addComponent(cacheUsage)).addGroup(layout.createParallelGroup(BASELINE).addComponent(emptyLabel).addComponent(clearCache).addComponent(cacheCleared)));
 
 		return cachePanel;
 	}
@@ -360,7 +313,9 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static boolean loadSynonymFile(SynonymLookup lookup, JRPTextField synonymFile) {
 		File file = new File(synonymFile.getText());
 
-		if (!file.isFile() || !file.canRead()) { return false; }
+		if (!file.isFile() || !file.canRead()) {
+			return false;
+		}
 
 		FileInputStream fis = null;
 		try {
@@ -375,7 +330,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 		return true;
 	}
-	
+
 	@Override
 	protected String getViewName() {
 		return "Data Sources";
@@ -384,71 +339,5 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	@Override
 	protected String getToolTip() {
 		return "Edit data sources and preferences";
-	}
-
-	@Override
-	protected Group addAddSourceComponents(AddSourceGroupCreator addSourceGroupCreator, GroupLayout layout) {
-		return addSourceGroupCreator.createGroup1(layout)
-		.addComponent(messageContainer)
-		.addGroup(addSourceGroupCreator.createGroup2(layout)
-			.addComponent(nameLabel)
-			.addComponent(name))
-		.addGroup(addSourceGroupCreator.createGroup2(layout)
-			.addComponent(typeLabel)
-			.addComponent(type))
-		.addGroup(addSourceGroupCreator.createGroup2(layout)
-			.addComponent(urlLabel)
-			.addComponent(url)
-			.addComponent(openDir));
-	}
-
-	@Override
-	protected JPanel createAddSourceDialog() {
-		typeLabel = new JLabel("Type");
-		type = new JComboBox(LoadUtils.ServerType.values());
-
-		if (type != null) {
-			type.removeItem(LoadUtils.ServerType.LocalFiles);
-			type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
-		}
-		openDir = new JRPButton("DataLoadPrefsView_openDir", "\u2026");
-
-		openDir.setToolTipText("Open Local Directory");
-		openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
-
-		type.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
-			}
-		});
-
-		final JPanel addServerPanel = super.createAddSourceDialog();
-		openDir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				File f = fileChooser(DIRECTORIES_ONLY, addServerPanel);
-				if (f != null && f.isDirectory()) {
-					try {
-						url.setText(f.toURI().toURL().toString());
-					} catch (MalformedURLException ex) {
-						Logger.getLogger(ServerPrefsView.class.getName()).log(Level.WARNING, "Unable to convert File '" + f.getName() + "' to URL", ex);
-					}
-				}
-			}
-		});
-
-		return addServerPanel;
-	}
-
-	@Override
-	protected void addDataSource() {
-		addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText());
-	}
-
-	@Override
-	protected void setSize(GroupLayout layout, JRPTextField name) {
-		layout.linkSize(nameLabel, urlLabel, typeLabel);
-		name.setPreferredSize(new Dimension(300, name.getPreferredSize().height));
-		layout.linkSize(name, type);
-		layout.linkSize(SwingConstants.VERTICAL, name, type, url);
 	}
 }

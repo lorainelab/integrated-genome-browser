@@ -12,13 +12,9 @@
  */
 package com.affymetrix.igb.view;
 
-import java.awt.Dimension;
 
-import javax.swing.GroupLayout;
-import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Group;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 
 public class BundleRepositoryPrefsView extends ServerPrefsView {
@@ -62,30 +58,5 @@ public class BundleRepositoryPrefsView extends ServerPrefsView {
 	@Override
 	protected boolean isSortable() {
 		return true;
-	}
-
-	@Override
-	protected Group addAddSourceComponents(AddSourceGroupCreator addSourceGroupCreator, GroupLayout layout) {
-		return addSourceGroupCreator.createGroup1(layout)
-		.addComponent(messageContainer)
-		.addGroup(addSourceGroupCreator.createGroup2(layout)
-			.addComponent(nameLabel)
-			.addComponent(name))
-		.addGroup(addSourceGroupCreator.createGroup2(layout)
-			.addComponent(urlLabel)
-			.addComponent(url));
-	}
-
-	@Override
-	protected void addDataSource() {
-		addDataSource(null, name.getText(), url.getText());
-	}
-
-	@Override
-	protected void setSize(GroupLayout layout, JRPTextField name) {
-		layout.linkSize(nameLabel, urlLabel);
-		name.setPreferredSize(new Dimension(300, name.getPreferredSize().height));
-		layout.linkSize(name);
-		layout.linkSize(SwingConstants.VERTICAL, name, url);
 	}
 }

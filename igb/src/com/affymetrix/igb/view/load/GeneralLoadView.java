@@ -91,7 +91,7 @@ public final class GeneralLoadView {
 		initComponents();
 		GeneralLoadUtils.loadServerMapping();
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
-		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView());
+		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
 	}
 
 	private void initComponents() {

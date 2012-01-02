@@ -407,9 +407,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 					options, options[1])) {
 
 				try {
-					PreferenceUtils.clearPreferences();
 					XmlStylesheetParser.removeUserStylesheetFile();
 					((IGB) Application.getSingleton()).defaultCloseOperations();
+					PreferenceUtils.clearPreferences();
 					System.exit(0);
 				} catch (Exception e) {
 					ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);

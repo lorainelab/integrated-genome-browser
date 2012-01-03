@@ -17,7 +17,7 @@ public interface ISearchMode {
 	public void clear();
 	public boolean useDisplaySelected();
 	public boolean useGenomeInSeqList();
-	public boolean checkInput(String search_text, BioSeq vseq, String seq);
+	public String checkInput(String search_text, BioSeq vseq, String seq);
 	public SearchResultsTableModel getEmptyTableModel();
 	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder);
 	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder);

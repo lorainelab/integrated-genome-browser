@@ -45,17 +45,15 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 	}
 
 	@Override
-	public boolean checkInput(String search_text, BioSeq vseq, String seq) {
+	public String checkInput(String search_text, BioSeq vseq, String seq) {
 		try {
 			getRegex(search_text);
 		} catch (PatternSyntaxException pse) {
-			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage()));
-			return false;
+			return MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage());
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorRegex"), ex);
-			return false;
+			return MessageFormat.format(BUNDLE.getString("searchError"), ex.getMessage());
 		}
-		return true;
+		return null;
 	}
 
 	public SearchResultsTableModel getEmptyTableModel() {

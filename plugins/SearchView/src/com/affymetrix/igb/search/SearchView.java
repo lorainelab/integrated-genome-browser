@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
@@ -100,7 +101,8 @@ public final class SearchView extends IGBTabPanel implements
 			selectedSearchMode = searchModeMap.get(searchMode);
 			String chrStr = (String) SearchView.this.sequenceCB.getSelectedItem();
 			final BioSeq chrfilter = Constants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
-			if (selectedSearchMode.checkInput(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString())) {
+			String errorMessage = selectedSearchMode.checkInput(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString());
+			if (errorMessage == null) {
 				enableComp(false);
 				clearTable();
 				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
@@ -129,6 +131,9 @@ public final class SearchView extends IGBTabPanel implements
 				};
 				worker.addThreadListener(cancel);
 				ThreadUtils.getPrimaryExecutor(this).execute(worker);
+			}
+			else {
+				ErrorHandler.errorPanel(errorMessage);
 			}
 		}
 	}

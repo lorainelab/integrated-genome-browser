@@ -17,13 +17,11 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -171,29 +169,25 @@ public class SearchModeResidue implements ISearchMode,
 		gmodel.addSeqSelectionListener(this);
 	}
 	
-	public boolean checkInput(String search_text, final BioSeq vseq, final String seq) {
+	public String checkInput(String search_text, final BioSeq vseq, final String seq) {
 		if (vseq == null ) {
-			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq));
-			return false;
+			return MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq);
 		}
 		if (search_text.length() < 3) {
-			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorShort"));
-			return false;
+			return BUNDLE.getString("searchErrorShort");
 		}
 		try {
 			Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
-			ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage()));
-			return false;
+			return MessageFormat.format(BUNDLE.getString("searchErrorSyntax"), pse.getMessage());
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel(BUNDLE.getString("searchErrorRegex"), ex);
-			return false;
+			return MessageFormat.format(BUNDLE.getString("searchError"), ex.getMessage());
 		}
 		
 		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
 			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), igbService.getSeqMapView().getAnnotatedSeq().getID()));
 			if(!confirm) {
-				return false;
+				return BUNDLE.getString("searchCancelled");
 			}
 			SeqSpan viewspan = igbService.getSeqMapView().getVisibleSpan();
 			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
@@ -208,7 +202,7 @@ public class SearchModeResidue implements ISearchMode,
 //		if (!confirm) {
 //			return false;
 //		}
-		return true;
+		return null;
 	}
 
 	@Override

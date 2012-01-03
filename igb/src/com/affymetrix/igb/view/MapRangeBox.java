@@ -78,9 +78,9 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 
 	private static abstract class EmptySearch implements ISearchMode {
 		protected abstract Matcher getMatcher(String search_text);
-		@Override public boolean checkInput(String search_text, BioSeq vseq, String seq) {
+		@Override public String checkInput(String search_text, BioSeq vseq, String seq) {
 			Matcher matcher = getMatcher(search_text);
-			return matcher.matches();
+			return matcher.matches() ? null : "";
 		}
 		@Override public String getName() { return null; }
 		@Override public String getTooltip() { return null; }
@@ -413,7 +413,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
 		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls());
 		for (ISearchMode mode : modes) {
-			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null)) {
+			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null) {
 				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());
 				if (rawSpans.size() > 0) {
 					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);

@@ -83,6 +83,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 			return matcher.matches() ? null : "";
 		}
 		@Override public String getName() { return null; }
+		@Override public SearchType getSearchType() { return SearchType.feature; }
 		@Override public String getTooltip() { return null; }
 		@Override public String getOptionName(int i) { return null; }
 		@Override public String getOptionTooltip(int i) { return null; }

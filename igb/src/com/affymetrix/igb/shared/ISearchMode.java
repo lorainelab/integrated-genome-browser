@@ -7,8 +7,13 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public interface ISearchMode {
+	public enum SearchType {
+		feature,
+		residue;
+	}
 	public static final int NO_ZOOM_SPOT = -1;
 	public String getName();
+	public SearchType getSearchType();
 	public String getTooltip();
 	public String getOptionName(int i);
 	public String getOptionTooltip(int i);

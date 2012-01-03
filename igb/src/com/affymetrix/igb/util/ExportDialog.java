@@ -206,8 +206,9 @@ public class ExportDialog {
 
 	public void extComboBoxActionPerformed() {
 		String path = filePathTextField.getText();
+		String directory = path.substring(0, path.lastIndexOf("/"));
 		String file = path.substring(path.lastIndexOf("/"));
-		String ext = "";
+		String ext = ".jpeg";
 		exportFile = new File(file);
 
 		for (ExportFileFilter filter : FILTER_LIST.values()) {
@@ -218,12 +219,10 @@ public class ExportDialog {
 
 		exportFile = changeFileExtension(exportFile, ext);
 
-		filePathTextField.setText(exportDirectory.getAbsolutePath()
-				+ "/"
-				+ exportFile.getName());
+		filePathTextField.setText(directory + "/" + exportFile.getName());
 	}
 
-	public void okButtonActionPerformed(Component component) {
+	public boolean okButtonActionPerformed(Component component) {
 		String previousDirectory = exportDirectory.getAbsolutePath();
 		String previousFile = exportFile.getName();
 		String path = filePathTextField.getText();
@@ -235,11 +234,12 @@ public class ExportDialog {
 			ErrorHandler.errorPanel("The path or image format is invalid.");
 			filePathTextField.setText(previousDirectory + "/" + previousFile);
 			filePathTextField.grabFocus();
-			return;
+			return false;
 		}
 
 		File file = new File(path);
 		doComponentExport(component, file, ext);
+		return true;
 	}
 
 	public static boolean isExt(String ext) {

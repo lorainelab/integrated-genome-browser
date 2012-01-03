@@ -37,7 +37,7 @@ public class ExportDialogGUI extends JPanel {
 	/** Creates new form ExportUtils */
 	public ExportDialogGUI() {
 		export = ExportDialog.getSingleton();
-		
+
 		initComponents();
 	}
 
@@ -154,10 +154,10 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-		export.okButtonActionPerformed(component);
-		static_frame.setVisible(false);
+		if (export.okButtonActionPerformed(component)) {
+			static_frame.setVisible(false);
+		}
 	}//GEN-LAST:event_okButtonActionPerformed
-	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JButton cancelButton;

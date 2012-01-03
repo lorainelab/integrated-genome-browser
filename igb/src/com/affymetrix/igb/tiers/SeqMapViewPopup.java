@@ -810,14 +810,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							style.setBackground(chooser.getColor());
 						}
 					}
-//				  for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-//					  if (fg) {
-//						  gg.setColor(chooser.getColor());
-//						  gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
-//					  } else {
-//						  gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
-//					  }
-//				  }
+				  for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+					  if (fg) {
+						  gg.setColor(chooser.getColor());
+						  gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
+					  } else {
+						  gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
+					  }
+				  }
 				}
 			}
 		};

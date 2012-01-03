@@ -1077,6 +1077,10 @@ public final class SimpleGraphTab
 			GlyphI g = igbService.getSeqMap().getItem(graf);
 			GraphGlyph gl = (GraphGlyph) g;
 			gl.getGraphState().getTierStyle().setBackground(color);
+			ITrackStyleExtended combo = gl.getGraphState().getComboStyle();
+			if(combo != null){
+				combo.setBackground(color);
+			}
 		}
 	}
 

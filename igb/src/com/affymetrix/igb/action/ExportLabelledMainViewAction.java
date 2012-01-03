@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.util.ComponentWriter;
+import com.affymetrix.igb.util.ExportDialogGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -30,7 +30,8 @@ public class ExportLabelledMainViewAction extends GenericAction {
 		super.actionPerformed(e);
 		try {
 			AffyLabelledTierMap tm = (AffyLabelledTierMap) IGB.getSingleton().getMapView().getSeqMap();
-			ComponentWriter.showExportDialog(tm.getSplitPane());
+			ExportDialogGUI.getSingleton().showExportDialog(tm.getSplitPane());
+			//ComponentWriter.showExportDialog(tm.getSplitPane());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

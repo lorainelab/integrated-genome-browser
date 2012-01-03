@@ -96,9 +96,10 @@ Import-Package: affymetrix.calvin.data,
  org.osgi.util.tracker,
  org.w3c.dom,
  org.xml.sax,
+ org.apache.batik.dom,
+ org.apache.batik.svggen,
  sun.reflect;resolution:=optional,
  org.jdesktop.layout,
  be.pwnt.jflow,
  be.pwnt.jflow.event,
  be.pwnt.jflow.shape
-

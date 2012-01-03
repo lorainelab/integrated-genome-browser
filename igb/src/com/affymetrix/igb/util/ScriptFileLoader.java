@@ -24,13 +24,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import org.freehep.util.export.ExportFileType;
 
 /**
  *
@@ -38,14 +36,15 @@ import org.freehep.util.export.ExportFileType;
  * Parse actions from IGB response file.
  */
 public class ScriptFileLoader {
+
 	private static String splitter = "\\s";
 
 	private static enum ExportMode {
-		MAIN ("mainView"),
-		MAINWITHLABELS ("mainViewWithLabels"),
-		SLICEDWITHLABELS ("slicedViewWithLabels"),
-		WHOLEFRAME ("wholeFrame");
 
+		MAIN("mainView"),
+		MAINWITHLABELS("mainViewWithLabels"),
+		SLICEDWITHLABELS("slicedViewWithLabels"),
+		WHOLEFRAME("wholeFrame");
 		private String name;
 
 		ExportMode(String name) {
@@ -62,10 +61,10 @@ public class ScriptFileLoader {
 		if (args == null) {
 			return null;
 		}
-		for (int i=0;i<args.length;i++) {
+		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-" + IGBService.SCRIPTFILETAG)) {
-				if (i+1 < args.length) {
-					return args[i+1];
+				if (i + 1 < args.length) {
+					return args[i + 1];
 				} else {
 					Logger.getLogger(ScriptFileLoader.class.getName()).severe("File was not specified.");
 					return null;
@@ -86,13 +85,11 @@ public class ScriptFileLoader {
 	public static boolean runScript(String fileName) {
 		if (!isScript(fileName)) {
 			return false;
-		}
-		else if (fileName.toLowerCase().endsWith(".igb")) {
+		} else if (fileName.toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.
 			// Potential for an infinite loop here, of course.
 			doActions(fileName);
-		}
-		else {
+		} else {
 			executeScript(fileName);
 		}
 		return true;
@@ -105,6 +102,7 @@ public class ScriptFileLoader {
 	private static void executeScript(String fileName) {
 		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
 		(new SwingWorker<Void, Void>() {
+
 			@Override
 			protected Void doInBackground() throws Exception {
 				try {
@@ -125,36 +123,37 @@ public class ScriptFileLoader {
 	 */
 	private static void doActions(final String batchFileStr) {
 		Executor vexec = Executors.newSingleThreadExecutor();
-			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() throws Exception {
-					if (batchFileStr == null || batchFileStr.length() == 0) {
-						Logger.getLogger(ScriptFileLoader.class.getName()).log(
-								Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
-						return null;
-					}
-					// A response file was requested.  Run response file parser, and ignore any other parameters.
-					File f = new File(batchFileStr);
-					if (!f.exists()) {
-						URI uri = URI.create(batchFileStr);
-						if (uri == null) {
-							Logger.getLogger(ScriptFileLoader.class.getName()).log(
-									Level.SEVERE, "Not a valid script file: {0}", batchFileStr);
-							return null;
-						}
-						f = LocalUrlCacher.convertURIToFile(uri);
-					}
-					if (f == null || !f.exists()) {
-						Logger.getLogger(ScriptFileLoader.class.getName()).log(
-								Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
-						return null;
-					}
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-					ScriptFileLoader.doActions(f);
+			protected Void doInBackground() throws Exception {
+				if (batchFileStr == null || batchFileStr.length() == 0) {
+					Logger.getLogger(ScriptFileLoader.class.getName()).log(
+							Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
 					return null;
 				}
-			};
+				// A response file was requested.  Run response file parser, and ignore any other parameters.
+				File f = new File(batchFileStr);
+				if (!f.exists()) {
+					URI uri = URI.create(batchFileStr);
+					if (uri == null) {
+						Logger.getLogger(ScriptFileLoader.class.getName()).log(
+								Level.SEVERE, "Not a valid script file: {0}", batchFileStr);
+						return null;
+					}
+					f = LocalUrlCacher.convertURIToFile(uri);
+				}
+				if (f == null || !f.exists()) {
+					Logger.getLogger(ScriptFileLoader.class.getName()).log(
+							Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
+					return null;
+				}
 
-			vexec.execute(worker);
+				ScriptFileLoader.doActions(f);
+				return null;
+			}
+		};
+
+		vexec.execute(worker);
 	}
 
 	/**
@@ -182,8 +181,9 @@ public class ScriptFileLoader {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				//Ignore comments.
-				if(line.startsWith("#"))
+				if (line.startsWith("#")) {
 					continue;
+				}
 
 				try {
 					IGB.getSingleton().addNotLockedUpMsg("Executing script line: " + line);
@@ -205,18 +205,18 @@ public class ScriptFileLoader {
 		String action = fields[0].toLowerCase();
 		if (action.equals("genome") && fields.length >= 2) {
 			// go to genome
-			goToGenome(join(fields,1));
+			goToGenome(join(fields, 1));
 			return;
 		}
 		if (action.equals("goto") && fields.length >= 2) {
 			// go to region
-			goToRegion(join(fields,1));
+			goToRegion(join(fields, 1));
 			return;
 		}
 		if (action.equals("load")) {
 			// Allowing multiple files to be specified, split by commas
-			String[] loadFiles = join(fields,1).split(",");
-			for (int i=0;i<loadFiles.length;i++) {
+			String[] loadFiles = join(fields, 1).split(",");
+			for (int i = 0; i < loadFiles.length; i++) {
 				if (i > 0) {
 					try {
 						Thread.sleep(2000);
@@ -230,13 +230,13 @@ public class ScriptFileLoader {
 		}
 		if (action.equals("loadfromserver")) {
 			if (fields.length >= 2) {
-				loadData(fields[1], join(fields,2));
+				loadData(fields[1], join(fields, 2));
 				return;
 			}
 		}
 		if (action.equals("loadmode")) {
-			if (fields.length >=2) {
-				loadMode(fields[1], join(fields,2));
+			if (fields.length >= 2) {
+				loadMode(fields[1], join(fields, 2));
 			}
 		}
 		if (action.equals("print")) {
@@ -252,8 +252,8 @@ public class ScriptFileLoader {
 		if (action.equals("refresh")) {
 			GeneralLoadView.getLoadView().loadVisibleFeatures();
 		}
-		if (action.equals("select") && fields.length>=2) {
-			UnibrowControlServlet.getInstance().performSelection(join(fields,1));
+		if (action.equals("select") && fields.length >= 2) {
+			UnibrowControlServlet.getInstance().performSelection(join(fields, 1));
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
@@ -265,7 +265,7 @@ public class ScriptFileLoader {
 		}
 		if (action.startsWith("snapshot")) {
 			// determine the export mode
-			action = action.substring(8,action.length());
+			action = action.substring(8, action.length());
 			ExportMode exportMode = ExportMode.WHOLEFRAME;
 			if (action.length() == 0 || action.equalsIgnoreCase(ExportMode.WHOLEFRAME.toString())) {
 				exportMode = ExportMode.WHOLEFRAME;
@@ -279,12 +279,12 @@ public class ScriptFileLoader {
 
 			// determine the file name, and export.
 			if (fields.length >= 1) {
-				snapShot(exportMode,new File(join(fields,1)));	// second field and possibly others are a single filename
+				snapShot(exportMode, new File(join(fields, 1)));	// second field and possibly others are a single filename
 			} else {
 				// base filename upon organism and timestamp
-				String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default" :
-					GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
-				snapShot(exportMode,new File(id + System.currentTimeMillis() + ".gif"));
+				String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default"
+						: GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
 			}
 		}
 	}
@@ -302,18 +302,18 @@ public class ScriptFileLoader {
 					Level.SEVERE, "no file extension given for file", f.getName());
 			return;
 		}
-		extension = extension.substring(1, extension.length());
-		List<ExportFileType> efts = ComponentWriter.getExportFileTypes(extension);
-		if (efts.isEmpty()) {
+
+		if (ExportDialog.isExt(extension)) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "image file extension {0} is not supported", extension);
 			return;
 		}
 
+		extension = extension.substring(1, extension.length());
+
 		try {
-			ExportFileType eft = efts.get(0);
 			Component c = null;
-			switch(exportMode) {
+			switch (exportMode) {
 				case WHOLEFRAME:
 					c = IGB.getSingleton().getFrame();
 					break;
@@ -327,10 +327,7 @@ public class ScriptFileLoader {
 					c = ExportSlicedViewAction.getAction().determineSlicedComponent();
 					break;
 			}
-			if (!ComponentWriter.exportComponent(f, c, eft)) {
-				Logger.getLogger(ScriptFileLoader.class.getName()).log(
-						Level.SEVERE, "Unknown error in outputting file {0}", f.getName());
-			}
+			ExportDialog.doComponentExport(c, f, extension);
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -341,9 +338,9 @@ public class ScriptFileLoader {
 		if (group == null) {
 			return;
 		}
-		for (int i=0;i<100;i++) {
+		for (int i = 0; i < 100; i++) {
 			// sleep until versions are initialized
-			for (GenericVersion version: group.getEnabledVersions()) {
+			for (GenericVersion version : group.getEnabledVersions()) {
 				if (version.isInitialized() && group == GenometryModel.getGenometryModel().getSelectedSeqGroup()) {
 					continue;
 				}
@@ -374,21 +371,19 @@ public class ScriptFileLoader {
 
 	private static void loadFile(String fileName) {
 		URI uri;
- 		File f = new File(fileName.trim());
+		File f = new File(fileName.trim());
 		if (fileName.startsWith("http")) {
 			try {
 				uri = new URI(fileName);
-			}
-			catch (URISyntaxException ex) {
+			} catch (URISyntaxException ex) {
 				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 				return;
 			}
-		}
-		else {
+		} else {
 			uri = f.toURI();
 		}
 		LoadFileAction.getAction().openURI(uri, f.getName());
- 	}
+	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
 
@@ -415,14 +410,16 @@ public class ScriptFileLoader {
 		GenericFeature feature = null;
 
 		// If feature is not found in current group then look up all groups.
-		if(seqGroup != null)
+		if (seqGroup != null) {
 			feature = findFeatureInGroup(seqGroup, featureURI);
+		}
 
-		if(feature == null){
-			for(AnnotatedSeqGroup group : GenometryModel.getGenometryModel().getSeqGroups().values()){
+		if (feature == null) {
+			for (AnnotatedSeqGroup group : GenometryModel.getGenometryModel().getSeqGroups().values()) {
 				feature = findFeatureInGroup(group, featureURI);
-				if(feature != null)
+				if (feature != null) {
 					break;
+				}
 			}
 		}
 
@@ -434,12 +431,13 @@ public class ScriptFileLoader {
 		}
 	}
 
-	private static GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI){
+	private static GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI) {
 		GenericFeature feature = null;
-		for(GenericVersion version : seqGroup.getEnabledVersions()){
+		for (GenericVersion version : seqGroup.getEnabledVersions()) {
 			feature = GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
-			if(feature != null)
+			if (feature != null) {
 				break;
+			}
 		}
 
 		return feature;
@@ -453,10 +451,9 @@ public class ScriptFileLoader {
 	 */
 	private static String join(String[] fields, int startField) {
 		StringBuilder buffer = new StringBuilder("");
-		for(int i=startField;i<fields.length;i++) {
+		for (int i = startField; i < fields.length; i++) {
 			buffer.append(fields[i]);
 		}
 		return buffer.toString();
 	}
-
 }

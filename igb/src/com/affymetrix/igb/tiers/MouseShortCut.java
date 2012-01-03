@@ -43,7 +43,6 @@ final public class MouseShortCut implements MouseListener{
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		processDoubleClick(e);
 		
 		if (e.getSource() instanceof AffyLabelledTierMap && 
 				e.getID() == MouseEvent.MOUSE_RELEASED) {
@@ -53,8 +52,11 @@ final public class MouseShortCut implements MouseListener{
 				TierLabelManager.setTierCollapsed(tier, !tier.getAnnotStyle().getCollapsed());
 				smv.getSeqMap().setTierStyles();
 				popup.getHandler().repackTheTiers(true, true);
+				return;
 			}
 		}
+		processDoubleClick(e);
+		
 	}
 
 	private void processDoubleClick(MouseEvent e) {

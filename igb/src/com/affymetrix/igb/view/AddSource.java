@@ -31,10 +31,19 @@ import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
  */
 public class AddSource extends javax.swing.JFrame {
 
+	private static AddSource singleton = new AddSource();
+
 	/** Creates new form AddSource */
 	public AddSource() {
 		initComponents();
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+	}
+
+	public static AddSource getSingleton() {
+		//Reset to defaults then return
+		name.setText("Your server name");
+		url.setText("http://");
+		type.setSelectedIndex(0);
+		return singleton;
 	}
 
 	/** This method is called from within the constructor to
@@ -56,8 +65,7 @@ public class AddSource extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         addServerButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAlwaysOnTop(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         nameLabelField.setText("Name");
 
@@ -182,17 +190,16 @@ public class AddSource extends javax.swing.JFrame {
 		// TODO add your handling code here:
 		this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addServerButton;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JTextField name;
-    private javax.swing.JLabel nameLabelField;
-    private javax.swing.JButton openDir;
-    private javax.swing.JComboBox type;
-    private javax.swing.JLabel typeLabelField;
-    private javax.swing.JTextField url;
-    private javax.swing.JLabel urlLabelField;
+    private static javax.swing.JButton addServerButton;
+    private static javax.swing.JButton cancelButton;
+    private static javax.swing.JTextField name;
+    private static javax.swing.JLabel nameLabelField;
+    private static javax.swing.JButton openDir;
+    private static javax.swing.JComboBox type;
+    private static javax.swing.JLabel typeLabelField;
+    private static javax.swing.JTextField url;
+    private static javax.swing.JLabel urlLabelField;
     // End of variables declaration//GEN-END:variables
 
 	protected static File fileChooser(int mode, Component parent) throws HeadlessException {

@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.prefs.PreferencesPanel;
+import java.awt.Point;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBServiceImpl;
@@ -23,7 +25,6 @@ import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
@@ -87,9 +88,10 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				//		showAddSourceDialog();
-				//		sourceTableModel.init();
-				AddSource addServerPanel = new AddSource();
+				AddSource addServerPanel = AddSource.getSingleton();
+				JFrame frame = PreferencesPanel.getSingleton().getFrame();
+				Point location = frame.getLocation();
+				addServerPanel.setLocation(location.x + frame.getWidth() / 2 - addServerPanel.getWidth() / 2, location.y + addServerPanel.getHeight() / 2 - addServerPanel.getHeight() / 2);
 				addServerPanel.setVisible(true);
 			}
 		});

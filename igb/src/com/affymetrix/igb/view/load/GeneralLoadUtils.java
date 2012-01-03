@@ -196,6 +196,10 @@ public final class GeneralLoadUtils {
 	}
 
 	public static boolean discoverServer(GenericServer gServer) {
+		if (gServer.isPrimary()) {
+			return true;
+		}
+		
 		if (gServer.serverType != null) {
 			Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		}
@@ -298,10 +302,6 @@ public final class GeneralLoadUtils {
 	 * @return false if there's an obvious failure.
 	 */
 	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
-		if (gServer.isPrimary()) {
-			return true;
-		}
-
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);

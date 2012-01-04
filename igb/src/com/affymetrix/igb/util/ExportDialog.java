@@ -93,11 +93,11 @@ public class ExportDialog {
 
 		if (selectedFile != null) {
 
-			if (!selectedFile.getName().toLowerCase().endsWith(".jpeg")) {
-				String correctedFilename = selectedFile.getAbsolutePath() + ".jpeg";
+			if (!selectedFile.getName().toLowerCase().endsWith(JPEG.getExtension())) {
+				String correctedFilename = selectedFile.getAbsolutePath() + JPEG.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
-			writeImage(image, selectedFile, "jpeg");
+			writeImage(image, JPEG.getExtension().substring(1), selectedFile);
 		}
 	}
 
@@ -109,11 +109,11 @@ public class ExportDialog {
 
 		if (selectedFile != null) {
 
-			if (!selectedFile.getName().toLowerCase().endsWith(".png")) {
-				String correctedFilename = selectedFile.getAbsolutePath() + ".png";
+			if (!selectedFile.getName().toLowerCase().endsWith(PNG.getExtension())) {
+				String correctedFilename = selectedFile.getAbsolutePath() + PNG.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
-			writeImage(image, selectedFile, "png");
+			writeImage(image, PNG.getExtension().substring(1),selectedFile);
 		}
 	}
 
@@ -123,7 +123,7 @@ public class ExportDialog {
 
 			// Create an instance of org.w3c.dom.Document.
 			String svgNS = "http://www.w3.org/2000/svg";
-			Document document = domImpl.createDocument(svgNS, "svg", null);
+			Document document = domImpl.createDocument(svgNS, SVG.getExtension(), null);
 
 			// Create an instance of the SVG Generator.
 			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
@@ -139,9 +139,9 @@ public class ExportDialog {
 		}
 	}
 
-	private static void writeImage(BufferedImage image, File f, String type) {
+	private static void writeImage(BufferedImage image, String ext, File f) {
 		try {
-			ImageIO.write(image, type, f);
+			ImageIO.write(image, ext, f);
 		} catch (IOException e) {
 			Logger.getLogger(ExportDialog.class.getName()).log(
 					Level.SEVERE, "Error creating: " + f.getAbsolutePath());
@@ -211,9 +211,9 @@ public class ExportDialog {
 		String ext = ".jpeg";
 		exportFile = new File(file);
 
-		for (ExportFileFilter filter : FILTER_LIST.values()) {
-			if (filter.getDescription().equals(extComboBox.getSelectedItem().toString())) {
-				ext = filter.getExtension();
+		for (ExportFileType type : FILTER_LIST.keySet()) {
+			if (type.equals(extComboBox.getSelectedItem())) {
+				ext = type.getExtension();
 			}
 		}
 
@@ -243,8 +243,8 @@ public class ExportDialog {
 	}
 
 	public static boolean isExt(String ext) {
-		for (ExportFileFilter filter : FILTER_LIST.values()) {
-			if (filter.getExtension().equals(ext)) {
+		for (ExportFileType type : FILTER_LIST.keySet()) {
+			if (type.getExtension().equals(ext)) {
 				return true;
 			}
 		}

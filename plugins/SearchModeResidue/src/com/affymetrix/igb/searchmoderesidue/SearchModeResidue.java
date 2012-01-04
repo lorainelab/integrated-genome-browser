@@ -189,10 +189,7 @@ public class SearchModeResidue implements ISearchMode,
 			if(!confirm) {
 				return BUNDLE.getString("searchCancelled");
 			}
-			SeqSpan viewspan = igbService.getSeqMapView().getVisibleSpan();
-			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
-			int max = Math.min(viewspan.getMax(), vseq.getMax());
-			SeqSpan newspan = new SimpleSeqSpan(min, max, vseq);
+			SeqSpan newspan = new SimpleSeqSpan(vseq.getMin(), vseq.getMax(), vseq);
 			gmodel.setSelectedSeq(vseq);
 			igbService.getSeqMapView().zoomTo(newspan);
 		}

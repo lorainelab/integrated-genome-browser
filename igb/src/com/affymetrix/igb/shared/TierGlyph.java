@@ -230,7 +230,7 @@ public class TierGlyph extends SolidGlyph {
 		return result;
 	}
 
-	private void sortChildren(boolean force) {
+	public void sortChildren(boolean force) {
 		int child_count = this.getChildCount();
 		if (((!sorted) || force) && (child_count > 0)) {
 			// make sure child symmetries are sorted by ascending min along search_seq

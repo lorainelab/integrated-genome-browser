@@ -288,11 +288,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					return false;
 				}
 			}
-		}else if ((vFeature.getStyle() !=null && vFeature.getStyle().isGraphTier())
+		} else if ((vFeature.getStyle() != null && vFeature.getStyle().isGraphTier())
 				&& (col == SEPARATE_COLUMN)) {
 			return false;
 		}
-		
+
 		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN
 				|| col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
@@ -301,7 +301,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else if (getFeature(row) == null) {
 			return false;
 		}
-		
+
 		// This cell is only editable if the feature isn't already fully loaded.
 		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME);
 	}
@@ -368,7 +368,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				break;
 			case SEPARATE_COLUMN:
 				if (vFeature.getStyle() != null) {
-					vFeature.getStyle().setSeparate((Boolean) value);
+					vFeature.getStyle().setSeparate((Boolean) value);					
+					smv.getPopup().refreshMap(false, true);
+					smv.getPopup().getHandler().sortTiers();
 				}
 				break;
 			case TRACK_NAME_COLUMN:
@@ -384,10 +386,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
 				&& col != INFO_FEATURE_COLUMN
 				&& col != FEATURE_NAME_COLUMN
-				&& col != REFRESH_FEATURE_COLUMN) {
+				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN) {
 			refreshSeqMapView();
 		}
-		
+
 		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 

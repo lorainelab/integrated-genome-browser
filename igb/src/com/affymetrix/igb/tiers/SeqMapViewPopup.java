@@ -1023,7 +1023,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //    gl.setColor(atier.getForegroundColor());
 	}
 
-	void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
+	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.
 			// later this can be made more specific to just update the tiers that changed

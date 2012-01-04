@@ -23,11 +23,13 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class SearchModeResidue implements ISearchMode, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -51,8 +53,8 @@ public class SearchModeResidue implements ISearchMode,
 
 	@SuppressWarnings("serial")
 	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
-		private final int[] colWidth = {10,10,5,10,65};
-		private final int[] colAlign = {SwingConstants.RIGHT,SwingConstants.RIGHT,SwingConstants.CENTER,SwingConstants.CENTER,SwingConstants.LEFT};
+		private final int[] colWidth = {20,8,10,10,5,10,65};
+		private final int[] colAlign = {SwingConstants.LEFT,SwingConstants.CENTER,SwingConstants.RIGHT,SwingConstants.RIGHT,SwingConstants.CENTER,SwingConstants.CENTER,SwingConstants.LEFT};
 		
 		private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);
 		protected final String seq;
@@ -63,6 +65,8 @@ public class SearchModeResidue implements ISearchMode,
 		}
 
 		private final String[] column_names = {
+			BUNDLE.getString("searchTablePattern"),
+			BUNDLE.getString("searchTableColor"),
 			BUNDLE.getString("searchTableStart"),
 			BUNDLE.getString("searchTableEnd"),
 			BUNDLE.getString("searchTableStrand"),
@@ -70,11 +74,13 @@ public class SearchModeResidue implements ISearchMode,
 			BUNDLE.getString("searchTableMatch")
 		};
 
-		private static final int START_COLUMN = 0;
-		private static final int END_COLUMN = 1;
-		private static final int STRAND_COLUMN = 2;
-		private static final int CHROM_COLUMN = 3;
-		private static final int MATCH_COLUMN = 4;
+		private static final int PATTERN_COLUMN = 0;
+		private static final int COLOR_COLUMN = 1;
+		private static final int START_COLUMN = 2;
+		private static final int END_COLUMN = 3;
+		private static final int STRAND_COLUMN = 4;
+		private static final int CHROM_COLUMN = 5;
+		private static final int MATCH_COLUMN = 6;
 
 		@Override
 		public GlyphI get(int i) {
@@ -101,6 +107,16 @@ public class SearchModeResidue implements ISearchMode,
 
 			switch (col) {
 			
+				case PATTERN_COLUMN:
+					Object pattern = map.get("pattern");
+					if (pattern != null) {
+						return pattern.toString();
+					}
+					return "";
+					
+				case COLOR_COLUMN:
+					return glyph.getColor();
+					
 				case START_COLUMN:
 					return (int)glyph.getCoordBox().x;
 
@@ -147,6 +163,9 @@ public class SearchModeResidue implements ISearchMode,
 			if(column == START_COLUMN || column == END_COLUMN) {
 				return Number.class;
 			}
+			if(column == COLOR_COLUMN) {
+				return Color.class;
+			}
 			return String.class;
 		}
 
@@ -160,7 +179,15 @@ public class SearchModeResidue implements ISearchMode,
 			return colAlign;
 		}
 
+		@Override
+		public DefaultTableCellRenderer getColumnRenderer(int column){
+			if(column == COLOR_COLUMN){
+				return new ColorTableCellRenderer();
+			}
+			return super.getColumnRenderer(column);
+		}
 	}
+	
 	public SearchModeResidue(IGBService igbService) {
 		super();
 		this.igbService = igbService;

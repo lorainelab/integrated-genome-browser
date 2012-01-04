@@ -1,7 +1,6 @@
 package com.affymetrix.igb.search;
 
-import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.thread.CThreadEvent;
+import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -14,6 +13,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableColumn;
 
+
+import com.affymetrix.common.ExtensionPointHandler;
+
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -32,6 +35,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -44,6 +48,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
+import javax.swing.table.TableCellRenderer;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {
@@ -373,7 +378,7 @@ public final class SearchView extends IGBTabPanel implements
 		sorter = new TableRowSorter<SearchResultsTableModel>(model);
 		table.setModel(model);
 		table.setRowSorter(sorter);
-
+		
 		for (int i = 0; i < model.getColumnWidth().length; i++) {
 			int colPer = model.getColumnWidth()[i];
 			int colWidth = table.getWidth() * colPer / 100;
@@ -381,7 +386,7 @@ public final class SearchView extends IGBTabPanel implements
 			column.setPreferredWidth(colWidth);
 
 			int colAlign = model.getColumnAlign()[i];
-			DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+			DefaultTableCellRenderer dtcr = model.getColumnRenderer(i);
 			dtcr.setHorizontalAlignment(colAlign);
 			column.setCellRenderer(dtcr);
 		}

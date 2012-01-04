@@ -8,7 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: search mode to allow searching on residues
 Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Searching#Searching-FindingSequencePatterns
-Import-Package: com.affymetrix.genometryImpl,
+Import-Package: javax.swing.table,
+ com.affymetrix.genoviz.swing,
+ com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genometryImpl.span,

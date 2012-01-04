@@ -20,9 +20,11 @@ public class ExportFileChooser extends JFileChooser {
 
 	boolean accepted = false;
 	File previousFile;
+	FileFilter selectedFilter;
 
-	public ExportFileChooser(File directory, File selectedFile) {
+	public ExportFileChooser(File directory, File selectedFile, FileFilter selectedFilter) {
 		super(directory);
+		this.selectedFilter = selectedFilter;
 		setPreviousFile(selectedFile);
 		init();
 	}
@@ -69,9 +71,11 @@ public class ExportFileChooser extends JFileChooser {
 
 		if (fileFilters != null) {
 			for (FileFilter fileFilter : fileFilters) {
-				addChoosableFileFilter(fileFilter);
+				this.addChoosableFileFilter(fileFilter);
 			}
 		}
+
+		this.setFileFilter(this.selectedFilter);
 
 		addPropertyChangeListener(new PropertyChangeListener() {
 

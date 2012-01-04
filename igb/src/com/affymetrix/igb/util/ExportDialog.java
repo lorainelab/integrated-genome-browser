@@ -32,21 +32,20 @@ public class ExportDialog {
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final String[] EXT = {
 		"Joint Photographic Experts Group Files (*.jpeg)",
-		"Portable Network Graphics Files (*.png)", 
+		"Portable Network Graphics Files (*.png)",
 		"Scalable Vector Graphics Files (*.svg)"
 	};
 	public static final ExportFileType JPEG = new ExportFileType(".jpeg", EXT[0]);
 	public static final ExportFileType PNG = new ExportFileType(".png", EXT[1]);
 	public static final ExportFileType SVG = new ExportFileType(".svg", EXT[2]);
-	
+
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 	}
-
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
-	
+
 	public static FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
 	}
@@ -86,7 +85,7 @@ public class ExportDialog {
 
 	private static void exportScreenShotJPEG(Component component, File selectedFile, int width, int height) {
 
-		BufferedImage image = getDeviceCompatibleImage(width, height); //  new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED);
+		BufferedImage image = getDeviceCompatibleImage(width, height);
 		Graphics g = image.createGraphics();
 		component.paintAll(g);
 
@@ -112,7 +111,7 @@ public class ExportDialog {
 				String correctedFilename = selectedFile.getAbsolutePath() + PNG.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
-			writeImage(image, PNG.getExtension().substring(1),selectedFile);
+			writeImage(image, PNG.getExtension().substring(1), selectedFile);
 		}
 	}
 
@@ -185,6 +184,7 @@ public class ExportDialog {
 		String directory = path.substring(0, path.lastIndexOf("/"));
 		String file = path.substring(path.lastIndexOf("/"));
 		String ext = path.substring(path.lastIndexOf("."));
+		FileFilter filter = null;
 		exportDirectory = new File(directory);
 		exportFile = new File(file);
 
@@ -194,13 +194,38 @@ public class ExportDialog {
 			filePathTextField.setText(previousDirectory + "/" + previousFile);
 		}
 
-		fileChooser = new ExportFileChooser(exportDirectory, exportFile);
+		filter = getFilter(ext);
+		fileChooser = new ExportFileChooser(exportDirectory, exportFile, filter);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");
 
 		if (fileChooser.getSelectedFile() != null) {
 			filePathTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+			filter = fileChooser.getFileFilter();
+			ExportFileType type = getType(filter.getDescription());
+			extComboBox.setSelectedItem(type);
 		}
+	}
+	
+	private ExportFileType getType(String description)
+	{
+		for (ExportFileType type : FILTER_LIST.keySet()) {
+			if (type.getDescription().equals(description)) {
+				return type;
+			}
+		}
+
+		return null;
+	}
+
+	private ExportFileFilter getFilter(String ext) {
+		for (ExportFileFilter filter : FILTER_LIST.values()) {
+			if (filter.getExtension().equals(ext)) {
+				return filter;
+			}
+		}
+
+		return null;
 	}
 
 	public void extComboBoxActionPerformed() {
@@ -269,16 +294,16 @@ class ExportFileType {
 	public String getDescription() {
 		return fileDescription;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getDescription();
 	}
 }
 
 class ExportFileFilter extends FileFilter {
 
-	private ExportFileType type;
+	public ExportFileType type;
 
 	public ExportFileFilter(ExportFileType type) {
 		this.type = type;

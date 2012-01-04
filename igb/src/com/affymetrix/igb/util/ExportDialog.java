@@ -11,11 +11,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.dom.GenericDOMImplementation;
-
-import org.w3c.dom.Document;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * Code referred from IGV
@@ -43,7 +42,7 @@ public class ExportDialog {
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 	}
 
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
@@ -123,7 +122,7 @@ public class ExportDialog {
 
 			// Create an instance of org.w3c.dom.Document.
 			String svgNS = "http://www.w3.org/2000/svg";
-			Document document = domImpl.createDocument(svgNS, SVG.getExtension(), null);
+			Document document = domImpl.createDocument(svgNS, SVG.getExtension().substring(1), null);
 
 			// Create an instance of the SVG Generator.
 			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);

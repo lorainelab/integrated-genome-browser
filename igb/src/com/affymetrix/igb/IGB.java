@@ -420,6 +420,7 @@ public final class IGB extends Application
 			Map<String, String> props = new HashMap<String, String>();
 			props.put("direction", forward ? "forward" : "reverse");
 			props.put("match", matcher.group(0));
+			props.put("pattern", regex.pattern());
 
 			GlyphI gl = new FillRectGlyph();
 			gl.setInfo(props);

@@ -2,7 +2,11 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.Application;
 import java.awt.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -16,15 +20,23 @@ public class ExportDialogGUI extends JPanel {
 	private static ExportDialog export;
 	private Component component;
 
-	public synchronized JFrame showExportDialog(Component c) {
+	public synchronized void display(Component c) {
 		component = c;
-
+		export.initImageInfo(c);
+		
 		if (static_frame == null) {
 			static_frame = PreferenceUtils.createFrame("Export view as",
 					getSingleton());
+
+			Application app = Application.getSingleton();
+			JFrame frame = (app == null) ? null : app.getFrame();
+
+			Point location = frame.getLocation();
+			// Display frame at center when initialize it
+			static_frame.setLocation(location.x + frame.getWidth() / 2 - static_frame.getWidth() / 2,
+					location.y + frame.getHeight() / 2 - static_frame.getHeight() / 2);
 		}
 		DisplayUtils.bringFrameToFront(static_frame);
-		return static_frame;
 	}
 
 	public static synchronized ExportDialogGUI getSingleton() {
@@ -37,7 +49,7 @@ public class ExportDialogGUI extends JPanel {
 	/** Creates new form ExportUtils */
 	public ExportDialogGUI() {
 		export = ExportDialog.getSingleton();
-
+		
 		initComponents();
 	}
 
@@ -95,23 +107,20 @@ public class ExportDialogGUI extends JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, extComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, filePathTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 516, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(browseButton)
-                            .add(optionsButton)))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 459, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(cancelButton)
-                        .add(0, 0, 0)
-                        .add(okButton)))
-                .addContainerGap())
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createSequentialGroup()
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, extComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, filePathTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 516, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(browseButton)
+                        .add(optionsButton)))
+                .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap(459, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(cancelButton)
+                    .add(0, 0, 0)
+                    .add(okButton)))
         );
 
         layout.linkSize(new java.awt.Component[] {browseButton, optionsButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -122,8 +131,7 @@ public class ExportDialogGUI extends JPanel {
 
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(20, 20, 20)
+            .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(filePathTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(browseButton))
@@ -134,8 +142,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(5, 5, 5)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(cancelButton)
-                    .add(okButton))
-                .add(10, 10, 10))
+                    .add(okButton)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -144,6 +151,7 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_browseButtonActionPerformed
 
 	private void optionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsButtonActionPerformed
+		ExportOptionView.getSingleton().display(export.imageInfo);
 	}//GEN-LAST:event_optionsButtonActionPerformed
 
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
@@ -155,8 +163,12 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-		if (export.okButtonActionPerformed(component)) {
-			static_frame.setVisible(false);
+		try {
+			if (export.okButtonActionPerformed(component)) {
+				static_frame.setVisible(false);
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(ExportDialogGUI.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

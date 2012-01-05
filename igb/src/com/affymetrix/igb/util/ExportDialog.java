@@ -5,10 +5,19 @@ import com.affymetrix.igb.shared.FileTracker;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -23,6 +32,7 @@ import org.w3c.dom.Document;
 public class ExportDialog {
 
 	private static ExportDialog singleton;
+	public static ImageInfo imageInfo;
 	private JFileChooser fileChooser;
 	private File exportDirectory = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + "/");
 	private File exportFile = new File("export.jpeg");
@@ -58,6 +68,10 @@ public class ExportDialog {
 		return singleton;
 	}
 
+	public void initImageInfo(Component c) {
+		imageInfo = new ImageInfo(c.getWidth(), c.getHeight());
+	}
+
 	public static String getFileExtension(String filePath) {
 
 		String extension = null;
@@ -69,7 +83,7 @@ public class ExportDialog {
 		return extension;
 	}
 
-	public static void doComponentExport(Component component, File file, String ext) {
+	public static void doComponentExport(Component component, File file, String ext) throws IOException {
 
 		int width = component.getWidth();
 		int height = component.getHeight();
@@ -83,7 +97,7 @@ public class ExportDialog {
 		}
 	}
 
-	private static void exportScreenShotJPEG(Component component, File selectedFile, int width, int height) {
+	private static void exportScreenShotJPEG(Component component, File selectedFile, int width, int height) throws IOException {
 
 		BufferedImage image = getDeviceCompatibleImage(width, height);
 		Graphics g = image.createGraphics();
@@ -95,11 +109,13 @@ public class ExportDialog {
 				String correctedFilename = selectedFile.getAbsolutePath() + JPEG.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
+			
+			image = resizeImage(image);
 			writeImage(image, JPEG.getExtension().substring(1), selectedFile);
 		}
 	}
 
-	private static void exportScreenShotPNG(Component component, File selectedFile, int width, int height) {
+	private static void exportScreenShotPNG(Component component, File selectedFile, int width, int height) throws IOException {
 
 		BufferedImage image = getDeviceCompatibleImage(width, height);
 		Graphics g = image.createGraphics();
@@ -111,6 +127,8 @@ public class ExportDialog {
 				String correctedFilename = selectedFile.getAbsolutePath() + PNG.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
+			
+			image = resizeImage(image);
 			writeImage(image, PNG.getExtension().substring(1), selectedFile);
 		}
 	}
@@ -137,13 +155,50 @@ public class ExportDialog {
 		}
 	}
 
-	private static void writeImage(BufferedImage image, String ext, File f) {
-		try {
-			ImageIO.write(image, ext, f);
-		} catch (IOException e) {
-			Logger.getLogger(ExportDialog.class.getName()).log(
-					Level.SEVERE, "Error creating: " + f.getAbsolutePath());
+	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
+		final String formatName = ext;
+
+		for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+			ImageWriter writer = iw.next();
+			ImageWriteParam writeParam = writer.getDefaultWriteParam();
+			ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+			IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+			if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+				continue;
+			}
+
+			setDPI(metadata);
+
+			final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
+			try {
+				writer.setOutput(stream);
+				writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+
+				stream.close();
+			}
+			break;
 		}
+	}
+
+	private static void setDPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+		
+		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
+		horiz.setAttribute("value", Double.toString(imageInfo.getXResolution() * 0.04));
+
+		IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
+		vert.setAttribute("value", Double.toString(imageInfo.getYResolution() * 0.04));
+
+		IIOMetadataNode dim = new IIOMetadataNode("Dimension");
+		dim.appendChild(horiz);
+		dim.appendChild(vert);
+
+		IIOMetadataNode root = new IIOMetadataNode("javax_imageio_1.0");
+		root.appendChild(dim);
+
+		metadata.mergeTree("javax_imageio_1.0", root);
 	}
 
 	private static BufferedImage getDeviceCompatibleImage(int width, int height) {
@@ -154,6 +209,16 @@ public class ExportDialog {
 		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
 
 		return image;
+	}
+
+	private static BufferedImage resizeImage(BufferedImage originalImage) {
+		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		BufferedImage resizedImage = new BufferedImage(imageInfo.getWidth(), imageInfo.getHeight(), type);
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(originalImage, 0, 0, imageInfo.getWidth(), imageInfo.getHeight(), null);
+		g.dispose();
+
+		return resizedImage;
 	}
 
 	final public static File changeFileExtension(File file, String extension) {
@@ -206,9 +271,8 @@ public class ExportDialog {
 			extComboBox.setSelectedItem(type);
 		}
 	}
-	
-	private ExportFileType getType(String description)
-	{
+
+	private ExportFileType getType(String description) {
 		for (ExportFileType type : FILTER_LIST.keySet()) {
 			if (type.getDescription().equals(description)) {
 				return type;
@@ -246,7 +310,7 @@ public class ExportDialog {
 		filePathTextField.setText(directory + "/" + exportFile.getName());
 	}
 
-	public boolean okButtonActionPerformed(Component component) {
+	public boolean okButtonActionPerformed(Component component) throws IOException {
 		String previousDirectory = exportDirectory.getAbsolutePath();
 		String previousFile = exportFile.getName();
 		String path = filePathTextField.getText();
@@ -274,6 +338,42 @@ public class ExportDialog {
 		}
 
 		return false;
+	}
+}
+
+class ImageInfo {
+
+	private int width;
+	private int height;
+	private int xResolution = 300;
+	private int yResolution = 300;
+
+	ImageInfo(int w, int h) {
+		width = w;
+		height = h;
+	}
+
+	ImageInfo(int w, int h, int x, int y) {
+		width = w;
+		height = h;
+		xResolution = x;
+		yResolution = y;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public int getXResolution() {
+		return xResolution;
+	}
+
+	public int getYResolution() {
+		return yResolution;
 	}
 }
 

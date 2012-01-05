@@ -29,7 +29,7 @@ public class ExportMainViewAction extends GenericAction {
 		super.actionPerformed(e);
 		try {
 		//	ComponentWriter.showExportDialog(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
-			ExportDialogGUI.getSingleton().showExportDialog(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
+			ExportDialogGUI.getSingleton().display(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

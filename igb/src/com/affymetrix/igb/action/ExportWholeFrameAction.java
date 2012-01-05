@@ -28,7 +28,7 @@ public class ExportWholeFrameAction extends GenericAction {
 		super.actionPerformed(e);
 		try {
 		//	ComponentWriter.showExportDialog(IGB.getSingleton().getFrame());
-			ExportDialogGUI.getSingleton().showExportDialog(IGB.getSingleton().getFrame());
+			ExportDialogGUI.getSingleton().display(IGB.getSingleton().getFrame());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

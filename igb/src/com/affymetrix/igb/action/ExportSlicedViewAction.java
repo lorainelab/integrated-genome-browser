@@ -38,7 +38,7 @@ public class ExportSlicedViewAction extends GenericAction {
 
 		try {
 		//	ComponentWriter.showExportDialog(slice_component);
-			ExportDialogGUI.getSingleton().showExportDialog(slice_component);
+			ExportDialogGUI.getSingleton().display(slice_component);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

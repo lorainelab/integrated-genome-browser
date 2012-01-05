@@ -7,7 +7,6 @@ package com.affymetrix.igb.view.load;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.igb.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -135,7 +134,7 @@ public class GeneConfiguration extends Configuration {
 						url = CommonUtils.class.getClassLoader().getResource("images/default.png");
 					}
 
-					BufferedImage img = GraphicsUtil.resizeImage(ImageIO.read(url), THUMB_WIDTH, THUMB_HEIGHT);
+					BufferedImage img = ImageIO.read(url);
 					Graphics2D g = img.createGraphics();
 
 					g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,

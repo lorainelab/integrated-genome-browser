@@ -20,8 +20,8 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selectTrackPanel" alignment="0" max="32767" attributes="2"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="propertiesPanel" max="32767" attributes="1"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="propertiesPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="showStrandPanel" alignment="0" max="32767" attributes="1"/>
@@ -44,7 +44,7 @@
               <Component id="selectTrackPanel" max="32767" attributes="2"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="1">
+                  <Group type="102" attributes="0">
                       <Component id="showStrandPanel" min="-2" pref="107" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="viewModelPanel" min="-2" max="-2" attributes="0"/>
@@ -82,8 +82,8 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="collapsedCheckBox" min="-2" pref="104" max="-2" attributes="0"/>
               </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -350,7 +350,7 @@
                   <Component id="restoreToDefaultButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="314" max="-2" attributes="0"/>
               </Group>
-              <Component id="jScrollPane1" alignment="0" pref="493" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" alignment="0" pref="506" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

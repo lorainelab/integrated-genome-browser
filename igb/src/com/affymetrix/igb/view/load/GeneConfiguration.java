@@ -100,14 +100,13 @@ public class GeneConfiguration extends Configuration {
 					if (line.startsWith("#")) {
 						continue;
 					}
-					String[] vals = line.split("\t");
+					
 					//allocate array values to check display_species.txt is 
-					//correctly formated.
-					String fileName = vals[0];
-					String genome = vals[1];
+					//correctly formated.					
+					String genome = line;
 					String imageLabel = SpeciesLookup.getSpeciesName(genome);
 					//tripple check no null message is being inserted into the list.
-					Message m = new Message(fileName, genome, imageLabel, FONT_SIZE_3);
+					Message m = new Message(genome, imageLabel, FONT_SIZE_3);
 					if (m != null) {
 						list.add(m);
 					}
@@ -131,7 +130,7 @@ public class GeneConfiguration extends Configuration {
 			for (int i = 0; i < shapes.length; i++) {
 
 				try {
-					URL url = CommonUtils.class.getClassLoader().getResource("images/" + DisplaySpecies[i].image_name);
+					URL url = CommonUtils.class.getClassLoader().getResource("images/" + DisplaySpecies[i].genomeName);
 
 					if (url == null) {
 						url = CommonUtils.class.getClassLoader().getResource("images/default.png");
@@ -163,7 +162,7 @@ public class GeneConfiguration extends Configuration {
 					} else {
 						n = new CargoPicture(scaleImage(img, 10));
 					}
-					n.setCargo(DisplaySpecies[i].group);
+					n.setCargo(DisplaySpecies[i].genomeName);
 					shapes[i] = n;
 
 				} catch (IOException ex) {
@@ -220,21 +219,12 @@ public class GeneConfiguration extends Configuration {
 	private static final class Message {
 
 		/**
-		 * The name of the image to be loaded for this icon. <br>
-		 * <br>
-		 * Notes about the image.
-		 * The image provided should be a 266 wide by 400 height picture (266x400)
-		 * "full bleed" ( no frame )
-		 * PNG format is preffered.
-		 */
-		final String image_name;
-		/**
 		 * This is the data set name.  This dataset should be present in 
 		 * one of the default data sources. <br>
 		 * <br>
 		 * Example name:  A_lyrata_Apr_2011
 		 */
-		final String group;
+		final String genomeName;
 		/**
 		 * This is the name that is displayed at the bottom of the image
 		 * icon
@@ -246,15 +236,13 @@ public class GeneConfiguration extends Configuration {
 		final float font_size;
 		
 		Message(String str, float font_size) {
-			this.image_name = null;
-			this.group = null;
+			this.genomeName = null;
 			this.str = str;
 			this.font_size = font_size;
 		}
 
-		Message(String image_name, String group, String str, float font_size) {
-			this.image_name = image_name;
-			this.group = group;
+		Message(String image_name, String str, float font_size) {
+			this.genomeName = image_name;
 			this.str = str;
 			this.font_size = font_size;
 		}

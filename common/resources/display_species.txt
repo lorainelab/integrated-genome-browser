@@ -1,18 +1,18 @@
-h_sapiens.png	H_sapiens_Feb_2009	H. sapiens
-m_musculus.png	M_musculus_Jul_2007	M. musculus
-d_melanogaster.png	D_melanogaster_Apr_2006	D. melanogaster
-a_melanoleuca.png	A_melanoleuca_Dec_2009	A. melanoleuca
-a_mellifera.png	A_mellifera_Jan_2005	A. mellifera
-d_rerio.png	D_rerio_Dec_2008	D. rerio
-b_taurus.png	B_taurus_Oct_2007	B. taurus
-c_elegans.png	C_elegans_May_2008	C. elegans
-c_papaya.png	C_papaya_Aug_2010	C. papaya
-a_thaliana.png	A_thaliana_Jun_2009	A. thaliana
-e_coli.png	E_coli_Oct_2007	E. coli
-g_gallus.png	G_gallus_May_2006	G. gallus
-m_domestica.png	M_domestica_Oct_2006	M. domestica
-m_musculus.png	M_muscullus_Jul_2007	M. musculus
-r_norvegicus.png	R_norvegicus_Nov_2004	R. norvegicus
-s_pombe.png	S_pombe_Sep_2007	S. pompe
-v_vinifera.png	V_vinifera_Mar_2010	V. vinifera
-z_mays.png	Z_mays_B73_Mar_2010	Z. mays
+M_musculus_Jul_2007.png
+D_melanogaster_Apr_2006.png
+A_melanoleuca_Dec_2009.png
+A_mellifera_Jan_2005.png
+D_rerio_Dec_2008.png
+B_taurus_Oct_2007.png
+C_elegans_May_2008.png
+C_papaya_Aug_2010.png
+H_sapiens_Feb_2009.png
+A_thaliana_Jun_2009.png
+E_coli_Oct_2007.png
+G_gallus_May_2006.png
+M_domestica_Oct_2006.png
+M_muscullus_Jul_2007.png
+R_norvegicus_Nov_2004.png
+S_pombe_Sep_2007.png
+V_vinifera_Mar_2010.png
+Z_mays_B73_Mar_2010.png

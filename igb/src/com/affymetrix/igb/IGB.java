@@ -422,7 +422,10 @@ public final class IGB extends Application
 			props.put("match", matcher.group(0));
 			props.put("pattern", regex.pattern());
 
-			GlyphI gl = new FillRectGlyph();
+			GlyphI gl = new FillRectGlyph(){
+				@Override public void moveAbsolute(double x, double y){};
+				@Override public void moveRelative(double diffx, double diffy){};
+			};
 			gl.setInfo(props);
 			gl.setColor(hitColor);
 			double pos = forward ? 10 : 15;

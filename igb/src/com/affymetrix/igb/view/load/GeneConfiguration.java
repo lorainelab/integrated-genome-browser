@@ -15,6 +15,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -49,8 +50,8 @@ public class GeneConfiguration extends Configuration {
 	private static final float FONT_SIZE_1 = 36.0f;
 	private static final float FONT_SIZE_2 = 22.0f;
 	private static final float FONT_SIZE_3 = 12.0f;
-	public final static int THUMB_WIDTH = 170;
-	public final static int THUMB_HEIGHT = 160;
+	public final static int THUMB_WIDTH = 250;
+	public final static int THUMB_HEIGHT = 250;
 	/**
 	 * * TODO:  the list of data sets should be loaded from a resource file.
 	 */
@@ -68,7 +69,7 @@ public class GeneConfiguration extends Configuration {
 		this.zoomFactor = 0.1;
 		this.zoomScale = 1.0;
 		this.shapeRotation = 0.0;
-		this.shapeSpacing = 1.2/3.0;
+		this.shapeSpacing = 1.2 / 3.0;
 		this.shadingFactor = 1.3;
 		this.reflectionOpacity = 0.0;
 
@@ -134,8 +135,7 @@ public class GeneConfiguration extends Configuration {
 						url = CommonUtils.class.getClassLoader().getResource("images/default.png");
 					}
 
-					BufferedImage img = GraphicsUtil.resizeImage(ImageIO.read(url),
-							THUMB_WIDTH, THUMB_HEIGHT);
+					BufferedImage img = GraphicsUtil.resizeImage(ImageIO.read(url), THUMB_WIDTH, THUMB_HEIGHT);
 					Graphics2D g = img.createGraphics();
 
 					g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -145,7 +145,7 @@ public class GeneConfiguration extends Configuration {
 					//g.fillRect( 0 , img.getHeight() - 40 , img.getWidth(), 40);
 
 					//TODO find cross-platform font
-					Font f = new Font("Sans Serif", Font.PLAIN, 12);
+					Font f = new Font("Sans Serif", Font.BOLD, 18);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color(0xd4d4d4));
@@ -155,37 +155,39 @@ public class GeneConfiguration extends Configuration {
 					 * create a soft shaddow around the text in case the picture has 
 					 * a white background
 					 */
-					if (getGrayScale(DisplaySpecies[i].color) > 0.5) {
-						g.setColor(new Color(0x000000));
-					} else {
-						g.setColor(new Color(0xFFFFFF));
-					}
+//					if (getGrayScale(DisplaySpecies[i].color) > 0.5) {
+//						g.setColor(new Color(0x000000));
+//					} else {
+//						g.setColor(new Color(0xFFFFFF));
+//					}
+//					try {
+//						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2 - 2, img.getHeight() - 5);
+//					} catch (Exception x) {
+//					} // ignore NPE
+					//Not sure what this code did, but it appears to do nothing useful.
+//					for (int e = 0; e < 10; e++) {
+//						for (int k = 10; k < img.getWidth() - 10; k++) {
+//							for (int j = img.getHeight() - 44; j < img.getHeight() - 10; j++) {
+//								Color colt = new Color(img.getRGB(k, j - 1));
+//								Color colb = new Color(img.getRGB(k, j + 1));
+//								Color coll = new Color(img.getRGB(k - 1, j));
+//								Color colr = new Color(img.getRGB(k + 1, j));
+//								Color c = new Color(img.getRGB(k, j));
+//								float red = ((float) (colt.getRed() + colb.getRed() + coll.getRed() + colr.getRed() + c.getRed()) / 5.0f) / 255.0f;
+//								float green = ((float) (colt.getGreen() + colb.getGreen() + coll.getGreen() + colr.getGreen() + c.getGreen()) / 5.0f) / 255.0f;
+//								float blue = ((float) (colt.getBlue() + colb.getBlue() + coll.getBlue() + colr.getBlue() + c.getBlue()) / 5.0f) / 255.0f;
+//								Color n_col = new Color(red, green, blue);
+//								g.setColor(n_col);
+//								g.fillRect(k, j, 1, 1);
+//							}
+//						}
+//					}
 					try {
-						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2 - 2, img.getHeight() - 22);
-					} catch (Exception x) {
-					} // ignore NPE
-					for (int e = 0; e < 10; e++) {
-						for (int k = 10; k < img.getWidth() - 10; k++) {
-							for (int j = img.getHeight() - 44; j < img.getHeight() - 10; j++) {
-								Color colt = new Color(img.getRGB(k, j - 1));
-								Color colb = new Color(img.getRGB(k, j + 1));
-								Color coll = new Color(img.getRGB(k - 1, j));
-								Color colr = new Color(img.getRGB(k + 1, j));
-								Color c = new Color(img.getRGB(k, j));
-								float red = ((float) (colt.getRed() + colb.getRed() + coll.getRed() + colr.getRed() + c.getRed()) / 5.0f) / 255.0f;
-								float green = ((float) (colt.getGreen() + colb.getGreen() + coll.getGreen() + colr.getGreen() + c.getGreen()) / 5.0f) / 255.0f;
-								float blue = ((float) (colt.getBlue() + colb.getBlue() + coll.getBlue() + colr.getBlue() + c.getBlue()) / 5.0f) / 255.0f;
-								Color n_col = new Color(red, green, blue);
-								g.setColor(n_col);
-								g.fillRect(k, j, 1, 1);
-							}
-						}
-					}
-
-					//draw the label
-					g.setColor(DisplaySpecies[i].color);
-					try {
-						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2, img.getHeight() -5);
+						g.setColor(Color.BLACK);
+						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight()+3));
+						//draw the label
+						g.setColor(DisplaySpecies[i].color);
+						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2, img.getHeight() - 4);
 					} catch (Exception x) {
 					} // ignore NPE
 					CargoPicture n = null;

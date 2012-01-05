@@ -120,6 +120,10 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 			return false;
 		return true;
 	}
+
+	public String toString() {
+		return seq.toString() + ":" + start + "-" + end;
+	}
 }
 
 

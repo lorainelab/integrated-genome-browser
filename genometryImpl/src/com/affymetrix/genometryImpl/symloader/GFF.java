@@ -161,7 +161,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
 					span = getSpan(line);
 
-					if (span.getMax() < min || span.getMin() > max) {
+					if (span == null || span.getMax() < min || span.getMin() > max) {
 						continue;
 					}
 

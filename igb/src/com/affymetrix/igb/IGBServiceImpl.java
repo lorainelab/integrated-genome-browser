@@ -68,6 +68,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.prefs.Preferences;
 
 /**
  * implementation of the IGBService, using the IGB instance for
@@ -118,6 +119,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return Application.confirmPanel(text);
 	}
 
+	@Override
+	public boolean confirmPanel(final String message, final Preferences node,
+			final String check, final boolean def_val){
+		return Application.confirmPanel(message, node, check, def_val);
+	}
+	
 	@Override
 	public ImageIcon getIcon(String name) {
 		return CommonUtils.getInstance().getIcon("images/" + name);

@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.prefs.Preferences;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
@@ -63,6 +64,17 @@ public interface IGBService {
 	 * @return true if the user confirms, else false.
 	 */
 	public boolean confirmPanel(String text);
+	/**
+	 * Shows a panel asking for the user to confirm something.
+	 * 
+	 * @param message
+	 * @param node
+	 * @param check
+	 * @param def_val
+	 * @return 
+	 */
+	public boolean confirmPanel(final String message, final Preferences node,
+			final String check, final boolean def_val);
 	/**
 	 * get the specified icon
 	 * @param name of the icon

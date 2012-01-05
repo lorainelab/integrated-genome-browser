@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -33,6 +34,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class SearchModeResidue implements ISearchMode, 
 		SeqMapRefreshed, SeqSelectionListener {
+	
+	private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
+	private static final boolean default_confirm_before_seq_change = true;
 	
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
@@ -212,7 +216,8 @@ public class SearchModeResidue implements ISearchMode,
 		}
 		
 		if (vseq != igbService.getSeqMapView().getAnnotatedSeq()){
-			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), igbService.getSeqMapView().getAnnotatedSeq().getID()));
+			boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"), vseq.getID(), vseq.getID()),
+					PreferenceUtils.getTopNode(), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
 			if(!confirm) {
 				return BUNDLE.getString("searchCancelled");
 			}

@@ -7,6 +7,9 @@ package com.affymetrix.igb.view.load;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -43,9 +46,10 @@ import javax.imageio.ImageIO;
  * @author jfvillal
  */
 public class GeneConfiguration extends Configuration {
-
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Color COLOR_1 = Color.WHITE;
-	private static final Color COLOR_2 = new Color(0x88588a);//Color.YELLOW;
+	private static final Color COLOR_2 = new Color(0xfffb86);//Color.YELLOW;
 	private static final float FONT_SIZE_1 = 36.0f;
 	private static final float FONT_SIZE_2 = 22.0f;
 	private static final float FONT_SIZE_3 = 12.0f;
@@ -99,12 +103,11 @@ public class GeneConfiguration extends Configuration {
 					String[] vals = line.split("\t");
 					//allocate array values to check display_species.txt is 
 					//correctly formated.
-					String val1 = vals[0];
-					String val2 = vals[1];
-					String val3 = vals[2];
-					String val4 = vals[3];
+					String fileName = vals[0];
+					String genome = vals[1];
+					String imageLabel = SpeciesLookup.getSpeciesName(genome);
 					//tripple check no null message is being inserted into the list.
-					Message m = new Message(val1, val2, val3, FONT_SIZE_3, Color.decode(val4));
+					Message m = new Message(fileName, genome, imageLabel, FONT_SIZE_3);
 					if (m != null) {
 						list.add(m);
 					}
@@ -139,53 +142,18 @@ public class GeneConfiguration extends Configuration {
 
 					g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 							RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-					//make a black background to hold the label
-					//g.setColor(new Color( 0x000000 ));
-					//g.fillRect( 0 , img.getHeight() - 40 , img.getWidth(), 40);
-
-					//TODO find cross-platform font
 					Font f = new Font("Sans Serif", Font.BOLD, 18);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color(0xd4d4d4));
 					g.setFont(f);
 					int num = metrics.stringWidth(DisplaySpecies[i].str);
-					/**
-					 * create a soft shaddow around the text in case the picture has 
-					 * a white background
-					 */
-//					if (getGrayScale(DisplaySpecies[i].color) > 0.5) {
-//						g.setColor(new Color(0x000000));
-//					} else {
-//						g.setColor(new Color(0xFFFFFF));
-//					}
-//					try {
-//						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2 - 2, img.getHeight() - 5);
-//					} catch (Exception x) {
-//					} // ignore NPE
-					//Not sure what this code did, but it appears to do nothing useful.
-//					for (int e = 0; e < 10; e++) {
-//						for (int k = 10; k < img.getWidth() - 10; k++) {
-//							for (int j = img.getHeight() - 44; j < img.getHeight() - 10; j++) {
-//								Color colt = new Color(img.getRGB(k, j - 1));
-//								Color colb = new Color(img.getRGB(k, j + 1));
-//								Color coll = new Color(img.getRGB(k - 1, j));
-//								Color colr = new Color(img.getRGB(k + 1, j));
-//								Color c = new Color(img.getRGB(k, j));
-//								float red = ((float) (colt.getRed() + colb.getRed() + coll.getRed() + colr.getRed() + c.getRed()) / 5.0f) / 255.0f;
-//								float green = ((float) (colt.getGreen() + colb.getGreen() + coll.getGreen() + colr.getGreen() + c.getGreen()) / 5.0f) / 255.0f;
-//								float blue = ((float) (colt.getBlue() + colb.getBlue() + coll.getBlue() + colr.getBlue() + c.getBlue()) / 5.0f) / 255.0f;
-//								Color n_col = new Color(red, green, blue);
-//								g.setColor(n_col);
-//								g.fillRect(k, j, 1, 1);
-//							}
-//						}
-//					}
+					
 					try {
 						g.setColor(Color.BLACK);
 						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight()+3));
 						//draw the label
-						g.setColor(DisplaySpecies[i].color);
+						g.setColor(COLOR_2);
 						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2, img.getHeight() - 4);
 					} catch (Exception x) {
 					} // ignore NPE
@@ -276,25 +244,19 @@ public class GeneConfiguration extends Configuration {
 		 * Font size (not used on the cover flow version of the welcome screen
 		 */
 		final float font_size;
-		/**
-		 * Color (not used on the cover flow version of the welcome screen
-		 */
-		final Color color;
-
-		Message(String str, float font_size, Color color) {
+		
+		Message(String str, float font_size) {
 			this.image_name = null;
 			this.group = null;
 			this.str = str;
 			this.font_size = font_size;
-			this.color = color;
 		}
 
-		Message(String image_name, String group, String str, float font_size, Color color) {
+		Message(String image_name, String group, String str, float font_size) {
 			this.image_name = image_name;
 			this.group = group;
 			this.str = str;
 			this.font_size = font_size;
-			this.color = color;
 		}
 	}
 }

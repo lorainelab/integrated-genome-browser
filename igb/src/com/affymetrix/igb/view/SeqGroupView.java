@@ -63,6 +63,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -557,7 +558,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
-		boolean areAllServersInited = ServerList.getServerInstance().areAllServersInited();	// do this first to avoid race condition
 		GenericServer gServer = (GenericServer) evt.getSource();
 
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
@@ -597,10 +597,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 
 		checkToAddListener();
-		
-		if (areAllServersInited) {
-			runBatchOrRestore();
-		}
 	}
 
 	private void checkToAddListener(){
@@ -618,6 +614,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 	
 	private void populateSpeciesData() {
+		final Set<GenericServer> servers = new HashSet<GenericServer>();
+		servers.addAll(ServerList.getServerInstance().getEnabledServers());
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -625,6 +623,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				protected Void doInBackground() throws Exception {
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
+				}
+				
+				@Override
+				public void done(){
+					servers.remove(gServer);
+					
+					if(servers.isEmpty()){
+						runBatchOrRestore();
+					}
 				}
 			};
 

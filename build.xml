@@ -133,9 +133,6 @@
     			<param name="jar_name" value="commons-net-2.0"/>
 		</antcall>
 		<antcall target="copy-bundle">
-    			<param name="jar_name" value="freehep-2.1.1"/>
-		</antcall>
-		<antcall target="copy-bundle">
     			<param name="jar_name" value="image4j"/>
 		</antcall>
 		<antcall target="copy-bundle">

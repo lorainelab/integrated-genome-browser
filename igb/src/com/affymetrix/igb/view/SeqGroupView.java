@@ -40,7 +40,7 @@ import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.view.load.MainWorkspaceManager;
+import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.jidesoft.utils.SwingWorker;
 
 import java.awt.Dimension;

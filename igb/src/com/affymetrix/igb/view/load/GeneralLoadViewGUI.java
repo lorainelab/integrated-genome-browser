@@ -10,6 +10,7 @@
  */
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import javax.swing.JTable;
 import com.affymetrix.igb.osgi.service.IGBService;

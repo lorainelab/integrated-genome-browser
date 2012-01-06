@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.view.load;
+package com.affymetrix.igb.view.welcome;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view.load;
+package com.affymetrix.genoviz.swing;
 
 /**
  *

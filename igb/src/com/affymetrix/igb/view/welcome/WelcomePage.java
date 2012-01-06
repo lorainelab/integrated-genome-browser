@@ -8,7 +8,7 @@
  *
  * Created on Nov 9, 2011, 2:54:08 PM
  */
-package com.affymetrix.igb.view.load;
+package com.affymetrix.igb.view.welcome;
 
 import be.pwnt.jflow.JFlowPanel;
 import java.awt.event.ActionEvent;

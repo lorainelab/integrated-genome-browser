@@ -10,13 +10,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView
 Bundle-ClassPath: .,
- resources/,
- lib/batik-dom.jar,
- lib/batik-svggen.jar,
- lib/batik-util.jar,
- lib/batik-ext.jar,
- lib/batik-awt-util.jar,
- lib/batik-xml.jar
+ resources/
 Export-Package: com.affymetrix.igb.shared
 Import-Package: affymetrix.calvin.data,
  affymetrix.calvin.parameter,

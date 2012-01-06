@@ -7,8 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -20,10 +18,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
 /**
  * Code referred from IGV
@@ -92,9 +86,10 @@ public class ExportDialog {
 			exportScreenShotJPEG(component, file, width, height);
 		} else if (ext.equals(PNG.getExtension())) {
 			exportScreenShotPNG(component, file, width, height);
-		} else if (ext.equals(SVG.getExtension())) {
-			exportScreenShotSVG(component, file);
-		}
+		} 
+//		else if (ext.equals(SVG.getExtension())) {
+//			exportScreenShotSVG(component, file);
+//		}
 	}
 
 	private static void exportScreenShotJPEG(Component component, File selectedFile, int width, int height) throws IOException {
@@ -133,27 +128,27 @@ public class ExportDialog {
 		}
 	}
 
-	private static void exportScreenShotSVG(Component component, File selectedFile) {
-		try {
-			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-
-			// Create an instance of org.w3c.dom.Document.
-			String svgNS = "http://www.w3.org/2000/svg";
-			Document document = domImpl.createDocument(svgNS, SVG.getExtension().substring(1), null);
-
-			// Create an instance of the SVG Generator.
-			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-
-			component.paintAll(svgGenerator);
-
-			Writer out = new BufferedWriter(new FileWriter(selectedFile));
-
-			svgGenerator.stream(out, true);
-		} catch (Exception e) {
-			Logger.getLogger(ExportDialog.class.getName()).log(
-					Level.SEVERE, "Error encountered creating SVG file: " + e.toString());
-		}
-	}
+//	private static void exportScreenShotSVG(Component component, File selectedFile) {
+//		try {
+//			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+//
+//			// Create an instance of org.w3c.dom.Document.
+//			String svgNS = "http://www.w3.org/2000/svg";
+//			Document document = domImpl.createDocument(svgNS, SVG.getExtension().substring(1), null);
+//
+//			// Create an instance of the SVG Generator.
+//			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+//
+//			component.paintAll(svgGenerator);
+//
+//			Writer out = new BufferedWriter(new FileWriter(selectedFile));
+//
+//			svgGenerator.stream(out, true);
+//		} catch (Exception e) {
+//			Logger.getLogger(ExportDialog.class.getName()).log(
+//					Level.SEVERE, "Error encountered creating SVG file: " + e.toString());
+//		}
+//	}
 
 	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
 		final String formatName = ext;

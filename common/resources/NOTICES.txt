@@ -119,5 +119,18 @@ N)   This product includes the JarLoader project from jDotSoft.com
 
      http://jdotsoft.com
 
-     Ths file from this project is in com.jdotsoft.jarloader.JarClassLoader.java
+     The file from this project is in com.jdotsoft.jarloader.JarClassLoader.java
+
+O)   This product includes the Bnd package from aQute
+
+     http://http://www.aqute.biz/Bnd/Bnd
+
+     The file for this package is in biz.aQute.bnd.jar
+
+P)   This product contains the BigWig and Tribble packages from the Broad institute
+
+     http://code.google.com/p/bigwig
+     http://code.google.com/p/tribble
+
+     The files for this package are in BigWig.jar and tribble-xxx.jar
 

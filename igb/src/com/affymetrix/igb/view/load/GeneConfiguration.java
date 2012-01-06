@@ -55,17 +55,6 @@ public class GeneConfiguration extends Configuration {
 	private static final float FONT_SIZE_3 = 12.0f;
 	public final static int THUMB_WIDTH = 250;
 	public final static int THUMB_HEIGHT = 250;
-	/**
-	 * * TODO:  the list of data sets should be loaded from a resource file.
-	 */
-	private Message DisplaySpecies[];
-	/*= new Message[]{
-	new Message("a_lyrata.png", "A_lyrata_Apr_2011", "A. lyrata", FONT_SIZE_3, COLOR_2),
-	new Message("h_sapiens.png","H_sapiens_Feb_2009", "H. Sapiens", FONT_SIZE_3, COLOR_2),
-	new Message("m_musculus.png", "M_musculus_Jul_2007","M. Musculus", FONT_SIZE_3, COLOR_2),
-	new Message("a_thaliana.png", "A_thaliana_Jun_2009","A. Thaliana", FONT_SIZE_3, COLOR_2),
-	new Message("d_melanogaster.png", "D_melanogaster_Apr_2006", "D. Melanogaster", FONT_SIZE_3, COLOR_2),
-	};*/
 
 	public GeneConfiguration() {
 		String os = System.getProperty("os.name");
@@ -87,7 +76,7 @@ public class GeneConfiguration extends Configuration {
 		BufferedReader stream = null;
 		try {
 			//load the messge class from a configuration file.
-			List<Message> list = new ArrayList<Message>();
+			List<String> list = new ArrayList<String>();
 			//this is at $IGB_SRC/common/rerources and image paths are relative to $IGB_SRC/common/images/
 			URL config_file_url = CommonUtils.class.getClassLoader().getResource("display_species.txt");
 			stream = new BufferedReader(
@@ -100,15 +89,10 @@ public class GeneConfiguration extends Configuration {
 					if (line.startsWith("#")) {
 						continue;
 					}
-					
-					//allocate array values to check display_species.txt is 
-					//correctly formated.					
-					String genome = line;
-					String imageLabel = SpeciesLookup.getSpeciesName(genome);
+	
 					//tripple check no null message is being inserted into the list.
-					Message m = new Message(genome, imageLabel, FONT_SIZE_3);
-					if (m != null) {
-						list.add(m);
+					if (line != null) {
+						list.add(line);
 					}
 				}
 			} catch (IOException ex) {
@@ -118,19 +102,15 @@ public class GeneConfiguration extends Configuration {
 						+ "[image file][tab][Data set to load upon click][tab][Name to display on tag][tab][color (example #122322]");
 				e.printStackTrace();
 			}
-			DisplaySpecies = new Message[list.size()];
-			for (int i = 0; i < list.size(); i++) {
-				DisplaySpecies[i] = list.get(i);
-			}
-
 
 			this.activeShapeBorderColor = Color.white;
 			this.framesPerSecond = 30;
-			shapes = new Shape[DisplaySpecies.length];
+			shapes = new Shape[list.size()];
 			for (int i = 0; i < shapes.length; i++) {
 
 				try {
-					URL url = CommonUtils.class.getClassLoader().getResource("images/" + DisplaySpecies[i].genomeName);
+					String version = list.get(i);
+					URL url = CommonUtils.class.getClassLoader().getResource("images/" + version);
 
 					if (url == null) {
 						url = CommonUtils.class.getClassLoader().getResource("images/default.png");
@@ -146,14 +126,16 @@ public class GeneConfiguration extends Configuration {
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color(0xd4d4d4));
 					g.setFont(f);
-					int num = metrics.stringWidth(DisplaySpecies[i].str);
+					version = version.split(".png")[0];
+					String species = SpeciesLookup.getSpeciesName(version);
+					int num = metrics.stringWidth(species);
 					
 					try {
 						g.setColor(Color.BLACK);
 						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight()+3));
 						//draw the label
 						g.setColor(COLOR_2);
-						g.drawString(DisplaySpecies[i].str, img.getWidth() / 2 - num / 2, img.getHeight() - 4);
+						g.drawString(species, img.getWidth() / 2 - num / 2, img.getHeight() - 4);
 					} catch (Exception x) {
 					} // ignore NPE
 					CargoPicture n = null;
@@ -162,7 +144,7 @@ public class GeneConfiguration extends Configuration {
 					} else {
 						n = new CargoPicture(scaleImage(img, 10));
 					}
-					n.setCargo(DisplaySpecies[i].genomeName);
+					n.setCargo(version);
 					shapes[i] = n;
 
 				} catch (IOException ex) {
@@ -213,38 +195,4 @@ public class GeneConfiguration extends Configuration {
 		return gray_scale;
 	}
 
-	/**
-	 * Handles the information necesary to presente a data set on the welcome screen 
-	 */
-	private static final class Message {
-
-		/**
-		 * This is the data set name.  This dataset should be present in 
-		 * one of the default data sources. <br>
-		 * <br>
-		 * Example name:  A_lyrata_Apr_2011
-		 */
-		final String genomeName;
-		/**
-		 * This is the name that is displayed at the bottom of the image
-		 * icon
-		 */
-		final String str;
-		/**
-		 * Font size (not used on the cover flow version of the welcome screen
-		 */
-		final float font_size;
-		
-		Message(String str, float font_size) {
-			this.genomeName = null;
-			this.str = str;
-			this.font_size = font_size;
-		}
-
-		Message(String image_name, String str, float font_size) {
-			this.genomeName = image_name;
-			this.str = str;
-			this.font_size = font_size;
-		}
-	}
 }

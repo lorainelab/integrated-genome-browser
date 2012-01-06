@@ -11,7 +11,6 @@ A_thaliana_Jun_2009.png
 E_coli_Oct_2007.png
 G_gallus_May_2006.png
 M_domestica_Oct_2006.png
-M_muscullus_Jul_2007.png
 R_norvegicus_Nov_2004.png
 S_pombe_Sep_2007.png
 V_vinifera_Mar_2010.png

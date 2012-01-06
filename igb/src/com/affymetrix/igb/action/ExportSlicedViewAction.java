@@ -17,7 +17,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author sgblanch
  * @version $Id$
  */
-public class ExportSlicedViewAction extends GenericAction {
+public class ExportSlicedViewAction extends ExportComponentAction {
 	private static final long serialVersionUID = 1l;
 	private static final ExportSlicedViewAction ACTION = new ExportSlicedViewAction();
 
@@ -27,21 +27,6 @@ public class ExportSlicedViewAction extends GenericAction {
 
 	private ExportSlicedViewAction() {
 		super();
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		Component slice_component = determineSlicedComponent();
-		if (slice_component == null) {
-			return;
-		}
-
-		try {
-		//	ComponentWriter.showExportDialog(slice_component);
-			ExportDialogGUI.getSingleton().display(slice_component);
-		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem during output.", ex);
-		}
 	}
 
 	public Component determineSlicedComponent() {

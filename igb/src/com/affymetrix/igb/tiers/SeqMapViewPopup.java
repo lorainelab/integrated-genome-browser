@@ -638,7 +638,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
-		handler.repackTheTiers(true, true);
+		repack(true);
 		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
 	}
 
@@ -706,7 +706,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					style.setShow(true);
 					showMenu.remove(show_tier);
 					handler.sortTiers();
-					handler.repackTheTiers(false, true);
+					repack(false);
 					DataManagementTable.updateVirtualFeatureList();
 				}
 			});
@@ -749,7 +749,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					style.setShow(true);
 					showMenu.remove(show_tier);
 					handler.sortTiers();
-					handler.repackTheTiers(false, true);
+					repack(false);
 				}
 			});
 			showMenu.add(show_tier);
@@ -768,14 +768,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 
-		handler.repackTheTiers(false, true);
+		repack(false);
 
 		/** Possible bug : When all strands are hidden.
 		 * tier label and tier do appear at same position.
 		 **/
 		// NOTE: Below call to stretchToFit is not redundancy. It is there
 		//       to solve above mentioned bug.
-		handler.repackTheTiers(false, true);
+		repack(false);
 	}
 
 	private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
@@ -1036,6 +1036,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
+	public void repack(boolean full_repack){
+		gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+		handler.repackTheTiers(full_repack, true);
+	}
+	
 	public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
 		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selections = labels.size();

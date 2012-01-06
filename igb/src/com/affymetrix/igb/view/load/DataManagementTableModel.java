@@ -410,7 +410,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					style.setShow(true);
 					smv.getPopup().getShowMenu().remove(smv.getPopup().getShowMenu().getItem(i));
 					smv.getPopup().getHandler().sortTiers();
-					smv.getPopup().getHandler().repackTheTiers(false, true);
+					smv.getPopup().repack(false);
 				}
 			}
 		}

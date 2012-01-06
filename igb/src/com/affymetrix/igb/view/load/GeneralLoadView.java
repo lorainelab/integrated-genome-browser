@@ -580,14 +580,21 @@ public final class GeneralLoadView {
 
 	}
 
-	public void addFeatureTier(final GenericFeature feature) {
+	public static void addFeatureTier(final GenericFeature feature) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer);
+				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
+				if(!syms.isEmpty())
+					gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+		
 				gviewer.getSeqMap().packTiers(true, true, false, false);
 				gviewer.getSeqMap().stretchToFit(false, true);
 				gviewer.getSeqMap().updateWidget();
+				
+				if(!syms.isEmpty())
+					gviewer.select(syms, false);
 			}
 		});
 	}

@@ -109,6 +109,7 @@ Taeniopygia guttata	Zebra finch	T_guttata	taeGut	Taeniopygia_guttata
 Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
 Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta
 Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
+Thermococcus kodakarensis KOD1	Hyperthermophilic Archaeon	T_kodakarensis_KOD1	T. kodakarensis_KOD1	
 Tribolium castaneum	Red flour beetle	T_castaneum
 Triticum aestivum	Common wheat	T_aestivum
 Trypanosoma brucei	Protozoan parasites	T_brucei

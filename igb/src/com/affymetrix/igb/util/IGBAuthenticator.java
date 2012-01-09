@@ -3,7 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
@@ -187,7 +187,7 @@ public class IGBAuthenticator extends Authenticator {
 	 * @return Password authentication to the user
 	 */
 	private static PasswordAuthentication displayDialog(final JFrame parent, final Preferences serverNode, final GenericServer serverObject, final String url) {
-		boolean authOptional = serverObject != null && serverObject.serverType == ServerType.DAS2;
+		boolean authOptional = serverObject != null && serverObject.serverType == ServerTypeI.DAS2;
 		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
 		JLabel server = new JLabel();
 		JRPTextField username = new JRPTextField("IGBAuthenticator_username");

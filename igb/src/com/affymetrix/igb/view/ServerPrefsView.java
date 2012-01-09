@@ -15,7 +15,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Point;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
@@ -156,7 +156,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			}
 		};
 		table.setDefaultRenderer(String.class, renderer);
-		table.setDefaultRenderer(ServerType.class, renderer);
+		table.setDefaultRenderer(ServerTypeI.class, renderer);
 
 		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
 			TableColumn column = e.nextElement();
@@ -189,7 +189,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	public void addDataSource(ServerType type, String name, String url) {
+	public void addDataSource(ServerTypeI type, String name, String url) {
 		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
 			return;
 		}

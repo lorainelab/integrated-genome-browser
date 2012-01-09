@@ -13,8 +13,8 @@
 package com.affymetrix.genometryImpl.das;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -70,7 +70,7 @@ public final class DasServerInfo {
 	private void setPrimaryURL(URL primaryURL) {
 		if (primaryURL != null) {
 			try {
-				this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerType.QuickLoad));
+				this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerTypeI.QuickLoad));
 			} catch (MalformedURLException ex) {
 				Logger.getLogger(DasServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}

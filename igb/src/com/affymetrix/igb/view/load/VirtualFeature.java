@@ -8,7 +8,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class VirtualFeature {
 		return gFeature;
 	}
 
-	public ServerType getServer() {
+	public ServerTypeI getServer() {
 		return gFeature.gVersion.gServer.serverType;
 	}
 

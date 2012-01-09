@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
+import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -12,6 +13,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -23,13 +25,13 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 import com.affymetrix.genometryImpl.symloader.*;
 import com.affymetrix.genometryImpl.symmetry.SearchableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -1027,15 +1029,15 @@ public abstract class ServerUtils {
 	 * @param name
 	 * @return initialized server
 	 */
-	public static Object getServerInfo(ServerType serverType, String url, String name) {
+	public static Object getServerInfo(ServerTypeI serverType, String url, String name) {
 		Object info = null;
 
 		try {
-			if (serverType == ServerType.QuickLoad) {
+			if (serverType == ServerTypeI.QuickLoad) {
 				info = ServerUtils.formatURL(url, serverType);
-			} else if (serverType == ServerType.DAS) {
+			} else if (serverType == ServerTypeI.DAS) {
 				info = new DasServerInfo(url);
-			} else if (serverType == ServerType.DAS2) {
+			} else if (serverType == ServerTypeI.DAS2) {
 				info = new Das2ServerInfo(url, name, false);
 			} else if (serverType == null) {
 				info = ServerUtils.formatURL(url, serverType);
@@ -1055,7 +1057,7 @@ public abstract class ServerUtils {
 	 * @param type type of server the URL represents
 	 * @return formatted URL
 	 */
-	public static String formatURL(String url, ServerType type) {
+	public static String formatURL(String url, ServerTypeI type) {
 		try {
 			/* remove .. and // from URL */
 			url = new URI(url).normalize().toASCIIString();
@@ -1067,18 +1069,30 @@ public abstract class ServerUtils {
 		if (type == null) {
 			return url;
 		}
-		switch (type) {
-			case DAS:
-			case DAS2:
+		switch (type.getOrdinal()) {
+			case DasServerType.ordinal:
+			case Das2ServerType.ordinal:
 				while (url.endsWith("/")) {
 					url = url.substring(0, url.length()-1);
 				}
 				return url;
-			case QuickLoad:
+			case QuickloadServerType.ordinal:
 				return url.endsWith("/") ? url : url + "/";
 			default:
 				return url;
 		}
+	}
+
+	private static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
+	static {
+		SERVER_TYPES.add(Das2ServerType.getInstance());
+		SERVER_TYPES.add(DasServerType.getInstance());
+		SERVER_TYPES.add(QuickloadServerType.getInstance());
+		SERVER_TYPES.add(LocalFilesServerType.getInstance());
+	}
+
+	public static List<ServerTypeI> getServerTypes() {
+		return SERVER_TYPES;
 	}
 
 	/**

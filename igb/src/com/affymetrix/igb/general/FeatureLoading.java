@@ -1,6 +1,5 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.das.DasSource;
@@ -8,6 +7,7 @@ import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
@@ -39,7 +39,7 @@ public final class FeatureLoading {
 			return;
 		}
 
-		if (gVersion.gServer.serverType == ServerType.DAS2) {
+		if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
 			if (DEBUG) {
 				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
 			}
@@ -56,7 +56,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.DAS) {
+		if (gVersion.gServer.serverType == ServerTypeI.DAS) {
 			// Discover features from DAS
 			if (DEBUG) {
 				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
@@ -72,7 +72,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
+		if (gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
 			// Discover feature names from QuickLoad
 
 			try {
@@ -107,7 +107,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.LocalFiles) {
+		if (gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
 			// no features.
 			return;
 		}

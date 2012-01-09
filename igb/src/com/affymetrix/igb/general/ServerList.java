@@ -2,7 +2,6 @@ package com.affymetrix.igb.general;
 
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -10,6 +9,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -42,7 +42,7 @@ import javax.swing.JFrame;
 public final class ServerList {
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
-	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null);
+	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerTypeI.LocalFiles,true,null);
 
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
@@ -156,7 +156,7 @@ public final class ServerList {
 	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerType serverType, String name, String url, boolean enabled, boolean primary) {
+	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, boolean primary) {
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
@@ -177,6 +177,18 @@ public final class ServerList {
 		return server;
 	}
 
+	private ServerTypeI getServerType(String name) {
+		if (name == null) {
+			return null;
+		}
+		for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
+			if (name.equals(serverType.getName())) {
+				return serverType;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 *
 	 * @param serverType
@@ -185,7 +197,7 @@ public final class ServerList {
 	 * @param enabled
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
+	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled) {
 		return addServer(serverType, name, url, enabled, false);
 	}
 
@@ -193,14 +205,14 @@ public final class ServerList {
 		GenericServer server = url2server.get(GeneralUtils.URLDecode( node.get(GenericServerPref.URL, "" ) ) );
 		String url;
 		String name;
-		ServerType serverType;
+		ServerTypeI serverType;
 		Object info;
 
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.get( GenericServerPref.URL, "" ));
 			name = node.get(GenericServerPref.NAME, "Unknown");
-			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerType.LocalFiles.name() : null);
-			serverType = type == null ? null : ServerType.valueOf(type);
+			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.LocalFiles.getName() : null);
+			serverType = type == null ? null : getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = ServerUtils.getServerInfo(serverType, url, name);
 
@@ -232,7 +244,7 @@ public final class ServerList {
 	 * Load server preferences from the Java preferences subsystem.
 	 */
 	public void loadServerPrefs() {
-		ServerType serverType;
+		ServerTypeI serverType;
 		Preferences node;
 
 		try {
@@ -263,10 +275,10 @@ public final class ServerList {
 				
 				serverType = null;
 				if (node.get(GenericServerPref.TYPE, null) != null) {
-					serverType = ServerType.valueOf(node.get(GenericServerPref.TYPE, ServerType.LocalFiles.name()));
+					serverType = getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.LocalFiles.getName()));
 				}
 
-				if (serverType == ServerType.LocalFiles) {
+				if (serverType == ServerTypeI.LocalFiles) {
 					continue;
 				}
 
@@ -294,7 +306,7 @@ public final class ServerList {
 	public void updateServerPrefs() {
 		GenericServer server;
 
-		for (ServerType type : ServerType.values()) {
+		for (ServerTypeI type : ServerUtils.getServerTypes()) {
 			try {
 				if (getPreferencesNode().nodeExists(type.toString())) {
 					Preferences prefServers = getPreferencesNode().node(type.toString());
@@ -343,7 +355,7 @@ public final class ServerList {
 					continue;
 				}
 				
-				normalizedURL = ServerUtils.formatURL(decodedURL, ServerType.valueOf(serverType));
+				normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
 
 				if (!decodedURL.equals(normalizedURL)) {
 					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading " + textName + " URL: ''{0}'' in preferences", decodedURL);
@@ -373,17 +385,17 @@ public final class ServerList {
 	 * @param type type of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
-	private GenericServer addServerToPrefs(String url, String name, ServerType type) {
+	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
 		
 		node.put(GenericServerPref.NAME,  name);
-		node.put(GenericServerPref.TYPE, type.toString());
+		node.put(GenericServerPref.TYPE, type.getName());
 		//Added url to preferences.
 		//long url was bugging the node name since it only accepts 80 char names
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url) );
 
-		return new GenericServer(node, null, ServerType.valueOf(node.get(GenericServerPref.TYPE, ServerType.LocalFiles.name())));
+		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.LocalFiles.getName())));
 	}
 
 	/**
@@ -480,7 +492,7 @@ public final class ServerList {
 
 			if(!removedManually) {
 				String errorText;
-				if (server.serverType == ServerType.QuickLoad) {
+				if (server.serverType == ServerTypeI.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
 					errorText = siteOK ?
 						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName) :
@@ -493,7 +505,7 @@ public final class ServerList {
 					ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, null);
 				}
 			}
-			if (server.serverType != ServerType.LocalFiles) {
+			if (server.serverType != ServerTypeI.LocalFiles) {
 				if (server.serverType == null) {
 					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
 				}

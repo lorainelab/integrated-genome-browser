@@ -10,7 +10,9 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
+
 import java.util.logging.Logger;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
@@ -18,7 +20,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import javax.swing.JFileChooser;
 import java.awt.HeadlessException;
 import java.awt.Component;
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import java.io.File;
@@ -72,7 +73,7 @@ public class AddSource extends javax.swing.JFrame {
         typeLabelField.setText("Type");
 
         type.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        type = new JComboBox(LoadUtils.ServerType.values());
+        type = new JComboBox(ServerUtils.getServerTypes().toArray());
         type.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 typeActionPerformed(evt);
@@ -153,11 +154,11 @@ public class AddSource extends javax.swing.JFrame {
         );
 
         if (type != null) {
-            type.removeItem(LoadUtils.ServerType.LocalFiles);
-            type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
+            type.removeItem(ServerTypeI.LocalFiles);
+            type.setSelectedItem(ServerTypeI.QuickLoad);	// common default
         }
         openDir.setToolTipText("Open Local Directory");
-        openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+        openDir.setEnabled(type != null && type.getSelectedItem() == ServerTypeI.QuickLoad);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -176,12 +177,12 @@ public class AddSource extends javax.swing.JFrame {
 
 	private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
 		// TODO add your handling code here:
-		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+		openDir.setEnabled(type.getSelectedItem() == ServerTypeI.QuickLoad);
 	}//GEN-LAST:event_typeActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 		// TODO add your handling code here:
-		DataLoadPrefsView.getSingleton().addDataSource((ServerType) type.getSelectedItem(), name.getText(), url.getText());
+		DataLoadPrefsView.getSingleton().addDataSource((ServerTypeI) type.getSelectedItem(), name.getText(), url.getText());
 		DataLoadPrefsView.getSingleton().sourceTableModel.init();
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed

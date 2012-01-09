@@ -8,8 +8,8 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
@@ -237,8 +237,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	private static boolean canHandleFeature(GenericFeature feature) {
-		ServerType serverType = feature.gVersion.gServer.serverType;
-		return (serverType == ServerType.DAS || serverType == ServerType.DAS2) || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
+		ServerTypeI serverType = feature.gVersion.gServer.serverType;
+		return (serverType == ServerTypeI.DAS || serverType == ServerTypeI.DAS2) || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
 	}
 
 	/**
@@ -509,7 +509,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @return hyperlink of the server name
 	 */
 	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-		if (gServer.serverType == ServerType.DAS) {
+		if (gServer.serverType == ServerTypeI.DAS) {
 			return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
 		}
 		if (gServer.friendlyURL != null) {
@@ -641,13 +641,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			String serverNameString = "";
-			if (gServer.friendlyURL != null && gServer.serverType != ServerType.DAS) {
+			if (gServer.friendlyURL != null && gServer.serverType != ServerTypeI.DAS) {
 				// TODO - hack to ignore server hyperlinks for DAS/1.
 				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
 			} else {
 				serverNameString = "<b>" + gServer.serverName + "</b>";
 			}
-			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
+			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.getName() + ")";
 			super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
 			if (gServer.getFriendlyIcon() != null) {
 				setIcon(gServer.getFriendlyIcon());

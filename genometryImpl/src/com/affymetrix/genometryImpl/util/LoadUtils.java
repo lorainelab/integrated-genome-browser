@@ -37,24 +37,6 @@ public final class LoadUtils {
 		}
 	};
 
-	public static enum ServerType {
-		DAS2 ("DAS2"),
-		DAS ("DAS"),
-		QuickLoad ("QuickLoad"),
-		LocalFiles ("Local Files");
-
-		private String name;
-
-		ServerType(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-	};
-
 	public static enum ServerStatus {
 		NotInitialized ("Not initialized"),
 		Initialized ("Initialized"),

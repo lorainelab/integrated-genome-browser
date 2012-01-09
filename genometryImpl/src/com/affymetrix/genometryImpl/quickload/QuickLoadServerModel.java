@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -69,10 +70,10 @@ public final class QuickLoadServerModel {
 	}
 
 	private QuickLoadServerModel(String url, String pri_url, GenericServer priServer) {
-		url = ServerUtils.formatURL(url, LoadUtils.ServerType.QuickLoad);
+		url = ServerUtils.formatURL(url, ServerTypeI.QuickLoad);
 
 		if(pri_url != null)
-			pri_url = ServerUtils.formatURL(pri_url, LoadUtils.ServerType.QuickLoad);
+			pri_url = ServerUtils.formatURL(pri_url, ServerTypeI.QuickLoad);
 		
 		root_url = url;
 		primary_url = pri_url;

@@ -31,8 +31,10 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -46,15 +48,17 @@ import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.LocalFilesServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -148,9 +152,9 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	public static GenericServer addServer(ServerList serverList, ServerType serverType, String serverName, String serverURL) {
+	public static GenericServer addServer(ServerList serverList, ServerTypeI serverType, String serverName, String serverURL) {
 		/* should never happen */
-		if (serverType == ServerType.LocalFiles) {
+		if (serverType == ServerTypeI.LocalFiles) {
 			return null;
 		}
 
@@ -208,21 +212,21 @@ public final class GeneralLoadUtils {
 			return IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryAdded(gServer.URL);
 		}
 		try {
-			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
+			if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
 				// should never happen
 				return false;
 			}
-			if (gServer.serverType == ServerType.QuickLoad) {
+			if (gServer.serverType == ServerTypeI.QuickLoad) {
 				if (!getQuickLoadSpeciesAndVersions(gServer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
-			} else if (gServer.serverType == ServerType.DAS) {
+			} else if (gServer.serverType == ServerTypeI.DAS) {
 				if (!getDAS1SpeciesAndVersions(gServer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
-			} else if (gServer.serverType == ServerType.DAS2) {
+			} else if (gServer.serverType == ServerTypeI.DAS2) {
 				if (!getDAS2SpeciesAndVersions(gServer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
@@ -378,7 +382,7 @@ public final class GeneralLoadUtils {
 		GenericServer server = ServerList.getServerInstance().getLocalFilesServer();
 
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerType.LocalFiles) {
+			if (gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
 				return gVersion;
 			}
 		}
@@ -508,7 +512,7 @@ public final class GeneralLoadUtils {
 	private static void loadChromInfo(AnnotatedSeqGroup group) {
 
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType != ServerType.DAS2) {
+			if (gVersion.gServer.serverType != ServerTypeI.DAS2) {
 				continue;
 			}
 			// Discover chromosomes from DAS/2
@@ -522,7 +526,7 @@ public final class GeneralLoadUtils {
 		}
 
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType != ServerType.DAS) {
+			if (gVersion.gServer.serverType != ServerTypeI.DAS) {
 				continue;
 			}
 			// Discover chromosomes from DAS
@@ -666,7 +670,7 @@ public final class GeneralLoadUtils {
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
-		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerType.LocalFiles)) {
+		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles)) {
 			//      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
 			//System.out.println("@@@@@ selected chrom: " + selected_seq);
 			//System.out.println("@@@@@ visible chrom: " + visible_seq);
@@ -715,7 +719,7 @@ public final class GeneralLoadUtils {
 	public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
 		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
-		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+		if ((feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles)
 				&& ((QuickLoad) feature.symL).extension.endsWith("chp")) {
 			feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
 			optimized_sym = new SimpleMutableSeqSymmetry();
@@ -726,7 +730,7 @@ public final class GeneralLoadUtils {
 
 		optimized_sym = feature.optimizeRequest(span);
 
-		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
+		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerTypeI.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
 			loadFeaturesForSym(optimized_sym, feature);
@@ -734,7 +738,7 @@ public final class GeneralLoadUtils {
 		}
 
 		//Since Das1 does not have whole genome return if it is not Quickload or LocalFile
-		if (feature.gVersion.gServer.serverType != ServerType.QuickLoad && feature.gVersion.gServer.serverType != ServerType.LocalFiles) {
+		if (feature.gVersion.gServer.serverType != ServerTypeI.QuickLoad && feature.gVersion.gServer.serverType != ServerTypeI.LocalFiles) {
 			return;
 		}
 
@@ -888,21 +892,21 @@ public final class GeneralLoadUtils {
 
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 
-			switch (feature.gVersion.gServer.serverType) {
-				case DAS2:
+			switch (feature.gVersion.gServer.serverType.getOrdinal()) {
+				case Das2ServerType.ordinal:
 					if (Das2.loadFeatures(optimized_span, feature)) {
 						result = true;
 					}
 					break;
 
-				case DAS:
+				case DasServerType.ordinal:
 					if (Das.loadFeatures(optimized_span, feature)) {
 						result = true;
 					}
 					break;
 
-				case QuickLoad:
-				case LocalFiles:
+				case QuickloadServerType.ordinal:
+				case LocalFilesServerType.ordinal:
 					if (((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
 						result = true;
 					}

@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -212,7 +212,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				return vFeature.getLoadStrategy().toString();
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
-				if (vFeature.getServer() == ServerType.QuickLoad) {
+				if (vFeature.getServer() == ServerTypeI.QuickLoad) {
 					return vFeature.getFeature().featureName;
 				} else if (!vFeature.isPrimary()) {
 					return "";

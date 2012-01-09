@@ -2,8 +2,8 @@ package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import java.net.URL;
@@ -35,7 +35,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * DAS, DAS2, QuickLoad, Unknown (local file)
 	 */
-	public final ServerType serverType;					
+	public final ServerTypeI serverType;					
 	/**
 	 * to be used by DAS/2 authentication
 	 */
@@ -74,7 +74,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private ServerStatus serverStatus = ServerStatus.NotInitialized;
 	private final boolean primary;
 
-	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, boolean primary) {
+	public GenericServer(String serverName, String URL, ServerTypeI serverType, boolean enabled, Object serverObj, boolean primary) {
 		this(
 				serverName,
 				URL,
@@ -86,7 +86,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverObj, primary);
 	}
 
-	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj) {
+	public GenericServer(String serverName, String URL, ServerTypeI serverType, boolean enabled, Object serverObj) {
 		this(
 				serverName,
 				URL,
@@ -98,7 +98,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverObj, false);
 	}
 
-	public GenericServer(Preferences node, Object serverObj, ServerType serverType) {
+	public GenericServer(Preferences node, Object serverObj, ServerTypeI serverType) {
 		this(
 				node.get(GenericServerPref.NAME, "Unknown"),
 				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
@@ -122,7 +122,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	
 	
 	private GenericServer(
-			String serverName, String URL, ServerType serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
+			String serverName, String URL, ServerTypeI serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
 		this.serverName = serverName;
 		this.URL = URL;	
 		this.serverType = serverType;
@@ -151,7 +151,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		return friendlyIcon;
 	}
 
-	private static URL determineFriendlyURL(String URL, ServerType serverType) {
+	private static URL determineFriendlyURL(String URL, ServerTypeI serverType) {
 		if (URL == null) {
 			return null;
 		}
@@ -160,11 +160,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		if (tempURL.endsWith("/")) {
 			tempURL = tempURL.substring(0, tempURL.length() - 1);
 		}
-		if (ServerType.DAS.equals(serverType)) {
+		if (ServerTypeI.DAS.equals(serverType)) {
 			if (tempURL.endsWith("/dsn")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 4);
 			}
-		} else if (ServerType.DAS2.equals(serverType)) {
+		} else if (ServerTypeI.DAS2.equals(serverType)) {
 			if (tempURL.endsWith("/genome")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 7);
 			} 

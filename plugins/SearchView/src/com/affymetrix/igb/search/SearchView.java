@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -449,7 +449,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 		int count = 0;
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerType.DAS2) {
+			if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
 				count++;
 			}
 		}

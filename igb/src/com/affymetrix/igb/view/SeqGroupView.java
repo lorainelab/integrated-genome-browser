@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
@@ -554,7 +554,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
-		GeneralLoadView.loadWholeRangeFeatures(ServerType.DAS2);
+		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
@@ -571,9 +571,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;	// ignore uninitialized servers
 		}
 
-		if (gServer.serverType != ServerType.LocalFiles) {
+		if (gServer.serverType != ServerTypeI.LocalFiles) {
 			if (gServer.serverType != null) {
-				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.getName() + ")");
 			}
 		}
 

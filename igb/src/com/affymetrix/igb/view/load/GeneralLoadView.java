@@ -19,7 +19,7 @@ import javax.swing.SwingWorker;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -291,19 +291,19 @@ public final class GeneralLoadView {
 	 * Load any features that have a whole strategy and haven't already been loaded.
 	 * @param versionName
 	 */
-	public static void loadWholeRangeFeatures(ServerType serverType) {
+	public static void loadWholeRangeFeatures(ServerTypeI serverType) {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.GENOME);
 		loadFeatures(loadStrategies, serverType);
 	}
 
-	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType) {
+	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			loadFeature(loadStrategies, gFeature, serverType);
 		}
 	}
 
-	static boolean loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerType serverType) {
+	static boolean loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerTypeI serverType) {
 		if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
 			return false;
 		}
@@ -320,7 +320,7 @@ public final class GeneralLoadView {
 	public static void AutoloadQuickloadFeature() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
-					|| gFeature.gVersion.gServer.serverType != ServerType.QuickLoad) {
+					|| gFeature.gVersion.gServer.serverType != ServerTypeI.QuickLoad) {
 				continue;
 			}
 
@@ -621,7 +621,7 @@ public final class GeneralLoadView {
 
 				// If feature is local then remove it from server.
 				GenericVersion version = feature.gVersion;
-				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
+				if (version.gServer.serverType.equals(ServerTypeI.LocalFiles)) {
 					if (version.removeFeature(feature)) {
 						SeqGroupView.getInstance().refreshTable();
 						if (!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {

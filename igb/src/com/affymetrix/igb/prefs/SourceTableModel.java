@@ -2,6 +2,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -73,7 +74,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			case Enabled:
 				return Boolean.class;
 			case Type:
-				return LoadUtils.ServerType.class;
+				return ServerTypeI.class;
 			default:
 				return String.class;
 		}

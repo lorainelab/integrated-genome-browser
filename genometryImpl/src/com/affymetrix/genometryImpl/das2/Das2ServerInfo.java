@@ -23,8 +23,8 @@ import org.w3c.dom.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -57,7 +57,7 @@ public final class Das2ServerInfo  {
 		// FIXME: if you remove the trailing slash then relative URI resolution doesn't work
 		// on the das.biopackages.net server!
 		// all trailing "/" chars are stripped off the end if present
-		String root_string = ServerUtils.formatURL(uri, ServerType.DAS2);
+		String root_string = ServerUtils.formatURL(uri, ServerTypeI.DAS2);
 		
 		this.server_uri = new URI(root_string);
 		this.name = name;
@@ -88,7 +88,7 @@ public final class Das2ServerInfo  {
 	private void setPrimaryURL(URL primary_url) {
 		if (primary_url != null) {
 			try {
-				this.primary_uri = new URI(ServerUtils.formatURL(primary_url.toExternalForm(), ServerType.QuickLoad));
+				this.primary_uri = new URI(ServerUtils.formatURL(primary_url.toExternalForm(), ServerTypeI.QuickLoad));
 			} catch (URISyntaxException ex) {
 				Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}

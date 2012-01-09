@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -28,6 +27,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -69,7 +69,7 @@ public final class UnibrowControlServlet {
 
 		URI uri = URI.create(feature_url);
 		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-		if (gVersion == null && gServer.serverType != ServerType.LocalFiles) {
+		if (gVersion == null && gServer.serverType != ServerTypeI.LocalFiles) {
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
 				Level.WARNING, "Couldn''t find version {0} in server {1}",
 				new Object[]{seqGroup.getID(), gServer.serverName});
@@ -79,7 +79,7 @@ public final class UnibrowControlServlet {
 		if(gVersion != null)
 			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
 
-		if(feature == null && gServer.serverType == ServerType.LocalFiles){
+		if(feature == null && gServer.serverType == ServerTypeI.LocalFiles){
 			String uriString = uri.toASCIIString().toLowerCase();
 			String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 			String extension = ParserController.getExtension(unzippedStreamName);

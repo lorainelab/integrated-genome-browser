@@ -12,7 +12,8 @@
  */
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.IGBConstants;
 import java.io.*;
 import java.util.*;
@@ -138,7 +139,7 @@ public final class XmlPrefsParser {
 		}
 	}
 
-	private static void processServer(Element el, ServerList serverList, ServerType server_type) {
+	private static void processServer(Element el, ServerList serverList, ServerTypeI server_type) {
 		String server_name = el.getAttribute("name");
 		String server_url = el.getAttribute("url");
 		String en = el.getAttribute("enabled");
@@ -151,13 +152,13 @@ public final class XmlPrefsParser {
 		serverList.addServer(server_type, server_name, server_url, enabled, primary);
 	}
 
-	private static ServerType getServerType(String type) {
-		for (ServerType t : ServerType.values()) {
-			if (type.equalsIgnoreCase(t.toString())) {
+	private static ServerTypeI getServerType(String type) {
+		for (ServerTypeI t : ServerUtils.getServerTypes()) {
+			if (type.equalsIgnoreCase(t.getName())) {
 				return t;
 			}
 		}
-		return ServerType.LocalFiles;
+		return ServerTypeI.LocalFiles;
 	}
 
 	/**

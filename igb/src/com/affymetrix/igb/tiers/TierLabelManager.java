@@ -322,7 +322,7 @@ public final class TierLabelManager implements PropertyHolder {
 		if (feature.friendlyURL != null) {
 			props.put("url", feature.friendlyURL);
 		}
-		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
+		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
 		props.put("Server", server);
 
 		return props;

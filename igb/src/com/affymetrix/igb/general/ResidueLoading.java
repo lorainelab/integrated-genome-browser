@@ -9,10 +9,13 @@ import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das.DasLoader;
+import com.affymetrix.genometryImpl.das.DasServerType;
+import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -76,18 +79,18 @@ public final class ResidueLoading {
 			String serverDescription = server.serverName + " " + server.serverType;
 			String msg = "Loading sequence for "+seq_name+" from "+serverDescription;
 			Application.getSingleton().addNotLockedUpMsg(msg);
-			switch (server.serverType) {
-			case DAS2:
+			switch (server.serverType.getOrdinal()) {
+			case Das2ServerType.ordinal:
 				if (getDAS2Residues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}
 				break;
-			case QuickLoad:
+			case QuickloadServerType.ordinal:
 				if (getQuickLoadResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}
 				break;
-			case DAS:
+			case DasServerType.ordinal:
 				if (getDASResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}

@@ -1,13 +1,16 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -154,16 +156,16 @@ public class CacheScript extends Thread {
 		String serverCachePath = path+gServer.serverName+temp;
 		GeneralUtils.makeDir(serverCachePath);
 
-		switch(gServer.serverType){
-			case QuickLoad:
+		switch(gServer.serverType.getOrdinal()){
+			case QuickloadServerType.ordinal:
 				return processQuickLoad(gServer, serverCachePath);
 				
 
-			case DAS2:
+			case Das2ServerType.ordinal:
 				return processDas2Server(gServer, serverCachePath);
 				
 
-			case DAS:
+			case DasServerType.ordinal:
 				return processDasServer(gServer, serverCachePath);
 		}
 
@@ -252,12 +254,12 @@ public class CacheScript extends Thread {
 		File file;
 		Set<String> files = null;
 
-		switch(gServer.serverType){
-			case QuickLoad:
+		switch(gServer.serverType.getOrdinal()){
+			case QuickloadServerType.ordinal:
 				files = quickloadFiles;
 				break;
 
-			case DAS2:
+			case Das2ServerType.ordinal:
 				files = das2Files;
 				break;
 
@@ -274,7 +276,7 @@ public class CacheScript extends Thread {
 
 			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
 
-			if(gServer.serverType.equals(ServerType.DAS2))
+			if(gServer.serverType.equals(ServerTypeI.DAS2))
 				fileName += Constants.xml_ext;
 
 			if((file == null && !fileMayNotExist))
@@ -397,7 +399,7 @@ public class CacheScript extends Thread {
 			if (child instanceof Element) {
 				el = (Element) child;
 				if (name.equalsIgnoreCase("server")) {
-					ServerType server_type = getServerType(el.getAttribute("type"));
+					ServerTypeI server_type = getServerType(el.getAttribute("type"));
 					String server_name = el.getAttribute("name").replaceAll("\\W","");
 					String server_url = el.getAttribute("url");
 					String en = el.getAttribute("enabled");
@@ -419,8 +421,8 @@ public class CacheScript extends Thread {
 	 * @param type	Type name.
 	 * @return
 	 */
-	private static ServerType getServerType(String type) {
-		for (ServerType t : ServerType.values()) {
+	private static ServerTypeI getServerType(String type) {
+		for (ServerTypeI t : ServerUtils.getServerTypes()) {
 			if (type.equalsIgnoreCase(t.toString())) {
 				return t;
 			}

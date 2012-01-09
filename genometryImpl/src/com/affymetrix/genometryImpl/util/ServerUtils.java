@@ -1063,7 +1063,7 @@ public abstract class ServerUtils {
 			url = new URI(url).normalize().toASCIIString();
 		} catch (URISyntaxException ex) {
 			String message = "Unable to parse URL: '" + url + "'";
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, message, ex);
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, message, ex);
 			throw new IllegalArgumentException(message, ex);
 		}
 		if (type == null) {

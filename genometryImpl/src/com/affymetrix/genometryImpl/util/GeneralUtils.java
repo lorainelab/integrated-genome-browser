@@ -334,7 +334,7 @@ public final class GeneralUtils {
 		boolean sucess = file.renameTo(newLocation);
 
 		if(!sucess){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find move file {0} to {1} !!!", new Object[]{fileName,path});
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "Could not find move file {0} to {1} !!!", new Object[]{fileName,path});
 		}
 
 		return sucess;
@@ -394,7 +394,7 @@ public final class GeneralUtils {
 		}
 
 		if(file == null && !fileMayNotExist){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Invalid path : {0} !!!", path);
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "Invalid path : {0} !!!", path);
 		}
 
 		return file;

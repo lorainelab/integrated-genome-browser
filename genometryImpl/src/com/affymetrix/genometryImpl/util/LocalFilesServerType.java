@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 public class LocalFilesServerType implements ServerTypeI {
@@ -32,5 +33,10 @@ public class LocalFilesServerType implements ServerTypeI {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public boolean processServer(GenericServer gServer, String path) {
+		return false;
 	}
 }

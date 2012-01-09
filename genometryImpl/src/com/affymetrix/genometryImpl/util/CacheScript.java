@@ -1,15 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasServerType;
-import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2ServerType;
-import com.affymetrix.genometryImpl.das2.Das2Source;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,13 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,33 +27,14 @@ import org.w3c.dom.NodeList;
  */
 public class CacheScript extends Thread {
 
-	private static final String dsn = "dsn.xml";
 	private static final String temp = "temp";
 
 	/** boolean to indicate should script continue to run if error occurs **/
-	private static final boolean exitOnError = false;
 	
 	/** Local path where data is cached. **/
 	private final String path;
 	/** List of server to be cached. **/
 	private final Set<GenericServer> server_list;
-
-	/** For files too be looked up on server. **/
-	private static final Set<String> quickloadFiles = new HashSet<String>();
-	private static final Set<String> das2Files = new HashSet<String>();
-
-	/** Add files to be looked up. **/
-	static{
-		quickloadFiles.add(Constants.annotsTxt);
-		quickloadFiles.add(Constants.annotsXml);
-		quickloadFiles.add(Constants.modChromInfoTxt);
-		quickloadFiles.add(Constants.liftAllLft);
-	}
-
-	static{
-		das2Files.add(Das2VersionedSource.TYPES_CAP_QUERY);
-		das2Files.add(Das2VersionedSource.SEGMENTS_CAP_QUERY);
-	}
 
 	/** Default server list. **/
 	private static final String defaultList =	" <servers> " +
@@ -156,80 +122,7 @@ public class CacheScript extends Thread {
 		String serverCachePath = path+gServer.serverName+temp;
 		GeneralUtils.makeDir(serverCachePath);
 
-		switch(gServer.serverType.getOrdinal()){
-			case QuickloadServerType.ordinal:
-				return processQuickLoad(gServer, serverCachePath);
-				
-
-			case Das2ServerType.ordinal:
-				return processDas2Server(gServer, serverCachePath);
-				
-
-			case DasServerType.ordinal:
-				return processDasServer(gServer, serverCachePath);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Gets files for all genomes from Quickload server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where mapping are fetched.
-	 * @param serverCachePath	Local path where fetched files are stored.
-	 * @return
-	 */
-	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
-		File file = GeneralUtils.getFile(gServer.URL+Constants.contentsTxt, false);
-
-		String quickloadStr = null;
-		quickloadStr = (String) gServer.serverObj;
-		
-		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
-
-		List<String> genome_names = quickloadServer.getGenomeNames();
-		if(!GeneralUtils.moveFileTo(file,Constants.contentsTxt,serverCachePath))
-			return false;
-		
-		for(String genome_name : genome_names){
-			if(!getAllFiles(gServer,genome_name,serverCachePath)){
-				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Gets files for all genomes from Das2 server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where mapping are fetched.
-	 * @param serverCachePath	Local path where fetched files are stored.
-	 * @return
-	 */
-	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
-		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath))
-			return false;
-		
-		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
-		Map<String,Das2Source> sources = serverInfo.getSources();
-		
-		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
-			return false;
-		}
-
-		for (Das2Source source : sources.values()) {
-			// Das/2 has versioned sources.  Get each version.
-			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				if(!getAllFiles(gServer,versionSource.getName(),serverCachePath)){
-					Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
-					return false;
-				}
-			}
-		}
-
-		return true;
+		return gServer.serverType.processServer(gServer, path);
 	}
 
 	/**
@@ -237,141 +130,11 @@ public class CacheScript extends Thread {
 	 * @param fileName
 	 * @return
 	 */
-	private static boolean getFileAvailability(String fileName){
+	public static boolean getFileAvailability(String fileName){
 		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
 			return true;
 
 		return false;
-	}
-
-	/**
-	 * Gets files for a genome and copies it to it's directory.
-	 * @param servertype	Server type to determine which set of files to be used.
-	 * @param server_path	Server path from where mapping is to be copied.
-	 * @param local_path	Local path from where mapping is to saved.
-	 */
-	private static boolean getAllFiles(GenericServer gServer, String genome_name, String local_path){
-		File file;
-		Set<String> files = null;
-
-		switch(gServer.serverType.getOrdinal()){
-			case QuickloadServerType.ordinal:
-				files = quickloadFiles;
-				break;
-
-			case Das2ServerType.ordinal:
-				files = das2Files;
-				break;
-
-			default:
-				return false;
-		}
-
-		String server_path = gServer.URL + "/" + genome_name;
-		local_path += "/" + genome_name;
-		GeneralUtils.makeDir(local_path);
-		boolean fileMayNotExist;
-		for(String fileName : files){
-			fileMayNotExist = getFileAvailability(fileName);
-
-			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
-
-			if(gServer.serverType.equals(ServerTypeI.DAS2))
-				fileName += Constants.xml_ext;
-
-			if((file == null && !fileMayNotExist))
-				return false;
-
-			if(!GeneralUtils.moveFileTo(file,fileName,local_path))
-				return false;
-		}
-
-		return true;
-	}
-	
-	/**
-	 * Gets files for all genomes from Das server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where mapping are fetched.
-	 * @param serverCachePath	Local path where fetched files are stored.
-	 * @return
-	 */
-	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
-		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file,dsn,serverCachePath))
-			return false;
-		
-		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		Map<String, DasSource> sources = server.getDataSources();
-
-		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
-			return false;
-		}
-
-		for (DasSource source : sources.values()) {
-			
-			if(!getAllDasFiles(source.getID(),source.getServerURL(), source.getMasterURL(), serverCachePath)){
-				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
-				return false;
-			}
-
-			for(String src : source.getSources()){
-				if(!getAllDasFiles(src,source.getServerURL(), source.getMasterURL(), serverCachePath)){
-					Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
-					return false;
-				}
-			}
-
-		}
-
-		return true;
-	}
-
-	/**
-	 * Gets files for a genome and copies it to it's directory.
-	 * @param server_path	Server path from where mapping is to be copied.
-	 * @param local_path	Local path from where mapping is to saved.
-	 */
-	private static boolean getAllDasFiles(String id, URL server, URL master, String local_path){
-		local_path += "/" + id;
-		GeneralUtils.makeDir(local_path);
-
-		File file;
-		final Map<String, String> DasFilePath = new HashMap<String, String>();
-
-		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
-		
-		String types = getPath(id,server,DasSource.TYPES);
-
-		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.xml_ext);
-		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
-
-		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
-			file = GeneralUtils.getFile(fileDet.getKey(), false);
-
-			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
-				return false;
-
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns server path for a mapping on Das server.
-	 * @param id	Genome id
-	 * @param server	Server url.
-	 * @param mapping	File name.
-	 * @return
-	 */
-	private static String getPath(String id, URL server, String file){
-		try {
-			URL server_path = new URL(server, id + "/" + file);
-			return server_path.toExternalForm();
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return null;
 	}
 
 	/**

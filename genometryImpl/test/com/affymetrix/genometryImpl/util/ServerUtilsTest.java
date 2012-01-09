@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.parsers.BpsParserTest;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -9,6 +8,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.BpsParserTest;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;

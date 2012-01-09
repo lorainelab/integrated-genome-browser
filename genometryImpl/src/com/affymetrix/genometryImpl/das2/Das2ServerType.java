@@ -1,10 +1,28 @@
 package com.affymetrix.genometryImpl.das2;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 public class Das2ServerType implements ServerTypeI {
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
+	/** For files too be looked up on server. **/
+	private static final Set<String> das2Files = new HashSet<String>();
+
+	/** Add files to be looked up. **/
+	static{
+		das2Files.add(Das2VersionedSource.TYPES_CAP_QUERY);
+		das2Files.add(Das2VersionedSource.SEGMENTS_CAP_QUERY);
+	}
 	private static final Das2ServerType instance = new Das2ServerType();
 	public static Das2ServerType getInstance() {
 		return instance;
@@ -32,5 +50,75 @@ public class Das2ServerType implements ServerTypeI {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	/**
+	 * Returns true if file may not exist else false.
+	 * @param fileName
+	 * @return
+	 */
+	private boolean getFileAvailability(String fileName){
+		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * Gets files for a genome and copies it to it's directory.
+	 * @param servertype	Server type to determine which set of files to be used.
+	 * @param server_path	Server path from where mapping is to be copied.
+	 * @param local_path	Local path from where mapping is to saved.
+	 */
+	private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path){
+		File file;
+		Set<String> files = das2Files;
+
+		String server_path = gServer.URL + "/" + genome_name;
+		local_path += "/" + genome_name;
+		GeneralUtils.makeDir(local_path);
+		boolean fileMayNotExist;
+		for(String fileName : files){
+			fileMayNotExist = getFileAvailability(fileName);
+
+			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
+
+			fileName += Constants.xml_ext;
+
+			if((file == null && !fileMayNotExist))
+				return false;
+
+			if(!GeneralUtils.moveFileTo(file,fileName,local_path))
+				return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean processServer(GenericServer gServer, String path) {
+		File file = GeneralUtils.getFile(gServer.URL, false);
+		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, path))
+			return false;
+		
+		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
+		Map<String,Das2Source> sources = serverInfo.getSources();
+		
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
+			return false;
+		}
+
+		for (Das2Source source : sources.values()) {
+			// Das/2 has versioned sources.  Get each version.
+			for (Das2VersionedSource versionSource : source.getVersions().values()) {
+				if(!getAllFiles(gServer,versionSource.getName(),path)){
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 }

@@ -20,7 +20,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Code referred from IGV
+ * 
  * @author nick
  */
 public class ExportDialog {
@@ -33,20 +33,18 @@ public class ExportDialog {
 	public JTextField filePathTextField = new JTextField(exportDirectory.getAbsolutePath()
 			+ "/"
 			+ exportFile.getName());
-	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+	private static final LinkedHashMap<ExportFileType, ExportFileFilter> 
+			FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final String[] EXT = {
 		"Joint Photographic Experts Group Files (*.jpeg)",
-		"Portable Network Graphics Files (*.png)",
-		"Scalable Vector Graphics Files (*.svg)"
+		"Portable Network Graphics Files (*.png)"
 	};
 	public static final ExportFileType JPEG = new ExportFileType(".jpeg", EXT[0]);
 	public static final ExportFileType PNG = new ExportFileType(".png", EXT[1]);
-	public static final ExportFileType SVG = new ExportFileType(".svg", EXT[2]);
 
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
 
@@ -83,72 +81,41 @@ public class ExportDialog {
 		int height = component.getHeight();
 
 		if (ext.equals(JPEG.getExtension())) {
-			exportScreenShotJPEG(component, file, width, height);
+			exportScreenshot(component, file, JPEG, width, height);
 		} else if (ext.equals(PNG.getExtension())) {
-			exportScreenShotPNG(component, file, width, height);
-		} 
-//		else if (ext.equals(SVG.getExtension())) {
-//			exportScreenShotSVG(component, file);
-//		}
+			exportScreenshot(component, file, PNG, width, height);
+		}
 	}
 
-	private static void exportScreenShotJPEG(Component component, File selectedFile, int width, int height) throws IOException {
-
+	private static void exportScreenshot(Component component, File selectedFile, ExportFileType type, int width, int height) throws IOException
+	{
 		BufferedImage image = getDeviceCompatibleImage(width, height);
 		Graphics g = image.createGraphics();
 		component.paintAll(g);
 
 		if (selectedFile != null) {
 
-			if (!selectedFile.getName().toLowerCase().endsWith(JPEG.getExtension())) {
-				String correctedFilename = selectedFile.getAbsolutePath() + JPEG.getExtension();
+			if (!selectedFile.getName().toLowerCase().endsWith(type.getExtension())) {
+				String correctedFilename = selectedFile.getAbsolutePath() + type.getExtension();
 				selectedFile = new File(correctedFilename);
 			}
-			
-			image = resizeImage(image);
-			writeImage(image, JPEG.getExtension().substring(1), selectedFile);
+
+			if (isSizeChanged(width, height)) {
+				System.out.println("here");
+				image = resizeImage(image);
+			}
+			writeImage(image, type.getExtension().substring(1), selectedFile);
 		}
 	}
 
-	private static void exportScreenShotPNG(Component component, File selectedFile, int width, int height) throws IOException {
-
-		BufferedImage image = getDeviceCompatibleImage(width, height);
-		Graphics g = image.createGraphics();
-		component.paintAll(g);
-
-		if (selectedFile != null) {
-
-			if (!selectedFile.getName().toLowerCase().endsWith(PNG.getExtension())) {
-				String correctedFilename = selectedFile.getAbsolutePath() + PNG.getExtension();
-				selectedFile = new File(correctedFilename);
-			}
-			
-			image = resizeImage(image);
-			writeImage(image, PNG.getExtension().substring(1), selectedFile);
+	private static boolean isSizeChanged(int width, int height) {
+		if (imageInfo.getWidth() != width
+				|| imageInfo.getHeight() != height) {
+			return true;
 		}
-	}
 
-//	private static void exportScreenShotSVG(Component component, File selectedFile) {
-//		try {
-//			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-//
-//			// Create an instance of org.w3c.dom.Document.
-//			String svgNS = "http://www.w3.org/2000/svg";
-//			Document document = domImpl.createDocument(svgNS, SVG.getExtension().substring(1), null);
-//
-//			// Create an instance of the SVG Generator.
-//			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-//
-//			component.paintAll(svgGenerator);
-//
-//			Writer out = new BufferedWriter(new FileWriter(selectedFile));
-//
-//			svgGenerator.stream(out, true);
-//		} catch (Exception e) {
-//			Logger.getLogger(ExportDialog.class.getName()).log(
-//					Level.SEVERE, "Error encountered creating SVG file: " + e.toString());
-//		}
-//	}
+		return false;
+	}
 
 	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
 		final String formatName = ext;
@@ -168,10 +135,7 @@ public class ExportDialog {
 			try {
 				writer.setOutput(stream);
 				writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-			} catch (IOException e) {
-				e.printStackTrace();
 			} finally {
-
 				stream.close();
 			}
 			break;
@@ -179,7 +143,7 @@ public class ExportDialog {
 	}
 
 	private static void setDPI(IIOMetadata metadata) throws IIOInvalidTreeException {
-		
+
 		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
 		horiz.setAttribute("value", Double.toString(imageInfo.getXResolution() * 0.04));
 
@@ -207,7 +171,8 @@ public class ExportDialog {
 	}
 
 	private static BufferedImage resizeImage(BufferedImage originalImage) {
-		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		
+		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 		BufferedImage resizedImage = new BufferedImage(imageInfo.getWidth(), imageInfo.getHeight(), type);
 		Graphics2D g = resizedImage.createGraphics();
 		g.drawImage(originalImage, 0, 0, imageInfo.getWidth(), imageInfo.getHeight(), null);
@@ -216,7 +181,7 @@ public class ExportDialog {
 		return resizedImage;
 	}
 
-	final public static File changeFileExtension(File file, String extension) {
+	public static File changeFileExtension(File file, String extension) {
 
 		if ((file == null) || (extension == null) || extension.trim().equals("")) {
 			return null;

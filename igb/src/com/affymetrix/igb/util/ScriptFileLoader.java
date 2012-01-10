@@ -327,6 +327,7 @@ public class ScriptFileLoader {
 					c = ExportSlicedViewAction.getAction().determineSlicedComponent();
 					break;
 			}
+			ExportDialog.initImageInfo(c);
 			ExportDialog.doComponentExport(c, f, extension);
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);

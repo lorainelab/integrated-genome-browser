@@ -33,8 +33,7 @@ public class ExportDialog {
 	public JTextField filePathTextField = new JTextField(exportDirectory.getAbsolutePath()
 			+ "/"
 			+ exportFile.getName());
-	private static final LinkedHashMap<ExportFileType, ExportFileFilter> 
-			FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final String[] EXT = {
 		"Joint Photographic Experts Group Files (*.jpeg)",
 		"Portable Network Graphics Files (*.png)"
@@ -60,8 +59,13 @@ public class ExportDialog {
 		return singleton;
 	}
 
-	public void initImageInfo(Component c) {
-		imageInfo = new ImageInfo(c.getWidth(), c.getHeight());
+	public static void initImageInfo(Component c) {
+		if (imageInfo == null) {
+			imageInfo = new ImageInfo(c.getWidth(), c.getHeight());
+		} else {
+			imageInfo.setWidth(c.getWidth());
+			imageInfo.setHeight(c.getHeight());
+		}
 	}
 
 	public static String getFileExtension(String filePath) {
@@ -75,23 +79,18 @@ public class ExportDialog {
 		return extension;
 	}
 
-	public static void doComponentExport(Component component, File file, String ext) throws IOException {
-
-		int width = component.getWidth();
-		int height = component.getHeight();
-
+	public static void doComponentExport(Component c, File file, String ext) throws IOException {
 		if (ext.equals(JPEG.getExtension())) {
-			exportScreenshot(component, file, JPEG, width, height);
+			exportScreenshot(c, file, JPEG);
 		} else if (ext.equals(PNG.getExtension())) {
-			exportScreenshot(component, file, PNG, width, height);
+			exportScreenshot(c, file, PNG);
 		}
 	}
 
-	private static void exportScreenshot(Component component, File selectedFile, ExportFileType type, int width, int height) throws IOException
-	{
-		BufferedImage image = getDeviceCompatibleImage(width, height);
+	private static void exportScreenshot(Component c, File selectedFile, ExportFileType type) throws IOException {
+		BufferedImage image = getDeviceCompatibleImage(c.getWidth(), c.getHeight());
 		Graphics g = image.createGraphics();
-		component.paintAll(g);
+		c.paintAll(g);
 
 		if (selectedFile != null) {
 
@@ -100,17 +99,16 @@ public class ExportDialog {
 				selectedFile = new File(correctedFilename);
 			}
 
-			if (isSizeChanged(width, height)) {
-				System.out.println("here");
+			if (isSizeChanged(c)) {
 				image = resizeImage(image);
 			}
 			writeImage(image, type.getExtension().substring(1), selectedFile);
 		}
 	}
 
-	private static boolean isSizeChanged(int width, int height) {
-		if (imageInfo.getWidth() != width
-				|| imageInfo.getHeight() != height) {
+	private static boolean isSizeChanged(Component c) {
+		if (imageInfo.getWidth() != c.getWidth()
+				|| imageInfo.getHeight() != c.getHeight()) {
 			return true;
 		}
 
@@ -171,7 +169,7 @@ public class ExportDialog {
 	}
 
 	private static BufferedImage resizeImage(BufferedImage originalImage) {
-		
+
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 		BufferedImage resizedImage = new BufferedImage(imageInfo.getWidth(), imageInfo.getHeight(), type);
 		Graphics2D g = resizedImage.createGraphics();
@@ -320,8 +318,16 @@ class ImageInfo {
 		yResolution = y;
 	}
 
+	public void setWidth(int w) {
+		width = w;
+	}
+
 	public int getWidth() {
 		return width;
+	}
+
+	public void setHeight(int h) {
+		height = h;
 	}
 
 	public int getHeight() {

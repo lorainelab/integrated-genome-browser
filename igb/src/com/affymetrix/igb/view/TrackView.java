@@ -181,7 +181,6 @@ public class TrackView {
 			ep.setMoveType(ExpandPacker.DOWN);
 		}
 		tg.setExpandedPacker(ep);
-		tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
 	}
 
 	static void addTracks(SeqMapView smv, BioSeq seq) {

@@ -319,6 +319,7 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public void pack(ViewI view, boolean manual) {
 		initForSearching();
+		setMaxExpandDepth(style.getMaxDepth());
 		super.pack(view, manual);
 		Rectangle2D.Double mbox = scene.getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
@@ -648,7 +649,7 @@ public class TierGlyph extends SolidGlyph {
 	/** Changes the maximum depth of the expanded packer.
 	 *  This does not call pack() afterwards.
 	 */
-	public final void setMaxExpandDepth(int max) {
+	private void setMaxExpandDepth(int max) {
 		expand_packer.setMaxSlots(max);
 	}
 

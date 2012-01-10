@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -100,7 +99,7 @@ public final class GenericFeature {
 			return;
 		}
 		if (gVersion != null && gVersion.gServer != null) {
-			if (gVersion.gServer.serverType == ServerTypeI.DAS || gVersion.gServer.serverType == ServerTypeI.DAS2) {
+			if (gVersion.gServer.serverType.loadStrategyVisibleOnly()) {
 				setLoadStrategy(LoadStrategy.VISIBLE);
 			} else {
 				// Local File or QuickLoad

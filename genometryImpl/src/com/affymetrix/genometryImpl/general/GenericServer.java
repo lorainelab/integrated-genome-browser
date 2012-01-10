@@ -160,14 +160,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		if (tempURL.endsWith("/")) {
 			tempURL = tempURL.substring(0, tempURL.length() - 1);
 		}
-		if (ServerTypeI.DAS.equals(serverType)) {
-			if (tempURL.endsWith("/dsn")) {
-				tempURL = tempURL.substring(0, tempURL.length() - 4);
-			}
-		} else if (ServerTypeI.DAS2.equals(serverType)) {
-			if (tempURL.endsWith("/genome")) {
-				tempURL = tempURL.substring(0, tempURL.length() - 7);
-			} 
+		if (serverType != null) {
+			tempURL = serverType.adjustURL(tempURL);
 		}
 		try {
 			tempFriendlyURL = new URL(tempURL);

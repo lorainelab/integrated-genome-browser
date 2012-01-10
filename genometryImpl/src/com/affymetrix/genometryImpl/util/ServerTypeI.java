@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 
 public interface ServerTypeI extends Comparable<ServerTypeI> {
@@ -23,4 +24,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	 * @return initialized server
 	 */
 	public Object getServerInfo(String url, String name);
+	public String adjustURL(String url);
+	public boolean loadStrategyVisibleOnly();
+	public void discoverFeatures(GenericVersion gVersion, boolean autoload);
 }

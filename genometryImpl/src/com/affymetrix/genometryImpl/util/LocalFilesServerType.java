@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 public class LocalFilesServerType implements ServerTypeI {
@@ -48,5 +49,19 @@ public class LocalFilesServerType implements ServerTypeI {
 	@Override
 	public Object getServerInfo(String url, String name) {
 		return null;
+	}
+
+	@Override
+	public String adjustURL(String url) {
+		return url;
+	}
+
+	@Override
+	public boolean loadStrategyVisibleOnly() {
+		return false;
+	}
+
+	@Override
+	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 	}
 }

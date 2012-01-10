@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -126,5 +127,20 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public Object getServerInfo(String url, String name) {
 		return formatURL(url);
+	}
+
+	@Override
+	public String adjustURL(String url) {
+		return url;
+	}
+
+	@Override
+	public boolean loadStrategyVisibleOnly() {
+		return false;
+	}
+
+	@Override
+	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
+		// not implemented here
 	}
 }

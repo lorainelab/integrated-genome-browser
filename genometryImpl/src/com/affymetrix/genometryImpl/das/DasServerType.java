@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -141,5 +143,32 @@ public class DasServerType implements ServerTypeI {
 	@Override
 	public Object getServerInfo(String url, String name) {
 		return new DasServerInfo(url);
+	}
+
+	@Override
+	public String adjustURL(String url) {
+		String tempURL = url;
+		if (tempURL.endsWith("/dsn")) {
+			tempURL = tempURL.substring(0, tempURL.length() - 4);
+		}
+		return tempURL;
+	}
+
+	@Override
+	public boolean loadStrategyVisibleOnly() {
+		return true;
+	}
+
+	@Override
+	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
+		DasSource version = (DasSource) gVersion.versionSourceObj;
+		for (Entry<String,String> type : version.getTypes().entrySet()) {
+			String type_name = type.getKey();
+			if (type_name == null || type_name.length() == 0) {
+				System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+				continue;
+			}
+			gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
+		}
 	}
 }

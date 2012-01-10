@@ -1,14 +1,10 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.util.ExportDialogGUI;
 import java.awt.Component;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 

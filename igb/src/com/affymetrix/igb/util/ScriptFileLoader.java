@@ -296,20 +296,18 @@ public class ScriptFileLoader {
 	private static void snapShot(ExportMode exportMode, File f) {
 		Logger.getLogger(ScriptFileLoader.class.getName()).log(
 				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
-		String extension = ParserController.getExtension(f.getName().toLowerCase());
-		if (extension.length() == 0) {
+		String ext = ParserController.getExtension(f.getName().toLowerCase());
+		if (ext.length() == 0) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "no file extension given for file", f.getName());
 			return;
 		}
 
-		if (ExportDialog.isExt(extension)) {
+		if (ExportDialog.isExt(ext)) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "image file extension {0} is not supported", extension);
+					Level.SEVERE, "image file extension {0} is not supported", ext);
 			return;
 		}
-
-		extension = extension.substring(1, extension.length());
 
 		try {
 			Component c = null;
@@ -328,7 +326,7 @@ public class ScriptFileLoader {
 					break;
 			}
 			ExportDialog.initImageInfo(c);
-			ExportDialog.doComponentExport(c, f, extension);
+			ExportDialog.exportScreenshot(c, f, ext);
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}

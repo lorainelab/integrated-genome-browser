@@ -31,7 +31,6 @@ public class ExportLabelledMainViewAction extends GenericAction {
 		try {
 			AffyLabelledTierMap tm = (AffyLabelledTierMap) IGB.getSingleton().getMapView().getSeqMap();
 			ExportDialogGUI.getSingleton().display(tm.getSplitPane());
-			//ComponentWriter.showExportDialog(tm.getSplitPane());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

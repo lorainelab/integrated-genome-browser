@@ -23,7 +23,6 @@ public abstract class ExportComponentAction extends GenericAction {
 		}
 
 		try {
-		//	ComponentWriter.showExportDialog(slice_component);
 			ExportDialogGUI.getSingleton().display(component);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);

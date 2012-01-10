@@ -25,6 +25,8 @@ public class ExportDialogGUI extends JPanel {
 		export.initImageInfo(c);
 		
 		if (static_frame == null) {
+			export.init();
+			
 			static_frame = PreferenceUtils.createFrame("Export view as",
 					getSingleton());
 
@@ -36,6 +38,7 @@ public class ExportDialogGUI extends JPanel {
 			static_frame.setLocation(location.x + frame.getWidth() / 2 - static_frame.getWidth() / 2,
 					location.y + frame.getHeight() / 2 - static_frame.getHeight() / 2);
 		}
+		
 		DisplayUtils.bringFrameToFront(static_frame);
 	}
 

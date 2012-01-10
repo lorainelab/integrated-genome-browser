@@ -47,7 +47,6 @@ import javax.swing.KeyStroke;
 
 import com.affymetrix.common.CommonUtils;
 
-
 /**
  * Helps to save and load preferences such as locations of windows.
  * The {@link Preferences} class is pretty easy to use, so the real utility of
@@ -70,7 +69,6 @@ public abstract class PreferenceUtils {
 	public static final boolean default_confirm_before_clear = true;
 	public static final boolean default_confirm_before_load = true;
 	public static final boolean default_auto_load = true;
-	
 	private static final String DEFAULT_PREFS_MODE = "igb";
 	private static final String SLASH_STANDIN = "%";
 	private static String prefs_mode = DEFAULT_PREFS_MODE;
@@ -118,13 +116,17 @@ public abstract class PreferenceUtils {
 	public static Preferences getGraphPrefsNode() {
 		return PreferenceUtils.getTopNode().node("graphs");
 	}
-	
+
 	public static Preferences getWindowPrefsNode() {
 		return PreferenceUtils.getTopNode().node("window");
 	}
 
 	public static Preferences getSessionPrefsNode() {
 		return PreferenceUtils.getTopNode().node("session");
+	}
+
+	public static Preferences getExportPrefsNode() {
+		return PreferenceUtils.getTopNode().node("export");
 	}
 
 	public static void saveIntParam(String param_name, int param) {
@@ -222,8 +224,7 @@ public abstract class PreferenceUtils {
 	public static void saveComponentState(String name, String state) {
 		if (state == null) {
 			getWindowPrefsNode().remove(name + " state");
-		}
-		else {
+		} else {
 			getWindowPrefsNode().put(name + " state", state);
 		}
 	}
@@ -247,8 +248,7 @@ public abstract class PreferenceUtils {
 	public static void saveSelectedTab(String tray, String tab) {
 		if (tab == null) {
 			getWindowPrefsNode().remove(tray + " selected");
-		}
-		else {
+		} else {
 			getWindowPrefsNode().put(tray + " selected", tab);
 		}
 	}
@@ -285,8 +285,8 @@ public abstract class PreferenceUtils {
 		double dividerLocation = -1;
 		try {
 			dividerLocation = Double.parseDouble(locString);
+		} catch (Exception x) {
 		}
-		catch (Exception x) {}
 		return dividerLocation;
 	}
 
@@ -469,7 +469,7 @@ public abstract class PreferenceUtils {
 		node.put(key, "0x" + getColorString(c));
 	}
 
-	public static String getColorString(Color c){
+	public static String getColorString(Color c) {
 		int i = c.getRGB() & 0xFFFFFF;
 		String s = Integer.toHexString(i).toUpperCase();
 		while (s.length() < 6) {
@@ -477,7 +477,7 @@ public abstract class PreferenceUtils {
 		}
 		return s;
 	}
-	
+
 	/**
 	 * Retrieves a color preference that was stored with {@link #putColor(Preferences, String, Color)}.
 	 *

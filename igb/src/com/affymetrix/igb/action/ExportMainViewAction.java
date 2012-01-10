@@ -28,7 +28,6 @@ public class ExportMainViewAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		try {
-		//	ComponentWriter.showExportDialog(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
 			ExportDialogGUI.getSingleton().display(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);

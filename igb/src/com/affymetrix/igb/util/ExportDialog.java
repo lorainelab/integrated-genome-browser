@@ -1,12 +1,15 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.shared.FileTracker;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.prefs.Preferences;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -23,31 +26,23 @@ import javax.swing.filechooser.FileFilter;
  * 
  * @author nick
  */
-public class ExportDialog {
+public class ExportDialog implements ExportConstants {
 
+	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
-	public static ImageInfo imageInfo;
 	private JFileChooser fileChooser;
-	private File exportDirectory = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + "/");
-	private File exportFile = new File("export.jpeg");
-	public JTextField filePathTextField = new JTextField(exportDirectory.getAbsolutePath()
-			+ "/"
-			+ exportFile.getName());
-	private static final LinkedHashMap<ExportFileType, ExportFileFilter> 
-			FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
-	public static final String[] EXT = {".jpeg", ".png"};
-	public static final String[] DESCRIPTION = {
-		"Joint Photographic Experts Group Files (*.jpeg)",
-		"Portable Network Graphics Files (*.png)"
-	};
-	public static final ExportFileType JPEG = new ExportFileType(EXT[0], DESCRIPTION[0]);
-	public static final ExportFileType PNG = new ExportFileType(EXT[1], DESCRIPTION[1]);
+	private File exportFile;
+	private File exportDirectory;
+	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
 
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
+	JTextField filePathTextField = new JTextField();
 
 	public static FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
@@ -60,6 +55,21 @@ public class ExportDialog {
 
 		return singleton;
 	}
+	public static ImageInfo imageInfo;
+
+	public void init() {
+		exportFile = new File(exportNode.get(PREF_FILE, DEFAULT_FILE));
+		exportDirectory = new File(exportNode.get(PREF_DIR,
+				FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + "/"));
+		imageInfo.setXResolution(exportNode.getInt(PREF_X, imageInfo.getXResolution()));
+		imageInfo.setYResolution(exportNode.getInt(PREF_Y, imageInfo.getYResolution()));
+
+		filePathTextField.setText(exportDirectory.getAbsolutePath()
+				+ "/" + exportFile.getName());
+
+		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[0]));
+		extComboBox.setSelectedItem(type);
+	}
 
 	public static void initImageInfo(Component c) {
 		if (imageInfo == null) {
@@ -71,7 +81,6 @@ public class ExportDialog {
 	}
 
 	public static String getFileExtension(String filePath) {
-
 		String extension = null;
 
 		int indexOfExtension = filePath.lastIndexOf(".");
@@ -81,31 +90,23 @@ public class ExportDialog {
 		return extension;
 	}
 
-	public static void doComponentExport(Component c, File file, String ext) throws IOException {
-		if (ext.equals(JPEG.getExtension())) {
-			exportScreenshot(c, file, JPEG);
-		} else if (ext.equals(PNG.getExtension())) {
-			exportScreenshot(c, file, PNG);
-		}
-	}
-
-	private static void exportScreenshot(Component c, File selectedFile, ExportFileType type) throws IOException {
+	public static void exportScreenshot(Component c, File f, String ext) throws IOException {
 		BufferedImage image = getDeviceCompatibleImage(c.getWidth(), c.getHeight());
 		Graphics g = image.createGraphics();
 		c.paintAll(g);
 
-		if (selectedFile != null) {
+		if (f != null) {
 
-			if (!selectedFile.getName().toLowerCase().endsWith(type.getExtension())) {
-				String correctedFilename = selectedFile.getAbsolutePath() + type.getExtension();
-				selectedFile = new File(correctedFilename);
+			if (!f.getName().toLowerCase().endsWith(ext)) {
+				String correctedFilename = f.getAbsolutePath() + ext;
+				f = new File(correctedFilename);
 			}
 
 			if (isSizeChanged(c)) {
 				image = resizeImage(image);
 			}
 
-			writeImage(image, type.getExtension(), selectedFile);
+			writeImage(image, ext, f);
 		}
 	}
 
@@ -130,7 +131,7 @@ public class ExportDialog {
 				continue;
 			}
 
-			if (ext.equals(EXT[0])) {
+			if (ext.equals(EXTENSION[0])) {
 				setJPEG_DPI(metadata);
 			} else {
 				setPNG_DPI(metadata);
@@ -174,7 +175,6 @@ public class ExportDialog {
 	}
 
 	private static BufferedImage getDeviceCompatibleImage(int width, int height) {
-
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
 		GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
@@ -184,7 +184,6 @@ public class ExportDialog {
 	}
 
 	private static BufferedImage resizeImage(BufferedImage originalImage) {
-
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 		BufferedImage resizedImage = new BufferedImage(imageInfo.getWidth(), imageInfo.getHeight(), type);
 		Graphics2D g = resizedImage.createGraphics();
@@ -195,7 +194,6 @@ public class ExportDialog {
 	}
 
 	public static File changeFileExtension(File file, String extension) {
-
 		if ((file == null) || (extension == null) || extension.trim().equals("")) {
 			return null;
 		}
@@ -221,7 +219,7 @@ public class ExportDialog {
 		String path = filePathTextField.getText();
 		String directory = path.substring(0, path.lastIndexOf("/"));
 		String file = path.substring(path.lastIndexOf("/"));
-		String ext = path.substring(path.lastIndexOf("."));
+		String ext = ParserController.getExtension(path);
 		FileFilter filter = null;
 		exportDirectory = new File(directory);
 		exportFile = new File(file);
@@ -269,7 +267,7 @@ public class ExportDialog {
 		String path = filePathTextField.getText();
 		String directory = path.substring(0, path.lastIndexOf("/"));
 		String file = path.substring(path.lastIndexOf("/"));
-		String ext = ".jpeg";
+		String ext = EXTENSION[0];
 		exportFile = new File(file);
 
 		for (ExportFileType type : FILTER_LIST.keySet()) {
@@ -287,7 +285,7 @@ public class ExportDialog {
 		String previousDirectory = exportDirectory.getAbsolutePath();
 		String previousFile = exportFile.getName();
 		String path = filePathTextField.getText();
-		String ext = path.substring(path.lastIndexOf("."));
+		String ext = ParserController.getExtension(path);
 		String directoryStr = path.substring(0, path.lastIndexOf("/"));
 		File directory = new File(directoryStr);
 
@@ -299,7 +297,15 @@ public class ExportDialog {
 		}
 
 		File file = new File(path);
-		doComponentExport(component, file, ext);
+		exportScreenshot(component, file, ext);
+
+		// Save settings to preference
+		exportNode.put(PREF_FILE, file.getName());
+		exportNode.put(PREF_DIR, directory.getAbsolutePath());
+		exportNode.put(PREF_EXT, extComboBox.getSelectedItem().toString());
+		exportNode.putInt(PREF_X, imageInfo.getXResolution());
+		exportNode.putInt(PREF_Y, imageInfo.getYResolution());
+
 		return true;
 	}
 
@@ -311,103 +317,5 @@ public class ExportDialog {
 		}
 
 		return false;
-	}
-}
-
-class ImageInfo {
-
-	private int width;
-	private int height;
-	private int xResolution = 300;
-	private int yResolution = 300;
-
-	ImageInfo(int w, int h) {
-		width = w;
-		height = h;
-	}
-
-	ImageInfo(int w, int h, int x, int y) {
-		width = w;
-		height = h;
-		xResolution = x;
-		yResolution = y;
-	}
-
-	public void setWidth(int w) {
-		width = w;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setHeight(int h) {
-		height = h;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public int getXResolution() {
-		return xResolution;
-	}
-
-	public int getYResolution() {
-		return yResolution;
-	}
-}
-
-class ExportFileType {
-
-	private String fileExtension;
-	private String fileDescription;
-
-	ExportFileType(String extension, String description) {
-		fileExtension = extension;
-		fileDescription = description;
-	}
-
-	public String getExtension() {
-		return fileExtension;
-	}
-
-	public String getDescription() {
-		return fileDescription;
-	}
-
-	@Override
-	public String toString() {
-		return getDescription();
-	}
-}
-
-class ExportFileFilter extends FileFilter {
-
-	public ExportFileType type;
-
-	public ExportFileFilter(ExportFileType type) {
-		this.type = type;
-	}
-
-	public boolean accept(File file) {
-
-		if (file.isDirectory()) {
-			return true;
-		}
-
-		return file.getName().toLowerCase().endsWith(type.getExtension());
-	}
-
-	public String getDescription() {
-		return type.getDescription();
-	}
-
-	public String getExtension() {
-		return type.getExtension();
-	}
-
-	public boolean accept(File file, String name) {
-		return name.toLowerCase().endsWith(type.getExtension());
 	}
 }

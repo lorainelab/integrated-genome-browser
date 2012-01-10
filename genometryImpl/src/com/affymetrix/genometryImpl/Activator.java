@@ -10,6 +10,8 @@ import com.affymetrix.genometryImpl.operator.graph.*;
 import com.affymetrix.genometryImpl.operator.transform.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 
 /**
  * OSGi Activator for genometry bundle
@@ -20,10 +22,20 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
+		initFileTypeHandlers();
+		initServerTypes();
+		initTransforms();
+		initGraphOperators();
+		initAnnotationOperators();
+	}
+
+	@Override
+	public void stop(BundleContext _bundleContext) throws Exception {}
+
+	private void initFileTypeHandlers() {
 		// add all FileTypeHandler implementations to FileTypeHolder
 		ExtensionPointHandler<FileTypeHandler> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
 		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
-			
 			@Override
 			public void removeService(FileTypeHandler fileTypeHandler) {
 				FileTypeHolder.getInstance().removeFileTypeHandler(fileTypeHandler);
@@ -34,13 +46,22 @@ public class Activator implements BundleActivator {
 				FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
 			}
 		});
-		initTransforms();
-		initGraphOperators();
-		initAnnotationOperators();
 	}
 
-	@Override
-	public void stop(BundleContext _bundleContext) throws Exception {}
+	private void initServerTypes() {
+		ExtensionPointHandler<ServerTypeI> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
+		extensionPoint.addListener(new ExtensionPointListener<ServerTypeI>() {
+			@Override
+			public void removeService(ServerTypeI serverType) {
+				ServerUtils.removeServerType(serverType);
+			}
+			
+			@Override
+			public void addService(ServerTypeI serverType) {
+				ServerUtils.addServerType(serverType);
+			}
+		});
+	}
 
 	private void initTransforms() {
 		bundleContext.registerService(FloatTransformer.class, new IdentityTransform(), null);

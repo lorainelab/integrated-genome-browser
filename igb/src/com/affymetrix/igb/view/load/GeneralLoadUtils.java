@@ -507,7 +507,7 @@ public final class GeneralLoadUtils {
 	 * names will be closer to what is expected.
 	 */
 	private static void loadChromInfo(AnnotatedSeqGroup group) {
-		for (ServerTypeI serverType : ServerUtils.SERVER_TYPES) {
+		for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
 			for (GenericVersion gVersion : group.getEnabledVersions()) {
 				if (gVersion.gServer.serverType != serverType) {
 					continue;

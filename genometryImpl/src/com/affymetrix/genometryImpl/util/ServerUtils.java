@@ -1038,16 +1038,27 @@ public abstract class ServerUtils {
 		return type.formatURL(url);
 	}
 
-	public static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
+	private static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
 	static {
 		SERVER_TYPES.add(ServerTypeI.DAS2);
 		SERVER_TYPES.add(ServerTypeI.DAS);
 		SERVER_TYPES.add(ServerTypeI.QuickLoad);
 		SERVER_TYPES.add(ServerTypeI.LocalFiles);
+		Collections.sort(SERVER_TYPES);
 	}
 
 	public static List<ServerTypeI> getServerTypes() {
 		return SERVER_TYPES;
+	}
+
+	public static synchronized void addServerType(ServerTypeI serverType) {
+		SERVER_TYPES.add(serverType);
+		Collections.sort(SERVER_TYPES);
+	}
+
+	public static synchronized void removeServerType(ServerTypeI serverType) {
+		SERVER_TYPES.remove(serverType);
+		Collections.sort(SERVER_TYPES);
 	}
 
 	/**

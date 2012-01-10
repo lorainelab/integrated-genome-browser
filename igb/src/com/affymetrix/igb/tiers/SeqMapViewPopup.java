@@ -636,7 +636,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyle style = tier.getAnnotStyle();
 			style.setMaxDepth(max);
-			tier.setMaxExpandDepth(max);
 		}
 		repack(true);
 		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();

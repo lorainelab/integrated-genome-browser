@@ -34,12 +34,13 @@ public class ExportDialog {
 			+ "/"
 			+ exportFile.getName());
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
-	public static final String[] EXT = {
+	public static final String[] EXT = {".jpeg", ".png"};
+	public static final String[] DESCRIPTION = {
 		"Joint Photographic Experts Group Files (*.jpeg)",
 		"Portable Network Graphics Files (*.png)"
 	};
-	public static final ExportFileType JPEG = new ExportFileType(".jpeg", EXT[0]);
-	public static final ExportFileType PNG = new ExportFileType(".png", EXT[1]);
+	public static final ExportFileType JPEG = new ExportFileType(EXT[0], DESCRIPTION[0]);
+	public static final ExportFileType PNG = new ExportFileType(EXT[1], DESCRIPTION[1]);
 
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
@@ -102,7 +103,8 @@ public class ExportDialog {
 			if (isSizeChanged(c)) {
 				image = resizeImage(image);
 			}
-			writeImage(image, type.getExtension().substring(1), selectedFile);
+
+			writeImage(image, type.getExtension(), selectedFile);
 		}
 	}
 
@@ -116,18 +118,22 @@ public class ExportDialog {
 	}
 
 	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
-		final String formatName = ext;
-
-		for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+		Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
+		while (iw.hasNext()) {
 			ImageWriter writer = iw.next();
 			ImageWriteParam writeParam = writer.getDefaultWriteParam();
-			ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+			ImageTypeSpecifier typeSpecifier =
+					ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
 			IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
 			if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
 				continue;
 			}
 
-			setDPI(metadata);
+			if (ext.equals(EXT[0])) {
+				setJPEG_DPI(metadata);
+			} else {
+				setPNG_DPI(metadata);
+			}
 
 			final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
 			try {
@@ -140,13 +146,12 @@ public class ExportDialog {
 		}
 	}
 
-	private static void setDPI(IIOMetadata metadata) throws IIOInvalidTreeException {
-
+	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
-		horiz.setAttribute("value", Double.toString(imageInfo.getXResolution() * 0.04));
+		horiz.setAttribute("value", Double.toString(imageInfo.getXResolution() * 0.039));
 
 		IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
-		vert.setAttribute("value", Double.toString(imageInfo.getYResolution() * 0.04));
+		vert.setAttribute("value", Double.toString(imageInfo.getYResolution() * 0.039));
 
 		IIOMetadataNode dim = new IIOMetadataNode("Dimension");
 		dim.appendChild(horiz);
@@ -156,6 +161,15 @@ public class ExportDialog {
 		root.appendChild(dim);
 
 		metadata.mergeTree("javax_imageio_1.0", root);
+	}
+
+	private static void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+		IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
+		IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
+		jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getXResolution()));
+		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getYResolution()));
+		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
+		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
 	}
 
 	private static BufferedImage getDeviceCompatibleImage(int width, int height) {

@@ -46,6 +46,7 @@ import javax.imageio.ImageIO;
  * @author jfvillal
  */
 public class GeneConfiguration extends Configuration {
+
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Color COLOR_1 = Color.WHITE;
@@ -89,7 +90,7 @@ public class GeneConfiguration extends Configuration {
 					if (line.startsWith("#")) {
 						continue;
 					}
-	
+
 					//tripple check no null message is being inserted into the list.
 					if (line != null) {
 						list.add(line);
@@ -128,11 +129,18 @@ public class GeneConfiguration extends Configuration {
 					g.setFont(f);
 					version = version.split(".png")[0];
 					String species = SpeciesLookup.getSpeciesName(version);
+					//If name is very long shorten the name by abbreviating the first name.
+					if (species.length() > 20) {
+						String delims = "[ ]+";
+						String[] tokens = species.split(delims);
+						species = tokens[0].substring(0, 1).toUpperCase() + ".";
+						species += " " + tokens[1];
+					}
 					int num = metrics.stringWidth(species);
-					
+
 					try {
 						g.setColor(Color.BLACK);
-						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight()+3));
+						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight() + 3));
 						//draw the label
 						g.setColor(COLOR_2);
 						g.drawString(species, img.getWidth() / 2 - num / 2, img.getHeight() - 4);
@@ -194,5 +202,4 @@ public class GeneConfiguration extends Configuration {
 		double gray_scale = (double) (g + r + b) / 3.0;
 		return gray_scale;
 	}
-
 }

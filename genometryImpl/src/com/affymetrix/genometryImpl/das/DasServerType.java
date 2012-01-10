@@ -171,4 +171,23 @@ public class DasServerType implements ServerTypeI {
 			gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
 		}
 	}
+
+	@Override
+	public void discoverChromosomes(Object versionSourceObj) {
+		// Discover chromosomes from DAS
+		DasSource version = (DasSource) versionSourceObj;
+
+		version.getGenome();
+		version.getEntryPoints();
+	}
+
+	@Override
+	public boolean hasFriendlyURL() {
+		return false;
+	}
+
+	@Override
+	public boolean canHandleFeature() {
+		return true;
+	}
 }

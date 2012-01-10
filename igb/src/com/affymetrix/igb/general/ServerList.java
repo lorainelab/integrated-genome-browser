@@ -211,7 +211,7 @@ public final class ServerList {
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.get( GenericServerPref.URL, "" ));
 			name = node.get(GenericServerPref.NAME, "Unknown");
-			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.LocalFiles.getName() : null);
+			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.DEFAULT.getName() : null);
 			serverType = getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = (serverType == null) ? url : serverType.getServerInfo(url, name);
@@ -275,7 +275,7 @@ public final class ServerList {
 				
 				serverType = null;
 				if (node.get(GenericServerPref.TYPE, null) != null) {
-					serverType = getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.LocalFiles.getName()));
+					serverType = getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName()));
 				}
 
 				if (serverType == ServerTypeI.LocalFiles) {
@@ -395,7 +395,7 @@ public final class ServerList {
 		//long url was bugging the node name since it only accepts 80 char names
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url) );
 
-		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.LocalFiles.getName())));
+		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())));
 	}
 
 	/**

@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
-import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -12,9 +11,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasServerType;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -25,7 +21,6 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 import com.affymetrix.genometryImpl.symloader.*;
 import com.affymetrix.genometryImpl.symmetry.SearchableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -1043,12 +1038,12 @@ public abstract class ServerUtils {
 		return type.formatURL(url);
 	}
 
-	private static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
+	public static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
 	static {
-		SERVER_TYPES.add(Das2ServerType.getInstance());
-		SERVER_TYPES.add(DasServerType.getInstance());
-		SERVER_TYPES.add(QuickloadServerType.getInstance());
-		SERVER_TYPES.add(LocalFilesServerType.getInstance());
+		SERVER_TYPES.add(ServerTypeI.DAS2);
+		SERVER_TYPES.add(ServerTypeI.DAS);
+		SERVER_TYPES.add(ServerTypeI.QuickLoad);
+		SERVER_TYPES.add(ServerTypeI.LocalFiles);
 	}
 
 	public static List<ServerTypeI> getServerTypes() {

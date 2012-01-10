@@ -143,4 +143,18 @@ public class QuickloadServerType implements ServerTypeI {
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		// not implemented here
 	}
+
+	@Override
+	public void discoverChromosomes(Object versionSourceObj) {
+	}
+
+	@Override
+	public boolean hasFriendlyURL() {
+		return true;
+	}
+
+	@Override
+	public boolean canHandleFeature() {
+		return false;
+	}
 }

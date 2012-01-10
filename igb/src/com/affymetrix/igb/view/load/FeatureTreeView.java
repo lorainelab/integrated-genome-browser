@@ -238,7 +238,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	private static boolean canHandleFeature(GenericFeature feature) {
 		ServerTypeI serverType = feature.gVersion.gServer.serverType;
-		return (serverType == ServerTypeI.DAS || serverType == ServerTypeI.DAS2) || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
+		return serverType.canHandleFeature() || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
 	}
 
 	/**
@@ -509,7 +509,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	 * @return hyperlink of the server name
 	 */
 	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-		if (gServer.serverType == ServerTypeI.DAS) {
+		if (!gServer.serverType.hasFriendlyURL()) {
 			return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
 		}
 		if (gServer.friendlyURL != null) {
@@ -641,7 +641,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			String serverNameString = "";
-			if (gServer.friendlyURL != null && gServer.serverType != ServerTypeI.DAS) {
+			if (gServer.friendlyURL != null && gServer.serverType.hasFriendlyURL()) {
 				// TODO - hack to ignore server hyperlinks for DAS/1.
 				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
 			} else {

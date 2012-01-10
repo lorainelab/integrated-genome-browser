@@ -158,7 +158,7 @@ public final class XmlPrefsParser {
 				return t;
 			}
 		}
-		return ServerTypeI.LocalFiles;
+		return ServerTypeI.DEFAULT;
 	}
 
 	/**

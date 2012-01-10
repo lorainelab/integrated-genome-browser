@@ -64,4 +64,18 @@ public class LocalFilesServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 	}
+
+	@Override
+	public void discoverChromosomes(Object versionSourceObj) {
+	}
+
+	@Override
+	public boolean hasFriendlyURL() {
+		return true;
+	}
+
+	@Override
+	public boolean canHandleFeature() {
+		return false;
+	}
 }

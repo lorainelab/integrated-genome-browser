@@ -203,14 +203,11 @@ public final class GeneralLoadUtils {
 		if (gServer.isPrimary()) {
 			return true;
 		}
-		
-		if (gServer.serverType != null) {
-			Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
-		}
-
-		if (gServer.serverType == null) {
+		if (gServer.serverType == null) { // bundle repository
 			return IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryAdded(gServer.URL);
 		}
+
+		Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		try {
 			if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
 				// should never happen
@@ -510,31 +507,14 @@ public final class GeneralLoadUtils {
 	 * names will be closer to what is expected.
 	 */
 	private static void loadChromInfo(AnnotatedSeqGroup group) {
-
-		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType != ServerTypeI.DAS2) {
-				continue;
+		for (ServerTypeI serverType : ServerUtils.SERVER_TYPES) {
+			for (GenericVersion gVersion : group.getEnabledVersions()) {
+				if (gVersion.gServer.serverType != serverType) {
+					continue;
+				}
+				serverType.discoverChromosomes(gVersion.versionSourceObj);
+				return;
 			}
-			// Discover chromosomes from DAS/2
-			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
-
-			version.getGenome();  // adds genome to singleton genometry model if not already present
-			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
-			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
-			version.getSegments();
-			return;
-		}
-
-		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType != ServerTypeI.DAS) {
-				continue;
-			}
-			// Discover chromosomes from DAS
-			DasSource version = (DasSource) gVersion.versionSourceObj;
-
-			version.getGenome();
-			version.getEntryPoints();
-			return;
 		}
 	}
 
@@ -1274,7 +1254,7 @@ public final class GeneralLoadUtils {
 			
 			gFeature.setVisible(); // this should be automatically checked in the feature tree
 			
-			GeneralLoadView.getLoadView().addFeatureTier(gFeature);
+			GeneralLoadView.addFeatureTier(gFeature);
 		}
 		
 		return gFeature;

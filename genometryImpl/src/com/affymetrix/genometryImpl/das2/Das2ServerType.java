@@ -175,4 +175,24 @@ public class Das2ServerType implements ServerTypeI {
 			gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null, type, autoload));
 		}
 	}
+
+	@Override
+	public void discoverChromosomes(Object versionSourceObj) {
+		Das2VersionedSource version = (Das2VersionedSource) versionSourceObj;
+		
+		version.getGenome();  // adds genome to singleton genometry model if not already present
+		// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
+		//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
+		version.getSegments();
+	}
+
+	@Override
+	public boolean hasFriendlyURL() {
+		return true;
+	}
+
+	@Override
+	public boolean canHandleFeature() {
+		return true;
+	}
 }

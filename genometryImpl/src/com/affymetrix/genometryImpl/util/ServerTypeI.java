@@ -11,6 +11,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	ServerTypeI DAS = DasServerType.getInstance();
 	ServerTypeI DAS2 = Das2ServerType.getInstance();
 	ServerTypeI LocalFiles = LocalFilesServerType.getInstance();
+	ServerTypeI DEFAULT = LocalFiles;
 
 	public String getName();
 	public int getOrdinal();
@@ -27,4 +28,7 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	public String adjustURL(String url);
 	public boolean loadStrategyVisibleOnly();
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload);
+	public void discoverChromosomes(Object versionSourceObj);
+	public boolean hasFriendlyURL();
+	public boolean canHandleFeature();
 }

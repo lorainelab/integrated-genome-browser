@@ -1022,35 +1022,6 @@ public abstract class ServerUtils {
 	}
 
 	/**
-	 * Initialize the server.
-	 *
-	 * @param serverType
-	 * @param url
-	 * @param name
-	 * @return initialized server
-	 */
-	public static Object getServerInfo(ServerTypeI serverType, String url, String name) {
-		Object info = null;
-
-		try {
-			if (serverType == ServerTypeI.QuickLoad) {
-				info = ServerUtils.formatURL(url, serverType);
-			} else if (serverType == ServerTypeI.DAS) {
-				info = new DasServerInfo(url);
-			} else if (serverType == ServerTypeI.DAS2) {
-				info = new Das2ServerInfo(url, name, false);
-			} else if (serverType == null) {
-				info = ServerUtils.formatURL(url, serverType);
-			}
-		} catch (URISyntaxException e) {
-			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-					"Could not initialize {0} server with address: {1}", new Object[]{serverType, url});
-			e.printStackTrace(System.out);
-		}
-		return info;
-	}
-
-	/**
 	 * Format a URL based on the ServerType's requirements.
 	 *
 	 * @param url URL to format
@@ -1069,18 +1040,7 @@ public abstract class ServerUtils {
 		if (type == null) {
 			return url;
 		}
-		switch (type.getOrdinal()) {
-			case DasServerType.ordinal:
-			case Das2ServerType.ordinal:
-				while (url.endsWith("/")) {
-					url = url.substring(0, url.length()-1);
-				}
-				return url;
-			case QuickloadServerType.ordinal:
-				return url.endsWith("/") ? url : url + "/";
-			default:
-				return url;
-		}
+		return type.formatURL(url);
 	}
 
 	private static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();

@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.das2;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 
 public class Das2ServerType implements ServerTypeI {
 	private static final String name = "DAS2";
@@ -120,5 +122,27 @@ public class Das2ServerType implements ServerTypeI {
 		}
 
 		return true;
+	}
+
+	@Override
+	public String formatURL(String url) {
+		while (url.endsWith("/")) {
+			url = url.substring(0, url.length()-1);
+		}
+		return url;
+	}
+
+	@Override
+	public Object getServerInfo(String url, String name) {
+		Object info = null;
+
+		try {
+			info = new Das2ServerInfo(url, name, false);
+		} catch (URISyntaxException e) {
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
+					"Could not initialize {0} server with address: {1}", new Object[]{name, url});
+			e.printStackTrace(System.out);
+		}
+		return info;
 	}
 }

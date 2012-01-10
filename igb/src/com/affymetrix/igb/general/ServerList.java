@@ -162,7 +162,7 @@ public final class ServerList {
 		Object info;
 
 		if (server == null) {
-			info = ServerUtils.getServerInfo(serverType, url, name);
+			info = serverType == null ? url : serverType.getServerInfo(url, name);
 
 			if (info != null) {
 				server = new GenericServer(name, url, serverType, enabled, info, primary);
@@ -182,7 +182,7 @@ public final class ServerList {
 			return null;
 		}
 		for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
-			if (name.equals(serverType.getName())) {
+			if (name.equalsIgnoreCase(serverType.getName())) {
 				return serverType;
 			}
 		}
@@ -212,9 +212,9 @@ public final class ServerList {
 			url = GeneralUtils.URLDecode(node.get( GenericServerPref.URL, "" ));
 			name = node.get(GenericServerPref.NAME, "Unknown");
 			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.LocalFiles.getName() : null);
-			serverType = type == null ? null : getServerType(type);
+			serverType = getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
-			info = ServerUtils.getServerInfo(serverType, url, name);
+			info = (serverType == null) ? url : serverType.getServerInfo(url, name);
 
 			if (info != null) {
 				server = new GenericServer(node, info, serverType);

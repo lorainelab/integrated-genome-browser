@@ -39,4 +39,14 @@ public class LocalFilesServerType implements ServerTypeI {
 	public boolean processServer(GenericServer gServer, String path) {
 		return false;
 	}
+
+	@Override
+	public String formatURL(String url) {
+		return url;
+	}
+
+	@Override
+	public Object getServerInfo(String url, String name) {
+		return null;
+	}
 }

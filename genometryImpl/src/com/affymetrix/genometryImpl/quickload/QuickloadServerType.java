@@ -117,4 +117,14 @@ public class QuickloadServerType implements ServerTypeI {
 
 		return true;
 	}
+
+	@Override
+	public String formatURL(String url) {
+		return url.endsWith("/") ? url : url + "/";
+	}
+
+	@Override
+	public Object getServerInfo(String url, String name) {
+		return formatURL(url);
+	}
 }

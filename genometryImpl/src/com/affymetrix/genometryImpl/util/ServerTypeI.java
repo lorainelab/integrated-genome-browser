@@ -14,4 +14,13 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	public String getName();
 	public int getOrdinal();
 	public boolean processServer(GenericServer gServer, String path);
+	public String formatURL(String url);
+	/**
+	 * Initialize the server.
+	 *
+	 * @param url
+	 * @param name
+	 * @return initialized server
+	 */
+	public Object getServerInfo(String url, String name);
 }

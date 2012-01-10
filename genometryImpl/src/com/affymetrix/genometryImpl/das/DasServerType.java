@@ -129,4 +129,17 @@ public class DasServerType implements ServerTypeI {
 
 		return true;
 	}
+
+	@Override
+	public String formatURL(String url) {
+		while (url.endsWith("/")) {
+			url = url.substring(0, url.length()-1);
+		}
+		return url;
+	}
+
+	@Override
+	public Object getServerInfo(String url, String name) {
+		return new DasServerInfo(url);
+	}
 }

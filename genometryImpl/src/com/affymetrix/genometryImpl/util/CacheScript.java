@@ -169,7 +169,7 @@ public class CacheScript extends Thread {
 					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
 
 					String serverURL = ServerUtils.formatURL(server_url, server_type);
-					Object serverInfo = ServerUtils.getServerInfo(server_type, serverURL, server_name);
+					Object serverInfo = server_type.getServerInfo(serverURL, server_name);
 					GenericServer server = new GenericServer(server_name, serverURL, server_type, enabled, serverInfo);
 					serverList.add(server);
 				}

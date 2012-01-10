@@ -20,17 +20,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 /**
@@ -41,61 +38,66 @@ import javax.swing.UIManager;
  * @author jfvillal
  */
 public class WelcomePage extends javax.swing.JPanel {
+
 	private static final long serialVersionUID = 1L;
+	static final double SHIFT_BY = 0.3333333333333333;
+	final JFlowPanel flow_panel;
+	private boolean scrollLeft;
+	private Timer timer = new Timer(100, new ActionListener() {
+
+		public void actionPerformed(ActionEvent e) {
+			if (scrollLeft) {
+				flow_panel.shiftBy(-SHIFT_BY);
+			} else {
+				flow_panel.shiftBy(SHIFT_BY);
+			}
+		}
+	});
+
 	/** Creates new form MainWorkspaceManager2 */
-	public WelcomePage( JPanel cover_flow) {
+	public WelcomePage(JPanel cover_flow) {
 		initComponents();
-		final JFlowPanel flow_panel = (JFlowPanel) cover_flow;
-		CoverFlowPane.setLayout( new BorderLayout());
-		CoverFlowPane.add( cover_flow );
+		flow_panel = (JFlowPanel) cover_flow;
+		CoverFlowPane.setLayout(new BorderLayout());
+		CoverFlowPane.add(cover_flow);
 		URL url = CommonUtils.class.getClassLoader().getResource("welcome.html");
-		
+
 		TitlePane.setLayout(new BorderLayout());
-		TitlePane.add( new WelcomeTitle());
-		TitlePane.setPreferredSize(new Dimension(400,150));
-		TitlePane.setMaximumSize(new Dimension(3000,150));
-		
-		UIManager.put ("Button.select", Color.TRANSLUCENT ) ; 
+		TitlePane.add(new WelcomeTitle());
+		TitlePane.setPreferredSize(new Dimension(400, 150));
+		TitlePane.setMaximumSize(new Dimension(3000, 150));
+
+		UIManager.put("Button.select", Color.TRANSLUCENT);
 		try {
 			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/wright.png")
-					);
-			RightSlide.setIcon( icon );
+					CommonUtils.class.getClassLoader().getResource("images/wright.png"));
+			RightSlide.setIcon(icon);
 			ImageIcon icon2 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/right_selected.png")
-					);
-			RightSlide.setPressedIcon( icon2);
+					CommonUtils.class.getClassLoader().getResource("images/right_selected.png"));
+			RightSlide.setPressedIcon(icon2);
 			RightSlide.setSelectedIcon(icon2);
 			RightSlide.setRolloverEnabled(true); // turn on before rollovers work
 			RightSlide.setRolloverIcon(icon2);
 			RightSlide.setBorderPainted(false);
 			RightSlide.setFocusPainted(false);
 			RightSlide.setContentAreaFilled(false);
-			RightSlide.addActionListener(new ActionListener(){
 
-				public void actionPerformed(ActionEvent e) {
-					flow_panel.shiftBy( SHIFT_BY  );
-				}
-			});;
 			ImageIcon icon3 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/right_more_selected.png")
-					);
-			RightSlide.setPressedIcon(icon3 );
+					CommonUtils.class.getClassLoader().getResource("images/right_more_selected.png"));
+			RightSlide.setPressedIcon(icon3);
 		} catch (IOException ex) {
 			Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		
-		
+
+
 		try {
 			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/wleft.png")
-					);
-			LeftSlide.setIcon( icon);
-			
+					CommonUtils.class.getClassLoader().getResource("images/wleft.png"));
+			LeftSlide.setIcon(icon);
+
 			ImageIcon icon2 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/left_selected.png")
-					);
-			LeftSlide.setPressedIcon( icon2);
+					CommonUtils.class.getClassLoader().getResource("images/left_selected.png"));
+			LeftSlide.setPressedIcon(icon2);
 			LeftSlide.setSelectedIcon(icon2);
 			LeftSlide.setRolloverEnabled(true);
 			LeftSlide.setRolloverIcon(icon2);
@@ -103,58 +105,47 @@ public class WelcomePage extends javax.swing.JPanel {
 			LeftSlide.setFocusPainted(false);
 			LeftSlide.setContentAreaFilled(false);
 			ImageIcon icon3 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/left_more_selected.png")
-					);
-			LeftSlide.setPressedIcon(icon3 );
-			LeftSlide.addActionListener(new ActionListener(){
+					CommonUtils.class.getClassLoader().getResource("images/left_more_selected.png"));
+			LeftSlide.setPressedIcon(icon3);
 
-				public void actionPerformed(ActionEvent e) {
-					flow_panel.shiftBy( -SHIFT_BY  );
-				}
-			});
 		} catch (IOException ex) {
 			Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 	}
-	
-	static final double SHIFT_BY = 0.3333333333333333;
+
 	/** Returns an ImageIcon, or null if the path was invalid. */
-	protected ImageIcon createImageIcon(URL imgURL )throws IOException {
+	protected ImageIcon createImageIcon(URL imgURL) throws IOException {
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, "");
 		} else {
-			throw new IOException( "file not found");
+			throw new IOException("file not found");
 		}
 	}
 
-	
-	 public static String getContent( JPanel context, InputStream resource){
-        
-        BufferedReader stream = new BufferedReader( 
-                                        new InputStreamReader( 
-                                            new DataInputStream(  
-                                                    resource
-                                            ) 
-                                        )
-        );
-        
-        String content = "";
-        String line = "";
-        try {
-            while( (line = stream.readLine() ) != null){
-                content += line + "\n";
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return content;
-    }
-	
+	public static String getContent(JPanel context, InputStream resource) {
+
+		BufferedReader stream = new BufferedReader(
+				new InputStreamReader(
+				new DataInputStream(
+				resource)));
+
+		String content = "";
+		String line = "";
+		try {
+			while ((line = stream.readLine()) != null) {
+				content += line + "\n";
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		return content;
+	}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -223,6 +214,17 @@ public class WelcomePage extends javax.swing.JPanel {
         RightSlide.setBorder(null);
         RightSlide.setMaximumSize(new Dimension(20,40));
         RightSlide.setPreferredSize(new java.awt.Dimension(20, 40));
+        RightSlide.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                RightSlideMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                RightSlideMouseReleased(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                RightSlideMouseClicked(evt);
+            }
+        });
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -259,9 +261,15 @@ public class WelcomePage extends javax.swing.JPanel {
         LeftSlide.setBorder(null);
         LeftSlide.setMaximumSize(new java.awt.Dimension(20, 40));
         LeftSlide.setPreferredSize(new java.awt.Dimension(20, 40));
-        LeftSlide.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                LeftSlideActionPerformed(evt);
+        LeftSlide.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                LeftSlideMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                LeftSlideMouseReleased(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LeftSlideMouseClicked(evt);
             }
         });
 
@@ -287,16 +295,14 @@ public class WelcomePage extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(1, 1, 1)))
+                            .addGap(0, 0, 0)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(LeftSlide, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(CoverFlowPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -345,10 +351,31 @@ public class WelcomePage extends javax.swing.JPanel {
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void LeftSlideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LeftSlideActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_LeftSlideActionPerformed
+	private void LeftSlideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMousePressed
+		scrollLeft = true;
+		timer.start();
+	}//GEN-LAST:event_LeftSlideMousePressed
 
+	private void LeftSlideMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMouseClicked
+		flow_panel.shiftBy(-SHIFT_BY);
+	}//GEN-LAST:event_LeftSlideMouseClicked
+
+	private void RightSlideMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMouseClicked
+		flow_panel.shiftBy(SHIFT_BY);
+	}//GEN-LAST:event_RightSlideMouseClicked
+
+	private void RightSlideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMousePressed
+		scrollLeft = false;
+		timer.start();
+	}//GEN-LAST:event_RightSlideMousePressed
+
+	private void RightSlideMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMouseReleased
+		timer.stop();
+	}//GEN-LAST:event_RightSlideMouseReleased
+
+	private void LeftSlideMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMouseReleased
+		timer.stop();
+	}//GEN-LAST:event_LeftSlideMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CoverFlowPane;
     private javax.swing.JButton LeftSlide;
@@ -359,6 +386,4 @@ public class WelcomePage extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
-
-
 }

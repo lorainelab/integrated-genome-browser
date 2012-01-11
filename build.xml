@@ -370,6 +370,9 @@
 				<include name="bundles.properties"/>
 			</fileset>
 		</jar>
+	</target>
+
+	<target name="protannot_exe" depends="jar" description="Create a single-jar Protannot application">
 		<jar jarfile="protannot_exe.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="org.bioviz.protannot.ProtAnnotMain"/>
@@ -388,7 +391,7 @@
 			</zipgroupfileset>
 		</jar>
 	</target>
-
+	
 	<target name="run" depends="classpath" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />

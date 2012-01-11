@@ -125,6 +125,6 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	
 	@Override
 	protected boolean loadSequenceAsTrack() {
-		return false;
+		return true;
 	}
 }

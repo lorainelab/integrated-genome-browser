@@ -46,7 +46,7 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 
 	@Override
 	protected boolean loadSequenceAsTrack() {
-		return true;
+		return false;
 	}
 
 	@Override

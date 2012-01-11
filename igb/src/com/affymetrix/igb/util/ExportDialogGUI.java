@@ -154,7 +154,8 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_browseButtonActionPerformed
 
 	private void optionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsButtonActionPerformed
-		ExportOptionView.getSingleton().display(export.imageInfo);
+		ExportOptionView.getSingleton().init(export.imageInfo, component);
+		ExportOptionView.getSingleton().display();
 	}//GEN-LAST:event_optionsButtonActionPerformed
 
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed

@@ -115,9 +115,3 @@ M)   This product includes portions of the furbelow project of Rabbit Hole
 
      The files from this project are bundled together in furbelow.jar.
 
-N)   This product includes the JarLoader project from jDotSoft.com
-
-     http://jdotsoft.com
-
-     Ths file from this project is in com.jdotsoft.jarloader.JarClassLoader.java
-

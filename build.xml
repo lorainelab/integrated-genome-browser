@@ -386,8 +386,9 @@
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
 				<include name="main.jar"/>
+				<include name="common.jar"/>
 			</zipgroupfileset>
-			<fileset file="${osgi.impl}" />
+			<zipgroupfileset file="${osgi.impl}" />
 			<fileset dir="${bundle.dir}">
 				<include name="*.jar"/>
 			</fileset>

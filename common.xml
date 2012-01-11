@@ -126,7 +126,13 @@
 		</path>
 
 		<available classname="org.tigris.subversion.svnant.SvnTask" classpathref="svn.path" property="have.svnant" />
-
+		
+		<path id="contrib.path">
+			<fileset dir="${lib.dir}/ant-contrib-1.0b3">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+			
 		<path id="pmd.path">
 			<fileset dir="${lib.dir}/pmd-4.2.5">
 				<include name="*.jar" />

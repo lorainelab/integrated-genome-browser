@@ -119,52 +119,23 @@
 		</antcall>
 	</target>
 
+	<target name="ant-copy-bundle" description="ant call to create bundle">
+		<antcall target="copy-bundle">
+			<param name="jar_name" value="${name_jar}"/>
+		</antcall>
+	</target>
+	
+	<target name="bundle-copy" description="copy lib to bundles dir">
+		<copy file="${lib.dir}/${jar_name}.jar" tofile="${bundle.dir}/${jar_name}.jar" filtering="false" />
+	</target>
+	
 	<target name="copy-bundles" description="copy bundles to bundle dir">
+		<taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach" classpathref="contrib.path" />
+		
 		<mkdir dir="${bundle.dir}" />
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="affx_fusion"/>
-		</antcall>
-		<copy file="${lib.dir}/BigWig.jar" tofile="${bundle.dir}/BigWig.jar" filtering="false" />
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="colt"/>
-		</antcall>
-		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${bundle.dir}/commons-codec-1.4.jar" filtering="false" />
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="commons-net-2.0"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="image4j"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="jide"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="be.pwnt.jflow_1.0.0"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="jlfgr-1_0"/>
-		</antcall>
-		<echo message='***** please ignore error message "Your bnd file contains a header called &apos;Name&apos;..." for jlfgr-1_0 *****' />
-		<echo message='***** please ignore error message "Your bnd file contains a header called &apos;Name&apos;..." for jlfgr-1_0 *****' />
-		<echo message='***** please ignore error message "Your bnd file contains a header called &apos;Name&apos;..." for jlfgr-1_0 *****' />
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="jython"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="log4j-1.2.11"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="picard"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="sam"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="swing-layout"/>
-		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="tribble-0.1"/>
-		</antcall>
+		
+		<foreach target="ant-copy-bundle" parallel="true" inheritall="true" param="name_jar" list="${include.lib}"/>
+		<foreach target="bundle-copy" parallel="true" inheritall="true" param="jar_name" list="${copy.lib}"/>
 	</target>
 
 	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">

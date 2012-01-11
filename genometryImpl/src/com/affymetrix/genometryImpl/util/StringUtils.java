@@ -117,7 +117,7 @@ public final class StringUtils {
 	}
 	
 	private static String[] getWords(String line){
-		String[] seprators = {"\\s+","/","\\"};
+		String[] seprators = {"\\s+","/","\\",".","-","_"," "};
 		
 		for(String seprator : seprators){
 			String[] words = getWords(line, seprator);

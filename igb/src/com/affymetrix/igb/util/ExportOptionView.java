@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 /**
@@ -15,6 +16,7 @@ public class ExportOptionView extends JPanel {
 	public static JFrame static_frame = null;
 	private static ExportOptionView singleton;
 	private ImageInfo imageInfo;
+	private Component component;
 	private int newWidth;
 	private int oldWidth;
 	private int newHeight;
@@ -22,7 +24,6 @@ public class ExportOptionView extends JPanel {
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
 
-	/** Creates new form ExportOptionView */
 	public ExportOptionView() {
 		initComponents();
 	}
@@ -34,7 +35,9 @@ public class ExportOptionView extends JPanel {
 		return singleton;
 	}
 
-	public synchronized void display(ImageInfo info) {
+	public synchronized void init(ImageInfo info, Component c) {
+		component = c;
+
 		imageInfo = info;
 		SpinnerModel sm = new SpinnerNumberModel(imageInfo.getWidth(), 0, 10000, 1);
 		widthSpinner.setModel(sm);
@@ -44,7 +47,9 @@ public class ExportOptionView extends JPanel {
 		xSpinner.setModel(sm);
 		sm = new SpinnerNumberModel(imageInfo.getYResolution(), 0, 1000, 1);
 		ySpinner.setModel(sm);
+	}
 
+	public synchronized void display() {
 		static_frame = PreferenceUtils.createFrame("Export Options",
 				getSingleton());
 
@@ -57,6 +62,8 @@ public class ExportOptionView extends JPanel {
 				location.y + frame.getHeight() / 2 - static_frame.getHeight() / 2);
 
 		DisplayUtils.bringFrameToFront(static_frame);
+
+		previewLabel.setIcon(null);
 	}
 
 	/** This method is called from within the constructor to
@@ -68,6 +75,11 @@ public class ExportOptionView extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        mainPanel = new javax.swing.JPanel();
+        previewButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
         imageSizePanel = new javax.swing.JPanel();
         widthLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
@@ -77,9 +89,36 @@ public class ExportOptionView extends JPanel {
         yLabel = new javax.swing.JLabel();
         xSpinner = new javax.swing.JSpinner();
         ySpinner = new javax.swing.JSpinner();
-        resetButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
+        previewPanel = new javax.swing.JPanel();
+        previewLabel = new javax.swing.JLabel();
+
+        previewButton.setText("Preview");
+        previewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previewButtonActionPerformed(evt);
+            }
+        });
+
+        okButton.setText("Ok");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
 
         imageSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
 
@@ -142,52 +181,63 @@ public class ExportOptionView extends JPanel {
                     .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
 
-        resetButton.setText("Reset");
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
+        org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
+                .add(previewButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 33, Short.MAX_VALUE)
+                .add(resetButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(cancelButton)
+                .add(0, 0, 0)
+                .add(okButton))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        mainPanelLayout.linkSize(new java.awt.Component[] {cancelButton, okButton, previewButton, resetButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        okButton.setText("Ok");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(mainPanelLayout.createSequentialGroup()
+                .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(resetButton)
+                    .add(cancelButton)
+                    .add(okButton)
+                    .add(previewButton)))
+        );
+
+        previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Viewer"));
+
+        previewLabel.setText("   ");
+
+        org.jdesktop.layout.GroupLayout previewPanelLayout = new org.jdesktop.layout.GroupLayout(previewPanel);
+        previewPanel.setLayout(previewPanelLayout);
+        previewPanelLayout.setHorizontalGroup(
+            previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+        );
+        previewPanelLayout.setVerticalGroup(
+            previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+        );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                .add(layout.createSequentialGroup()
-                    .add(resetButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(0, 0, 0)
-                    .add(cancelButton)
-                    .add(0, 0, 0)
-                    .add(okButton))
-                .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(mainPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        layout.linkSize(new java.awt.Component[] {cancelButton, okButton, resetButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(mainPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(resetButton)
-                    .add(cancelButton)
-                    .add(okButton)))
+                .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -227,21 +277,38 @@ public class ExportOptionView extends JPanel {
 	}//GEN-LAST:event_heightSpinnerStateChanged
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-		int width = (Integer)widthSpinner.getValue();
-		int height = (Integer)heightSpinner.getValue();
-		int x = (Integer)xSpinner.getValue();
-		int y = (Integer)ySpinner.getValue();
+		int width = (Integer) widthSpinner.getValue();
+		int height = (Integer) heightSpinner.getValue();
+		int x = (Integer) xSpinner.getValue();
+		int y = (Integer) ySpinner.getValue();
 		ImageInfo info = new ImageInfo(width, height, x, y);
 		ExportDialog.imageInfo = info;
 		static_frame.setVisible(false);
 	}//GEN-LAST:event_okButtonActionPerformed
 
+	private void previewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previewButtonActionPerformed
+		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
+				component.getWidth(), component.getHeight());
+		Graphics g = image.createGraphics();
+		component.paintAll(g);
+
+		image = GraphicsUtil.resizeImage(image,
+				(Integer) widthSpinner.getValue(),
+				(Integer) heightSpinner.getValue());
+
+		ImageIcon icon = new ImageIcon(image);
+		previewLabel.setIcon(icon);
+	}//GEN-LAST:event_previewButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel heightLabel;
     private javax.swing.JSpinner heightSpinner;
     private javax.swing.JPanel imageSizePanel;
+    private javax.swing.JPanel mainPanel;
     private javax.swing.JButton okButton;
+    private javax.swing.JButton previewButton;
+    private javax.swing.JLabel previewLabel;
+    private javax.swing.JPanel previewPanel;
     private javax.swing.JButton resetButton;
     private javax.swing.JLabel widthLabel;
     private javax.swing.JSpinner widthSpinner;

@@ -91,7 +91,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static void exportScreenshot(Component c, File f, String ext) throws IOException {
-		BufferedImage image = getDeviceCompatibleImage(c.getWidth(), c.getHeight());
+		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(c.getWidth(), c.getHeight());
 		Graphics g = image.createGraphics();
 		c.paintAll(g);
 
@@ -101,23 +101,13 @@ public class ExportDialog implements ExportConstants {
 				String correctedFilename = f.getAbsolutePath() + ext;
 				f = new File(correctedFilename);
 			}
-
-			if (isSizeChanged(c)) {
-				image = resizeImage(image);
-			}
+			
+			image = GraphicsUtil.resizeImage(image,
+					imageInfo.getWidth(), imageInfo.getHeight());
 
 			writeImage(image, ext, f);
 		}
-	}
-
-	private static boolean isSizeChanged(Component c) {
-		if (imageInfo.getWidth() != c.getWidth()
-				|| imageInfo.getHeight() != c.getHeight()) {
-			return true;
-		}
-
-		return false;
-	}
+	} 
 
 	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
 		Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
@@ -172,25 +162,6 @@ public class ExportDialog implements ExportConstants {
 		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getYResolution()));
 		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
-	}
-
-	private static BufferedImage getDeviceCompatibleImage(int width, int height) {
-		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
-		GraphicsConfiguration graphicConfiguration = screenDevice.getDefaultConfiguration();
-		BufferedImage image = graphicConfiguration.createCompatibleImage(width, height);
-
-		return image;
-	}
-
-	private static BufferedImage resizeImage(BufferedImage originalImage) {
-		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-		BufferedImage resizedImage = new BufferedImage(imageInfo.getWidth(), imageInfo.getHeight(), type);
-		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(originalImage, 0, 0, imageInfo.getWidth(), imageInfo.getHeight(), null);
-		g.dispose();
-
-		return resizedImage;
 	}
 
 	public static File changeFileExtension(File file, String extension) {

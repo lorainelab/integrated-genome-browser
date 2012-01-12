@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
  */
 public abstract class PrefsLoader {
 
-	private static final int CURRENT_PREF_VERSION = 3;
+	private static final int CURRENT_PREF_VERSION = 2;
 	private static boolean prefsLoaded = false;
 	private static final String user_dir = System.getProperty("user.dir");
 	private static final String user_home = System.getProperty("user.home");
@@ -44,6 +44,8 @@ public abstract class PrefsLoader {
 	 *  there.
 	 */
 	private static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
+	// optional file to customize menu
+	private static final String PREFS_MENU_RESOURCE = "/igb_menu_prefs.xml";
 	static String default_user_prefs_files =
 			(new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath()
 			+ ";"
@@ -66,6 +68,7 @@ public abstract class PrefsLoader {
 
 		LoadDefaultPrefsFromJar(prefsMode);
 		LoadDefaultAPIPrefsFromJar(prefsMode);
+		LoadMenuPrefsFromJar(prefsMode);
 		LoadWebPrefs(def_prefs_url, prefsMode);
 		LoadFileOrURLPrefs(prefs_list, prefsMode);
 		ServerList.getServerInstance().loadServerPrefs();
@@ -107,9 +110,11 @@ public abstract class PrefsLoader {
 		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
 			default_prefs_stream = IGB.class.getResourceAsStream(fileName);
-			System.out.println("loading default User preferences from: " + fileName);
-			default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
-			Preferences.importPreferences(default_prefs_stream);
+			if (default_prefs_stream != null) {
+				System.out.println("loading default User preferences from: " + fileName);
+				default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
+				Preferences.importPreferences(default_prefs_stream);
+			}
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
 			System.out.println("Problem parsing prefs from: " + fileName);
@@ -121,6 +126,15 @@ public abstract class PrefsLoader {
 
 	private static void LoadDefaultAPIPrefsFromJar(String prefsMode) {
 		LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_API_RESOURCE, "keystrokes", prefsMode);
+	}
+
+	private static void LoadMenuPrefsFromJar(String prefsMode) {
+		Preferences mainMenuPrefs = PreferenceUtils.getAltNode(PreferenceUtils.MENU_NODE_NAME);
+		try {
+			mainMenuPrefs.removeNode();
+		}
+		catch(BackingStoreException x) {}
+		LoadDefaultExtraPrefsFromJar(PREFS_MENU_RESOURCE, null, prefsMode);
 	}
 
 	private static void LoadWebPrefs(String def_prefs_url, String prefsMode) {
@@ -225,7 +239,6 @@ public abstract class PrefsLoader {
 	 * Checks the version of the preferences file.  This function is also
 	 * responsible for updating older preference files to the current version.
 	 */
-	public static final String V3_PREFS_MENU_RESOURCE = "/igb_v3_menu_prefs.xml";
 	@SuppressWarnings("fallthrough")
 	private static void checkPrefsVersion() {
 		int version = PreferenceUtils.getTopNode().getInt("version", 0);
@@ -239,13 +252,6 @@ public abstract class PrefsLoader {
 				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 1 to version 2");
 
 				ServerList.getServerInstance().updateServerURLsInPrefs();
-
-				/* continue */
-			case 2:
-				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 2 to version 3");
-
-				LoadDefaultExtraPrefsFromJar(V3_PREFS_MENU_RESOURCE, null, null);
-				/* add future version checks here */
 
 				/* this always should occur in version n-1 */
 				version = CURRENT_PREF_VERSION; /* change this number to current prefs version */

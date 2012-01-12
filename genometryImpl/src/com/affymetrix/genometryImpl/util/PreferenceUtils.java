@@ -58,6 +58,7 @@ import com.affymetrix.common.CommonUtils;
 public abstract class PreferenceUtils {
 
 	public static final String PREFS_MAIN = "/com/affymetrix";
+	public static final String MENU_NODE_NAME = "main_menu";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
 	public static final String CONFIRM_BEFORE_DELETE = "Confirm before delete";
@@ -87,6 +88,10 @@ public abstract class PreferenceUtils {
 	 */
 	public static Preferences getTopNode() {
 		return Preferences.userRoot().node(PREFS_MAIN + "/" + prefs_mode);
+	}
+
+	public static Preferences getAltNode(String name) {
+		return Preferences.userRoot().node(PREFS_MAIN + "/" + name);
 	}
 
 	public static Preferences getKeystrokesNode() {

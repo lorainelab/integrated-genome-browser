@@ -95,7 +95,6 @@ public class ExportDialogGUI extends JPanel {
         xSpinner = export.xSpinner;
         ySpinner = export.ySpinner;
         resetButton = new javax.swing.JButton();
-        applyButton = new javax.swing.JButton();
         previewPanel = new javax.swing.JPanel();
         previewLabel = export.previewLabel;
         chooseViewPanel = new javax.swing.JPanel();
@@ -160,13 +159,6 @@ public class ExportDialogGUI extends JPanel {
             }
         });
 
-        applyButton.setText("Apply");
-        applyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyButtonActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout imageSizePanelLayout = new org.jdesktop.layout.GroupLayout(imageSizePanel);
         imageSizePanel.setLayout(imageSizePanelLayout);
         imageSizePanelLayout.setHorizontalGroup(
@@ -186,34 +178,30 @@ public class ExportDialogGUI extends JPanel {
                     .add(xLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(20, 20, 20)
-                        .add(applyButton))
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(xSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(20, 20, 20)
-                        .add(resetButton))))
+                    .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(xSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(resetButton)
+                .add(3, 3, 3))
         );
-
-        imageSizePanelLayout.linkSize(new java.awt.Component[] {applyButton, resetButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
         imageSizePanelLayout.setVerticalGroup(
             imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(imageSizePanelLayout.createSequentialGroup()
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(widthLabel)
-                    .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(xLabel)
                     .add(xSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(resetButton))
+                    .add(xLabel)
+                    .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(widthLabel))
                 .add(5, 5, 5)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(heightSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(heightLabel)
                     .add(yLabel)
-                    .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(applyButton)))
+                    .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, imageSizePanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(resetButton)
+                .addContainerGap())
         );
 
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
@@ -336,7 +324,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(chooseViewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
+                .add(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -353,7 +341,10 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-		try {
+		try {		
+			export.imageInfo.setWidth((Integer) widthSpinner.getValue());
+			export.imageInfo.setHeight((Integer) heightSpinner.getValue());
+			
 			if (export.okButtonActionPerformed()) {
 				static_frame.setVisible(false);
 			}
@@ -369,14 +360,6 @@ public class ExportDialogGUI extends JPanel {
 	private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
 		export.heightSpinnerStateChanged();
 	}//GEN-LAST:event_heightSpinnerStateChanged
-
-	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
-		int width = (Integer) widthSpinner.getValue();
-		int height = (Integer) heightSpinner.getValue();
-		int x = (Integer) xSpinner.getValue();
-		int y = (Integer) ySpinner.getValue();
-		ExportDialog.imageInfo.reset(width, height, x, y);
-	}//GEN-LAST:event_applyButtonActionPerformed
 
 	private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
 		export.resetButtonActionPerformed();
@@ -404,7 +387,6 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_wfRadioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyButton;
     private javax.swing.JButton browseButton;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton cancelButton;

@@ -63,7 +63,7 @@
               <Component id="chooseViewPanel" min="-2" pref="76" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Component id="previewPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -136,17 +136,12 @@
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="ySpinner" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="applyButton" linkSize="4" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="xSpinner" min="-2" pref="88" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="resetButton" linkSize="4" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="ySpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
+                      <Component id="xSpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="resetButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -154,11 +149,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="widthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="widthSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="xLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="xSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="resetButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="xLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="widthSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="widthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
@@ -166,8 +160,12 @@
                       <Component id="heightLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="yLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="ySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="applyButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="resetButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -225,14 +223,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="applyButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Apply"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

@@ -295,20 +295,27 @@ public class ExportDialog implements ExportConstants {
 			filePathTextField.grabFocus();
 			return false;
 		}
-
+		
 		File file = new File(path);
 		exportScreenshot(file, ext);
 
-		// Save settings to preference
-		exportNode.put(PREF_FILE, file.getName());
-		exportNode.put(PREF_DIR, directory.getAbsolutePath());
-		exportNode.put(PREF_EXT, extComboBox.getSelectedItem().toString());
-		exportNode.putInt(PREF_X, imageInfo.getXResolution());
-		exportNode.putInt(PREF_Y, imageInfo.getYResolution());
-
+		saveToPref(file.getName(), directory.getAbsolutePath(), 
+				extComboBox.getSelectedItem().toString(), 
+				imageInfo.getXResolution(),
+				imageInfo.getYResolution());
+		
 		return true;
 	}
-
+	
+	private void saveToPref(String file, String directory, String ext, int x, int y)
+	{
+		exportNode.put(PREF_FILE, file);
+		exportNode.put(PREF_DIR, directory);
+		exportNode.put(PREF_EXT, ext);
+		exportNode.putInt(PREF_X, x);
+		exportNode.putInt(PREF_Y, y);
+	}
+			
 	public void resetButtonActionPerformed() {
 		widthSpinner.setValue(originalInfo.getWidth());
 		heightSpinner.setValue(originalInfo.getHeight());

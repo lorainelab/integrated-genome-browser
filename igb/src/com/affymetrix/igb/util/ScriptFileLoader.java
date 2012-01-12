@@ -302,7 +302,7 @@ public class ScriptFileLoader {
 			return;
 		}
 
-		if (ExportDialog.isExt(ext)) {
+		if (!ExportDialog.isExt(ext)) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "image file extension {0} is not supported", ext);
 			return;

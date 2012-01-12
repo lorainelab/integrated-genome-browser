@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.net.URL;
+
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -76,6 +78,12 @@ public class LocalFilesServerType implements ServerTypeI {
 
 	@Override
 	public boolean canHandleFeature() {
+		return false;
+	}
+
+	@Override
+	public boolean getSpeciesAndVersions(GenericServer gServer,
+			GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
 		return false;
 	}
 }

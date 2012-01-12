@@ -1,5 +1,8 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.net.URL;
+import java.util.List;
+
 import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -31,4 +34,5 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	public void discoverChromosomes(Object versionSourceObj);
 	public boolean hasFriendlyURL();
 	public boolean canHandleFeature();
+	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer);
 }

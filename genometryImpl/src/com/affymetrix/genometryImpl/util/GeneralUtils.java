@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import net.sf.image4j.codec.ico.ICOImage;
 import net.sf.samtools.util.BlockCompressedInputStream;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 
 public final class GeneralUtils {
 	public static final String UTF8 = "UTF-8";
@@ -517,5 +519,14 @@ public final class GeneralUtils {
 			File f = new File(fixFileName(url));
 			return f.exists();
 		}
+	}
+
+	/**
+	 * Private copy of the default Synonym lookup
+	 * @see SynonymLookup#getDefaultLookup()
+	 */
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+	public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
+		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
 	}
 }

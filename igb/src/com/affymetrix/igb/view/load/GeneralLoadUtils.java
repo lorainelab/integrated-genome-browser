@@ -27,21 +27,17 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
+import com.affymetrix.genometryImpl.das.DasServerType;
+import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasServerType;
-import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2ServerType;
-import com.affymetrix.genometryImpl.das2.Das2Source;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -57,8 +53,7 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
+import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -199,6 +194,20 @@ public final class GeneralLoadUtils {
 		}
 	}
 
+	private static final VersionDiscoverer versionDiscoverer = new VersionDiscoverer() {
+		@Override
+		public GenericVersion discoverVersion(String versionID,
+				String versionName, GenericServer gServer,
+				Object versionSourceObj, String speciesName) {
+			return GeneralLoadUtils.discoverVersion(versionID, versionName, gServer, versionSourceObj, speciesName);
+		}
+
+		@Override
+		public String versionName2Species(String versionName) {
+			return versionName2species.get(versionName);
+		}
+	};
+
 	public static boolean discoverServer(GenericServer gServer) {
 		if (gServer.isPrimary()) {
 			return true;
@@ -213,18 +222,10 @@ public final class GeneralLoadUtils {
 				// should never happen
 				return false;
 			}
-			if (gServer.serverType == ServerTypeI.QuickLoad) {
-				if (!getQuickLoadSpeciesAndVersions(gServer)) {
-					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					return false;
-				}
-			} else if (gServer.serverType == ServerTypeI.DAS) {
-				if (!getDAS1SpeciesAndVersions(gServer)) {
-					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-					return false;
-				}
-			} else if (gServer.serverType == ServerTypeI.DAS2) {
-				if (!getDAS2SpeciesAndVersions(gServer)) {
+			if (gServer.serverType != null) {
+				GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
+				URL primaryURL = getServerDirectory(gServer.URL);
+				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
@@ -233,119 +234,6 @@ public final class GeneralLoadUtils {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Discover species from DAS
-	 * @param gServer
-	 * @return false if there's an obvious problem
-	 */
-	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
-		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-		URL primaryURL = getServerDirectory(gServer.URL);
-		if (primaryURL == null) {
-			try {
-				primaryURL = new URL(gServer.URL);
-				primaryServer = null;
-			}
-			catch (MalformedURLException x) {
-				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, "cannot load URL " + gServer.URL + " for DAS server " + gServer.serverName, x);
-			}
-		}
-		Map<String, DasSource> sources = server.getDataSources(primaryURL, primaryServer);
-		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-			System.out.println("WARNING: Couldn't find species for server: " + gServer);
-			return false;
-		}
-		for (DasSource source : sources.values()) {
-			String speciesName = SpeciesLookup.getSpeciesName(source.getID());
-			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
-			String versionID = source.getID();
-			discoverVersion(versionID, versionName, gServer, source, speciesName);
-		}
-		return true;
-	}
-
-	/**
-	 * Discover genomes from DAS/2
-	 * @param gServer
-	 * @return false if there's an obvious problem
-	 */
-	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
-		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		URL primaryURL = getServerDirectory(gServer.URL);
-		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-		Map<String, Das2Source> sources = server.getSources(primaryURL, primaryServer);
-		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-			System.out.println("WARNING: Couldn't find species for server: " + gServer);
-			return false;
-		}
-		for (Das2Source source : sources.values()) {
-			String speciesName = SpeciesLookup.getSpeciesName(source.getName());
-
-			// Das/2 has versioned sources.  Get each version.
-			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
-				String versionID = versionSource.getName();
-				discoverVersion(versionID, versionName, gServer, versionSource, speciesName);
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Discover genomes from Quickload
-	 * @param gServer
-	 * @param loadGenome boolean to check load genomes from server.
-	 * @return false if there's an obvious failure.
-	 */
-	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
-		URL quickloadURL = null;
-		try {
-			quickloadURL = new URL((String) gServer.serverObj);
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		}
-		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-		URL primaryURL = getServerDirectory(gServer.URL);
-		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
-
-		if (quickloadServer == null) {
-			System.out.println("ERROR: No quickload server model found for server: " + gServer);
-			return false;
-		}
-		List<String> genomeList = quickloadServer.getGenomeNames();
-		if (genomeList == null || genomeList.isEmpty()) {
-			System.out.println("WARNING: No species found in server: " + gServer);
-			return false;
-		}
-
-		//update species.txt with information from the server.
-		if( quickloadServer.hasSpeciesTxt()){
-			try {
-				SpeciesLookup.load(quickloadServer.getSpeciesTxt());
-			} catch (IOException ex) {
-				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "No species.txt found at this quickload server.", ex);
-			}
-		}
-		for (String genomeID : genomeList) {
-			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
-			String versionName, speciesName;
-			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
-			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getEnabledVersions();
-			if (!gVersions.isEmpty()) {
-				// We've found a corresponding version object that was initialized earlier.
-				versionName = getPreferredVersionName(gVersions);
-				speciesName = versionName2species.get(versionName);
-			} else {
-				versionName = genomeName;
-				speciesName = SpeciesLookup.getSpeciesName(genomeName);
-			}
-			discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
 	}
@@ -974,10 +862,6 @@ public final class GeneralLoadUtils {
 //		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
 
 		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
-	}
-
-	public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
-		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
 	}
 
 	/**

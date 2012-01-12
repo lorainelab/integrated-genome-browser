@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
@@ -434,7 +435,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			createUnknownVersion(group);
 			return;
 		}
-		final String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
+		final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
 		if (versionName == null) {
 			System.out.println("ERROR -- couldn't find version");
 			return;
@@ -547,7 +548,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		if (!(GeneralLoadUtils.getPreferredVersionName(gVersions).equals(versionName))) {
+		if (!(GeneralUtils.getPreferredVersionName(gVersions).equals(versionName))) {
 			/*System.out.println("ERROR - versions don't match: " + versionName + "," +
 			GeneralLoadUtils.getPreferredVersionName(gVersions));*/
 			return;
@@ -812,7 +813,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		if (gVersions == null || gVersions.isEmpty()) {
 			return;
 		}
-		final String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
+		final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
 		if (versionName == null || GeneralLoadUtils.getVersionName2Species().get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
 			return;
 		}

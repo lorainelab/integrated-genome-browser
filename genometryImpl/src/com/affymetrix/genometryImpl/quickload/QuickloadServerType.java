@@ -1,21 +1,34 @@
 package com.affymetrix.genometryImpl.quickload;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class QuickloadServerType implements ServerTypeI {
 	private static final String name = "Quickload";
 	public static final int ordinal = 30;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	/**
+	 * Private copy of the default Synonym lookup
+	 * @see SynonymLookup#getDefaultLookup()
+	 */
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	/** For files too be looked up on server. **/
 	private static final Set<String> quickloadFiles = new HashSet<String>();
 
@@ -156,5 +169,58 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public boolean canHandleFeature() {
 		return false;
+	}
+	/**
+	 * Discover genomes from Quickload
+	 * @param gServer
+	 * @param loadGenome boolean to check load genomes from server.
+	 * @return false if there's an obvious failure.
+	 */
+	@Override
+	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+		URL quickloadURL = null;
+		try {
+			quickloadURL = new URL((String) gServer.serverObj);
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+			return false;
+		}
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
+
+		if (quickloadServer == null) {
+			System.out.println("ERROR: No quickload server model found for server: " + gServer);
+			return false;
+		}
+		List<String> genomeList = quickloadServer.getGenomeNames();
+		if (genomeList == null || genomeList.isEmpty()) {
+			System.out.println("WARNING: No species found in server: " + gServer);
+			return false;
+		}
+
+		//update species.txt with information from the server.
+		if( quickloadServer.hasSpeciesTxt()){
+			try {
+				SpeciesLookup.load(quickloadServer.getSpeciesTxt());
+			} catch (IOException ex) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "No species.txt found at this quickload server.", ex);
+			}
+		}
+		for (String genomeID : genomeList) {
+			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
+			String versionName, speciesName;
+			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
+			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getEnabledVersions();
+			if (!gVersions.isEmpty()) {
+				// We've found a corresponding version object that was initialized earlier.
+				versionName = GeneralUtils.getPreferredVersionName(gVersions);
+//				speciesName = versionName2species.get(versionName);
+				speciesName = versionDiscoverer.versionName2Species(versionName);
+			} else {
+				versionName = genomeName;
+				speciesName = SpeciesLookup.getSpeciesName(genomeName);
+			}
+			versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
+		}
+		return true;
 	}
 }

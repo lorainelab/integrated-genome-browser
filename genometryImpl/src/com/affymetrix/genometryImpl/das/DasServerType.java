@@ -9,12 +9,16 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class DasServerType implements ServerTypeI {
 	/** boolean to indicate should script continue to run if error occurs **/
@@ -22,6 +26,12 @@ public class DasServerType implements ServerTypeI {
 	private static final String dsn = "dsn.xml";
 	private static final String name = "DAS";
 	public static final int ordinal = 20;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	/**
+	 * Private copy of the default Synonym lookup
+	 * @see SynonymLookup#getDefaultLookup()
+	 */
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final DasServerType instance = new DasServerType();
 	public static DasServerType getInstance() {
 		return instance;
@@ -188,6 +198,37 @@ public class DasServerType implements ServerTypeI {
 
 	@Override
 	public boolean canHandleFeature() {
+		return true;
+	}
+
+	/**
+	 * Discover species from DAS
+	 * @param gServer
+	 * @return false if there's an obvious problem
+	 */
+	@Override
+	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+		DasServerInfo server = (DasServerInfo) gServer.serverObj;
+		if (primaryURL == null) {
+			try {
+				primaryURL = new URL(gServer.URL);
+				primaryServer = null;
+			}
+			catch (MalformedURLException x) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot load URL " + gServer.URL + " for DAS server " + gServer.serverName, x);
+			}
+		}
+		Map<String, DasSource> sources = server.getDataSources(primaryURL, primaryServer);
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
+			System.out.println("WARNING: Couldn't find species for server: " + gServer);
+			return false;
+		}
+		for (DasSource source : sources.values()) {
+			String speciesName = SpeciesLookup.getSpeciesName(source.getID());
+			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
+			String versionID = source.getID();
+			versionDiscoverer.discoverVersion(versionID, versionName, gServer, source, speciesName);
+		}
 		return true;
 	}
 }

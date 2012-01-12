@@ -2,12 +2,14 @@ package com.affymetrix.genometryImpl.das2;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -15,10 +17,19 @@ import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class Das2ServerType implements ServerTypeI {
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	/**
+	 * Private copy of the default Synonym lookup
+	 * @see SynonymLookup#getDefaultLookup()
+	 */
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	/** For files too be looked up on server. **/
 	private static final Set<String> das2Files = new HashSet<String>();
 
@@ -193,6 +204,32 @@ public class Das2ServerType implements ServerTypeI {
 
 	@Override
 	public boolean canHandleFeature() {
+		return true;
+	}
+
+	/**
+	 * Discover genomes from DAS/2
+	 * @param gServer
+	 * @return false if there's an obvious problem
+	 */
+	@Override
+	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+		Map<String, Das2Source> sources = server.getSources(primaryURL, primaryServer);
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
+			System.out.println("WARNING: Couldn't find species for server: " + gServer);
+			return false;
+		}
+		for (Das2Source source : sources.values()) {
+			String speciesName = SpeciesLookup.getSpeciesName(source.getName());
+
+			// Das/2 has versioned sources.  Get each version.
+			for (Das2VersionedSource versionSource : source.getVersions().values()) {
+				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
+				String versionID = versionSource.getName();
+				versionDiscoverer.discoverVersion(versionID, versionName, gServer, versionSource, speciesName);
+			}
+		}
 		return true;
 	}
 }

@@ -1,13 +1,13 @@
 
 package com.affymetrix.igb.action;
 
-import java.text.MessageFormat;
 import java.awt.Component;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
  * @author hiralv
+ * Modified by nick
  */
 public class ExportSequenceViewerAction extends ExportComponentAction{
 	private static final long serialVersionUID = 1l;
@@ -25,6 +25,6 @@ public class ExportSequenceViewerAction extends ExportComponentAction{
 
 	@Override
 	public String getText() {
-		return MessageFormat.format("{0} {1}",BUNDLE.getString("export"),BUNDLE.getString("mainView"));
+		return BUNDLE.getString("exportImage");
 	}
 }

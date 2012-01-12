@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.action.ExportSlicedViewAction;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -303,7 +302,7 @@ public class ScriptFileLoader {
 			return;
 		}
 
-		if (ExportDialog.isExt(ext)) {
+		if (!ExportDialog.isExt(ext)) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "image file extension {0} is not supported", ext);
 			return;
@@ -322,11 +321,12 @@ public class ScriptFileLoader {
 					c = IGB.getSingleton().getMapView().getSeqMap();
 					break;
 				case SLICEDWITHLABELS:
-					c = ExportSlicedViewAction.getAction().determineSlicedComponent();
+					c = ExportDialog.determineSlicedComponent();
 					break;
 			}
-			ExportDialog.initImageInfo(c);
-			ExportDialog.exportScreenshot(c, f, ext);
+			ExportDialog.setComponent(c);
+			ExportDialog.initImageInfo();
+			ExportDialog.exportScreenshot(f, ext);
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}

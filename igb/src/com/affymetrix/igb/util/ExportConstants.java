@@ -16,8 +16,8 @@ public interface ExportConstants {
 	static final String PREF_Y = "Y"; // Vertical Resolution
 	static final String[] EXTENSION = {".jpeg", ".png"};
 	static final String[] DESCRIPTION = {
-		"Joint Photographic Experts Group Files (*.jpeg)",
-		"Portable Network Graphics Files (*.png)"
+		"Joint Photographic Experts Group (*.jpeg)",
+		"Portable Network Graphics (*.png)"
 	};
 	static final String DEFAULT_FILE = "export.jpeg";
 }
@@ -35,6 +35,14 @@ class ImageInfo {
 	}
 
 	ImageInfo(int w, int h, int x, int y) {
+		width = w;
+		height = h;
+		xResolution = x;
+		yResolution = y;
+	}
+	
+	public void reset(int w, int h, int x, int y)
+	{
 		width = w;
 		height = h;
 		xResolution = x;

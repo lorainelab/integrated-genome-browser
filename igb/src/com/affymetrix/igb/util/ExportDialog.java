@@ -46,8 +46,8 @@ public class ExportDialog implements ExportConstants {
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
 	JTextField filePathTextField = new JTextField();
-	JSpinner heightSpinner = new JSpinner();
-	JSpinner widthSpinner = new JSpinner();
+	static JSpinner heightSpinner = new JSpinner();
+	static JSpinner widthSpinner = new JSpinner();
 	JSpinner xSpinner = new JSpinner();
 	JSpinner ySpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
@@ -79,7 +79,7 @@ public class ExportDialog implements ExportConstants {
 		filePathTextField.setText(exportDirectory.getAbsolutePath()
 				+ "/" + exportFile.getName());
 
-		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[0]));
+		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
 		extComboBox.setSelectedItem(type);
 
 		SpinnerModel sm = new SpinnerNumberModel(imageInfo.getWidth(), 0, 10000, 1);
@@ -94,6 +94,8 @@ public class ExportDialog implements ExportConstants {
 
 	public static void setComponent(Component c) {
 		component = c;
+		
+		initImageInfo();
 	}
 
 	public static void initImageInfo() {
@@ -106,6 +108,9 @@ public class ExportDialog implements ExportConstants {
 
 		originalInfo = new ImageInfo(imageInfo.getWidth(), imageInfo.getHeight(),
 				imageInfo.getXResolution(), imageInfo.getYResolution());
+		
+		widthSpinner.setValue(component.getWidth());
+		heightSpinner.setValue(component.getHeight());
 	}
 
 	public static String getFileExtension(String filePath) {

@@ -37,7 +37,6 @@ public class ExportDialogGUI extends JPanel {
 		}
 
 		chooseViewPanel.setVisible(!isSequenceViewer);
-		export.initImageInfo();
 
 		if (static_frame == null) {
 			export.init();

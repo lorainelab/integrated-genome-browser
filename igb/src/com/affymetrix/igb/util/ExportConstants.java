@@ -19,7 +19,7 @@ public interface ExportConstants {
 		"Joint Photographic Experts Group (*.jpeg)",
 		"Portable Network Graphics (*.png)"
 	};
-	static final String DEFAULT_FILE = "export.jpeg";
+	static final String DEFAULT_FILE = "export.png";
 }
 
 class ImageInfo {

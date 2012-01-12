@@ -138,8 +138,11 @@
 		<foreach target="bundle-copy" parallel="true" inheritall="true" param="jar_name" list="${copy.lib}"/>
 	</target>
 
-	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
-		<iterate target="jar" />
+	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
+		<parallel>
+			<iterate target="jar" />
+			<antcall target="copy-bundles" inheritAll="true" inheritRefs="true" />
+		</parallel>
 	</target>
 
 	<target name="webstart" depends="exe" description="Create webstart-compatible IGB jars">
@@ -409,7 +412,14 @@
 		</java>
 	</target>
 
-	<target name="classpath" depends="cbc, compile, copy-bundles, bundles_properties" >
+	<target name="comp-copy" description="compile and copy bundles">
+		<parallel>
+			<antcall target="compile" inheritAll="true" inheritRefs="true" />
+			<antcall target="copy-bundles" inheritAll="true" inheritRefs="true" />
+		</parallel>
+	</target>
+	
+	<target name="classpath" depends="cbc, comp-copy, bundles_properties" >
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />

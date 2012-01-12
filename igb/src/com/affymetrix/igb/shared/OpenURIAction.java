@@ -67,7 +67,7 @@ public abstract class OpenURIAction extends GenericAction {
 		if (SELECT_SPECIES.equals(speciesName)) {
 			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
-		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, false);
+		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);
 
 		return true;
 	}

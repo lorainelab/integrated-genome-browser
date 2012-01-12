@@ -24,7 +24,7 @@ public class ExportImageAction extends GenericAction {
 		super.actionPerformed(e);
 
 		try {
-			ExportDialogGUI.getSingleton().display();
+			ExportDialogGUI.getSingleton().display(false);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

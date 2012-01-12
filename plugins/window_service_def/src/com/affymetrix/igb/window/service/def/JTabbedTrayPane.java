@@ -305,7 +305,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			tab_pane.setSelectedIndex(1);
 		}
 	}
-	
+
 
 	/**
 	 * put the tray in the RETRACT tray state
@@ -435,14 +435,27 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	public void removeTab(final IGBTabPanel plugin) {
 		plugin.setTrayRectangle(plugin.getBounds());
 		String name = plugin.getName();
+		boolean selectedTabRemoved = false;
 		for (int i = 1; i < tab_pane.getTabCount(); i++) {
 			if (name.equals(((IGBTabPanel) tab_pane.getComponentAt(i)).getName())) {
+				if (tab_pane.getSelectedIndex() == i) {
+					selectedTabRemoved = true;
+				}
 				tab_pane.remove(i);
 				tab_pane.validate();
+				break;
 			}
 		}
 		if (tab_pane.getTabCount() == 1) {
 			hideTray();
+		}
+		else if (selectedTabRemoved) {
+			for (int i = 1; i < tab_pane.getTabCount(); i++) {
+				if (((IGBTabPanel) tab_pane.getComponentAt(i)).isFocus()) {
+					tab_pane.setSelectedIndex(i);
+					break;
+				}
+			}
 		}
 	}
 

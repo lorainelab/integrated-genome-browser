@@ -105,36 +105,16 @@
                                     <entry key="item" value="PrintAction" />
                                 </map>
                             </node>
-                            <node name="m01_07_print_frame">
+                            <node name="m01_06_print_frame">
                                 <map>
                                     <entry key="item" value="PrintFrameAction" />
                                 </map>
                             </node>
-                            <node name="m01_07_export_menu">
-                                <map>
-                                    <entry key="menu" value="export" />
-                                </map>
-                                <node name="m01_07_01_export_main_view">
-                                    <map>
-                                        <entry key="item" value="ExportMainViewAction" />
-                                    </map>
-                                </node>
-                                <node name="m01_07_02_export_labelled_main_view">
-                                    <map>
-                                        <entry key="item" value="ExportLabelledMainViewAction" />
-                                    </map>
-                                </node>
-                                <node name="m01_07_03_export_whole_frame">
-                                    <map>
-                                        <entry key="item" value="ExportWholeFrameAction" />
-                                    </map>
-                                </node>
-                                <node name="m01_07_04_export_sliced_view">
-                                    <map>
-                                        <entry key="item" value="ExportSlicedViewAction" />
-                                    </map>
-                                </node>
-                            </node>
+							<node name="m01_07_export_image">
+								<map>
+									<entry key="item" value="ExportImageAction" />
+								</map>
+							</node>
                             <node name="m01_08_separator">
                                 <map>
                                     <entry key="separator" value="true" />

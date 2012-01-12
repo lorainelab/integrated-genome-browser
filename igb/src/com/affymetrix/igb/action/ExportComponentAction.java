@@ -23,7 +23,7 @@ public abstract class ExportComponentAction extends GenericAction {
 		}
 
 		try {
-			ExportDialogGUI.getSingleton().display(component);
+			ExportDialogGUI.getSingleton().display();
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

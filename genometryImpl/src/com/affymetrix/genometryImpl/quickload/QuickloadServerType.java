@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -14,15 +15,20 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
@@ -30,10 +36,16 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class QuickloadServerType implements ServerTypeI {
+	enum QFORMAT{
+		BNIB,
+		VTWOBIT,
+		TWOBIT,
+		FA
+	};
 	private static final boolean DEBUG = false;
 	private static final String quickloadGenomeError = "QuickLoad site {0} does not have a genome description file (genome.txt) for {1} genome version {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
 	private static final String name = "Quickload";
-	public static final int ordinal = 30;
+	public static final int ordinal = 20;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<QuickLoadSymLoaderHook>();
 	/**
@@ -289,6 +301,128 @@ public class QuickloadServerType implements ServerTypeI {
 
 	@Override
 	public boolean isAuthOptional() {
+		return false;
+	}
+
+	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
+	private String generateQuickLoadURI(String common_url, String vPath, QFORMAT Format) {
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "trying to load residues via Quickload");
+		switch(Format)
+		{
+			case BNIB:
+				common_url += "bnib";
+				break;
+
+			case FA:
+				common_url += "fa";
+				break;
+
+			case VTWOBIT:
+				common_url = vPath;
+				break;
+
+			case TWOBIT:
+				common_url += "2bit";
+				break;
+
+		}
+
+		return common_url;
+	}
+
+	private QFORMAT determineFormat(String common_url, String vPath){
+
+		for(QFORMAT format : QFORMAT.values()){
+			String url_path = generateQuickLoadURI(common_url,vPath,format);
+			if(LocalUrlCacher.isValidURL(url_path)){
+				Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+							"  Quickload location of bnib file: {0}", url_path);
+
+				return format;
+			}
+		}
+
+		return null;
+	}
+
+	private SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group, String seq_name){
+		QFORMAT format = determineFormat(common_url, vPath);
+
+		if(format == null)
+			return null;
+
+		URI uri = null;
+		try {
+			uri = new URI(generateQuickLoadURI(common_url, vPath, format));
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		}
+
+		switch(format){
+			case BNIB:
+				return new BNIB(uri, "", seq_group);
+
+			case VTWOBIT:
+				return new TwoBit(uri, seq_group, seq_name);
+
+			case TWOBIT:
+				return new TwoBit(uri, "", seq_group);
+
+//			case FA:
+//				return new Fasta(uri, seq_group);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the partial residues from the specified QuickLoad server.
+	 * @param seq_group
+	 * @param path
+	 * @param root_url
+	 * @param span
+	 * @return residue String.
+	 */
+
+	private String GetQuickLoadResidues(
+			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
+		String common_url = "";
+		String path = "";
+		SymLoader symloader;
+		try {
+			URL quickloadURL = new URL((String) server.serverObj);
+			QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+			path = quickloadServer.getPath(version.versionName, seq_name);
+			common_url = root_url + path + ".";
+			String vPath = root_url + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit";
+
+			symloader = determineLoader(common_url, vPath, seq_group, seq_name);
+
+			if (symloader != null) {
+				return symloader.getRegionResidues(span);
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean getResidues(GenericServer server,
+			List<GenericVersion> versions, String genomeVersionName,
+			BioSeq aseq, int min, int max, SeqSpan span) {
+		String seq_name = aseq.getID();
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
+			String residues = GetQuickLoadResidues(server, version, seq_group, seq_name, server.URL, span, aseq);
+			if (residues != null) {
+				BioSeq.addResiduesToComposition(aseq, residues, span);
+				return true;
+			}
+		}
 		return false;
 	}
 }

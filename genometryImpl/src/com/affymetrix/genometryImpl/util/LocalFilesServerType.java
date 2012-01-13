@@ -2,7 +2,9 @@ package com.affymetrix.genometryImpl.util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -99,6 +101,13 @@ public class LocalFilesServerType implements ServerTypeI {
 
 	@Override
 	public boolean isAuthOptional() {
+		return false;
+	}
+
+	@Override
+	public boolean getResidues(GenericServer server,
+			List<GenericVersion> versions, String genomeVersionName,
+			BioSeq aseq, int min, int max, SeqSpan span) {
 		return false;
 	}
 }

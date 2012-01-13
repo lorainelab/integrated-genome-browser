@@ -1,8 +1,10 @@
 package com.affymetrix.genometryImpl.das2;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -18,6 +20,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -25,8 +28,10 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
@@ -47,6 +52,11 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class Das2ServerType implements ServerTypeI {
+	enum FORMAT {
+		BNIB,
+		RAW,
+		FASTA
+	};
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -532,5 +542,181 @@ public class Das2ServerType implements ServerTypeI {
 	@Override
 	public boolean isAuthOptional() {
 		return true;
+	}
+
+	// try loading via DAS/2 server that genome was originally modeled from
+	private boolean LoadResiduesFromDAS2(BioSeq aseq, AnnotatedSeqGroup seq_group, String uri) {
+		InputStream istr = null;
+		BufferedReader buff = null;
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			istr = LocalUrlCacher.getInputStream(uri, true, headers);
+			String content_type = headers.get("content-type");
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+						"    response content-type: {0}", content_type);
+			if (istr == null || content_type == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.FINE, "  Improper response from DAS/2; aborting DAS/2 residues loading.");
+				return false;
+			}
+			if(content_type.equals("text/raw"))
+			{
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in raw format, parsing...");
+				buff = new BufferedReader(new InputStreamReader(istr));
+				aseq.setResidues(buff.readLine());
+				return true;
+			}
+
+			if (content_type.equals(NibbleResiduesParser.getMimeType())) {
+				// check for bnib format
+				// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in bnib format, parsing...");
+				NibbleResiduesParser.parse(istr, seq_group);
+				return true;
+			}
+
+			if (content_type.equals(FastaParser.getMimeType())) {
+				// check for fasta format
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in fasta format, parsing...");
+				FastaParser.parseSingle(istr, seq_group);
+				return true;
+			}
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "   response is not in accepted format, aborting DAS/2 residues loading");
+			return false;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(buff);
+			GeneralUtils.safeClose(istr);
+		}
+
+		return false;
+	}
+
+	// try loading via DAS/2 server
+	private String GetPartialFASTADas2Residues(String uri) {
+		InputStream istr = null;
+		BufferedReader buff = null;
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			istr = LocalUrlCacher.getInputStream(uri, true, headers);
+			// System.out.println(headers);
+			String content_type = headers.get("content-type");
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE,
+						"    response content-type: {0}", content_type);
+			if (istr == null || content_type == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.FINE, "  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
+				return null;
+			}
+
+			if(content_type.equals("text/raw"))
+			{
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in raw format, parsing...");
+				buff = new BufferedReader(new InputStreamReader(istr));
+				return buff.readLine();
+			}
+
+			if (content_type.equals(FastaParser.getMimeType())) {
+				// check for fasta format
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "   response is in fasta format, parsing...");
+				return FastaParser.parseResidues(istr);
+			}
+
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "   response is not in accepted format, aborting DAS/2 residues loading");
+			return null;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(buff);
+			GeneralUtils.safeClose(istr);
+		}
+
+		return null;
+	}
+
+	private boolean loadDAS2Residues(BioSeq aseq, String uri, SeqSpan span, boolean partial_load) {
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		if (partial_load) {
+			String residues = GetPartialFASTADas2Residues(uri);
+			if (residues != null) {
+				BioSeq.addResiduesToComposition(aseq, residues, span);
+				return true;
+			}
+		}
+		else {
+			if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
+				BioSeq.addResiduesToComposition(aseq);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")
+	private String generateDas2URI(String URL, String genomeVersionName,
+			String segmentName, int min, int max, FORMAT Format) {
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "trying to load residues via DAS/2");
+		String uri = URL + "/" + genomeVersionName + "/" + segmentName + "?format=";
+		switch(Format)
+		{
+			case RAW:
+				uri += "raw";
+				break;
+
+			case BNIB:
+				uri += "bnib";
+				break;
+
+			case FASTA:
+				uri += "fasta";
+				break;
+		}
+
+		if (max > -1) {
+			// ranged
+			uri = uri + "&range=" + min + ":" + max;
+		}
+
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "   request URI: {0}", uri);
+		return uri;
+	}
+
+	@Override
+	public boolean getResidues(GenericServer server,
+			List<GenericVersion> versions, String genomeVersionName,
+			BioSeq aseq, int min, int max, SeqSpan span) {
+		String seq_name = aseq.getID();
+		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
+		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
+			Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
+			Set<String> format = das2version.getResidueFormat(seq_name);
+			FORMAT[] formats = null;
+
+			if (format != null && !format.isEmpty()) {
+				//Try to check if format data is available from Das2
+				if (format.contains("bnib")) {
+					formats = new FORMAT[]{FORMAT.BNIB};
+				} else if (format.contains("raw")) {
+					formats = new FORMAT[]{FORMAT.RAW};
+				} else if (format.contains("fasta") || format.contains("fa")) {
+					formats = new FORMAT[]{FORMAT.FASTA};
+				}
+			}
+			if (formats == null) {
+				// If no format information is available then try all formats.
+				// Try to load in raw format from DAS2 server.
+				// Then try to load in fasta format from DAS2 server.
+				formats = partial_load ? new FORMAT[]{FORMAT.RAW, FORMAT.FASTA} : new FORMAT[]{FORMAT.BNIB, FORMAT.RAW, FORMAT.FASTA};
+			}
+			for (FORMAT formatLoop : formats) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, formatLoop);
+				if (loadDAS2Residues(aseq, uri, span, partial_load)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -45,7 +45,7 @@ public class DasServerType implements ServerTypeI {
 	private static final boolean exitOnError = false;
 	private static final String dsn = "dsn.xml";
 	private static final String name = "DAS";
-	public static final int ordinal = 20;
+	public static final int ordinal = 30;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	/**
 	 * Private copy of the default Synonym lookup
@@ -359,6 +359,24 @@ public class DasServerType implements ServerTypeI {
 
 	@Override
 	public boolean isAuthOptional() {
+		return false;
+	}
+
+	@Override
+	public boolean getResidues(GenericServer server,
+			List<GenericVersion> versions, String genomeVersionName,
+			BioSeq aseq, int min, int max, SeqSpan span) {
+		String seq_name = aseq.getID();
+		for (GenericVersion version : versions) {
+			if (!server.equals(version.gServer)) {
+				continue;
+			}
+			String residues = DasLoader.getDasResidues(version, seq_name, min, max);
+			if (residues != null) {
+				BioSeq.addResiduesToComposition(aseq, residues, span);
+				return true;
+			}
+		}
 		return false;
 	}
 }

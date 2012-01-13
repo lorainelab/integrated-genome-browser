@@ -2,7 +2,9 @@ package com.affymetrix.genometryImpl.util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.das.DasServerType;
 import com.affymetrix.genometryImpl.das2.Das2ServerType;
@@ -39,4 +41,5 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer);
 	public boolean loadFeatures(SeqSpan span, GenericFeature feature) throws IOException;
 	public boolean isAuthOptional();
+	public boolean getResidues(GenericServer server, List<GenericVersion> versions, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span);
 }

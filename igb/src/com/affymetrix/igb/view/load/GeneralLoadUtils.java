@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,8 +66,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.igb.general.FeatureLoading;
-import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -80,6 +79,8 @@ import com.affymetrix.igb.view.TrackView;
  * @version $Id$
  */
 public final class GeneralLoadUtils {
+
+	private static final boolean DEBUG = false;
 
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
@@ -364,6 +365,28 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
+	 * Load the annotations for the given version.  This is specific to one server.
+	 * @param gVersion
+	 */
+	private static void loadFeatureNames(final GenericVersion gVersion) {
+		boolean autoload = PreferenceUtils.getBooleanParam(
+						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		if (!gVersion.getFeatures().isEmpty()) {
+			if (DEBUG) {
+				System.out.println("Feature names are already loaded.");
+			}
+			return;
+		}
+
+		if (gVersion.gServer.serverType == null) {
+			System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
+		}
+		else {
+			gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
+		}
+	}
+
+	/**
 	 * Make sure this genome version has been initialized.
 	 * @param versionName
 	 */
@@ -374,7 +397,7 @@ public final class GeneralLoadUtils {
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (!gVersion.isInitialized()) {
-				FeatureLoading.loadFeatureNames(gVersion);
+				loadFeatureNames(gVersion);
 				gVersion.setInitialized();
 			}
 		}
@@ -805,6 +828,45 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
+	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
+	 * Also gets partial residues.
+	 * @param genomeVersionName -- name of the genome.
+	 * @param seq_name -- sequence (chromosome) name
+	 * @param span	-- May be null.  If not, then it's used for partial loading.
+	 * @return boolean
+	 */
+	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
+	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
+	public static boolean getResidues(Set<GenericVersion> versionsWithChrom, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
+		if (span == null) {
+			span = new SimpleSeqSpan(min, max, aseq);
+		}
+		List<GenericVersion> versions = new ArrayList<GenericVersion>(versionsWithChrom);
+		String seq_name = aseq.getID();
+		boolean residuesLoaded = false;
+		for (GenericServer server : ServerList.getServerInstance().getAllServers()) {
+			if (!server.isEnabled()) {
+				continue;
+			}
+			String serverDescription = server.serverName + " " + server.serverType;
+			String msg = "Loading sequence for "+seq_name+" from "+serverDescription;
+			Application.getSingleton().addNotLockedUpMsg(msg);
+			if (server.serverType != null && server.serverType.getResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
+				residuesLoaded = true;
+			}
+			Application.getSingleton().removeNotLockedUpMsg(msg);
+			if (residuesLoaded) {
+				Application.getSingleton().setStatus(MessageFormat.format(
+						"Completed loading sequence for {0} : {1} - {2} from {3}", 
+						new Object[]{seq_name,min,max,serverDescription}));
+				return true;
+			}
+		}
+		Application.getSingleton().setStatus("");
+		return false;
+	}
+
+	/**
 	 * Load residues on span.
 	 * First, attempt to load them with DAS/2 servers.
 	 * Second, attempt to load them with QuickLoad servers.
@@ -842,7 +904,7 @@ public final class GeneralLoadUtils {
 
 //		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
 
-		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
+		return getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}
 
 	/**

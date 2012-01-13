@@ -20,10 +20,12 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.restrictions.Activator());
 		activators.add(new com.affymetrix.igb.search.Activator());
 		activators.add(new com.affymetrix.genometryImpl.Activator());
+		activators.add(new com.affymetrix.genoviz.Activator());
 		activators.add(new com.affymetrix.igb.searchmodeidorprops.Activator());
 		activators.add(new com.affymetrix.igb.searchmoderesidue.Activator());
 		activators.add(new com.affymetrix.igb.tutorial.Activator());
 	}
+
 	/**
 	 * Start the program.
 	 */

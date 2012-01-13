@@ -41,6 +41,7 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jide.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jlfgr-1_0.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jython.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/picard.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/swing-layout.jar"/>

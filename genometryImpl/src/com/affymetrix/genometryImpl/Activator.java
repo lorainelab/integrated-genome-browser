@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.operator.transform.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 
 /**
  * OSGi Activator for genometry bundle
@@ -49,18 +48,11 @@ public class Activator implements BundleActivator {
 	}
 
 	private void initServerTypes() {
-		ExtensionPointHandler<ServerTypeI> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
-		extensionPoint.addListener(new ExtensionPointListener<ServerTypeI>() {
-			@Override
-			public void removeService(ServerTypeI serverType) {
-				ServerUtils.removeServerType(serverType);
-			}
-			
-			@Override
-			public void addService(ServerTypeI serverType) {
-				ServerUtils.addServerType(serverType);
-			}
-		});
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
+		bundleContext.registerService(ServerTypeI.class, ServerTypeI.LocalFiles, null);
+		bundleContext.registerService(ServerTypeI.class, ServerTypeI.QuickLoad, null);
+		bundleContext.registerService(ServerTypeI.class, ServerTypeI.DAS, null);
+		bundleContext.registerService(ServerTypeI.class, ServerTypeI.DAS2, null);
 	}
 
 	private void initTransforms() {

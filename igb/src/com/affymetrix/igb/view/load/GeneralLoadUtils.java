@@ -27,8 +27,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
-import com.affymetrix.genometryImpl.das.DasServerType;
-import com.affymetrix.genometryImpl.das2.Das2ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -37,7 +35,7 @@ import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -47,7 +45,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LocalFilesServerType;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -71,9 +68,7 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.featureloader.QuickLoad;
-import com.affymetrix.igb.featureloader.Das;
-import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -588,7 +583,7 @@ public final class GeneralLoadUtils {
 		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles)
-				&& ((QuickLoad) feature.symL).extension.endsWith("chp")) {
+				&& ((QuickLoadSymLoader) feature.symL).extension.endsWith("chp")) {
 			feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
 			optimized_sym = new SimpleMutableSeqSymmetry();
 			((SimpleMutableSeqSymmetry) optimized_sym).addSpan(span);
@@ -611,9 +606,9 @@ public final class GeneralLoadUtils {
 		}
 
 		//If Loading whole genome for unoptimized file then load everything at once.
-		if (((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInst) {
+		if (((QuickLoadSymLoader) feature.symL).getSymLoader() instanceof SymLoaderInst) {
 			if (optimized_sym != null) {
-				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+				loadAllSymmetriesThread(feature);
 			}
 			return;
 		}
@@ -648,7 +643,7 @@ public final class GeneralLoadUtils {
 						loadOnSequence(seq);
 					}
 				} catch (Exception ex) {
-					((QuickLoad) feature.symL).logException(ex);
+					((QuickLoadSymLoader) feature.symL).logException(ex);
 				}
 				return null;
 			}
@@ -754,31 +749,17 @@ public final class GeneralLoadUtils {
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
+		if (feature.gVersion.gServer.serverType == null) {
+			return false;
+		}
 		Thread thread = Thread.currentThread();
 		boolean result = false;
 		for (SeqSpan optimized_span : optimized_spans) {
 
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 
-			switch (feature.gVersion.gServer.serverType.getOrdinal()) {
-				case Das2ServerType.ordinal:
-					if (Das2.loadFeatures(optimized_span, feature)) {
-						result = true;
-					}
-					break;
-
-				case DasServerType.ordinal:
-					if (Das.loadFeatures(optimized_span, feature)) {
-						result = true;
-					}
-					break;
-
-				case QuickloadServerType.ordinal:
-				case LocalFilesServerType.ordinal:
-					if (((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
-						result = true;
-					}
-					break;
+			if (feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature)) {
+				result = true;
 			}
 
 			if (thread.isInterrupted()) {
@@ -1037,8 +1018,8 @@ public final class GeneralLoadUtils {
 	}
 	
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
-		if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+		if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			loadAllSymmetriesThread(gFeature);
 			// force a refresh of this server. This forces creation of 'genome' sequence.
 			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 			return;
@@ -1056,7 +1037,7 @@ public final class GeneralLoadUtils {
 					}
 					return true;
 				} catch (Exception ex) {
-					((QuickLoad) gFeature.symL).logException(ex);
+					((QuickLoadSymLoader) gFeature.symL).logException(ex);
 					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
 						if (gFeature.gVersion.removeFeature(gFeature)) {
 							SeqGroupView.getInstance().refreshTable();
@@ -1124,15 +1105,18 @@ public final class GeneralLoadUtils {
 			boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 
 			Map<String, String> featureProps = null;
-			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoad.detemineFriendlyName(uri), version.group);
+			SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
 			if (symL != null && symL.isResidueLoader() && loadAsTrack) {
 				symL = new ResidueTrackSymLoader(symL);
 				featureProps = new HashMap<String, String>();
 				featureProps.put("collapsed", "true");
 				featureProps.put("show2tracks", "false");
 			}
-
-			gFeature = new GenericFeature(fileName, featureProps, version, new QuickLoad(version, uri, symL), File.class, autoload);
+			String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
+			QuickLoadSymLoader quickLoad = SymLoader.getExtension(uri).endsWith("chp") ?
+				new QuickLoadSymLoaderChp(uri, friendlyName, version, symL) :
+				new QuickLoadSymLoader(uri, friendlyName, version, symL);
+			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload);
 
 			version.addFeature(gFeature);
 			
@@ -1257,5 +1241,51 @@ public final class GeneralLoadUtils {
 		}
 
 		return group;
+	}
+
+
+	/**
+	 * For unoptimized file formats load symmetries and add them.
+	 * @param feature
+	 * @return
+	 */
+	public static void loadAllSymmetriesThread(final GenericFeature feature) {
+		final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
+		final SeqMapView gviewer = Application.getSingleton().getMapView();
+
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+
+			@Override
+			protected Object runInBackground() {
+				try {
+					quickLoad.loadAndAddAllSymmetries(feature);
+					TrackView.updateDependentData();
+				} catch (Exception ex) {
+					quickLoad.logException(ex);
+				}
+				return null;
+			}
+
+			@Override
+			protected void finished() {
+				try {
+					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+					if (aseq != null) {
+						gviewer.setAnnotatedSeq(aseq, true, true);
+					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && quickLoad.getVersion().group != null) {
+						// This can happen when loading a brand-new genome
+						GenometryModel.getGenometryModel().setSelectedSeq(quickLoad.getVersion().group.getSeq(0));
+					}
+
+					SeqGroupView.getInstance().refreshTable();
+					//Update LoadModeTableModel
+				//	LoadModeTable.updateVirtualFeatureList();
+				} catch (Exception ex) {
+					Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		};
+
+		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 }

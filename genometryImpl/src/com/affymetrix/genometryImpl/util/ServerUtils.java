@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
@@ -1038,27 +1039,20 @@ public abstract class ServerUtils {
 		return type.formatURL(url);
 	}
 
-	private static final List<ServerTypeI> SERVER_TYPES = new ArrayList<ServerTypeI>();
+	private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = new ArrayList<ServerTypeI>();
 	static {
-		SERVER_TYPES.add(ServerTypeI.DAS2);
-		SERVER_TYPES.add(ServerTypeI.DAS);
-		SERVER_TYPES.add(ServerTypeI.QuickLoad);
-		SERVER_TYPES.add(ServerTypeI.LocalFiles);
-		Collections.sort(SERVER_TYPES);
+		DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS2);
+		DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS);
+		DEFAULT_SERVER_TYPES.add(ServerTypeI.QuickLoad);
+		DEFAULT_SERVER_TYPES.add(ServerTypeI.LocalFiles);
 	}
 
 	public static List<ServerTypeI> getServerTypes() {
-		return SERVER_TYPES;
-	}
-
-	public static synchronized void addServerType(ServerTypeI serverType) {
-		SERVER_TYPES.add(serverType);
-		Collections.sort(SERVER_TYPES);
-	}
-
-	public static synchronized void removeServerType(ServerTypeI serverType) {
-		SERVER_TYPES.remove(serverType);
-		Collections.sort(SERVER_TYPES);
+	    List<ServerTypeI> serverTypes = ExtensionPointHandler.getExtensionPoint(ServerTypeI.class) == null ?
+	    	DEFAULT_SERVER_TYPES :
+	    	ExtensionPointHandler.getExtensionPoint(ServerTypeI.class).getExtensionPointImpls();
+		Collections.sort(serverTypes);
+		return serverTypes;
 	}
 
 	/**

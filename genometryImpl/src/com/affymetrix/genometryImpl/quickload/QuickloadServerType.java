@@ -3,27 +3,39 @@ package com.affymetrix.genometryImpl.quickload;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class QuickloadServerType implements ServerTypeI {
+	private static final boolean DEBUG = false;
+	private static final String quickloadGenomeError = "QuickLoad site {0} does not have a genome description file (genome.txt) for {1} genome version {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
 	private static final String name = "Quickload";
 	public static final int ordinal = 30;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<QuickLoadSymLoaderHook>();
 	/**
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()
@@ -152,9 +164,55 @@ public class QuickloadServerType implements ServerTypeI {
 		return false;
 	}
 
+	public static void addQuickLoadSymLoaderHook(QuickLoadSymLoaderHook quickLoadSymLoaderHook) {
+		quickLoadSymLoaderHooks.add(quickLoadSymLoaderHook);
+	}
+
+	private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName, String organism_dir) {
+		URI uri = QuickLoadSymLoader.determineURI(version, featureName, organism_dir);
+		String extension = SymLoader.getExtension(uri);
+		SymLoader symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
+		QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version, symL);
+		for (QuickLoadSymLoaderHook quickLoadSymLoaderHook : quickLoadSymLoaderHooks) {
+			quickLoadSymLoader = quickLoadSymLoaderHook.processQuickLoadSymLoader(quickLoadSymLoader);
+		}
+		return quickLoadSymLoader;
+	}
+
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
-		// not implemented here
+		// Discover feature names from QuickLoad
+
+		try {
+			URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
+			if (DEBUG) {
+				System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
+			}
+
+			QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+			List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
+			if (typeNames == null) {
+				String errorText = MessageFormat.format(quickloadGenomeError, gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
+				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
+				return;
+			}
+			String organism_dir = quickloadServer.getOrganismDir(gVersion.versionName);
+			for (String type_name : typeNames) {
+				if (type_name == null || type_name.length() == 0) {
+					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+					continue;
+				}
+				if (DEBUG) {
+					System.out.println("Adding feature " + type_name);
+				}
+				Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
+				gVersion.addFeature(
+						new GenericFeature(
+						type_name, type_props, gVersion, getQuickLoad(gVersion, type_name, organism_dir), null, autoload));
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -222,5 +280,15 @@ public class QuickloadServerType implements ServerTypeI {
 			versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean loadFeatures(SeqSpan span, GenericFeature feature) throws IOException {
+		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
+	}
+
+	@Override
+	public boolean isAuthOptional() {
+		return false;
 	}
 }

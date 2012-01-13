@@ -1,9 +1,13 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.io.IOException;
 import java.net.URL;
 
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 public class LocalFilesServerType implements ServerTypeI {
@@ -84,6 +88,17 @@ public class LocalFilesServerType implements ServerTypeI {
 	@Override
 	public boolean getSpeciesAndVersions(GenericServer gServer,
 			GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+		return false;
+	}
+
+	@Override
+	public boolean loadFeatures(SeqSpan span, GenericFeature feature)
+			throws IOException {
+		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
+	}
+
+	@Override
+	public boolean isAuthOptional() {
 		return false;
 	}
 }

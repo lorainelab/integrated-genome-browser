@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
@@ -46,7 +47,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
-import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
@@ -325,8 +325,8 @@ public final class GeneralLoadView {
 			}
 
 			//If Loading whole genome for unoptimized file then load everything at once.
-			if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInst) {
-				((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+			if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInst) {
+				GeneralLoadUtils.loadAllSymmetriesThread(gFeature);
 			} else {
 				GeneralLoadUtils.iterateSeqList(gFeature);
 			}
@@ -335,7 +335,7 @@ public final class GeneralLoadView {
 
 	public void useAsRefSequence(final GenericFeature feature) throws Exception {
 		if (feature != null && feature.symL != null) {
-			final QuickLoad quickload = (QuickLoad) feature.symL;
+			final QuickLoadSymLoader quickload = (QuickLoadSymLoader) feature.symL;
 			if (quickload.getSymLoader() instanceof ResidueTrackSymLoader) {
 
 				final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.featureName) {

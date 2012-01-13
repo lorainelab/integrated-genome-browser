@@ -1,4 +1,4 @@
-package com.affymetrix.igb.featureloader;
+package com.affymetrix.genometryImpl.quickload;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -27,42 +28,27 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.parsers.ChpParser;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ParserController;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.igb.util.ThreadHandler;
-import com.affymetrix.igb.view.SeqGroupView;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
 
 /**
  *
  * @author jnicol
  * @version $Id$
  */
-public final class QuickLoad extends SymLoader {
+public class QuickLoadSymLoader extends SymLoader {
 
-	private final GenericVersion version;
-	private final SymLoader symL;	// parser factory
-	GenometryModel gmodel = GenometryModel.getGenometryModel();
+	protected final GenericVersion version;
+	protected final SymLoader symL;	// parser factory
+	protected GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	public QuickLoad(GenericVersion version, String featureName, String organism_dir) {
-		super(determineURI(version, featureName, organism_dir), featureName, null);
-		this.version = version;
-		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
-		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
-	}
-
-	public QuickLoad(GenericVersion version, URI uri, SymLoader symL) {
-		super(uri, detemineFriendlyName(uri), null);
+	public QuickLoadSymLoader(URI uri, String featureName, GenericVersion version, SymLoader symL) {
+		super(uri, featureName, null);
 		this.version = version;
 		this.symL = symL;
 		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
 	}
-	
+
 	@Override
 	protected void init() {
 		this.isInitialized = true;
@@ -78,7 +64,7 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, "No symloader found.");
+		Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, "No symloader found.");
 		return super.getLoadChoices();
 	}
 	
@@ -160,66 +146,13 @@ public final class QuickLoad extends SymLoader {
 		return false;
 	}
 
-	private boolean loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+	protected boolean loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 			throws OutOfMemoryError, Exception {
-
-		if (QuickLoad.this.extension.endsWith("chp")) {
-			// special-case chp files, due to their LazyChpSym DAS/2 loading
-			addMethodsToFeature(feature, QuickLoad.this.getGenome());
-			return true;
-		}
-
 		//Do not not anything in case of genome. Just refresh.
 		if (Constants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
 			return false;
 		}
-
 		return loadAndAddSymmetries(feature, overlapSpan);
-	}
-
-	/**
-	 * For unoptimized file formats load symmetries and add them.
-	 * @param feature
-	 * @return
-	 */
-	public void loadAllSymmetriesThread(final GenericFeature feature) {
-
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
-
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
-
-			@Override
-			protected Object runInBackground() {
-				try {
-					loadAndAddAllSymmetries(feature);
-					TrackView.updateDependentData();
-				} catch (Exception ex) {
-					logException(ex);
-				}
-				return null;
-			}
-
-			@Override
-			protected void finished() {
-				try {
-					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-					if (aseq != null) {
-						gviewer.setAnnotatedSeq(aseq, true, true);
-					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
-						// This can happen when loading a brand-new genome
-						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
-					}
-
-					SeqGroupView.getInstance().refreshTable();
-					//Update LoadModeTableModel
-				//	LoadModeTable.updateVirtualFeatureList();
-				} catch (Exception ex) {
-					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		};
-
-		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 
 	/**
@@ -260,7 +193,7 @@ public final class QuickLoad extends SymLoader {
 		return ret;
 	}
 
-	private void loadAndAddAllSymmetries(final GenericFeature feature)
+	public void loadAndAddAllSymmetries(final GenericFeature feature)
 			throws OutOfMemoryError {
 
 		setStyle(feature);
@@ -278,15 +211,14 @@ public final class QuickLoad extends SymLoader {
 			results = null;
 			return;
 		}
+		addAllSymmetries(feature, results);
+	}
+
+	protected void addAllSymmetries(final GenericFeature feature, List<? extends SeqSymmetry> results)
+			throws OutOfMemoryError {
 
 		//For a file format that adds SeqSymmetries from
 		//within the parser handle them here.
-		if (extension.endsWith("chp")) {
-			// special-case chp files, due to their LazyChpSym DAS/2 loading
-			addMethodsToFeature(feature, results);
-			return;
-		}
-
 		Map<BioSeq, List<SeqSymmetry>> seq_syms = SymLoader.splitResultsBySeqs(results);
 		SeqSpan span = null;
 		BioSeq seq = null;
@@ -300,17 +232,6 @@ public final class QuickLoad extends SymLoader {
 
 	}
 
-	//Only used for "chp"
-	private static void addMethodsToFeature(GenericFeature feature, List<? extends SeqSymmetry> results) {
-		String method;
-		for (SeqSymmetry sym : results) {
-			method = BioSeq.determineMethod(sym);
-			if (method != null) {
-				feature.addMethod(method);
-			}
-		}
-	}
-	
 	private void setStyle(GenericFeature feature) {
 		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);
@@ -339,7 +260,7 @@ public final class QuickLoad extends SymLoader {
 	}
 
 	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) throws Exception  {
-		String results = QuickLoad.this.getRegionResidues(span);
+		String results = QuickLoadSymLoader.this.getRegionResidues(span);
 		if (results != null && !results.isEmpty()) {
 			// TODO: make this more general.  Since we can't currently optimize all residue requests,
 			// we are simply considering the span loaded if it loads the entire chromosome
@@ -372,20 +293,13 @@ public final class QuickLoad extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
 		try {
-			if (this.extension.endsWith("chp")) {
-				// special-case CHP files. ChpParser only has
-				//    a parse() method that takes the file name
-				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-				File f = LocalUrlCacher.convertURIToFile(this.uri);
-				return ChpParser.parse(f.getAbsolutePath(), true);
-			}
 			BufferedInputStream bis = null;
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
 				return symL.parse(bis, false);
 			} catch (FileNotFoundException ex) {
-				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(bis);
 			}
@@ -409,7 +323,7 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null && this.symL.isResidueLoader()) {
 			return this.symL.getRegionResidues(span);
 		}
-		Logger.getLogger(QuickLoad.class.getName()).log(
+		Logger.getLogger(QuickLoadSymLoader.class.getName()).log(
 				Level.SEVERE, "Residue loading was called with a non-residue format.");
 		return "";
 	}
@@ -418,8 +332,12 @@ public final class QuickLoad extends SymLoader {
 		return symL;
 	}
 	
+	public GenericVersion getVersion() {
+		return version;
+	}
+
 	public void logException(Exception ex){
-		String loggerName = QuickLoad.class.getName();
+		String loggerName = QuickLoadSymLoader.class.getName();
 		Level level = Level.SEVERE;
 		
 		if (symL != null) 

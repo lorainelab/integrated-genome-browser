@@ -45,10 +45,14 @@ public final class StringUtilsTest {
 		this.canvas = null;
     }
 
+	@Test
+	public void testWrap(){
+		
+	}
+	
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
-	@Test
 	public void testWrap_3args() {
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));
@@ -77,7 +81,6 @@ public final class StringUtilsTest {
 	/**
 	 * Test of wrap method, of class StringUtils.
 	 */
-	@Test
 	public void testWrap_4args() {
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));

@@ -15,11 +15,12 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 public final class StringUtils {
 	private static final String ELLIPSIS = "\u2026";
 	private static final String SPACE = " ";
+	private static final String SEPRATORS = "\\s+/\\\\._-";
+	private static final String SEPRATOR_REGEX = "(?<=["+SEPRATORS+"])";
 
 	public static boolean isAllDigits(CharSequence cseq) {
 		int char_count = cseq.length();
@@ -75,7 +76,7 @@ public final class StringUtils {
 			remainingWidth -= ellipsisWidth;
 		}
 
-		for (String word : getWords(toWrap)) {
+		for (String word : toWrap.split(SEPRATOR_REGEX)) {
 			wordWidth = metrics.stringWidth(word);
 
 			if (wordWidth + spaceWidth > remainingWidth) {
@@ -87,14 +88,14 @@ public final class StringUtils {
 
 				/* Only add current line if it is non-empty */
 				if (buffer.length() > 0) {
+					buffer.append(SPACE);
 					lines.add(buffer.toString());
 				}
 
 				/* Start a new line and add current word to it */
 				buffer.setLength(0);
 				buffer.append(word);
-				buffer.append(SPACE);
-				remainingWidth = pixels - wordWidth - spaceWidth;
+				remainingWidth = pixels - wordWidth;
 
 				/* Starting last line, save room for ellipsis */
 				if (maxLines != 0 && maxLines - 1 == lines.size()) {
@@ -103,8 +104,7 @@ public final class StringUtils {
 			} else {
 				/* append current word to current line */
 				buffer.append(word);
-				buffer.append(SPACE);
-				remainingWidth -= wordWidth + spaceWidth;
+				remainingWidth -= wordWidth;
 			}
 		}
 		
@@ -116,33 +116,4 @@ public final class StringUtils {
 		return lines.toArray(new String[lines.size()]);
 	}
 	
-	private static String[] getWords(String line){
-		String[] seprators = {"\\s+","/","\\",".","-","_"," "};
-		
-		for(String seprator : seprators){
-			String[] words = getWords(line, seprator);
-			if(words.length > 1){
-				return words;
-			}
-		}
-		
-		return new String[]{line};
-	}
-	
-	private static String[] getWords(String line, String seprator){
-		try {
-			String[] words = line.split(seprator);
-			
-			if(!("\\s+".equals(seprator))){
-				for(int i=0; i<words.length-1; i++){
-					words[i] += seprator;
-				}
-			}
-			
-			return words;
-		}
-		catch (PatternSyntaxException x) {
-			return new String[]{line};
-		}
-	}
 }

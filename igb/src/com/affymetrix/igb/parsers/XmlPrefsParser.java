@@ -23,8 +23,8 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 

@@ -14,6 +14,7 @@ import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 

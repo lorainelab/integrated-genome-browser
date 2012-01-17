@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 
 /**
  *

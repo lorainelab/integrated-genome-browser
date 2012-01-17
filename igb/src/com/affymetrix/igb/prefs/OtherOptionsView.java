@@ -42,10 +42,18 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 
 	private static final long serialVersionUID = 1L;
 	private final SeqMapView smv;
+	private static OtherOptionsView singleton;
 	String default_label_format = SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
 	String[] label_format_options = new String[]{SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_FULL,
 		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
 		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
+
+	public static synchronized OtherOptionsView getSingleton() {
+		if (singleton == null) {
+			singleton = new OtherOptionsView();
+		}
+		return singleton;
+	}
 
 	/** Creates new form OtherOptions */
 	public OtherOptionsView() {
@@ -81,8 +89,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             label_format_options,
             default_label_format)
         ;
-        bgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, Color.WHITE, this);
-        fgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, Color.BLACK, this);
+        bgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, CoordinateStyle.default_coordinate_background, this);
+        fgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, CoordinateStyle.default_coordinate_color, this);
         orfAnalyzerPanel = new javax.swing.JPanel();
         stopCodonLabel = new javax.swing.JLabel();
         dynamicORFLabel = new javax.swing.JLabel();
@@ -357,7 +365,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 		// TODO add your handling code here:
 		TierPrefsView.getSingleton().refreshSeqMapView();
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;
@@ -433,5 +440,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 	}
 
 	public void refresh() {
+		//Update Coordinate Track Colors
+		bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());
+		fgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getForeground());
 	}
 }

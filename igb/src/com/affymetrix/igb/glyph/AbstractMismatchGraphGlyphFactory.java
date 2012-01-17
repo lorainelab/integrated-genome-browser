@@ -1,6 +1,7 @@
 package com.affymetrix.igb.glyph;
 
 import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -10,7 +11,6 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -26,7 +26,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapVi
 
 	private static final String[] supportedFormat = {"bam", "sam"};
 	
-	public void init(java.util.Map options) { }
+	public void init(Map<String, Object> options) { }
 	
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		

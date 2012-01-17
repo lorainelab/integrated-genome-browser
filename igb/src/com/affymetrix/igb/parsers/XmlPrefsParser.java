@@ -176,28 +176,28 @@ public final class XmlPrefsParser {
 	 *  to require an exact match.
 	 */
 	private static void processLinkUrl(Element el) {
-		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
-		String url = attmap.get("url");
+		Map<String, Object> attmap = XmlPrefsParser.getAttributeMap(el);
+		String url = (String)attmap.get("url");
 		if (url == null || url.trim().length() == 0) {
 			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
 			return;
 		}
 
 		WebLink.RegexType type_regex = WebLink.RegexType.TYPE;
-		String annot_regex_string = attmap.get("annot_type_regex");
+		String annot_regex_string = (String)attmap.get("annot_type_regex");
 		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
 			type_regex = WebLink.RegexType.ID;
-			annot_regex_string = attmap.get("annot_id_regex");
+			annot_regex_string = (String)attmap.get("annot_id_regex");
 		}
 		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
 			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
 			return;
 		}
 
-		String name = attmap.get("name");
-		String species = attmap.get("species");
-		String IDField = attmap.get("id_field");
-		String type = attmap.get("type");
+		String name = (String)attmap.get("name");
+		String species = (String)attmap.get("species");
+		String IDField = (String)attmap.get("id_field");
+		String type = (String)attmap.get("type");
 		if (type == null) {
 			type = WebLink.LOCAL;
 		}
@@ -209,7 +209,7 @@ public final class XmlPrefsParser {
 			link.setUrl(url);
 			link.setType(type);
 			link.setSpeciesName(species);
-			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
+			if ("false".equalsIgnoreCase((String)attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);
 			} else {
 				link.setRegex(annot_regex_string);
@@ -223,7 +223,7 @@ public final class XmlPrefsParser {
 
 	private static void processAnnotStyle(Element el) {
 		Class<?> factory_class = default_factory_class;
-		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
+		Map<String, Object> attmap = XmlPrefsParser.getAttributeMap(el);
 
 		// annotation_style element _must_ have and annot_type attribute
 		// planning to relax this at some point to allow for element to have one (and only one) of:
@@ -231,7 +231,7 @@ public final class XmlPrefsParser {
 		if (attmap.get("factory") != null) {
 			String factory_name = null;
 			try {
-				factory_name = attmap.get("factory");
+				factory_name = (String)attmap.get("factory");
 				factory_class = Class.forName(factory_name);
 			} catch (ClassNotFoundException ex) {
 				System.out.println("ERROR: Class '" + factory_name + "' specified in the preferences file can not be found");
@@ -252,8 +252,8 @@ public final class XmlPrefsParser {
 		}
 	}
 
-	private static Map<String, String> getAttributeMap(Element el) {
-		HashMap<String, String> amap = new HashMap<String, String>();
+	private static Map<String, Object> getAttributeMap(Element el) {
+		HashMap<String, Object> amap = new HashMap<String, Object>();
 		NamedNodeMap atts = el.getAttributes();
 		int attcount = atts.getLength();
 		for (int i = 0; i < attcount; i++) {

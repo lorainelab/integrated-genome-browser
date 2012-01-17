@@ -99,7 +99,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		parent_labelled_glyph_class = default_elabelled_parent_class;
 	}
 	
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 		if (DEBUG) {
 			System.out.println("     @@@@@@@@@@@@@     in GenericAnnotGlyphFactory.init(), props: " + options);
 		}

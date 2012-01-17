@@ -34,7 +34,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *  @see GraphGlyph#setTransitionScale(double)
 	 */
 	/** Allows you to set the parameter CHECK_SAME_SEQ_OPTION. */
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 		Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
 		if (ccs != null) {
 			check_same_seq = ccs.booleanValue();

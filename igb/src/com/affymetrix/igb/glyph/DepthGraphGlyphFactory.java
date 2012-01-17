@@ -1,5 +1,7 @@
 package com.affymetrix.igb.glyph;
 
+import java.util.Map;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -26,7 +28,7 @@ public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
 		return "depth";
 	}
 	
-	public void init(java.util.Map options) { }
+	public void init(Map<String, Object> options) { }
 
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 

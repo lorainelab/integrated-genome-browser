@@ -41,7 +41,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	// does nothing
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 	}
 
 	public String getName(){

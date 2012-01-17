@@ -92,7 +92,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	private String label_field = null;
 	private static final int GLYPH_HEIGHT = 20;
 
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 	}
 
 	public ProbeSetDisplayGlyphFactory() {

@@ -49,7 +49,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	private static final boolean separate_by_strand = true;
 
 	/** Does nothing. */
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 	}
 	
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {

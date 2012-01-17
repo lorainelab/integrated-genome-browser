@@ -45,7 +45,7 @@ public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFact
 		return "coverage";
 	}
 	
-	public void init(Map options) {
+	public void init(Map<String, Object> options) {
 		if (options.get("height") != null) {
 			try {
 				glyph_height = Integer.parseInt((String) options.get("height"));

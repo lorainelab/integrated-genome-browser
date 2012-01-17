@@ -176,7 +176,7 @@ public class SeqMapView extends JPanel
 	// mapping of annotated seq to virtual "view" seq
 	protected MutableSeqSymmetry seq2viewSym;
 	protected SeqSymmetry[] transform_path;
-	private static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
+	public static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
 	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */
 	public static final String VALUE_COORDINATE_LABEL_FORMAT_COMMA = "COMMA";
 	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */

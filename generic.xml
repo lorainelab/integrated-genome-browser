@@ -178,14 +178,16 @@
 	</target>
 
 	<target name="clean" depends="init">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${docs.dir}"/>
+			<fileset dir="${dist.dir}" />
+			<fileset dir="${report.dir}" />
+			<fileset dir="${test.build.dir}" />
+			<fileset dir="${test.report.dir}" />
+		</delete>
 		<delete file="${component}.jar"/>
-		<delete dir="${docs.dir}"/>
-		<delete dir="${build.dir}" />
-		<delete dir="${dist.dir}" />
-		<delete dir="${test.build.dir}" />
-		<delete dir="${test.report.dir}" />
-		<delete dir="${report.dir}" />
-		<antcall target="clean-manifest" />
+		<delete file="${basedir}/META-INF/MANIFEST.MF"/> <!-- generated in mani-vers task -->
 	</target>
 
 	<target name="check-nullness" description="Check for nullness errors." depends="clean">

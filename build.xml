@@ -295,20 +295,22 @@
 	</target>
 
 	<target name="clean" depends="init">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist.dir}" />
+			<fileset dir="${webstart.dir}" />
+			<fileset dir="${webapp.dir}" />
+			<fileset dir="${demos.dir}/genoviz" />
+			<fileset dir="${report.dir}" />
+			<fileset dir="${basedir}/build" />
+			<fileset dir="${work.dir}" />
+			<fileset dir="${bundle.dir}" />
+			<fileset dir="${igb.ant.dir}/build" />
+		</delete>
 		<delete file="${igb.jar.name}.jar"/>
 		<delete file="protannot_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
 		<delete file="${demos.dir}/genoviz.jar" />
 		<delete file="${etc.dir}/bundles.properties" />
-		<delete dir="${dist.dir}" />
-		<delete dir="${webstart.dir}" />
-		<delete dir="${webapp.dir}" />
-		<delete dir="${demos.dir}/genoviz" />
-		<delete dir="${report.dir}" />
-		<delete dir="${basedir}/build" />
-		<delete dir="${work.dir}" />
-		<delete dir="${bundle.dir}" />
-		<delete dir="${igb.ant.dir}/build" />
 		<iterate target="clean" />
 	</target>
 

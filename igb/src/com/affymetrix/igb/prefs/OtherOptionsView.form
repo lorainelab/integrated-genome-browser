@@ -154,7 +154,7 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="coordinates_label_format_CB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;&quot;Coordinates label format&quot;,&#xa;label_format_options,&#xa;default_label_format);&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_COORDINATE_LABEL_FORMAT,&#xa;    label_format_options,&#xa;    default_label_format)&#xa;"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
@@ -365,9 +365,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Reset preference to defaults"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clear_prefsBActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="clear_prefsB.addActionListener(this);"/>
       </AuxValues>

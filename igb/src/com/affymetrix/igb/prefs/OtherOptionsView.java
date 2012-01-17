@@ -50,7 +50,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 	public OtherOptionsView() {
 		super();
 		this.setName("Other Options");
-		//this.setToolTipText("Edit Miscellaneous Options");
 		this.setLayout(new BorderLayout());
 
 		Application igb = Application.getSingleton();
@@ -77,9 +76,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         foregroundLabel = new javax.swing.JLabel();
         numFormatLabel = new javax.swing.JLabel();
         coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
-            "Coordinates label format",
+            SeqMapView.PREF_COORDINATE_LABEL_FORMAT,
             label_format_options,
-            default_label_format);
+            default_label_format)
         ;
         bgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, Color.WHITE, this);
         fgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, Color.BLACK, this);
@@ -248,11 +247,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         );
 
         clear_prefsB.setText("Reset preference to defaults");
-        clear_prefsB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clear_prefsBActionPerformed(evt);
-            }
-        });
 
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
         edgeMatchPanel.setMaximumSize(new java.awt.Dimension(335, 57));
@@ -341,9 +335,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         clear_prefsB.addActionListener(this);
     }// </editor-fold>//GEN-END:initComponents
 
-	private void clear_prefsBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_prefsBActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_clear_prefsBActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;

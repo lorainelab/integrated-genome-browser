@@ -35,7 +35,7 @@ import javax.swing.table.AbstractTableModel;
 public class TierPrefsView implements ListSelectionListener {
 
 	public static final long serialVersionUID = 1l;
-	public static TierPrefsView singleton;
+	private static TierPrefsView singleton;
 	public static final String TRACK_NAME = "Display Name";
 	public static final String FOREGROUND = "Foreground";
 	public static final String BACKGROUND = "Background";

@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.load.DataManagementTable;
@@ -334,6 +335,8 @@ public class TierPrefsView implements ListSelectionListener {
 		if (table.getRowCount() != 0) {
 			table.setRowSelectionInterval(0, 0);
 		}
+		//also refresh options panel to ensure coordinate track colors stay synchronized
+		OtherOptionsView.getSingleton().refresh();
 	}
 
 	/** Called when the user selects a row of the table.

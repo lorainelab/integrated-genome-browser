@@ -185,9 +185,9 @@
 			<fileset dir="${report.dir}" />
 			<fileset dir="${test.build.dir}" />
 			<fileset dir="${test.report.dir}" />
+			<fileset file="${component}.jar" />
+			<fileset file="${basedir}/META-INF/MANIFEST.MF" /> <!-- generated in mani-vers task -->
 		</delete>
-		<delete file="${component}.jar"/>
-		<delete file="${basedir}/META-INF/MANIFEST.MF"/> <!-- generated in mani-vers task -->
 	</target>
 
 	<target name="check-nullness" description="Check for nullness errors." depends="clean">

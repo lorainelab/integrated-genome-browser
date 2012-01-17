@@ -305,12 +305,12 @@
 			<fileset dir="${work.dir}" />
 			<fileset dir="${bundle.dir}" />
 			<fileset dir="${igb.ant.dir}/build" />
+			<fileset file="${igb.jar.name}.jar" />
+			<fileset file="protannot_exe.jar" />
+			<fileset file="${genoviz}/genoviz.jar" />
+			<fileset file="${demos.dir}/genoviz.jar" />
+			<fileset file="${etc.dir}/bundles.properties" />
 		</delete>
-		<delete file="${igb.jar.name}.jar"/>
-		<delete file="protannot_exe.jar"/>
-		<delete file="${genoviz}/genoviz.jar" />
-		<delete file="${demos.dir}/genoviz.jar" />
-		<delete file="${etc.dir}/bundles.properties" />
 		<iterate target="clean" />
 	</target>
 

@@ -29,6 +29,7 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.util.ColorUtils;
+import com.affymetrix.igb.view.TierPrefsView;
 
 /**
  *
@@ -123,6 +124,18 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 
         numFormatLabel.setText("Number format:");
 
+        bgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bgColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        fgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fgColorComboBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout coordinatePanelLayout = new org.jdesktop.layout.GroupLayout(coordinatePanel);
         coordinatePanel.setLayout(coordinatePanelLayout);
         coordinatePanelLayout.setHorizontalGroup(
@@ -155,7 +168,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(numFormatLabel)
                     .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         orfAnalyzerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ORF Analyzer (Sliced View tab)"));
@@ -308,7 +321,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(10, 10, 10)
-                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
                 .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
@@ -334,6 +347,16 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 
         clear_prefsB.addActionListener(this);
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
+		// TODO add your handling code here:
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_bgColorComboBoxActionPerformed
+
+	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
+		// TODO add your handling code here:
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;

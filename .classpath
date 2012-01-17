@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="debug/src"/>
+	<classpathentry kind="src" path="plugins/SearchModeGeneric/resources"/>
+	<classpathentry kind="src" path="plugins/SearchModeGeneric/src"/>
 	<classpathentry kind="src" path="plugins/ant/src"/>
 	<classpathentry kind="src" path="plugins/Tutorial/src"/>
 	<classpathentry kind="src" path="plugins/SearchModeResidue/src"/>

@@ -18,11 +18,5 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/BigWig.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/be.pwnt.jflow_1.0.0.jar"/>
 	<classpathentry kind="lib" path="resources"/>
-	<classpathentry kind="lib" path="lib/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="lib/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="lib/batik-xml.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

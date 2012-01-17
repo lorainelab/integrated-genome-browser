@@ -115,7 +115,7 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 		CardLayout layout = (CardLayout) getLayout();
 		System.out.println("MainWorkspaceManager:itemStateChanged hit");
 		JComboBox jb = (JComboBox) e.getSource();
-		if(jb.getSelectedItem() != null &&
+		if(gmodel.getSelectedSeqGroup() == null && jb.getSelectedItem() != null &&
 				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
 			layout.show( this, WELCOME_PANE );
 		}else{

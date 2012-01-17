@@ -637,20 +637,22 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	public void restoreToDefault() {
-		int row;
-		TrackStyle style;
-		int[] previousSelectedRows = selectedRows;
-		for (int i = 0; i < selectedRows.length; i++) {
-			row = selectedRows[i];
-			style = model.getStyles().get(row);
-			style.restoreToDefault();
+		if (selectedRows != null) { //Prevents NPE when no tracks have been generated.
+			int row;
+			TrackStyle style;
+			int[] previousSelectedRows = selectedRows;
+			for (int i = 0; i < selectedRows.length; i++) {
+				row = selectedRows[i];
+				style = model.getStyles().get(row);
+				style.restoreToDefault();
+			}
+
+			model.fireTableDataChanged();
+
+			applyChanges();
+
+			table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 		}
-
-		model.fireTableDataChanged();
-
-		applyChanges();
-
-		table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {

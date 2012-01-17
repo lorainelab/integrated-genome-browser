@@ -2,6 +2,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;

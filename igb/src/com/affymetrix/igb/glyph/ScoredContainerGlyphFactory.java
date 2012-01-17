@@ -38,6 +38,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.TrackView;

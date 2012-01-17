@@ -103,7 +103,7 @@ public final class BookmarkUnibrowControlServlet {
 		String version = getStringParameter(parameters, Bookmark.VERSION);
 		String start_param = getStringParameter(parameters, Bookmark.START);
 		String end_param = getStringParameter(parameters, Bookmark.END);
-		String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
+//		String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
 		String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
 		String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
 		boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));

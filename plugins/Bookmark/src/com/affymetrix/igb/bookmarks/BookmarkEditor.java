@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
-import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import javax.swing.*;
 

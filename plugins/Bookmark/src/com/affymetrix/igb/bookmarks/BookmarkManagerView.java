@@ -38,8 +38,6 @@ import javax.swing.undo.UndoManager;
  *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView implements TreeSelectionListener {
-
-	private static final long serialVersionUID = 1L;
 	private static JFileChooser static_chooser = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	public JTree tree;

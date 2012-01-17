@@ -186,8 +186,8 @@
 			<fileset dir="${test.build.dir}" />
 			<fileset dir="${test.report.dir}" />
 			<fileset file="${component}.jar" />
-			<fileset file="${basedir}/META-INF/MANIFEST.MF" /> <!-- generated in mani-vers task -->
 		</delete>
+		<antcall target="clean-manifest" />
 	</target>
 
 	<target name="check-nullness" description="Check for nullness errors." depends="clean">

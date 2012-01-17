@@ -9,12 +9,15 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.view.SeqMapView;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -35,7 +38,7 @@ import java.util.logging.Logger;
  *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
  */
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
-
+	
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
@@ -74,19 +77,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
-
+	
 	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
 		return getInstance(unique_name, track_name, file_type, true, true, props);
 	}
-
+	
 	public static TrackStyle getInstance(String unique_name, String track_name, String file_type) {
 		return getInstance(unique_name, track_name, file_type, true, true, null);
 	}
-
+	
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
 		return getInstance(unique_name, null, null, persistent, false, null);
 	}
-
+	
 	private static TrackStyle getInstance(String unique_name, String track_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props) {
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
@@ -100,13 +103,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			style = new TrackStyle(unique_name, track_name, file_type, persistent, template, props);
 			static_map.put(unique_name.toLowerCase(), style);
 		}
-
+		
 		return style;
 	}
-
+	
 	public void restoreToDefault() {
 		TrackStyle template = getDefaultInstance();
-
+		
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
 			initFromTemplate(template);
@@ -131,7 +134,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				initFromPropertyMap(props);
 			}
 		}
-
+		if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			this.setForeground(CoordinateStyle.default_coordinate_color);
+			this.setBackground(CoordinateStyle.default_coordinate_background);
+			Application igb = Application.getSingleton();
+			PreferenceUtils.getTopNode().put(SeqMapView.PREF_COORDINATE_LABEL_FORMAT, SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
+			igb.getMapView().setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
+		}
 		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setTrackName(original_track_name);
 		}
@@ -153,11 +162,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return result;
 	}
-
+	
 	protected TrackStyle() {
 		method_name = null;
 	}
-
+	
 	public TrackStyle(PropertyMap props) {
 		this();
 		initFromPropertyMap(props);
@@ -181,7 +190,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.file_type = file_type;
 		this.unique_name = unique_ame.toLowerCase();
 		this.is_persistent = is_persistent;
-
+		
 		if (is_persistent) {
 			if (this.unique_name.endsWith("/")) {
 				this.unique_name = this.unique_name.substring(0, this.unique_name.length() - 1);
@@ -190,7 +199,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
 			//   is now handled within PreferenceUtils.getSubnod() call
 		}
-
+		
 		if (template != null) {
 			// calling initFromTemplate should take care of A) and B)
 			initFromTemplate(template);
@@ -242,7 +251,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				initFromPropertyMap(props);
 			}
 		}
-
+		
 		if (is_persistent) {
 			try {
 				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
@@ -278,16 +287,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
 		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getForwardColor());
 		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getReverseColor());
-
+		
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
 		view_mode = node.get(PREF_VIEW_MODE, this.getViewMode());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
-
+	
 	public PropertyMap getProperties() {
 		PropertyMap props = new PropertyMap();
-
+		
 		props.put(PROP_FOREGROUND, PreferenceUtils.getColorString(getForeground()));
 		props.put(PROP_BACKGROUND, PreferenceUtils.getColorString(getBackground()));
 		props.put(PROP_START_COLOR, PreferenceUtils.getColorString(getForwardColor()));
@@ -302,7 +311,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		props.put(PROP_FONT_SIZE, String.valueOf(getTrackNameSize()));
 		props.put(PROP_DIRECTION_TYPE, String.valueOf(getDirectionName()));
 		props.put(PROP_VIEW_MODE, getViewMode());
-
+		
 		return props;
 	}
 
@@ -311,12 +320,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	//      older values would override newer values since persisted nodes take precedence
 	//    (only want to persists when user sets preferences in GUI)
 	private void initFromPropertyMap(PropertyMap props) {
-
+		
 		if (DEBUG) {
 			System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
 			System.out.println("             props: " + props);
 		}
-
+		
 		Color col = props.getColor(PROP_COLOR);
 		if (col == null) {
 			col = props.getColor(PROP_FOREGROUND);
@@ -328,17 +337,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (col != null) {
 			this.setBackground(col);
 		}
-
+		
 		col = props.getColor(PROP_START_COLOR);
 		if (col != null) {
 			this.setForwardColor(col);
 		}
-
+		
 		col = props.getColor(PROP_END_COLOR);
 		if (col != null) {
 			this.setReverseColor(col);
 		}
-
+		
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null) {
 			int prev_glyph_depth = glyph_depth;
@@ -348,12 +357,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setGlyphDepth(prev_glyph_depth);
 			}
 		}
-
+		
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
 		if (labfield != null) {
 			this.setLabelField(labfield);
 		}
-
+		
 		String mdepth_string = (String) props.getProperty(PROP_MAX_DEPTH);
 		if (mdepth_string != null) {
 			int prev_max_depth = max_depth;
@@ -363,7 +372,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setMaxDepth(prev_max_depth);
 			}
 		}
-
+		
 		String sepstring = (String) props.getProperty(PROP_SEPARATE);
 		if (sepstring != null) {
 			if (sepstring.equalsIgnoreCase(FALSE)) {
@@ -372,7 +381,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setSeparate(true);
 			}
 		}
-
+		
 		String showstring = (String) props.getProperty(PROP_SHOW);
 		if (showstring != null) {
 			if (showstring.equalsIgnoreCase(FALSE)) {
@@ -381,7 +390,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				show = true;
 			}
 		}
-
+		
 		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
 		if (collapstring != null) {
 			if (collapstring.equalsIgnoreCase(FALSE)) {
@@ -412,39 +421,39 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (viewmodestring != null) {
 			setViewMode(viewmodestring);
 		}
-
+		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");
 		}
 		// height???
 	}
-
+	
 	private void initFromPropertyMap(Map<String, String> props) {
 		String fgString = props.get("foreground");
 		if (fgString != null && !"".equals(fgString)) {
 			this.setForeground(Color.decode("0x" + fgString));
 		}
-
+		
 		String bgString = props.get("background");
 		if (bgString != null && !"".equals(bgString)) {
 			this.setBackground(Color.decode("0x" + bgString));
 		}
-
+		
 		String startColorString = props.get("positive_strand_color");
 		if (startColorString != null && !"".equals(startColorString)) {
 			this.setForwardColor(Color.decode("0x" + startColorString));
 		}
-
+		
 		String endColorString = props.get("negative_strand_color");
 		if (endColorString != null && !"".equals(endColorString)) {
 			this.setReverseColor(Color.decode("0x" + endColorString));
 		}
-
+		
 		String labfield = props.get("label_field");
 		if (labfield != null && !"".equals(labfield) && label_field != null) {
 			this.setLabelField(labfield);
 		}
-
+		
 		String mDepthString = props.get("max_depth");
 		if (mDepthString != null && !"".equals(mDepthString)) {
 			int prev_max_depth = max_depth;
@@ -454,7 +463,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setMaxDepth(prev_max_depth);
 			}
 		}
-
+		
 		String nameSizeString = props.get("name_size");
 		if (nameSizeString != null && !"".equals(nameSizeString)) {
 			float prev_font_size = track_name_size;
@@ -464,7 +473,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setTrackNameSize(prev_font_size);
 			}
 		}
-
+		
 		String connectedString = props.get("connected");
 		if (connectedString != null && !"".equals(connectedString)) {
 			if (connectedString.equalsIgnoreCase(FALSE)) {
@@ -473,7 +482,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setGlyphDepth(2);
 			}
 		}
-
+		
 		String collapsedString = props.get("collapsed");
 		if (collapsedString != null && !"".equals(collapsedString)) {
 			if (collapsedString.equalsIgnoreCase(FALSE)) {
@@ -482,7 +491,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setCollapsed(true);
 			}
 		}
-
+		
 		String show2tracksString = props.get("show2tracks");
 		if (show2tracksString != null && !"".equals(show2tracksString)) {
 			if (show2tracksString.equalsIgnoreCase(FALSE)) {
@@ -491,7 +500,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setSeparate(true);
 			}
 		}
-
+		
 		String directionstring = props.get("direction_type");
 		if (directionstring != null) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
@@ -501,7 +510,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				this.setDirectionType(prev_direction_type);
 			}
 		}
-
+		
 		String viewModeString = props.get("view_mode");
 		if (viewModeString != null) {
 			setViewMode(viewModeString);
@@ -549,11 +558,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return default_instance;
 	}
-
+	
 	public String getUniqueName() {
 		return unique_name;
 	}
-
+	
 	public String getMethodName() {
 		return method_name;
 	}
@@ -568,7 +577,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return this.track_name;
 	}
-
+	
 	public void setTrackName(String track_name) {
 		this.track_name = track_name;
 		if (getNode() != null) {
@@ -594,7 +603,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public boolean getSeparate() {
 		return show2tracks;
 	}
-
+	
 	public void setSeparate(boolean b) {
 		if (is_graph && b) {
 			return;
@@ -607,7 +616,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putBoolean(PREF_SHOW2TRACKS, b);
 		}
 	}
-
+	
 	public final boolean getCustomizable() {
 		return customizable;
 	}
@@ -616,7 +625,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public boolean getCollapsed() {
 		return collapsed;
 	}
-
+	
 	public void setCollapsed(boolean b) {
 		this.collapsed = b;
 		if (getNode() != null) {
@@ -654,7 +663,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public Color getForeground() {
 		return foreground;
 	}
-
+	
 	public void setForeground(Color c) {
 		if (c != this.foreground) {
 			custom_heatmap = null;
@@ -673,7 +682,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public Color getBackground() {
 		return background;
 	}
-
+	
 	public void setBackground(Color c) {
 		if (c != this.background) {
 			custom_heatmap = null;
@@ -692,7 +701,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public Color getForwardColor() {
 		return start_color;
 	}
-
+	
 	public void setForwardColor(Color c) {
 		this.start_color = c;
 		if (getNode() != null) {
@@ -707,7 +716,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public Color getReverseColor() {
 		return end_color;
 	}
-
+	
 	public void setReverseColor(Color c) {
 		this.end_color = c;
 		if (getNode() != null) {
@@ -724,7 +733,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public String getLabelField() {
 		return label_field;
 	}
-
+	
 	public void setLabelField(String l) {
 		if (l == null || l.trim().length() == 0) {
 			l = "";
@@ -737,11 +746,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().put(PREF_LABEL_FIELD, l);
 		}
 	}
-
+	
 	public boolean getConnected() {
 		return connected;
 	}
-
+	
 	public void setConnected(boolean b) {
 		connected = b;
 		if (getNode() != null) {
@@ -751,11 +760,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putBoolean(PREF_CONNECTED, b);
 		}
 	}
-
+	
 	public int getGlyphDepth() {
 		return glyph_depth;
 	}
-
+	
 	public void setGlyphDepth(int i) {
 		if (glyph_depth != i) {
 			glyph_depth = i;
@@ -766,18 +775,18 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				getNode().putInt(PREF_GLYPH_DEPTH, i);
 			}
 		}
-
+		
 		if (glyph_depth == 1) {
 			setConnected(false);
 		} else {
 			setConnected(true);
 		}
 	}
-
+	
 	public double getHeight() {
 		return height;
 	}
-
+	
 	public void setHeight(double h) {
 		height = h;
 		if (getNode() != null) {
@@ -787,11 +796,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putDouble(PREF_HEIGHT, h);
 		}
 	}
-
+	
 	public float getTrackNameSize() {
 		return track_name_size;
 	}
-
+	
 	public void setTrackNameSize(float font_size) {
 		this.track_name_size = font_size;
 		if (getNode() != null) {
@@ -801,19 +810,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putFloat(PREF_TRACK_SIZE, font_size);
 		}
 	}
-
+	
 	public void setFeature(GenericFeature f) {
 		this.feature = f;
 	}
-
+	
 	public GenericFeature getFeature() {
 		return this.feature;
 	}
-
+	
 	public String getFileType() {
 		return file_type;
 	}
-
+	
 	public void setDirectionType(DIRECTION_TYPE type) {
 		this.direction_type = type;
 		if (getNode() != null) {
@@ -823,11 +832,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().putInt(PREF_DIRECTION_TYPE, type.ordinal());
 		}
 	}
-
+	
 	public int getDirectionType() {
 		return direction_type.ordinal();
 	}
-
+	
 	public DIRECTION_TYPE getDirectionName() {
 		return direction_type;
 	}
@@ -851,15 +860,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public String getUrl() {
 		return this.url;
 	}
-
+	
 	public final boolean getPersistent() {
 		return (is_persistent && getNode() != null);
 	}
-
+	
 	public boolean getExpandable() {
 		return expandable;
 	}
-
+	
 	public void setExpandable(boolean b) {
 		// currently there is no need to make this property persistent.
 		// there is rarly any reason to change it from the defualt value for
@@ -883,7 +892,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			setSeparate(false);
 		}
 	}
-
+	
 	public Map<String, Object> getTransientPropertyMap() {
 		if (transient_properties == null) {
 			transient_properties = new HashMap<String, Object>();
@@ -912,16 +921,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public Color getScoreColor(float score) {
 		final float min = 1.0f; // min and max might become variables later...
 		final float max = 1000.0f;
-
+		
 		if (score < min) {
 			score = min;
 		} else if (score > max) {
 			score = max;
 		}
-
+		
 		final float range = max - min;
 		int index = (int) ((score / range) * 255);
-
+		
 		return getCustomHeatMap().getColors()[index];
 	}
 
@@ -940,7 +949,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		return custom_heatmap;
 	}
-
+	
 	public void setViewMode(String s) {
 		if (s != null && !default_view_mode.equalsIgnoreCase(s)
 				&& MapViewModeHolder.getInstance().getViewFactory(s) == null) {
@@ -948,7 +957,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			s = default_view_mode;
 		}
 		view_mode = s;
-
+		
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setViewMode(): " + s);
@@ -956,27 +965,27 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			getNode().put(PREF_VIEW_MODE, s);
 		}
 	}
-
+	
 	public String getViewMode() {
 		return view_mode;
 	}
-
+	
 	public static void setDrawCollapseControl(boolean b) {
 		draw_collapse_icon = b;
 		if (tiers_root_node != null) {
 			tiers_root_node.putBoolean(PREF_DRAW_COLLAPSE_ICON, b);
 		}
 	}
-
+	
 	public static boolean getDrawCollapseState() {
 		return tiers_root_node.getBoolean(PREF_DRAW_COLLAPSE_ICON, default_draw_collapse_icon);
 	}
-
+	
 	public boolean drawCollapseControl() {
 		return (draw_collapse_icon && getExpandable()
 				&& (view_mode == null || view_mode.equals(default_view_mode)));
 	}
-
+	
 	public void copyPropertiesFrom(ITrackStyle g) {
 		setForeground(g.getForeground());
 		setShow(g.getShow());
@@ -1000,7 +1009,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			TrackStyle as = (TrackStyle) g;
 			setCustomizable(as.getCustomizable());
 		}
-
+		
 		getTransientPropertyMap().putAll(g.getTransientPropertyMap());
 	}
 
@@ -1015,7 +1024,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		// getHasMaxDepth(), etc....
 		customizable = b;
 	}
-
+	
 	@Override
 	public String toString() {
 		String s = "AnnotStyle: (" + Integer.toHexString(this.hashCode()) + ")"
@@ -1025,14 +1034,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				+ " bg: " + getBackground();
 		return s;
 	}
-
+	
 	public static synchronized boolean autoSaveUserStylesheet() {
 		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
 		if (stylesheet == null) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "No user stylesheet present.");
 			return false;
 		}
-
+		
 		java.io.File f = XmlStylesheetParser.getUserStylesheetFile();
 		String filename = f.getAbsolutePath();
 		java.io.FileWriter fw = null;
@@ -1049,7 +1058,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			bw = new java.io.BufferedWriter(fw);
 			bw.write(sb.toString());
 			bw.flush();
-
+			
 			return true;
 		} catch (java.io.FileNotFoundException fnfe) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Could not auto-save user stylesheet to {0}", filename);
@@ -1059,7 +1068,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(fw);
 		}
-
+		
 		return false;
 	}
 }

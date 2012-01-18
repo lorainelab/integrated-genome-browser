@@ -627,6 +627,8 @@ public final class GeneralLoadView {
 						if (gmodel.getSelectedSeqGroup().getSeqCount() > 0 && 
 								!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
 							gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
+						} else {
+							gmodel.setSelectedSeq(null);
 						}
 					}
 				}

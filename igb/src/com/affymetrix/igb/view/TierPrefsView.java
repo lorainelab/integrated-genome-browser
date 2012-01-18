@@ -83,6 +83,7 @@ public class TierPrefsView implements ListSelectionListener {
 	public JRPCheckBox colorCheckBox;
 	public JRPCheckBox connectedCheckBox;
 	public JRPTextField displayNameTextField;
+	public JButton applyDisplayNameButton;
 	public ColorComboBox fgColorComboBox;
 	public JRPComboBox labelFieldComboBox;
 	public JRPTextField maxDepthTextField;
@@ -118,6 +119,7 @@ public class TierPrefsView implements ListSelectionListener {
 		initTable();
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
+		applyDisplayNameButton = new JRPButton("TierPrefsView_applyDisplayNameButton");
 		fgColorComboBox = new ColorComboBox();
 		bgColorComboBox = new ColorComboBox();
 		trackNameSizeComboBox = new JRPComboBox("TierPrefsView_trackNameSizeComboBox");
@@ -136,6 +138,7 @@ public class TierPrefsView implements ListSelectionListener {
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
 		displayNameTextField.setEnabled(false);
+		applyDisplayNameButton.setEnabled(false);
 		bgColorComboBox.setEnabled(false);
 		fgColorComboBox.setEnabled(false);
 		trackNameSizeComboBox.setEnabled(false);
@@ -344,6 +347,7 @@ public class TierPrefsView implements ListSelectionListener {
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
 		displayNameTextField.setEnabled(true);
+		applyDisplayNameButton.setEnabled(true);		
 		viewModeCB.setEnabled(true);
 		labelFieldComboBox.setEnabled(true);
 		maxDepthTextField.setEnabled(true);
@@ -354,7 +358,6 @@ public class TierPrefsView implements ListSelectionListener {
 		possitiveColorComboBox.setEnabled(true);
 		negativeColorComboBox.setEnabled(true);
 		show2TracksCheckBox.setEnabled(true);
-		displayNameTextField.setEnabled(true);
 		bgColorComboBox.setEnabled(true);
 		fgColorComboBox.setEnabled(true);
 		trackNameSizeComboBox.setEnabled(true);
@@ -367,6 +370,7 @@ public class TierPrefsView implements ListSelectionListener {
 
 		if (table.getRowCount() == 0) {
 			displayNameTextField.setEnabled(false);
+			applyDisplayNameButton.setEnabled(false);	
 			viewModeCB.setEnabled(false);
 			labelFieldComboBox.setEnabled(false);
 			maxDepthTextField.setEnabled(false);
@@ -377,7 +381,6 @@ public class TierPrefsView implements ListSelectionListener {
 			possitiveColorComboBox.setEnabled(false);
 			negativeColorComboBox.setEnabled(false);
 			show2TracksCheckBox.setEnabled(false);
-			displayNameTextField.setEnabled(false);
 			bgColorComboBox.setEnabled(false);
 			fgColorComboBox.setEnabled(false);
 			trackNameSizeComboBox.setEnabled(false);
@@ -388,6 +391,7 @@ public class TierPrefsView implements ListSelectionListener {
 
 		if (selectedRows.length > 1) {
 			displayNameTextField.setEnabled(false);
+			applyDisplayNameButton.setEnabled(false);	
 			viewModeCB.setEnabled(false);
 			bgColorComboBox.setSelectedColor(null);
 			fgColorComboBox.setSelectedColor(null);
@@ -410,6 +414,7 @@ public class TierPrefsView implements ListSelectionListener {
 					|| selectedStyle.isGraphTier()) {
 				if (!selectedStyle.isGraphTier()) {
 					displayNameTextField.setEnabled(false);
+					applyDisplayNameButton.setEnabled(false);	
 				}
 				viewModeCB.setEnabled(false);
 				labelFieldComboBox.setEnabled(false);

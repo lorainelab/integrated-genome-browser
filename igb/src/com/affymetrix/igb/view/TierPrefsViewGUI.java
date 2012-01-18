@@ -58,7 +58,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         collapsedCheckBox = tpv.collapsedCheckBox;
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
-        ApplyTrackNameButton = new javax.swing.JButton();
+        ApplyTrackNameButton = tpv.applyDisplayNameButton;
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = tpv.table;

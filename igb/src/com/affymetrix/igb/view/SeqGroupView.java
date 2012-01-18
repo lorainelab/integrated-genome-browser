@@ -84,7 +84,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
 	private final JRPTable seqtable;
 	private final ListSelectionModel lsm;
@@ -103,16 +102,18 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private JRPComboBox versionCB;
 	private final IGBService igbService;
 	private SeqGroupTableModel model;
-	
+
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
 		gviewer = Application.getSingleton().getMapView();
 		seqtable = new JRPTable("SeqGroupView_seqtable") {
+
 			private static final long serialVersionUID = 1L;
 			//Implement table header tool tips.
 
 			protected JTableHeader createDefaultTableHeader() {
 				return new JTableHeader(columnModel) {
+
 					private static final long serialVersionUID = 1L;
 
 					public String getToolTipText(MouseEvent e) {
@@ -134,7 +135,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		lsm = seqtable.getSelectionModel();
 		lsm.addListSelectionListener(this);
 
-		
+
 		speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
 		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));
@@ -154,7 +155,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCBRenderer = new JComboBoxToolTipRenderer();
 		versionCB.setRenderer(versionCBRenderer);
 		versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
-		
+
 		populateSpeciesData();
 
 	}
@@ -242,6 +243,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column) {
 
+			if (value == null) { //fixes NPE when tabbing through table
+				return null;
+			}
+
 			if (value.toString().length() == 0) {
 				return super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
 			}
@@ -313,7 +318,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		setSelectedGroup(versionName);
 	}
 
-	public void setSelectedGroup(String versionName){
+	public void setSelectedGroup(String versionName) {
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");
@@ -328,7 +333,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		(new InitVersionWorker(versionName, group)).execute();
 	}
-	
+
 	public void valueChanged(ListSelectionEvent evt) {
 		Object src = evt.getSource();
 		if ((src == lsm) && (!evt.getValueIsAdjusting())) { // ignore extra messages
@@ -599,20 +604,20 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		checkToAddListener();
 	}
 
-	private void checkToAddListener(){
+	private void checkToAddListener() {
 		// Need to refresh species names
 		boolean speciesListener = true;
-		for(ItemListener listener : this.speciesCB.getItemListeners()){
-			if(listener == this){
+		for (ItemListener listener : this.speciesCB.getItemListeners()) {
+			if (listener == this) {
 				speciesListener = false;
 			}
 		}
-		
+
 		if (speciesListener) {
 			this.speciesCB.addItemListener(this);
 		}
 	}
-	
+
 	private void populateSpeciesData() {
 		final Set<GenericServer> servers = new HashSet<GenericServer>();
 		servers.addAll(ServerList.getServerInstance().getEnabledServers());
@@ -624,12 +629,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}
-				
+
 				@Override
-				public void done(){
+				public void done() {
 					servers.remove(gServer);
-					
-					if(servers.isEmpty()){
+
+					if (servers.isEmpty()) {
 						runBatchOrRestore();
 					}
 				}
@@ -828,9 +833,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 				initVersion(versionName);
 
-				if(Thread.currentThread().isInterrupted())
+				if (Thread.currentThread().isInterrupted()) {
 					return null;
-				
+				}
+
 				gmodel.setSelectedSeqGroup(group);
 
 				List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
@@ -860,14 +866,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			protected void finished() {
 				try {
-					if(Thread.currentThread().isInterrupted())
+					if (Thread.currentThread().isInterrupted()) {
 						return;
-					
+					}
+
 					BioSeq seq = get();
-					if(seq != null){
+					if (seq != null) {
 						gmodel.setSelectedSeq(seq);
 					}
-					
+
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -877,13 +884,13 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		GroupSelectionListener listener = new GroupSelectionListener() {
 
 			public void groupSelectionChanged(GroupSelectionEvent evt) {
-				if(evt.getSelectedGroup() != group){
+				if (evt.getSelectedGroup() != group) {
 					worker.cancel(true);
 				}
 				gmodel.removeGroupSelectionListener(this);
 			}
 		};
-		
+
 		gmodel.addGroupSelectionListener(listener);
 		worker.execute();
 	}
@@ -927,13 +934,13 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		ServerList.getServerInstance().addServerInitListener(singleton);
 		gmodel.addGroupSelectionListener(singleton);
 		gmodel.addSeqSelectionListener(singleton);
-		
+
 		singleton.speciesCB.setEnabled(true);
 		singleton.versionCB.setEnabled(true);
 		singleton.speciesCB.addItemListener(singleton);
 		singleton.versionCB.addItemListener(singleton);
 		//speciesCB.addItemListener(Welcome.getWelcome());
-		singleton.speciesCB.addItemListener( MainWorkspaceManager.getWorkspaceManager());
+		singleton.speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
 	}
 
 	public JRPTable getTable() {

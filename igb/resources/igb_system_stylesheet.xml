@@ -303,6 +303,11 @@ will not work well with these styles.
 			<PROPERTY key="direction_type" value="none"/>
 			<PROPERTY key='separate' value='false'/>
 		</FILE_TYPE_ASSOCIATION>
+		
+		<FILE_TYPE_ASSOCIATION file_type="sam">
+			<PROPERTY key="direction_type" value="none"/>
+			<PROPERTY key='separate' value='false'/>
+		</FILE_TYPE_ASSOCIATION>
   
 		<FILE_TYPE_ASSOCIATION file_type="bed">
 			<PROPERTY key="direction_type" value="arrow"/>

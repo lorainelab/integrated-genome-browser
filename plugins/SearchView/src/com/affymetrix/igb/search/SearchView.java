@@ -1,6 +1,5 @@
 package com.affymetrix.igb.search;
 
-import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -35,7 +34,6 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -48,7 +46,6 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
-import javax.swing.table.TableCellRenderer;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {

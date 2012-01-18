@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="0" green="0" red="0" type="rgb"/>
@@ -22,61 +22,62 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jPanel4" linkSize="6" alignment="1" min="-2" pref="52" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jPanel2" linkSize="4" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="jPanel2" linkSize="4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                          <Component id="LeftSlide" linkSize="3" min="-2" pref="35" max="-2" attributes="1"/>
                       </Group>
                   </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                      <Component id="LeftSlide" linkSize="3" min="-2" pref="35" max="-2" attributes="1"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                      <Component id="jPanel4" linkSize="6" min="-2" pref="52" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Component id="CoverFlowPane" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="RightSlide" linkSize="3" min="-2" pref="32" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="1" pref="1" max="1" attributes="0"/>
+                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="jPanel1" linkSize="4" min="-2" pref="51" max="-2" attributes="1"/>
+                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jPanel3" linkSize="6" alignment="1" pref="52" max="32767" attributes="1"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="RightSlide" linkSize="3" min="-2" pref="32" max="-2" attributes="1"/>
+                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Component id="jPanel3" linkSize="6" pref="52" max="32767" attributes="1"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
           </Group>
-          <Component id="TitlePane" pref="218" max="32767" attributes="0"/>
+          <Component id="TitlePane" alignment="0" pref="218" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="TitlePane" pref="130" max="32767" attributes="0"/>
+              <Component id="TitlePane" min="-2" pref="169" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="CoverFlowPane" max="32767" attributes="2"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jPanel2" linkSize="14" min="-2" max="-2" attributes="0"/>
+                      <Component id="jPanel2" linkSize="16" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="LeftSlide" pref="112" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="jPanel4" linkSize="15" min="-2" pref="26" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <Component id="jPanel4" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="1">
-                      <Component id="jPanel1" linkSize="14" min="-2" pref="57" max="-2" attributes="0"/>
+                      <Component id="jPanel1" linkSize="16" min="-2" pref="48" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="RightSlide" pref="112" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="jPanel3" linkSize="15" min="-2" pref="26" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <Component id="jPanel3" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -107,7 +108,7 @@
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -118,6 +119,9 @@
           <Dimension value="[150, 75]"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jPanel1.setBackground(new java.awt.Color(0, 0, 0));"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -127,7 +131,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="55" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="46" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -135,7 +139,7 @@
     <Container class="javax.swing.JPanel" name="jPanel4">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -146,6 +150,9 @@
           <Dimension value="[150, 80]"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jPanel4.setBackground(new java.awt.Color(0, 0, 0));"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -155,7 +162,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="24" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="32" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -163,11 +170,15 @@
     <Component class="javax.swing.JButton" name="RightSlide">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Scroll genome version right"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="null"/>
+          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+            <LineBorder thickness="2">
+              <Color PropertyName="color" blue="0" green="66" red="ff" type="rgb"/>
+            </LineBorder>
+          </Border>
         </Property>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="new Dimension(20,40)" type="code"/>
@@ -181,11 +192,14 @@
         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RightSlideMouseReleased"/>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RightSlideMouseClicked"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="RightSlide.setBackground(new java.awt.Color(0, 0, 0));&#xa;RightSlide.setBorder(null);"/>
+      </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel3">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -196,6 +210,9 @@
           <Dimension value="[150, 77]"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jPanel3.setBackground(new java.awt.Color(0, 0, 0));"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -205,7 +222,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="24" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="32" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -231,7 +248,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="130" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="169" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -239,11 +256,15 @@
     <Component class="javax.swing.JButton" name="LeftSlide">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Scroll genome version left"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="null"/>
+          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+            <LineBorder thickness="2">
+              <Color PropertyName="color" blue="0" green="66" red="ff" type="rgb"/>
+            </LineBorder>
+          </Border>
         </Property>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[20, 40]"/>
@@ -257,11 +278,14 @@
         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="LeftSlideMouseReleased"/>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="LeftSlideMouseClicked"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="LeftSlide.setBackground(new java.awt.Color(0, 0, 0));&#xa;LeftSlide.setBorder(null);"/>
+      </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel2">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="0" type="rgb"/>
+          <Color blue="0" green="66" red="ff" type="rgb"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -269,6 +293,9 @@
           </Border>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jPanel2.setBackground(new java.awt.Color(0, 0, 0));"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -278,7 +305,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="55" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="46" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

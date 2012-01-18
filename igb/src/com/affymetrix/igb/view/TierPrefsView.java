@@ -241,8 +241,6 @@ public class TierPrefsView implements ListSelectionListener {
 
 		Font f = new Font("SansSerif", Font.BOLD, 12);
 		table.getTableHeader().setFont(f);
-		table.setRowSelectionAllowed(false);
-		table.setCellSelectionEnabled(true);
 	}
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
@@ -522,6 +520,12 @@ public class TierPrefsView implements ListSelectionListener {
 					applyChanges();
 				}
 			});
+		}
+	}
+
+	public void selectAll() {		
+		if (table.getRowCount() > 1) {
+			table.setRowSelectionInterval(0, table.getRowCount() - 2);
 		}
 	}
 

@@ -92,6 +92,20 @@ public final class BookmarksParser {
 		return result;
 	}
 
+	static String parseNetscapeBookmarkListComment(String html) {
+		String result = ""; 
+		String str = html.trim();
+		String str_uc = str.toUpperCase();
+		if (str_uc.startsWith("<DT><H")) { // usually <DT><H3>
+			int ind1 = 4 + str_uc.indexOf("<DD>");
+			int ind2 = str_uc.indexOf("</DD", ind1);
+			if (ind1 != -1 && ind2 != -1) {
+				result = str.substring(ind1, ind2);
+			}
+		}
+		return result;
+	}
+
 	/** @return a Bookmark, or null if the bookmark couldn't be parsed. */
 	static Bookmark parseNetscapeFormatBookmark(String html) {
 		String name = null;
@@ -122,9 +136,8 @@ public final class BookmarksParser {
 			if (ind1 > -1 && ind2 > ind1) {
 				name = str.substring(ind1, ind2);
 			}
-			
-			if(ind_a == -1)
-			{
+
+			if (ind_a == -1) {
 				comment = name; //Old bookmark format doesn't include comment
 			}
 		}
@@ -144,7 +157,7 @@ public final class BookmarksParser {
 	}
 
 	private static String formatComment(String comment) {
-		return comment.replaceAll("&newLine","\n");
+		return comment.replaceAll("&newLine", "\n");
 	}
 
 	public static void parseNetscapeBookmarks(BookmarkList bookmarks, BufferedReader br) throws IOException {
@@ -160,7 +173,7 @@ public final class BookmarksParser {
 			String str = line.trim().toUpperCase();
 			if (str.startsWith("<DT><H3")) { // Start and name a new list
 				//if (DEBUG) System.out.println("FOLDER:   "+line);
-				BookmarkList new_list = new BookmarkList(parseNetscapeBookmarkListName(line));
+				BookmarkList new_list = new BookmarkList(parseNetscapeBookmarkListName(line), parseNetscapeBookmarkListComment(line));
 				current_list.addSublist(new_list);
 				if (DEBUG) {
 					System.out.println("Made new list: " + new_list.getName() + ", with parent: " + current_list.getName());

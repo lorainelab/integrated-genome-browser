@@ -265,7 +265,7 @@
                       <Component id="buttonsPanel" linkSize="4" alignment="0" max="32767" attributes="1"/>
                       <Component id="previewLabel" linkSize="4" alignment="0" pref="107" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

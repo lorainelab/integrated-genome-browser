@@ -6,6 +6,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.*;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -21,6 +22,11 @@ public class ExportDialogGUI extends JPanel {
 	public static JFrame static_frame = null;
 	private static ExportDialogGUI singleton;
 	private static ExportDialog export;
+	private AffyTieredMap seqMap;
+	private Component wholeFrame;
+	private Component mainView;
+	private Component mainViewWithLabels;
+	private Component slicedView;
 
 	public synchronized void display(boolean isSequenceViewer) {
 		initRadioButton(isSequenceViewer);
@@ -34,17 +40,16 @@ public class ExportDialogGUI extends JPanel {
 
 	private void initRadioButton(boolean isSequenceViewer) {
 		if (!isSequenceViewer) {
-			AffyTieredMap seqMap = IGB.getSingleton().getMapView().getSeqMap();
+			initView();
 
 			if (svRadioButton.isSelected()) {
-				export.setComponent(export.determineSlicedComponent());
+				export.setComponent(slicedView);
 			} else if (mvRadioButton.isSelected()) {
-				export.setComponent(seqMap.getNeoCanvas());
+				export.setComponent(mainView);
 			} else if (mvlRadioButton.isSelected()) {
-				AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
-				export.setComponent(tm.getSplitPane());
+				export.setComponent(mainViewWithLabels);
 			} else {
-				export.setComponent(IGB.getSingleton().getFrame());
+				export.setComponent(wholeFrame);
 				wfRadioButton.setSelected(true);
 			}
 
@@ -54,6 +59,19 @@ public class ExportDialogGUI extends JPanel {
 		}
 
 		buttonsPanel.setVisible(!isSequenceViewer);
+	}
+
+	private void initView() {
+		seqMap = IGB.getSingleton().getMapView().getSeqMap();
+		wholeFrame = IGB.getSingleton().getFrame().getContentPane();
+
+		mainView = seqMap.getNeoCanvas();
+
+		AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
+		mainViewWithLabels = tm.getSplitPane();
+
+		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 
 	private void initFrame() {
@@ -80,8 +98,6 @@ public class ExportDialogGUI extends JPanel {
 		this.mvRadioButton.setEnabled(!b);
 		this.mvlRadioButton.setEnabled(!b);
 		this.svRadioButton.setEnabled(!b);
-
-		export.previewImage();
 	}
 
 	public static synchronized ExportDialogGUI getSingleton() {
@@ -237,33 +253,6 @@ public class ExportDialogGUI extends JPanel {
                             .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        imageSizePanelLayout.setVerticalGroup(
-            imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(imageSizePanelLayout.createSequentialGroup()
-                .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(widthLabel))
-                        .add(5, 5, 5)
-                        .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(heightSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(heightLabel)))
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(resetButton))
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(xSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(xLabel))
-                        .add(5, 5, 5)
-                        .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(yLabel)
-                            .add(ySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
 
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
 
@@ -424,23 +413,22 @@ public class ExportDialogGUI extends JPanel {
 	}//GEN-LAST:event_resetButtonActionPerformed
 
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed
-		export.setComponent(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
+		export.setComponent(mainView);
 		export.previewImage();
 	}//GEN-LAST:event_mvRadioButtonActionPerformed
 
 	private void mvlRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvlRadioButtonActionPerformed
-		AffyLabelledTierMap tm = (AffyLabelledTierMap) IGB.getSingleton().getMapView().getSeqMap();
-		export.setComponent(tm.getSplitPane());
+		export.setComponent(mainViewWithLabels);
 		export.previewImage();
 	}//GEN-LAST:event_mvlRadioButtonActionPerformed
 
 	private void wfRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wfRadioButtonActionPerformed
-		export.setComponent(IGB.getSingleton().getFrame());
+		export.setComponent(wholeFrame);
 		export.previewImage();
 	}//GEN-LAST:event_wfRadioButtonActionPerformed
 
 	private void svRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_svRadioButtonActionPerformed
-		export.setComponent(export.determineSlicedComponent());
+		export.setComponent(slicedView);
 		export.previewImage();
 	}//GEN-LAST:event_svRadioButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

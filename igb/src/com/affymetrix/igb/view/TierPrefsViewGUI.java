@@ -63,6 +63,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         jScrollPane1 = new javax.swing.JScrollPane();
         table = tpv.table;
         restoreToDefaultButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -259,22 +260,31 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
             }
         });
 
+        jButton1.setText("Select All");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
         selectTrackPanelLayout.setHorizontalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(restoreToDefaultButton)
-                .add(314, 314, 314))
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
+                .add(jButton1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 248, Short.MAX_VALUE)
+                .add(restoreToDefaultButton))
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                 .add(0, 0, 0)
-                .add(restoreToDefaultButton))
+                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(restoreToDefaultButton)
+                    .add(jButton1)))
         );
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
@@ -478,8 +488,12 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 	}//GEN-LAST:event_restoreToDefaultButtonActionPerformed
 
 	private void ApplyTrackNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyTrackNameButtonActionPerformed
-		displayNameTextFieldActionPerformed(evt);
+		tpv.displayNameTextField();
 	}//GEN-LAST:event_ApplyTrackNameButtonActionPerformed
+
+	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		tpv.selectAll();
+	}//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ApplyTrackNameButton;
@@ -494,6 +508,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private javax.swing.JTextField displayNameTextField;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

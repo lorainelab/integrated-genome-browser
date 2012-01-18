@@ -332,7 +332,7 @@ public class ExportDialog implements ExportConstants {
 		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
 		Graphics g = image.createGraphics();
-		component.paintAll(g);
+		component.printAll(g);
 
 		image = GraphicsUtil.resizeImage(image,
 				previewLabel.getWidth(), previewLabel.getHeight());
@@ -380,6 +380,7 @@ public class ExportDialog implements ExportConstants {
 		if (slice_view == null) {
 			return null;
 		}
+				
 		return ((AffyLabelledTierMap)slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 }

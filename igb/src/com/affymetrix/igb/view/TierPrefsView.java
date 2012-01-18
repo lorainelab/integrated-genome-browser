@@ -523,7 +523,7 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
-	public void selectAll() {		
+	public void selectAll() {
 		if (table.getRowCount() > 1) {
 			table.setRowSelectionInterval(0, table.getRowCount() - 2);
 		}

@@ -260,13 +260,12 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="buttonsPanel" linkSize="4" max="32767" attributes="1"/>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="previewLabel" linkSize="4" pref="107" max="32767" attributes="1"/>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="buttonsPanel" linkSize="4" alignment="0" max="32767" attributes="1"/>
+                      <Component id="previewLabel" linkSize="4" alignment="0" pref="107" max="32767" attributes="1"/>
+                  </Group>
+                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

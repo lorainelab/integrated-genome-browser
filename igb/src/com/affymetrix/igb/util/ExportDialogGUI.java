@@ -60,7 +60,7 @@ public class ExportDialogGUI extends JPanel {
 		if (static_frame == null) {
 			export.init();
 
-			static_frame = PreferenceUtils.createFrame("Export view as",
+			static_frame = PreferenceUtils.createFrame("Export Image",
 					getSingleton());
 
 			Application app = Application.getSingleton();

@@ -43,7 +43,6 @@ public class AddSource extends javax.swing.JFrame {
 		//Reset to defaults then return
 		name.setText("Your server name");
 		url.setText("http://");
-		type.setSelectedIndex(0);
 		return singleton;
 	}
 

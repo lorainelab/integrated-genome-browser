@@ -624,7 +624,8 @@ public final class GeneralLoadView {
 				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
 					if (version.removeFeature(feature)) {
 						SeqGroupView.getInstance().refreshTable();
-						if (!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
+						if (gmodel.getSelectedSeqGroup().getSeqCount() > 0 && 
+								!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
 							gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
 						}
 					}

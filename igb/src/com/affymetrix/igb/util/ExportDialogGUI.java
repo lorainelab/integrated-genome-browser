@@ -44,9 +44,7 @@ public class ExportDialogGUI extends JPanel {
 				AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
 				export.setComponent(tm.getSplitPane());
 			} else {
-				Frame jframe = IGB.getSingleton().getFrame();
-				jframe.setUndecorated(true);
-				export.setComponent(jframe);
+				export.setComponent(IGB.getSingleton().getFrame());
 				wfRadioButton.setSelected(true);
 			}
 

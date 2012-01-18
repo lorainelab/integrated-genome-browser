@@ -227,7 +227,6 @@ public class AnnotatedSeqGroup {
 
 	public boolean removeSeqsForUri(String uri) {
 		Set<String> seqids = uri2Seqs.get(uri);
-		uri2Seqs.remove(uri);
 		boolean removed = false;
 		if (seqids != null) {
 			for (String seqid : seqids) {
@@ -238,6 +237,7 @@ public class AnnotatedSeqGroup {
 				}
 			}
 		}
+		uri2Seqs.remove(uri);
 		return removed;
 	}
 

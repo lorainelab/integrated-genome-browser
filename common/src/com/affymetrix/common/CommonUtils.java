@@ -20,9 +20,9 @@ public class CommonUtils {
 	private static final String APP_NAME         = BUNDLE.getString("appName");
 	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
 	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
+	private static final String BUILD_VERSION    = BUNDLE.getString("buildVersion");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
-			BUNDLE.getString("appVersionFull"),
-			APP_VERSION);
+			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION);
 
 	private CommonUtils() {
 		super();

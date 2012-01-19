@@ -632,10 +632,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 				@Override
 				public void done() {
-					servers.remove(gServer);
+					synchronized (servers) {
+						servers.remove(gServer);
 
-					if (servers.isEmpty()) {
-						runBatchOrRestore();
+						if (servers.isEmpty()) {
+							runBatchOrRestore();
+						}
 					}
 				}
 			};

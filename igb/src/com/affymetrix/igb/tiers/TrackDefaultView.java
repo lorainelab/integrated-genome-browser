@@ -63,7 +63,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private final TrackDefaultPrefTableModel model;
 	private ListSelectionModel lsm;
 	private boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
-	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int[] selectedRows;
 	private Object[] temp;
@@ -97,7 +96,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		if (singleton == null) {
 			singleton = new TrackDefaultView();
 		}
-		
+
 		return singleton;
 	}
 
@@ -242,31 +241,25 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	public void possitiveColorComboBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
 		}
 	}
 
 	public void negativeColorComboBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
 		}
 	}
 
 	public void bgColorComboBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[i], COL_BACKGROUND);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[i], COL_BACKGROUND);
 		}
 	}
 
 	public void trackNameSizeComboBox() {
-		if (!settingValueFromTable && !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
+		if (!initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
 			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(trackNameSize, selectedRows[i], COL_TRACK_NAME_SIZE);
@@ -275,50 +268,38 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	public void fgColorComboBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[i], COL_FOREGROUND);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[i], COL_FOREGROUND);
 		}
 	}
 
 	public void labelFieldComboBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[i], COL_LABEL_FIELD);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[i], COL_LABEL_FIELD);
 		}
 	}
 
 	public void maxDepthTextField() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(maxDepthTextField.getText(), selectedRows[i], COL_MAX_DEPTH);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(maxDepthTextField.getText(), selectedRows[i], COL_MAX_DEPTH);
 		}
 	}
 
 	public void show2TracksCheckBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], Col_Show_2_Tracks);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], Col_Show_2_Tracks);
 		}
 	}
 
 	public void connectedCheckBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
 		}
 	}
 
 	public void collapsedCheckBox() {
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[i], COL_COLLAPSED);
-			}
+		for (int i = 0; i < selectedRows.length; i++) {
+			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[i], COL_COLLAPSED);
 		}
 	}
 
@@ -351,52 +332,48 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	public void arrowCheckBox() {
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
-					}
-				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+		if (colorCheckBox.isSelected()) {
+			if (arrowCheckBox.isSelected()) {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
 				}
 			} else {
-				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
-					}
-				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+				}
+			}
+		} else {
+			if (arrowCheckBox.isSelected()) {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+				}
+			} else {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
 				}
 			}
 		}
 	}
 
 	public void colorCheckBox() {
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
-					}
-				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+		if (colorCheckBox.isSelected()) {
+			if (arrowCheckBox.isSelected()) {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
 				}
 			} else {
-				if (arrowCheckBox.isSelected()) {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
-					}
-				} else {
-					for (int i = 0; i < selectedRows.length; i++) {
-						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
-					}
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+				}
+			}
+		} else {
+			if (arrowCheckBox.isSelected()) {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+				}
+			} else {
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -503,11 +480,11 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public com.jidesoft.combobox.ColorComboBox getPossitiveColorCombo() {
+	public ColorComboBox getPossitiveColorCombo() {
 		return possitiveColorComboBox;
 	}
 
-	public com.jidesoft.combobox.ColorComboBox getNegativeColorComboBox() {
+	public ColorComboBox getNegativeColorComboBox() {
 		return negativeColorComboBox;
 	}
 
@@ -519,7 +496,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		return arrowCheckBox;
 	}
 
-	public javax.swing.JTable getTable() {
+	public JTable getTable() {
 		return table;
 	}
 
@@ -531,39 +508,39 @@ public final class TrackDefaultView implements ListSelectionListener {
 		return removeTrackDefaultButton;
 	}
 
-	public javax.swing.JTextField getTrackDefaultTextField() {
+	public JTextField getTrackDefaultTextField() {
 		return trackDefaultTextField;
 	}
 
-	public com.jidesoft.combobox.ColorComboBox getBgColorComboBox() {
+	public ColorComboBox getBgColorComboBox() {
 		return bgColorComboBox;
 	}
 
-	public javax.swing.JComboBox getTrackNameSizeComboBox() {
+	public JComboBox getTrackNameSizeComboBox() {
 		return trackNameSizeComboBox;
 	}
 
-	public com.jidesoft.combobox.ColorComboBox getFgColorComboBox() {
+	public ColorComboBox getFgColorComboBox() {
 		return fgColorComboBox;
 	}
 
-	public javax.swing.JComboBox getLabelFieldComboBox() {
+	public JComboBox getLabelFieldComboBox() {
 		return labelFieldComboBox;
 	}
 
-	public javax.swing.JTextField getMaxDepthTextField() {
+	public JTextField getMaxDepthTextField() {
 		return maxDepthTextField;
 	}
 
-	public javax.swing.JCheckBox getShow2TracksCheckBox() {
+	public JCheckBox getShow2TracksCheckBox() {
 		return show2TracksCheckBox;
 	}
 
-	public javax.swing.JCheckBox getConnectedCheckBox() {
+	public JCheckBox getConnectedCheckBox() {
 		return connectedCheckBox;
 	}
 
-	public javax.swing.JCheckBox getCollapsedCheckBox() {
+	public JCheckBox getCollapsedCheckBox() {
 		return collapsedCheckBox;
 	}
 
@@ -673,7 +650,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
 					TrackStyle style = tier_styles.get(row);
@@ -772,7 +748,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
 			}
-			settingValueFromTable = false;
 		}
 
 		int parseInteger(String s, int empty_string, int fallback) {

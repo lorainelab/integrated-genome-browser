@@ -10,11 +10,13 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
  */
 public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1L;
+	
+	private TrackDefaultView tdv;
 
 	/** Creates new form FileTypeViewNew */
 	public TrackDefaultViewGUI() {
 		setName("Track Defaults");
-		TrackDefaultView.init();
+		tdv = TrackDefaultView.getSingleton();
 		initComponents();
 	}
 
@@ -29,31 +31,31 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
-        possitiveColorComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getPossitiveColorCombo();
-        negativeColorComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getNegativeColorComboBox();
-        colorCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getColorCheckBox();
-        arrowCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getArrowCheckBox();
+        possitiveColorComboBox = tdv.getPossitiveColorCombo();
+        negativeColorComboBox = tdv.getNegativeColorComboBox();
+        colorCheckBox = tdv.getColorCheckBox();
+        arrowCheckBox = tdv.getArrowCheckBox();
         selectTrackDefaultPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        table = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTable();
-        addTrackDefaultButton = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getAddTrackDefaultButton();
-        removeTrackDefaultButton = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getRemoveTrackDefaultButton();
+        table = tdv.getTable();
+        addTrackDefaultButton = tdv.getAddTrackDefaultButton();
+        deleteTrackDefaultButton = tdv.getRemoveTrackDefaultButton();
         propertiesPanel = new javax.swing.JPanel();
         TrackTypeNameLabel = new javax.swing.JLabel();
-        trackDefaultTextField = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTrackDefaultTextField();
+        trackDefaultTextField = tdv.getTrackDefaultTextField();
         bgLabel = new javax.swing.JLabel();
-        bgColorComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getBgColorComboBox();
+        bgColorComboBox = tdv.getBgColorComboBox();
         trackNameSizeLabel = new javax.swing.JLabel();
-        trackNameSizeComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTrackNameSizeComboBox();
+        trackNameSizeComboBox = tdv.getTrackNameSizeComboBox();
         labelFieldLabel = new javax.swing.JLabel();
         fgLabel = new javax.swing.JLabel();
-        fgColorComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getFgColorComboBox();
-        labelFieldComboBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getLabelFieldComboBox();
+        fgColorComboBox = tdv.getFgColorComboBox();
+        labelFieldComboBox = tdv.getLabelFieldComboBox();
         maxDepthLabel = new javax.swing.JLabel();
-        maxDepthTextField = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getMaxDepthTextField();
-        show2TracksCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getShow2TracksCheckBox();
-        connectedCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getConnectedCheckBox();
-        collapsedCheckBox = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getCollapsedCheckBox();
+        maxDepthTextField = tdv.getMaxDepthTextField();
+        show2TracksCheckBox = tdv.getShow2TracksCheckBox();
+        connectedCheckBox = tdv.getConnectedCheckBox();
+        collapsedCheckBox = tdv.getCollapsedCheckBox();
         labelFieldTip = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(540, 512));
@@ -146,10 +148,10 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
-        removeTrackDefaultButton.setText("Remove");
-        removeTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+        deleteTrackDefaultButton.setText("Delete");
+        deleteTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeTrackDefaultButtonActionPerformed(evt);
+                deleteTrackDefaultButtonActionPerformed(evt);
             }
         });
 
@@ -161,12 +163,12 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .add(0, 0, 0)
                 .add(addTrackDefaultButton)
                 .add(0, 0, 0)
-                .add(removeTrackDefaultButton)
-                .addContainerGap(302, Short.MAX_VALUE))
+                .add(deleteTrackDefaultButton)
+                .addContainerGap(320, Short.MAX_VALUE))
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
-        selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, removeTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, deleteTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         selectTrackDefaultPanelLayout.setVerticalGroup(
             selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -175,19 +177,13 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .add(0, 0, 0)
                 .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addTrackDefaultButton)
-                    .add(removeTrackDefaultButton)))
+                    .add(deleteTrackDefaultButton)))
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
         propertiesPanel.setPreferredSize(new java.awt.Dimension(501, 183));
 
         TrackTypeNameLabel.setText("Track Type:");
-
-        trackDefaultTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trackDefaultTextFieldActionPerformed(evt);
-            }
-        });
 
         bgLabel.setText("Background:");
 
@@ -204,11 +200,15 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         trackNameSizeLabel.setText("Name Size:");
 
-        trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trackNameSizeComboBoxActionPerformed(evt);
+            }
+        });
+        trackNameSizeComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                trackNameSizeComboBoxKeyReleased(evt);
             }
         });
 
@@ -227,7 +227,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
-        labelFieldComboBox.setEditable(true);
         labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -240,6 +239,11 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxDepthTextFieldActionPerformed(evt);
+            }
+        });
+        maxDepthTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                maxDepthTextFieldKeyReleased(evt);
             }
         });
 
@@ -369,64 +373,69 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     }// </editor-fold>//GEN-END:initComponents
 
 	private void addTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrackDefaultButtonActionPerformed
-		TrackDefaultView.getTrackDefaultView().addTrackDefaultButton();
+		tdv.addTrackDefaultButton();
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
 
-	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
-		TrackDefaultView.getTrackDefaultView().removeTrackDefaultButton();
-	}//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
-
-	private void trackDefaultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackDefaultTextFieldActionPerformed
-		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBox();
-	}//GEN-LAST:event_trackDefaultTextFieldActionPerformed
+	private void deleteTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteTrackDefaultButtonActionPerformed
+		tdv.deleteTrackDefaultButton();
+	}//GEN-LAST:event_deleteTrackDefaultButtonActionPerformed
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().bgColorComboBox();
+		tdv.bgColorComboBox();
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().fgColorComboBox();
+		tdv.fgColorComboBox();
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBox();
+		tdv.trackNameSizeComboBox();
 	}//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
 
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().labelFieldComboBox();
+		tdv.labelFieldComboBox();
 	}//GEN-LAST:event_labelFieldComboBoxActionPerformed
 
 	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		TrackDefaultView.getTrackDefaultView().maxDepthTextField();
+		tdv.maxDepthTextField();
 	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
 
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().show2TracksCheckBox();
+		tdv.show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
 	private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().connectedCheckBox();
+		tdv.connectedCheckBox();
 	}//GEN-LAST:event_connectedCheckBoxActionPerformed
 
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().collapsedCheckBox();
+		tdv.collapsedCheckBox();
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().arrowCheckBox();
+		tdv.arrowCheckBox();
 	}//GEN-LAST:event_arrowCheckBoxActionPerformed
 
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().colorCheckBox();
+		tdv.colorCheckBox();
 	}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().possitiveColorComboBox();
+		tdv.possitiveColorComboBox();
 	}//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
-		TrackDefaultView.getTrackDefaultView().negativeColorComboBox();
+		tdv.negativeColorComboBox();
 	}//GEN-LAST:event_negativeColorComboBoxActionPerformed
+
+	private void maxDepthTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxDepthTextFieldKeyReleased
+		tdv.maxDepthTextField();
+	}//GEN-LAST:event_maxDepthTextFieldKeyReleased
+
+	private void trackNameSizeComboBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxKeyReleased
+		// TODO add your handling code here:
+	}//GEN-LAST:event_trackNameSizeComboBoxKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
     private javax.swing.JButton addTrackDefaultButton;
@@ -436,6 +445,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JCheckBox colorCheckBox;
     private javax.swing.JCheckBox connectedCheckBox;
+    private javax.swing.JButton deleteTrackDefaultButton;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
     private javax.swing.JScrollPane jScrollPane1;
@@ -449,7 +459,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
     private javax.swing.JLabel possitiveLabel;
     private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JButton removeTrackDefaultButton;
     private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
     private javax.swing.JPanel showStrandPanel;

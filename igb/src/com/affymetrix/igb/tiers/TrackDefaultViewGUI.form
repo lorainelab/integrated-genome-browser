@@ -131,7 +131,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="possitiveColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getPossitiveColorCombo()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getPossitiveColorCombo()"/>
           </AuxValues>
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="negativeColorComboBox">
@@ -154,7 +154,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="negativeColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getNegativeColorComboBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getNegativeColorComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="colorCheckBox">
@@ -165,7 +165,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorCheckBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getColorCheckBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getColorCheckBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="arrowCheckBox">
@@ -176,7 +176,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="arrowCheckBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getArrowCheckBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getArrowCheckBox()"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -200,8 +200,8 @@
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="addTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="removeTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="302" max="32767" attributes="0"/>
+                  <Component id="deleteTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="320" max="32767" attributes="0"/>
               </Group>
               <Component id="jScrollPane1" alignment="0" pref="488" max="32767" attributes="0"/>
           </Group>
@@ -213,7 +213,7 @@
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="addTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="removeTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deleteTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -234,7 +234,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTable()"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getTable()"/>
               </AuxValues>
             </Component>
           </SubComponents>
@@ -247,18 +247,18 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addTrackDefaultButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getAddTrackDefaultButton()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getAddTrackDefaultButton()"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JButton" name="removeTrackDefaultButton">
+        <Component class="javax.swing.JButton" name="deleteTrackDefaultButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Remove"/>
+            <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeTrackDefaultButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteTrackDefaultButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getRemoveTrackDefaultButton()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getRemoveTrackDefaultButton()"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -370,11 +370,8 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="trackDefaultTextField">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackDefaultTextFieldActionPerformed"/>
-          </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTrackDefaultTextField()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getTrackDefaultTextField()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">
@@ -402,7 +399,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getBgColorComboBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getBgColorComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="trackNameSizeLabel">
@@ -412,16 +409,16 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="trackNameSizeComboBox">
           <Properties>
-            <Property name="editable" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE)" type="code"/>
             </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackNameSizeComboBoxActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="trackNameSizeComboBoxKeyReleased"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTrackNameSizeComboBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getTrackNameSizeComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldLabel">
@@ -454,12 +451,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fgColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getFgColorComboBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getFgColorComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
           <Properties>
-            <Property name="editable" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD)" type="code"/>
             </Property>
@@ -468,7 +464,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getLabelFieldComboBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getLabelFieldComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="maxDepthLabel">
@@ -479,9 +475,10 @@
         <Component class="javax.swing.JTextField" name="maxDepthTextField">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxDepthTextFieldActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="maxDepthTextFieldKeyReleased"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getMaxDepthTextField()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getMaxDepthTextField()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="show2TracksCheckBox">
@@ -492,7 +489,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show2TracksCheckBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getShow2TracksCheckBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getShow2TracksCheckBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="connectedCheckBox">
@@ -503,7 +500,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="connectedCheckBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getConnectedCheckBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getConnectedCheckBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="collapsedCheckBox">
@@ -514,7 +511,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getCollapsedCheckBox()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getCollapsedCheckBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="labelFieldTip">

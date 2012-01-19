@@ -4,11 +4,8 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import java.awt.Color;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -19,10 +16,11 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
-import java.awt.Font;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,11 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import javax.swing.border.LineBorder;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author dcnorris
+ * Modified by nick
  */
 public final class TrackDefaultView implements ListSelectionListener {
 
@@ -77,27 +77,27 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private TrackStyle selectedStyle;
 	private JRPButton addTrackDefaultButton;
 	private JRPCheckBox arrowCheckBox;
-	private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
+	private ColorComboBox bgColorComboBox;
 	private JRPCheckBox collapsedCheckBox;
 	private JRPCheckBox colorCheckBox;
 	private JRPCheckBox connectedCheckBox;
-	private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
-	private javax.swing.JComboBox labelFieldComboBox;
-	private javax.swing.JTextField maxDepthTextField;
-	private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
-	private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
+	private ColorComboBox fgColorComboBox;
+	private JComboBox labelFieldComboBox;
+	private JTextField maxDepthTextField;
+	private ColorComboBox negativeColorComboBox;
+	private ColorComboBox possitiveColorComboBox;
 	private JRPButton removeTrackDefaultButton;
 	private JRPCheckBox show2TracksCheckBox;
-	private javax.swing.JTable table;
-	private javax.swing.JTextField trackDefaultTextField;
-	private javax.swing.JComboBox trackNameSizeComboBox;
+	private JTable table;
+	private JTextField trackDefaultTextField;
+	private JComboBox trackNameSizeComboBox;
 	private static TrackDefaultView singleton;
 
-	public static void init() {
-		singleton = new TrackDefaultView();
-	}
-
-	public static synchronized TrackDefaultView getTrackDefaultView() {
+	public static synchronized TrackDefaultView getSingleton() {
+		if (singleton == null) {
+			singleton = new TrackDefaultView();
+		}
+		
 		return singleton;
 	}
 
@@ -131,35 +131,35 @@ public final class TrackDefaultView implements ListSelectionListener {
 	}
 
 	private void initComponents() {
-		trackDefaultTextField = new javax.swing.JTextField();
-		possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+		trackDefaultTextField = new JTextField();
+		possitiveColorComboBox = new ColorComboBox();
+		negativeColorComboBox = new ColorComboBox();
 		colorCheckBox = new JRPCheckBox("TrackDefaultView_colorCheckBox");
 		arrowCheckBox = new JRPCheckBox("TrackDefaultView_arrowCheckBox");
-		table = new javax.swing.JTable();
+		table = new JTable();
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
-		bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		trackNameSizeComboBox = new javax.swing.JComboBox();
-		fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-		labelFieldComboBox = new javax.swing.JComboBox();
-		maxDepthTextField = new javax.swing.JTextField();
+		bgColorComboBox = new ColorComboBox();
+		trackNameSizeComboBox = new JComboBox();
+		fgColorComboBox = new ColorComboBox();
+		labelFieldComboBox = new JComboBox();
+		maxDepthTextField = new JTextField();
 		show2TracksCheckBox = new JRPCheckBox("TrackDefaultView_show2TracksCheckBox");
 		connectedCheckBox = new JRPCheckBox("TrackDefaultView_connectedCheckBox");
 		collapsedCheckBox = new JRPCheckBox("TrackDefaultView_collapsedCheckBox");
 
-		possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-		possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+		possitiveColorComboBox.setBackground(new Color(255, 255, 255));
+		possitiveColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		possitiveColorComboBox.setButtonVisible(false);
 		possitiveColorComboBox.setColorValueVisible(false);
-		possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+		possitiveColorComboBox.setMaximumSize(new Dimension(150, 20));
 		possitiveColorComboBox.setStretchToFit(true);
 
-		negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-		negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+		negativeColorComboBox.setBackground(new Color(255, 255, 255));
+		negativeColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		negativeColorComboBox.setButtonVisible(false);
 		negativeColorComboBox.setColorValueVisible(false);
-		negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+		negativeColorComboBox.setMaximumSize(new Dimension(150, 20));
 		negativeColorComboBox.setStretchToFit(true);
 
 		colorCheckBox.setText("Color");
@@ -216,25 +216,23 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 		removeTrackDefaultButton.setText("Remove");
 
-		bgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-		bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+		bgColorComboBox.setBackground(new Color(255, 255, 255));
+		bgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		bgColorComboBox.setButtonVisible(false);
 		bgColorComboBox.setColorValueVisible(false);
-		bgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+		bgColorComboBox.setMaximumSize(new Dimension(150, 20));
 		bgColorComboBox.setStretchToFit(true);
 
-		trackNameSizeComboBox.setEditable(true);
-		trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
+		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
 
-		fgColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-		fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+		fgColorComboBox.setBackground(new Color(255, 255, 255));
+		fgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		fgColorComboBox.setButtonVisible(false);
 		fgColorComboBox.setColorValueVisible(false);
-		fgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+		fgColorComboBox.setMaximumSize(new Dimension(150, 20));
 		fgColorComboBox.setStretchToFit(true);
 
-		labelFieldComboBox.setEditable(true);
-		labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
+		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
 		show2TracksCheckBox.setText("Show (+/-) tracks");
 
@@ -256,12 +254,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
 			}
-		}
-	}
-
-	public void trackDefaultTextField() {
-		if (!settingValueFromTable) {
-			model.setValueAt(trackDefaultTextField.getText(), selectedRows[0], COL_TRACK_DEFAULT);
 		}
 	}
 
@@ -410,7 +402,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void removeTrackDefaultButton() {
+	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
 			selectedStyle = model.tier_styles.get(table.getSelectedRow());
 			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());

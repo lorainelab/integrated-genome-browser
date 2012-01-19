@@ -786,17 +786,18 @@ public class TierPrefsView implements ListSelectionListener {
 					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
 							|| col == COL_TRACK_NAME || col == COL_COLLAPSED
 							|| col == COL_MAX_DEPTH) {
-						if (col == COL_TRACK_NAME || col == COL_COLLAPSED
-								|| col == COL_MAX_DEPTH) {
+						if (col == COL_COLLAPSED || col == COL_MAX_DEPTH) {
 							smv.getSeqMap().setTierStyles();
 							smv.getSeqMap().repackTheTiers(true, true, false);
 						}
+
 						if (col == COL_TRACK_NAME || col == COL_BACKGROUND) {
 							if (DataManagementTable.getModel() != null) {
+								smv.getSeqMap().setTierLabels();
 								DataManagementTable.getModel().fireTableDataChanged();
 							}
 						}
-
+						
 						smv.getSeqMap().updateWidget();
 					} else {
 						applyChanges();

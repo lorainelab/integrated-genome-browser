@@ -474,7 +474,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="maxDepthTextField">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxDepthTextFieldActionPerformed"/>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="maxDepthTextFieldKeyReleased"/>
           </Events>
           <AuxValues>

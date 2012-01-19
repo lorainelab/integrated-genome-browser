@@ -236,11 +236,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         maxDepthLabel.setText("Max Stack Depth:");
 
-        maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxDepthTextFieldActionPerformed(evt);
-            }
-        });
         maxDepthTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 maxDepthTextFieldKeyReleased(evt);
@@ -395,10 +390,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
 		tdv.labelFieldComboBox();
 	}//GEN-LAST:event_labelFieldComboBoxActionPerformed
-
-	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		tdv.maxDepthTextField();
-	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
 
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		tdv.show2TracksCheckBox();

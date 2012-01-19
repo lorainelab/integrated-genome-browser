@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -242,7 +243,12 @@ public class OSGiHandler {
 		}
 		else { // ant run
 			File dir = new File("bundles");
-			entries = Arrays.asList(dir.list());
+			FilenameFilter ff = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".jar");
+				}
+			};
+			entries = Arrays.asList(dir.list(ff));
 		}
 		entries.remove(OSGiImplFile); // don't install OSGiImpl as a bundle
         return entries;

@@ -12,6 +12,7 @@
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
             <arg value="-prefs"/>
             <arg value="${igb}/etc/igb_prefs.xml"/>
+			<arg line="${svn.update.available}" />
             <classpath refid="igb.classpath"/>
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
@@ -33,6 +34,7 @@
             <jvmarg line="${profiler.info.jvmargs}"/>
             <arg value="-prefs" />
             <arg value="${igb}/etc/igb_prefs.xml" />
+			<arg line="${svn.update.available}" />
             <classpath refid="igb.classpath"/>
         </java>
     </target>

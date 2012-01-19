@@ -161,7 +161,7 @@
 			<arg line="status -u" />
 		</exec>
 		<condition property="svn.update.available" value="true" else="false">
-			<contains string="${svn.status.update}" substring="\\*" />
+			<contains string="${svn.status.update}" substring="*" />
 		</condition>
 		
 		<property name="run.svn-init" value="true" />

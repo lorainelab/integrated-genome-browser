@@ -69,7 +69,7 @@ public class Activator implements BundleActivator {
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
 				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
 				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
-				System.out.println("-cbc - clear bundle cache (all cached bundles) and exit");
+				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
 				System.exit(0);
     		}
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
@@ -129,7 +129,7 @@ public class Activator implements BundleActivator {
 			public void removeService(FileTypeHandler fileTypeHandler) {
 				GeneralLoadView.getLoadView().refreshTreeView();
 			}
-			
+
 			@Override
 			public void addService(FileTypeHandler fileTypeHandler) {
 				GeneralLoadView.getLoadView().refreshTreeView();
@@ -209,7 +209,7 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		bundleContext.registerService(IStopRoutine.class, 
+		bundleContext.registerService(IStopRoutine.class,
 			new IStopRoutine() {
 				@Override
 				public void stop() {

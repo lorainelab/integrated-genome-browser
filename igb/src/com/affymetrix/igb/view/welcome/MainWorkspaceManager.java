@@ -17,6 +17,7 @@ import be.pwnt.jflow.event.ShapeEvent;
 import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -87,6 +88,8 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 
 					if(group == null || group.getEnabledVersions().isEmpty()){
 						Application.getSingleton().setStatus(groupStr+" Not Available", true);
+						ErrorHandler.errorPanel("NOTICE", groupStr + " not available at this time. "
+								+ "Please check that the appropriate data source is available.");
 						return;
 					}
 
@@ -102,9 +105,8 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 			public void shapeDeactivated(ShapeEvent e) {
 			}
 		});
-		return panel;
-	
-		 
+		
+		return panel; 
 	}
 	
 	/**

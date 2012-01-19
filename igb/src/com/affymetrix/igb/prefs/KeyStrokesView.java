@@ -21,32 +21,34 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import java.awt.BorderLayout;
+
 
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
  */
-public final class KeyStrokesView extends IPrefEditorComponent implements ListSelectionListener,
+public final class KeyStrokesView implements ListSelectionListener,
   PreferenceChangeListener {
   private static final long serialVersionUID = 1L;
 
-  private final JTable table = new JTable();
+  public final JTable table = new JTable();
 //  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
   private final static String[] col_headings = {"Action", "Key Stroke"};
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
   private final TableRowSorter<DefaultTableModel> sorter;
-  KeyStrokeEditPanel edit_panel = null;
+  public KeyStrokeEditPanel edit_panel = null;
+  private static KeyStrokesView singleton;
+  
+  public static synchronized KeyStrokesView getSingleton() {
+		if (singleton == null) {
+			singleton = new KeyStrokesView();
+		}
+		return singleton;
+	}
 
-  public KeyStrokesView() {
+  private KeyStrokesView() {
     super();
-    this.setName("Shortcuts");
-	this.setToolTipText("Edit Locations");
-    this.setLayout(new BorderLayout());
-
-    JScrollPane scroll_pane = new JScrollPane(table);
-    this.add(scroll_pane, BorderLayout.CENTER);
-
+  
     model = new DefaultTableModel() {
     	  private static final long serialVersionUID = 1L;
 			@Override
@@ -71,13 +73,11 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 
     edit_panel = new KeyStrokeEditPanel();
     edit_panel.setEnabled(false);
-    this.add("South", edit_panel);
 
     try {PreferenceUtils.getKeystrokesNode().flush();} catch (Exception e) {}
     PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(this);
 
-    showShortcuts();
-    validate();
+    showShortcuts();    
   }
 
 //  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {

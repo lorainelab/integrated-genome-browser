@@ -22,19 +22,18 @@ import com.affymetrix.igb.IGB;
 import java.awt.event.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
-import javax.swing.border.*;
 
 public final class KeyStrokeEditPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
   private static final boolean DEBUG = false;
   
-  private final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
+  public final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
 //  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
-  private final JLabel key_label = new JLabel("Type a shortcut: " );
-  private final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB" );
-  private final JRPButton apply_button = new JRPButton("KeyStrokeEditPanel_apply_button", "Ok");
-  private final JRPButton clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
+  public final JLabel key_label = new JLabel("Type a shortcut: " );
+  public final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB" );
+  public final JRPButton apply_button = new JRPButton("KeyStrokeEditPanel_apply_button", "Ok");
+  public final JRPButton clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
   
   private int key_code;
   private int modifiers;
@@ -44,38 +43,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   private String the_key = null;
   
   /** Creates a new instance of KeyStrokesView */
-  public KeyStrokeEditPanel() {
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    this.setBorder(new EmptyBorder(new java.awt.Insets(8, 8, 8, 8)));
-        
-    Box box1 = new Box(BoxLayout.X_AXIS);
-    box1.add(key_label);
-    box1.add(Box.createHorizontalGlue());
-	
-    Box buttons = new Box(BoxLayout.X_AXIS);
-	buttons.add(Box.createHorizontalGlue());
-	buttons.add(key_field);
-    buttons.add(Box.createHorizontalGlue());
-//	buttons.add(toolbar_field);
-//  buttons.add(Box.createHorizontalGlue());
-    buttons.add(apply_button);
-    buttons.add(Box.createHorizontalStrut(5));
-    buttons.add(clear_button);
-    buttons.add(Box.createHorizontalGlue());
-    
-	Box box2 = new Box(BoxLayout.X_AXIS);
-	box2.add(Box.createHorizontalGlue());
-    box2.add(note_label);
-    box2.add(Box.createHorizontalGlue());
-	
-    this.add(Box.createVerticalGlue());
-    this.add(box1);
-    this.add(Box.createVerticalStrut(5));
-    this.add(buttons);
-    this.add(Box.createVerticalStrut(5));
-	this.add(box2);
-    this.add(Box.createVerticalGlue());
-    
+  public KeyStrokeEditPanel() {    
     key_field.addKeyListener(new KeyListener() {
       public void keyPressed(KeyEvent evt) {
         evt.consume();

@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
-import java.util.prefs.Preferences;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

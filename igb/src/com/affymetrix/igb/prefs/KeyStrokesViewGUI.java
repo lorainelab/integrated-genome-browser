@@ -46,10 +46,7 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = ksv.table;
-        jTextField1 = ksv.edit_panel.key_field;
-        jButton1 = ksv.edit_panel.apply_button;
         jLabel1 = ksv.edit_panel.note_label;
-        jLabel2 = ksv.edit_panel.key_label;
         jButton2 = ksv.edit_panel.clear_button;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -57,12 +54,8 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
         jTable1.setModel(ksv.table.getModel());
         jScrollPane1.setViewportView(jTable1);
 
-        jButton1.setText("Ok");
-
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
         jLabel1.setText("Changes will take effect next time you launch IGB");
-
-        jLabel2.setText("Type a Shortcut:");
 
         jButton2.setText("Clear");
 
@@ -70,47 +63,31 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(9, 9, 9)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jLabel1)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(189, Short.MAX_VALUE)
+                .add(jLabel1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton2))
-            .add(layout.createSequentialGroup()
-                .add(9, 9, 9)
-                .add(jLabel2)
-                .addContainerGap(466, Short.MAX_VALUE))
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLabel2)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jButton2)
-                    .add(jButton1)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLabel1))
+                    .add(jLabel1)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
 	public void refresh() {

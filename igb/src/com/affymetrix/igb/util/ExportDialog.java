@@ -39,6 +39,7 @@ public class ExportDialog implements ExportConstants {
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+	private static String slash = "/";
 
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
@@ -59,10 +60,22 @@ public class ExportDialog implements ExportConstants {
 	public static ExportDialog getSingleton() {
 		if (singleton == null) {
 			singleton = new ExportDialog();
+			if (isWindows()) {
+				slash = "\\";
+			}
 		}
 
 		return singleton;
 	}
+	
+	private static boolean isWindows() {
+ 
+		String os = System.getProperty("os.name").toLowerCase();
+		// windows
+		return (os.indexOf("win") >= 0);
+ 
+	}
+	
 	public static Component component; // Export component
 	public static ImageInfo imageInfo;
 	private static ImageInfo originalInfo;
@@ -72,12 +85,12 @@ public class ExportDialog implements ExportConstants {
 	public void init() {
 		exportFile = new File(exportNode.get(PREF_FILE, DEFAULT_FILE));
 		exportDirectory = new File(exportNode.get(PREF_DIR,
-				FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + "/"));
+				FileTracker.EXPORT_DIR_TRACKER.getFile().getPath() + slash));
 		imageInfo.setXResolution(exportNode.getInt(PREF_X, imageInfo.getXResolution()));
 		imageInfo.setYResolution(exportNode.getInt(PREF_Y, imageInfo.getYResolution()));
 
 		filePathTextField.setText(exportDirectory.getAbsolutePath()
-				+ "/" + exportFile.getName());
+				+ slash + exportFile.getName());
 
 		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
 		extComboBox.setSelectedItem(type);
@@ -94,7 +107,7 @@ public class ExportDialog implements ExportConstants {
 
 	public static void setComponent(Component c) {
 		component = c;
-		
+
 		initImageInfo();
 	}
 
@@ -108,7 +121,7 @@ public class ExportDialog implements ExportConstants {
 
 		originalInfo = new ImageInfo(imageInfo.getWidth(), imageInfo.getHeight(),
 				imageInfo.getXResolution(), imageInfo.getYResolution());
-		
+
 		widthSpinner.setValue(component.getWidth());
 		heightSpinner.setValue(component.getHeight());
 	}
@@ -222,8 +235,8 @@ public class ExportDialog implements ExportConstants {
 		String previousDirectory = exportDirectory.getAbsolutePath();
 		String previousFile = exportFile.getName();
 		String path = filePathTextField.getText();
-		String directory = path.substring(0, path.lastIndexOf("/"));
-		String file = path.substring(path.lastIndexOf("/"));
+		String directory = path.substring(0, path.lastIndexOf(slash));
+		String file = path.substring(path.lastIndexOf(slash));
 		String ext = ParserController.getExtension(path);
 		FileFilter filter = null;
 		exportDirectory = new File(directory);
@@ -232,7 +245,7 @@ public class ExportDialog implements ExportConstants {
 		if (!exportDirectory.isDirectory() || !isExt(ext)) {
 			exportDirectory = new File(previousDirectory);
 			exportFile = new File(previousFile);
-			filePathTextField.setText(previousDirectory + "/" + previousFile);
+			filePathTextField.setText(previousDirectory + slash + previousFile);
 		}
 
 		filter = getFilter(ext);
@@ -270,8 +283,8 @@ public class ExportDialog implements ExportConstants {
 
 	public void extComboBoxActionPerformed() {
 		String path = filePathTextField.getText();
-		String directory = path.substring(0, path.lastIndexOf("/"));
-		String file = path.substring(path.lastIndexOf("/"));
+		String directory = path.substring(0, path.lastIndexOf(slash));
+		String file = path.substring(path.lastIndexOf(slash));
 		String ext = EXTENSION[0];
 		exportFile = new File(file);
 
@@ -283,7 +296,7 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = changeFileExtension(exportFile, ext);
 
-		filePathTextField.setText(directory + "/" + exportFile.getName());
+		filePathTextField.setText(directory + slash + exportFile.getName());
 	}
 
 	public boolean okButtonActionPerformed() throws IOException {
@@ -291,36 +304,35 @@ public class ExportDialog implements ExportConstants {
 		String previousFile = exportFile.getName();
 		String path = filePathTextField.getText();
 		String ext = ParserController.getExtension(path);
-		String directoryStr = path.substring(0, path.lastIndexOf("/"));
+		String directoryStr = path.substring(0, path.lastIndexOf(slash));
 		File directory = new File(directoryStr);
 
 		if (!directory.isDirectory() || !isExt(ext)) {
 			ErrorHandler.errorPanel("The path or image format is invalid.");
-			filePathTextField.setText(previousDirectory + "/" + previousFile);
+			filePathTextField.setText(previousDirectory + slash + previousFile);
 			filePathTextField.grabFocus();
 			return false;
 		}
-		
+
 		File file = new File(path);
 		exportScreenshot(file, ext);
 
-		saveToPref(file.getName(), directory.getAbsolutePath(), 
-				extComboBox.getSelectedItem().toString(), 
+		saveToPref(file.getName(), directory.getAbsolutePath(),
+				extComboBox.getSelectedItem().toString(),
 				imageInfo.getXResolution(),
 				imageInfo.getYResolution());
-		
+
 		return true;
 	}
-	
-	private void saveToPref(String file, String directory, String ext, int x, int y)
-	{
+
+	private void saveToPref(String file, String directory, String ext, int x, int y) {
 		exportNode.put(PREF_FILE, file);
 		exportNode.put(PREF_DIR, directory);
 		exportNode.put(PREF_EXT, ext);
 		exportNode.putInt(PREF_X, x);
 		exportNode.putInt(PREF_Y, y);
 	}
-			
+
 	public void resetButtonActionPerformed() {
 		widthSpinner.setValue(originalInfo.getWidth());
 		heightSpinner.setValue(originalInfo.getHeight());
@@ -374,13 +386,13 @@ public class ExportDialog implements ExportConstants {
 			isHeightSpinner = false;
 		}
 	}
-	
+
 	public static Component determineSlicedComponent() {
-		AltSpliceView slice_view = (AltSpliceView)((IGB)IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view == null) {
 			return null;
 		}
-				
-		return ((AffyLabelledTierMap)slice_view.getSplicedView().getSeqMap()).getSplitPane();
+
+		return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 }

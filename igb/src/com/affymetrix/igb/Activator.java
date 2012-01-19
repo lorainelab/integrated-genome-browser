@@ -69,6 +69,7 @@ public class Activator implements BundleActivator {
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
 				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
 				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
+				System.out.println("-cbc - clear bundle cache (all cached bundles) and exit");
 				System.exit(0);
     		}
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);

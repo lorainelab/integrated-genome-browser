@@ -127,6 +127,11 @@ public class OSGiHandler {
 	 * @param args the command line arguments
 	 */
 	public synchronized void startOSGi(String[] args) {
+		if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
+			clearCache();
+			return;
+		}
+
 		setLaf();
 
 		String argArray = Arrays.toString(args);

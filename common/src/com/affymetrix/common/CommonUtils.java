@@ -20,6 +20,7 @@ public class CommonUtils {
 	private static final String APP_NAME         = BUNDLE.getString("appName");
 	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
 	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
+	private static final String UPDATE_AVAILABLE = BUNDLE.getString("updateAvailable");
 	private static final String BUILD_VERSION    = BUNDLE.getString("buildVersion");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
 			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION);
@@ -55,7 +56,15 @@ public class CommonUtils {
 	public String getAppVersionFull() {
 		return APP_VERSION_FULL;
 	}
-
+	
+	/**
+	 * get the build version from svn repository.
+	 * @return 
+	 */
+	public boolean getUpdateAvailable(){
+		return UPDATE_AVAILABLE.equalsIgnoreCase("true");
+	}
+	
 	/**
 	 * Returns the value of the argument indicated by label.
 	 * If arguments are

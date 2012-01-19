@@ -26,7 +26,6 @@
 
 		<!-- Filters -->
 		<filter token="build.version"  value="${build.version}" />
-		<filter token="update.available"  value="${svn.update.available}" />
 		<filter token="osgi.impl.file" value="${osgi.impl.file}" />
   </target>
 

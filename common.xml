@@ -76,7 +76,6 @@
 
 
 		<filter token="build.version"  value="${build.version}" />
-		<filter token="update.available"  value="${svn.update.available}" />
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
@@ -160,7 +159,7 @@
 		<exec executable="svn" outputproperty="svn.status.update">
 			<arg line="status -u" />
 		</exec>
-		<condition property="svn.update.available" value="true" else="false">
+		<condition property="svn.update.available" value="-updateAvailable" else="">
 			<contains string="${svn.status.update}" substring="*" />
 		</condition>
 		

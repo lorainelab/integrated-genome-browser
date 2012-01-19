@@ -14,13 +14,13 @@ import javax.swing.ImageIcon;
  */
 public class CommonUtils {
 	private static final CommonUtils instance = new CommonUtils();
+	private boolean updateAvailable = false;
 	private String app_dir = null;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
 
 	private static final String APP_NAME         = BUNDLE.getString("appName");
 	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
 	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
-	private static final String UPDATE_AVAILABLE = BUNDLE.getString("updateAvailable");
 	private static final String BUILD_VERSION    = BUNDLE.getString("buildVersion");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
 			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION);
@@ -62,7 +62,11 @@ public class CommonUtils {
 	 * @return 
 	 */
 	public boolean getUpdateAvailable(){
-		return UPDATE_AVAILABLE.equalsIgnoreCase("true");
+		return updateAvailable;
+	}
+	
+	public void setUpdateAvailable(boolean updateAvailable){
+		this.updateAvailable = updateAvailable;
 	}
 	
 	/**

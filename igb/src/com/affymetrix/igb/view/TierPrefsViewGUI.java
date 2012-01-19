@@ -58,6 +58,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         collapsedCheckBox = tpv.collapsedCheckBox;
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        applyButton = new javax.swing.JButton();
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = tpv.table;
@@ -137,12 +138,9 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         maxDepthLabel.setText("Max Stack Depth:");
 
-        maxDepthTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                maxDepthTextFieldKeyTyped(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                maxDepthTextFieldKeyReleased(evt);
+        maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxDepthTextFieldActionPerformed(evt);
             }
         });
 
@@ -164,6 +162,14 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         collapsedCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 collapsedCheckBoxActionPerformed(evt);
+            }
+        });
+
+        applyButton.setText("Apply");
+        applyButton.setToolTipText("Apply max stack depth value to track");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
             }
         });
 
@@ -192,31 +198,33 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                         .add(maxDepthLabel)))
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(25, 25, 25)
+                        .add(30, 30, 30)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(labelFieldLabel)
                             .add(trackNameSizeLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(labelFieldComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(trackNameSizeComboBox, 0, 104, Short.MAX_VALUE)))
+                            .add(trackNameSizeComboBox, 0, 0, Short.MAX_VALUE)
+                            .add(labelFieldComboBox, 0, 92, Short.MAX_VALUE)))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 65, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
-            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                        .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(applyButton)))
+                .addContainerGap(24, Short.MAX_VALUE))
+            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(10, 10, 10)
+                .add(0, 0, 0)
                 .add(show2TracksCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(connectedCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(collapsedCheckBox)
                 .add(0, 0, Short.MAX_VALUE))
-            .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(104, 104, 104)
-                .add(displayNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE))
+                .add(displayNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -243,7 +251,8 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                 .add(8, 8, 8)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(maxDepthLabel)
-                    .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(applyButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(show2TracksCheckBox)
@@ -275,16 +284,16 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         selectTrackPanel.setLayout(selectTrackPanelLayout);
         selectTrackPanelLayout.setHorizontalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
                 .add(jButton1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 236, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 222, Short.MAX_VALUE)
                 .add(restoreToDefaultButton))
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                 .add(0, 0, 0)
                 .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(restoreToDefaultButton)
@@ -402,7 +411,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                     .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(18, 18, 18)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(autoRefreshCheckBox)
@@ -482,17 +491,9 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		tpv.selectAll();
 	}//GEN-LAST:event_jButton1ActionPerformed
 
-	private void maxDepthTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxDepthTextFieldKeyTyped
-		tpv.maxDepthTextField();
-	}//GEN-LAST:event_maxDepthTextFieldKeyTyped
-
 	private void displayNameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_displayNameTextFieldKeyReleased
 		tpv.displayNameTextField();
 	}//GEN-LAST:event_displayNameTextFieldKeyReleased
-
-	private void maxDepthTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxDepthTextFieldKeyReleased
-		tpv.maxDepthTextField();
-	}//GEN-LAST:event_maxDepthTextFieldKeyReleased
 
 	private void trackNameSizeComboBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxKeyReleased
 		tpv.trackNameSizeComboBox();
@@ -502,7 +503,16 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		tpv.trackNameSizeComboBox();
 	}//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
 
+	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
+		tpv.maxDepthTextField();
+	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
+
+	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+		tpv.maxDepthTextField();
+	}//GEN-LAST:event_applyButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton applyButton;
     private javax.swing.JCheckBox arrowCheckBox;
     private javax.swing.JCheckBox autoRefreshCheckBox;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;

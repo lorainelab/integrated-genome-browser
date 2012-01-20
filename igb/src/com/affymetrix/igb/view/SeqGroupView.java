@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -599,6 +600,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 				// TODO: refresh feature tree view if a version is selected
 				GeneralLoadView.getLoadView().refreshTreeView();
+				if(AutoLoadFeatureAction.getActionCB().isSelected()){
+					GeneralLoadUtils.setFeatureAutoLoad(true);
+				}
 			}
 		}
 

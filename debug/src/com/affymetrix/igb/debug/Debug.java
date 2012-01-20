@@ -24,6 +24,9 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.searchmodeidorprops.Activator());
 		activators.add(new com.affymetrix.igb.searchmoderesidue.Activator());
 		activators.add(new com.affymetrix.igb.tutorial.Activator());
+//
+		activators.add(new com.gene.searchmodelucene.Activator());
+		activators.add(new com.gene.findfeatures.Activator());
 	}
 
 	/**

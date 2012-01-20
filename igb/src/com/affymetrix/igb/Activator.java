@@ -97,6 +97,9 @@ public class Activator implements BundleActivator {
     		if (CommonUtils.getInstance().getArg("-pntallprf", args) != null) {
 				PreferenceUtils.printAllPreferences();
     		}
+			if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
+				CommonUtils.getInstance().setUpdateAvailable(true);
+    		}
     		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
 				System.exit(0);
     		}

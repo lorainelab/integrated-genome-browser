@@ -20,7 +20,7 @@
 		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
 			<isset property="svn.info.rev" />
 		</condition>
-		
+
 		<!-- file paths -->
 		<property name="genopub.web.xml" value="${das2server}/web.xml" />
 		<property name="genopub.context.xml" value="${das2server}/context.xml" />
@@ -149,6 +149,14 @@
 		<svn failonerror="false">
 			<info target="${basedir}" />
 		</svn>
+		
+		<exec executable="svn" outputproperty="svn.status.update">
+			<arg line="status -u" />
+		</exec>
+		<condition property="svn.update.available" value="-updateAvailable" else="">
+			<contains string="${svn.status.update}" substring="*" />
+		</condition>
+		
 		<property name="run.svn-init" value="true" />
 	</target>
 	

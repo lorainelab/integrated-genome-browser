@@ -598,7 +598,15 @@ public final class GeneralLoadView {
 			}
 		});
 	}
-
+	
+	void removeAllFeautres(Set<GenericFeature> features) {
+		for (GenericFeature feature : features) {
+			if (feature.isVisible()) {
+				GeneralLoadView.getLoadView().removeFeature(feature, true);
+			}
+		}
+	}
+	
 	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
 		if (feature == null) {
 			return null;

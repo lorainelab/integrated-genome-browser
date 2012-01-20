@@ -181,6 +181,7 @@ public final class GeneralLoadUtils {
 				version = versionIterator.next();
 
 				if (version.gServer == server) {
+					GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
 					version.clear();
 					versionIterator.remove();
 				}

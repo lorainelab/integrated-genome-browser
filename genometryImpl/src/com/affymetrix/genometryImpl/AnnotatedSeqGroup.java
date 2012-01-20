@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscGeneSym;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 /**
@@ -496,6 +497,17 @@ public class AnnotatedSeqGroup {
 			return;
 
 		String lcSymID = sym.getID().toLowerCase();
+		removeSymmetry(lcSymID, sym);
+		
+		if(sym instanceof UcscGeneSym){
+			lcSymID = ((UcscGeneSym)sym).getGeneName();
+			if(lcSymID != null){
+				removeSymmetry(lcSymID.toLowerCase(), sym);
+			}
+		}
+	}
+	
+	private void removeSymmetry(String lcSymID, SeqSymmetry sym){
 		Set<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
 		if (symList != null && symList.contains(sym)) {
 			symList.remove(sym);
@@ -505,7 +517,7 @@ public class AnnotatedSeqGroup {
 		}
 		symid2id_hash.remove(lcSymID);
 	}
-
+	
 	/**
 	 * Create a temporary shallow-copy genome, to avoid any side-effects.
 	 * @param oldGenome

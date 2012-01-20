@@ -33,8 +33,8 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 	}
 
 	@Override
-	public SearchType getSearchType() {
-		return SearchType.feature;
+	public boolean searchAllUse() {
+		return true;
 	}
 
 	private Pattern getRegex(String search_text) throws Exception  {

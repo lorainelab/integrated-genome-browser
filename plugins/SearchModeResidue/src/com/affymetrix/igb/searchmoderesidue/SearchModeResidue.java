@@ -333,8 +333,8 @@ public class SearchModeResidue implements ISearchMode,
 	}
 
 	@Override
-	public SearchType getSearchType() {
-		return SearchType.residue;
+	public boolean searchAllUse() {
+		return false;
 	}
 
 	@Override

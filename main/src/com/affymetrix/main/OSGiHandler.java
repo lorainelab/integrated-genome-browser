@@ -53,19 +53,23 @@ public class OSGiHandler {
         getInstance().startOSGi(args);
 	}
 
+	private String getCacheFolder(){
+		return CommonUtils.getInstance().getAppDataDirectory() + "bundles/";
+	}
+	
 	/**
 	 * get the OSGi cache directory
 	 * @return the OSGi cache directory
 	 */
 	private String getCacheDir() {
-		return CommonUtils.getInstance().getAppDataDirectory() + "cache/v" + CommonUtils.getInstance().getAppVersionFull() + "-bundle-cache";
+		return getCacheFolder() + "v" + CommonUtils.getInstance().getAppVersionFull() + "-bundle-cache";
 	}
 
 	/**
 	 * clear the OSGi cache
 	 */
 	public void clearCache() {
-		deleteDirectory(new File(getCacheDir()));
+		deleteDirectory(new File(getCacheFolder()));
 	}
 
 	/**

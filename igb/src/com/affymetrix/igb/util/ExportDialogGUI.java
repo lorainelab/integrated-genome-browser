@@ -196,6 +196,28 @@ public class ExportDialogGUI extends JPanel {
 
         yLabel.setText("Y Resolution:");
 
+        xSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                xSpinnerStateChanged(evt);
+            }
+        });
+        xSpinner.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                xSpinnerKeyReleased(evt);
+            }
+        });
+
+        ySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                ySpinnerStateChanged(evt);
+            }
+        });
+        ySpinner.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                ySpinnerKeyReleased(evt);
+            }
+        });
+
         resetButton.setText("Reset");
         resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -325,11 +347,10 @@ public class ExportDialogGUI extends JPanel {
         previewPanelLayout.setVerticalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(previewPanelLayout.createSequentialGroup()
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(5, 5, 5))
-            .add(previewPanelLayout.createSequentialGroup()
-                .add(previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                .add(5, 5, 5))
+                .add(previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                .add(20, 20, 20))
         );
 
         previewPanelLayout.linkSize(new java.awt.Component[] {buttonsPanel, previewLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -389,9 +410,6 @@ public class ExportDialogGUI extends JPanel {
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		try {
-			export.imageInfo.setWidth((Integer) widthSpinner.getValue());
-			export.imageInfo.setHeight((Integer) heightSpinner.getValue());
-
 			if (export.okButtonActionPerformed()) {
 				static_frame.setVisible(false);
 			}
@@ -431,6 +449,23 @@ public class ExportDialogGUI extends JPanel {
 		export.setComponent(slicedView);
 		export.previewImage();
 	}//GEN-LAST:event_svRadioButtonActionPerformed
+
+	private void xSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_xSpinnerStateChanged
+		export.xSpinnerStateChanged();
+	}//GEN-LAST:event_xSpinnerStateChanged
+
+	private void ySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ySpinnerStateChanged
+		export.ySpinnerStateChanged();
+	}//GEN-LAST:event_ySpinnerStateChanged
+
+	private void xSpinnerKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xSpinnerKeyReleased
+		export.xSpinnerStateChanged();
+	}//GEN-LAST:event_xSpinnerKeyReleased
+
+	private void ySpinnerKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ySpinnerKeyReleased
+		export.ySpinnerStateChanged();
+	}//GEN-LAST:event_ySpinnerKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.ButtonGroup buttonGroup;

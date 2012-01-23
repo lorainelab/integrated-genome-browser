@@ -10,7 +10,6 @@ import javax.swing.filechooser.FileFilter;
 public interface ExportConstants {
 
 	static final String PREF_FILE = "File";
-	static final String PREF_DIR = "Dir";
 	static final String PREF_EXT = "Ext";
 	static final String PREF_X = "X"; // Horizontal Resolution
 	static final String PREF_Y = "Y"; // Vertical Resolution
@@ -24,44 +23,43 @@ public interface ExportConstants {
 
 class ImageInfo {
 
-	private int width;
-	private int height;
+	private double width;
+	private double height;
 	private int xResolution = 300;
 	private int yResolution = 300;
 
-	ImageInfo(int w, int h) {
+	ImageInfo(double w, double h) {
 		width = w;
 		height = h;
 	}
 
-	ImageInfo(int w, int h, int x, int y) {
-		width = w;
-		height = h;
-		xResolution = x;
-		yResolution = y;
-	}
-	
-	public void reset(int w, int h, int x, int y)
-	{
+	ImageInfo(double w, double h, int x, int y) {
 		width = w;
 		height = h;
 		xResolution = x;
 		yResolution = y;
 	}
 
-	public void setWidth(int w) {
+	public void reset(int w, int h, int x, int y) {
+		width = w;
+		height = h;
+		xResolution = x;
+		yResolution = y;
+	}
+
+	public void setWidth(double w) {
 		width = w;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public void setHeight(int h) {
+	public void setHeight(double h) {
 		height = h;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
@@ -79,6 +77,14 @@ class ImageInfo {
 
 	public int getYResolution() {
 		return yResolution;
+	}
+
+	public double getWidthHeightRate() {
+		return width / height;
+	}
+
+	public double getHeightWidthRate() {
+		return height / width;
 	}
 }
 

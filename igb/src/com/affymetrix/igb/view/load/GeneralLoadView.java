@@ -607,9 +607,13 @@ public final class GeneralLoadView {
 		}
 	}
 	
-	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
+	public void removeFeature(final GenericFeature feature, final boolean refresh) {
+		removeFeature(feature, refresh, true);
+	}
+	
+	void removeFeature(final GenericFeature feature, final boolean refresh, final boolean removeLocal) {
 		if (feature == null) {
-			return null;
+			return;
 		}
 
 		CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.featureName) {
@@ -627,16 +631,18 @@ public final class GeneralLoadView {
 
 				feature.clear();
 
-				// If feature is local then remove it from server.
-				GenericVersion version = feature.gVersion;
-				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
-					if (version.removeFeature(feature)) {
-						SeqGroupView.getInstance().refreshTable();
-						if (gmodel.getSelectedSeqGroup().getSeqCount() > 0 && 
-								!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
-							gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
-						} else {
-							gmodel.setSelectedSeq(null);
+				if (removeLocal) {
+					// If feature is local then remove it from server.
+					GenericVersion version = feature.gVersion;
+					if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
+						if (version.removeFeature(feature)) {
+							SeqGroupView.getInstance().refreshTable();
+							if (gmodel.getSelectedSeqGroup().getSeqCount() > 0
+									&& !gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
+								gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
+							} else {
+								gmodel.setSelectedSeq(null);
+							}
 						}
 					}
 				}
@@ -657,7 +663,6 @@ public final class GeneralLoadView {
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
 
-		return delete;
 	}
 
 	protected GenericAction getRefreshDataAction() {

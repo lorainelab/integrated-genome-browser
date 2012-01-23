@@ -18,12 +18,13 @@ public class CommonUtils {
 	private String app_dir = null;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
 
-	private static final String APP_NAME         = BUNDLE.getString("appName");
-	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
-	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
-	private static final String BUILD_VERSION    = BUNDLE.getString("buildVersion");
+	private static final String APP_NAME            = BUNDLE.getString("appName");
+	private static final String APP_NAME_SHORT      = BUNDLE.getString("appNameShort");
+	private static final String APP_VERSION         = BUNDLE.getString("appVersion");
+	private static final String BUILD_VERSION       = BUNDLE.getString("buildVersion");
+	private static final String BUILD_CUSTOMIZATION = BUNDLE.getString("buildCustomization");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
-			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION);
+			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION, BUILD_CUSTOMIZATION);
 
 	private CommonUtils() {
 		super();

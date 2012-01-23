@@ -11,7 +11,6 @@
 package com.affymetrix.igb.prefs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
@@ -22,9 +21,11 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.CoordinateStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -123,6 +124,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
+        showCollapseOptionCheckBox = new javax.swing.JCheckBox();
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
 
@@ -293,6 +295,14 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
+        showCollapseOptionCheckBox.setText("Show Collapse Option");
+        showCollapseOptionCheckBox.setSelected(TrackStyle.getDrawCollapseState());
+        showCollapseOptionCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showCollapseOptionCheckBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -312,13 +322,18 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                             .add(showZoomStripLabelCheckBox)
                             .add(confirmBeforeDeleteCheckBox)
                             .add(confirmBeforeLoadingCheckBox)
-                            .add(askBeforeExitCheckBox)
-                            .add(autoChangeView)))
+                            .add(askBeforeExitCheckBox)))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 326, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
-                        .add(68, 68, 68)
+                        .addContainerGap()
+                        .add(showCollapseOptionCheckBox))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(autoChangeView))
+                    .add(layout.createSequentialGroup()
+                        .add(69, 69, 69)
                         .add(clear_prefsB)))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -328,7 +343,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
+                .add(20, 20, 20)
                 .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
                 .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -347,8 +362,10 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(showCollapseOptionCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(autoChangeView)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(clear_prefsB)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -357,14 +374,17 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		// TODO add your handling code here:
 		TierPrefsView.getSingleton().refreshSeqMapView();
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		// TODO add your handling code here:
 		TierPrefsView.getSingleton().refreshSeqMapView();
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
+
+	private void showCollapseOptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCollapseOptionCheckBoxActionPerformed
+		DrawCollapseControlAction.getAction().actionPerformed(evt);
+	}//GEN-LAST:event_showCollapseOptionCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;
@@ -396,6 +416,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
     private javax.swing.JPanel orfAnalyzerPanel;
     private javax.swing.JLabel otherLabel;
     private javax.swing.JPanel residueColorPanel;
+    private javax.swing.JCheckBox showCollapseOptionCheckBox;
     private javax.swing.JCheckBox showZoomStripLabelCheckBox;
     private javax.swing.JLabel stopCodonLabel;
     private javax.swing.JLabel tLabel;

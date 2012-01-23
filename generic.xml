@@ -26,6 +26,7 @@
 
 		<!-- Filters -->
 		<filter token="build.version"  value="${build.version}" />
+		<filter token="build.customization"  value="${build.customization}" />
 		<filter token="osgi.impl.file" value="${osgi.impl.file}" />
   </target>
 

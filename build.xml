@@ -243,7 +243,7 @@
     </copy>
 	</target>
 
-	<target name="cbc" depends="common-init" description="clear bundle cache">
+	<target name="cbc" depends="compiler-def-args,init" description="clear bundle cache">
 		<mkdir dir="${bundle.dir}" />
 		<subant target="compile" genericantfile="generic.xml" inheritall="true">
 			<dirset dir="${basedir}">
@@ -419,7 +419,7 @@
 		</parallel>
 	</target>
 	
-	<target name="classpath" depends="cbc, comp-copy, bundles_properties" >
+	<target name="classpath" depends="common-init, cbc, comp-copy, bundles_properties" >
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />

@@ -453,41 +453,6 @@ will not work well with these styles.
 			<PROPERTY key="color" value="A000A0" />
 		</METHOD_REGEX_ASSOCIATION>
 
-<!-- end of "Flat" annotation types section -->
-
-		<METHOD_REGEX_ASSOCIATION regex="^coverage: ."
-      style="com.affymetrix.igb.glyph.CoverageSummarizerFactory">
-			<PROPERTY key="style" value="coverage"/>
-			<PROPERTY key="height" value="100"/>
-		</METHOD_REGEX_ASSOCIATION>
-
-		<METHOD_REGEX_ASSOCIATION regex="_tf$"
-     style="com.affymetrix.igb.glyph.CoverageSummarizerFactory">
-			<PROPERTY key="style" value="coverage"/>
-			<PROPERTY key="height" value="100"/>
-		</METHOD_REGEX_ASSOCIATION>
-
-<!-- Files named "snpMap_Mapping10K", etc., have been renamed as "Mapping10K", etc. -->
-		<METHOD_REGEX_ASSOCIATION regex="^snpMap_"
-     style="com.affymetrix.igb.glyph.CoverageSummarizerFactory">
-			<PROPERTY key="style" value="coverage"/>
-			<PROPERTY key="height" value="200"/>
-		</METHOD_REGEX_ASSOCIATION>
-
-<!-- Match names like Mapping10K Mapping100K Mapping500K -->
-		<METHOD_REGEX_ASSOCIATION regex="Mapping[0-9]+K$"
-     style="com.affymetrix.igb.glyph.CoverageSummarizerFactory">
-			<PROPERTY key="style" value="coverage"/>
-			<PROPERTY key="height" value="200"/>
-		</METHOD_REGEX_ASSOCIATION>
-
-		<METHOD_REGEX_ASSOCIATION regex="^RepeatMasker_"
-     style="com.affymetrix.igb.glyph.CoverageSummarizerFactory">
-			<PROPERTY key="style" value="coverage"/>
-			<PROPERTY key="height" value="200"/>
-		</METHOD_REGEX_ASSOCIATION>
-
-
 <!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
 <!--
   Must match all these names:  (and similar ones for non-human chips)

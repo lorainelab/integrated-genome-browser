@@ -72,6 +72,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -172,7 +173,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Refresh seqtable if more chromosomes are added, for example.
 	 */
 	public void refreshTable() {
-		((SeqGroupTableModel)seqtable.getModel()).fireTableDataChanged();
+		((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
 	}
 
 	public void updateTableHeader() {

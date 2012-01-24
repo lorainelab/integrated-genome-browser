@@ -599,7 +599,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				// TODO: refresh feature tree view if a version is selected
 				GeneralLoadView.getLoadView().refreshTreeView();
 				if(AutoLoadFeatureAction.getActionCB().isSelected()){
-					GeneralLoadUtils.setFeatureAutoLoad(true);
+					GeneralLoadView.loadWholeRangeFeatures(null);
 				}
 			}
 		}

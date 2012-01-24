@@ -60,11 +60,12 @@ public class TierPrefsView implements ListSelectionListener {
 	public static final int COL_POS_STRAND_COLOR = 10;
 	public static final int COL_NEG_STRAND_COLOR = 11;
 	public static final int COL_VIEW_MODE = 12;
-	public TierPrefsTableModel model;
-	public ListSelectionModel lsm;
 	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
+	public static TierPrefsTableModel model;
+	public ListSelectionModel lsm;
+	public static JTable table;
 	public SeqMapView smv;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
@@ -92,7 +93,6 @@ public class TierPrefsView implements ListSelectionListener {
 	public JRPButton refreshButton;
 	public JRPCheckBox show2TracksCheckBox;
 	public ButtonGroup showStrandButtonGroup;
-	public JTable table;
 	public JRPComboBox trackNameSizeComboBox;
 	public JRPComboBox viewModeCB;
 	public JLabel applyToAllTip;
@@ -195,12 +195,6 @@ public class TierPrefsView implements ListSelectionListener {
 
 	private void initTable() {
 		table = new JTable();
-		model.addTableModelListener(new javax.swing.event.TableModelListener() {
-
-			public void tableChanged(javax.swing.event.TableModelEvent e) {
-				// do nothing.
-			}
-		});
 
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
@@ -320,24 +314,22 @@ public class TierPrefsView implements ListSelectionListener {
 		if (!isContained) {
 			model.setStyles(customizables);
 			model.fireTableDataChanged();
-			if (table.getRowCount() != 0) {
-				table.setRowSelectionInterval(0, 0);
-				this.initialLabelField();
-			}
 		}
-	}
-
-	public void applyChanges() {
-		refreshSeqMapView();
 	}
 
 	public void externalChange() {
-		model.fireTableDataChanged();
-		if (table.getRowCount() != 0) {
-			table.setRowSelectionInterval(0, 0);
-		}
+		updateTable();
+
 		//also refresh options panel to ensure coordinate track colors stay synchronized
 		OtherOptionsView.getSingleton().refresh();
+	}
+
+	public void updateTable() {
+		table.repaint();
+	}
+
+	public void clearTable() {
+		model.clear();
 	}
 
 	/** Called when the user selects a row of the table.
@@ -517,13 +509,13 @@ public class TierPrefsView implements ListSelectionListener {
 			SwingUtilities.invokeLater(new Runnable() {
 
 				public void run() {
-					applyChanges();
+					refreshSeqMapView();
 				}
 			});
 		}
 	}
 
-	public void selectAll() {		
+	public void selectAll() {
 		if (table.getRowCount() > 1) {
 			table.setRowSelectionInterval(0, table.getRowCount() - 2);
 		}
@@ -663,7 +655,7 @@ public class TierPrefsView implements ListSelectionListener {
 
 			model.fireTableDataChanged();
 
-			applyChanges();
+			refreshSeqMapView();
 
 			table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 		}
@@ -686,6 +678,15 @@ public class TierPrefsView implements ListSelectionListener {
 
 		public List<TrackStyle> getStyles() {
 			return this.tier_styles;
+		}
+
+		public void clear() {
+			for (Iterator<TrackStyle> iter = tier_styles.iterator(); iter.hasNext();) {
+				TrackStyle style = iter.next();
+				if (!style.getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+					iter.remove();
+				}
+			}
 		}
 
 		// Allow editing most fields in normal rows, but don't allow editing some
@@ -835,7 +836,7 @@ public class TierPrefsView implements ListSelectionListener {
 
 						smv.getSeqMap().updateWidget();
 					} else {
-						applyChanges();
+						refreshSeqMapView();
 					}
 				}
 

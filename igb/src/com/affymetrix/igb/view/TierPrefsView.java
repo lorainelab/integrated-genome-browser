@@ -63,9 +63,9 @@ public class TierPrefsView implements ListSelectionListener {
 	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
-	public static TierPrefsTableModel model;
+	public TierPrefsTableModel model;
 	public ListSelectionModel lsm;
-	public static JTable table;
+	public JTable table;
 	public SeqMapView smv;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.

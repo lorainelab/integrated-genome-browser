@@ -391,7 +391,7 @@ public class ExportDialogGUI extends JPanel {
                     .add(extComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 0, 0)
                 .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 95, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(0, 0, 0)
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -471,7 +471,6 @@ public class ExportDialogGUI extends JPanel {
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel chooseViewPanel;
     private javax.swing.JComboBox extComboBox;
     private javax.swing.JTextField filePathTextField;
     private javax.swing.JLabel heightLabel;

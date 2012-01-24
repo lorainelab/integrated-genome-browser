@@ -10,7 +10,6 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import be.pwnt.jflow.JFlowPanel;
 import be.pwnt.jflow.event.ShapeEvent;
@@ -114,11 +113,13 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	 * @param e 
 	 */
 	public void itemStateChanged(ItemEvent e) {
+		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null)
+			return;
+		
 		CardLayout layout = (CardLayout) getLayout();
 		System.out.println("MainWorkspaceManager:itemStateChanged hit");
-		JComboBox jb = (JComboBox) e.getSource();
-		if(gmodel.getSelectedSeqGroup() == null && jb.getSelectedItem() != null &&
-				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
+		String species = e.getItem().toString();
+		if(gmodel.getSelectedSeqGroup() == null && SELECT_SPECIES.equals(species)){
 			layout.show( this, WELCOME_PANE );
 		}else{
 			layout.show( this, SEQ_MAP_PANE );

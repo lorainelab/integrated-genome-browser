@@ -102,7 +102,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private JRPComboBox speciesCB;
 	private JRPComboBox versionCB;
 	private final IGBService igbService;
-	private SeqGroupTableModel model;
 
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
@@ -130,7 +129,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
 
-		model = new SeqGroupTableModel(null);
+		SeqGroupTableModel model = new SeqGroupTableModel(null);
 		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
 
 		lsm = seqtable.getSelectionModel();
@@ -157,13 +156,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCB.setRenderer(versionCBRenderer);
 		versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
 
-		populateSpeciesData();
-
 	}
 
 	static void init(IGBService _igbService) {
 		singleton = new SeqGroupView(_igbService);
-		addListeners();
+		singleton.addListeners();
+		singleton.populateSpeciesData();
 	}
 
 	public static SeqGroupView getInstance() {
@@ -174,7 +172,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Refresh seqtable if more chromosomes are added, for example.
 	 */
 	public void refreshTable() {
-		model.fireTableDataChanged();
+		((SeqGroupTableModel)seqtable.getModel()).fireTableDataChanged();
 	}
 
 	public void updateTableHeader() {
@@ -936,17 +934,16 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 	}
 
-	private static void addListeners() {
-		ServerList.getServerInstance().addServerInitListener(singleton);
-		gmodel.addGroupSelectionListener(singleton);
-		gmodel.addSeqSelectionListener(singleton);
+	private void addListeners() {
+		ServerList.getServerInstance().addServerInitListener(this);
+		gmodel.addGroupSelectionListener(this);
+		gmodel.addSeqSelectionListener(this);
 
-		singleton.speciesCB.setEnabled(true);
-		singleton.versionCB.setEnabled(true);
-		singleton.speciesCB.addItemListener(singleton);
-		singleton.versionCB.addItemListener(singleton);
-		//speciesCB.addItemListener(Welcome.getWelcome());
-		singleton.speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
+		speciesCB.setEnabled(true);
+		versionCB.setEnabled(true);
+		speciesCB.addItemListener(this);
+		versionCB.addItemListener(this);
+		speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
 	}
 
 	public JRPTable getTable() {

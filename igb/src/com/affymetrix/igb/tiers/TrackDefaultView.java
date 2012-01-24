@@ -4,7 +4,6 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -191,12 +190,13 @@ public final class TrackDefaultView implements ListSelectionListener {
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
 		table.setModel(model);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(80);
+				
+		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(85);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(85);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(85);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(85);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(85);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(85);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);

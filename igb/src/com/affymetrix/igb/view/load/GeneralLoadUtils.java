@@ -748,7 +748,6 @@ public final class GeneralLoadUtils {
 		}
 
 		iterateSeqList(feature);
-
 	}
 
 	static void iterateSeqList(final GenericFeature feature) {

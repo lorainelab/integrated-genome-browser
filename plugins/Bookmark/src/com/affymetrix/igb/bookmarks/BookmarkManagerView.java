@@ -39,7 +39,6 @@ import javax.swing.undo.UndoManager;
  */
 public final class BookmarkManagerView implements TreeSelectionListener {
 
-	private static final long serialVersionUID = 1L;
 	private static JFileChooser static_chooser = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	public JTree tree;
@@ -118,7 +117,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		} else {
 			parent = (DefaultMutableTreeNode) tree_node.getParent();
 		}
-		
+
 		int index = parent.getChildCount();
 
 		// Copy or move each source object to the target
@@ -127,7 +126,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
 				TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
-				
+
 				tree.setSelectionPath(path);
 			} catch (IllegalStateException e) {
 				// Cancelled by user
@@ -267,8 +266,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					name_text_field.setEnabled(selected_bl != def_tree_model.getRoot());
 					properties_action.setEnabled(selected_bl != def_tree_model.getRoot());
 					goto_action.setEnabled(false);
-					comment_text_area.setText("Uneditable");
-					comment_text_area.setEnabled(false);
+					comment_text_area.setText(selected_bl.getComment());
+					comment_text_area.setEnabled(true);
+					if (selected_bl == def_tree_model.getRoot()) {
+						comment_text_area.setText("Uneditable");
+						comment_text_area.setEnabled(false);
+					}
 				}
 
 				previousSelected_bl = selected_bl;
@@ -295,9 +298,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		public void updateNode(BookmarkList bl, String name, String comment) {
 			if (bl == def_tree_model.getRoot()) {
-				// I do not allow re-naming the root node because the current BookmarkParser
-				// class cannot actually read the name of a bookmark list, so any
-				// name change would be lost after saving and re-loading.
+				// I do not allow re-naming the root node currently
 				return;
 			}
 			if (name == null || name.length() == 0) {
@@ -311,6 +312,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				def_tree_model.nodeChanged(bl);
 			} else if (user_object instanceof String) {
 				selected_bl.setUserObject(name);
+				selected_bl.setComment(comment);
 				def_tree_model.nodeChanged(bl);
 			}
 		}
@@ -326,8 +328,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
-					if (selected_bl != null || 
-							selected_bl.getUserObject() instanceof Bookmark) {
+					if (selected_bl != null
+							|| selected_bl.getUserObject() instanceof Bookmark) {
 						bl_editor.openDialog(selected_bl);
 					} else {
 						setEnabled(false);

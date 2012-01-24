@@ -123,7 +123,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 				if (!Arrays.asList(sequenceFormats).contains(allowedTrackDefaults)) {
 					list.add(allowedTrackDefaults);
 				}
-
 			}
 		}
 		Collections.sort(list);
@@ -165,13 +164,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 		colorCheckBox.setText("Color");
 
 		arrowCheckBox.setText("Arrow");
-
-		model.addTableModelListener(new javax.swing.event.TableModelListener() {
-
-			public void tableChanged(javax.swing.event.TableModelEvent e) {
-				// do nothing.
-			}
-		});
 
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
@@ -374,9 +366,16 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
-			selectedStyle = model.tier_styles.get(table.getSelectedRow());
-			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
-			model.removeElement(selectedStyle.getTrackName());
+			List<TrackStyle> styles = new ArrayList<TrackStyle>();
+			for (int i : selectedRows) {
+				styles.add(model.tier_styles.get(i));
+			}
+
+			for (TrackStyle style : styles) {
+				XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
+				model.removeElement(style.getTrackName());
+			}
+
 			model.fireTableDataChanged();
 		}
 	}
@@ -582,7 +581,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 		private void removeElement(String filetype) {
 			Iterator<TrackStyle> iterator = tier_styles.iterator();
 			TrackStyle style;
-
 			while (iterator.hasNext()) {
 				style = iterator.next();
 				if (style.getTrackName().equals(filetype)) {
@@ -641,11 +639,10 @@ public final class TrackDefaultView implements ListSelectionListener {
 			}
 		}
 
-
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				setValue(value, selectedRows[i], col);
+			for (int i : selectedRows) {
+				setValue(value, i, col);
 			}
 		}
 
@@ -743,7 +740,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 							System.out.println("Unknown column selected: " + col);
 					}
 					fireTableCellUpdated(row, col);
-					table.setRowSelectionInterval(row, row);
 				} catch (Exception e) {
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);

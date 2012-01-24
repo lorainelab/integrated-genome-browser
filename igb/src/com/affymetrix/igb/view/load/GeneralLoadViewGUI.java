@@ -98,8 +98,8 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                .add(9, 9, 9)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                .add(0, 0, 0)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(all_residuesB)
                     .add(partial_residuesB)
@@ -169,6 +169,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 			this.setCursor(defaultCursor);
 		}
 	}//GEN-LAST:event_jPanel1MouseMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton all_residuesB;
     private javax.swing.JTable dataManagementTable;

@@ -61,7 +61,7 @@
               </Group>
               <EmptySpace min="-2" pref="0" max="-2" attributes="1"/>
               <Component id="imageSizePanel" min="-2" pref="95" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Component id="previewPanel" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>

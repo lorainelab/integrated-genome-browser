@@ -366,11 +366,18 @@ public final class TrackDefaultView implements ListSelectionListener {
 		}
 	}
 
-	public void removeTrackDefaultButton() {
+	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
-			selectedStyle = model.tier_styles.get(table.getSelectedRow());
-			XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
-			model.removeElement(selectedStyle.getTrackName());
+			List<TrackStyle> styles = new ArrayList<TrackStyle>();
+			for (int i : selectedRows) {
+				styles.add(model.tier_styles.get(i));
+			}
+
+			for (TrackStyle style : styles) {
+				XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
+				model.removeElement(style.getTrackName());
+			}
+
 			model.fireTableDataChanged();
 		}
 	}
@@ -576,7 +583,6 @@ public final class TrackDefaultView implements ListSelectionListener {
 		private void removeElement(String filetype) {
 			Iterator<TrackStyle> iterator = tier_styles.iterator();
 			TrackStyle style;
-
 			while (iterator.hasNext()) {
 				style = iterator.next();
 				if (style.getTrackName().equals(filetype)) {
@@ -637,8 +643,8 @@ public final class TrackDefaultView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				setValue(value, selectedRows[i], col);
+			for (int i : selectedRows) {
+				setValue(value, i, col);
 			}
 		}
 

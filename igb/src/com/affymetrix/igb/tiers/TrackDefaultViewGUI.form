@@ -200,8 +200,8 @@
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="addTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="removeTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="302" max="32767" attributes="0"/>
+                  <Component id="deleteTrackDefaultButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="320" max="32767" attributes="0"/>
               </Group>
               <Component id="jScrollPane1" alignment="0" pref="488" max="32767" attributes="0"/>
           </Group>
@@ -213,7 +213,7 @@
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="addTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="removeTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deleteTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -250,12 +250,12 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getAddTrackDefaultButton()"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JButton" name="removeTrackDefaultButton">
+        <Component class="javax.swing.JButton" name="deleteTrackDefaultButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Remove"/>
+            <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeTrackDefaultButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteTrackDefaultButtonActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getRemoveTrackDefaultButton()"/>

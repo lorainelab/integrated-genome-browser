@@ -37,7 +37,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
         jScrollPane1 = new javax.swing.JScrollPane();
         table = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTable();
         addTrackDefaultButton = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getAddTrackDefaultButton();
-        removeTrackDefaultButton = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getRemoveTrackDefaultButton();
+        deleteTrackDefaultButton = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getRemoveTrackDefaultButton();
         propertiesPanel = new javax.swing.JPanel();
         TrackTypeNameLabel = new javax.swing.JLabel();
         trackDefaultTextField = com.affymetrix.igb.tiers.TrackDefaultView.getTrackDefaultView().getTrackDefaultTextField();
@@ -146,10 +146,10 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
             }
         });
 
-        removeTrackDefaultButton.setText("Remove");
-        removeTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+        deleteTrackDefaultButton.setText("Delete");
+        deleteTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeTrackDefaultButtonActionPerformed(evt);
+                deleteTrackDefaultButtonActionPerformed(evt);
             }
         });
 
@@ -161,12 +161,12 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .add(0, 0, 0)
                 .add(addTrackDefaultButton)
                 .add(0, 0, 0)
-                .add(removeTrackDefaultButton)
-                .addContainerGap(302, Short.MAX_VALUE))
+                .add(deleteTrackDefaultButton)
+                .addContainerGap(320, Short.MAX_VALUE))
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
-        selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, removeTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        selectTrackDefaultPanelLayout.linkSize(new java.awt.Component[] {addTrackDefaultButton, deleteTrackDefaultButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         selectTrackDefaultPanelLayout.setVerticalGroup(
             selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -175,7 +175,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
                 .add(0, 0, 0)
                 .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addTrackDefaultButton)
-                    .add(removeTrackDefaultButton)))
+                    .add(deleteTrackDefaultButton)))
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
@@ -372,9 +372,9 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 		TrackDefaultView.getTrackDefaultView().addTrackDefaultButton();
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
 
-	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
-		TrackDefaultView.getTrackDefaultView().removeTrackDefaultButton();
-	}//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
+	private void deleteTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteTrackDefaultButtonActionPerformed
+		TrackDefaultView.getTrackDefaultView().deleteTrackDefaultButton();
+	}//GEN-LAST:event_deleteTrackDefaultButtonActionPerformed
 
 	private void trackDefaultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackDefaultTextFieldActionPerformed
 		TrackDefaultView.getTrackDefaultView().trackNameSizeComboBox();
@@ -436,6 +436,7 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JCheckBox colorCheckBox;
     private javax.swing.JCheckBox connectedCheckBox;
+    private javax.swing.JButton deleteTrackDefaultButton;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
     private javax.swing.JScrollPane jScrollPane1;
@@ -449,7 +450,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
     private javax.swing.JLabel possitiveLabel;
     private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JButton removeTrackDefaultButton;
     private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
     private javax.swing.JPanel showStrandPanel;

@@ -71,44 +71,44 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" max="-2" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="displayNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                                   <Component id="fgLabel" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="fgColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
                               <Component id="bgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="18" pref="18" max="18" attributes="0"/>
+                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           <Component id="maxDepthLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" max="-2" attributes="0">
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="labelFieldLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="trackNameSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="trackNameSizeComboBox" min="0" pref="0" max="32767" attributes="1"/>
-                              <Component id="labelFieldComboBox" alignment="0" pref="92" max="32767" attributes="1"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="labelFieldComboBox" pref="109" max="32767" attributes="1"/>
+                              <Component id="trackNameSizeComboBox" alignment="0" min="-2" pref="79" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -118,7 +118,7 @@
                           <Component id="applyButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="24" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
               <Component id="jSeparator1" alignment="0" pref="350" max="32767" attributes="2"/>
               <Group type="102" alignment="0" attributes="0">
@@ -126,14 +126,14 @@
                   <Component id="show2TracksCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="connectedCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="collapsedCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               </Group>
               <Component id="jSeparator2" alignment="0" pref="350" max="32767" attributes="2"/>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="104" max="-2" attributes="0"/>
-                  <Component id="displayNameTextField" pref="246" max="32767" attributes="2"/>
+                  <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
+                  <Component id="displayNameTextField" pref="258" max="32767" attributes="2"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -153,7 +153,7 @@
                       <Component id="trackNameSizeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="bgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="fgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="fgColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>

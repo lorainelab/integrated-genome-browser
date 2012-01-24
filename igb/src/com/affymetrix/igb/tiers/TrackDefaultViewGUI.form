@@ -285,7 +285,7 @@
                       <Component id="bgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="trackNameSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -304,16 +304,17 @@
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="maxDepthTextField" linkSize="2" alignment="0" max="32767" attributes="1"/>
+                              <Component id="maxDepthTextField" linkSize="2" alignment="0" pref="87" max="32767" attributes="1"/>
                               <Component id="labelFieldComboBox" linkSize="2" alignment="0" min="-2" pref="87" max="-2" attributes="1"/>
                               <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                           <Component id="labelFieldTip" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="1">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="trackDefaultTextField" max="32767" attributes="1"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="trackDefaultTextField" pref="258" max="32767" attributes="1"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>

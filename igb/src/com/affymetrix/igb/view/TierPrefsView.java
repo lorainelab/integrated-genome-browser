@@ -662,13 +662,8 @@ public class TierPrefsView implements ListSelectionListener {
 			}
 		}
 
-		// Allow editing most fields in normal rows, but don't allow editing some
-		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-//			if (column == COL_TRACK_NAME) {
-//				return false;
-//			}
 			return true;
 		}
 
@@ -714,12 +709,12 @@ public class TierPrefsView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-
-			for (int i = 0; i < selectedRows.length; i++) {
-				if (i == selectedRows.length - 1) {
-					setValueAt(value, selectedRows[i], col, true);
+			for (int i : selectedRows) {
+				// Do refresh sequence map view after changing the last selected row.
+				if (i == selectedRows[selectedRows.length - 1]) {
+					setValueAt(value, i, col, true);
 				} else {
-					setValueAt(value, selectedRows[i], col, false);
+					setValueAt(value, i, col, false);
 				}
 			}
 		}
@@ -806,7 +801,7 @@ public class TierPrefsView implements ListSelectionListener {
 								DataManagementTable.getModel().fireTableDataChanged();
 							}
 						}
-						
+
 						smv.getSeqMap().updateWidget();
 					} else {
 						refreshSeqMapView();

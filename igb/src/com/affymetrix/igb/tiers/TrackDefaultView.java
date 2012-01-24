@@ -374,8 +374,10 @@ public final class TrackDefaultView implements ListSelectionListener {
 			}
 
 			for (TrackStyle style : styles) {
-				XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
-				model.removeElement(style.getTrackName());
+				if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
+					XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
+					model.removeElement(style.getTrackName());
+				}
 			}
 
 			model.fireTableDataChanged();

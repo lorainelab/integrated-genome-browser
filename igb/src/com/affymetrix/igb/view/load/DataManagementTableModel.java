@@ -359,16 +359,20 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			case BACKGROUND_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setBackground((Color) value);
+					TierPrefsView.getSingleton().bgColorComboBox.setSelectedColor((Color) value);
+
 				}
 				break;
 			case FOREGROUND_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setForeground((Color) value);
+					TierPrefsView.getSingleton().fgColorComboBox.setSelectedColor((Color) value);
 				}
 				break;
 			case SEPARATE_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setSeparate((Boolean) value);
+					TierPrefsView.getSingleton().show2TracksCheckBox.setSelected((Boolean) value);
 					smv.getPopup().refreshMap(false, true);
 					smv.getPopup().getHandler().sortTiers();
 				}
@@ -376,6 +380,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setTrackName((String) value);
+					TierPrefsView.getSingleton().displayNameTextField.setText((String) value);
 				}
 				break;
 			default:

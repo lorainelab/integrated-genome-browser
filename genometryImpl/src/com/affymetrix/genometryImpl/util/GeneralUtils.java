@@ -86,7 +86,7 @@ public final class GeneralUtils {
 	public static InputStream getInputStream(File f, StringBuffer sb) throws
 		FileNotFoundException, IOException {
 
-			String infile_name = f.getName();
+			String infile_name = "file:"+f.getAbsolutePath();
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
 			InputStream isr = unzipStream(bis, infile_name, sb);
 			return isr;

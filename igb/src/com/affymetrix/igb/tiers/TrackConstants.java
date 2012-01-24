@@ -12,7 +12,7 @@ public interface TrackConstants {
 	// A pattern that matches two or more slash "/" characters.
 	// A preference node name can't contain two slashes, nor end with a slash.
 	static final Pattern multiple_slashes = Pattern.compile("/{2,}");
-	static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
+	static final String NAME_OF_DEFAULT_INSTANCE = "* Default *";
 	static final String NAME_OF_COORDINATE_INSTANCE = "Coordinates";
 	static final String NO_LABEL = "* none *";
 	// The String constants named PREF_* are for use in the persistent preferences

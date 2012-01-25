@@ -526,6 +526,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (aseq == null) {
 			GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
+			GeneralLoadView.getLoadView().createFeaturesTable();
 			// refreshTreeView should only be called if feature table
 			// needs to be cleared.
 

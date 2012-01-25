@@ -68,6 +68,7 @@ public class TierPrefsView implements ListSelectionListener {
 	public static JTable table;
 	public SeqMapView smv;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
+	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	public int[] selectedRows;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
@@ -246,10 +247,14 @@ public class TierPrefsView implements ListSelectionListener {
 			tier = (TierGlyph) tlg.getInfo();
 			style = tier.getAnnotStyle();
 
-			for (int i = 0; i < table.getRowCount(); i++) {
-				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
-					table.addRowSelectionInterval(i, i);
-				}
+			setRowSeletion(style);
+		}
+	}
+
+	public void setRowSeletion(ITrackStyle style) {
+		for (int i = 0; i < table.getRowCount(); i++) {
+			if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+				table.addRowSelectionInterval(i, i);
 			}
 		}
 	}
@@ -323,7 +328,7 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	public void updateTable() {
-		table.repaint();
+		model.fireTableDataChanged();
 	}
 
 	public void clearTable() {
@@ -522,96 +527,123 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	public void show2TracksCheckBox() {
-		model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
+		if (!settingValueFromTable) {
+			model.setValueAt(show2TracksCheckBox.isSelected(), 0, COL_SHOW2TRACKS);
+		}
 	}
 
 	public void connectedCheckBox() {
-		model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
+		if (!settingValueFromTable) {
+			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
+		}
 	}
 
 	public void collapsedCheckBox() {
-		model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
+		if (!settingValueFromTable) {
+			model.setValueAt(collapsedCheckBox.isSelected(), 0, COL_COLLAPSED);
+		}
 	}
 
 	public void displayNameTextField() {
-		model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
+		if (!settingValueFromTable) {
+			model.setValueAt(displayNameTextField.getText(), 0, COL_TRACK_NAME);
+		}
 	}
 
 	public void maxDepthTextField() {
-		model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
+		if (!settingValueFromTable) {
+			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
+		}
 	}
 
 	public void trackNameSizeComboBox() {
-		if (!initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
+		if (!settingValueFromTable
+				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
 			float trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
+			model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
 		}
 	}
 
 	public void fgColorComboBox() {
-		model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
+		if (!settingValueFromTable) {
+			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
+		}
 	}
 
 	public void bgColorComboBox() {
-		model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
+		if (!settingValueFromTable) {
+			model.setValueAt(bgColorComboBox.getSelectedColor(), 0, COL_BACKGROUND);
+		}
 	}
 
 	public void labelFieldComboBox() {
-		model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
+		if (!settingValueFromTable) {
+			model.setValueAt(labelFieldComboBox.getSelectedItem(), 0, COL_LABEL_FIELD);
+		}
 	}
 
 	public void possitiveColorComboBox() {
-		model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
+		if (!settingValueFromTable) {
+			model.setValueAt(possitiveColorComboBox.getSelectedColor(), 0, COL_POS_STRAND_COLOR);
+		}
 	}
 
 	public void negativeColorComboBox() {
-		model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
+		if (!settingValueFromTable) {
+			model.setValueAt(negativeColorComboBox.getSelectedColor(), 0, COL_NEG_STRAND_COLOR);
+		}
 	}
 
 	public void colorCheckBox() {
-		if (colorCheckBox.isSelected()) {
-			if (arrowCheckBox.isSelected()) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-						selectedRows[0], COL_DIRECTION_TYPE);
+		if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
+							0, COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
+							0, COL_DIRECTION_TYPE);
+				}
 			} else {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-						selectedRows[0], COL_DIRECTION_TYPE);
-			}
-		} else {
-			if (arrowCheckBox.isSelected()) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-						selectedRows[0], COL_DIRECTION_TYPE);
-			} else {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-						selectedRows[0], COL_DIRECTION_TYPE);
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
+							0, COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
+							0, COL_DIRECTION_TYPE);
+				}
 			}
 		}
 	}
 
 	public void arrowCheckBox() {
-		if (colorCheckBox.isSelected()) {
-			if (arrowCheckBox.isSelected()) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-						selectedRows[0], COL_DIRECTION_TYPE);
+		if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
+							0, COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
+							0, COL_DIRECTION_TYPE);
+				}
 			} else {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-						selectedRows[0], COL_DIRECTION_TYPE);
-			}
-		} else {
-			if (arrowCheckBox.isSelected()) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-						selectedRows[0], COL_DIRECTION_TYPE);
-			} else {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-						selectedRows[0], COL_DIRECTION_TYPE);
+				if (arrowCheckBox.isSelected()) {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
+							0, COL_DIRECTION_TYPE);
+				} else {
+					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
+							0, COL_DIRECTION_TYPE);
+				}
 			}
 		}
 	}
 
 	public void viewModeCB() {
-		for (int i = 0; i < selectedRows.length; i++) {
-			model.setValueAt(viewModeCB.getSelectedItem(),
-					selectedRows[i], COL_VIEW_MODE);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(viewModeCB.getSelectedItem(),
+						0, COL_VIEW_MODE);
+			}
 		}
 	}
 

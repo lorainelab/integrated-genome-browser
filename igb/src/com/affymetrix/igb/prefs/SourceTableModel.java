@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.jidesoft.utils.SwingWorker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +15,7 @@ import java.util.prefs.PreferenceChangeListener;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
+import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 
 

@@ -248,10 +248,14 @@ public class TierPrefsView implements ListSelectionListener {
 			tier = (TierGlyph) tlg.getInfo();
 			style = tier.getAnnotStyle();
 
-			for (int i = 0; i < table.getRowCount(); i++) {
-				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
-					table.addRowSelectionInterval(i, i);
-				}
+			setRowSeletion(style);
+		}
+	}
+
+	public void setRowSeletion(ITrackStyle style) {
+		for (int i = 0; i < table.getRowCount(); i++) {
+			if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+				table.addRowSelectionInterval(i, i);
 			}
 		}
 	}
@@ -276,7 +280,7 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 
 		boolean isContained = true; // If add a new track, its style will not contain...
-		
+
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
@@ -325,7 +329,7 @@ public class TierPrefsView implements ListSelectionListener {
 	}
 
 	public void updateTable() {
-		table.repaint();
+		model.fireTableDataChanged();
 	}
 
 	public void clearTable() {
@@ -523,31 +527,31 @@ public class TierPrefsView implements ListSelectionListener {
 
 	public void show2TracksCheckBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[0], COL_SHOW2TRACKS);
+			model.setValueAt(show2TracksCheckBox.isSelected(), 0, COL_SHOW2TRACKS);
 		}
 	}
 
 	public void connectedCheckBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[0], COL_CONNECTED);
+			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
 		}
 	}
 
 	public void collapsedCheckBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
+			model.setValueAt(collapsedCheckBox.isSelected(), 0, COL_COLLAPSED);
 		}
 	}
 
 	public void displayNameTextField() {
 		if (!settingValueFromTable) {
-			model.setValueAt(displayNameTextField.getText(), selectedRows[0], COL_TRACK_NAME);
+			model.setValueAt(displayNameTextField.getText(), 0, COL_TRACK_NAME);
 		}
 	}
 
 	public void maxDepthTextField() {
 		if (!settingValueFromTable) {
-			model.setValueAt(maxDepthTextField.getText(), selectedRows[0], COL_MAX_DEPTH);
+			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
 		}
 	}
 
@@ -555,37 +559,37 @@ public class TierPrefsView implements ListSelectionListener {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
 			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
+			model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
 		}
 	}
 
 	public void fgColorComboBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[0], COL_FOREGROUND);
+			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
 		}
 	}
 
 	public void bgColorComboBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
+			model.setValueAt(bgColorComboBox.getSelectedColor(), 0, COL_BACKGROUND);
 		}
 	}
 
 	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[0], COL_LABEL_FIELD);
+			model.setValueAt(labelFieldComboBox.getSelectedItem(), 0, COL_LABEL_FIELD);
 		}
 	}
 
 	public void possitiveColorComboBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[0], COL_POS_STRAND_COLOR);
+			model.setValueAt(possitiveColorComboBox.getSelectedColor(), 0, COL_POS_STRAND_COLOR);
 		}
 	}
 
 	public void negativeColorComboBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[0], COL_NEG_STRAND_COLOR);
+			model.setValueAt(negativeColorComboBox.getSelectedColor(), 0, COL_NEG_STRAND_COLOR);
 		}
 	}
 
@@ -594,18 +598,18 @@ public class TierPrefsView implements ListSelectionListener {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				} else {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				} else {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -616,18 +620,18 @@ public class TierPrefsView implements ListSelectionListener {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				} else {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				}
 			} else {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				} else {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-							selectedRows[0], COL_DIRECTION_TYPE);
+							0, COL_DIRECTION_TYPE);
 				}
 			}
 		}
@@ -637,7 +641,7 @@ public class TierPrefsView implements ListSelectionListener {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(viewModeCB.getSelectedItem(),
-						selectedRows[i], COL_VIEW_MODE);
+						0, COL_VIEW_MODE);
 			}
 		}
 	}
@@ -693,9 +697,6 @@ public class TierPrefsView implements ListSelectionListener {
 		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-//			if (column == COL_TRACK_NAME) {
-//				return false;
-//			}
 			return true;
 		}
 
@@ -741,7 +742,6 @@ public class TierPrefsView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-
 			for (int i = 0; i < selectedRows.length; i++) {
 				if (i == selectedRows.length - 1) {
 					setValueAt(value, selectedRows[i], col, true);

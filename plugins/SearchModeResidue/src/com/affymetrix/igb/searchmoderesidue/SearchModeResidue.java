@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class SearchModeResidue implements ISearchMode, 
 		SeqMapRefreshed, SeqSelectionListener {
 	
+	private static final int SEARCH_ALL_ORDINAL = -1;
 	private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
 	private static final boolean default_confirm_before_seq_change = true;
 	
@@ -333,8 +334,8 @@ public class SearchModeResidue implements ISearchMode,
 	}
 
 	@Override
-	public boolean searchAllUse() {
-		return false;
+	public int searchAllUse() {
+		return SEARCH_ALL_ORDINAL;
 	}
 
 	@Override

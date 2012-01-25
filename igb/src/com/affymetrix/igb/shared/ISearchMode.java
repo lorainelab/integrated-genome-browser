@@ -17,9 +17,9 @@ public interface ISearchMode {
 	 */
 	public String getName();
 	/**
-	 * @return if this search mode can be used in combined searches
-	 */
-	public boolean searchAllUse();
+	 * @return the search mode order to be used in combined searches, negative means don't use
+ 	 */
+	public int searchAllUse();
 	/**
 	 * @return the tooltip text
 	 */
@@ -44,7 +44,7 @@ public interface ISearchMode {
 	 */
 	public boolean useOption();
 	/**
-	 * slear results
+	 * clear results
 	 */
 	public void clear();
 	public boolean useDisplaySelected();

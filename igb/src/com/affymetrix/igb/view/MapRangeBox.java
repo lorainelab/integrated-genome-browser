@@ -83,7 +83,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 			return matcher.matches() ? null : "";
 		}
 		@Override public String getName() { return null; }
-		@Override public boolean searchAllUse() { return false; }
+		@Override public int searchAllUse() { return 0; }
 		@Override public String getTooltip() { return null; }
 		@Override public String getOptionName(int i) { return null; }
 		@Override public String getOptionTooltip(int i) { return null; }
@@ -414,7 +414,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
 		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls());
 		for (ISearchMode mode : modes) {
-			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null) {
+			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null && mode.searchAllUse() >= 0) {
 				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());
 				if (rawSpans.size() > 0) {
 					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);

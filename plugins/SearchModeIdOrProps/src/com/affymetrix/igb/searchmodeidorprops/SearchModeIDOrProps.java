@@ -32,11 +32,6 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 		super(igbService);
 	}
 
-	@Override
-	public boolean searchAllUse() {
-		return true;
-	}
-
 	private Pattern getRegex(String search_text) throws Exception  {
 		Pattern regex = null;
 		String regexText = search_text;

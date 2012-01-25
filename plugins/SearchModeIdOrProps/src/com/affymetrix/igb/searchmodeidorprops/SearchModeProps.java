@@ -12,6 +12,7 @@ import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public class SearchModeProps extends SearchModeIDOrProps implements ISearchMode {
+	private static final int SEARCH_ALL_ORDINAL = 3000;
 	public SearchModeProps(IGBService igbService) {
 		super(igbService);
 	}
@@ -61,6 +62,11 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchMode 
 	@Override
 	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
 		return findSpans(findLocalSyms(search_text, null, Constants.GENOME_SEQ_ID, true, DUMMY_STATUS));
+	}
+
+	@Override
+	public int searchAllUse() {
+		return SEARCH_ALL_ORDINAL;
 	}
 
 	@Override

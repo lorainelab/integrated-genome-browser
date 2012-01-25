@@ -347,8 +347,6 @@ public class ExportDialog implements ExportConstants {
 
 			imageInfo.setWidth(newWidth);
 		}
-
-		System.out.println(isHeightSpinner);
 	}
 
 	public void heightSpinnerStateChanged() {
@@ -361,8 +359,6 @@ public class ExportDialog implements ExportConstants {
 
 			imageInfo.setHeight(newHeight);
 		}
-
-		System.out.println(isWidthSpinner);
 	}
 
 	public void xSpinnerStateChanged() {

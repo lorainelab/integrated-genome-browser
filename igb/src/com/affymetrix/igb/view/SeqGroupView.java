@@ -42,7 +42,6 @@ import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
-import com.jidesoft.utils.SwingWorker;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -72,6 +71,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 
 /**

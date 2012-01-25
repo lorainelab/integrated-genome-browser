@@ -54,9 +54,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="all_residuesB" pref="204" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="partial_residuesB" pref="205" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Component id="refresh_dataB" pref="205" max="32767" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane2" alignment="1" pref="614" max="32767" attributes="1"/>

@@ -21,18 +21,17 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class SearchModeResidue implements ISearchMode, 
+public class SearchModeResidue implements ISearchModeGlyph, 
 		SeqMapRefreshed, SeqSelectionListener {
 	
 	private static final int SEARCH_ALL_ORDINAL = -1;
@@ -389,7 +388,7 @@ public class SearchModeResidue implements ISearchMode,
 	}
 
 	@Override
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
+	public List<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
 		return null;
 	}
 

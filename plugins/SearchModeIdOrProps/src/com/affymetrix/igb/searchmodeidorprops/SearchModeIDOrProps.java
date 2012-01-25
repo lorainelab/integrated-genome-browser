@@ -19,11 +19,11 @@ import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.searchmodegeneric.SearchModeGeneric;
 import com.affymetrix.igb.searchmodegeneric.SymSearchResultsTableModel;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public abstract class SearchModeIDOrProps extends SearchModeGeneric implements ISearchMode {
+public abstract class SearchModeIDOrProps extends SearchModeGeneric implements ISearchModeSym {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodeidorprops");
 	private List<SeqSymmetry> remoteSymList;
 	protected static final IStatus DUMMY_STATUS = new IStatus() { public void setStatus(String s){}};

@@ -44,6 +44,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
@@ -308,7 +310,9 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
-		List<ISearchMode> searchModes = ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls();
+		List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
+		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
+		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeGlyph.class).getExtensionPointImpls());
 		// consistent order for search modes
 		Collections.sort(searchModes,
 			new Comparator<ISearchMode>() {

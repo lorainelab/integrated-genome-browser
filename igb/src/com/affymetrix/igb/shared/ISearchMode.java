@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  * represents a method of searching the selected features
@@ -62,14 +61,6 @@ public interface ISearchMode {
 	 * @return an empty result table
 	 */
 	public SearchResultsTableModel getEmptyTableModel();
-	/**
-	 * actually perform the search
-	 * @param search_text the input text
-	 * @param chrFilter the chromosome / seq to search or null for all
-	 * @param statusHolder the status display for output messages
-	 * @return a list of the syms found by the search
-	 */
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder);
 	/**
 	 * run the search and fill the output table
 	 * @param search_text the input text

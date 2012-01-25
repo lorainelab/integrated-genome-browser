@@ -8,20 +8,20 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration<ISearchMode> searchModeIDRegistration;
-	private ServiceRegistration<ISearchMode> searchModePropsRegistration;
+	private ServiceRegistration<ISearchModeSym> searchModeIDRegistration;
+	private ServiceRegistration<ISearchModeSym> searchModePropsRegistration;
 	private ServiceRegistration<RemoteSearchI> remoteSearchDAS2Registration;
 
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-    		searchModeIDRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeID(igbService), null);
-    		searchModePropsRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeProps(igbService), null);
+    		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeID(igbService), null);
+    		searchModePropsRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeProps(igbService), null);
     		remoteSearchDAS2Registration = bundleContext.registerService(RemoteSearchI.class, new RemoteSearchDAS2(), null);
         }
         catch (Exception ex) {

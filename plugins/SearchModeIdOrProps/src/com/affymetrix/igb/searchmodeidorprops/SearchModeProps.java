@@ -7,11 +7,11 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public class SearchModeProps extends SearchModeIDOrProps implements ISearchMode {
+public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeSym {
 	private static final int SEARCH_ALL_ORDINAL = 3000;
 	public SearchModeProps(IGBService igbService) {
 		super(igbService);

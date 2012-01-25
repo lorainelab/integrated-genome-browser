@@ -10,10 +10,10 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public abstract class SearchModeGeneric implements ISearchMode {
+public abstract class SearchModeGeneric implements ISearchModeSym {
 	private static final int MAX_HITS = 100000;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodegeneric");
 	protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");

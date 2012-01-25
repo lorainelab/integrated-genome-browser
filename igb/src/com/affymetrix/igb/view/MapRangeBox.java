@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.NextSearchSpanAction;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResultsTableModel;
 
@@ -67,7 +67,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
-	private static final List<ISearchMode> BASE_SEARCH_MODES = new ArrayList<ISearchMode>();
+	private static final List<ISearchModeSym> BASE_SEARCH_MODES = new ArrayList<ISearchModeSym>();
 	static {
 		BASE_SEARCH_MODES.add(new ChromStartEndSearch());
 		BASE_SEARCH_MODES.add(new ChromStartWidthSearch());
@@ -77,7 +77,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		BASE_SEARCH_MODES.add(new CenterSearch());
 	}
 
-	private static abstract class EmptySearch implements ISearchMode {
+	private static abstract class EmptySearch implements ISearchModeSym {
 		protected abstract Matcher getMatcher(String search_text);
 		@Override public String checkInput(String search_text, BioSeq vseq, String seq) {
 			Matcher matcher = getMatcher(search_text);
@@ -411,9 +411,9 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 * or "ADAR" (a gene name)
 	 */
 	public void setRange(SeqMapView gview, String search_text) {
-		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
-		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls());
-		for (ISearchMode mode : modes) {
+		List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>(BASE_SEARCH_MODES);
+		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
+		for (ISearchModeSym mode : modes) {
 			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null && mode.searchAllUse() >= 0) {
 				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());
 				if (rawSpans.size() > 0) {

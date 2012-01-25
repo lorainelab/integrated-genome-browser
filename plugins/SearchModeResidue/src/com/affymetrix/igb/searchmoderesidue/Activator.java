@@ -7,17 +7,17 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeGlyph;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration<ISearchMode> searchModeResidueRegistration;
+	private ServiceRegistration<ISearchModeGlyph> searchModeResidueRegistration;
 
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-        	searchModeResidueRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeResidue(igbService), null);
+        	searchModeResidueRegistration = bundleContext.registerService(ISearchModeGlyph.class, new SearchModeResidue(igbService), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());

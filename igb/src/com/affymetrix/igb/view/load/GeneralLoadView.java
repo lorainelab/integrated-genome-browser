@@ -48,6 +48,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
+import com.affymetrix.igb.view.TierPrefsView;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import javax.swing.table.TableCellRenderer;
@@ -595,6 +596,8 @@ public final class GeneralLoadView {
 				
 				if(!syms.isEmpty())
 					gviewer.select(syms, false);
+				
+				TierPrefsView.getSingleton().refreshList();
 			}
 		});
 	}

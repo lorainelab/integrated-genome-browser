@@ -340,4 +340,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	protected String getToolTip() {
 		return "Edit data sources and preferences";
 	}
+	@Override
+	protected boolean enableCombo() {
+		return true;
+	}
 }

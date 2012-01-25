@@ -88,7 +88,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				AddSource addServerPanel = AddSource.getSingleton();
+				AddSource addServerPanel = new AddSource(enableCombo());
 				JFrame frame = PreferencesPanel.getSingleton().getFrame();
 				Point location = frame.getLocation();
 				addServerPanel.setLocation(location.x + frame.getWidth() / 2 - addServerPanel.getWidth() / 2, location.y + addServerPanel.getHeight() / 2 - addServerPanel.getHeight() / 2);
@@ -202,7 +202,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 					"Unable to load " + type + " data source '" + url + "'.");
 			return;
 		}
-
+		sourceTableModel.init();
 		//ServerList.addServerToPrefs(server);
 	}
 
@@ -248,4 +248,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected abstract String getViewName();
 
 	protected abstract String getToolTip();
+	
+	protected abstract boolean enableCombo();
 }

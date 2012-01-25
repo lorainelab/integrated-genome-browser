@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import javax.swing.SwingConstants;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -23,13 +20,10 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 
 public class SearchModeResidue implements ISearchModeGlyph, 
 		SeqMapRefreshed, SeqSelectionListener {
@@ -54,143 +48,6 @@ public class SearchModeResidue implements ISearchModeGlyph,
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private IGBService igbService;
 	private int color = 0;
-
-	@SuppressWarnings("serial")
-	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
-		private final int[] colWidth = {20,8,10,10,5,10,65};
-		private final int[] colAlign = {SwingConstants.LEFT,SwingConstants.CENTER,SwingConstants.RIGHT,SwingConstants.RIGHT,SwingConstants.CENTER,SwingConstants.CENTER,SwingConstants.LEFT};
-		
-		private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);
-		protected final String seq;
-
-		public GlyphSearchResultsTableModel(List<GlyphI> results, String seq) {
-			tableRows.addAll(results);
-			this.seq = seq;
-		}
-
-		private final String[] column_names = {
-			BUNDLE.getString("searchTablePattern"),
-			BUNDLE.getString("searchTableColor"),
-			BUNDLE.getString("searchTableStart"),
-			BUNDLE.getString("searchTableEnd"),
-			BUNDLE.getString("searchTableStrand"),
-			BUNDLE.getString("searchTableChromosome"),
-			BUNDLE.getString("searchTableMatch")
-		};
-
-		private static final int PATTERN_COLUMN = 0;
-		private static final int COLOR_COLUMN = 1;
-		private static final int START_COLUMN = 2;
-		private static final int END_COLUMN = 3;
-		private static final int STRAND_COLUMN = 4;
-		private static final int CHROM_COLUMN = 5;
-		private static final int MATCH_COLUMN = 6;
-
-		@Override
-		public GlyphI get(int i) {
-			return tableRows.get(i);
-		}
-
-		@Override
-		public void clear() {
-			tableRows.clear();
-		}
-
-		public int getRowCount() {
-			return tableRows.size();
-		}
-
-		public int getColumnCount() {
-			return column_names.length;
-		}
-
-		@SuppressWarnings("unchecked")
-		public Object getValueAt(int row, int col) {
-			GlyphI glyph = tableRows.get(row);
-			Map<Object, Object> map = (Map<Object, Object>) glyph.getInfo();
-
-			switch (col) {
-			
-				case PATTERN_COLUMN:
-					Object pattern = map.get("pattern");
-					if (pattern != null) {
-						return pattern.toString();
-					}
-					return "";
-					
-				case COLOR_COLUMN:
-					return glyph.getColor();
-					
-				case START_COLUMN:
-					return (int)glyph.getCoordBox().x;
-
-				case END_COLUMN:
-					return (int)(glyph.getCoordBox().x  + glyph.getCoordBox().width);
-
-				case STRAND_COLUMN:
-					Object direction = map.get("direction");
-					if (direction != null) {
-						if (direction.toString().equalsIgnoreCase("forward")) {
-							return "+";
-						} else if (direction.toString().equalsIgnoreCase("reverse")) {
-							return "-";
-						}
-					}
-					return "";
-
-				case CHROM_COLUMN:
-					return seq;
-					
-				case MATCH_COLUMN:
-					Object match = map.get("match");
-					if (match != null) {
-						return match.toString();
-					}
-				return "";
-			}
-
-			return "";
-		}
-
-		@Override
-		public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-
-		@Override
-		public String getColumnName(int col) {
-			return column_names[col];
-		}
-		
-		@Override
-		public Class<?> getColumnClass(int column) {
-			if(column == START_COLUMN || column == END_COLUMN) {
-				return Number.class;
-			}
-			if(column == COLOR_COLUMN) {
-				return Color.class;
-			}
-			return String.class;
-		}
-
-		@Override
-		public int[] getColumnWidth() {
-			return colWidth;
-		}
-
-		@Override
-		public int[] getColumnAlign() {
-			return colAlign;
-		}
-
-		@Override
-		public DefaultTableCellRenderer getColumnRenderer(int column){
-			if(column == COLOR_COLUMN){
-				return new ColorTableCellRenderer();
-			}
-			return super.getColumnRenderer(column);
-		}
-	}
 	
 	public SearchModeResidue(IGBService igbService) {
 		super();
@@ -241,15 +98,89 @@ public class SearchModeResidue implements ISearchModeGlyph,
 			igbService.getSeqMapView().setAnnotatedSeq(vseq, true, true, true);
 		}
 	}
-	public SearchResultsTableModel getEmptyTableModel() {
-		return new GlyphSearchResultsTableModel(Collections.<GlyphI>emptyList(),"");
+
+	public void clear(){
+		clearResults();
+	}
+	
+	public void mapRefresh() {
+		igbService.mapRefresh(glyphs);
+	}
+	
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		clearResults();
+	}
+	
+	private void clearResults() {
+		if (!glyphs.isEmpty()) {
+			glyphs.clear();
+			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
+		}
+		color = 0;
+	}
+		
+	@Override
+	public String getName() {
+		return BUNDLE.getString("searchRegexResidue");
 	}
 
-	/**
-	 * Display (highlight on SeqMap) the residues matching the specified regex.
-	 */
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean overlay, IStatus statusHolder) {
-		if(!overlay){
+	@Override
+	public int searchAllUse() {
+		return SEARCH_ALL_ORDINAL;
+	}
+
+	@Override
+	public String getTooltip() {
+		return BUNDLE.getString("searchRegexResidueTF");
+	}
+
+	@Override
+	public String getOptionName(int i) {
+		return BUNDLE.getString("optionCheckBox");
+	}
+
+	@Override
+	public String getOptionTooltip(int i) {
+		return BUNDLE.getString("optionCheckBoxTT");
+	}
+	
+	@Override
+	public boolean getOptionEnable(int i) {
+		return hitcolors.length - 1 > color;
+	}
+		
+	@Override
+	public void valueChanged(GlyphI glyph, String seq) {
+		for(GlyphI g : glyphs){
+			igbService.getSeqMap().deselect(g);
+		}
+		if(glyph != null){
+			int start = (int)glyph.getCoordBox().x;
+			int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
+			igbService.getSeqMap().select(glyph);
+			igbService.zoomToCoord(seq, start, end);
+			igbService.getSeqMapView().centerAtHairline();
+		}
+	}
+
+	@Override
+	public boolean useOption() {
+		return true;
+	}
+
+	@Override
+	public boolean useGenomeInSeqList() {
+		return false;
+	}
+
+	@Override
+	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
+		return new ArrayList<SeqSpan>();
+	}
+
+	@Override
+	public List<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+		if(!option){
 			clearResults();
 		}
 		
@@ -304,92 +235,6 @@ public class SearchModeResidue implements ISearchModeGlyph,
 			}
 		});
 		color++;
-		return new GlyphSearchResultsTableModel(glyphs, chrFilter.getID());
+		return glyphs;
 	}
-
-	public void clear(){
-		clearResults();
-	}
-	
-	public void mapRefresh() {
-		igbService.mapRefresh(glyphs);
-	}
-	
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		clearResults();
-	}
-	
-	private void clearResults() {
-		if (!glyphs.isEmpty()) {
-			glyphs.clear();
-			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
-		}
-		color = 0;
-	}
-		
-	@Override
-	public String getName() {
-		return BUNDLE.getString("searchRegexResidue");
-	}
-
-	@Override
-	public int searchAllUse() {
-		return SEARCH_ALL_ORDINAL;
-	}
-
-	@Override
-	public String getTooltip() {
-		return BUNDLE.getString("searchRegexResidueTF");
-	}
-
-	@Override
-	public String getOptionName(int i) {
-		return BUNDLE.getString("optionCheckBox");
-	}
-
-	@Override
-	public String getOptionTooltip(int i) {
-		return BUNDLE.getString("optionCheckBoxTT");
-	}
-	
-	@Override
-	public boolean getOptionEnable(int i) {
-		return hitcolors.length - 1 > color;
-	}
-		
-	@Override
-	public void valueChanged(SearchResultsTableModel model, int srow) {
-		GlyphI glyph = ((GlyphSearchResultsTableModel)model).get(srow);
-		for(GlyphI g : glyphs){
-			igbService.getSeqMap().deselect(g);
-		}
-		if(glyph != null){
-			int start = (int)glyph.getCoordBox().x;
-			int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
-			igbService.getSeqMap().select(glyph);
-			igbService.zoomToCoord(((GlyphSearchResultsTableModel)model).seq, start, end);
-			igbService.getSeqMapView().centerAtHairline();
-		}
-	}
-
-	@Override
-	public boolean useOption() {
-		return true;
-	}
-
-	@Override
-	public boolean useGenomeInSeqList() {
-		return false;
-	}
-
-	@Override
-	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
-		return new ArrayList<SeqSpan>();
-	}
-
-	@Override
-	public List<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
-		return null;
-	}
-
 }

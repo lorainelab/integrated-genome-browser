@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym {
 	private static final int SEARCH_ALL_ORDINAL = 2000;
@@ -21,11 +20,6 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	
 	public SearchModeID(IGBService igbService) {
 		super(igbService);
-	}
-
-	@Override
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, final boolean remote, IStatus statusHolder) {
-		return run(search_text, chrFilter, seq, false, remote, statusHolder);
 	}
 
 	@Override
@@ -76,7 +70,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
  	}
 
 	@Override
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
-		return findLocalSyms(search_text, chrFilter, (chrFilter == null) ? "genome" : chrFilter.getID(), false, statusHolder);
+	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+		return search(search_text, chrFilter, statusHolder, option, false);
 	}
 }

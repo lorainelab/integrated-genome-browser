@@ -15,6 +15,7 @@ import javax.swing.table.TableColumn;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -34,6 +35,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -81,7 +83,12 @@ public final class SearchView extends IGBTabPanel implements
 
 			initOptionCheckBox();
 
-			setModel(selectedSearchMode.getEmptyTableModel());
+			if (selectedSearchMode instanceof ISearchModeGlyph) {
+				setModel(new GlyphSearchResultsTableModel(null, null));
+			}
+			else {
+				setModel(new SymSearchResultsTableModel(null));
+			}
 
 			SearchView.this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
 
@@ -109,11 +116,18 @@ public final class SearchView extends IGBTabPanel implements
 			if (errorMessage == null) {
 				enableComp(false);
 				clearTable();
-				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
+				CThreadWorker<SearchResultsTableModel, Void> worker = new CThreadWorker<SearchResultsTableModel, Void>(" ") {
 
 					@Override
-					protected Object runInBackground() {
-						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), optionCheckBox.isSelected(), SearchView.this);
+					protected SearchResultsTableModel runInBackground() {
+						if (selectedSearchMode instanceof ISearchModeGlyph) {
+							List<GlyphI> glyphs = ((ISearchModeGlyph)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
+						}
+						else {
+							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							return new SymSearchResultsTableModel(syms);
+						}
 					}
 
 					@Override
@@ -122,7 +136,7 @@ public final class SearchView extends IGBTabPanel implements
 						enableComp(true);
 						initOptionCheckBox();
 						try {
-							SearchResultsTableModel model = (SearchResultsTableModel) get();
+							SearchResultsTableModel model = get();
 							if (model != null) {
 								setModel(model);
 							}
@@ -405,8 +419,14 @@ public final class SearchView extends IGBTabPanel implements
 					if (srow < 0) {
 						return;
 					}
-					selectedSearchMode.valueChanged(
-							(SearchResultsTableModel) table.getModel(), srow);
+					if (selectedSearchMode instanceof ISearchModeGlyph) {
+						GlyphI glyph = ((GlyphSearchResultsTableModel)table.getModel()).get(srow);
+						((ISearchModeGlyph)selectedSearchMode).valueChanged(glyph, ((GlyphSearchResultsTableModel)table.getModel()).seq);
+					}
+					else {
+						SeqSymmetry sym = ((SymSearchResultsTableModel)table.getModel()).get(srow);
+						((ISearchModeSym)selectedSearchMode).valueChanged(sym);
+					}
 				}
 			}
 

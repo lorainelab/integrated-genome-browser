@@ -58,29 +58,9 @@ public interface ISearchMode {
 	 */
 	public String checkInput(String search_text, BioSeq vseq, String seq);
 	/**
-	 * @return an empty result table
-	 */
-	public SearchResultsTableModel getEmptyTableModel();
-	/**
-	 * run the search and fill the output table
-	 * @param search_text the input text
-	 * @param chrFilter the chromosome / seq to search or null for all
-	 * @param seq the seq (redundant)
-	 * @param remote if this search has remote selected
-	 * @param statusHolder the status display for output messages
-	 * @return the display table of results
-	 */
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder);
-	/**
 	 * called when the search is done
 	 * @param vseq the seq
 	 */
 	public void finished(BioSeq vseq);
-	/**
-	 * called when the user selects a row in the table
-	 * @param model the table model
-	 * @param srow the selected
-	 */
-	public void valueChanged(SearchResultsTableModel model, int srow);
 	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan);
 }

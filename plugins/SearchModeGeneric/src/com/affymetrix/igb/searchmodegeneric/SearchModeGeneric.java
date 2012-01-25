@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public abstract class SearchModeGeneric implements ISearchModeSym {
 	private static final int MAX_HITS = 100000;
@@ -29,10 +28,9 @@ public abstract class SearchModeGeneric implements ISearchModeSym {
 	}
 
 	@Override
-	public void valueChanged(SearchResultsTableModel model, int srow) {
+	public void valueChanged(SeqSymmetry sym) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		SeqSymmetry sym = ((SymSearchResultsTableModel)model).get(srow);
 
 		if (sym != null) {
 			List<SeqSymmetry> altSymList = getAltSymList();

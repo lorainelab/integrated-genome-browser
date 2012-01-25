@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -60,11 +61,12 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 		return new SymSearchResultsTableModel(Collections.<SeqSymmetry>emptyList());
 	}
 
-	protected SearchResultsTableModel run(final String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final boolean remote, final IStatus statusHolder) {
+	protected List<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		String text = search_text;
 
+		String seq = chrFilter == null ? Constants.GENOME_SEQ_ID : chrFilter.getID();
 		List<SeqSymmetry> localSymList = findLocalSyms(search_text, chrFilter, seq, search_props, statusHolder);
 		remoteSymList = null;
 
@@ -127,7 +129,7 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 			}
 		});
 
-		return new SymSearchResultsTableModel(tableRows);
+		return tableRows;
 	}
 
 	protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {

@@ -91,14 +91,10 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		@Override public boolean getOptionEnable(int i) { return false; }
 		@Override public boolean useOption() { return false; }
 		@Override public boolean useGenomeInSeqList() { return true; }
-		@Override public SearchResultsTableModel getEmptyTableModel() { return null; }
-		@Override public SearchResultsTableModel run(String search_text,
-				BioSeq chrFilter, String seq, boolean remote,
-				IStatus statusHolder) { return null; }
-		@Override public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) { return null; }
+		@Override public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) { return null; }
 		@Override public void finished(BioSeq vseq) { }
 		@Override public void clear() {}
-		@Override public void valueChanged(SearchResultsTableModel model, int srow) { }
+		@Override public void valueChanged(SeqSymmetry sym) { }
 		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
 		public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
 	}

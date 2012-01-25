@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
+	public static final int NO_ZOOM_SPOT = -1;
 
 	private final NeoMap map;
 	private final SeqMapView gview;
@@ -89,7 +90,6 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		@Override public String getOptionTooltip(int i) { return null; }
 		@Override public boolean getOptionEnable(int i) { return false; }
 		@Override public boolean useOption() { return false; }
-		@Override public boolean useDisplaySelected() { return false; }
 		@Override public boolean useGenomeInSeqList() { return true; }
 		@Override public SearchResultsTableModel getEmptyTableModel() { return null; }
 		@Override public SearchResultsTableModel run(String search_text,
@@ -100,7 +100,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		@Override public void clear() {}
 		@Override public void valueChanged(SearchResultsTableModel model, int srow) { }
 		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
-		@Override public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
+		public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
 	}
 	private static class ChromStartEndSearch extends EmptySearch {
 		// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
@@ -419,9 +419,11 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				if (rawSpans.size() > 0) {
 					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
 					zoomToSeqAndSpan(gview, mergedSpans.get(0));
-					int zoomSpot = mode.getZoomSpot(search_text);
-					if (zoomSpot != ISearchMode.NO_ZOOM_SPOT) {
-						gview.setZoomSpotX(zoomSpot);
+					if (mode instanceof EmptySearch) {
+						int zoomSpot = ((EmptySearch)mode).getZoomSpot(search_text);
+						if (zoomSpot != NO_ZOOM_SPOT) {
+							gview.setZoomSpotX(zoomSpot);
+						}
 					}
 					foundSpans = mergedSpans;
 					spanPointer = 0;

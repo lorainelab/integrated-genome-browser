@@ -119,10 +119,6 @@ public abstract class SearchModeGeneric implements ISearchMode {
 		return spans;
 	}
 
-	public int getZoomSpot(String search_text) {
-		return NO_ZOOM_SPOT;
-	}
-
 	@Override
 	public void finished(BioSeq vseq) {	}
 }

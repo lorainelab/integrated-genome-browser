@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
  * given an input string and options
  */
 public interface ISearchMode {
-	public static final int NO_ZOOM_SPOT = -1;
 	/**
 	 * @return the name of the search mode
 	 */
@@ -47,7 +46,6 @@ public interface ISearchMode {
 	 * clear results
 	 */
 	public void clear();
-	public boolean useDisplaySelected();
 	/**
 	 * @return if whole genome is allowed instead of selecting a chromosome
 	 */
@@ -94,5 +92,4 @@ public interface ISearchMode {
 	 */
 	public void valueChanged(SearchResultsTableModel model, int srow);
 	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan);
-	public int getZoomSpot(String search_text);
 }

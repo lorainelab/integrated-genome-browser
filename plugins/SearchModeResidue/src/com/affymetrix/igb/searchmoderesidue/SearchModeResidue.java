@@ -379,11 +379,6 @@ public class SearchModeResidue implements ISearchMode,
 	}
 
 	@Override
-	public boolean useDisplaySelected() {
-		return false;
-	}
-
-	@Override
 	public boolean useGenomeInSeqList() {
 		return false;
 	}
@@ -391,10 +386,6 @@ public class SearchModeResidue implements ISearchMode,
 	@Override
 	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
 		return new ArrayList<SeqSpan>();
-	}
-
-	public int getZoomSpot(String search_text) {
-		return NO_ZOOM_SPOT;
 	}
 
 	@Override

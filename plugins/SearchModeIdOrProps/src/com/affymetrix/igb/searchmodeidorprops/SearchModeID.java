@@ -61,11 +61,6 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchMode {
 	}
 
 	@Override
-	public boolean useDisplaySelected() {
-		return true;
-	}
-
-	@Override
 	public boolean useGenomeInSeqList() {
 		return true;
 	}

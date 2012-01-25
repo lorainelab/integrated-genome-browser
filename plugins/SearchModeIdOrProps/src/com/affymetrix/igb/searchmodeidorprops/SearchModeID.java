@@ -4,9 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
@@ -57,11 +55,6 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	@Override
 	public boolean useGenomeInSeqList() {
 		return true;
-	}
-
-	@Override
-	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
-		return findSpans(findLocalSyms(search_text, null, Constants.GENOME_SEQ_ID, false, DUMMY_STATUS));
 	}
 
 	@Override

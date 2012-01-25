@@ -174,11 +174,6 @@ public class SearchModeResidue implements ISearchModeGlyph,
 	}
 
 	@Override
-	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
-		return new ArrayList<SeqSpan>();
-	}
-
-	@Override
 	public List<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		if(!option){
 			clearResults();

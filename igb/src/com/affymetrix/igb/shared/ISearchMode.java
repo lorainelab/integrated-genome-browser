@@ -1,9 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 
 /**
  * represents a method of searching the selected features
@@ -62,5 +60,4 @@ public interface ISearchMode {
 	 * @param vseq the seq
 	 */
 	public void finished(BioSeq vseq);
-	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan);
 }

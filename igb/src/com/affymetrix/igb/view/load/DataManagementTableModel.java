@@ -393,7 +393,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		TierPrefsView.getSingleton().updateTable();
-		TierPrefsView.getSingleton().setRowSeletion(vFeature.getStyle());
+		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 
 	private void setVisibleTracks(ITrackStyle style) {

@@ -248,11 +248,11 @@ public class TierPrefsView implements ListSelectionListener {
 			tier = (TierGlyph) tlg.getInfo();
 			style = tier.getAnnotStyle();
 
-			setRowSeletion(style);
+			setRowSelection(style);
 		}
 	}
 
-	public void setRowSeletion(ITrackStyle style) {
+	public void setRowSelection(ITrackStyle style) {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			if (model.getValueAt(i, 0).equals(style.getTrackName())) {
 				table.addRowSelectionInterval(i, i);
@@ -753,9 +753,9 @@ public class TierPrefsView implements ListSelectionListener {
 
 		public void setValueAt(Object value, int row, int col, boolean apply) {
 			settingValueFromTable = true;
+			TrackStyle style = tier_styles.get(row);
 			if (value != null && !initializationDetector) {
 				try {
-					TrackStyle style = tier_styles.get(row);
 					switch (col) {
 						case COL_TRACK_NAME:
 							//Test prevents a bug allowing Coordinate track to be renamed when multi-selecting
@@ -841,6 +841,7 @@ public class TierPrefsView implements ListSelectionListener {
 				}
 
 			}
+			setRowSelection(style);
 			settingValueFromTable = false;
 		}
 

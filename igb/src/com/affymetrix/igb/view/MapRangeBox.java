@@ -31,7 +31,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

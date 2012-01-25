@@ -225,9 +225,9 @@ public class TierPrefsView implements ListSelectionListener {
 		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(80);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);

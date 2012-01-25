@@ -275,8 +275,8 @@ public class TierPrefsView implements ListSelectionListener {
 			currentStyles = new ArrayList<TrackStyle>();
 		}
 
-		boolean isContained = true;
-
+		boolean isContained = true; // If add a new track, its style will not contain...
+		
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();

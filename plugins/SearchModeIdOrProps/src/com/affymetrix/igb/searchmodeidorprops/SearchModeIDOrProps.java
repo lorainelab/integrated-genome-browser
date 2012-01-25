@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -91,12 +90,11 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 
 			//remoteSearches
 			remoteSymList = new ArrayList<SeqSymmetry>();
-			for (RemoteSearchI remoteSearch : ExtensionPointHandler.getExtensionPoint(RemoteSearchI.class).getExtensionPointImpls()) {
-				statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
-				List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
-				symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
-				remoteSymList.addAll(symList);
-			}
+			RemoteSearchDAS2 remoteSearch = new RemoteSearchDAS2();
+			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
+			List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
+			symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
+			remoteSymList.addAll(symList);
 		}
 
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {

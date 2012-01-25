@@ -80,6 +80,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		fireTableDataChanged();
 		
 		TierPrefsView.getSingleton().clearTable();
+		
+		TierPrefsView.getSingleton().updateTable();
 	}
 
 	void createVirtualFeatures(List<GenericFeature> features) {

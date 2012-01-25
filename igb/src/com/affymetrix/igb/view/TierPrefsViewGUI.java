@@ -1,12 +1,17 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.Application;
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 
-public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed {
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+
+import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.Application;
+
+public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed, GroupSelectionListener {
 
 	public static final long serialVersionUID = 1l;
 	public TierPrefsView tpv;
@@ -27,6 +32,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 			smv.addToRefreshList(this);
 		}
 
+		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 		initComponents();
 		validate();
 	}
@@ -551,6 +557,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		}
 	}
 
+	public void groupSelectionChanged(GroupSelectionEvent evt) {
+		mapRefresh();
+	}
+	
 	private void stopEditing() {
 		if (table != null && table.getCellEditor() != null) {
 			table.getCellEditor().stopCellEditing();

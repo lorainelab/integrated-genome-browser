@@ -596,6 +596,8 @@ public final class GeneralLoadView {
 				
 				if(!syms.isEmpty())
 					gviewer.select(syms, false);
+				
+				TierPrefsView.getSingleton().refreshList();
 			}
 		});
 	}

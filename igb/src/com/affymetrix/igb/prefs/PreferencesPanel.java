@@ -89,7 +89,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
-		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(new BundleRepositoryPrefsView());
+		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
 
 		return singleton;
 	}

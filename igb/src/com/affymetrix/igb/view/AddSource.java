@@ -31,18 +31,12 @@ import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
  */
 public class AddSource extends javax.swing.JFrame {
 
-	private static AddSource singleton = new AddSource();
+	private boolean enableCombo;
 
 	/** Creates new form AddSource */
-	public AddSource() {
+	public AddSource(boolean comboActive) {
+		enableCombo = comboActive;
 		initComponents();
-	}
-
-	public static AddSource getSingleton() {
-		//Reset to defaults then return
-		name.setText("Your server name");
-		url.setText("http://");
-		return singleton;
 	}
 
 	/** This method is called from within the constructor to
@@ -70,7 +64,6 @@ public class AddSource extends javax.swing.JFrame {
 
         typeLabelField.setText("Type");
 
-        type.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         type = new JComboBox(LoadUtils.ServerType.values());
         type.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -155,6 +148,8 @@ public class AddSource extends javax.swing.JFrame {
             type.removeItem(LoadUtils.ServerType.LocalFiles);
             type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
         }
+
+        type.setEnabled(enableCombo);
         openDir.setToolTipText("Open Local Directory");
         openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
 
@@ -180,8 +175,11 @@ public class AddSource extends javax.swing.JFrame {
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 		// TODO add your handling code here:
-		DataLoadPrefsView.getSingleton().addDataSource((ServerType) type.getSelectedItem(), name.getText(), url.getText());
-		DataLoadPrefsView.getSingleton().sourceTableModel.init();
+		if (enableCombo) {
+			DataLoadPrefsView.getSingleton().addDataSource((ServerType) type.getSelectedItem(), name.getText(), url.getText());
+		} else {
+			BundleRepositoryPrefsView.getSingleton().addDataSource(null, name.getText(), url.getText());
+		}
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed
 
@@ -190,7 +188,7 @@ public class AddSource extends javax.swing.JFrame {
 		this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private static javax.swing.JButton addServerButton;
+    private javax.swing.JButton addServerButton;
     private static javax.swing.JButton cancelButton;
     private static javax.swing.JTextField name;
     private static javax.swing.JLabel nameLabelField;

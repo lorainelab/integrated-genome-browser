@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -72,7 +71,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	/** Creates a new instance of Class */
 	public BookmarkManagerView(IGBService igbService) {
 
-		tree = new DragDropTree();
+		tree = new BookmarkTree(this);
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
@@ -148,7 +147,369 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
-	/** A JPanel that listens for TreeSelectionEvents, displays
+	public void valueChanged(TreeSelectionEvent e) {
+		if (e.getSource() != tree) {
+			return;
+		}
+
+		if (tree.getSelectionCount() > 0) {
+			if (tree.isRowSelected(0)) {
+				deleteBookmarkButton.setEnabled(false);
+			} else {
+				deleteBookmarkButton.setEnabled(true);
+			}
+		}
+	}
+
+	private void setUpPopupMenu() {
+		final JPopupMenu popup = new JPopupMenu() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public JMenuItem add(Action a) {
+				JMenuItem menu_item = super.add(a);
+				menu_item.setToolTipText(null);
+				return menu_item;
+			}
+		};
+
+		popup.add(delete_action);
+		popup.addSeparator();
+		popup.add(thing.getPropertiesAction());
+
+		MouseAdapter mouse_adapter = new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (processDoubleClick(e)) {
+					return;
+				}
+
+				if (popup.isPopupTrigger(e)) {
+					popup.show(tree, e.getX(), e.getY());
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (processDoubleClick(e)) {
+					return;
+				}
+
+				if (popup.isPopupTrigger(e)) {
+					popup.show(tree, e.getX(), e.getY());
+				}
+			}
+
+			private boolean processDoubleClick(MouseEvent e) {
+				if (e.getClickCount() != 2) {
+					return false;
+				}
+
+				thing.getGoToAction().actionPerformed(null);
+
+				return true;
+			}
+		};
+		tree.addMouseListener(mouse_adapter);
+	}
+
+	/**
+	 *  Tries to import bookmarks into Unibrow.
+	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
+	 */
+	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
+		JFileChooser chooser = getJFileChooser();
+		chooser.setCurrentDirectory(getLoadDirectory());
+		int option = chooser.showOpenDialog(frame);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			setLoadDirectory(chooser.getCurrentDirectory());
+			try {
+				File fil = chooser.getSelectedFile();
+				BookmarksParser.parse(bookmark_list, fil);
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
+			}
+		}
+	}
+
+	Action makeImportAction() {
+		Action a = new GenericAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent ae) {
+				super.actionPerformed(ae);
+				BookmarkList bl = (BookmarkList) tree_model.getRoot();
+				importBookmarks(bl, null);
+				tree_model.reload();
+			}
+
+			@Override
+			public String getText() {
+				return "Import ...";
+			}
+
+			@Override
+			public String getIconPath() {
+				return "images/import.png";
+			}
+
+			@Override
+			public int getMnemonic() {
+				return KeyEvent.VK_I;
+			}
+
+			@Override
+			public String getTooltip() {
+				return "Import Bookmarks";
+			}
+		};
+		setAccelerator(a);
+		return a;
+	}
+
+	private void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
+		if (main_bookmark_list == null || main_bookmark_list.getChildCount() == 0) {
+			ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception) null);
+			return;
+		}
+		JFileChooser chooser = getJFileChooser();
+		chooser.setCurrentDirectory(getLoadDirectory());
+		int option = chooser.showSaveDialog(frame);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			try {
+				setLoadDirectory(chooser.getCurrentDirectory());
+				File fil = chooser.getSelectedFile();
+				String full_path = fil.getCanonicalPath();
+
+				if ((!full_path.endsWith(".html"))
+						&& (!full_path.endsWith(".htm"))
+						&& (!full_path.endsWith(".xhtml"))) {
+					fil = new File(full_path + ".html");
+				}
+
+				BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
+			}
+		}
+	}
+
+	Action makeExportAction() {
+		Action a = new GenericAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent ae) {
+				super.actionPerformed(ae);
+				BookmarkList bl = (BookmarkList) tree_model.getRoot();
+				exportBookmarks(bl, null); // already contains a null check on bookmark list
+			}
+
+			@Override
+			public String getText() {
+				return "Export ...";
+			}
+
+			@Override
+			public String getIconPath() {
+				return "images/export.png";
+			}
+
+			@Override
+			public int getMnemonic() {
+				return KeyEvent.VK_E;
+			}
+
+			@Override
+			public String getTooltip() {
+				return "Export Bookmarks";
+			}
+		};
+		setAccelerator(a);
+		return a;
+	}
+
+	Action makeDeleteAction() {
+		Action a = new GenericAction() {
+
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent ae) {
+				super.actionPerformed(ae);
+				deleteAction();
+				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
+			}
+
+			@Override
+			public String getText() {
+				return "Delete ...";
+			}
+
+			@Override
+			public String getIconPath() {
+				//return "images/removeBookmark.png";
+				return null;
+			}
+
+			@Override
+			public int getMnemonic() {
+				return KeyEvent.VK_D;
+			}
+
+			@Override
+			public String getTooltip() {
+				return "Delete Selected Bookmark(s)";
+			}
+		};
+		setAccelerator(a);
+		return a;
+	}
+
+	public void deleteAction() {
+		TreePath[] selectionPaths = tree.getSelectionPaths();
+		if (selectionPaths == null) {
+			return;
+		}
+		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
+		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
+		String message = "Delete these " + selectionPaths.length + " selected bookmarks?";
+		Object[] params = {message, checkbox};
+		doNotShowWarning = checkbox.isSelected();
+		if (!doNotShowWarning) {
+			int yes = JOptionPane.showConfirmDialog(frame, params, "Delete?", JOptionPane.YES_NO_OPTION);
+			doNotShowWarning = checkbox.isSelected();
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < selectionPaths.length; i++) {
+					TreePath path = selectionPaths[i];
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					if (node.getParent() != null) {
+						tree_model.removeNodeFromParent(node);
+						removeBookmarkFromHistory(path);
+					}
+				}
+			}
+		} else {
+			for (int i = 0; i < selectionPaths.length; i++) {
+				TreePath path = selectionPaths[i];
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+				if (node.getParent() != null) {
+					tree_model.removeNodeFromParent(node);
+					removeBookmarkFromHistory(path);
+				}
+			}
+		}
+	}
+
+	public TreePath getPath(TreeNode treeNode) {
+		List<Object> nodes = new ArrayList<Object>();
+		if (treeNode != null) {
+			nodes.add(treeNode);
+			treeNode = treeNode.getParent();
+			while (treeNode != null) {
+				nodes.add(0, treeNode);
+				treeNode = treeNode.getParent();
+			}
+		}
+		return nodes.isEmpty() ? null : new TreePath(nodes.toArray());
+	}
+
+	public void addBookmarkToHistory(BookmarkList bl) {
+		addBookmarkToHistory(getPath(bl));
+	}
+
+	public void addBookmarkToHistory(TreePath tp) {
+		if (tp == null) {
+			return;
+		}
+		int lastEntryIndex = bookmark_history.size() - 1;
+		if (!bookmark_history.isEmpty()) {
+			if (!bookmark_history.get(lastEntryIndex).equals(tp)) {
+				bookmark_history.add(tp);
+				history_pointer = bookmark_history.size() - 1;
+				forwardButton.setEnabled(true);
+				backwardButton.setEnabled(bookmark_history.size() > 1);
+			}
+		} else if (bookmark_history.isEmpty()) {
+			bookmark_history.add(tp);
+			history_pointer = bookmark_history.size() - 1;
+			forwardButton.setEnabled(true);
+			backwardButton.setEnabled(bookmark_history.size() > 1);
+		}
+	}
+
+	public void removeBookmarkFromHistory(TreePath tp) {
+		if (tp == null) {
+			return;
+		}
+		int remove_pos = bookmark_history.indexOf(tp);
+		if (remove_pos > -1) {
+			if (history_pointer >= remove_pos) {
+				history_pointer--;
+			}
+			bookmark_history.remove(remove_pos);
+			forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
+			backwardButton.setEnabled(history_pointer > 0);
+		}
+	}
+
+	public File getLoadDirectory() {
+		return FileTracker.DATA_DIR_TRACKER.getFile();
+	}
+
+	public void setLoadDirectory(File file) {
+		FileTracker.DATA_DIR_TRACKER.setFile(file);
+	}
+
+	/** Gets a static re-usable file chooser that prefers "html" files. */
+	private JFileChooser getJFileChooser() {
+		if (static_chooser == null) {
+			static_chooser = new JFileChooser();
+			static_chooser.setCurrentDirectory(getLoadDirectory());
+			UniFileFilter filter = new UniFileFilter(
+					new String[]{"html", "htm", "xhtml"}, "HTML Files");
+			static_chooser.addChoosableFileFilter(filter);
+		}
+		static_chooser.rescanCurrentDirectory();
+		return static_chooser;
+	}
+
+	/** Returns true or false to indicate that if an item is inserted at
+	 *  the given row it will be inserted "into" (true) or "after" (false)
+	 *  the item currently at that row.  Will return true only if the given
+	 *  row contains a folder and that folder is currently expanded or empty
+	 *  or is the root node.
+	 */
+	private boolean dropInto(int row) {
+		boolean into = false;
+		TreePath path = tree.getPathForRow(row);
+		if (path == null) {
+			// not necessarily an error
+			return false;
+		}
+		if (row == 0) { // node is root [see DefaultMutableTreeNode.isRoot()]
+			into = true;
+		} else if (tree.isExpanded(path)) {
+			into = true;
+		} else {
+			TreeNode node = (TreeNode) path.getLastPathComponent();
+			if (node.getAllowsChildren()) {
+				into = true;
+			}
+		}
+		return into;
+	}
+
+	public void destroy() {
+//    this.setApplication(null);
+		tree.removeTreeSelectionListener(this);
+		thing = null;
+		tree = null;
+	}
+	
+		/** A JPanel that listens for TreeSelectionEvents, displays
 	 *  the name(s) of the selected item(s), and may allow you to edit them.
 	 */
 	public class BottomThing extends JPanel implements TreeSelectionListener {
@@ -404,366 +765,5 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarkController.viewBookmark(igbService, bm);
 			}
 		}
-	}
-
-	public void valueChanged(TreeSelectionEvent e) {
-		if (e.getSource() != tree) {
-			return;
-		}
-
-		if (tree.getSelectionCount() > 0) {
-			if (tree.isRowSelected(0)) {
-				deleteBookmarkButton.setEnabled(false);
-			} else {
-				deleteBookmarkButton.setEnabled(true);
-			}
-		}
-	}
-
-	private void setUpPopupMenu() {
-		final JPopupMenu popup = new JPopupMenu() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public JMenuItem add(Action a) {
-				JMenuItem menu_item = super.add(a);
-				menu_item.setToolTipText(null);
-				return menu_item;
-			}
-		};
-
-		popup.add(delete_action);
-		popup.addSeparator();
-		popup.add(thing.getPropertiesAction());
-
-		MouseAdapter mouse_adapter = new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (processDoubleClick(e)) {
-					return;
-				}
-
-				if (popup.isPopupTrigger(e)) {
-					popup.show(tree, e.getX(), e.getY());
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				if (processDoubleClick(e)) {
-					return;
-				}
-
-				if (popup.isPopupTrigger(e)) {
-					popup.show(tree, e.getX(), e.getY());
-				}
-			}
-
-			private boolean processDoubleClick(MouseEvent e) {
-				if (e.getClickCount() != 2) {
-					return false;
-				}
-
-				thing.getGoToAction().actionPerformed(null);
-
-				return true;
-			}
-		};
-		tree.addMouseListener(mouse_adapter);
-	}
-
-	/**
-	 *  Tries to import bookmarks into Unibrow.
-	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
-	 */
-	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
-		JFileChooser chooser = getJFileChooser();
-		chooser.setCurrentDirectory(getLoadDirectory());
-		int option = chooser.showOpenDialog(frame);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			setLoadDirectory(chooser.getCurrentDirectory());
-			try {
-				File fil = chooser.getSelectedFile();
-				BookmarksParser.parse(bookmark_list, fil);
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
-			}
-		}
-	}
-
-	Action makeImportAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				BookmarkList bl = (BookmarkList) tree_model.getRoot();
-				importBookmarks(bl, null);
-				tree_model.reload();
-			}
-
-			@Override
-			public String getText() {
-				return "Import ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return "images/import.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_I;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Import Bookmarks";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
-		if (main_bookmark_list == null || main_bookmark_list.getChildCount() == 0) {
-			ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception) null);
-			return;
-		}
-		JFileChooser chooser = getJFileChooser();
-		chooser.setCurrentDirectory(getLoadDirectory());
-		int option = chooser.showSaveDialog(frame);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			try {
-				setLoadDirectory(chooser.getCurrentDirectory());
-				File fil = chooser.getSelectedFile();
-				String full_path = fil.getCanonicalPath();
-
-				if ((!full_path.endsWith(".html"))
-						&& (!full_path.endsWith(".htm"))
-						&& (!full_path.endsWith(".xhtml"))) {
-					fil = new File(full_path + ".html");
-				}
-
-				BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
-			}
-		}
-	}
-
-	Action makeExportAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				BookmarkList bl = (BookmarkList) tree_model.getRoot();
-				exportBookmarks(bl, null); // already contains a null check on bookmark list
-			}
-
-			@Override
-			public String getText() {
-				return "Export ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				return "images/export.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_E;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Export Bookmarks";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	Action makeDeleteAction() {
-		Action a = new GenericAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent ae) {
-				super.actionPerformed(ae);
-				deleteAction();
-				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
-			}
-
-			@Override
-			public String getText() {
-				return "Delete ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				//return "images/removeBookmark.png";
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_D;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Delete Selected Bookmark(s)";
-			}
-		};
-		setAccelerator(a);
-		return a;
-	}
-
-	private void deleteAction() {
-		TreePath[] selectionPaths = tree.getSelectionPaths();
-		if (selectionPaths == null) {
-			return;
-		}
-		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
-		String message = "Delete these " + selectionPaths.length + " selected bookmarks?";
-		Object[] params = {message, checkbox};
-		if (!doNotShowWarning) {
-			int yes = JOptionPane.showConfirmDialog(frame, params, "Delete?", JOptionPane.YES_NO_OPTION);
-			doNotShowWarning = checkbox.isSelected();
-			if (yes == JOptionPane.YES_OPTION) {
-				for (int i = 0; i < selectionPaths.length; i++) {
-					TreePath path = selectionPaths[i];
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-					if (node.getParent() != null) {
-						tree_model.removeNodeFromParent(node);
-						removeBookmarkFromHistory(path);
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < selectionPaths.length; i++) {
-				TreePath path = selectionPaths[i];
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-				if (node.getParent() != null) {
-					tree_model.removeNodeFromParent(node);
-					removeBookmarkFromHistory(path);
-				}
-			}
-		}
-	}
-
-	public TreePath getPath(TreeNode treeNode) {
-		List<Object> nodes = new ArrayList<Object>();
-		if (treeNode != null) {
-			nodes.add(treeNode);
-			treeNode = treeNode.getParent();
-			while (treeNode != null) {
-				nodes.add(0, treeNode);
-				treeNode = treeNode.getParent();
-			}
-		}
-		return nodes.isEmpty() ? null : new TreePath(nodes.toArray());
-	}
-
-	public void addBookmarkToHistory(BookmarkList bl) {
-		addBookmarkToHistory(getPath(bl));
-	}
-
-	public void addBookmarkToHistory(TreePath tp) {
-		if (tp == null) {
-			return;
-		}
-		int lastEntryIndex = bookmark_history.size() - 1;
-		if (!bookmark_history.isEmpty()) {
-			if (!bookmark_history.get(lastEntryIndex).equals(tp)) {
-				bookmark_history.add(tp);
-				history_pointer = bookmark_history.size() - 1;
-				forwardButton.setEnabled(true);
-				backwardButton.setEnabled(bookmark_history.size() > 1);
-			}
-		} else if (bookmark_history.isEmpty()) {
-			bookmark_history.add(tp);
-			history_pointer = bookmark_history.size() - 1;
-			forwardButton.setEnabled(true);
-			backwardButton.setEnabled(bookmark_history.size() > 1);
-		}
-	}
-
-	public void removeBookmarkFromHistory(TreePath tp) {
-		if (tp == null) {
-			return;
-		}
-		int remove_pos = bookmark_history.indexOf(tp);
-		if (remove_pos > -1) {
-			if (history_pointer >= remove_pos) {
-				history_pointer--;
-			}
-			bookmark_history.remove(remove_pos);
-			forwardButton.setEnabled(history_pointer < bookmark_history.size() - 1);
-			backwardButton.setEnabled(history_pointer > 0);
-		}
-	}
-
-	public File getLoadDirectory() {
-		return FileTracker.DATA_DIR_TRACKER.getFile();
-	}
-
-	public void setLoadDirectory(File file) {
-		FileTracker.DATA_DIR_TRACKER.setFile(file);
-	}
-
-	/** Gets a static re-usable file chooser that prefers "html" files. */
-	private JFileChooser getJFileChooser() {
-		if (static_chooser == null) {
-			static_chooser = new JFileChooser();
-			static_chooser.setCurrentDirectory(getLoadDirectory());
-			UniFileFilter filter = new UniFileFilter(
-					new String[]{"html", "htm", "xhtml"}, "HTML Files");
-			static_chooser.addChoosableFileFilter(filter);
-		}
-		static_chooser.rescanCurrentDirectory();
-		return static_chooser;
-	}
-
-	/** Returns true or false to indicate that if an item is inserted at
-	 *  the given row it will be inserted "into" (true) or "after" (false)
-	 *  the item currently at that row.  Will return true only if the given
-	 *  row contains a folder and that folder is currently expanded or empty
-	 *  or is the root node.
-	 */
-	private boolean dropInto(int row) {
-		boolean into = false;
-		TreePath path = tree.getPathForRow(row);
-		if (path == null) {
-			// not necessarily an error
-			return false;
-		}
-		if (row == 0) { // node is root [see DefaultMutableTreeNode.isRoot()]
-			into = true;
-		} else if (tree.isExpanded(path)) {
-			into = true;
-		} else {
-			TreeNode node = (TreeNode) path.getLastPathComponent();
-			if (node.getAllowsChildren()) {
-				into = true;
-			}
-		}
-		return into;
-	}
-
-	public void destroy() {
-//    this.setApplication(null);
-		tree.removeTreeSelectionListener(this);
-		thing = null;
-		tree = null;
 	}
 }

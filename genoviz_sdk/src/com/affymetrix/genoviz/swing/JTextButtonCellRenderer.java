@@ -80,19 +80,19 @@ public class JTextButtonCellRenderer extends AbstractCellEditor implements
 		final JDialog dialog = new JDialog(frame, "Value"){
 			
 			@Override
-			public void setVisible(boolean b){
-				super.setVisible(b);
-				if(!b){
-					field.setText(tfa.getText());
-					fireEditingStopped();
-				}
+			public void dispose(){
+				super.dispose();
+				field.setText(tfa.getText());
+				fireEditingStopped();
 			}
+			
 		};
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
 		ok.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				dialog.setVisible(false);
+				dialog.dispose();
 			}
 		});
 		
@@ -104,7 +104,7 @@ public class JTextButtonCellRenderer extends AbstractCellEditor implements
 				String hackstr = new String(hackbuf);
 				StringSelection data = new StringSelection(hackstr);
 				clipboard.setContents(data, null);
-				dialog.setVisible(false);
+				dialog.dispose();
 			}
 		});
 		

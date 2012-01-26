@@ -1,36 +1,26 @@
 package com.affymetrix.igb.property;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.event.PropertyHolder;
-import com.affymetrix.genometryImpl.event.PropertyListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.PropertyViewHelper;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-
+import java.util.*;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.PropertyViewHelper;
+
+import com.affymetrix.genoviz.swing.JTextButtonCellRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
+
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -234,17 +224,9 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		propertyChanged(col_headings.length);
 
-		TableModel model = new DefaultTableModel(rows, col_headings) {
-
-			public static final long serialVersionUID = 1l;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
+		TableModel model = new DefaultTableModel(rows, col_headings);
 		table.setModel(model);
-
+		
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);
 
@@ -260,6 +242,12 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.add(scroll_pane, BorderLayout.CENTER);
 		table.setCellSelectionEnabled(true);
 
+		JTextButtonCellRenderer ren = new JTextButtonCellRenderer(igbService.getFrame());
+		for(int i=1; i<table.getColumnCount(); i++){
+			table.getColumnModel().getColumn(i).setCellRenderer(ren);
+			table.getColumnModel().getColumn(i).setCellEditor(ren);
+		}
+		
 		validate();
 		table.getColumnModel().getColumn(0).setMinWidth(100);
 		table.getColumnModel().getColumn(0).setPreferredWidth(150);

@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -142,7 +143,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 		trackNameSizeComboBox = new JComboBox();
 		fgColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
-		maxDepthTextField = new JTextField();
+		maxDepthTextField = new JRPNumTextField("TrackDefaultView_maxDepth");
 		show2TracksCheckBox = new JRPCheckBox("TrackDefaultView_show2TracksCheckBox");
 		connectedCheckBox = new JRPCheckBox("TrackDefaultView_connectedCheckBox");
 		collapsedCheckBox = new JRPCheckBox("TrackDefaultView_collapsedCheckBox");

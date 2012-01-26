@@ -163,7 +163,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
 			}
 			
-			low_zoom.createGlyph(sym, smv);
+			if(smv.autoChangeView()){
+				low_zoom.createGlyph(sym, smv);
+			}
 		} else {  // keep recursing down into child syms if parent sym has no "method" property
 			int childCount = sym.getChildCount();
 			for (int i = 0; i < childCount; i++) {

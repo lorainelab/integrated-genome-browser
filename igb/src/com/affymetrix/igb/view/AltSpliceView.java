@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -60,7 +61,7 @@ public class AltSpliceView extends IGBTabPanel
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view);
-		buffer_sizeTF = new JRPTextField("AltSpliceView_buffer_size", 4);
+		buffer_sizeTF = new JRPNumTextField("AltSpliceView_buffer_size", 4);
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JRPCheckBox("AltSpliceView_slice_by_selectionCB", "Slice By Selection", true);
 

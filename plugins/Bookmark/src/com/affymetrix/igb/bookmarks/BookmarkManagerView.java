@@ -59,6 +59,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private final BookmarkTreeCellRenderer renderer;
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
+	private boolean doNotShowWarning = false;
 
 	public static void init(IGBService _igbService) {
 		singleton = new BookmarkManagerView(_igbService);
@@ -632,10 +633,23 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			return;
 		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-		int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-				+ selectionPaths.length + " selected bookmarks?", "Delete?",
-				JOptionPane.YES_NO_OPTION);
-		if (yes == JOptionPane.YES_OPTION) {
+		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", true);
+		String message = "Delete these " + selectionPaths.length + " selected bookmarks?";
+		Object[] params = {message, checkbox};
+		if (!doNotShowWarning) {
+			int yes = JOptionPane.showConfirmDialog(frame, params, "Delete?", JOptionPane.YES_NO_OPTION);
+			doNotShowWarning = checkbox.isSelected();
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < selectionPaths.length; i++) {
+					TreePath path = selectionPaths[i];
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					if (node.getParent() != null) {
+						tree_model.removeNodeFromParent(node);
+						removeBookmarkFromHistory(path);
+					}
+				}
+			}
+		} else {
 			for (int i = 0; i < selectionPaths.length; i++) {
 				TreePath path = selectionPaths[i];
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();

@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public class SymSearchResultsTableModel extends SearchResultsTableModel {
 	private static final long serialVersionUID = 1L;

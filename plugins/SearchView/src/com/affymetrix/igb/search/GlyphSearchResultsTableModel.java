@@ -10,7 +10,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 	private static final long serialVersionUID = 1L;

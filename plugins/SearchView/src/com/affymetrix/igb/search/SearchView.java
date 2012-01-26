@@ -49,7 +49,6 @@ import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {

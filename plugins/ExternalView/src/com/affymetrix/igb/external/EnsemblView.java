@@ -7,6 +7,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -80,7 +81,8 @@ public class EnsemblView extends BrowserView {
 		private static final long serialVersionUID = 1L;
 		private final JRPButton okButton = new JRPButton("ExternalView_okButton", ExternalViewer.BUNDLE.getString("submit"));
 		private final JRPTextField userIdField = new JRPTextField("ExternalView_userId", getCookie(ENSEMBLSESSION), 50);
-
+		private final Font font = okButton.getFont();
+		
 		public ENSEMBLHelper(Window window, String string, String helper) {
 			super(window, string);
 			CookieHandler.setDefault(null);
@@ -89,8 +91,13 @@ public class EnsemblView extends BrowserView {
 			final JTextPane pane = new JTextPane();
 			pane.setContentType("text/html");
 
-			String text = "<h1>" + ExternalViewer.BUNDLE.getString("ensemblCookieHeader") + "</h1><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage1") + "</p>";
-			text += "<p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage2") + "</p><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage3") + "</p>";
+			String text = "<h1>" + ExternalViewer.BUNDLE.getString("ensemblCookieHeader") + "</h1>";
+			text += "<table><tr><td width='20'/><td>";
+			text += "<font face='"+font.getFontName()+"'><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage1") + "</p>";
+			text += "<ol><li><p>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage2") + "</p></li>";
+			text += "<li>" + ExternalViewer.BUNDLE.getString("ensemblCookieMessage3") + "</li>";
+			text += "<li>"+ ExternalViewer.BUNDLE.getString("ensemblCookieMessage4") + "</li></ol></font>";
+			text += "</td> <td width='20'/></tr> </table>";
 			text += helper;
 			pane.setText(text);
 			pane.setEditable(false);

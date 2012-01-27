@@ -39,6 +39,7 @@
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
 		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
+		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"     value="${basedir}/ext" />

@@ -33,7 +33,8 @@ public class JRPNumTextField extends JRPTextField {
 		char ch = ev.getKeyChar();
 		
 		if(NUMBERS.matcher(String.valueOf(ch)).matches() || 
-				ch == KeyEvent.VK_BACK_SPACE || ch == KeyEvent.VK_DELETE){
+				ch == KeyEvent.VK_BACK_SPACE || ch == KeyEvent.VK_DELETE
+				|| ch == KeyEvent.VK_ENTER){
 			super.processKeyEvent(ev);
 			return;
 		}

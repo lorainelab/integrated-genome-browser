@@ -11,6 +11,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeIdOrProps"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeLength"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeResidue"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeSymmetryFilter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Tutorial"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
@@ -36,6 +37,7 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-net-2.0.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/freehep-2.1.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/image4j.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jide.jar"/>
@@ -47,7 +49,5 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/etc"/>
 	<classpathentry kind="lib" path="lib/org.osgi.core-4.3.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/FindFeatures"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeLucene"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

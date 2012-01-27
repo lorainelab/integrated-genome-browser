@@ -23,6 +23,8 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.searchmodeidorprops.Activator());
 		activators.add(new com.affymetrix.igb.searchmoderesidue.Activator());
 		activators.add(new com.affymetrix.igb.tutorial.Activator());
+		activators.add(new com.gene.bigbedhandler.Activator());
+		activators.add(new com.gene.bigwighandler.Activator());
 	}
 	/**
 	 * Start the program.

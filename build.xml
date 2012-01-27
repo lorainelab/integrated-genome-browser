@@ -38,6 +38,7 @@
 		<property name="SearchModeGeneric"   value="${basedir}/plugins/SearchModeGeneric" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
 		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
+		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
 
 		<!-- directory paths -->

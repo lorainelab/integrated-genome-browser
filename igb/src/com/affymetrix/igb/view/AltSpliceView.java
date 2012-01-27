@@ -32,15 +32,18 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.concurrent.Executor;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 public class AltSpliceView extends IGBTabPanel
 		implements ActionListener, ComponentListener, ItemListener,
-		SymSelectionListener, SeqSelectionListener,
+		SymSelectionListener, SeqSelectionListener, PreferenceChangeListener,
 		TierLabelManager.PopupListener {
 
 	private static final long serialVersionUID = 1L;
@@ -90,7 +93,8 @@ public class AltSpliceView extends IGBTabPanel
 
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
-
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		
 		TierLabelManager tlman = spliced_view.getTierManager();
 		if (tlman != null) {
 			tlman.addPopupListener(this);
@@ -210,7 +214,7 @@ public class AltSpliceView extends IGBTabPanel
 			pending_selection_change = false;
 		}
 	}
-
+	
 	public void componentHidden(ComponentEvent e) {
 	}
 
@@ -292,4 +296,17 @@ public class AltSpliceView extends IGBTabPanel
 	public boolean isEmbedded() {
 		return true;
 	}
+
+	public void preferenceChange(PreferenceChangeEvent evt) {
+		if (!evt.getNode().equals(PreferenceUtils.getTopNode())
+				|| !this.isShowing()) {
+			return;
+		}
+
+		if (evt.getKey().equals(OrfAnalyzer.PREF_STOP_CODON_COLOR)
+				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)) {
+			setSliceBuffer(spliced_view.getSliceBuffer());
+		}
+	}
+
 }

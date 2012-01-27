@@ -9,7 +9,7 @@ import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 
 public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeSym {
-	private static final int SEARCH_ALL_ORDINAL = 3000;
+	private static final int SEARCH_ALL_ORDINAL = -9000;
 	public SearchModeProps(IGBService igbService) {
 		super(igbService);
 	}

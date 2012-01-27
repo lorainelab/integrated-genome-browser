@@ -8,9 +8,12 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.filter.SearchResult;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.IStatus;
 
 public abstract class SearchModeGeneric implements ISearchModeSym {
 	private static final int MAX_HITS = 100000;
@@ -24,6 +27,11 @@ public abstract class SearchModeGeneric implements ISearchModeSym {
 	}
 
 	protected List<SeqSymmetry> getAltSymList() {
+		return null;
+	}
+
+	@Override
+	public List<SearchResult> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option) {
 		return null;
 	}
 

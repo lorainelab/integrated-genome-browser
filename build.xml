@@ -353,9 +353,6 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<jar jarfile="${bundle.dir}/igb.jar" update="true">
-			<fileset dir="${igb-18n}/resources" />
-		</jar>
 		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
@@ -433,9 +430,6 @@
 			<dirset dir="${etc.dir}/" />
 			<fileset file="${osgi.impl}" />
 		</path>
-		<jar jarfile="${bundle.dir}/igb.jar" update="true">
-			<fileset dir="${igb-18n}/resources" />
-		</jar>
 	</target>
 	
 	<target name="run_Protannot" depends="compile" description="run Protannot">

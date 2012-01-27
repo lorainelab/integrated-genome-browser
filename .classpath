@@ -82,5 +82,6 @@
 	<classpathentry kind="lib" path="ext/felix.jar"/>
 	<classpathentry kind="lib" path="ext/be.pwnt.jflow_1.0.0.jar"/>
 	<classpathentry kind="lib" path="plugins/ant/lib/ant.jar"/>
+	<classpathentry kind="lib" path="ext/commons-lang3-3.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

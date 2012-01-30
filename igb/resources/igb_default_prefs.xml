@@ -3,7 +3,7 @@
 <!-- Specify servers here with type, name, and url.  Type is "das", "das2", or "quickload" -->
 
 <!-- servers enabled by default -->
-<server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" />
+<!-- server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" / -->
 <server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="4" />
 
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" />

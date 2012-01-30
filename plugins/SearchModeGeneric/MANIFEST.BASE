@@ -6,7 +6,7 @@ Bundle-Version: @appVersion@
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: generic search (abstract)
-Import-Package: com.affymetrix.common;version="@appVersion@",
+Import-Package: com.affymetrix.common;version="[@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.filter,

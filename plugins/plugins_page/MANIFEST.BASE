@@ -7,7 +7,7 @@ Bundle-Activator: com.affymetrix.igb.plugins.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/Plug-ins+Panel
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.plugins.PluginsView
-Import-Package: com.affymetrix.common;version="@appVersion@",
+Import-Package: com.affymetrix.common;version="[@appVersion@]",
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  com.affymetrix.genoviz.swing.recordplayback,

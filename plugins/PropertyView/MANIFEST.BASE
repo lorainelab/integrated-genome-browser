@@ -7,7 +7,7 @@ Bundle-Activator: com.affymetrix.igb.property.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-SelectionInfoPanel
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.property.PropertyView
-Import-Package: com.affymetrix.common;version="@appVersion@",
+Import-Package: com.affymetrix.common;version="[@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.general,

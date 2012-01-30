@@ -7,7 +7,7 @@ Bundle-Activator: com.affymetrix.igb.search.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-SearchPanel
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.search.SearchView
-Import-Package: com.affymetrix.common;version="@appVersion@",
+Import-Package: com.affymetrix.common;version="[@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.span,
  com.affymetrix.genometryImpl.das2,

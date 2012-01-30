@@ -17,12 +17,15 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.filter.SearchResult;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -31,6 +34,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.DummyStatus;
 import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.TierGlyph;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -41,6 +45,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -383,10 +388,11 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		return mergedSpans;
 	}
 
-	private List<SeqSpan> findSpans(List<SeqSymmetry> syms) {
+	private List<SeqSpan> findSpansFromSearchResult(List<SearchResult> searchResults) {
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
-		if (syms != null) {
-			for (SeqSymmetry sym : syms) {
+		if (searchResults != null) {
+			for (SearchResult searchResult : searchResults) {
+				SeqSymmetry sym = searchResult.getSym();
 				for (int i = 0; i < sym.getSpanCount(); i++) {
 					spans.add(sym.getSpan(i));
 				}
@@ -410,20 +416,41 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				}
 			}
 		}
+		List<TypeContainerAnnot> trackSyms = getTrackSyms();
 		List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>();
 		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
-		for (ISearchModeSym mode : modes) {
-			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null && mode.searchAllUse() >= 0) {
-				List<SeqSpan> rawSpans = findSpans(mode.search(search_text, null, DummyStatus.getInstance(), false));
-				if (rawSpans.size() > 0) {
-					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
-					zoomToSeqAndSpan(gview, mergedSpans.get(0));
-					return mergedSpans;
+		for (ISearchModeSym searchMode : modes) {
+			if (searchMode.checkInput(search_text, null, null) == null && searchMode.searchAllUse() >= 0) {
+				for (TypeContainerAnnot trackSym : trackSyms) {
+					List<SearchResult> searchResults = null;
+					String errorMessage = searchMode.checkInput(search_text, null, null);
+					if (errorMessage == null) {
+						searchResults = searchMode.searchTrack(search_text, null, trackSym, DummyStatus.getInstance(), false);
+					}
+					if (searchResults != null) {
+						Collections.sort(searchResults);
+						List<SeqSpan> rawSpans = findSpansFromSearchResult(searchResults);
+						if (rawSpans.size() > 0) {
+							zoomToSeqAndSpan(gview, rawSpans.get(0));
+							return rawSpans;
+						}
+					}
 				}
-				return null;
 			}
 		}
 		return null;
+	}
+
+	private List<TypeContainerAnnot> getTrackSyms() {
+		List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
+		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs();
+		for (Glyph selectedTierGlyph : tierGlyphs) {
+			Object info = selectedTierGlyph.getInfo();
+			if (info instanceof TypeContainerAnnot) {
+				trackSyms.add((TypeContainerAnnot)info);
+			}
+		}
+		return trackSyms;
 	}
 
 	/**

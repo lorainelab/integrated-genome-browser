@@ -51,7 +51,6 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -326,22 +325,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return graphSym != null;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
-		List<Glyph> allTierGlyphs = new ArrayList<Glyph>();
-		for (TierLabelGlyph labelGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getAllTierLabels()) {
-			allTierGlyphs.add(labelGlyph.getReferenceTier());
-		}
-		return allTierGlyphs;
+		return (List<Glyph>)(List)((SeqMapView)getSeqMapView()).getTierManager().getAllTierGlyphs();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Glyph> getSelectedTierGlyphs() {
-		List<Glyph> selectedTierGlyphs = new ArrayList<Glyph>();
-		for (TierGlyph tierGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getSelectedTiers()) {
-			selectedTierGlyphs.add(tierGlyph);
-		}
-		return selectedTierGlyphs;
+		return (List<Glyph>)(List)((SeqMapView)getSeqMapView()).getTierManager().getSelectedTiers();
 	}
 
 	@Override

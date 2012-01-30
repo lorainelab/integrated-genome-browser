@@ -1,6 +1,7 @@
 package com.affymetrix.searchmodesymmetryfilter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -122,7 +123,9 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 		if (!search_text.equals(filter.getParam())) {
 			throw new IllegalStateException("filter value changed from " + filter.getParam() + " to " + search_text);
 		}
-		return searchSym(trackSym);
+		List<SearchResult> results = searchSym(trackSym);
+		Collections.sort(results);
+		return results;
 	}
 
 	@Override

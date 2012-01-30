@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class SearchResult {
+public class SearchResult implements Comparable<SearchResult> {
 	private final SeqSymmetry sym;
 	private final Map<String, String> searchTerms;
 	private final int ranking;
@@ -22,5 +22,9 @@ public class SearchResult {
 	}
 	public int getRanking() {
 		return ranking;
+	}
+	@Override
+	public int compareTo(SearchResult o) {
+		return o.getRanking() - getRanking();
 	}
 }

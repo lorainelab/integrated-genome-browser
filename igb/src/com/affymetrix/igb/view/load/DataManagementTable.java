@@ -13,6 +13,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Component;
@@ -33,7 +34,7 @@ import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.plaf.basic.BasicTableHeaderUI;
+import java.util.EventObject;
 
 /**
  * A table with two customizations:
@@ -180,31 +181,11 @@ public final class DataManagementTable {
 		}
 	}
 
-	public static void updateVirtualFeatureList() {
-		if (jTable != null) {
-			GeneralLoadView.getLoadView().initDataManagementTable();
-		}
-	}
-
-	public static JTableX getTable() {
-		if (jTable != null) {
-			return jTable;
-		}
-		return null;
-	}
-
-	public static DataManagementTableModel getModel() {
-		if (jTable != null) {
-			return (DataManagementTableModel) jTable.getModel();
-		}
-		return null;
-	}
 }
-
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends JTable {
+class JTableX extends JTable implements TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
@@ -391,6 +372,13 @@ class JTableX extends JTable {
 				return columnToolTips[realIndex];
 			}
 		};
+	}
+	
+	public void trackstylePropertyChanged(EventObject eo) {
+		if(eo.getSource() == this.getModel())
+			return;
+		
+		GeneralLoadView.getLoadView().initDataManagementTable();
 	}
 }
 

@@ -21,7 +21,8 @@ import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
-import com.affymetrix.igb.view.load.DataManagementTable;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;
@@ -30,7 +31,7 @@ import java.awt.event.ActionListener;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-public class TierPrefsView implements ListSelectionListener {
+public class TierPrefsView implements ListSelectionListener, TrackStylePropertyListener {
 
 	public static final long serialVersionUID = 1l;
 	private static TierPrefsView singleton;
@@ -60,7 +61,8 @@ public class TierPrefsView implements ListSelectionListener {
 	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
-	public static TierPrefsTableModel model;
+	
+	private TierPrefsTableModel model;
 	public ListSelectionModel lsm;
 	public static JTable table;
 	public SeqMapView smv;
@@ -96,6 +98,8 @@ public class TierPrefsView implements ListSelectionListener {
 	public static synchronized TierPrefsView getSingleton() {
 		if (singleton == null) {
 			singleton = new TierPrefsView();
+			singleton.model.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
+			TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(singleton);
 		}
 		return singleton;
 	}
@@ -324,7 +328,7 @@ public class TierPrefsView implements ListSelectionListener {
 		OtherOptionsView.getSingleton().refresh();
 	}
 
-	public void updateTable() {
+	private void updateTable() {
 		model.fireTableDataChanged();
 	}
 
@@ -663,6 +667,13 @@ public class TierPrefsView implements ListSelectionListener {
 		}
 	}
 
+	public void trackstylePropertyChanged(EventObject eo) {
+		if(eo.getSource() == table.getModel())
+			return;
+		
+		table.repaint();
+	}
+
 	class TierPrefsTableModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = 1L;
@@ -826,10 +837,7 @@ public class TierPrefsView implements ListSelectionListener {
 						}
 
 						if (col == COL_TRACK_NAME || col == COL_BACKGROUND) {
-							if (DataManagementTable.getModel() != null) {
-								smv.getSeqMap().setTierLabels();
-								DataManagementTable.getModel().fireTableDataChanged();
-							}
+							smv.getSeqMap().setTierLabels();
 						}
 
 						smv.getSeqMap().updateWidget();

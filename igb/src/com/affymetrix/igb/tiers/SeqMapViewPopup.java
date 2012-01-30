@@ -56,13 +56,12 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.view.load.DataManagementTable;
-import java.awt.Color;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -191,7 +190,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			hideTiers(handler.getSelectedTierLabels());
-			DataManagementTable.updateVirtualFeatureList();
+			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		}
 
 		@Override
@@ -706,7 +705,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					showMenu.remove(show_tier);
 					handler.sortTiers();
 					repack(false);
-					DataManagementTable.updateVirtualFeatureList();
 				}
 			});
 			showMenu.add(show_tier);

@@ -48,9 +48,11 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TierPrefsView;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
+import java.util.EventObject;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -71,7 +73,7 @@ public final class GeneralLoadView {
 	private static IGBService igbService;
 	//gui components 
 	private static JRPButton all_residuesB;
-	private static javax.swing.JTable dataManagementTable;
+	private static JTableX dataManagementTable;
 	private static JRPButton partial_residuesB;
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
@@ -99,7 +101,9 @@ public final class GeneralLoadView {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
 		dataManagementTableModel = new DataManagementTableModel(this);
+		dataManagementTableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
 		dataManagementTable = new JTableX(dataManagementTableModel);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(dataManagementTable);
 		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
@@ -491,7 +495,7 @@ public final class GeneralLoadView {
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-		DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+		DataManagementTable.setComboBoxEditors(dataManagementTable, !GeneralLoadView.IsGenomeSequence());
 	}
 
 	/**

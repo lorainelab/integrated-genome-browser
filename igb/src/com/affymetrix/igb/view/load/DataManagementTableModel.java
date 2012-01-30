@@ -16,15 +16,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TierPrefsView;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
@@ -79,9 +71,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 		fireTableDataChanged();
 		
-		TierPrefsView.getSingleton().clearTable();
-		
-		TierPrefsView.getSingleton().updateTable();
+		TierPrefsView.getSingleton().clearTable();	
 	}
 
 	void createVirtualFeatures(List<GenericFeature> features) {
@@ -95,9 +85,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		if (DataManagementTable.getTable() != null) {
-			this.fireTableDataChanged();
-		}
+		this.fireTableDataChanged();
 	}
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
@@ -392,7 +380,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			refreshSeqMapView();
 		}
 
-		TierPrefsView.getSingleton().updateTable();
 		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 

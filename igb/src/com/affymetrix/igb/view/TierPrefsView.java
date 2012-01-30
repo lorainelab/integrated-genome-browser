@@ -321,13 +321,6 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		}
 	}
 
-	public void externalChange() {
-		updateTable();
-
-		//also refresh options panel to ensure coordinate track colors stay synchronized
-		OtherOptionsView.getSingleton().refresh();
-	}
-
 	private void updateTable() {
 		model.fireTableDataChanged();
 	}
@@ -672,6 +665,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			return;
 		
 		table.repaint();
+		valueChanged(null);
 	}
 
 	class TierPrefsTableModel extends AbstractTableModel {

@@ -43,7 +43,6 @@ import java.util.EventObject;
  */
 public final class DataManagementTable {
 
-	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
@@ -69,7 +68,6 @@ public final class DataManagementTable {
 	 * @param enabled
 	 */
 	static void setComboBoxEditors(JTableX table, boolean enabled) {
-		jTable = table;
 		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.AUTOLOAD.toString(), IGBConstants.BUNDLE.getString("autoLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
@@ -378,7 +376,7 @@ class JTableX extends JTable implements TrackStylePropertyListener {
 		if(eo.getSource() == this.getModel())
 			return;
 		
-		GeneralLoadView.getLoadView().initDataManagementTable();
+		repaint();
 	}
 }
 

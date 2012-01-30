@@ -42,6 +42,9 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 
 	//Only used for "chp"
 	private static void addMethodsToFeature(GenericFeature feature, List<? extends SeqSymmetry> results) {
+		if(results == null)
+			return;
+		
 		String method;
 		for (SeqSymmetry sym : results) {
 			method = BioSeq.determineMethod(sym);

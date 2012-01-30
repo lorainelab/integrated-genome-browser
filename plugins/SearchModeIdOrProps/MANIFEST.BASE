@@ -8,7 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: search mode to allow searching on gene id or other properties
 Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Searching#Searching-FindinganAnnotationByIDorName
-Import-Package: com.affymetrix.common;version="[@appVersion@]",
+Import-Package: com.affymetrix.common,
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.general,

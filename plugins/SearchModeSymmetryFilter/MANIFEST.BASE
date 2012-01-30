@@ -7,7 +7,7 @@ Bundle-Activator: com.affymetrix.searchmodesymmetryfilter.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: search mode to allow searching using SymmetryFilter
-Import-Package: com.affymetrix.common;version="[@appVersion@]",
+Import-Package: com.affymetrix.common;version="@appVersion@",
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.filter,

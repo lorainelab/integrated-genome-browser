@@ -1,14 +1,14 @@
 package com.affymetrix.genometryImpl.filter;
 
-import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class SearchResult {
 	private final SeqSymmetry sym;
-	private final List<String> searchTerms;
+	private final Map<String, String> searchTerms;
 	private final int ranking;
-	public SearchResult(SeqSymmetry sym, List<String> searchTerms, int ranking) {
+	public SearchResult(SeqSymmetry sym, Map<String, String> searchTerms, int ranking) {
 		super();
 		this.sym = sym;
 		this.searchTerms = searchTerms;
@@ -17,7 +17,7 @@ public class SearchResult {
 	public SeqSymmetry getSym() {
 		return sym;
 	}
-	public List<String> getSearchTerms() {
+	public Map<String, String> getSearchTerms() {
 		return searchTerms;
 	}
 	public int getRanking() {

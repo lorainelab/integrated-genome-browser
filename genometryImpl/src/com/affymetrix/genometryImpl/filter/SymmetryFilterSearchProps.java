@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.filter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,15 +72,14 @@ public class SymmetryFilterSearchProps implements SymmetryFilterSearchI {
 	@Override
 	public SearchResult searchSymmetry(SeqSymmetry sym) {
 		Matcher matcher = regex.matcher("");
-		List<String> searchTerms = new ArrayList<String>();
+		Map<String,String> searchTerms = new HashMap<String,String>();
 		int ranking = 0;
 		match = sym.getID();
 		if (match != null) {
-			if (match.equals(param))
 			matcher.reset(match);
 			if (matcher.matches()) {
 				ranking = match.equals(param) ? ID_EXACT_RANK : ID_REGEX_RANK;
-				searchTerms.add(ID_SEARCH_TERM);
+				searchTerms.put(ID_SEARCH_TERM, (String)param);
 			}
 		}
 		if (sym instanceof SymWithProps) {
@@ -94,7 +92,7 @@ public class SymmetryFilterSearchProps implements SymmetryFilterSearchI {
 					matcher.reset(match);
 					if (matcher.matches()) {
 						ranking += match.equals(param) ? PROPERTY_EXACT_RANK : PROPERTY_REGEX_RANK;
-						searchTerms.add(prop.getKey());
+						searchTerms.put(prop.getKey(), (String)param);
 					}
 				}
 			}

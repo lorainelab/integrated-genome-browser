@@ -7,7 +7,7 @@ Bundle-Activator: com.affymetrix.igb.bookmarks.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-Bookmarks
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.bookmarks.BookmarkManagerViewGUI
-Import-Package: com.affymetrix.common;version="@appVersion@",
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.event,

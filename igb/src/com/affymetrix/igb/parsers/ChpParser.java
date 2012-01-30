@@ -50,6 +50,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
 import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 
 public final class ChpParser {
 
@@ -282,7 +283,7 @@ public final class ChpParser {
 
 		GenericServer gServer = ServerList.getServerInstance().getServer(LazyChpSym.PROBESET_SERVER_NAME);
 		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
-		if (gServer == null) {
+		if (gServer == null || gServer.serverType != ServerType.DAS2) {
 			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
 			return null;
 		}

@@ -18,6 +18,8 @@
 	<classpathentry kind="src" path="common/resources"/>
 	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="igb/resources"/>
+	<classpathentry kind="src" path="plugins/BigBedHandler/src"/>
+	<classpathentry kind="src" path="plugins/BigWigHandler/src"/>
 	<classpathentry kind="src" path="plugins/Bookmark/resources"/>
 	<classpathentry kind="src" path="plugins/Bookmark/src"/>
 	<classpathentry kind="src" path="plugins/ExternalView/resources"/>

@@ -38,7 +38,6 @@
 		<property name="SearchModeGeneric"   value="${basedir}/plugins/SearchModeGeneric" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
 		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
-		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
 
@@ -607,7 +606,6 @@
 			</fileset>
 			<fileset dir="${genoviz}">
 				<include name="index.html" />
-				<include name="tutorial/**" />
 				<include name="demo/**" />
 			</fileset>
 		</copy>

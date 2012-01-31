@@ -5,7 +5,9 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.genoviz.swing.PartialLineBorder;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -30,6 +32,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
+import java.awt.Dimension;
 
 /**
  * A table with two customizations:
@@ -143,13 +146,9 @@ public final class DataManagementTable {
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		private final JComboBox comboBox;
 		private final JRPTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
 
 		public ColumnRenderer() {
-			comboBox = new JComboBox();
-			comboBox.setRenderer(comboRenderer);
-			comboBox.setBorder(null);
 
 			textField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
 			textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
@@ -159,18 +158,23 @@ public final class DataManagementTable {
 		public Component getTableCellRendererComponent(
 				JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column) {
+			DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
 			if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
 				if (((String) value).equals(textField.getText())) {
 					return textField;
 				} else {
-					comboBox.removeAllItems();
-					comboBox.addItem(value);
-					return comboBox;
+					VirtualFeature vFeature = ftm.getFeature(row);
+					ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+					Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+					renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+					return c;
 				}
 			} else {
-				comboBox.removeAllItems();
-				comboBox.addItem(value);
-				return comboBox;
+				VirtualFeature vFeature = ftm.getFeature(row);
+				ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+				Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+				return c;
 			}
 		}
 	}
@@ -226,6 +230,34 @@ class JTableX extends JTable {
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
+		init();
+	}
+
+	private void init() {
+		setCellSelectionEnabled(false);
+		setColumnSelectionAllowed(false);
+		setRowSelectionAllowed(false);
+		setFocusable(false);
+		getSelectionModel().setSelectionMode(0);
+
+		setOpaque(true);
+		setBackground(Color.white);
+		setIntercellSpacing(new Dimension(1, 1));
+		setShowGrid(true);
+		setGridColor(new Color(11184810));
+		setRowHeight(20);
+		//setAutoResizeMode(2);
+		
+		
+		JTableHeader header = getTableHeader();
+        header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+        header.setForeground(Color.black);
+		header.setBackground(Color.white);
+        header.setReorderingAllowed(false);
+        header.setResizingAllowed(true);		
+
+        setAutoscrolls(true);
+        setRequestFocusEnabled(false);
 	}
 
 	void setRowEditorModel(int column, RowEditorModel rm) {
@@ -234,7 +266,7 @@ class JTableX extends JTable {
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		if (rmMap != null) { 
+		if (rmMap != null) {
 
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
@@ -347,6 +379,7 @@ class JTableX extends JTable {
 
 	protected JTableHeader createDefaultTableHeader() {
 		return new JTableHeader(columnModel) {
+
 			private static final long serialVersionUID = 1L;
 
 			@Override

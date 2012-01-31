@@ -39,8 +39,9 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.view.DataLoadPrefsView;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
@@ -49,7 +50,6 @@ import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.util.TrackstylePropertyMonitor;
-import com.affymetrix.igb.view.TierPrefsView;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import java.util.EventObject;

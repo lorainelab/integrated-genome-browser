@@ -18,9 +18,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.action.ExportPreferencesAction;
-import com.affymetrix.igb.view.BundleRepositoryPrefsView;
-import com.affymetrix.igb.view.TierPrefsViewGUI;
-import com.affymetrix.igb.tiers.TrackDefaultViewGUI;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.Application;
@@ -18,11 +18,11 @@ import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
-import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.util.TrackstylePropertyMonitor;
 import com.affymetrix.igb.util.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Font;

@@ -10,18 +10,14 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Point;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.prefs.SourceTableModel;
-import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -101,7 +97,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			public void actionPerformed(ActionEvent e) {
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceColumn.URL));
+						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
 				removeDataSource(url.toString());
 				sourceTableModel.init();
 			}
@@ -151,7 +147,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 					boolean isSelected, boolean hasFocus, int row, int col) {
 
 				int modelRow = table.convertRowIndexToModel(row);
-				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceColumn.Enabled)));
+				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 			}
 		};
@@ -160,7 +156,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
 			TableColumn column = e.nextElement();
-			SourceColumn current = SourceColumn.valueOf((String) column.getHeaderValue());
+			SourceTableModel.SourceColumn current = SourceTableModel.SourceColumn.valueOf((String) column.getHeaderValue());
 
 			switch (current) {
 				case Name:

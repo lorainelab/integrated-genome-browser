@@ -8,7 +8,7 @@
  *
  * Created on Dec 30, 2011, 12:26:34 PM
  */
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.util.logging.Logger;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
+
 import com.affymetrix.igb.shared.FileTracker;
 import javax.swing.JFileChooser;
 import java.awt.HeadlessException;

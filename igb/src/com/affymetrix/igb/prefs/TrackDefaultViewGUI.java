@@ -1,8 +1,8 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 /**
  *

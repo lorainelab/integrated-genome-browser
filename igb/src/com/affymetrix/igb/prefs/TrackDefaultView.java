@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
@@ -18,6 +18,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;

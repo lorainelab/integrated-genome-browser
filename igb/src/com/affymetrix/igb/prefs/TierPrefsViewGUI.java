@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.prefs;
 
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;
@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 
-import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 
 public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed, GroupSelectionListener {

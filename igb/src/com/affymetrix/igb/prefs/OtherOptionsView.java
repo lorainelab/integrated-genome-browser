@@ -32,7 +32,6 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.util.ColorUtils;
-import com.affymetrix.igb.view.TierPrefsView;
 
 /**
  *

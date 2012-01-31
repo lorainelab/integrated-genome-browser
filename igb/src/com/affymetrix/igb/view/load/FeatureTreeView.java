@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.view.TierPrefsView;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;

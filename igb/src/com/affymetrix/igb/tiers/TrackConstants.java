@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * @author hiralv
  */
 public interface TrackConstants {
-	
+
 	// A pattern that matches two or more slash "/" characters.
 	// A preference node name can't contain two slashes, nor end with a slash.
 	static final Pattern multiple_slashes = Pattern.compile("/{2,}");
@@ -41,10 +41,10 @@ public interface TrackConstants {
 	static final boolean default_show_summary = false;
 	static final boolean default_draw_collapse_icon = true;
 	static final int default_max_depth = 10;
-	static final Color default_foreground =  Color.CYAN;
+	static final Color default_foreground = Color.CYAN;
 	static final Color default_background = Color.BLACK;
-	static final Color default_start = new Color(204,255,255);
-	static final Color default_end = new Color(51,255,255);
+	static final Color default_start = new Color(204, 255, 255);
+	static final Color default_end = new Color(51, 255, 255);
 	static final String default_label_field = "";
 	static final String default_view_mode = "default";
 	static final int default_glyphDepth = 2;
@@ -52,30 +52,31 @@ public interface TrackConstants {
 	static final double default_y = 0.0;
 	static final float default_track_name_size = 12;
 	static final DIRECTION_TYPE default_direction_type = DIRECTION_TYPE.NONE;
-	public static final Object[] SUPPORTED_SIZE = {8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f};
-	public static final Object[] LABELFIELD = { NO_LABEL, "id", "name", "score" };
-	public static final Object[] VIEWMODE = { "default", "depth"};
-	
-	public static enum DIRECTION_TYPE{
+	public static final Object[] SUPPORTED_SIZE = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f};
+	public static final Object[] LABELFIELD = {NO_LABEL, "id", "name", "score"};
+	public static final Object[] VIEWMODE = {"default", "depth"};
+
+	public static enum DIRECTION_TYPE {
+
 		NONE,
 		ARROW,
 		COLOR,
 		BOTH;
-		
-		public static DIRECTION_TYPE valueFor(String string){
+
+		public static DIRECTION_TYPE valueFor(String string) {
 			for (DIRECTION_TYPE type : DIRECTION_TYPE.values()) {
-				if(type.name().equalsIgnoreCase(string))
+				if (type.name().equalsIgnoreCase(string)) {
 					return type;
+				}
 			}
 			return default_direction_type;
 		}
-		
-		public static DIRECTION_TYPE valueFor(int i){
-			if(i < DIRECTION_TYPE.values().length){
+
+		public static DIRECTION_TYPE valueFor(int i) {
+			if (i < DIRECTION_TYPE.values().length) {
 				return DIRECTION_TYPE.values()[i];
 			}
 			return default_direction_type;
 		}
 	}
-	
 }

@@ -108,7 +108,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         trackNameSizeLabel.setText("Name Size:");
 
-        trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trackNameSizeComboBoxActionPerformed(evt);
@@ -184,24 +183,18 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
+                .add(6, 6, 6)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(6, 6, 6)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(bgLabel)
-                                    .add(displayNameLabel)))
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(6, 6, 6)
-                                .add(fgLabel)))
+                            .add(bgLabel)
+                            .add(displayNameLabel)
+                            .add(fgLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(6, 6, 6)
-                        .add(maxDepthLabel)))
+                    .add(maxDepthLabel))
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(30, 30, 30)

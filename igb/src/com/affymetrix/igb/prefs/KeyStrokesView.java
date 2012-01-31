@@ -15,67 +15,51 @@ package com.affymetrix.igb.prefs;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
-import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import java.awt.BorderLayout;
+import javax.swing.table.TableCellEditor;
 
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
  */
-public final class KeyStrokesView extends IPrefEditorComponent implements ListSelectionListener,
+public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private final JTable table = new JTable();
+	public final KeyStrokeViewTable table = new KeyStrokeViewTable();
 //  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
-	private final static String[] col_headings = {"Action", "Key Stroke"};
-	private final DefaultTableModel model;
+	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();;
+	public static final int KeySrokeColumn = 1;
 	private final ListSelectionModel lsm;
-	private final TableRowSorter<DefaultTableModel> sorter;
-	KeyStrokeEditPanel edit_panel = null;
+	// private final TableRowSorter<DefaultTableModel> sorter;
+	public KeyStrokeEditPanel edit_panel = null;
+	private static KeyStrokesView singleton;
+	private int selected = -1;
+	
+	public static synchronized KeyStrokesView getSingleton() {
+		if (singleton == null) {
+			singleton = new KeyStrokesView();
+		}
+		return singleton;
+	}
 
-	public KeyStrokesView() {
+	private KeyStrokesView() {
 		super();
-		this.setName("Shortcuts");
-		this.setToolTipText("Edit Locations");
-		this.setLayout(new BorderLayout());
-
-		JScrollPane scroll_pane = new JScrollPane(table);
-		this.add(scroll_pane, BorderLayout.CENTER);
-
-		model = new DefaultTableModel() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public Class<?> getColumnClass(int column) {
-				return String.class;
-			}
-		};
-		model.setDataVector(new Object[0][0], col_headings);
-
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		sorter = new TableRowSorter<DefaultTableModel>(model);
+		//sorter = new TableRowSorter<KeyStrokeViewTableModel>(model);
 
 		table.setModel(model);
-		table.setRowSorter(sorter);
+		//table.setRowSorter(sorter);
 		table.setRowSelectionAllowed(true);
 		table.setEnabled(true);
 
 		edit_panel = new KeyStrokeEditPanel();
 		edit_panel.setEnabled(false);
-		this.add("South", edit_panel);
 
 		try {
 			PreferenceUtils.getKeystrokesNode().flush();
@@ -83,8 +67,7 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 		}
 		PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(this);
 
-		showShortcuts();
-		validate();
+		refresh();
 	}
 
 //  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
@@ -109,22 +92,25 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 	}
 
 	/** Re-populates the table with the shortcut data. */
-	private void showShortcuts() {
+	private void refresh() {
 		Object[][] rows = null;
 //    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
 		rows = buildRows(PreferenceUtils.getKeystrokesNode());
-		model.setDataVector(rows, col_headings);
+		model.setRows(rows);
 	}
-
-	public void refresh() {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				showShortcuts();
-				model.fireTableDataChanged();
+	
+	public void invokeRefreshTable() { //Should fix the problems associated with updating entire table at every preference change.
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            refresh();
+			model.fireTableDataChanged();
+			if(selected > 0){
+				table.setRowSelectionInterval(selected, selected);
 			}
-		});
-	}
+        }
+    }); 
+
+  }
 
 	/** This is called when the user selects a row of the table;
 	 */
@@ -151,8 +137,8 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 			return;
 		}
 		// Each time a keystroke preference is changed, update the
-		// whole table.  Inelegant, but works.
-		refresh();
+		// whole table.  Inelegant, but works. 
+		invokeRefreshTable();
 	}
 
 	/*public void destroy() {
@@ -160,4 +146,18 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 	if (lsm != null) {lsm.removeListSelectionListener(this);}
 	PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this);
 	}*/
+	class KeyStrokeViewTable extends JTable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public TableCellEditor getCellEditor(int row, int col) {
+			DefaultCellEditor textEditor = new DefaultCellEditor(edit_panel.key_field);
+			if (col == KeySrokeColumn) {
+				selected = row;
+				return textEditor;
+			}
+			return super.getCellEditor(row, col);
+		}
+	}
 }

@@ -86,7 +86,7 @@ public final class PreferencesPanel extends JPanel {
 
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpvGUI);
 		singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
-		singleton.addPrefEditorComponent(new KeyStrokesView());
+		singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
 		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());

@@ -204,7 +204,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
 
         trackNameSizeLabel.setText("Name Size:");
 
-        trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

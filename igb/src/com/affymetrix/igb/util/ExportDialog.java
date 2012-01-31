@@ -342,10 +342,10 @@ public class ExportDialog implements ExportConstants {
 			int newWidth = ((Double) widthSpinner.getValue()).intValue();
 			double newHeight = newWidth * originalInfo.getHeightWidthRate();
 			isWidthSpinner = true;
-			heightSpinner.setValue((int)newHeight);
+			heightSpinner.setValue((int) newHeight);
 			isWidthSpinner = false;
 
-			imageInfo.setWidth(newWidth);
+			setWidthHeight(newWidth, (int)newHeight);
 		}
 	}
 
@@ -354,11 +354,16 @@ public class ExportDialog implements ExportConstants {
 			int newHeight = ((Double) heightSpinner.getValue()).intValue();
 			double newWidth = newHeight * originalInfo.getWidthHeightRate();
 			isHeightSpinner = true;
-			widthSpinner.setValue((int)newWidth);
+			widthSpinner.setValue((int) newWidth);
 			isHeightSpinner = false;
 
-			imageInfo.setHeight(newHeight);
+			setWidthHeight((int) newWidth, newHeight);
 		}
+	}
+
+	private void setWidthHeight(int width, int height) {
+		imageInfo.setWidth(width);
+		imageInfo.setHeight(height);
 	}
 
 	public void xSpinnerStateChanged() {

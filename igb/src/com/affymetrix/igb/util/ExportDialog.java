@@ -284,16 +284,13 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public boolean okButtonActionPerformed() throws IOException {
-		String previousFile = exportFile.getAbsolutePath();
-		String newFile = filePathTextField.getText();
-		String ext = ParserController.getExtension(newFile);
+		String previousPath = exportFile.getAbsolutePath();
+		String newPath = filePathTextField.getText();
+		String ext = ParserController.getExtension(newPath);
 
-		exportFile = new File(newFile);
+		exportFile = new File(newPath);
 
-		if (!exportFile.getParentFile().isDirectory() || !isExt(ext)) {
-			ErrorHandler.errorPanel("The path or image format is invalid.");
-			filePathTextField.setText(previousFile);
-			filePathTextField.grabFocus();
+		if (!isValidExportFile(exportFile, ext, previousPath)) {
 			return false;
 		}
 
@@ -303,6 +300,31 @@ public class ExportDialog implements ExportConstants {
 		exportNode.put(PREF_EXT, extComboBox.getSelectedItem().toString());
 		exportNode.putInt(PREF_X, imageInfo.getXResolution());
 		exportNode.putInt(PREF_Y, imageInfo.getYResolution());
+
+		return true;
+	}
+
+	private boolean isValidExportFile(File file, String ext, String path) {
+		if (!exportFile.getParentFile().isDirectory() || !isExt(ext)) {
+			ErrorHandler.errorPanel("The path or image format is invalid.");
+			filePathTextField.setText(path);
+			filePathTextField.grabFocus();
+			exportFile = new File(path);
+			return false;
+		}
+
+		if (exportFile.exists()) {
+			// give the user the choice to overwrite the existing file or not
+			// The option pane used differs from the confirmDialog only in
+			// that "No" is the default choice.
+			String[] options = {"Yes", "No"};
+			if (JOptionPane.NO_OPTION == JOptionPane.showOptionDialog(
+					null, "Overwrite Existing File?", "File Exists",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					options, options[1])) {
+				return false;
+			}
+		}
 
 		return true;
 	}

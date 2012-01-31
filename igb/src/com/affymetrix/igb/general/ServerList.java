@@ -397,7 +397,7 @@ public final class ServerList {
 	private GenericServer addRepositoryToPrefs(String url, String name) {
 		Preferences node = PreferenceUtils.getRepositoriesNode().node( GenericServer.getHash( url ) );
 
-		node.put( GenericServerPref.URL, name);
+		node.put( GenericServerPref.NAME, name);
 		node.put( GenericServerPref.URL, GeneralUtils.URLEncode(url));
 
 		return new GenericServer(node, null, null);

@@ -73,15 +73,17 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	}
 
 	public void clearFeatures() {
-		virtualFeatures.clear();
+		if (features != null && virtualFeatures != null) {
+			virtualFeatures.clear();
 
-		features.clear();
+			features.clear();
 
-		fireTableDataChanged();
+			fireTableDataChanged();
 
-		TierPrefsView.getSingleton().clearTable();
+			TierPrefsView.getSingleton().clearTable();
 
-		TierPrefsView.getSingleton().updateTable();
+			TierPrefsView.getSingleton().updateTable();
+		}
 	}
 
 	void createVirtualFeatures(List<GenericFeature> features) {

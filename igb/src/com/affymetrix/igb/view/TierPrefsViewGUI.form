@@ -97,8 +97,8 @@
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="labelFieldComboBox" pref="109" max="32767" attributes="1"/>
-                              <Component id="trackNameSizeComboBox" alignment="0" min="-2" pref="79" max="-2" attributes="1"/>
+                              <Component id="trackNameSizeComboBox" min="-2" pref="89" max="-2" attributes="1"/>
+                              <Component id="labelFieldComboBox" alignment="0" pref="109" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">

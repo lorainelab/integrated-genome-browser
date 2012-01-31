@@ -555,8 +555,10 @@ public class TierPrefsView implements ListSelectionListener {
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
-			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-			model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
+			if (!"".equals(trackNameSizeComboBox.getSelectedItem().toString())) { //Fixes NumberFormatException in special cases
+				trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
+				model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
+			}
 		}
 	}
 

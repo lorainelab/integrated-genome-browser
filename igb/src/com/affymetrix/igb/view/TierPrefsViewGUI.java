@@ -273,6 +273,11 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         });
 
         selectAllButton.setText("Select All");
+        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
@@ -481,10 +486,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		tpv.restoreToDefault();
 	}//GEN-LAST:event_restoreToDefaultButtonActionPerformed
 
-	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-		tpv.selectAll();
-	}//GEN-LAST:event_jButton1ActionPerformed
-
 	private void displayNameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_displayNameTextFieldKeyReleased
 		tpv.displayNameTextField();
 	}//GEN-LAST:event_displayNameTextFieldKeyReleased
@@ -505,6 +506,9 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		tpv.maxDepthTextField();
 	}//GEN-LAST:event_applyButtonActionPerformed
 
+	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
+		tpv.selectAll();
+	}//GEN-LAST:event_selectAllButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JCheckBox arrowCheckBox;
@@ -564,7 +568,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		mapRefresh();
 	}
-	
+
 	private void stopEditing() {
 		if (table != null && table.getCellEditor() != null) {
 			table.getCellEditor().stopCellEditing();
@@ -583,17 +587,23 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 		stopEditing();
 	}
 
-	public void windowOpened(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {
+	}
 
-	public void windowClosing(WindowEvent e) {}
+	public void windowClosing(WindowEvent e) {
+	}
 
-	public void windowIconified(WindowEvent e) {}
+	public void windowIconified(WindowEvent e) {
+	}
 
-	public void windowDeiconified(WindowEvent e) {}
+	public void windowDeiconified(WindowEvent e) {
+	}
 
-	public void windowActivated(WindowEvent e) {}
+	public void windowActivated(WindowEvent e) {
+	}
 
-	public void windowDeactivated(WindowEvent e) {}
+	public void windowDeactivated(WindowEvent e) {
+	}
 
 	public void valueChanged(ListSelectionEvent lse) {
 		tpv.valueChanged(lse);

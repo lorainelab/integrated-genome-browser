@@ -61,7 +61,6 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
-	
 	private TierPrefsTableModel model;
 	public ListSelectionModel lsm;
 	public static JTable table;
@@ -553,8 +552,10 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
-			float trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-			model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
+			if (!"".equals(trackNameSizeComboBox.getSelectedItem().toString())) { //Fixes NumberFormatException in special cases
+				float trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
+				model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
+			}
 		}
 	}
 
@@ -661,9 +662,10 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {
-		if(eo.getSource() == table.getModel())
+		if (eo.getSource() == table.getModel()) {
 			return;
-		
+		}
+
 		table.repaint();
 		valueChanged(null);
 	}

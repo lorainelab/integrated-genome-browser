@@ -266,7 +266,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Import Bookmarks";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
@@ -328,7 +327,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Export Bookmarks";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
@@ -364,7 +362,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Delete Selected Bookmark(s)";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
@@ -718,7 +715,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					return "Properties";
 				}
 			};
-			setAccelerator(a);
 			return a;
 		}
 
@@ -751,7 +747,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					return "Go To Bookmark";
 				}
 			};
-			setAccelerator(a);
 			return a;
 		}
 

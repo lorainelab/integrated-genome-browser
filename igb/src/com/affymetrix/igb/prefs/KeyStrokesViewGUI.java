@@ -91,7 +91,7 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent {
     // End of variables declaration//GEN-END:variables
 
 	public void refresh() {
-		ksv.refresh();
+		ksv.invokeRefreshTable();
 	}
 
 	private void setDefaultCloseOperation(int i) {

@@ -66,7 +66,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		}
 		PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(this);
 
-		showShortcuts();
+		refresh();
 	}
 
 //  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
@@ -91,16 +91,22 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	/** Re-populates the table with the shortcut data. */
-	private void showShortcuts() {
+	private void refresh() {
 		Object[][] rows = null;
 //    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
 		rows = buildRows(PreferenceUtils.getKeystrokesNode());
 		model.setRows(rows);
 	}
+	
+	public void invokeRefreshTable() { //Should fix the problems associated with updating entire table at every preference change.
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            refresh();
+			model.fireTableDataChanged();
+        }
+    }); 
 
-	public void refresh() {
-		showShortcuts();
-	}
+  }
 
 	/** This is called when the user selects a row of the table;
 	 */
@@ -127,8 +133,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 			return;
 		}
 		// Each time a keystroke preference is changed, update the
-		// whole table.  Inelegant, but works.
-		refresh();
+		// whole table.  Inelegant, but works. 
+		invokeRefreshTable();
 	}
 
 	/*public void destroy() {

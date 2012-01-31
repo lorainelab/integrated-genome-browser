@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
@@ -29,9 +30,27 @@ public class ExportFileChooser extends JFileChooser {
 		init();
 	}
 
+	@Override
 	public void approveSelection() {
 		accepted = true;
-		super.approveSelection();
+		File f = getSelectedFile();
+		if (!f.exists()) {
+			super.approveSelection();
+			return;
+		} else { // give the user the choice to overwrite the existing file or not
+			// The option pane used differs from the confirmDialog only in
+			// that "No" is the default choice.
+			getToolkit().beep();
+			String[] options = {"Yes", "No"};
+			if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+					this, "Overwrite Existing File?", "File Exists",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					options, options[1])) {
+				super.approveSelection();
+				return;
+			}
+			return;
+		}
 	}
 
 	public void setPreviousFile(File file) {

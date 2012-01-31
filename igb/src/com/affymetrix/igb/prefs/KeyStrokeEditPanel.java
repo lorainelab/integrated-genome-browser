@@ -46,21 +46,25 @@ public final class KeyStrokeEditPanel extends JPanel {
 				key_code = evt.getKeyCode();
 				modifiers = evt.getModifiers();
 				KeyStroke ks = getStroke();
-				String command = keyStroke2String(ks);
-				String useCommand = isCommandInUse(command);
-				if (useCommand != null) {
-					if (!IGB.confirmPanel(KeyStrokeEditPanel.this, "This shortcut is currently in use; \n"
-							+ "reassigning this will remove the shortcut for " + useCommand + ".\n"
-							+ "Do you want to proceed?")) {
+				if (getKeyText(ks.getKeyCode()).equals("BACK_SPACE") || getKeyText(ks.getKeyCode()).equals("DELETE")) {
+					clearAction();
+				} else {
+					String command = keyStroke2String(ks);
+					String useCommand = isCommandInUse(command);
+					if (useCommand != null) {
+						if (!IGB.confirmPanel(KeyStrokeEditPanel.this, "This shortcut is currently in use; \n"
+								+ "reassigning this will remove the shortcut for " + useCommand + ".\n"
+								+ "Do you want to proceed?")) {
+							return;
+						}
+
+						the_keystroke_node.put(useCommand, "");
+						key_field.setText(command);
+						applyAction();
 						return;
 					}
-
-					the_keystroke_node.put(useCommand, "");
 					key_field.setText(command);
-					applyAction();
-					return;
 				}
-				key_field.setText(command);
 			}
 
 			public void keyReleased(KeyEvent evt) {
@@ -134,8 +138,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 
 	private void applyAction() {
 		if (the_keystroke_node == null || the_key == null) {
-			// shouldn't happen
-			ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
+			//do nothing except disable clear button
 			setEnabled(false);
 			return;
 		}
@@ -190,8 +193,8 @@ public final class KeyStrokeEditPanel extends JPanel {
 //    toolbar_field.setSelected(false);
 		this.the_keystroke_node.put(this.the_key, "");
 		//TO DO:  Fix cell update 
-		KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeySrokeColumn);
-		}
+		//KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeySrokeColumn);
+	}
 
 	/** Returns true if the primary key code is control, or alt, etc. */
 	private static boolean isModifierKey(KeyStroke key) {

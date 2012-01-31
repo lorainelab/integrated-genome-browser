@@ -36,7 +36,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
 	private static KeyStrokesView singleton;
-
+	private int selected = -1;
+	
 	public static synchronized KeyStrokesView getSingleton() {
 		if (singleton == null) {
 			singleton = new KeyStrokesView();
@@ -103,6 +104,9 @@ public final class KeyStrokesView implements ListSelectionListener,
         public void run() {
             refresh();
 			model.fireTableDataChanged();
+			if(selected > 0){
+				table.setRowSelectionInterval(selected, selected);
+			}
         }
     }); 
 
@@ -150,6 +154,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		public TableCellEditor getCellEditor(int row, int col) {
 			DefaultCellEditor textEditor = new DefaultCellEditor(edit_panel.key_field);
 			if (col == KeySrokeColumn) {
+				selected = row;
 				return textEditor;
 			}
 			return super.getCellEditor(row, col);

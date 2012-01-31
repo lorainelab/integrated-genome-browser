@@ -200,7 +200,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(dynamicORFLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -224,6 +224,36 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         cLabel.setText("C:");
 
         otherLabel.setText("Other:");
+
+        AColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        TColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        GColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        CColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        OtherColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OtherColorComboBoxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout residueColorPanelLayout = new org.jdesktop.layout.GroupLayout(residueColorPanel);
         residueColorPanel.setLayout(residueColorPanelLayout);
@@ -309,9 +339,9 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                 .add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, 326, Short.MAX_VALUE)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 326, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 335, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 335, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
             .add(askBeforeExitCheckBox)
             .add(keepZoomStripeCheckBox)
             .add(showZoomStripLabelCheckBox)
@@ -330,7 +360,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             .add(layout.createSequentialGroup()
                 .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
-                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
@@ -367,6 +397,25 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 		DrawCollapseControlAction.getAction().actionPerformed(evt);
 	}//GEN-LAST:event_showCollapseOptionCheckBoxActionPerformed
 
+	private void AColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AColorComboBoxActionPerformed
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_AColorComboBoxActionPerformed
+
+	private void TColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TColorComboBoxActionPerformed
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_TColorComboBoxActionPerformed
+
+	private void GColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GColorComboBoxActionPerformed
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_GColorComboBoxActionPerformed
+
+	private void CColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CColorComboBoxActionPerformed
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_CColorComboBoxActionPerformed
+
+	private void OtherColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OtherColorComboBoxActionPerformed
+		TierPrefsView.getSingleton().refreshSeqMapView();
+	}//GEN-LAST:event_OtherColorComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;
     private com.jidesoft.combobox.ColorComboBox CColorComboBox;

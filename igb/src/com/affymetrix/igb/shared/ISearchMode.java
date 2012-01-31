@@ -21,20 +21,17 @@ public interface ISearchMode {
 	 */
 	public String getTooltip();
 	/**
-	 * @param i the index of the option
 	 * @return the name of the option at the specified index
 	 */
-	public String getOptionName(int i);
+	public String getOptionName();
 	/**
-	 * @param i the index of the option
 	 * @return the tooltip of the option at the specified index
 	 */
-	public String getOptionTooltip(int i);
+	public String getOptionTooltip();
 	/**
-	 * @param i the index of the option
 	 * @return if the option at the specified index is enabled
 	 */
-	public boolean getOptionEnable(int i);
+	public boolean getOptionEnable();
 	/**
 	 * @return if options are used for this search mode
 	 */

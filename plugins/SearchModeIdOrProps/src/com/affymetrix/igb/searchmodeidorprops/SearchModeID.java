@@ -3,8 +3,12 @@ package com.affymetrix.igb.searchmodeidorprops;
 import java.text.MessageFormat;
 import java.util.List;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
@@ -31,19 +35,22 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	}
 
 	@Override
-	public String getOptionName(int i) {
+	public String getOptionName() {
+		int i = getRemoteServerCount();
 		String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
 		return MessageFormat.format(REMOTESERVERSEARCH, "" + i, remoteServerPluralText);
 	}
 
 	@Override
-	public String getOptionTooltip(int i) {
+	public String getOptionTooltip() {
+		int i = getRemoteServerCount();
 		String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
 		return MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + i, remoteServerPluralText);
 	}
 	
 	@Override
-	public boolean getOptionEnable(int i) {
+	public boolean getOptionEnable() {
+		int i = getRemoteServerCount();
 		return i > 0;
 	}
 	
@@ -65,5 +72,19 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym 
 	@Override
 	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
 		return search(search_text, chrFilter, statusHolder, option, false);
+	}
+
+	private int getRemoteServerCount() {
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		if (group == null) {
+			return 0;
+		}
+		int count = 0;
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
+			if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

@@ -42,17 +42,17 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public String getOptionName(int i) {
+	public String getOptionName() {
 		return null;
 	}
 
 	@Override
-	public String getOptionTooltip(int i) {
+	public String getOptionTooltip() {
 		return null;
 	}
 
 	@Override
-	public boolean getOptionEnable(int i) {
+	public boolean getOptionEnable() {
 		return false;
 	}
 

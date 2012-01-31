@@ -24,15 +24,18 @@ public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeS
 		return BUNDLE.getString("searchRegexPropsTF");
 	}
 
-	public String getOptionName(int i) {
+	@Override
+	public String getOptionName() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public String getOptionTooltip(int i) {
+	@Override
+	public String getOptionTooltip() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
-	public boolean getOptionEnable(int i) {
+	@Override
+	public boolean getOptionEnable() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	

@@ -274,10 +274,9 @@ public final class SearchView extends IGBTabPanel implements
 			return;
 		
 		if(selectedSearchMode.useOption()){
-			int remoteServerCount = getRemoteServerCount(group);
-			optionCheckBox.setText(selectedSearchMode.getOptionName(remoteServerCount));
-			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip(remoteServerCount));
-			boolean enabled = selectedSearchMode.getOptionEnable(remoteServerCount);
+			optionCheckBox.setText(selectedSearchMode.getOptionName());
+			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip());
+			boolean enabled = selectedSearchMode.getOptionEnable();
 			optionCheckBox.setEnabled(enabled);
 			if(!enabled){
 				optionCheckBox.setSelected(false);
@@ -461,19 +460,6 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.setEnabled(enabled);
 		searchButton.setEnabled(enabled);
 		clearButton.setEnabled(enabled);
-	}
-
-	private static int getRemoteServerCount(AnnotatedSeqGroup group) {
-		if (group == null) {
-			return 0;
-		}
-		int count = 0;
-		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {

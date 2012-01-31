@@ -135,17 +135,17 @@ public class SearchModeResidue implements ISearchModeGlyph,
 	}
 
 	@Override
-	public String getOptionName(int i) {
+	public String getOptionName() {
 		return BUNDLE.getString("optionCheckBox");
 	}
 
 	@Override
-	public String getOptionTooltip(int i) {
+	public String getOptionTooltip() {
 		return BUNDLE.getString("optionCheckBoxTT");
 	}
 	
 	@Override
-	public boolean getOptionEnable(int i) {
+	public boolean getOptionEnable() {
 		return hitcolors.length - 1 > color;
 	}
 		

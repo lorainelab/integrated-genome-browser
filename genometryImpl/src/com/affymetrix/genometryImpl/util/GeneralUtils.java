@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
@@ -528,5 +530,16 @@ public final class GeneralUtils {
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
 		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
+	}
+
+	public static String preferencesDisplay(Preferences prefs) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			prefs.exportSubtree(baos);
+		}
+		catch (Exception x) {
+			return x.getClass().getSimpleName() + " " + x.getMessage();
+		}
+		return baos.toString();
 	}
 }

@@ -26,7 +26,8 @@ public class EmptyTierGlyphFactory {
 	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer) {
 
 		// No seqeunce selected or if it is cytoband or it is residue file. Then return
-		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND_TIER_NAME) ||
+		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND) ||
+				feature.featureName.toLowerCase().contains(CytobandParser.CYTOBAND) ||
 				(feature.symL != null && feature.symL.isResidueLoader())){
 			return;
 		}
@@ -38,7 +39,8 @@ public class EmptyTierGlyphFactory {
 		// for other sequence.
 		if (!feature.getMethods().isEmpty()) {
 			for (String method : feature.getMethods()) {
-				if(method.endsWith(ProbeSetDisplayGlyphFactory.NETAFFX_PROBESETS)){
+				if(method.endsWith(ProbeSetDisplayGlyphFactory.NETAFFX_PROBESETS) ||
+						method.equals(CytobandParser.CYTOBAND_TIER_NAME)){
 					continue;
 				}
 				style = getStyle(method, feature);

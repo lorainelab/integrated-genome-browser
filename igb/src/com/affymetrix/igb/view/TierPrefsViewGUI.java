@@ -108,7 +108,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         trackNameSizeLabel.setText("Name Size:");
 
-        trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trackNameSizeComboBoxActionPerformed(evt);

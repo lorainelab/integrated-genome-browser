@@ -30,8 +30,8 @@ import org.osgi.framework.Version;
  * the TableModel for the table in the plugins view
  */
 public class BundleTableModel extends DefaultTableModel implements Constants {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	private static final int WIDE_COLUMN_MULTIPLIER = 5;
 	private static final int NARROW_COLUMN = 60;
 
@@ -40,6 +40,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	 * info icon that links to the documntation web page of the bundle.
 	 */
 	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
+
 		private static final long serialVersionUID = 1L;
 		private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
 		private final JLabel text;
@@ -62,32 +63,30 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			if (bundle.getHeaders().get(Constants.BUNDLE_DOCURL) != null) {
 				icon = new JLabel(pluginsHandler.getIcon("info.png"));
 				add(icon);
-			}
-			else {
+			} else {
 				icon = null;
 			}
 			PANEL_MAP.put(bundle, this);
 		}
 
-        /**
-         * @param x x position of cursor on window
-         * @param y y position of cursor on window
-         * @return if the specified position is over the info icon
-         */
-        public boolean isOnInfoIcon(int x, int y) {
-        	if (icon == null) {
-        		return false;
-        	}
-        	Rectangle iconBounds = icon.getBounds();
-        	return
-        		x >= iconBounds.getX() && x <= iconBounds.getX() + icon.getWidth() &&
-        		y >= iconBounds.getY() && y <= iconBounds.getY() + icon.getHeight();
-        }
+		/**
+		 * @param x x position of cursor on window
+		 * @param y y position of cursor on window
+		 * @return if the specified position is over the info icon
+		 */
+		public boolean isOnInfoIcon(int x, int y) {
+			if (icon == null) {
+				return false;
+			}
+			Rectangle iconBounds = icon.getBounds();
+			return x >= iconBounds.getX() && x <= iconBounds.getX() + icon.getWidth()
+					&& y >= iconBounds.getY() && y <= iconBounds.getY() + icon.getHeight();
+		}
 
 		@Override
-        public String toString() {
-        	return text.getText() + " " + (icon != null);
-        }
+		public String toString() {
+			return text.getText() + " " + (icon != null);
+		}
 
 		@Override
 		public int compareTo(NameInfoPanel o) {
@@ -99,13 +98,17 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	 * Swing Renderer class for the NameInfoPanel
 	 */
 	public static class NameInfoRenderer implements TableCellRenderer, UIResource {
+
 		private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
-			NameInfoPanel nameInfoPanel = (NameInfoPanel)value;
+			NameInfoPanel nameInfoPanel = (NameInfoPanel) value;
+			if (nameInfoPanel == null) {
+				return null;
+			}
 			if (isSelected) {
 				nameInfoPanel.setForeground(table.getSelectionForeground());
 				nameInfoPanel.setBackground(table.getSelectionBackground());
@@ -113,13 +116,13 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 				nameInfoPanel.setForeground(table.getForeground());
 				nameInfoPanel.setBackground(table.getBackground());
 			}
-            if (hasFocus) {
-            	nameInfoPanel.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
-            } else {
-            	nameInfoPanel.setBorder(noFocusBorder);
-            }
+			if (hasFocus) {
+				nameInfoPanel.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
+			} else {
+				nameInfoPanel.setBorder(noFocusBorder);
+			}
 
-            return nameInfoPanel;
+			return nameInfoPanel;
 		}
 	}
 
@@ -127,12 +130,24 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	 * parent class for all the columns in the table
 	 */
 	private static abstract class BundleColumn {
+
 		public abstract String getTitle();
-		public Class<?> getCellClass() { return JLabel.class; }
-		public boolean isEditable() { return false; }
+
+		public Class<?> getCellClass() {
+			return JLabel.class;
+		}
+
+		public boolean isEditable() {
+			return false;
+		}
+
 		public abstract Object getValue(Bundle bundle);
-		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {}
-		public void formatColumn(JTable jTable, TableColumn tc) {}
+
+		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
+		}
+
+		public void formatColumn(JTable jTable, TableColumn tc) {
+		}
 	}
 
 	/**
@@ -140,110 +155,149 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	 * latest version in parenthesis if necessary.
 	 */
 	private static class VersionInfo {
+
 		private final Bundle bundle;
 		private final IPluginsHandler pluginsHandler;
+
 		public VersionInfo(Bundle bundle, IPluginsHandler pluginsHandler) {
 			super();
 			this.bundle = bundle;
 			this.pluginsHandler = pluginsHandler;
 		}
+
 		public Version getVersion() {
 			return bundle.getVersion();
 		}
+
 		public Version getLatestVersion() {
 			return pluginsHandler.getLatestVersion(bundle);
 		}
+
 		public String toString() {
-			return pluginsHandler.isUpdatable(bundle) ?
-					"<html>" + getVersion() + " (<b>" + getLatestVersion() + "</b>)</html>)" :
-					"" + getVersion();
+			return pluginsHandler.isUpdatable(bundle)
+					? "<html>" + getVersion() + " (<b>" + getLatestVersion() + "</b>)</html>)"
+					: "" + getVersion();
 		}
 	}
-
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
+
 	static {
-	columns.add(new BundleColumn() { // install
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("installColumn"); }
-		@Override
-		public boolean isEditable() { return true; }
-		@Override
-		public Object getValue(Bundle bundle) { return bundle.getState() != Bundle.UNINSTALLED; }
-		@Override
-		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
-			if (bundle.getState() == Bundle.UNINSTALLED) {
-				pluginsHandler.installBundle(bundle);
+		columns.add(new BundleColumn() { // install
+
+			@Override
+			public String getTitle() {
+				return PluginsView.BUNDLE.getString("installColumn");
 			}
-			else {
-				pluginsHandler.uninstallBundle(bundle);
+
+			@Override
+			public boolean isEditable() {
+				return true;
 			}
-		}
-		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
-			tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
-			tc.setMinWidth(NARROW_COLUMN);
-			tc.setMaxWidth(NARROW_COLUMN);
-			tc.setPreferredWidth(NARROW_COLUMN);
-		}
-	});
-	columns.add(new BundleColumn() { // symbolic name
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME); }
-		@Override
-		public Class<?> getCellClass() { return NameInfoPanel.class; }
-		@Override
-		public Object getValue(Bundle bundle) { return new NameInfoPanel(bundle); }
-		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setCellRenderer(new NameInfoRenderer());
-		}
-	});
-	columns.add(new BundleColumn() { // description
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_DESCRIPTION); }
-		@Override
-		public Object getValue(Bundle bundle) {
-			Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
-			return description == null ? "" : description.toString();
-		}
-		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
-			tc.setCellRenderer(
-					new TableCellRenderer() {
-						@Override
-						public Component getTableCellRendererComponent(JTable table, Object value,
-								boolean isSelected, boolean hasFocus, int row, int column) {
-							Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-							((JLabel)component).setToolTipText((String)value);
-							return component;
-						}
-					}
-			);
-		}
-	});
-	columns.add(new BundleColumn() { // version
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_VERSION); }
-		@Override
-		public Object getValue(Bundle bundle) { return new VersionInfo(bundle, pluginsHandler);
-		}
-	});
-	columns.add(new BundleColumn() { // repository
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("repository"); }
-		@Override
-		public Object getValue(Bundle bundle) { return pluginsHandler.getRepository(bundle);
-		}
-	});
+
+			@Override
+			public Object getValue(Bundle bundle) {
+				return bundle.getState() != Bundle.UNINSTALLED;
+			}
+
+			@Override
+			public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
+				if (bundle.getState() == Bundle.UNINSTALLED) {
+					pluginsHandler.installBundle(bundle);
+				} else {
+					pluginsHandler.uninstallBundle(bundle);
+				}
+			}
+
+			@Override
+			public void formatColumn(JTable jTable, TableColumn tc) {
+				tc.setCellEditor(jTable.getDefaultEditor(Boolean.class));
+				tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
+				tc.setMinWidth(NARROW_COLUMN);
+				tc.setMaxWidth(NARROW_COLUMN);
+				tc.setPreferredWidth(NARROW_COLUMN);
+			}
+		});
+		columns.add(new BundleColumn() { // symbolic name
+
+			@Override
+			public String getTitle() {
+				return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME);
+			}
+
+			@Override
+			public Class<?> getCellClass() {
+				return NameInfoPanel.class;
+			}
+
+			@Override
+			public Object getValue(Bundle bundle) {
+				return new NameInfoPanel(bundle);
+			}
+
+			@Override
+			public void formatColumn(JTable jTable, TableColumn tc) {
+				tc.setCellRenderer(new NameInfoRenderer());
+			}
+		});
+		columns.add(new BundleColumn() { // description
+
+			@Override
+			public String getTitle() {
+				return PluginsView.BUNDLE.getString(BUNDLE_DESCRIPTION);
+			}
+
+			@Override
+			public Object getValue(Bundle bundle) {
+				Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
+				return description == null ? "" : description.toString();
+			}
+
+			@Override
+			public void formatColumn(JTable jTable, TableColumn tc) {
+				tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
+				tc.setCellRenderer(
+						new TableCellRenderer() {
+
+							@Override
+							public Component getTableCellRendererComponent(JTable table, Object value,
+									boolean isSelected, boolean hasFocus, int row, int column) {
+								Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+								((JLabel) component).setToolTipText((String) value);
+								return component;
+							}
+						});
+			}
+		});
+		columns.add(new BundleColumn() { // version
+
+			@Override
+			public String getTitle() {
+				return PluginsView.BUNDLE.getString(BUNDLE_VERSION);
+			}
+
+			@Override
+			public Object getValue(Bundle bundle) {
+				return new VersionInfo(bundle, pluginsHandler);
+			}
+		});
+		columns.add(new BundleColumn() { // repository
+
+			@Override
+			public String getTitle() {
+				return PluginsView.BUNDLE.getString("repository");
+			}
+
+			@Override
+			public Object getValue(Bundle bundle) {
+				return pluginsHandler.getRepository(bundle);
+			}
+		});
 	}
 	private static IPluginsHandler pluginsHandler;
 
 	public static void setPluginsHandler(IPluginsHandler _pluginsHandler) {
 		pluginsHandler = _pluginsHandler;
 	}
-
 	public static final List<SortKey> SORT_KEYS;
 
 	static {

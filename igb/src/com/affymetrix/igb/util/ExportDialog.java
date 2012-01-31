@@ -284,12 +284,13 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public boolean okButtonActionPerformed() throws IOException {
-		String newFile = filePathTextField.getText();
-		String ext = ParserController.getExtension(newFile);
+		String previousPath = exportFile.getAbsolutePath();
+		String newPath = filePathTextField.getText();
+		String ext = ParserController.getExtension(newPath);
 
-		exportFile = new File(newFile);
+		exportFile = new File(newPath);
 
-		if (!isValidateExportFile(exportFile, ext)) {
+		if (!isValidExportFile(exportFile, ext, previousPath)) {
 			return false;
 		}
 
@@ -303,11 +304,12 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
-	private boolean isValidateExportFile(File file, String ext) {
+	private boolean isValidExportFile(File file, String ext, String path) {
 		if (!exportFile.getParentFile().isDirectory() || !isExt(ext)) {
 			ErrorHandler.errorPanel("The path or image format is invalid.");
-			filePathTextField.setText(file.getAbsolutePath());
+			filePathTextField.setText(path);
 			filePathTextField.grabFocus();
+			exportFile = new File(path);
 			return false;
 		}
 

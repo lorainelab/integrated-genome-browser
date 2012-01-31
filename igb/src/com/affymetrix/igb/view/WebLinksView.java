@@ -301,59 +301,6 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 	}
 
-	public void save() {
-		if (localTable.getSelectedRow() != -1) {
-			String name = nameTextField.getText();
-			if (isEmpty(name)) {
-				ErrorHandler.errorPanel("The name cannot be blank");
-				nameTextField.setText(previousName);
-				nameTextField.grabFocus();
-				return;
-			}
-
-			String url = urlTextField.getText();
-			if (isEmpty(url)) {
-				ErrorHandler.errorPanel("The URL cannot be blank");
-				urlTextField.setText(previousUrl);
-				urlTextField.grabFocus();
-				return;
-			} else {
-				try {
-					new URL(url);
-				} catch (MalformedURLException e) {
-					ErrorHandler.errorPanel("Malformed URL",
-							"The given URL appears to be invalid.\n" + e.getMessage(),
-							urlTextField);
-					urlTextField.setText(previousUrl);
-					urlTextField.grabFocus();
-					return;
-				}
-			}
-
-			String regex = regexTextField.getText();
-			if (isEmpty(regex)) {
-				ErrorHandler.errorPanel("The regular expression cannot be blank");
-				regexTextField.setText(previousRegex);
-				regexTextField.grabFocus();
-				return;
-			} else {
-				try {
-					Pattern.compile(regexTextField.getText());
-				} catch (PatternSyntaxException pse) {
-					ErrorHandler.errorPanel("Bad Regular Expression",
-							"Error in regular expression:\n" + pse.getMessage(), regexTextField);
-					regexTextField.setText(previousRegex);
-					regexTextField.grabFocus();
-					return;
-				}
-			}
-
-			localModel.setValueAt(name, selectedRows[0], COL_NAME);
-			localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
-			localModel.setValueAt(url, selectedRows[0], COL_URL);
-		}
-	}
-
 	public void clear() {
 		nameTextField.setText("");
 		urlTextField.setText("");

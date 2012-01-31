@@ -28,7 +28,7 @@ public class EmptyTierGlyphFactory {
 		// No seqeunce selected or if it is cytoband or it is residue file. Then return
 		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND) ||
 				feature.featureName.toLowerCase().contains(CytobandParser.CYTOBAND) ||
-				(feature.symL != null && feature.symL.isResidueLoader())){
+				(feature.symL != null && (feature.symL.isResidueLoader() || feature.symL.getExtension().equalsIgnoreCase("cyt")))){
 			return;
 		}
 		

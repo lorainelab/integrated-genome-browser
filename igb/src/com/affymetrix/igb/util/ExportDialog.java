@@ -44,12 +44,13 @@ public class ExportDialog implements ExportConstants {
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
+	JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
+	JComboBox unitComboBox = new JComboBox(UNIT);
 	JTextField filePathTextField = new JTextField();
-	static JSpinner heightSpinner = new JSpinner();
 	static JSpinner widthSpinner = new JSpinner();
-	JSpinner xSpinner = new JSpinner();
-	JSpinner ySpinner = new JSpinner();
+	static JSpinner heightSpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
+	JLabel sizeLabel = new JLabel();
 
 	public static FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
@@ -65,6 +66,7 @@ public class ExportDialog implements ExportConstants {
 	public static Component component; // Export component
 	public static ImageInfo imageInfo;
 	private static ImageInfo originalInfo;
+	private static String unit;
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
 
@@ -76,22 +78,30 @@ public class ExportDialog implements ExportConstants {
 			exportFile = new File(file);
 		}
 
-		imageInfo.setXResolution(exportNode.getInt(PREF_X, imageInfo.getXResolution()));
-		imageInfo.setYResolution(exportNode.getInt(PREF_Y, imageInfo.getYResolution()));
+		imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
+
+		unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
 
 		filePathTextField.setText(exportFile.getAbsolutePath());
 
 		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
 		extComboBox.setSelectedItem(type);
+		resolutionComboBox.setSelectedItem(imageInfo.getResolution());
+		unitComboBox.setSelectedItem(unit);
 
-		SpinnerModel sm = new SpinnerNumberModel(imageInfo.getWidth(), 0, 10000, 1);
+		double width = originalInfo.getWidth();
+		double height = originalInfo.getHeight();
+		if (unit.equals(UNIT[1])) {
+			width /= originalInfo.getResolution();
+			height /= originalInfo.getResolution();
+		}
+
+		SpinnerModel sm = new SpinnerNumberModel(width, 0, 10000, 1);
 		widthSpinner.setModel(sm);
-		sm = new SpinnerNumberModel(imageInfo.getHeight(), 0, 10000, 1);
+		sm = new SpinnerNumberModel(height, 0, 10000, 1);
 		heightSpinner.setModel(sm);
-		sm = new SpinnerNumberModel(imageInfo.getXResolution(), 0, 1000, 1);
-		xSpinner.setModel(sm);
-		sm = new SpinnerNumberModel(imageInfo.getYResolution(), 0, 1000, 1);
-		ySpinner.setModel(sm);
+
+		reSetWidthHeight(width, height);
 	}
 
 	public static void setComponent(Component c) {
@@ -108,11 +118,12 @@ public class ExportDialog implements ExportConstants {
 			imageInfo.setHeight(component.getHeight());
 		}
 
-		originalInfo = new ImageInfo(imageInfo.getWidth(), imageInfo.getHeight(),
-				imageInfo.getXResolution(), imageInfo.getYResolution());
+		originalInfo = new ImageInfo(imageInfo.getWidth(),
+				imageInfo.getHeight(),
+				imageInfo.getResolution());
 
-		widthSpinner.setValue((double)component.getWidth());
-		heightSpinner.setValue((double)component.getHeight());
+		widthSpinner.setValue((double) component.getWidth());
+		heightSpinner.setValue((double) component.getHeight());
 	}
 
 	public static String getFileExtension(String filePath) {
@@ -139,7 +150,7 @@ public class ExportDialog implements ExportConstants {
 			}
 
 			image = GraphicsUtil.resizeImage(image,
-					(int)imageInfo.getWidth(), (int)imageInfo.getHeight());
+					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
 
 			writeImage(image, ext, f);
 		}
@@ -176,10 +187,10 @@ public class ExportDialog implements ExportConstants {
 
 	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
-		horiz.setAttribute("value", Double.toString(imageInfo.getXResolution() * 0.039));
+		horiz.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
 
 		IIOMetadataNode vert = new IIOMetadataNode("VerticalPixelSize");
-		vert.setAttribute("value", Double.toString(imageInfo.getYResolution() * 0.039));
+		vert.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
 
 		IIOMetadataNode dim = new IIOMetadataNode("Dimension");
 		dim.appendChild(horiz);
@@ -194,8 +205,8 @@ public class ExportDialog implements ExportConstants {
 	private static void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
 		IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
-		jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getXResolution()));
-		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getYResolution()));
+		jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getResolution()));
+		jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getResolution()));
 		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
 	}
@@ -239,10 +250,15 @@ public class ExportDialog implements ExportConstants {
 		fileChooser.showDialog(panel, "Select");
 
 		if (fileChooser.getSelectedFile() != null) {
-			filePathTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+			String path = fileChooser.getSelectedFile().getAbsolutePath();
 			filter = fileChooser.getFileFilter();
 			ExportFileType type = getType(filter.getDescription());
 			extComboBox.setSelectedItem(type);
+			if (ParserController.getExtension(path).equals("")) {
+				path += type.getExtension();
+			}
+
+			filePathTextField.setText(path);
 		}
 	}
 
@@ -267,18 +283,24 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void extComboBoxActionPerformed() {
-		String newFile = filePathTextField.getText();
-		String previousFile = exportFile.getAbsolutePath();
+		String newPath = filePathTextField.getText();
+		String previousPath = exportFile.getAbsolutePath();
 		String ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-		exportFile = new File(newFile);
+		exportFile = new File(newPath);
 
 		if (!exportFile.getParentFile().isDirectory()) {
-			exportFile = new File(previousFile);
-			filePathTextField.setText(previousFile);
+			exportFile = new File(previousPath);
+			filePathTextField.setText(previousPath);
 		}
 
-		exportFile = changeFileExtension(exportFile, ext);
+		if (isExt(ParserController.getExtension(newPath))) {
+			// Check if the extention is valid or not
+			exportFile = changeFileExtension(exportFile, ext);
+		} else {
+			newPath += ext;
+			exportFile = new File(newPath);
+		}
 
 		filePathTextField.setText(exportFile.getAbsolutePath());
 	}
@@ -290,7 +312,7 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = new File(newPath);
 
-		if (!isValidExportFile(exportFile, ext, previousPath)) {
+		if (!isValidExportFile(ext, previousPath)) {
 			return false;
 		}
 
@@ -298,19 +320,30 @@ public class ExportDialog implements ExportConstants {
 
 		exportNode.put(PREF_FILE, exportFile.getAbsolutePath());
 		exportNode.put(PREF_EXT, extComboBox.getSelectedItem().toString());
-		exportNode.putInt(PREF_X, imageInfo.getXResolution());
-		exportNode.putInt(PREF_Y, imageInfo.getYResolution());
+		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
+		exportNode.put(PREF_UNIT, unit);
 
 		return true;
 	}
 
-	private boolean isValidExportFile(File file, String ext, String path) {
-		if (!exportFile.getParentFile().isDirectory() || !isExt(ext)) {
+	private boolean isValidExportFile(String ext, String path) {
+		if (!exportFile.getParentFile().isDirectory()) {
+			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The path or image format is invalid.");
 			filePathTextField.setText(path);
 			filePathTextField.grabFocus();
 			exportFile = new File(path);
 			return false;
+		}
+
+		if (!isExt(ext)) {
+			// if file format is not exist, add current selected format to the end
+			String newPath = exportFile.getAbsolutePath()
+					+ ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+
+			System.out.println(newPath);
+
+			exportFile = new File(newPath);
 		}
 
 		if (exportFile.exists()) {
@@ -332,8 +365,7 @@ public class ExportDialog implements ExportConstants {
 	public void resetButtonActionPerformed() {
 		widthSpinner.setValue(originalInfo.getWidth());
 		heightSpinner.setValue(originalInfo.getHeight());
-		xSpinner.setValue(originalInfo.getXResolution());
-		ySpinner.setValue(originalInfo.getYResolution());
+		resolutionComboBox.setSelectedItem(originalInfo.getResolution());
 	}
 
 	public void previewImage() {
@@ -361,39 +393,70 @@ public class ExportDialog implements ExportConstants {
 
 	public void widthSpinnerStateChanged() {
 		if (!isHeightSpinner) {
-			int newWidth = ((Double) widthSpinner.getValue()).intValue();
+			double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
 			double newHeight = newWidth * originalInfo.getHeightWidthRate();
+
 			isWidthSpinner = true;
-			heightSpinner.setValue((int) newHeight);
+			heightSpinner.setValue(newHeight);
 			isWidthSpinner = false;
 
-			setWidthHeight(newWidth, (int)newHeight);
+			reSetWidthHeight(newWidth, newHeight);
 		}
 	}
 
 	public void heightSpinnerStateChanged() {
 		if (!isWidthSpinner) {
-			int newHeight = ((Double) heightSpinner.getValue()).intValue();
+			double newHeight = ((Double) heightSpinner.getValue()).doubleValue();
 			double newWidth = newHeight * originalInfo.getWidthHeightRate();
+
 			isHeightSpinner = true;
-			widthSpinner.setValue((int) newWidth);
+			widthSpinner.setValue(newWidth);
 			isHeightSpinner = false;
 
-			setWidthHeight((int) newWidth, newHeight);
+			reSetWidthHeight(newWidth, newHeight);
 		}
 	}
 
-	private void setWidthHeight(int width, int height) {
-		imageInfo.setWidth(width);
-		imageInfo.setHeight(height);
+	public void unitComboBoxActionPerformed() {
+		unit = (String) unitComboBox.getSelectedItem();
+
+		double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
+
+		if (unit.equals(UNIT[0])) {
+			newWidth *= imageInfo.getResolution();
+		} else {
+			newWidth /= imageInfo.getResolution();
+		}
+
+		widthSpinner.setValue(newWidth);
 	}
 
-	public void xSpinnerStateChanged() {
-		imageInfo.setXResolution((Integer) xSpinner.getValue());
+	private void reSetWidthHeight(double width, double height) {
+		if (unit != null) {
+			if (unit.equals(UNIT[1])) {
+				// Convert back from inches to pixels
+				width *= imageInfo.getResolution();
+				height *= imageInfo.getResolution();
+			}
+
+			imageInfo.setWidth(width);
+			imageInfo.setHeight(height);
+
+			sizeLabel.setText(String.valueOf((int) width)
+					+ " x "
+					+ String.valueOf((int) height)
+					+ " pixels");
+		}
 	}
 
-	public void ySpinnerStateChanged() {
-		imageInfo.setYResolution((Integer) ySpinner.getValue());
+	public void resolutionComboBoxActionPerformed() {
+		imageInfo.setResolution((Integer) resolutionComboBox.getSelectedItem());
+
+		if (unit.equals(UNIT[1])) {
+			double width = imageInfo.getWidth();
+			width /= imageInfo.getResolution();
+			widthSpinner.setValue(width);
+		}
 	}
 
 	public static Component determineSlicedComponent() {

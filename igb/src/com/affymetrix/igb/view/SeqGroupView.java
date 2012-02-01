@@ -62,9 +62,11 @@ import java.awt.Component;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -766,7 +768,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 					versionCB.addItem(versionName);
 				}
 				versionCB.setEnabled(true);
-				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getSpecies2Generic().containsKey(oldVersion)) {
+				
+				
+			
+				
+				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getVersionName2Species().containsKey(oldVersion)) {
 					versionCB.setSelectedItem(oldVersion);
 				} else {
 					versionCB.setSelectedIndex(0);

@@ -112,15 +112,14 @@ public final class GeneralLoadUtils {
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
 	static final Map<String, String> versionName2species =
 			new HashMap<String, String>();	// the species associated with the given version.
-	
+
 	public static Map<String, String> getVersionName2Species() {
 		return versionName2species;
 	}
-	public static Map<String, List<GenericVersion>>  getSpecies2Generic() {
+
+	public static Map<String, List<GenericVersion>> getSpecies2Generic() {
 		return species2genericVersionList;
 	}
-	
-
 	/**
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()
@@ -200,7 +199,7 @@ public final class GeneralLoadUtils {
 		if (gServer.isPrimary()) {
 			return true;
 		}
-		
+
 		if (gServer.serverType != null) {
 			Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 		}
@@ -250,8 +249,7 @@ public final class GeneralLoadUtils {
 			try {
 				primaryURL = new URL(gServer.URL);
 				primaryServer = null;
-			}
-			catch (MalformedURLException x) {
+			} catch (MalformedURLException x) {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, "cannot load URL " + gServer.URL + " for DAS server " + gServer.serverName, x);
 			}
 		}
@@ -325,7 +323,7 @@ public final class GeneralLoadUtils {
 		}
 
 		//update species.txt with information from the server.
-		if( quickloadServer.hasSpeciesTxt()){
+		if (quickloadServer.hasSpeciesTxt()) {
 			try {
 				SpeciesLookup.load(quickloadServer.getSpeciesTxt());
 			} catch (IOException ex) {
@@ -436,12 +434,11 @@ public final class GeneralLoadUtils {
 		return featureList;
 	}
 
-	
 	/**
-	* Only want to display features with visible attribute set to true.
-	* @param features
-	* @return list of visible features
-	*/
+	 * Only want to display features with visible attribute set to true.
+	 * @param features
+	 * @return list of visible features
+	 */
 	public static List<GenericFeature> getVisibleFeatures() {
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 
@@ -454,7 +451,7 @@ public final class GeneralLoadUtils {
 
 		return visibleFeatures;
 	}
-	
+
 	/*
 	 * Returns the list of features for currently selected group.
 	 */
@@ -702,7 +699,7 @@ public final class GeneralLoadUtils {
 		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
 			// TODO: Investigate edge case at max
-			if(overlap.getMin() == selected_seq.getMin() && overlap.getMax() == selected_seq.getMax()){
+			if (overlap.getMin() == selected_seq.getMin() && overlap.getMax() == selected_seq.getMax()) {
 				overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax() - 1, selected_seq);
 			}
 		} else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME) {
@@ -792,14 +789,14 @@ public final class GeneralLoadUtils {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
 
-				//	LoadModeTable.updateVirtualFeatureList();
-
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
 					gviewer.setAnnotatedSeq(seq, true, true);
-				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-					// This can happen when loading a brand-new genome
-					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+				} else if (gmodel.getSelectedSeqGroup() != null) {
+					if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+						// This can happen when loading a brand-new genome
+						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+					}
 				}
 			}
 
@@ -844,7 +841,7 @@ public final class GeneralLoadUtils {
 				}
 				return false;
 			}
-									
+
 			@Override
 			protected void finished() {
 				BioSeq aseq = gmodel.getSelectedSeq();
@@ -1099,7 +1096,7 @@ public final class GeneralLoadUtils {
 		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
 			for (GenericVersion genericVersion : genericVersions) {
 				for (GenericFeature genericFeature : genericVersion.getFeatures()) {
-					if(autoload){
+					if (autoload) {
 						genericFeature.setAutoload(autoload);
 					}
 				}
@@ -1142,7 +1139,7 @@ public final class GeneralLoadUtils {
 			ScriptFileLoader.runScript(uri.toString());
 			return;
 		}
-		
+
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
@@ -1167,7 +1164,7 @@ public final class GeneralLoadUtils {
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
-	
+
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
 		if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
@@ -1220,11 +1217,10 @@ public final class GeneralLoadUtils {
 					GeneralLoadView.getLoadView().createFeaturesTable();
 				}
 			}
-
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
-	
+
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
 		GenericFeature gFeature = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
@@ -1267,12 +1263,12 @@ public final class GeneralLoadUtils {
 			gFeature = new GenericFeature(fileName, featureProps, version, new QuickLoad(version, uri, symL), File.class, autoload);
 
 			version.addFeature(gFeature);
-			
+
 			gFeature.setVisible(); // this should be automatically checked in the feature tree
-			
+
 			GeneralLoadView.getLoadView().addFeatureTier(gFeature);
 		}
-		
+
 		return gFeature;
 	}
 

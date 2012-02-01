@@ -682,14 +682,14 @@ public final class GeneralLoadUtils {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
 
-				//	LoadModeTable.updateVirtualFeatureList();
-
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
 					gviewer.setAnnotatedSeq(seq, true, true);
-				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-					// This can happen when loading a brand-new genome
-					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+				} else if (gmodel.getSelectedSeqGroup() != null) {
+					if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+						// This can happen when loading a brand-new genome
+						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+					}
 				}
 			}
 

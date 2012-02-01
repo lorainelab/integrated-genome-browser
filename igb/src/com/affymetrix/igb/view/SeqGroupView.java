@@ -767,7 +767,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 					versionCB.addItem(versionName);
 				}
 				versionCB.setEnabled(true);
-				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getSpecies2Generic().containsKey(oldVersion)) {
+				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getVersionName2Species().containsKey(oldVersion)) {
 					versionCB.setSelectedItem(oldVersion);
 				} else {
 					versionCB.setSelectedIndex(0);

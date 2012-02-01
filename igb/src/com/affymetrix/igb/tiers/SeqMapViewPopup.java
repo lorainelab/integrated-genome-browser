@@ -79,19 +79,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
-	private final Action select_all_tiers_action = new GenericAction() {
-		private static final long serialVersionUID = 1L;
 
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			handler.selectAllTiers();
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("selectAllTiersAction");
-		}
-	};
 	private final Action rename_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -1069,7 +1057,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 
-		select_all_tiers_action.setEnabled(true);
 		customize_action.setEnabled(true);
 
 		hide_action.setEnabled(num_selections > 0);
@@ -1189,7 +1176,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //	strandsMenu.add(at3);
 		popup.add(strandsMenu);
 		popup.add(new JSeparator());
-		popup.add(select_all_tiers_action);
 		popup.add(changeMenu);
 		popup.add(viewModeMenu);
 		popup.add(new JSeparator());

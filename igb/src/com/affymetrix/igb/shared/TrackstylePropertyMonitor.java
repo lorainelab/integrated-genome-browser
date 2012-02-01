@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

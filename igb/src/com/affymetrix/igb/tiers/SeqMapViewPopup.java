@@ -57,7 +57,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.util.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;

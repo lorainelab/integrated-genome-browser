@@ -399,6 +399,7 @@ public class TierGlyph extends SolidGlyph {
 	
 	@Override
 	public void drawChildren(ViewI view) {
+		try{
 		if (children != null) {
 			GlyphI child;
 			int numChildren = children.size();
@@ -421,6 +422,9 @@ public class TierGlyph extends SolidGlyph {
 
 		if (shouldDrawToolBar()) {
 			drawExpandCollapse(view);
+		}
+		}catch(Exception ex){	
+			System.out.println(ex);
 		}
 	}
 	

@@ -13,7 +13,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
-import com.affymetrix.igb.util.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Component;

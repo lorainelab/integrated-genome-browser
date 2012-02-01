@@ -751,6 +751,9 @@ public final class GeneralLoadUtils {
 					SeqGroupView.getInstance().refreshTable();
 				}
 
+				if(this.isCancelled())
+					return;
+				
 				try {
 					boolean result = get();
 					setLastRefreshStatus(feature, result);

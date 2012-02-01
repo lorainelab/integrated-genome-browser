@@ -89,10 +89,19 @@ public class ExportDialog implements ExportConstants {
 		resolutionComboBox.setSelectedItem(imageInfo.getResolution());
 		unitComboBox.setSelectedItem(unit);
 
-		SpinnerModel sm = new SpinnerNumberModel(originalInfo.getWidth(), 0, 10000, 1);
+		double width = originalInfo.getWidth();
+		double height = originalInfo.getHeight();
+		if (unit.equals(UNIT[1])) {
+			width /= originalInfo.getResolution();
+			height /= originalInfo.getResolution();
+		}
+
+		SpinnerModel sm = new SpinnerNumberModel(width, 0, 10000, 1);
 		widthSpinner.setModel(sm);
-		sm = new SpinnerNumberModel(originalInfo.getHeight(), 0, 10000, 1);
+		sm = new SpinnerNumberModel(height, 0, 10000, 1);
 		heightSpinner.setModel(sm);
+
+		reSetWidthHeight(width, height);
 	}
 
 	public static void setComponent(Component c) {
@@ -423,7 +432,7 @@ public class ExportDialog implements ExportConstants {
 
 		if (unit.equals(UNIT[1])) {
 			double width = imageInfo.getWidth();
-			width *= imageInfo.getResolution();
+			width /= imageInfo.getResolution();
 			widthSpinner.setValue(width);
 		}
 	}

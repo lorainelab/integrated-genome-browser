@@ -250,10 +250,15 @@ public class ExportDialog implements ExportConstants {
 		fileChooser.showDialog(panel, "Select");
 
 		if (fileChooser.getSelectedFile() != null) {
-			filePathTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+			String path = fileChooser.getSelectedFile().getAbsolutePath();
 			filter = fileChooser.getFileFilter();
 			ExportFileType type = getType(filter.getDescription());
 			extComboBox.setSelectedItem(type);
+			if (ParserController.getExtension(path).equals("")) {
+				path += type.getExtension();
+			}
+
+			filePathTextField.setText(path);
 		}
 	}
 
@@ -278,18 +283,24 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void extComboBoxActionPerformed() {
-		String newFile = filePathTextField.getText();
-		String previousFile = exportFile.getAbsolutePath();
+		String newPath = filePathTextField.getText();
+		String previousPath = exportFile.getAbsolutePath();
 		String ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-		exportFile = new File(newFile);
+		exportFile = new File(newPath);
 
 		if (!exportFile.getParentFile().isDirectory()) {
-			exportFile = new File(previousFile);
-			filePathTextField.setText(previousFile);
+			exportFile = new File(previousPath);
+			filePathTextField.setText(previousPath);
 		}
 
-		exportFile = changeFileExtension(exportFile, ext);
+		if (isExt(ParserController.getExtension(newPath))) {
+			// Check if the extention is valid or not
+			exportFile = changeFileExtension(exportFile, ext);
+		} else {
+			newPath += ext;
+			exportFile = new File(newPath);
+		}
 
 		filePathTextField.setText(exportFile.getAbsolutePath());
 	}
@@ -301,7 +312,7 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = new File(newPath);
 
-		if (!isValidExportFile(exportFile, ext, previousPath)) {
+		if (!isValidExportFile(ext, previousPath)) {
 			return false;
 		}
 
@@ -315,13 +326,24 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
-	private boolean isValidExportFile(File file, String ext, String path) {
-		if (!exportFile.getParentFile().isDirectory() || !isExt(ext)) {
+	private boolean isValidExportFile(String ext, String path) {
+		if (!exportFile.getParentFile().isDirectory()) {
+			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The path or image format is invalid.");
 			filePathTextField.setText(path);
 			filePathTextField.grabFocus();
 			exportFile = new File(path);
 			return false;
+		}
+
+		if (!isExt(ext)) {
+			// if file format is not exist, add current selected format to the end
+			String newPath = exportFile.getAbsolutePath()
+					+ ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+
+			System.out.println(newPath);
+
+			exportFile = new File(newPath);
 		}
 
 		if (exportFile.exists()) {

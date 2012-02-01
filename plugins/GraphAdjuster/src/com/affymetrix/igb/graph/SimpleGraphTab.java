@@ -52,6 +52,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -66,7 +67,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab
-		implements SeqSelectionListener, SymSelectionListener {
+		implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener {
 
 	//System.out.println() statements do not show on the screen, they are not translated.
 
@@ -204,6 +205,7 @@ public final class SimpleGraphTab
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {
@@ -316,6 +318,7 @@ public final class SimpleGraphTab
 			bgColorComboBox.setSelectedColor(null);
 		}
 
+		setColorCombobox();
 		selectButtonBasedOnGraphStyle(graph_style);
 
 		if (graph_style == GraphType.HEAT_MAP) {
@@ -440,6 +443,24 @@ public final class SimpleGraphTab
 
 	public AdvancedGraphPanel getAdvancedPanel() {
 		return advanced_panel;
+	}
+
+	private void setColorCombobox() {
+		int num_glyphs = glyphs.size();
+		
+		if (num_glyphs == 0) {
+			// Do Nothing
+		} else if (num_glyphs == 1) {
+			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
+			GraphGlyph gl = (GraphGlyph) g;
+			Color color = gl.getGraphState().getTierStyle().getBackground();
+			bgColorComboBox.setSelectedColor(color);
+			color = gl.getGraphState().getTierStyle().getForeground();
+			fgColorComboBox.setSelectedColor(color);
+		} else {
+			fgColorComboBox.setSelectedColor(null);
+			bgColorComboBox.setSelectedColor(null);
+		}
 	}
 
 	private final class GraphStyleSetter implements ActionListener {
@@ -1108,5 +1129,9 @@ public final class SimpleGraphTab
 
 	public void bgColorComboBoxActionPerformed() {
 		changeColor(grafs, bgColorComboBox);
+	}
+	
+	public void trackstylePropertyChanged(EventObject eo) {
+		setColorCombobox();
 	}
 }

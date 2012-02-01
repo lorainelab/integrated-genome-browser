@@ -20,29 +20,24 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="1">
+              <Component id="filePathTextField" min="-2" pref="356" max="-2" attributes="1"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="1">
-                      <Component id="filePathTextField" min="-2" pref="356" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                      <Component id="browseButton" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="extComboBox" min="-2" pref="309" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="cancelButton" min="-2" pref="76" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="okButton" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="previewPanel" alignment="0" pref="460" max="32767" attributes="2"/>
-                          <Component id="imageSizePanel" alignment="1" min="0" pref="460" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  </Group>
+              <Component id="browseButton" min="-2" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="extComboBox" min="-2" pref="309" max="-2" attributes="1"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <Component id="cancelButton" min="-2" pref="76" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <Component id="okButton" min="-2" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="imageSizePanel" linkSize="18" alignment="0" pref="460" max="32767" attributes="1"/>
+                  <Component id="previewPanel" linkSize="18" alignment="1" max="32767" attributes="3"/>
               </Group>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -59,8 +54,8 @@
                   <Component id="okButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="extComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="0" max="-2" attributes="1"/>
-              <Component id="imageSizePanel" min="-2" pref="95" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <Component id="imageSizePanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
               <Component id="previewPanel" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -118,64 +113,57 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="widthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="heightLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                          <Component id="widthLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="widthSpinner" linkSize="11" min="-2" pref="94" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="1">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="sizeLabel" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="heightSpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
-                      <Component id="widthSpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="heightLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="heightSpinner" linkSize="11" min="-2" pref="88" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" attributes="1">
+                          <Component id="xLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="resolutionComboBox" max="32767" attributes="1"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="yLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="xLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="resetButton" max="32767" attributes="1"/>
+                      <Component id="unitComboBox" alignment="0" pref="91" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="ySpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
-                      <Component id="xSpinner" alignment="0" min="-2" pref="88" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="resetButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="widthSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="widthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="heightSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="heightLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="resetButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="xSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="xLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="yLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="ySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="unitComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="heightSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="widthSpinner" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="heightLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="widthLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="sizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="resolutionComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="resetButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="xLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -209,31 +197,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="xLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="X Resolution:"/>
+            <Property name="text" type="java.lang.String" value="Resolution:"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="yLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Y Resolution:"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JSpinner" name="xSpinner">
-          <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="xSpinnerStateChanged"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="xSpinnerKeyReleased"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.xSpinner"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JSpinner" name="ySpinner">
-          <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="ySpinnerStateChanged"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="ySpinnerKeyReleased"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.ySpinner"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="resetButton">
           <Properties>
@@ -242,6 +207,30 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetButtonActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="resolutionComboBox">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resolutionComboBoxActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.resolutionComboBox"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="unitComboBox">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="unitComboBoxActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.unitComboBox"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="sizeLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="  "/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.sizeLabel"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -262,19 +251,14 @@
                   <Component id="buttonsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="previewLabel" min="-2" pref="210" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="23" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="buttonsPanel" linkSize="4" alignment="0" max="32767" attributes="1"/>
-                      <Component id="previewLabel" linkSize="4" alignment="0" pref="107" max="32767" attributes="1"/>
-                  </Group>
-                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
-              </Group>
+              <Component id="buttonsPanel" linkSize="4" alignment="0" max="32767" attributes="1"/>
+              <Component id="previewLabel" linkSize="4" alignment="0" pref="107" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
       </Layout>

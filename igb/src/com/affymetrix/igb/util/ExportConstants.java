@@ -11,40 +11,39 @@ public interface ExportConstants {
 
 	static final String PREF_FILE = "File";
 	static final String PREF_EXT = "Ext";
-	static final String PREF_X = "X"; // Horizontal Resolution
-	static final String PREF_Y = "Y"; // Vertical Resolution
+	static final String PREF_RESOLUTION = "Resolution"; // Horizontal and Vertical resolution will be the same value
+	static final String PREF_UNIT = "Unit";
 	static final String[] EXTENSION = {".jpeg", ".png"};
 	static final String[] DESCRIPTION = {
 		"Joint Photographic Experts Group (*.jpeg)",
 		"Portable Network Graphics (*.png)"
 	};
 	static final String DEFAULT_FILE = "export.png";
+	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600};
+	static final Object[] UNIT = { "pixels", "inches"};
 }
 
 class ImageInfo {
 
 	private double width;
 	private double height;
-	private int xResolution = 300;
-	private int yResolution = 300;
+	private int resolution = 300;
 
 	ImageInfo(double w, double h) {
 		width = w;
 		height = h;
 	}
 
-	ImageInfo(double w, double h, int x, int y) {
+	ImageInfo(double w, double h, int r) {
 		width = w;
 		height = h;
-		xResolution = x;
-		yResolution = y;
+		resolution = r;
 	}
 
-	public void reset(int w, int h, int x, int y) {
+	public void reset(int w, int h, int r) {
 		width = w;
 		height = h;
-		xResolution = x;
-		yResolution = y;
+		resolution = r;
 	}
 
 	public void setWidth(double w) {
@@ -63,20 +62,12 @@ class ImageInfo {
 		return height;
 	}
 
-	public void setXResolution(int x) {
-		xResolution = x;
+	public void setResolution(int r) {
+		resolution = r;
 	}
 
-	public int getXResolution() {
-		return xResolution;
-	}
-
-	public void setYResolution(int y) {
-		yResolution = y;
-	}
-
-	public int getYResolution() {
-		return yResolution;
+	public int getResolution() {
+		return resolution;
 	}
 
 	public double getWidthHeightRate() {

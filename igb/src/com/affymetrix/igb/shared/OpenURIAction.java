@@ -13,14 +13,17 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.net.URI;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.igb.util.MergeOptionChooser;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -34,13 +37,14 @@ public abstract class OpenURIAction extends GenericAction {
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
+	protected MergeOptionChooser chooser = null;
 	
 	public OpenURIAction(IGBService _igbService){
 		igbService = _igbService;
 	}
 	
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
-			final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack) {
+		final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack) {
 		igbService.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
 		
 		if (!mergeSelected) {
@@ -72,7 +76,42 @@ public abstract class OpenURIAction extends GenericAction {
 		return true;
 	}
 
+	protected MergeOptionChooser getFileChooser(String id) {
+		chooser = new MergeOptionChooser(id);
+		chooser.setMultiSelectionEnabled(true);
+		
+		addSupportedFiles();
+		
+		Set<String> all_known_endings = new HashSet<String>();
+		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
+			if (filter instanceof UniFileFilter) {
+				UniFileFilter uff = (UniFileFilter) filter;
+				uff.addCompressionEndings(GeneralUtils.compression_endings);
+				all_known_endings.addAll(uff.getExtensions());
+			}
+		}
+		UniFileFilter all_known_types = new UniFileFilter(
+				all_known_endings.toArray(new String[all_known_endings.size()]),
+				"Known Types");
+		all_known_types.setExtensionListInDescription(false);
+		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
+		chooser.addChoosableFileFilter(all_known_types);
+		chooser.setFileFilter(all_known_types);
+		return chooser;
+	}
+	
 	protected boolean checkFriendlyName(String friendlyName) {
+		if (!getFileChooser(getFriendlyNameID()).accept(new File(friendlyName))) {
+			return false;
+		}
 		return true;
 	}
+	
+	protected abstract void addSupportedFiles();
+	
+	protected abstract String getFriendlyNameID();
+	
+	protected abstract boolean loadSequenceAsTrack();
+	
+	
 }

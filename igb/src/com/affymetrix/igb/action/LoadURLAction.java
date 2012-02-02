@@ -1,11 +1,9 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.OpenURIAction;
-import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.net.URI;
@@ -21,7 +19,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author jnicol
  */
-public final class LoadURLAction extends OpenURIAction {
+public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	private static final long serialVersionUID = 1l;
 	private static final LoadURLAction ACTION = new LoadURLAction();
 
@@ -29,13 +27,11 @@ public final class LoadURLAction extends OpenURIAction {
 		return ACTION;
 	}
 
-	private static final MergeOptionChooser chooser = new MergeOptionChooser("loadURL");
 	private final JFrame gviewerFrame;
-	private static final Box mergeOptionBox = chooser.box;
 	private JDialog dialog = null;
 
 	private LoadURLAction() {
-		super(IGBServiceImpl.getInstance());
+		super();
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 
@@ -47,7 +43,8 @@ public final class LoadURLAction extends OpenURIAction {
 	private void loadURL() {
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION );
 		pane.setWantsInput(true);
-
+		chooser = getFileChooser(getID());
+		Box mergeOptionBox = chooser.box;
 		chooser.refreshSpeciesList();
 		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
 		dialog.setModal(true);
@@ -71,12 +68,19 @@ public final class LoadURLAction extends OpenURIAction {
 			ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL");
 			return;
 		}
-			
+		
+		String friendlyName = getFriendlyName(urlStr);
+		
+		if (!checkFriendlyName(friendlyName)) {
+			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
+			return;
+		}
+		
 		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.versionCB.getSelectedItem());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
-
-		openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem(), true);
+	
+		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem(), true);
 		
 	}
 
@@ -102,6 +106,11 @@ public final class LoadURLAction extends OpenURIAction {
 		return null;
 	}
 
+	@Override
+	protected String getID() {
+		return "loadURL";
+	}
+		
 	@Override
 	public boolean isPopup() {
 		return true;

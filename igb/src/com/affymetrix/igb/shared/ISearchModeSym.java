@@ -18,6 +18,10 @@ public interface ISearchModeSym extends ISearchMode {
 	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option);
 	/**
 	 * actually perform the search
+	 * note - returning null means that the implementation could not process
+	 *   the search, for example, SearchModeLucene cannot work if the file is not indexed.
+	 *   returning an empty List means that the implementation could process, but
+	 *   found no hits.
 	 * @param search_text the input text
 	 * @param chrFilter the chromosome / seq to search or null for all
 	 * @param statusHolder the status display for output messages

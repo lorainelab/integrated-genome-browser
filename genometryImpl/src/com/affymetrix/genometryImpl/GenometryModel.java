@@ -283,7 +283,10 @@ public final class GenometryModel {
 			if (sym == null) {
 				continue;
 			}
-			BioSeq seq = getSelectedSeqGroup().getSeq(sym);
+			BioSeq seq = null;
+			if (getSelectedSeqGroup() != null) { //fixes NPE
+				seq = getSelectedSeqGroup().getSeq(sym);
+			}
 			if (seq == null) {
 				continue;
 			}

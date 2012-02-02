@@ -92,7 +92,7 @@ public class UnionAnnotationOperator implements AnnotationOperator {
 
 	@Override
 	public int getOperandCountMin() {
-		return 1;
+		return 2;
 	}
 
 	@Override

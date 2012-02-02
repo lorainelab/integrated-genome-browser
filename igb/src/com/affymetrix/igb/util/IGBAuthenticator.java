@@ -226,8 +226,11 @@ public class IGBAuthenticator extends Authenticator {
 			}
 		}
 
-		serverNode.put(PREF_AUTH_TYPE, AuthType.ANONYMOUS.toString());
-		serverNode.parent().putBoolean(PREF_REMEMBER, true);
+		// This can be null in case of opening url.
+		if(serverNode != null){
+			serverNode.put(PREF_AUTH_TYPE, AuthType.ANONYMOUS.toString());
+			serverNode.parent().putBoolean(PREF_REMEMBER, true);
+		}
 
 		/* User cancelled or quit login prompt */
 		/*

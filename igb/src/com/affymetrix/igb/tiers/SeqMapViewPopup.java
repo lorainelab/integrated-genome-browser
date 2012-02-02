@@ -45,10 +45,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.CenterAtHairlineAction;
-import com.affymetrix.igb.action.FeatureInfoAction;
-import com.affymetrix.igb.action.ShowMinusStrandAction;
-import com.affymetrix.igb.action.ShowPlusStrandAction;
+import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -63,6 +60,7 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.concurrent.ExecutionException;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -904,57 +902,70 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	public static void addMisMatchTier(TierGlyph atier, String prefix) {
-		boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);
-		BioSeq aseq = gmodel.getSelectedSeq();
-		String human_name = prefix + ": " + atier.getLabel();
-		String unique_name = TrackStyle.getUniqueName(human_name);
-		String method = atier.getAnnotStyle().getMethodName();
-		SeqSymmetry tsym = aseq.getAnnotation(method);
-		if (tsym == null || tsym.getChildCount() == 0) {
-			ErrorHandler.errorPanel("Empty Track",
-					"The selected track is empty.  Can not make a coverage track for an empty track.");
-			return;
-		}
+	public static void addMisMatchTier(final TierGlyph atier, final String prefix) {
+		final BioSeq aseq = gmodel.getSelectedSeq();
+		
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
-		int[] startEnd = DependentData.getStartEnd(tsym, aseq);
-		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);		
+				String human_name = prefix + ": " + atier.getLabel();
+				String unique_name = TrackStyle.getUniqueName(human_name);
+				String method = atier.getAnnotStyle().getMethodName();
+				SeqSymmetry tsym = aseq.getAnnotation(method);
+				if (tsym == null || tsym.getChildCount() == 0) {
+					ErrorHandler.errorPanel("Empty Track",
+							"The selected track is empty.  Can not make a coverage track for an empty track.");
+					return false;
+				}
 
-		//Load Residues
-		if (!aseq.isAvailable(loadSpan)) {
-			boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
-					+ " not loaded.  \nDo you want to load residues?");
-			if (!confirm) {
-				return;
+				int[] startEnd = DependentData.getStartEnd(tsym, aseq);
+				SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+
+				LoadResidueAction loadResidue = new LoadResidueAction(loadSpan, true);
+				loadResidue.actionPerformed(null);
+
+				if (!aseq.isAvailable(loadSpan)) {
+					ErrorHandler.errorPanel("Sequence Not Loaded",
+							"Unable to load sequence. Cannot create mismatch graph.");
+					return false;
+				}
+
+				DependentData dd = new DependentData(unique_name, pileup ? DependentType.MISMATCH_PILEUP : DependentType.MISMATCH, method);
+				SymWithProps wrapperSym = TrackView.addToDependentList(dd);
+
+				if (wrapperSym == null) {
+					ErrorHandler.errorPanel("Empty Track",
+							"The selected track is empty.  Can not make a coverage track for an empty track.");
+					return false;
+				}
+
+				// Generate a non-persistent style.
+				// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
+				TrackStyle style = TrackStyle.getInstance(unique_name, false);
+				style.setTrackName(human_name);
+				style.setGlyphDepth(1);
+				style.setSeparate(false); // there are not separate (+) and (-) strands
+				style.setExpandable(false); // cannot expand and collapse
+				style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+				style.setFeature(atier.getAnnotStyle().getFeature());
+
+				return true;
 			}
-
-			if (!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)) {
-				ErrorHandler.errorPanel("No Residues Loaded",
-						"Could not load partial or full residues.");
-				return;
+			
+			@Override
+			public void done(){
+				try {
+					if(get()){
+						IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, null, ex);
+				}
 			}
-		}
-
-		DependentData dd = new DependentData(unique_name, pileup ? DependentType.MISMATCH_PILEUP : DependentType.MISMATCH, method);
-		SymWithProps wrapperSym = TrackView.addToDependentList(dd);
-
-		if (wrapperSym == null) {
-			ErrorHandler.errorPanel("Empty Track",
-					"The selected track is empty.  Can not make a coverage track for an empty track.");
-			return;
-		}
-
-		// Generate a non-persistent style.
-		// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
-		TrackStyle style = TrackStyle.getInstance(unique_name, false);
-		style.setTrackName(human_name);
-		style.setGlyphDepth(1);
-		style.setSeparate(false); // there are not separate (+) and (-) strands
-		style.setExpandable(false); // cannot expand and collapse
-		style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-		style.setFeature(atier.getAnnotStyle().getFeature());
-
-		IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
+		};
+		worker.execute();
 	}
 
 	private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {

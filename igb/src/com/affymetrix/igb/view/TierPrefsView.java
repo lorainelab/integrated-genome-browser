@@ -237,15 +237,17 @@ public class TierPrefsView implements ListSelectionListener {
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
 
-		//set Selected Rows
-		ITrackStyle style;
-		TierGlyph tier;
-		table.removeRowSelectionInterval(0, table.getRowCount() - 1);
-		for (TierLabelGlyph tlg : selectedTiers) {
-			tier = (TierGlyph) tlg.getInfo();
-			style = tier.getAnnotStyle();
+		if (table.getRowCount() > 0) {
+			//set Selected Rows
+			ITrackStyle style;
+			TierGlyph tier;
+			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
+			for (TierLabelGlyph tlg : selectedTiers) {
+				tier = (TierGlyph) tlg.getInfo();
+				style = tier.getAnnotStyle();
 
-			setRowSelection(style);
+				setRowSelection(style);
+			}
 		}
 	}
 

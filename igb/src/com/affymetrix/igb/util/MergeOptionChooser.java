@@ -78,6 +78,7 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	public MergeOptionChooser(String id) {
 		super(id);
 		
+		setAcceptAllFileFilterUsed(false);
 		speciesCB = new JRPComboBox(id + "_speciesCB");
 		versionCB = new JRPComboBox(id + "_versionCB");
 		speciesCB.addActionListener(speciesAction);

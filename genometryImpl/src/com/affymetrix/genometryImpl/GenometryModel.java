@@ -19,30 +19,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
 public final class GenometryModel {
 
 	private static GenometryModel smodel = new GenometryModel();
-	
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
 	 * SeqSymmetry objects. It appears that SeqSymmetry on many different
 	 * BioSeq objects can be selected simultaneously. Why? What does
 	 * selection mean in this context?
 	 */
-
 	private static final boolean DEBUG = false;
-
-	private final Map<String,AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String,AnnotatedSeqGroup>();
+	private final Map<String, AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String, AnnotatedSeqGroup>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
-
 	// maps sequences to lists of selected symmetries
-	private final Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
-
+	private final Map<BioSeq, List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq, List<SeqSymmetry>>();
 	private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
 	private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
 	private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
-
 	private AnnotatedSeqGroup selected_group = null;
 	private BioSeq selected_seq = null;
 
@@ -52,7 +45,7 @@ public final class GenometryModel {
 	public static GenometryModel getGenometryModel() {
 		return smodel;
 	}
-	
+
 	/***
 	 * Clear out all instance variables from genometry model
 	 * so that it can be reloaded.
@@ -60,7 +53,7 @@ public final class GenometryModel {
 	public void resetGenometryModel() {
 		this.seq_groups.clear();
 		this.seq2selectedSymsHash.clear();
-		
+
 		this.seq_selection_listeners.clear();
 		group_selection_listeners.clear();
 		sym_selection_listeners.clear();
@@ -69,9 +62,8 @@ public final class GenometryModel {
 		selected_seq = null;
 	}
 
-
 	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
-	public Map<String,AnnotatedSeqGroup> getSeqGroups() {
+	public Map<String, AnnotatedSeqGroup> getSeqGroups() {
 		return Collections.unmodifiableMap(seq_groups);
 	}
 
@@ -82,7 +74,9 @@ public final class GenometryModel {
 	}
 
 	public AnnotatedSeqGroup getSeqGroup(String group_syn) {
-		if (group_syn == null) { return null; }
+		if (group_syn == null) {
+			return null;
+		}
 		AnnotatedSeqGroup group = seq_groups.get(group_syn);
 		if (group == null) {
 			// try and find a synonym
@@ -131,7 +125,7 @@ public final class GenometryModel {
 	// TODO: modify so that fireGroupSelectionEvent() is only called if
 	//     group arg is different than previous selected_group
 	public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
-		if (DEBUG)  {
+		if (DEBUG) {
 			System.out.println("GenometryModel.setSelectedSeqGroup() called, ");
 			System.out.println("    group = " + (group == null ? null : group.getID()));
 		}
@@ -172,7 +166,7 @@ public final class GenometryModel {
 	 *     SeqSelectionEvent are important even if selected seq is same.
 	 */
 	public void setSelectedSeq(BioSeq seq, Object src) {
-		if (DEBUG)  {
+		if (DEBUG) {
 			System.out.println("GenometryModel.setSelectedSeq() called, ");
 			System.out.println("    seq = " + (seq == null ? null : seq.getID()));
 		}
@@ -200,7 +194,7 @@ public final class GenometryModel {
 	void fireSeqSelectionEvent(Object src, List<BioSeq> slist) {
 		SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
 		for (SeqSelectionListener listener : seq_selection_listeners) {
-				listener.seqSelectionChanged(evt);
+			listener.seqSelectionChanged(evt);
 		}
 	}
 
@@ -211,7 +205,7 @@ public final class GenometryModel {
 	public void removeSymSelectionListener(SymSelectionListener listener) {
 		sym_selection_listeners.remove(listener);
 	}
-	
+
 	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
 		if (DEBUG) {
 			System.out.println("Firing event: " + syms.size());
@@ -230,7 +224,7 @@ public final class GenometryModel {
 	 *  @param syms A List of SeqSymmetry objects to select.
 	 *  @param src The object responsible for selecting the sequences.
 	 */
-	public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src)  {
+	public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src) {
 		setSelectedSymmetries(syms);
 		fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
 	}
@@ -248,10 +242,10 @@ public final class GenometryModel {
 	 */
 	public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> syms, Object src) {
 		List<BioSeq> seqs_with_selections = setSelectedSymmetries(syms);
-		if (! seqs_with_selections.contains(getSelectedSeq())) {
+		if (!seqs_with_selections.contains(getSelectedSeq())) {
 			if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
 				BioSeq seq = null;
-				if (! seqs_with_selections.isEmpty()) {
+				if (!seqs_with_selections.isEmpty()) {
 					seq = seqs_with_selections.get(0);
 				}
 				setSelectedSeq(seq, src);
@@ -274,7 +268,7 @@ public final class GenometryModel {
 			System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
 		}
 
-		HashMap<BioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
+		HashMap<BioSeq, List<SeqSymmetry>> seq2SymsHash = new HashMap<BioSeq, List<SeqSymmetry>>();
 
 		// for each ID found in the ID2sym hash, add it to the owning sequences
 		// list of selected symmetries
@@ -283,7 +277,10 @@ public final class GenometryModel {
 			if (sym == null) {
 				continue;
 			}
-			BioSeq seq = getSelectedSeqGroup().getSeq(sym);
+			BioSeq seq = null;
+			if (getSelectedSeqGroup() != null) { //fixes NPE
+				seq = getSelectedSeqGroup().getSeq(sym);
+			}
 			if (seq == null) {
 				continue;
 			}
@@ -302,7 +299,7 @@ public final class GenometryModel {
 		clearSelectedSymmetries(); // do not send an event yet
 
 		// now perform the selections for each sequence that was matched
-		for(Map.Entry<BioSeq,List<SeqSymmetry>> entry : seq2SymsHash.entrySet()) {
+		for (Map.Entry<BioSeq, List<SeqSymmetry>> entry : seq2SymsHash.entrySet()) {
 			if (DEBUG) {
 				System.out.println("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
 			}
@@ -315,16 +312,18 @@ public final class GenometryModel {
 	// Selects a List of SeqSymmetry objects for a particular BioSeq.
 	// Does not send a selection event.
 	private void setSelectedSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
-		if (seq == null) { return; }
+		if (seq == null) {
+			return;
+		}
 		// Should it complain if any of the syms are not on the specified seq?
 		// (This is not an issue since this is not called from outside of this class.)
 
-		if (DEBUG)  {
+		if (DEBUG) {
 			System.out.println("GenometryModel.setSelectedSymmetries() called, ");
 			System.out.println("    syms = " + syms);
 		}
 		// set the selected syms for the sequence
-		if (syms != null && ! syms.isEmpty()) {
+		if (syms != null && !syms.isEmpty()) {
 			seq2selectedSymsHash.put(seq, syms);
 		} else {
 			seq2selectedSymsHash.remove(seq); // to avoid memory leaks when a seq is deleted

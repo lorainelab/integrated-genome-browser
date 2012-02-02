@@ -873,7 +873,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			protected void finished() {
 				try {
-					if (Thread.currentThread().isInterrupted()) {
+					if (Thread.currentThread().isInterrupted() || isCancelled())
 						return;
 					}
 

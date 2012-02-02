@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.filter;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,12 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 
-public class SymmetryFilterSearchProps implements SymmetryFilterSearchI {
-	private static final String ID_SEARCH_TERM = "id";
-	private static final int ID_EXACT_RANK = 1000000;
-	private static final int ID_REGEX_RANK = 10000;
-	private static final int PROPERTY_EXACT_RANK = 100;
-	private static final int PROPERTY_REGEX_RANK = 1;
+public class SymmetryFilterProps implements SymmetryFilterI {
 	private Object param;
 	private Pattern regex;
 	private SymWithProps swp;
@@ -45,7 +39,31 @@ public class SymmetryFilterSearchProps implements SymmetryFilterSearchI {
 
 	@Override
 	public boolean filterSymmetry(SeqSymmetry sym) {
-		return searchSymmetry(sym) != null;
+		boolean passes = false;
+		Matcher matcher = regex.matcher("");
+		match = sym.getID();
+		if (match != null) {
+			matcher.reset(match);
+			if (matcher.matches()) {
+				passes = true;
+			}
+		}
+		if (sym instanceof SymWithProps && !passes) {
+			swp = (SymWithProps) sym;
+
+			// Iterate through each properties.
+			for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
+				if (prop.getValue() != null) {
+					match = ArrayUtils.toString(prop.getValue());
+					matcher.reset(match);
+					if (matcher.matches()) {
+						passes = true;
+						break;
+					}
+				}
+			}
+		}
+		return passes;
 	}
 
 	private Pattern getRegex(String search_text)  {
@@ -67,40 +85,5 @@ public class SymmetryFilterSearchProps implements SymmetryFilterSearchI {
 			regex = null;
 		}
 		return regex;
-	}
-
-	@Override
-	public SearchResult searchSymmetry(SeqSymmetry sym) {
-		Matcher matcher = regex.matcher("");
-		Map<String,String> searchTerms = new HashMap<String,String>();
-		int ranking = 0;
-		match = sym.getID();
-		if (match != null) {
-			matcher.reset(match);
-			if (matcher.matches()) {
-				ranking = match.equals(param) ? ID_EXACT_RANK : ID_REGEX_RANK;
-				searchTerms.put(ID_SEARCH_TERM, (String)param);
-			}
-		}
-		if (sym instanceof SymWithProps) {
-			swp = (SymWithProps) sym;
-
-			// Iterate through each properties.
-			for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
-				if (prop.getValue() != null) {
-					match = ArrayUtils.toString(prop.getValue());
-					matcher.reset(match);
-					if (matcher.matches()) {
-						ranking += match.equals(param) ? PROPERTY_EXACT_RANK : PROPERTY_REGEX_RANK;
-						searchTerms.put(prop.getKey(), (String)param);
-					}
-				}
-			}
-		}
-		SearchResult result = null;
-		if (ranking > 0) {
-			result = new SearchResult(sym, searchTerms, ranking);
-		}
-		return result;
 	}
 }

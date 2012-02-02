@@ -10,7 +10,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 //import com.affymetrix.genometryImpl.filter.SymmetryFilterSearchId;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterSearchProps;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterProps;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 
@@ -23,7 +23,7 @@ public class Activator implements BundleActivator {
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
 			System.out.println("searchModeSymmetryFilterRegistrations.registerService");
-        	searchModeSymmetryFilterRegistrations.add(bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterSearchProps(), 2000), null));
+        	searchModeSymmetryFilterRegistrations.add(bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterProps(), 2000), null));
 //        	searchModeSymmetryFilterRegistrations.add(bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterSearchId(), 4000), null));
         }
         catch (Exception ex) {

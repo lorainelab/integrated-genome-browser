@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.filter.SearchResult;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -388,11 +387,10 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		return mergedSpans;
 	}
 
-	private List<SeqSpan> findSpansFromSearchResult(List<SearchResult> searchResults) {
+	private List<SeqSpan> findSpansFromSyms(List<SeqSymmetry> syms) {
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
-		if (searchResults != null) {
-			for (SearchResult searchResult : searchResults) {
-				SeqSymmetry sym = searchResult.getSym();
+		if (syms != null) {
+			for (SeqSymmetry sym : syms) {
 				for (int i = 0; i < sym.getSpanCount(); i++) {
 					spans.add(sym.getSpan(i));
 				}
@@ -422,14 +420,13 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		for (ISearchModeSym searchMode : modes) {
 			if (searchMode.checkInput(search_text, null, null) == null && searchMode.searchAllUse() >= 0) {
 				for (TypeContainerAnnot trackSym : trackSyms) {
-					List<SearchResult> searchResults = null;
+					List<SeqSymmetry> searchResults = null;
 					String errorMessage = searchMode.checkInput(search_text, null, null);
 					if (errorMessage == null) {
 						searchResults = searchMode.searchTrack(search_text, null, trackSym, DummyStatus.getInstance(), false);
 					}
 					if (searchResults != null) {
-						Collections.sort(searchResults);
-						List<SeqSpan> rawSpans = findSpansFromSearchResult(searchResults);
+						List<SeqSpan> rawSpans = findSpansFromSyms(searchResults);
 						if (rawSpans.size() > 0) {
 							zoomToSeqAndSpan(gview, rawSpans.get(0));
 							return rawSpans;

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-public class SymmetryFilterSearchId implements SymmetryFilterSearchI {
+public class SymmetryFilterId implements SymmetryFilterI {
 	private static final int ID_RANK = 1000;
 	private Object param;
 	private Pattern regex;
@@ -37,7 +37,25 @@ public class SymmetryFilterSearchId implements SymmetryFilterSearchI {
 
 	@Override
 	public boolean filterSymmetry(SeqSymmetry sym) {
-		return searchSymmetry(sym) != null;
+		boolean passes = false;
+		if (regex == null) {
+			throw new IllegalStateException("invalid filter");
+		}
+		Matcher matcher = regex.matcher("");
+		int ranking = 0;
+		match = sym.getID();
+		if (match != null) {
+			matcher.reset(match);
+			if (matcher.matches()) {
+				ranking = ID_RANK;
+			}
+			if (ranking > 0) {
+				Map<String,String> searchTerms = new HashMap<String,String>();
+				searchTerms.put("id", sym.getID());
+				passes = true;
+			}
+		}
+		return passes;
 	}
 
 	private Pattern getRegex(String search_text)  {
@@ -59,28 +77,5 @@ public class SymmetryFilterSearchId implements SymmetryFilterSearchI {
 			regex = null;
 		}
 		return regex;
-	}
-
-	@Override
-	public SearchResult searchSymmetry(SeqSymmetry sym) {
-		if (regex == null) {
-			throw new IllegalStateException("invalid filter");
-		}
-		Matcher matcher = regex.matcher("");
-		int ranking = 0;
-		SearchResult result = null;
-		match = sym.getID();
-		if (match != null) {
-			matcher.reset(match);
-			if (matcher.matches()) {
-				ranking = ID_RANK;
-			}
-			if (ranking > 0) {
-				Map<String,String> searchTerms = new HashMap<String,String>();
-				searchTerms.put("id", sym.getID());
-				result = new SearchResult(sym, searchTerms, ranking);
-			}
-		}
-		return result;
 	}
 }

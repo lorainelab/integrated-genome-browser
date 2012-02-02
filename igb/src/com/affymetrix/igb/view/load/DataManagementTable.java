@@ -247,17 +247,17 @@ class JTableX extends JTable {
 		setGridColor(new Color(11184810));
 		setRowHeight(20);
 		//setAutoResizeMode(2);
-		
-		
-		JTableHeader header = getTableHeader();
-        header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
-        header.setForeground(Color.black);
-		header.setBackground(Color.white);
-        header.setReorderingAllowed(false);
-        header.setResizingAllowed(true);		
 
-        setAutoscrolls(true);
-        setRequestFocusEnabled(false);
+
+		JTableHeader header = getTableHeader();
+		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+		header.setForeground(Color.black);
+		header.setBackground(Color.white);
+		header.setReorderingAllowed(false);
+		header.setResizingAllowed(true);
+
+		setAutoscrolls(true);
+		setRequestFocusEnabled(false);
 	}
 
 	void setRowEditorModel(int column, RowEditorModel rm) {
@@ -390,6 +390,13 @@ class JTableX extends JTable {
 				return columnToolTips[realIndex];
 			}
 		};
+	}
+
+	public void stopCellEditing() {
+		TableCellEditor tce = getCellEditor();
+		if (tce != null) {
+			tce.cancelCellEditing();
+		}
 	}
 }
 

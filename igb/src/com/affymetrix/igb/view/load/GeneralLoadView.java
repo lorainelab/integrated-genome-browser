@@ -71,7 +71,7 @@ public final class GeneralLoadView {
 	private static IGBService igbService;
 	//gui components 
 	private static JRPButton all_residuesB;
-	private static javax.swing.JTable dataManagementTable;
+	private static JTableX dataManagementTable;
 	private static JRPButton partial_residuesB;
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
@@ -446,6 +446,7 @@ public final class GeneralLoadView {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
+		dataManagementTable.stopCellEditing(); 
 		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
 
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
@@ -490,7 +491,7 @@ public final class GeneralLoadView {
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-		DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+		DataManagementTable.setComboBoxEditors(dataManagementTable, !GeneralLoadView.IsGenomeSequence());
 	}
 
 	/**

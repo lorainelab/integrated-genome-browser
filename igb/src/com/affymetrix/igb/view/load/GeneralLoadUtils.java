@@ -1150,15 +1150,6 @@ public final class GeneralLoadUtils {
 			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
-
-		String uriString = uri.toASCIIString().toLowerCase();
-		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		String ext = ParserController.getExtension(unzippedStreamName);
-		
-		if(FileTypeHolder.getInstance().getFileTypeHandler(ext) == null){
-			ErrorHandler.errorPanel("FILE TYPE NOT SUPPORTED", "File type for \n" +uri + "\nis not supported in IGB. ");
-			return;
-		}
 		
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 

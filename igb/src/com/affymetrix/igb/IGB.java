@@ -288,8 +288,8 @@ public final class IGB extends Application
 
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 
-		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
+		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
 	}

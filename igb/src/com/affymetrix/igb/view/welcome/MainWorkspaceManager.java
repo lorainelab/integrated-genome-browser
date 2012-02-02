@@ -51,14 +51,14 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	
 	public MainWorkspaceManager(){
 		this.setLayout( new CardLayout());
-		add( new WelcomePage( getWelcomePane() ), WELCOME_PANE);
-		CardLayout layout = (CardLayout) getLayout();
-        layout.show( this, WELCOME_PANE );    
 		gmodel = GenometryModel.getGenometryModel();
 	}
+	
 	public void setSeqMapViewObj( SeqMapView obj){
 		add(obj, SEQ_MAP_PANE);
+		add(new WelcomePage(getWelcomePane()), WELCOME_PANE);
 	}
+	
 	/**
 	 * Returns welcome JPanel
 	 * @return 

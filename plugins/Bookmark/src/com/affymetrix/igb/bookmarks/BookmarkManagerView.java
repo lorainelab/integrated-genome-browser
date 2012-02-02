@@ -174,25 +174,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			}
 		};
 
-		popup.add(delete_action);
-		popup.addSeparator();
 		popup.add(thing.getPropertiesAction());
 
 		MouseAdapter mouse_adapter = new MouseAdapter() {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (processDoubleClick(e)) {
-					return;
-				}
-
-				if (popup.isPopupTrigger(e)) {
-					popup.show(tree, e.getX(), e.getY());
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
 				if (processDoubleClick(e)) {
 					return;
 				}
@@ -515,7 +502,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
 		public javax.swing.JTextArea comment_text_area = new javax.swing.JTextArea();
-		BookmarkListEditor bl_editor;
+		BookmarkProperties bl_editor;
 		TreePath selected_path = null;
 		public BookmarkList selected_bl = null;
 		BookmarkList previousSelected_bl = null;
@@ -565,7 +552,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			this.comment_text_area.setEnabled(false);
 			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
 
-			bl_editor = new BookmarkListEditor(def_tree_model);
+			bl_editor = new BookmarkProperties(def_tree_model);
 		}
 
 		/** Sets the instance of IGBService.  This is the instance

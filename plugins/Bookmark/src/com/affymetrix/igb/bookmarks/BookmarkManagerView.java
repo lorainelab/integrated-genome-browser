@@ -599,7 +599,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				selected_path = selections[0];
 				selected_bl = (BookmarkList) selected_path.getLastPathComponent();
 				Object user_object = selected_bl.getUserObject();
-				name_text_field.setText(user_object.toString());
+				name_text_field.setText(selected_bl.toString());
 				comment_text_area.setText(selected_bl.getComment());
 				
 				if (user_object instanceof Bookmark) {

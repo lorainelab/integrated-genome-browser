@@ -4,20 +4,14 @@ package com.affymetrix.igb.action;
 
 import java.io.File;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.igb.IGB;
 
-import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.util.MergeOptionChooser;
 
 
@@ -25,12 +19,11 @@ import com.affymetrix.igb.util.MergeOptionChooser;
  *
  * @author hiralv
  */
-public abstract class AbstractLoadFileAction extends OpenURIAction {
+public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction {
 
 	private static final long serialVersionUID = 1L;
 	
 	private final FileTracker load_dir_tracker;
-	protected MergeOptionChooser chooser = null;
 	protected final JFrame gviewerFrame;
 
 	/**
@@ -38,8 +31,7 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	protected AbstractLoadFileAction() {
-		super(IGBServiceImpl.getInstance());
-		
+		super();
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	}
@@ -48,31 +40,7 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 		super.actionPerformed(e);
 		loadFile(load_dir_tracker, gviewerFrame, getId(), loadSequenceAsTrack());
 	}
-	
-	protected MergeOptionChooser getFileChooser(String id) {
-		chooser = new MergeOptionChooser(id);
-		chooser.setMultiSelectionEnabled(true);
 		
-		addSupportedFiles();
-		
-		Set<String> all_known_endings = new HashSet<String>();
-		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
-			if (filter instanceof UniFileFilter) {
-				UniFileFilter uff = (UniFileFilter) filter;
-				uff.addCompressionEndings(GeneralUtils.compression_endings);
-				all_known_endings.addAll(uff.getExtensions());
-			}
-		}
-		UniFileFilter all_known_types = new UniFileFilter(
-				all_known_endings.toArray(new String[all_known_endings.size()]),
-				"Known Types");
-		all_known_types.setExtensionListInDescription(false);
-		all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
-		chooser.addChoosableFileFilter(all_known_types);
-		chooser.setFileFilter(all_known_types);
-		return chooser;
-	}
-	
 	/** Load a file into the global singleton genometry model. */
 	private void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame, String id, boolean loadAsTrack) {
 		MergeOptionChooser fileChooser = getFileChooser(id);
@@ -109,13 +77,6 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 		openURI(uri, fileName, true, group, group.getOrganism(), false);
 	}
 
-	@Override
-	protected boolean checkFriendlyName(String friendlyName) {
-		if (!getFileChooser(getFriendlyNameID()).accept(new File(friendlyName))) {
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public String getIconPath() {
@@ -126,13 +87,5 @@ public abstract class AbstractLoadFileAction extends OpenURIAction {
 	public boolean isPopup() {
 		return true;
 	}
-
-	protected abstract void addSupportedFiles();
 	
-	protected abstract String getID();
-	
-	protected abstract String getFriendlyNameID();
-
-	protected abstract boolean loadSequenceAsTrack();
-
 }

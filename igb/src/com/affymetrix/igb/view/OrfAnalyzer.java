@@ -31,6 +31,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -283,16 +284,24 @@ public final class OrfAnalyzer extends JComponent
 	}
 
 	private void adjustMap() {
-		AffyTieredMap tiermap = smv.getSeqMap();
-		List<SeqSymmetry> syms = smv.getSelectedSyms();
-		if(!syms.isEmpty())
-			smv.select(new ArrayList<SeqSymmetry>(1), true);
-		
-		tiermap.repack();
-		tiermap.stretchToFit(false, true);
-		tiermap.updateWidget();
-		
-		if(!syms.isEmpty())
-			smv.select(syms, true);
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				AffyTieredMap tiermap = smv.getSeqMap();
+				List<SeqSymmetry> syms = smv.getSelectedSyms();
+				if (!syms.isEmpty()) {
+					smv.select(new ArrayList<SeqSymmetry>(1), true);
+				}
+
+				tiermap.repack();
+				tiermap.stretchToFit(false, true);
+				tiermap.updateWidget();
+
+				if (!syms.isEmpty()) {
+					smv.select(syms, true);
+				}
+			}
+		});
+
 	}
 }

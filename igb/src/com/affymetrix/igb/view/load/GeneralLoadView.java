@@ -450,6 +450,7 @@ public final class GeneralLoadView {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
+		dataManagementTable.stopCellEditing(); 
 		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
 
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);

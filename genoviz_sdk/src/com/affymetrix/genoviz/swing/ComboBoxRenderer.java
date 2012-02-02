@@ -14,6 +14,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ *
+ * @author dcnorris
+ */
 public class ComboBoxRenderer extends DefaultCellEditor
 		implements TableCellEditor, TableCellRenderer, TableCellEditorRenderer {
 
@@ -24,12 +28,12 @@ public class ComboBoxRenderer extends DefaultCellEditor
 	public ComboBoxRenderer(Object[] options) {
 		super(new JComboBox(options));
 		setClickCountToStart(1);
-		this.combobox = ((JComboBox) getComponent());
-		this.combobox.setBackground(Color.white);
-		this.combobox.setOpaque(true);
-		this.combobox.setBorder(new EmptyBorder(0, 0, 0, 0));
-		this.combobox.setFocusable(false);
-		this.combobox.addActionListener(new ActionListener() {
+		combobox = ((JComboBox) getComponent());
+		combobox.setBackground(Color.white);
+		combobox.setOpaque(true);
+		combobox.setBorder(new EmptyBorder(0, 0, 0, 0));
+		combobox.setFocusable(false);
+		combobox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				if (ComboBoxRenderer.this.cancelWhenZero == 0) {
@@ -52,23 +56,23 @@ public class ComboBoxRenderer extends DefaultCellEditor
 
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		this.cancelWhenZero += 1;
-		this.combobox.setSelectedItem(value);
-		this.cancelWhenZero -= 1;
+		cancelWhenZero += 1;
+		combobox.setSelectedItem(value);
+		cancelWhenZero -= 1;
 		return this.panel;
 	}
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		this.cancelWhenZero += 1;
-		this.combobox.setSelectedItem(value);
-		this.cancelWhenZero -= 1;
+		cancelWhenZero += 1;
+		combobox.setSelectedItem(value);
+		cancelWhenZero -= 1;
 		return this.panel;
 	}
 
 	@Override
 	public Object getCellEditorValue() {
-		return this.combobox.getSelectedItem();
+		return combobox.getSelectedItem();
 	}
 
 	@Override
@@ -81,18 +85,13 @@ public class ComboBoxRenderer extends DefaultCellEditor
 	}
 
 	public boolean isFullyEngaged() {
-		return this.combobox.isPopupVisible();
+		return combobox.isPopupVisible();
 	}
 
 	@Override
 	public void cancelCellEditing() {
-		if (this.cancelWhenZero == 0) {
+		if (cancelWhenZero == 0) {
 			super.cancelCellEditing();
 		}
 	}
-}
-
-abstract interface TableCellEditorRenderer extends TableCellEditor {
-
-	abstract boolean isFullyEngaged();
 }

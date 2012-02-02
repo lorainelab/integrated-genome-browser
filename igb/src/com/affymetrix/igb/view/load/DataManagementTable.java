@@ -8,16 +8,19 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.PartialLineBorder;
+import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.util.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,10 @@ import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.util.EventObject;
 
 /**
@@ -122,9 +129,9 @@ public final class DataManagementTable {
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
 			action.addEditorForRow(row, buttonEditor);
-			JRPTextField trackNameFieldEditor = new JRPTextField("LoadModeTable_trackNameFieldEditor");
-			DefaultCellEditor textEditor = new DefaultCellEditor(trackNameFieldEditor);
-			text.addEditorForRow(row, textEditor);
+			JRPTextFieldTableCellRenderer trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor",
+					vFeature.getStyle().getTrackName());
+			text.addEditorForRow(row, trackNameFieldEditor);
 			color.addEditorForRow(row, cellEditor);
 		}
 
@@ -153,6 +160,7 @@ public final class DataManagementTable {
 			textField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
 			textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
 			textField.setBorder(null);
+			textField.setHorizontalAlignment(JRPTextField.CENTER);
 		}
 
 		public Component getTableCellRendererComponent(
@@ -178,12 +186,12 @@ public final class DataManagementTable {
 			}
 		}
 	}
-
 }
+
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends JTable implements TrackStylePropertyListener {
+class JTableX extends JTable implements TrackStylePropertyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
@@ -226,18 +234,17 @@ class JTableX extends JTable implements TrackStylePropertyListener {
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
 		setRowHeight(20);
-		//setAutoResizeMode(2);
-		
-		
-		JTableHeader header = getTableHeader();
-        header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
-        header.setForeground(Color.black);
-		header.setBackground(Color.white);
-        header.setReorderingAllowed(false);
-        header.setResizingAllowed(true);		
 
-        setAutoscrolls(true);
-        setRequestFocusEnabled(false);
+
+		JTableHeader header = getTableHeader();
+		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+		header.setForeground(Color.black);
+		header.setBackground(Color.white);
+		header.setReorderingAllowed(false);
+		header.setResizingAllowed(true);
+
+		setAutoscrolls(true);
+		setRequestFocusEnabled(false);
 	}
 
 	void setRowEditorModel(int column, RowEditorModel rm) {
@@ -301,6 +308,9 @@ class JTableX extends JTable implements TrackStylePropertyListener {
 				}
 			}
 
+		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
+			JRPTextFieldTableCellRenderer tcr = new JRPTextFieldTableCellRenderer("DataManagementTable_TrackNameColumnRenderer", vFeature.getStyle().getTrackName());
+			return tcr;
 		}
 		return super.getCellRenderer(row, column);
 	}
@@ -371,12 +381,98 @@ class JTableX extends JTable implements TrackStylePropertyListener {
 			}
 		};
 	}
-	
+
 	public void trackstylePropertyChanged(EventObject eo) {
-		if(eo.getSource() == this.getModel())
+		if (eo.getSource() == this.getModel()) {
 			return;
-		
+		}
+
 		repaint();
+	}
+
+	@Override
+	public Component prepareRenderer(TableCellRenderer tcr, int i, int i2) {
+		Component component = super.prepareRenderer(tcr, i, i2);
+		return setComponentBackground(component, i, i2);
+	}
+
+	@Override
+	public Component prepareEditor(TableCellEditor tce, int i, int i2) {
+		Component component = super.prepareEditor(tce, i, i2);
+		return setComponentBackground(component, i, i2);
+	}
+
+	private Component setComponentBackground(Component c, int i, int i2) {
+		if (i2 == DataManagementTable.FOREGROUND_COLUMN
+				|| i2 == DataManagementTable.BACKGROUND_COLUMN) { //using column name to fix buggy behavior with the column number
+			return c;
+		}
+		if (isCellEditable(i, i2)) {
+			c.setBackground(Color.WHITE);
+		} else {
+			c.setBackground(new Color(235, 235, 235));
+		}
+		return c;
+	}
+
+	public void mouseMoved(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseExited(MouseEvent e) {
+		stopCellEditing();
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mousePressed(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		//do nothing
+	}
+
+	public void mouseDragged(MouseEvent e) {
+		//do nothing
+	}
+
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		//do nothing
+	}
+
+	private void switchEditors(MouseEvent paramMouseEvent) {
+		Point point = paramMouseEvent.getPoint();
+		if (point != null) {
+			int rowIndex = rowAtPoint(point);
+			int columnIndex = columnAtPoint(point);
+			if ((rowIndex != getEditingRow()) || (columnIndex != getEditingColumn())) {
+				if (isEditing()) {
+					TableCellEditor tce = getCellEditor();
+					if (((tce instanceof TableCellEditorRenderer)) && (!((TableCellEditorRenderer) tce).isFullyEngaged())
+							&& (!tce.stopCellEditing())) {
+						tce.cancelCellEditing();
+					}
+				}
+				if ((!isEditing())
+						&& (rowIndex != -1) && (isCellEditable(rowIndex, columnIndex))) {
+					editCellAt(rowIndex, columnIndex);
+				}
+			}
+		}
+	}
+
+	public void stopCellEditing() {
+		TableCellEditor tce = getCellEditor();
+		if (tce != null) {
+			tce.cancelCellEditing();
+		}
 	}
 }
 

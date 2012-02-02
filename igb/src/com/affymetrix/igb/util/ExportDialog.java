@@ -348,7 +348,7 @@ public class ExportDialog implements ExportConstants {
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
 		long size = (long) imageInfo.getWidth() * (long) imageInfo.getHeight();
 		if (size > heapFreeSize) {
-			ErrorHandler.errorPanel("The image size is invalid");
+			ErrorHandler.errorPanel("The image size is invalid.");
 			return false;
 		}
 

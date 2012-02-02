@@ -101,7 +101,7 @@ public class ExportDialog implements ExportConstants {
 		sm = new SpinnerNumberModel(height, 0, 10000, 1);
 		heightSpinner.setModel(sm);
 
-		reSetWidthHeight(width, height);
+		resetWidthHeight(width, height);
 	}
 
 	public static void setComponent(Component c) {
@@ -134,26 +134,6 @@ public class ExportDialog implements ExportConstants {
 			extension = filePath.substring(indexOfExtension, filePath.length());
 		}
 		return extension;
-	}
-
-	public static void exportScreenshot(File f, String ext) throws IOException {
-		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
-				component.getWidth(), component.getHeight());
-		Graphics g = image.createGraphics();
-		component.paintAll(g);
-
-		if (f != null) {
-
-			if (!f.getName().toLowerCase().endsWith(ext)) {
-				String correctedFilename = f.getAbsolutePath() + ext;
-				f = new File(correctedFilename);
-			}
-
-			image = GraphicsUtil.resizeImage(image,
-					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-
-			writeImage(image, ext, f);
-		}
 	}
 
 	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
@@ -326,10 +306,30 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
+	public static void exportScreenshot(File f, String ext) throws IOException {
+		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
+				component.getWidth(), component.getHeight());
+		Graphics g = image.createGraphics();
+		component.paintAll(g);
+
+		if (f != null) {
+
+			if (!f.getName().toLowerCase().endsWith(ext)) {
+				String correctedFilename = f.getAbsolutePath() + ext;
+				f = new File(correctedFilename);
+			}
+
+			image = GraphicsUtil.resizeImage(image,
+					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+
+			writeImage(image, ext, f);
+		}
+	}
+
 	private boolean isValidExportFile(String ext, String path) {
 		if (!exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
-			ErrorHandler.errorPanel("The path or image format is invalid.");
+			ErrorHandler.errorPanel("The output path is invalid.");
 			filePathTextField.setText(path);
 			filePathTextField.grabFocus();
 			exportFile = new File(path);
@@ -341,9 +341,15 @@ public class ExportDialog implements ExportConstants {
 			String newPath = exportFile.getAbsolutePath()
 					+ ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-			System.out.println(newPath);
-
 			exportFile = new File(newPath);
+		}
+
+		// if image size is too large...
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
+		long size = (long) imageInfo.getWidth() * (long) imageInfo.getHeight();
+		if (size > heapFreeSize) {
+			ErrorHandler.errorPanel("The image size is invalid");
+			return false;
 		}
 
 		if (exportFile.exists()) {
@@ -366,6 +372,7 @@ public class ExportDialog implements ExportConstants {
 		widthSpinner.setValue(originalInfo.getWidth());
 		heightSpinner.setValue(originalInfo.getHeight());
 		resolutionComboBox.setSelectedItem(originalInfo.getResolution());
+		unitComboBox.setSelectedItem(UNIT[0]);
 	}
 
 	public void previewImage() {
@@ -400,7 +407,7 @@ public class ExportDialog implements ExportConstants {
 			heightSpinner.setValue(newHeight);
 			isWidthSpinner = false;
 
-			reSetWidthHeight(newWidth, newHeight);
+			resetWidthHeight(newWidth, newHeight);
 		}
 	}
 
@@ -413,7 +420,7 @@ public class ExportDialog implements ExportConstants {
 			widthSpinner.setValue(newWidth);
 			isHeightSpinner = false;
 
-			reSetWidthHeight(newWidth, newHeight);
+			resetWidthHeight(newWidth, newHeight);
 		}
 	}
 
@@ -431,7 +438,7 @@ public class ExportDialog implements ExportConstants {
 		widthSpinner.setValue(newWidth);
 	}
 
-	private void reSetWidthHeight(double width, double height) {
+	private void resetWidthHeight(double width, double height) {
 		if (unit != null) {
 			if (unit.equals(UNIT[1])) {
 				// Convert back from inches to pixels

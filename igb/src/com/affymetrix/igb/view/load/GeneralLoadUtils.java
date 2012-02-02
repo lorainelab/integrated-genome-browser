@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
@@ -1064,6 +1065,15 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
+		String uriString = uri.toASCIIString().toLowerCase();
+		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+		String ext = ParserController.getExtension(unzippedStreamName);
+		
+		if(FileTypeHolder.getInstance().getFileTypeHandler(ext) == null){
+			ErrorHandler.errorPanel("FILE TYPE NOT SUPPORTED", "File type for \n" +uri + "\nis not supported in IGB. ");
+			return;
+		}
+		
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 
 		if (gFeature == null) {

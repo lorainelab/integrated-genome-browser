@@ -505,8 +505,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		thing = null;
 		tree = null;
 	}
-	
-		/** A JPanel that listens for TreeSelectionEvents, displays
+
+	/** A JPanel that listens for TreeSelectionEvents, displays
 	 *  the name(s) of the selected item(s), and may allow you to edit them.
 	 */
 	public class BottomThing extends JPanel implements TreeSelectionListener {
@@ -590,24 +590,19 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			name_text_field.setText("");
 			comment_text_area.setText("");
-			if (selections == null || selections.length != 1) {
-				name_text_field.setText("");
-				comment_text_area.setText("");
-				comment_text_area.setEnabled(false);
-				name_text_field.setEnabled(false);
-				properties_action.setEnabled(false);
-				goto_action.setEnabled(false);
-				return;
-			} else {
+			comment_text_area.setEnabled(false);
+			name_text_field.setEnabled(false);
+			properties_action.setEnabled(false);
+			goto_action.setEnabled(false);
+
+			if (selections != null && selections.length == 1) {
 				selected_path = selections[0];
 				selected_bl = (BookmarkList) selected_path.getLastPathComponent();
 				Object user_object = selected_bl.getUserObject();
-				//bl_editor.setBookmarkList(selected_bl);
+				name_text_field.setText(user_object.toString());
+				comment_text_area.setText(selected_bl.getComment());
+				
 				if (user_object instanceof Bookmark) {
-					Bookmark bm = (Bookmark) user_object;
-
-					name_text_field.setText(bm.getName());
-					comment_text_area.setText(bm.getComment());
 					comment_text_area.setEnabled(true);
 					name_text_field.setEnabled(true);
 					properties_action.setEnabled(true);
@@ -615,22 +610,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				} else if (user_object instanceof Separator) {
 					name_text_field.setText("Separator");
 					comment_text_area.setText("Uneditable");
-					comment_text_area.setEnabled(false);
-					name_text_field.setEnabled(false);
-					properties_action.setEnabled(false);
-					goto_action.setEnabled(false);
+				} else if (selected_bl == def_tree_model.getRoot()) {
+					comment_text_area.setText("Uneditable");
 				} else {
-					name_text_field.setText(user_object.toString());
-					// don't allow editing the root bookmark list name: see rename()
-					name_text_field.setEnabled(selected_bl != def_tree_model.getRoot());
-					properties_action.setEnabled(selected_bl != def_tree_model.getRoot());
-					goto_action.setEnabled(false);
-					comment_text_area.setText(selected_bl.getComment());
+					name_text_field.setEnabled(true);
 					comment_text_area.setEnabled(true);
-					if (selected_bl == def_tree_model.getRoot()) {
-						comment_text_area.setText("Uneditable");
-						comment_text_area.setEnabled(false);
-					}
 				}
 
 				previousSelected_bl = selected_bl;
@@ -687,12 +671,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
-					if (selected_bl != null
-							|| selected_bl.getUserObject() instanceof Bookmark) {
-						bl_editor.openDialog(selected_bl);
-					} else {
-						setEnabled(false);
-					}
+					bl_editor.openDialog(selected_bl);
 				}
 
 				@Override

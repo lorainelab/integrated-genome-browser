@@ -305,7 +305,7 @@ public class AltSpliceView extends IGBTabPanel
 
 		if (evt.getKey().equals(OrfAnalyzer.PREF_STOP_CODON_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)) {
-			setSliceBuffer(spliced_view.getSliceBuffer());
+			orf_analyzer.redoOrfs();
 		}
 	}
 

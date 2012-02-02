@@ -218,16 +218,14 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanelLayout.setHorizontalGroup(
             imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(imageSizePanelLayout.createSequentialGroup()
-                .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                .add(20, 20, 20)
+                .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(imageSizePanelLayout.createSequentialGroup()
-                        .add(20, 20, 20)
                         .add(widthLabel)
-                        .add(16, 16, 16)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 94, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(imageSizePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(sizeLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .add(14, 14, 14)
+                    .add(sizeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 140, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(imageSizePanelLayout.createSequentialGroup()
                         .add(heightLabel)
@@ -241,7 +239,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(resetButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(unitComboBox, 0, 91, Short.MAX_VALUE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         imageSizePanelLayout.linkSize(new java.awt.Component[] {heightSpinner, widthSpinner}, org.jdesktop.layout.GroupLayout.HORIZONTAL);

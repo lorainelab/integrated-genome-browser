@@ -153,6 +153,7 @@ public interface IGBService {
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
 	public List<Glyph> getSelectedTierGlyphs();
+	public List<Glyph> getVisibleTierGlyphs();
 	public RepositoryChangeHolderI getRepositoryChangerHolder();
 
 	// ServerList

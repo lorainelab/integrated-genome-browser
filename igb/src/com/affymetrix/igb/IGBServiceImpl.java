@@ -337,6 +337,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return (List<Glyph>)(List)((SeqMapView)getSeqMapView()).getTierManager().getSelectedTiers();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<Glyph> getVisibleTierGlyphs() {
+		return (List<Glyph>)(List)((SeqMapView)getSeqMapView()).getTierManager().getVisibleTierGlyphs();
+	}
+
 	@Override
 	public RepositoryChangeHolderI getRepositoryChangerHolder() {
 		return RepositoryChangerHolder.getInstance();

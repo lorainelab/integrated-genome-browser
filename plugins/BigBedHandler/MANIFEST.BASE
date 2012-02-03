@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: BigBedHandler
-Bundle-SymbolicName: BigBedHandler
+Bundle-SymbolicName: com.gene.bigbedhandler.BigBedHandler
 Bundle-Version: @appVersion@
 Bundle-Activator: com.gene.bigbedhandler.Activator
 Bundle-ActivationPolicy: lazy

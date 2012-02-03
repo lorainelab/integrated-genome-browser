@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: BigWigHandler
-Bundle-SymbolicName: BigWigHandler
+Bundle-SymbolicName: com.gene.bigwighandler.BigWigHandler
 Bundle-Version: @appVersion@
 Bundle-Activator: com.gene.bigwighandler.Activator
 Bundle-ActivationPolicy: lazy

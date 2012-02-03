@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import java.util.Map.Entry;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
@@ -144,9 +145,10 @@ public final class IGB extends Application
 
 					if (look_and_feel.isSupportedLookAndFeel()) {
 						LookAndFeelFactory.installJideExtension();
-						UIManager.getDefaults().put("MenuItemUI", "com.sun.java.swing.plaf.windows.WindowsMenuItemUI");
-						UIManager.getDefaults().put("CheckBoxMenuItemUI", "com.sun.java.swing.plaf.windows.WindowsCheckBoxMenuItemUI");
-						UIManager.getDefaults().put("MenuUI", "com.sun.java.swing.plaf.windows.WindowsMenuUI");
+						// Is there a better way to do it? HV 03/02/12
+						for(Entry<Object,Object> obj : look_and_feel.getDefaults().entrySet()){
+							UIManager.getDefaults().put(obj.getKey(), obj.getValue());
+						}
 						UIManager.setLookAndFeel(look_and_feel);
 					}
 				} catch (Exception ulfe) {

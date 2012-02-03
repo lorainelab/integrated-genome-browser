@@ -25,7 +25,7 @@
 			<classpath location="${workspace}/Integrated_Genome_Browser/genoviz_sdk/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/igb_service/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/window_service/build" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/SearchModeGeneric/build" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/SearchModeSymmetryFilter/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/colt.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/felix.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/tribble-0.1.jar" />

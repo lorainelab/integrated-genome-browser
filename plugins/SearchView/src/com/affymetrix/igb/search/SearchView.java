@@ -78,7 +78,7 @@ public final class SearchView extends IGBTabPanel implements
 			igbService.getSeqMap().updateWidget();
 
 			SearchView.this.initSequenceCB();
-			SearchView.this.searchTF.setEnabled(true);
+//			SearchView.this.searchTF.setEnabled(true);
 
 			initOptionCheckBox();
 
@@ -351,7 +351,6 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initComponents() {
-		searchTF.setVisible(true);
 		searchTF.setEnabled(true);
 		searchTF.setMinimumSize(new Dimension(125, 50));
 

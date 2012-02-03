@@ -432,11 +432,11 @@ public class TierPrefsView implements ListSelectionListener {
 
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
-			String file_type = selectedStyle.getFileType();
+//			String file_type = selectedStyle.getFileType();
 			viewModeCB.removeAllItems();
 
 			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
-				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));
+				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(null))); // FIX THIS - use SeqSymmetry!!!
 				String view_mode = selectedStyle.getViewMode();
 				if (view_mode == null) {
 					viewModeCB.setSelectedIndex(0);

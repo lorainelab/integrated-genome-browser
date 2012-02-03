@@ -12,17 +12,18 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
  *
  * @author hiralv
  */
-public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
+public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static final String[] supportedFormat = {"bam", "sam"};
 	
@@ -116,5 +117,17 @@ public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapVi
 		}
 
 		return new int[]{start, end};
+	}
+
+	@Override
+	public boolean isSeqSymmetrySupported(SeqSymmetry sym) {
+		// TO DO fix this
+		return false;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style) {
+		// TO DO fix this
+		return null;
 	}
 }

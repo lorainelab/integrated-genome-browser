@@ -21,11 +21,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFactoryI {
+public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 
 	private static final int default_glyph_height = 50;
 	private int glyph_height = default_glyph_height;
@@ -135,7 +136,12 @@ public final class CoverageSummarizerFactory implements ExtendedMapViewGlyphFact
 		gviewer.setDataModelFromOriginalSym(cov, tsym);
 	}
 
-	public boolean isFileSupported(String format) {
+	public boolean isSeqSymmetrySupported(SeqSymmetry sym) {
 		return true;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style) {
+		return null;
 	}
 }

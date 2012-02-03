@@ -41,6 +41,7 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
@@ -263,5 +264,22 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView(), false);
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "scored";
+	}
+
+	@Override
+	public boolean isSeqSymmetrySupported(SeqSymmetry sym) {
+		// TODO fix this
+		return false;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style) {
+		// TODO fix this
+		return null;
 	}
 }

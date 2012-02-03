@@ -17,6 +17,7 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -167,5 +168,20 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			tglyph.pack(map.getView(), false);
 		}
 		return graph_glyph;
+	}
+
+	@Override
+	public String getName() {
+		return "graph";
+	}
+
+	@Override
+	public boolean isSeqSymmetrySupported(SeqSymmetry sym) {
+		return sym instanceof GraphSym;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style) {
+		return new GraphGlyph((GraphSym)sym, new GraphState(style));
 	}
 }

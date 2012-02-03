@@ -1121,10 +1121,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 
 			if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
-				String file_format = ((ITrackStyleExtended) style).getFileType();
+//				String file_format = ((ITrackStyleExtended) style).getFileType();
 
 				Map<String, Action> actions = new HashMap<String, Action>();
-				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
+				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor((SeqSymmetry)glyph.getInfo())) {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 

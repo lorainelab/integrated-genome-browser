@@ -7,14 +7,14 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  *
  * @author hiralv
  */
-public class MismatchGraphGlyphFactory extends AbstractMismatchGraphGlyphFactory  implements ExtendedMapViewGlyphFactoryI {
+public class MismatchGraphGlyphFactory extends AbstractMismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 	public String getName(){
 		return "mismatch";
 	}

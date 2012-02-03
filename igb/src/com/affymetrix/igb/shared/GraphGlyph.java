@@ -50,7 +50,7 @@ import java.text.AttributedString;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public class GraphGlyph extends Glyph {
+public class GraphGlyph extends ViewModeGlyph {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 
@@ -1484,6 +1484,11 @@ public class GraphGlyph extends Glyph {
 			return getVisibleMinY();
 		}
 		return Math.min(0, getVisibleMaxY());
+	}
+
+	@Override
+	public String getViewMode() {
+		return "graph"; // GenericGraphGlyphFactory.getName()
 	}
 }
 

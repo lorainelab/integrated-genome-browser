@@ -22,15 +22,9 @@ public class Debug {
 		activators.add(new com.affymetrix.genometryImpl.Activator());
 		activators.add(new com.affymetrix.genoviz.Activator());
 		activators.add(new com.affymetrix.igb.searchmodeidorprops.Activator());
-		activators.add(new com.affymetrix.igb.tutorial.Activator());
 		activators.add(new com.affymetrix.searchmodesymmetryfilter.Activator());
 		activators.add(new com.gene.bigbedhandler.Activator());
 		activators.add(new com.gene.bigwighandler.Activator());
-		//
-		activators.add(new com.gene.codondisplay.Activator());
-		activators.add(new com.gene.searchmodelength.Activator());
-		activators.add(new com.gene.searchmodelucene.Activator());
-		activators.add(new com.gene.findannotations.Activator());
 	}
 
 	/**

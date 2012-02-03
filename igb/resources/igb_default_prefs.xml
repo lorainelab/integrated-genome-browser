@@ -8,6 +8,7 @@
 
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" />
 <server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="5" />
+<server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="0" />
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="7" />
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="8" />

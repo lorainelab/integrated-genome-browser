@@ -330,9 +330,8 @@ public final class SearchView extends IGBTabPanel implements
 			new Comparator<ISearchMode>() {
 				@Override
 				public int compare(ISearchMode o1, ISearchMode o2) {
-					return o1.getClass().getName().compareTo(o2.getClass().getName());
+					return o1.searchAllUse() - o2.searchAllUse();
 				}
-			
 			}
 		);
 

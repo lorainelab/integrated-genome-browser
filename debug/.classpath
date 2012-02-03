@@ -11,7 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/PropertyView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/RestrictionSites"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeIdOrProps"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeResidue"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeSymmetryFilter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Tutorial"/>
@@ -50,5 +49,9 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/etc"/>
 	<classpathentry kind="lib" path="lib/org.osgi.core-4.3.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/FindAnnotations"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeLength"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SearchModeLucene"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/CodonDisplay"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

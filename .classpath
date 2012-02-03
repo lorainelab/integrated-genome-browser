@@ -69,10 +69,7 @@
 	<classpathentry kind="src" path="plugins/PropertyView/src"/>
 	<classpathentry kind="src" path="plugins/RestrictionSites/resources"/>
 	<classpathentry kind="src" path="plugins/RestrictionSites/src"/>
-	<classpathentry kind="src" path="plugins/SearchModeGeneric/resources"/>
-	<classpathentry kind="src" path="plugins/SearchModeGeneric/src"/>
 	<classpathentry kind="src" path="plugins/SearchModeIdOrProps/src"/>
-	<classpathentry kind="src" path="plugins/SearchModeResidue/src"/>
 	<classpathentry kind="src" path="plugins/SearchModeSymmetryFilter/src"/>
 	<classpathentry kind="src" path="plugins/SearchView/resources"/>
 	<classpathentry kind="src" path="plugins/SearchView/src"/>

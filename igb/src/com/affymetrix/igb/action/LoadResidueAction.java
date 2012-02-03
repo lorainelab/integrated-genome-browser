@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
@@ -11,6 +12,7 @@ import javax.swing.JProgressBar;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.Application;
@@ -41,8 +43,15 @@ public class LoadResidueAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		
+		// Hack for complete sequence
+		SeqSpan newSpan = span;
+		BioSeq seq = span.getBioSeq();
+		if(span.getMin() == seq.getMin() && span.getMax() == seq.getMax()){
+			newSpan = new SimpleSeqSpan(span.getMin(), span.getMax() - 1, seq);
+		}
+		
 		//Check if sequence is already loaded
-		if (!span.getBioSeq().isAvailable(span)) {
+		if (!seq.isAvailable(newSpan)) {
 			boolean new_residue_loaded = false;
 			Application app = Application.getSingleton();
 			JFrame frame = (app == null) ? null : app.getFrame();

@@ -661,7 +661,7 @@
    sudo apt-get install graphviz
    More info for other platforms at:  http://www.graphviz.org/
    -->
-   <target name="umljavadocs" depends="jar">
+   <target name="umljavadocs" depends="jar" description="Build HTML including UML diagrams from JavaDoc. Requires graphviz for the UML diagrams.">
 	   <path id="uml.source.path">
            <pathelement path="${basedir}/igb/src/"/>
            <pathelement path="${basedir}/genoviz_sdk/src/"/>

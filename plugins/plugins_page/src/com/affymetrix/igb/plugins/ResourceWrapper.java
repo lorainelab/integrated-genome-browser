@@ -30,6 +30,7 @@ public class ResourceWrapper implements Bundle {
 	private static final HashMap<String, String> KEY_CONVERTER = new HashMap<String, String>();
 	static {
 		KEY_CONVERTER.put(Resource.DESCRIPTION, Constants.BUNDLE_DESCRIPTION);
+		KEY_CONVERTER.put(Resource.PRESENTATION_NAME, Constants.BUNDLE_NAME);
 		KEY_CONVERTER.put(Resource.SYMBOLIC_NAME, Constants.BUNDLE_SYMBOLICNAME);
 		KEY_CONVERTER.put(Resource.VERSION, Constants.BUNDLE_VERSION);
 		KEY_CONVERTER.put(Resource.COPYRIGHT, Constants.BUNDLE_COPYRIGHT);

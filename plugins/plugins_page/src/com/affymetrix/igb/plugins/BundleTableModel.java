@@ -59,7 +59,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public NameInfoPanel(Bundle bundle) {
 			super();
 			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-			text = new JLabel(bundle.getSymbolicName() + " ");
+			text = new JLabel(bundle.getHeaders().get(BUNDLE_NAME) + " ");
 			add(text);
 			if (bundle.getHeaders().get(Constants.BUNDLE_DOCURL) != null) {
 				icon = new JLabel(pluginsHandler.getIcon("info.png"));

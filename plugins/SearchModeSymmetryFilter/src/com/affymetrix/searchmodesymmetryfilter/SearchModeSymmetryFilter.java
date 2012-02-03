@@ -1,5 +1,6 @@
 package com.affymetrix.searchmodesymmetryfilter;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +88,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 				}
 			}
 		}
+		statusHolder.setStatus(MessageFormat.format("Searching {0} - found {1} matches", search_text, "" + results.size()));
 		return results;
 	}
 

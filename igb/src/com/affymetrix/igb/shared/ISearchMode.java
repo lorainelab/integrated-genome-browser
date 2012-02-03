@@ -37,10 +37,6 @@ public interface ISearchMode {
 	 */
 	public boolean useOption();
 	/**
-	 * clear results
-	 */
-	public void clear();
-	/**
 	 * @return if whole genome is allowed instead of selecting a chromosome
 	 */
 	public boolean useGenomeInSeqList();
@@ -52,9 +48,4 @@ public interface ISearchMode {
 	 * @return the error message or null for no error
 	 */
 	public String checkInput(String search_text, BioSeq vseq, String seq);
-	/**
-	 * called when the search is done
-	 * @param vseq the seq
-	 */
-	public void finished(BioSeq vseq);
 }

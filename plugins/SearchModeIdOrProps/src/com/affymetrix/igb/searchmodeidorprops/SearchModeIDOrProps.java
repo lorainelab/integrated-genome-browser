@@ -140,7 +140,7 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 	}
 
 	@Override
-	protected List<SeqSymmetry> getAltSymList() {
+	public List<SeqSymmetry> getAltSymList() {
 		return remoteSymList;
 	}
 	

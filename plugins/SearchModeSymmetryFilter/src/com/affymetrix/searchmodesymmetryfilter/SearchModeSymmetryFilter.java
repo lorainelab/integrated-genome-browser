@@ -60,9 +60,6 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public void clear() {}
-
-	@Override
 	public boolean useGenomeInSeqList() {
 		return false;
 	}
@@ -70,10 +67,6 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	@Override
 	public String checkInput(String search_text, BioSeq vseq, String seq) {
 		return filter.setParam(search_text) ? null : "Error setting param " + search_text;
-	}
-
-	@Override
-	public void finished(BioSeq vseq) {
 	}
 
 	@Override
@@ -123,6 +116,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 	}
 
 	@Override
-	public void valueChanged(SeqSymmetry sym) {
+	public List<SeqSymmetry> getAltSymList() {
+		return null;
 	}
 }

@@ -37,7 +37,6 @@
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 		<property name="SearchModeGeneric"   value="${basedir}/plugins/SearchModeGeneric" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
-		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
 		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />

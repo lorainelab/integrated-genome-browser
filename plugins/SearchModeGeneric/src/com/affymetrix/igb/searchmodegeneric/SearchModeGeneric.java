@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -25,58 +23,14 @@ public abstract class SearchModeGeneric implements ISearchModeSym {
 		this.igbService = igbService;
 	}
 
-	protected List<SeqSymmetry> getAltSymList() {
+	@Override
+	public List<SeqSymmetry> getAltSymList() {
 		return null;
 	}
 
 	@Override
 	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option) {
 		return null;
-	}
-
-	@Override
-	public void valueChanged(SeqSymmetry sym) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-
-		if (sym != null) {
-			List<SeqSymmetry> altSymList = getAltSymList();
-			if (altSymList != null && altSymList.contains(sym)) {
-				if (group == null) {
-					return;
-				}
-				zoomToCoord(sym);
-				return;
-			}
-
-			if (igbService.getSeqMap().getItem(sym) == null) {
-				if (group == null) {
-					return;
-				}
-				// Couldn't find sym in map view! Go ahead and zoom to it.
-				zoomToCoord(sym);
-				return;
-			}
-
-			// Set selected symmetry normally
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
-			syms.add(sym);
-			igbService.getSeqMapView().select(syms, true);
-		}
-	}
-
-	private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		String seqID = sym.getSpanSeq(0).getID();
-		BioSeq seq = group.getSeq(seqID);
-		if (seq != null) {
-			SeqSpan span = sym.getSpan(0);
-			if (span != null) {
-				// zoom to its coordinates
-				igbService.zoomToCoord(seqID, span.getStart(), span.getEnd());
-			}
-		}
 	}
 
 	protected static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
@@ -123,7 +77,4 @@ public abstract class SearchModeGeneric implements ISearchModeSym {
 		}
 		return spans;
 	}
-
-	@Override
-	public void finished(BioSeq vseq) {	}
 }

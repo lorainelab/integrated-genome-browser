@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public interface ISearchModeSym extends ISearchMode {
 	/**
-	 * actually perform the search
+	 * perform the search on all tracks
 	 * @param search_text the input text
 	 * @param chrFilter the chromosome / seq to search or null for all
 	 * @param statusHolder the status display for output messages
@@ -17,7 +17,7 @@ public interface ISearchModeSym extends ISearchMode {
 	 */
 	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option);
 	/**
-	 * actually perform the search
+	 * perform the search on a single track
 	 * note - returning null means that the implementation could not process
 	 *   the search, for example, SearchModeLucene cannot work if the file is not indexed.
 	 *   returning an empty List means that the implementation could process, but
@@ -30,8 +30,8 @@ public interface ISearchModeSym extends ISearchMode {
 	 */
 	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option);
 	/**
-	 * called when the user selects a row in the table
-	 * @param sym the sym selected
+	 * return any alternate symmetries - this is only here to
+	 * be backwardly compatible, return the remote search on DAS2 symmetries
 	 */
-	public void valueChanged(SeqSymmetry sym);
+	public List<SeqSymmetry> getAltSymList();
 }

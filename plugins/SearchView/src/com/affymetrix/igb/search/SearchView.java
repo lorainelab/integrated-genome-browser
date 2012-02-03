@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -27,10 +28,8 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
@@ -47,7 +46,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.IStatus;
 
 public final class SearchView extends IGBTabPanel implements
@@ -82,7 +80,7 @@ public final class SearchView extends IGBTabPanel implements
 
 			initOptionCheckBox();
 
-			if (selectedSearchMode instanceof ISearchModeGlyph) {
+			if (selectedSearchMode instanceof SearchModeResidue) {
 				setModel(new GlyphSearchResultsTableModel(null, null));
 			}
 			else {
@@ -119,8 +117,8 @@ public final class SearchView extends IGBTabPanel implements
 
 					@Override
 					protected SearchResultsTableModel runInBackground() {
-						if (selectedSearchMode instanceof ISearchModeGlyph) {
-							List<GlyphI> glyphs = ((ISearchModeGlyph)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+						if (selectedSearchMode instanceof SearchModeResidue) {
+							List<GlyphI> glyphs = ((SearchModeResidue)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
 							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
 						}
 						else {
@@ -131,7 +129,9 @@ public final class SearchView extends IGBTabPanel implements
 
 					@Override
 					protected void finished() {
-						selectedSearchMode.finished(chrfilter);
+						if (selectedSearchMode instanceof SearchModeResidue) {
+							((SearchModeResidue)selectedSearchMode).finished(chrfilter);
+						}
 						enableComp(true);
 						initOptionCheckBox();
 						try {
@@ -324,7 +324,7 @@ public final class SearchView extends IGBTabPanel implements
 		boolean saveFound = false;
 		List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
 		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
-		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeGlyph.class).getExtensionPointImpls());
+		searchModes.add(new SearchModeResidue(igbService));
 		// consistent order for search modes
 		Collections.sort(searchModes,
 			new Comparator<ISearchMode>() {
@@ -403,29 +403,72 @@ public final class SearchView extends IGBTabPanel implements
 			column.setCellRenderer(dtcr);
 		}
 	}
-	
+
+	public void zoomToSym(SeqSymmetry sym, List<SeqSymmetry> altSymList) {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+
+		if (sym != null) {
+			if (altSymList != null && altSymList.contains(sym)) {
+				if (group == null) {
+					return;
+				}
+				zoomToCoord(sym);
+				return;
+			}
+
+			if (igbService.getSeqMap().getItem(sym) == null) {
+				if (group == null) {
+					return;
+				}
+				// Couldn't find sym in map view! Go ahead and zoom to it.
+				zoomToCoord(sym);
+				return;
+			}
+
+			// Set selected symmetry normally
+			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+			syms.add(sym);
+			igbService.getSeqMapView().select(syms, true);
+		}
+	}
+
+	private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		String seqID = sym.getSpanSeq(0).getID();
+		BioSeq seq = group.getSeq(seqID);
+		if (seq != null) {
+			SeqSpan span = sym.getSpan(0);
+			if (span != null) {
+				// zoom to its coordinates
+				igbService.zoomToCoord(seqID, span.getStart(), span.getEnd());
+			}
+		}
+	}
+
 	/** This is called when the user double click a row of the table. */
 	private final MouseListener list_selection_listener = new MouseListener() {
 
 		public void mouseClicked(MouseEvent e) {
-				if (e.getComponent().isEnabled()
-						&& e.getButton() == MouseEvent.BUTTON1
-						&& e.getClickCount() == 2) {
-					int srow = table.getSelectedRow();
-					srow = table.convertRowIndexToModel(srow);
-					if (srow < 0) {
-						return;
-					}
-					if (selectedSearchMode instanceof ISearchModeGlyph) {
-						GlyphI glyph = ((GlyphSearchResultsTableModel)table.getModel()).get(srow);
-						((ISearchModeGlyph)selectedSearchMode).valueChanged(glyph, ((GlyphSearchResultsTableModel)table.getModel()).seq);
-					}
-					else {
-						SeqSymmetry sym = ((SymSearchResultsTableModel)table.getModel()).get(srow);
-						((ISearchModeSym)selectedSearchMode).valueChanged(sym);
-					}
+			if (e.getComponent().isEnabled()
+					&& e.getButton() == MouseEvent.BUTTON1
+					&& e.getClickCount() == 2) {
+				int srow = table.getSelectedRow();
+				srow = table.convertRowIndexToModel(srow);
+				if (srow < 0) {
+					return;
+				}
+				if (selectedSearchMode instanceof SearchModeResidue) {
+					GlyphI glyph = ((GlyphSearchResultsTableModel)table.getModel()).get(srow);
+					((SearchModeResidue)selectedSearchMode).valueChanged(glyph, ((GlyphSearchResultsTableModel)table.getModel()).seq);
+				}
+				else {
+					SeqSymmetry sym = ((SymSearchResultsTableModel)table.getModel()).get(srow);
+					zoomToSym(sym, ((ISearchModeSym)selectedSearchMode).getAltSymList());
 				}
 			}
+		}
 
 		public void mousePressed(MouseEvent me) {}
 
@@ -440,8 +483,8 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
 		selectedSearchMode = searchModeMap.get(searchMode);
-		if (selectedSearchMode != null) {
-			selectedSearchMode.clear();
+		if (selectedSearchMode != null && selectedSearchMode instanceof SearchModeResidue) {
+			((SearchModeResidue)selectedSearchMode).clear();
 		}
 		clearTable();
 	}

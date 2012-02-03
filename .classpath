@@ -86,8 +86,5 @@
 	<classpathentry kind="src" path="plugins/window_service_def/resources"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="protannot/src"/>
-	<classpathentry kind="src" path="/SearchModeLength"/>
-	<classpathentry kind="src" path="/SearchModeLucene"/>
-	<classpathentry kind="src" path="/FindAnnotations"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

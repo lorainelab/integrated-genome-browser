@@ -35,7 +35,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.ISearchModeGlyph;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -191,7 +190,6 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ExtendedMapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeGlyph.class);
 		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
 		stopRoutineExtensionPoint.addListener(
 			new ExtensionPointListener<IStopRoutine>() {

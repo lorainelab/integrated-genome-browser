@@ -10,7 +10,6 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.PartialLineBorder;
 import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -129,9 +128,9 @@ public final class DataManagementTable {
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
 			action.addEditorForRow(row, buttonEditor);
-			JRPTextFieldTableCellRenderer trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor",
-					vFeature.getStyle().getTrackName());
-			text.addEditorForRow(row, trackNameFieldEditor);
+			JRPTextField trackNameFieldEditor = new JRPTextField("LoadModeTable_trackNameFieldEditor");
+			DefaultCellEditor textEditor = new DefaultCellEditor(trackNameFieldEditor);
+			text.addEditorForRow(row, textEditor);
 			color.addEditorForRow(row, cellEditor);
 		}
 
@@ -308,10 +307,7 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 				}
 			}
 
-		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
-			JRPTextFieldTableCellRenderer tcr = new JRPTextFieldTableCellRenderer("DataManagementTable_TrackNameColumnRenderer", vFeature.getStyle().getTrackName());
-			return tcr;
-		}
+		} 
 		return super.getCellRenderer(row, column);
 	}
 

@@ -170,11 +170,11 @@ public final class WebLink {
 
 		List<WebLink> webLinks = getWebLink(sym, method);
 
-		if (webLinks.isEmpty()) {
+	//	if (webLinks.isEmpty()) {
 			if (style.getFeature() != null) {
 				webLinks = getWebLink(sym, style.getFeature().featureName);
 			}
-		}
+	//	}
 
 		if (!webLinks.isEmpty()) {
 			results.addAll(webLinks);

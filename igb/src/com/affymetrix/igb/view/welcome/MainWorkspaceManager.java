@@ -10,13 +10,13 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import be.pwnt.jflow.JFlowPanel;
 import be.pwnt.jflow.event.ShapeEvent;
 import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -51,14 +51,14 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	
 	public MainWorkspaceManager(){
 		this.setLayout( new CardLayout());
-		add( new WelcomePage( getWelcomePane() ), WELCOME_PANE);
-		CardLayout layout = (CardLayout) getLayout();
-        layout.show( this, WELCOME_PANE );    
 		gmodel = GenometryModel.getGenometryModel();
 	}
+	
 	public void setSeqMapViewObj( SeqMapView obj){
 		add(obj, SEQ_MAP_PANE);
+		add(new WelcomePage(getWelcomePane()), WELCOME_PANE);
 	}
+	
 	/**
 	 * Returns welcome JPanel
 	 * @return 
@@ -87,6 +87,8 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 
 					if(group == null || group.getEnabledVersions().isEmpty()){
 						Application.getSingleton().setStatus(groupStr+" Not Available", true);
+						ErrorHandler.errorPanel("NOTICE", groupStr + " not available at this time. "
+								+ "Please check that the appropriate data source is available.");
 						return;
 					}
 
@@ -102,9 +104,8 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 			public void shapeDeactivated(ShapeEvent e) {
 			}
 		});
-		return panel;
-	
-		 
+		
+		return panel; 
 	}
 	
 	/**
@@ -112,11 +113,13 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	 * @param e 
 	 */
 	public void itemStateChanged(ItemEvent e) {
+		if(e.getStateChange() != ItemEvent.SELECTED || e.getItem() == null)
+			return;
+		
 		CardLayout layout = (CardLayout) getLayout();
 		System.out.println("MainWorkspaceManager:itemStateChanged hit");
-		JComboBox jb = (JComboBox) e.getSource();
-		if(gmodel.getSelectedSeqGroup() == null && jb.getSelectedItem() != null &&
-				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
+		String species = e.getItem().toString();
+		if(gmodel.getSelectedSeqGroup() == null && SELECT_SPECIES.equals(species)){
 			layout.show( this, WELCOME_PANE );
 		}else{
 			layout.show( this, SEQ_MAP_PANE );

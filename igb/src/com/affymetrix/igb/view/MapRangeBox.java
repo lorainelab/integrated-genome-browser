@@ -17,21 +17,23 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.NextSearchSpanAction;
-import com.affymetrix.igb.shared.ISearchMode;
-import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
+import com.affymetrix.igb.shared.DummyStatus;
+import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.TierGlyph;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -42,6 +44,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -55,6 +58,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
+	public static final int NO_ZOOM_SPOT = -1;
 
 	private final NeoMap map;
 	private final SeqMapView gview;
@@ -66,7 +70,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
-	private static final List<ISearchMode> BASE_SEARCH_MODES = new ArrayList<ISearchMode>();
+	private static final List<EmptySearch> BASE_SEARCH_MODES = new ArrayList<EmptySearch>();
 	static {
 		BASE_SEARCH_MODES.add(new ChromStartEndSearch());
 		BASE_SEARCH_MODES.add(new ChromStartWidthSearch());
@@ -76,31 +80,13 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		BASE_SEARCH_MODES.add(new CenterSearch());
 	}
 
-	private static abstract class EmptySearch implements ISearchMode {
+	private static abstract class EmptySearch {
 		protected abstract Matcher getMatcher(String search_text);
-		@Override public String checkInput(String search_text, BioSeq vseq, String seq) {
-			Matcher matcher = getMatcher(search_text);
-			return matcher.matches() ? null : "";
+		public boolean testInput(String search_text) {
+			return getMatcher(search_text).matches();
 		}
-		@Override public String getName() { return null; }
-		@Override public SearchType getSearchType() { return SearchType.feature; }
-		@Override public String getTooltip() { return null; }
-		@Override public String getOptionName(int i) { return null; }
-		@Override public String getOptionTooltip(int i) { return null; }
-		@Override public boolean getOptionEnable(int i) { return false; }
-		@Override public boolean useOption() { return false; }
-		@Override public boolean useDisplaySelected() { return false; }
-		@Override public boolean useGenomeInSeqList() { return true; }
-		@Override public SearchResultsTableModel getEmptyTableModel() { return null; }
-		@Override public SearchResultsTableModel run(String search_text,
-				BioSeq chrFilter, String seq, boolean remote,
-				IStatus statusHolder) { return null; }
-		@Override public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) { return null; }
-		@Override public void finished(BioSeq vseq) { }
-		@Override public void clear() {}
-		@Override public void valueChanged(SearchResultsTableModel model, int srow) { }
-		@Override public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
-		@Override public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
+		public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) { return new ArrayList<SeqSpan>(); }
+		public int getZoomSpot(String search_text) { return NO_ZOOM_SPOT; }
 	}
 	private static class ChromStartEndSearch extends EmptySearch {
 		// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
@@ -401,6 +387,69 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		return mergedSpans;
 	}
 
+	private List<SeqSpan> findSpansFromSyms(List<SeqSymmetry> syms) {
+		List<SeqSpan> spans = new ArrayList<SeqSpan>();
+		if (syms != null) {
+			for (SeqSymmetry sym : syms) {
+				for (int i = 0; i < sym.getSpanCount(); i++) {
+					spans.add(sym.getSpan(i));
+				}
+			}
+		}
+		return spans;
+	}
+
+	private List<SeqSpan> getSpanList(SeqMapView gview, String search_text) {
+		for (EmptySearch emptySearch : BASE_SEARCH_MODES) {
+			if (emptySearch.testInput(search_text)) {
+				List<SeqSpan> rawSpans = emptySearch.findSpans(search_text, gview.getVisibleSpan());
+				if (rawSpans.size() > 0) {
+					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
+					zoomToSeqAndSpan(gview, mergedSpans.get(0));
+					int zoomSpot = emptySearch.getZoomSpot(search_text);
+					if (zoomSpot != NO_ZOOM_SPOT) {
+						gview.setZoomSpotX(zoomSpot);
+					}
+					return mergedSpans;
+				}
+			}
+		}
+		List<TypeContainerAnnot> trackSyms = getTrackSyms();
+		List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>();
+		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
+		for (ISearchModeSym searchMode : modes) {
+			if (searchMode.checkInput(search_text, null, null) == null && searchMode.searchAllUse() >= 0) {
+				for (TypeContainerAnnot trackSym : trackSyms) {
+					List<SeqSymmetry> searchResults = null;
+					String errorMessage = searchMode.checkInput(search_text, null, null);
+					if (errorMessage == null) {
+						searchResults = searchMode.searchTrack(search_text, null, trackSym, DummyStatus.getInstance(), false);
+					}
+					if (searchResults != null) {
+						List<SeqSpan> rawSpans = findSpansFromSyms(searchResults);
+						if (rawSpans.size() > 0) {
+							zoomToSeqAndSpan(gview, rawSpans.get(0));
+							return rawSpans;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private List<TypeContainerAnnot> getTrackSyms() {
+		List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
+		List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs();
+		for (Glyph selectedTierGlyph : tierGlyphs) {
+			Object info = selectedTierGlyph.getInfo();
+			if (info instanceof TypeContainerAnnot) {
+				trackSyms.add((TypeContainerAnnot)info);
+			}
+		}
+		return trackSyms;
+	}
+
 	/**
 	 * Set range of view. This will go through all the ISearchMode
 	 * instances registered, including plugins. The standard forms
@@ -411,33 +460,22 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 * or "ADAR" (a gene name)
 	 */
 	public void setRange(SeqMapView gview, String search_text) {
-		List<ISearchMode> modes = new ArrayList<ISearchMode>(BASE_SEARCH_MODES);
-		modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls());
-		for (ISearchMode mode : modes) {
-			if (mode.useGenomeInSeqList() && mode.checkInput(search_text, null, null) == null) {
-				List<SeqSpan> rawSpans = mode.findSpans(search_text, gview.getVisibleSpan());
-				if (rawSpans.size() > 0) {
-					List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
-					zoomToSeqAndSpan(gview, mergedSpans.get(0));
-					int zoomSpot = mode.getZoomSpot(search_text);
-					if (zoomSpot != ISearchMode.NO_ZOOM_SPOT) {
-						gview.setZoomSpotX(zoomSpot);
-					}
-					foundSpans = mergedSpans;
-					spanPointer = 0;
-					if (foundSpans.size() > 1) {
-						Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
-						NextSearchSpanAction.getAction().setEnabled(true);
-					}
-					else {
-						NextSearchSpanAction.getAction().setEnabled(false);
-					}
-				}
-				return;
+		List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
+		if (mergedSpans != null && mergedSpans.size() > 0) {
+			foundSpans = mergedSpans;
+			spanPointer = 0;
+			if (foundSpans.size() > 1) {
+				Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
+				NextSearchSpanAction.getAction().setEnabled(true);
+			}
+			else {
+				NextSearchSpanAction.getAction().setEnabled(false);
 			}
 		}
-		NextSearchSpanAction.getAction().setEnabled(false);
-		Application.getSingleton().setStatus("unable to match entry");
+		else {
+			NextSearchSpanAction.getAction().setEnabled(false);
+			Application.getSingleton().setStatus("unable to match entry");
+		}
 	}
 
 	public boolean nextSpan() {

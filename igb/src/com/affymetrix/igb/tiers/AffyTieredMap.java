@@ -144,6 +144,12 @@ public class AffyTieredMap extends NeoMap {
 		}
 	}
 	
+	public void setTierLabels(){
+		for (TierGlyph tier : tiers) {
+			tier.setLabel(tier.getAnnotStyle().getTrackName());
+		}
+	}
+	
 	@Override
 	public void repack() {
 		// WARNING

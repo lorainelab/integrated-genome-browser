@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -106,7 +107,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		tree_panel.add(serverPrefsB);
 
 		tree = new FeatureTree("FeatureTreeView_tree");
-		//tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getPreferredSize().height));
 
 		//Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
@@ -128,10 +128,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		tree_scroller = new JScrollPane(tree);
 		tree_scroller.setAlignmentX(LEFT_ALIGNMENT);
 		tree_scroller.setAlignmentY(TOP_ALIGNMENT);
-		/*tree_scroller.setPreferredSize(new Dimension(
-		tree_scroller.getMinimumSize().width,
-		tree_scroller.getPreferredSize().height));*/
-		//initOrRefreshTree(null);
 
 		tree_panel.add(tree_scroller);
 
@@ -144,14 +140,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(featuresLabel).addComponent(serverPrefsB)).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tree_scroller)));
 
-		/*tree_panel.setPreferredSize(new Dimension(
-		tree_panel.getMinimumSize().width,
-		tree_panel.getPreferredSize().height
-		));*/
-
 		this.add(tree_panel);
-
-
 	}
 
 	/**
@@ -690,7 +679,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 							String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
 							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-								GeneralLoadView.getLoadView().removeFeature(feature, true);
+								GeneralLoadView.getLoadView().removeFeature(feature, true, false);
 							} else {
 								tn.setChecked(true);
 							}

@@ -34,29 +34,35 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 
 	private static final long serialVersionUID = 1L;
 	public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
-	
+	private String COMMENT;
+
 	public BookmarkList(String s) {
 		super(s, true);
 	}
-	
+
+	public BookmarkList(String s, String comment) {
+		super(s, true);
+		COMMENT = comment;
+	}
+
 	public BookmarkList(Bookmark b) {
 		super(b, false);
 	}
-	
+
 	public BookmarkList(Separator s) {
 		super(s, false);
 	}
-	
+
 	public BookmarkList addBookmark(Bookmark bookmark) {
 		BookmarkList bl = new BookmarkList(bookmark);
 		add(bl);
 		return bl;
 	}
-	
+
 	public void addSeparator() {
 		add(new BookmarkList(new Separator()));
 	}
-	
+
 	public void addSublist(BookmarkList sublist) {
 		add(sublist);
 	}
@@ -96,11 +102,11 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 		}
 		super.setUserObject(o);
 	}
-	
+
 	public String getName() {
 		return this.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		Object o = getUserObject();
@@ -198,7 +204,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			bw.write("<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n");
 			bw.write("<TITLE>Bookmarks</TITLE>\n");
 			bw.write("<H1>Bookmarks</H1>\n");
-			
+
 			bw.write("<DL><p>\n");
 			exportAsHTML_recursive(list, bw, " ");
 			bw.write("</DL><p>\n");
@@ -222,13 +228,13 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			BookmarkList btn = e.nextElement();
 			Object o = btn.getUserObject();
 			if (o instanceof String) {
-				bw.write(indent + "<DT><H3>" + o + "</H3>\n");
+				bw.write(indent + "<DT><H3>" + o + "</H3>"+"<DD>"+btn.getComment()+"</DD>"+"\n");
 				bw.write(indent + "<DL><p>\n");
 				exportAsHTML_recursive(btn, bw, indent + "  ");
 				bw.write(indent + "</DL><p>\n");
 			} else if (o instanceof Bookmark) {
 				Bookmark bm = (Bookmark) o;
-				bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");				
+				bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
 				bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
 				bw.write(bm.getName());
 				bw.write("</A>\n");
@@ -237,14 +243,21 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			}
 		}
 	}
-	
-	private static String formatComment(String comment) 
-	{
-		return comment.replaceAll("\n","&newLine"); 
+
+	private static String formatComment(String comment) {
+		return comment.replaceAll("\n", "&newLine");
 	}
-			
+
 	/** Returns true only if the two objects are the same identical object. */
 	public boolean equals(Object o) {
 		return (this == o);
+	}
+
+	public String getComment() {
+		return COMMENT;
+	}
+
+	public void setComment(String comment) {
+		COMMENT = comment;
 	}
 }

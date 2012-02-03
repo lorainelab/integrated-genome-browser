@@ -14,15 +14,17 @@ import javax.swing.ImageIcon;
  */
 public class CommonUtils {
 	private static final CommonUtils instance = new CommonUtils();
+	private boolean updateAvailable = false;
 	private String app_dir = null;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
 
-	private static final String APP_NAME         = BUNDLE.getString("appName");
-	private static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
-	private static final String APP_VERSION      = BUNDLE.getString("appVersion");
+	private static final String APP_NAME            = BUNDLE.getString("appName");
+	private static final String APP_NAME_SHORT      = BUNDLE.getString("appNameShort");
+	private static final String APP_VERSION         = BUNDLE.getString("appVersion");
+	private static final String BUILD_VERSION       = BUNDLE.getString("buildVersion");
+	private static final String BUILD_CUSTOMIZATION = BUNDLE.getString("buildCustomization");
 	private static final String APP_VERSION_FULL = MessageFormat.format(
-			BUNDLE.getString("appVersionFull"),
-			APP_VERSION);
+			BUNDLE.getString("appVersionFull"), APP_VERSION, BUILD_VERSION, BUILD_CUSTOMIZATION);
 
 	private CommonUtils() {
 		super();
@@ -55,7 +57,19 @@ public class CommonUtils {
 	public String getAppVersionFull() {
 		return APP_VERSION_FULL;
 	}
-
+	
+	/**
+	 * get the build version from svn repository.
+	 * @return 
+	 */
+	public boolean getUpdateAvailable(){
+		return updateAvailable;
+	}
+	
+	public void setUpdateAvailable(boolean updateAvailable){
+		this.updateAvailable = updateAvailable;
+	}
+	
 	/**
 	 * Returns the value of the argument indicated by label.
 	 * If arguments are

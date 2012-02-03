@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -52,19 +53,23 @@ public class OSGiHandler {
         getInstance().startOSGi(args);
 	}
 
+	private String getCacheFolder(){
+		return CommonUtils.getInstance().getAppDataDirectory() + "bundles/";
+	}
+	
 	/**
 	 * get the OSGi cache directory
 	 * @return the OSGi cache directory
 	 */
 	private String getCacheDir() {
-		return CommonUtils.getInstance().getAppDataDirectory() + "cache/v" + CommonUtils.getInstance().getAppVersionFull() + "-bundle-cache";
+		return getCacheFolder() + "v" + CommonUtils.getInstance().getAppVersionFull() + "-bundle-cache";
 	}
 
 	/**
 	 * clear the OSGi cache
 	 */
 	public void clearCache() {
-		deleteDirectory(new File(getCacheDir()));
+		deleteDirectory(new File(getCacheFolder()));
 	}
 
 	/**
@@ -127,6 +132,11 @@ public class OSGiHandler {
 	 * @param args the command line arguments
 	 */
 	public synchronized void startOSGi(String[] args) {
+		if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
+			clearCache();
+			return;
+		}
+
 		setLaf();
 
 		String argArray = Arrays.toString(args);
@@ -237,7 +247,12 @@ public class OSGiHandler {
 		}
 		else { // ant run
 			File dir = new File("bundles");
-			entries = Arrays.asList(dir.list());
+			FilenameFilter ff = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".jar");
+				}
+			};
+			entries = Arrays.asList(dir.list(ff));
 		}
 		entries.remove(OSGiImplFile); // don't install OSGiImpl as a bundle
         return entries;

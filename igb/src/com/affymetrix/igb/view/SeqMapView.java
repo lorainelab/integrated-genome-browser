@@ -809,7 +809,7 @@ public class SeqMapView extends JPanel
 		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
-		DataManagementTable.updateVirtualFeatureList();
+
 	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers

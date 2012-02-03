@@ -9,32 +9,30 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.searchmodegeneric.SearchModeGeneric;
-import com.affymetrix.igb.searchmodegeneric.SymSearchResultsTableModel;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
 
-public abstract class SearchModeIDOrProps extends SearchModeGeneric implements ISearchMode {
+public abstract class SearchModeIDOrProps implements ISearchModeSym {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodeidorprops");
+	private static final int MAX_HITS = 100000;
+	protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");
 	private List<SeqSymmetry> remoteSymList;
+	protected IGBService igbService;
 	protected static final IStatus DUMMY_STATUS = new IStatus() { public void setStatus(String s){}};
 
 	protected SearchModeIDOrProps(IGBService igbService) {
-		super(igbService);
-	}
-
-	@Override
-	public SearchType getSearchType() {
-		return SearchType.feature;
+		super();
+		this.igbService = igbService;
 	}
 
 	private Pattern getRegex(String search_text) throws Exception  {
@@ -61,15 +59,47 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 		return null;
 	}
 
-	public SearchResultsTableModel getEmptyTableModel() {
-		return new SymSearchResultsTableModel(Collections.<SeqSymmetry>emptyList());
-	}
+	protected static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 
-	protected SearchResultsTableModel run(final String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final boolean remote, final IStatus statusHolder) {
+		if (results == null || results.isEmpty()) {
+			return new ArrayList<SeqSymmetry>();
+		}
+
+		int num_rows = results.size();
+
+		List<SeqSymmetry> rows = new ArrayList<SeqSymmetry>(num_rows / 10);
+		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
+			SeqSymmetry result = results.get(j);
+
+			SeqSpan span = null;
+			if (seq != null) {
+				span = result.getSpan(seq);
+				if (span == null) {
+					// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
+					SeqSpan tempSpan = result.getSpan(0);
+					if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+						span = tempSpan;
+					}
+				}
+			} else {
+				span = result.getSpan(0);
+			}
+			if (span == null) {
+				continue;
+			}
+
+			rows.add(result);
+		}
+
+		return rows;
+	}	
+
+	protected List<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		String text = search_text;
 
+		String seq = chrFilter == null ? Constants.GENOME_SEQ_ID : chrFilter.getID();
 		List<SeqSymmetry> localSymList = findLocalSyms(search_text, chrFilter, seq, search_props, statusHolder);
 		remoteSymList = null;
 
@@ -100,12 +130,11 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 
 			//remoteSearches
 			remoteSymList = new ArrayList<SeqSymmetry>();
-			for (RemoteSearchI remoteSearch : ExtensionPointHandler.getExtensionPoint(RemoteSearchI.class).getExtensionPointImpls()) {
-				statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
-				List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
-				symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
-				remoteSymList.addAll(symList);
-			}
+			RemoteSearchDAS2 remoteSearch = new RemoteSearchDAS2();
+			statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
+			List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
+			symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
+			remoteSymList.addAll(symList);
 		}
 
 		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
@@ -132,7 +161,7 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 			}
 		});
 
-		return new SymSearchResultsTableModel(tableRows);
+		return tableRows;
 	}
 
 	protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {
@@ -151,9 +180,12 @@ public abstract class SearchModeIDOrProps extends SearchModeGeneric implements I
 	}
 
 	@Override
-	protected List<SeqSymmetry> getAltSymList() {
+	public List<SeqSymmetry> getAltSymList() {
 		return remoteSymList;
 	}
-	
-	public void clear(){}
+
+	@Override
+	public List<SeqSymmetry> searchTrack(String search_text, final BioSeq chrFilter, TypeContainerAnnot contSym, IStatus statusHolder, boolean option) {
+		return null;
+	}
 }

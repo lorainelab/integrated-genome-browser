@@ -35,7 +35,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -70,6 +70,7 @@ public class Activator implements BundleActivator {
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
 				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
 				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
+				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
 				System.exit(0);
     		}
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
@@ -96,6 +97,9 @@ public class Activator implements BundleActivator {
     		}
     		if (CommonUtils.getInstance().getArg("-pntallprf", args) != null) {
 				PreferenceUtils.printAllPreferences();
+    		}
+			if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
+				CommonUtils.getInstance().setUpdateAvailable(true);
     		}
     		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
 				System.exit(0);
@@ -186,7 +190,7 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AnnotationOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchMode.class);
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
 		stopRoutineExtensionPoint.addListener(
 			new ExtensionPointListener<IStopRoutine>() {

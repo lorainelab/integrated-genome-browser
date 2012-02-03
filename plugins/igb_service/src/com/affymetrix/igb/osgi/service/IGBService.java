@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -154,6 +153,7 @@ public interface IGBService {
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
 	public List<Glyph> getSelectedTierGlyphs();
+	public List<Glyph> getVisibleTierGlyphs();
 	public RepositoryChangeHolderI getRepositoryChangerHolder();
 
 	// ServerList

@@ -1,33 +1,51 @@
 package com.affymetrix.igb.shared;
 
-import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
+/**
+ * represents a method of searching the selected features
+ * given an input string and options
+ */
 public interface ISearchMode {
-	public enum SearchType {
-		feature,
-		residue;
-	}
-	public static final int NO_ZOOM_SPOT = -1;
+	/**
+	 * @return the name of the search mode
+	 */
 	public String getName();
-	public SearchType getSearchType();
+	/**
+	 * @return the search mode order to be used in combined searches, negative means don't use
+ 	 */
+	public int searchAllUse();
+	/**
+	 * @return the tooltip text
+	 */
 	public String getTooltip();
-	public String getOptionName(int i);
-	public String getOptionTooltip(int i);
-	public boolean getOptionEnable(int i);
+	/**
+	 * @return the name of the option at the specified index
+	 */
+	public String getOptionName();
+	/**
+	 * @return the tooltip of the option at the specified index
+	 */
+	public String getOptionTooltip();
+	/**
+	 * @return if the option at the specified index is enabled
+	 */
+	public boolean getOptionEnable();
+	/**
+	 * @return if options are used for this search mode
+	 */
 	public boolean useOption();
-	public void clear();
-	public boolean useDisplaySelected();
+	/**
+	 * @return if whole genome is allowed instead of selecting a chromosome
+	 */
 	public boolean useGenomeInSeqList();
+	/**
+	 * verify the user input for this search
+	 * @param search_text the input text
+	 * @param vseq the chromosome / seq to search
+	 * @param seq the chromosome / seq to search
+	 * @return the error message or null for no error
+	 */
 	public String checkInput(String search_text, BioSeq vseq, String seq);
-	public SearchResultsTableModel getEmptyTableModel();
-	public List<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder);
-	public SearchResultsTableModel run(String search_text, BioSeq chrFilter, String seq, boolean remote, IStatus statusHolder);
-	public void finished(BioSeq vseq);
-	public void valueChanged(SearchResultsTableModel model, int srow);
-	public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan);
-	public int getZoomSpot(String search_text);
 }

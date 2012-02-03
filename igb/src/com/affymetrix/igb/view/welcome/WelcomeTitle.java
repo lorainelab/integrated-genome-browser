@@ -40,7 +40,7 @@ public class WelcomeTitle extends JPanel {
 		FontMetrics m = g.getFontMetrics(f);
 		FontMetrics m2 = g.getFontMetrics(f2);
 
-		int start = (int) (.50 * this.getHeight()) - 43;
+		int start = (int) (.50 * this.getHeight()) - 25;
 		//g.drawString( this.getWidth() +","+this.getHeight(), 20 , 20);
 
 		g.setFont(f);
@@ -53,19 +53,19 @@ public class WelcomeTitle extends JPanel {
 		g.setFont(f2);
 		g.setColor(Color.decode("#fffb86"));
 		width = (this.getWidth() / 2) - m2.stringWidth(second) / 2;
-		start += 48;
+		start += 35;
 		g.drawString(second, width, start);
 
 
 		g.setFont(f);
 		width = (this.getWidth() / 2) - m.stringWidth(third) / 2;
 		g.setColor(Color.decode("#FFFFFF"));
-		start += 48;
+		start += 35;
 		g.drawString(third, width, start);
 
 		width = (this.getWidth() / 2) - m.stringWidth(fourth) / 2;
 		g.setColor(Color.decode("#fffb86"));
-		start += 48;
+		start += 35;
 		g.drawString(fourth, width, start);
 	}
 }

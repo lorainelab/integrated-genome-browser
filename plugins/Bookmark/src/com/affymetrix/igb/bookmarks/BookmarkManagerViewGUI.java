@@ -87,9 +87,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
         PropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
-        nameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTextFieldActionPerformed(evt);
+        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nameTextFieldKeyReleased(evt);
             }
         });
 
@@ -117,9 +117,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentTextArea.setLineWrap(true);
         commentTextArea.setRows(5);
         commentTextArea.setWrapStyleWord(true);
-        commentTextArea.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                commentTextAreaFocusLost(evt);
+        commentTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                commentTextAreaKeyReleased(evt);
             }
         });
         jScrollPane2.setViewportView(commentTextArea);
@@ -324,16 +324,16 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                     .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(1, 1, 1)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 165, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 159, Short.MAX_VALUE)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(15, 15, 15))
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -395,10 +395,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		AddPositionBookmarkAction.getAction().actionPerformed(evt);
 }//GEN-LAST:event_addBookmarkActionButtonActionPerformed
 
-	private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
-		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_nameTextFieldActionPerformed
-
 	private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
 		bmv.import_action.actionPerformed(evt);
 		BookmarkActionManager.getInstance().rebuildMenus();
@@ -416,6 +412,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	private void undoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoNameButtonActionPerformed
 		try {
 			bmv.thing.undoManager.undo();
+			bmv.thing.updateBookmarkData();
 		} catch (CannotUndoException ex) {
 		}
 	}//GEN-LAST:event_undoNameButtonActionPerformed
@@ -423,13 +420,18 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 	private void redoNameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoNameButtonActionPerformed
 		try {
 			bmv.thing.undoManager.redo();
+			bmv.thing.updateBookmarkData();
 		} catch (CannotRedoException ex) {
 		}
 	}//GEN-LAST:event_redoNameButtonActionPerformed
 
-	private void commentTextAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentTextAreaFocusLost
+	private void nameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameTextFieldKeyReleased
 		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_commentTextAreaFocusLost
+	}//GEN-LAST:event_nameTextFieldKeyReleased
+
+	private void commentTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commentTextAreaKeyReleased
+		bmv.thing.updateBookmarkData();
+	}//GEN-LAST:event_commentTextAreaKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PropertiesPanel;

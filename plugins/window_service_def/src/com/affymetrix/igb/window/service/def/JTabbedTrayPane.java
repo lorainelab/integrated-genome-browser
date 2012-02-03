@@ -111,7 +111,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @return the retract state divider location
 	 */
 	private int getRetractDividerLocation() {
-		if (tab_pane.getTabCount() < 1) {
+		if (tab_pane.getTabCount() < 2) {
 			return -1;
 		}
 		int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
@@ -615,6 +615,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			PreferenceUtils.saveSelectedTab(title, getSelectedIGBTabPanel().getName());
 		}
 		PreferenceUtils.saveDividerLocation(title, saveDividerProportionalLocation);
+		PreferenceUtils.saveComponentState(title, trayState.toString());
 	}
 
 	@Override

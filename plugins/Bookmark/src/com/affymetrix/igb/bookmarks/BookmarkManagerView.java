@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -38,6 +37,7 @@ import javax.swing.undo.UndoManager;
  *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView implements TreeSelectionListener {
+
 	private static JFileChooser static_chooser = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 	public JTree tree;
@@ -58,6 +58,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private final BookmarkTreeCellRenderer renderer;
 	private static BookmarkManagerView singleton;
 	protected int last_selected_row = -1;  // used by dragUnderFeedback()
+	private boolean doNotShowWarning = false;
 
 	public static void init(IGBService _igbService) {
 		singleton = new BookmarkManagerView(_igbService);
@@ -70,7 +71,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	/** Creates a new instance of Class */
 	public BookmarkManagerView(IGBService igbService) {
 
-		tree = new DragDropTree();
+		tree = new BookmarkTree(this);
 		tree.setModel(tree_model);
 		bookmark_history = new ArrayList<TreePath>();
 
@@ -116,7 +117,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		} else {
 			parent = (DefaultMutableTreeNode) tree_node.getParent();
 		}
-		
+
 		int index = parent.getChildCount();
 
 		// Copy or move each source object to the target
@@ -125,7 +126,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				((DefaultTreeModel) tree.getModel()).insertNodeInto(node, parent, index);
 				TreePath path = new TreePath(((DefaultTreeModel) tree.getModel()).getPathToRoot(node));
-				
+
 				tree.setSelectionPath(path);
 			} catch (IllegalStateException e) {
 				// Cancelled by user
@@ -144,261 +145,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private static void setAccelerator(Action a) {
 		KeyStroke ks = PreferenceUtils.getAccelerator("Bookmark Manager / " + a.getValue(Action.NAME));
 		a.putValue(Action.ACCELERATOR_KEY, ks);
-	}
-
-	/** A JPanel that listens for TreeSelectionEvents, displays
-	 *  the name(s) of the selected item(s), and may allow you to edit them.
-	 */
-	public class BottomThing extends JPanel implements TreeSelectionListener {
-
-		private static final long serialVersionUID = 1L;
-		JLabel name_label = new JLabel("Name:");
-		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
-		public javax.swing.JTextArea comment_text_area = new javax.swing.JTextArea();
-		BookmarkListEditor bl_editor;
-		TreePath selected_path = null;
-		public BookmarkList selected_bl = null;
-		BookmarkList previousSelected_bl = null;
-		private final JTree tree;
-		public IGBService igbService = null;
-		public final DefaultTreeModel def_tree_model;
-		Action properties_action;
-		Action goto_action;
-		UndoManager undoManager = new UndoManager();
-		//UndoManager undoCommentManager = new UndoManager();
-
-		BottomThing(JTree tree) {
-			if (tree == null) {
-				throw new IllegalArgumentException();
-			}
-
-			this.tree = tree;
-			this.tree.addKeyListener(new KeyListener() {
-
-				@Override
-				public void keyTyped(KeyEvent e) {
-				}
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-					if ((e.getKeyCode() == KeyEvent.VK_DELETE)) {
-						deleteAction();
-					}
-					if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
-						goToAction();
-					}
-				}
-
-				@Override
-				public void keyReleased(KeyEvent e) {
-				}
-			});
-			this.def_tree_model = (DefaultTreeModel) tree.getModel();
-
-			properties_action = makePropertiesAction();
-			properties_action.setEnabled(false);
-			goto_action = makeGoToAction();
-			goto_action.setEnabled(false);
-
-			this.name_text_field.setEnabled(false);
-			this.name_text_field.getDocument().addUndoableEditListener(undoManager);
-			this.comment_text_area.setEnabled(false);
-			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
-
-			bl_editor = new BookmarkListEditor(def_tree_model);
-		}
-
-		/** Sets the instance of IGBService.  This is the instance
-		 *  in which the bookmarks will be opened when the "GoTo" button
-		 *  is pressed.
-		 *  @param igbService an instance of IGBService; null is ok.
-		 */
-		void setIGBService(IGBService igbService) {
-			this.igbService = igbService;
-		}
-
-		public void valueChanged(TreeSelectionEvent e) {
-			updatePreviousBookmarkData();
-
-			Object source = e.getSource();
-			assert source == tree;
-			if (source != tree) {
-				return;
-			}
-
-			TreePath[] selections = tree.getSelectionPaths();
-
-			name_text_field.setText("");
-			comment_text_area.setText("");
-			if (selections == null || selections.length != 1) {
-				name_text_field.setText("");
-				comment_text_area.setText("");
-				comment_text_area.setEnabled(false);
-				name_text_field.setEnabled(false);
-				properties_action.setEnabled(false);
-				goto_action.setEnabled(false);
-				return;
-			} else {
-				selected_path = selections[0];
-				selected_bl = (BookmarkList) selected_path.getLastPathComponent();
-				Object user_object = selected_bl.getUserObject();
-				//bl_editor.setBookmarkList(selected_bl);
-				if (user_object instanceof Bookmark) {
-					Bookmark bm = (Bookmark) user_object;
-
-					name_text_field.setText(bm.getName());
-					comment_text_area.setText(bm.getComment());
-					comment_text_area.setEnabled(true);
-					name_text_field.setEnabled(true);
-					properties_action.setEnabled(true);
-					goto_action.setEnabled(igbService != null);
-				} else if (user_object instanceof Separator) {
-					name_text_field.setText("Separator");
-					comment_text_area.setText("Uneditable");
-					comment_text_area.setEnabled(false);
-					name_text_field.setEnabled(false);
-					properties_action.setEnabled(false);
-					goto_action.setEnabled(false);
-				} else {
-					name_text_field.setText(user_object.toString());
-					// don't allow editing the root bookmark list name: see rename()
-					name_text_field.setEnabled(selected_bl != def_tree_model.getRoot());
-					properties_action.setEnabled(selected_bl != def_tree_model.getRoot());
-					goto_action.setEnabled(false);
-					comment_text_area.setText("Uneditable");
-					comment_text_area.setEnabled(false);
-				}
-
-				previousSelected_bl = selected_bl;
-			}
-		}
-
-		/*
-		 * Auto save comments when another node is selected.
-		 */
-		public void updatePreviousBookmarkData() {
-			updateNode(previousSelected_bl,
-					name_text_field.getText(),
-					comment_text_area.getText());
-		}
-
-		public void updateBookmarkData() {
-			TreePath[] selections = tree.getSelectionPaths();
-			selected_path = selections[0];
-			selected_bl = (BookmarkList) selected_path.getLastPathComponent();
-			updateNode(selected_bl,
-					name_text_field.getText(),
-					comment_text_area.getText());
-		}
-
-		public void updateNode(BookmarkList bl, String name, String comment) {
-			if (bl == def_tree_model.getRoot()) {
-				// I do not allow re-naming the root node because the current BookmarkParser
-				// class cannot actually read the name of a bookmark list, so any
-				// name change would be lost after saving and re-loading.
-				return;
-			}
-			if (name == null || name.length() == 0) {
-				return;
-			}
-			Object user_object = selected_bl.getUserObject();
-			if (user_object instanceof Bookmark) {
-				Bookmark bm = (Bookmark) user_object;
-				bm.setName(name);
-				bm.setComment(comment);
-				def_tree_model.nodeChanged(bl);
-			} else if (user_object instanceof String) {
-				selected_bl.setUserObject(name);
-				def_tree_model.nodeChanged(bl);
-			}
-		}
-
-		public Action getPropertiesAction() {
-			return properties_action;
-		}
-
-		private Action makePropertiesAction() {
-			Action a = new GenericAction() {
-
-				private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent ae) {
-					super.actionPerformed(ae);
-					if (selected_bl != null || 
-							selected_bl.getUserObject() instanceof Bookmark) {
-						bl_editor.openDialog(selected_bl);
-					} else {
-						setEnabled(false);
-					}
-				}
-
-				@Override
-				public String getText() {
-					return "Properties ...";
-				}
-
-				@Override
-				public String getIconPath() {
-					return null;
-				}
-
-				@Override
-				public int getMnemonic() {
-					return KeyEvent.VK_P;
-				}
-
-				@Override
-				public String getTooltip() {
-					return "Properties";
-				}
-			};
-			setAccelerator(a);
-			return a;
-		}
-
-		public Action getGoToAction() {
-			return goto_action;
-		}
-
-		private Action makeGoToAction() {
-			Action a = new GenericAction() {
-
-				private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent ae) {
-					super.actionPerformed(ae);
-					goToAction();
-				}
-
-				@Override
-				public String getText() {
-					return "Go To";
-				}
-
-				@Override
-				public int getMnemonic() {
-					return KeyEvent.VK_G;
-				}
-
-				@Override
-				public String getTooltip() {
-					return "Go To Bookmark";
-				}
-			};
-			setAccelerator(a);
-			return a;
-		}
-
-		private void goToAction() {
-			if (igbService == null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
-				setEnabled(false);
-			} else {
-
-				Bookmark bm = (Bookmark) selected_bl.getUserObject();
-				addBookmarkToHistory(tree.getSelectionPath());
-				BookmarkController.viewBookmark(igbService, bm);
-			}
-		}
 	}
 
 	public void valueChanged(TreeSelectionEvent e) {
@@ -520,7 +266,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Import Bookmarks";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
@@ -582,7 +327,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Export Bookmarks";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
@@ -618,20 +362,33 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				return "Delete Selected Bookmark(s)";
 			}
 		};
-		setAccelerator(a);
 		return a;
 	}
 
-	private void deleteAction() {
+	public void deleteAction() {
 		TreePath[] selectionPaths = tree.getSelectionPaths();
 		if (selectionPaths == null) {
 			return;
 		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-		int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-				+ selectionPaths.length + " selected bookmarks?", "Delete?",
-				JOptionPane.YES_NO_OPTION);
-		if (yes == JOptionPane.YES_OPTION) {
+		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
+		String message = "Delete these " + selectionPaths.length + " selected items?";
+		Object[] params = {message, checkbox};
+		doNotShowWarning = checkbox.isSelected();
+		if (!doNotShowWarning) {
+			int yes = JOptionPane.showConfirmDialog(frame, params, "Delete?", JOptionPane.YES_NO_OPTION);
+			doNotShowWarning = checkbox.isSelected();
+			if (yes == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < selectionPaths.length; i++) {
+					TreePath path = selectionPaths[i];
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					if (node.getParent() != null) {
+						tree_model.removeNodeFromParent(node);
+						removeBookmarkFromHistory(path);
+					}
+				}
+			}
+		} else {
 			for (int i = 0; i < selectionPaths.length; i++) {
 				TreePath path = selectionPaths[i];
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -747,5 +504,245 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree.removeTreeSelectionListener(this);
 		thing = null;
 		tree = null;
+	}
+	
+		/** A JPanel that listens for TreeSelectionEvents, displays
+	 *  the name(s) of the selected item(s), and may allow you to edit them.
+	 */
+	public class BottomThing extends JPanel implements TreeSelectionListener {
+
+		private static final long serialVersionUID = 1L;
+		JLabel name_label = new JLabel("Name:");
+		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
+		public javax.swing.JTextArea comment_text_area = new javax.swing.JTextArea();
+		BookmarkListEditor bl_editor;
+		TreePath selected_path = null;
+		public BookmarkList selected_bl = null;
+		BookmarkList previousSelected_bl = null;
+		private final JTree tree;
+		public IGBService igbService = null;
+		public final DefaultTreeModel def_tree_model;
+		Action properties_action;
+		Action goto_action;
+		UndoManager undoManager = new UndoManager();
+		//UndoManager undoCommentManager = new UndoManager();
+
+		BottomThing(JTree tree) {
+			if (tree == null) {
+				throw new IllegalArgumentException();
+			}
+
+			this.tree = tree;
+			this.tree.addKeyListener(new KeyListener() {
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+				}
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if ((e.getKeyCode() == KeyEvent.VK_DELETE)) {
+						deleteAction();
+					}
+					if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
+						goToAction();
+					}
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+				}
+			});
+			this.def_tree_model = (DefaultTreeModel) tree.getModel();
+
+			properties_action = makePropertiesAction();
+			properties_action.setEnabled(false);
+			goto_action = makeGoToAction();
+			goto_action.setEnabled(false);
+
+			this.name_text_field.setEnabled(false);
+			this.name_text_field.getDocument().addUndoableEditListener(undoManager);
+			this.comment_text_area.setEnabled(false);
+			this.comment_text_area.getDocument().addUndoableEditListener(undoManager);
+
+			bl_editor = new BookmarkListEditor(def_tree_model);
+		}
+
+		/** Sets the instance of IGBService.  This is the instance
+		 *  in which the bookmarks will be opened when the "GoTo" button
+		 *  is pressed.
+		 *  @param igbService an instance of IGBService; null is ok.
+		 */
+		void setIGBService(IGBService igbService) {
+			this.igbService = igbService;
+		}
+
+		public void valueChanged(TreeSelectionEvent e) {
+			updatePreviousBookmarkData();
+
+			Object source = e.getSource();
+			assert source == tree;
+			if (source != tree) {
+				return;
+			}
+
+			TreePath[] selections = tree.getSelectionPaths();
+
+			name_text_field.setText("");
+			comment_text_area.setText("");
+			comment_text_area.setEnabled(false);
+			name_text_field.setEnabled(false);
+			properties_action.setEnabled(false);
+			goto_action.setEnabled(false);
+
+			if (selections != null && selections.length == 1) {
+				selected_path = selections[0];
+				selected_bl = (BookmarkList) selected_path.getLastPathComponent();
+				Object user_object = selected_bl.getUserObject();
+				name_text_field.setText(selected_bl.getName());
+				comment_text_area.setText(selected_bl.getComment());
+				
+				if (user_object instanceof Bookmark) {
+					comment_text_area.setEnabled(true);
+					name_text_field.setEnabled(true);
+					properties_action.setEnabled(true);
+					goto_action.setEnabled(igbService != null);
+				} else if (user_object instanceof Separator) {
+					name_text_field.setText("Separator");
+					comment_text_area.setText("Uneditable");
+				} else if (selected_bl == def_tree_model.getRoot()) {
+					comment_text_area.setText("Uneditable");
+				} else {
+					name_text_field.setEnabled(true);
+					comment_text_area.setEnabled(true);
+				}
+
+				previousSelected_bl = selected_bl;
+			}
+		}
+
+		/*
+		 * Auto save comments when another node is selected.
+		 */
+		public void updatePreviousBookmarkData() {
+			updateNode(previousSelected_bl,
+					name_text_field.getText(),
+					comment_text_area.getText());
+		}
+
+		public void updateBookmarkData() {
+			TreePath[] selections = tree.getSelectionPaths();
+			selected_path = selections[0];
+			selected_bl = (BookmarkList) selected_path.getLastPathComponent();
+			updateNode(selected_bl,
+					name_text_field.getText(),
+					comment_text_area.getText());
+		}
+
+		public void updateNode(BookmarkList bl, String name, String comment) {
+			if (bl == def_tree_model.getRoot()) {
+				// I do not allow re-naming the root node currently
+				return;
+			}
+			if (name == null || name.length() == 0) {
+				return;
+			}
+			Object user_object = selected_bl.getUserObject();
+			if (user_object instanceof Bookmark) {
+				Bookmark bm = (Bookmark) user_object;
+				bm.setName(name);
+				bm.setComment(comment);
+				def_tree_model.nodeChanged(bl);
+			} else if (user_object instanceof String) {
+				selected_bl.setUserObject(name);
+				selected_bl.setComment(comment);
+				def_tree_model.nodeChanged(bl);
+			}
+		}
+
+		public Action getPropertiesAction() {
+			return properties_action;
+		}
+
+		private Action makePropertiesAction() {
+			Action a = new GenericAction() {
+
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent ae) {
+					super.actionPerformed(ae);
+					if (selected_bl != null
+							|| selected_bl.getUserObject() instanceof Bookmark) {
+						bl_editor.openDialog(selected_bl);
+					} else {
+						setEnabled(false);
+					}
+				}
+
+				@Override
+				public String getText() {
+					return "Properties ...";
+				}
+
+				@Override
+				public String getIconPath() {
+					return null;
+				}
+
+				@Override
+				public int getMnemonic() {
+					return KeyEvent.VK_P;
+				}
+
+				@Override
+				public String getTooltip() {
+					return "Properties";
+				}
+			};
+			return a;
+		}
+
+		public Action getGoToAction() {
+			return goto_action;
+		}
+
+		private Action makeGoToAction() {
+			Action a = new GenericAction() {
+
+				private static final long serialVersionUID = 1L;
+
+				public void actionPerformed(ActionEvent ae) {
+					super.actionPerformed(ae);
+					goToAction();
+				}
+
+				@Override
+				public String getText() {
+					return "Go To";
+				}
+
+				@Override
+				public int getMnemonic() {
+					return KeyEvent.VK_G;
+				}
+
+				@Override
+				public String getTooltip() {
+					return "Go To Bookmark";
+				}
+			};
+			return a;
+		}
+
+		private void goToAction() {
+			if (igbService == null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
+				setEnabled(false);
+			} else {
+
+				Bookmark bm = (Bookmark) selected_bl.getUserObject();
+				addBookmarkToHistory(tree.getSelectionPath());
+				BookmarkController.viewBookmark(igbService, bm);
+			}
+		}
 	}
 }

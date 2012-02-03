@@ -7,24 +7,16 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
@@ -73,13 +65,15 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	}
 
 	public void clearFeatures() {
-		if (this.virtualFeatures != null) {
-			this.virtualFeatures.clear();
-		}
-		if (features != null) {
+		if (features != null && virtualFeatures != null) {
+			virtualFeatures.clear();
+
 			features.clear();
+
+			fireTableDataChanged();
+
+			TierPrefsView.getSingleton().clearTable();
 		}
-		this.fireTableDataChanged();
 	}
 
 	void createVirtualFeatures(List<GenericFeature> features) {
@@ -93,9 +87,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		if (DataManagementTable.getTable() != null) {
-			this.fireTableDataChanged();
-		}
+		this.fireTableDataChanged();
 	}
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
@@ -368,7 +360,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				break;
 			case SEPARATE_COLUMN:
 				if (vFeature.getStyle() != null) {
-					vFeature.getStyle().setSeparate((Boolean) value);					
+					vFeature.getStyle().setSeparate((Boolean) value);
 					smv.getPopup().refreshMap(false, true);
 					smv.getPopup().getHandler().sortTiers();
 				}
@@ -390,7 +382,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			refreshSeqMapView();
 		}
 
-		PreferencesPanel.getSingleton().tpvGUI.tpv.externalChange();
+		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 
 	private void setVisibleTracks(ITrackStyle style) {

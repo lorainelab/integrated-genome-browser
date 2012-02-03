@@ -51,7 +51,6 @@ public final class WebLinksView implements ListSelectionListener {
 	public static final int COL_TYPE = 3;
 	public int[] selectedRows;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
-	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	public JTextField nameTextField;
 	public JTextField urlTextField;
 	public JTextField regexTextField;
@@ -205,61 +204,40 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	public void nameTextField() {
-		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
+		if (localTable.getSelectedRow() != -1) {
 			String name = nameTextField.getText();
-			if (isEmpty(name)) {
-				ErrorHandler.errorPanel("The name cannot be blank");
-				nameTextField.setText(previousName);
-			} else {
+			if (!isEmpty(name)) {
 				localModel.setValueAt(name, selectedRows[0], COL_NAME);
 			}
-
-			nameTextField.grabFocus();
 		}
 	}
 
 	public void urlTextField() {
-		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
+		if (localTable.getSelectedRow() != -1) {
 			String url = urlTextField.getText();
-			if (isEmpty(url)) {
-				ErrorHandler.errorPanel("The URL cannot be blank");
-				urlTextField.setText(previousUrl);
-			} else {
-				try {
-					new URL(url);
-					localModel.setValueAt(url, selectedRows[0], COL_URL);
-				} catch (MalformedURLException e) {
-					ErrorHandler.errorPanel("Malformed URL",
-							"The given URL appears to be invalid.\n" + e.getMessage(),
-							urlTextField);
-					urlTextField.setText(previousUrl);
-				}
+			if (!isEmpty(url)) {
+				localModel.setValueAt(url, selectedRows[0], COL_URL);
 			}
-
-			urlTextField.grabFocus();
 		}
 	}
 
 	public void regexTextField() {
-		if (!settingValueFromTable && localTable.getSelectedRow() != -1) {
+		if (localTable.getSelectedRow() != -1) {
 			String regex = regexTextField.getText();
-			if (isEmpty(regex)) {
-				ErrorHandler.errorPanel("The regular expression cannot be blank");
-			}
-
-			try {
-				Pattern.compile(regexTextField.getText());
+			if (!isEmpty(regex)) {
 				localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
-			} catch (PatternSyntaxException pse) {
-				ErrorHandler.errorPanel("Bad Regular Expression",
-						"Error in regular expression:\n" + pse.getMessage(), regexTextField);
-				regexTextField.setText(previousRegex);
 			}
-
-			regexTextField.grabFocus();
 		}
 	}
 
+	public void idRadioButton() {
+		localModel.setValueAt(WebLink.RegexType.ID, selectedRows[0], COL_TYPE);
+	}
+
+	public void nameRadioButton() {
+		localModel.setValueAt(WebLink.RegexType.TYPE, selectedRows[0], COL_TYPE);
+	}
+	
 	/** Gets a static re-usable file chooser that prefers "html" files. */
 	private static JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
@@ -320,59 +298,6 @@ public final class WebLinksView implements ListSelectionListener {
 				ErrorHandler.errorPanel("Error", "Error exporting web links",
 						frame, ex);
 			}
-		}
-	}
-
-	public void save() {
-		if (localTable.getSelectedRow() != -1) {
-			String name = nameTextField.getText();
-			if (isEmpty(name)) {
-				ErrorHandler.errorPanel("The name cannot be blank");
-				nameTextField.setText(previousName);
-				nameTextField.grabFocus();
-				return;
-			}
-
-			String url = urlTextField.getText();
-			if (isEmpty(url)) {
-				ErrorHandler.errorPanel("The URL cannot be blank");
-				urlTextField.setText(previousUrl);
-				urlTextField.grabFocus();
-				return;
-			} else {
-				try {
-					new URL(url);
-				} catch (MalformedURLException e) {
-					ErrorHandler.errorPanel("Malformed URL",
-							"The given URL appears to be invalid.\n" + e.getMessage(),
-							urlTextField);
-					urlTextField.setText(previousUrl);
-					urlTextField.grabFocus();
-					return;
-				}
-			}
-
-			String regex = regexTextField.getText();
-			if (isEmpty(regex)) {
-				ErrorHandler.errorPanel("The regular expression cannot be blank");
-				regexTextField.setText(previousRegex);
-				regexTextField.grabFocus();
-				return;
-			} else {
-				try {
-					Pattern.compile(regexTextField.getText());
-				} catch (PatternSyntaxException pse) {
-					ErrorHandler.errorPanel("Bad Regular Expression",
-							"Error in regular expression:\n" + pse.getMessage(), regexTextField);
-					regexTextField.setText(previousRegex);
-					regexTextField.grabFocus();
-					return;
-				}
-			}
-
-			localModel.setValueAt(name, selectedRows[0], COL_NAME);
-			localModel.setValueAt(regex, selectedRows[0], COL_REGEX);
-			localModel.setValueAt(url, selectedRows[0], COL_URL);
 		}
 	}
 
@@ -493,7 +418,6 @@ public final class WebLinksView implements ListSelectionListener {
 
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
 					WebLink webLink = webLinks.get(row);
@@ -503,16 +427,14 @@ public final class WebLinksView implements ListSelectionListener {
 							nameTextField.setText((String) value);
 							break;
 						case COL_REGEX:
-							if (idRadioButton.isSelected()) {
-								webLink.setRegexType(WebLink.RegexType.ID);
-							} else {
-								webLink.setRegexType(WebLink.RegexType.TYPE);
-							}
 							webLink.setRegex((String) value);
 							break;
 						case COL_URL:
 							webLink.setUrl((String) value);
 							urlTextField.setText((String) value);
+							break;
+						case COL_TYPE:
+							webLink.setRegexType((RegexType) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);
@@ -524,10 +446,11 @@ public final class WebLinksView implements ListSelectionListener {
 
 				previousSelectedRow = localTable.getSelectedRow();
 
-				refreshList();
+				setLinks(WebLink.getLocalWebList());
+				fireTableCellUpdated(row, col);
+
 				resetRow(previousSelectedRow);
 			}
-			settingValueFromTable = false;
 		}
 
 		public int getRowCount() {

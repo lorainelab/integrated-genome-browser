@@ -16,6 +16,8 @@ Caenorhabditis elegans	C. elegans (nematode)	C_elegans	ce	Caenorhabditis_elegans
 Caenorhabditis japonica	C. japonica (nematode)	C_japonica	caeJap
 Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
+Candida albicans SC	Yeast (Human Flora)	C_albicans_SC
+Candida albicans WO	Yeast (Human Flora)	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
@@ -93,8 +95,8 @@ Pteropus vampyrus	Large flying fox	P_vampyrus	pteVam	Pteropus_vampyrus
 Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
 Ricinis communis	Castor oil plant	R_communis
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
-Schizosaccharomyces pombe	Fission yeast	S_pombe
+Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
+Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii
 Setaria italica	Foxtail millet	S. italica	S_italica
 Sigmodon hispidus	Cotton rat	S_hispidus

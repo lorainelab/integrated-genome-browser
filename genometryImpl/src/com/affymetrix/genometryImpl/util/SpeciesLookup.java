@@ -27,6 +27,9 @@ public final class SpeciesLookup {
 
 	/** Regex to find species named in the UCSC format.  (eg. gs# or genSpe#) */
 	private static final Pattern UCSC_REGEX = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");
+	
+	/** Regex to find species named in the UCSC format.  (eg. gs# or genSpe#) */
+	private static final Pattern NON_STANDARD_REGEX = Pattern.compile("^([a-zA-Z]+_[a-zA-Z]+_[a-zA-Z]+).*$");
 
 
 	/** lookup of generic species names */
@@ -88,6 +91,11 @@ public final class SpeciesLookup {
 		/* attempt to decode standard format (G_species_*) */
 		if (species.equals(version)) {
 			species = getSpeciesName(version, STANDARD_REGEX, cs);
+		}
+		
+//		/* attempt to decode standard format (G_species_XXX_*) */
+		if (species == null) {
+			species = getSpeciesName(version, NON_STANDARD_REGEX, cs);
 		}
 
 		/* attempt to decode UCSC format (gs# or genSpe#) */

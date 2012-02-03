@@ -1,6 +1,5 @@
 package com.affymetrix.igb.search;
 
-import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -16,10 +15,12 @@ import javax.swing.table.TableColumn;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -27,15 +28,13 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -46,9 +45,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResultsTableModel;
-import javax.swing.table.TableCellRenderer;
 
 public final class SearchView extends IGBTabPanel implements
 		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {
@@ -78,11 +76,16 @@ public final class SearchView extends IGBTabPanel implements
 			igbService.getSeqMap().updateWidget();
 
 			SearchView.this.initSequenceCB();
-			SearchView.this.searchTF.setEnabled(true);
+//			SearchView.this.searchTF.setEnabled(true);
 
 			initOptionCheckBox();
 
-			setModel(selectedSearchMode.getEmptyTableModel());
+			if (selectedSearchMode instanceof SearchModeResidue) {
+				setModel(new GlyphSearchResultsTableModel(null, null));
+			}
+			else {
+				setModel(new SymSearchResultsTableModel(null));
+			}
 
 			SearchView.this.searchTF.setToolTipText(selectedSearchMode.getTooltip());
 
@@ -110,20 +113,29 @@ public final class SearchView extends IGBTabPanel implements
 			if (errorMessage == null) {
 				enableComp(false);
 				clearTable();
-				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(" ") {
+				CThreadWorker<SearchResultsTableModel, Void> worker = new CThreadWorker<SearchResultsTableModel, Void>(" ") {
 
 					@Override
-					protected Object runInBackground() {
-						return selectedSearchMode.run(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this.sequenceCB.getSelectedItem().toString(), optionCheckBox.isSelected(), SearchView.this);
+					protected SearchResultsTableModel runInBackground() {
+						if (selectedSearchMode instanceof SearchModeResidue) {
+							List<GlyphI> glyphs = ((SearchModeResidue)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							return new GlyphSearchResultsTableModel(glyphs, SearchView.this.sequenceCB.getSelectedItem().toString());
+						}
+						else {
+							List<SeqSymmetry> syms = ((ISearchModeSym)selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+							return new SymSearchResultsTableModel(syms);
+						}
 					}
 
 					@Override
 					protected void finished() {
-						selectedSearchMode.finished(chrfilter);
+						if (selectedSearchMode instanceof SearchModeResidue) {
+							((SearchModeResidue)selectedSearchMode).finished(chrfilter);
+						}
 						enableComp(true);
 						initOptionCheckBox();
 						try {
-							SearchResultsTableModel model = (SearchResultsTableModel) get();
+							SearchResultsTableModel model = get();
 							if (model != null) {
 								setModel(model);
 							}
@@ -262,10 +274,9 @@ public final class SearchView extends IGBTabPanel implements
 			return;
 		
 		if(selectedSearchMode.useOption()){
-			int remoteServerCount = getRemoteServerCount(group);
-			optionCheckBox.setText(selectedSearchMode.getOptionName(remoteServerCount));
-			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip(remoteServerCount));
-			boolean enabled = selectedSearchMode.getOptionEnable(remoteServerCount);
+			optionCheckBox.setText(selectedSearchMode.getOptionName());
+			optionCheckBox.setToolTipText(selectedSearchMode.getOptionTooltip());
+			boolean enabled = selectedSearchMode.getOptionEnable();
 			optionCheckBox.setEnabled(enabled);
 			if(!enabled){
 				optionCheckBox.setSelected(false);
@@ -311,15 +322,16 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.removeAllItems();
 		searchModeMap = new HashMap<String, ISearchMode>();
 		boolean saveFound = false;
-		List<ISearchMode> searchModes = ExtensionPointHandler.getExtensionPoint(ISearchMode.class).getExtensionPointImpls();
+		List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
+		searchModes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
+		searchModes.add(new SearchModeResidue(igbService));
 		// consistent order for search modes
 		Collections.sort(searchModes,
 			new Comparator<ISearchMode>() {
 				@Override
 				public int compare(ISearchMode o1, ISearchMode o2) {
-					return o1.getClass().getName().compareTo(o2.getClass().getName());
+					return o1.searchAllUse() - o2.searchAllUse();
 				}
-			
 			}
 		);
 
@@ -351,7 +363,6 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initComponents() {
-		searchTF.setVisible(true);
 		searchTF.setEnabled(true);
 		searchTF.setMinimumSize(new Dimension(125, 50));
 
@@ -391,23 +402,72 @@ public final class SearchView extends IGBTabPanel implements
 			column.setCellRenderer(dtcr);
 		}
 	}
-	
+
+	public void zoomToSym(SeqSymmetry sym, List<SeqSymmetry> altSymList) {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+
+		if (sym != null) {
+			if (altSymList != null && altSymList.contains(sym)) {
+				if (group == null) {
+					return;
+				}
+				zoomToCoord(sym);
+				return;
+			}
+
+			if (igbService.getSeqMap().getItem(sym) == null) {
+				if (group == null) {
+					return;
+				}
+				// Couldn't find sym in map view! Go ahead and zoom to it.
+				zoomToCoord(sym);
+				return;
+			}
+
+			// Set selected symmetry normally
+			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+			syms.add(sym);
+			igbService.getSeqMapView().select(syms, true);
+		}
+	}
+
+	private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		String seqID = sym.getSpanSeq(0).getID();
+		BioSeq seq = group.getSeq(seqID);
+		if (seq != null) {
+			SeqSpan span = sym.getSpan(0);
+			if (span != null) {
+				// zoom to its coordinates
+				igbService.zoomToCoord(seqID, span.getStart(), span.getEnd());
+			}
+		}
+	}
+
 	/** This is called when the user double click a row of the table. */
 	private final MouseListener list_selection_listener = new MouseListener() {
 
 		public void mouseClicked(MouseEvent e) {
-				if (e.getComponent().isEnabled()
-						&& e.getButton() == MouseEvent.BUTTON1
-						&& e.getClickCount() == 2) {
-					int srow = table.getSelectedRow();
-					srow = table.convertRowIndexToModel(srow);
-					if (srow < 0) {
-						return;
-					}
-					selectedSearchMode.valueChanged(
-							(SearchResultsTableModel) table.getModel(), srow);
+			if (e.getComponent().isEnabled()
+					&& e.getButton() == MouseEvent.BUTTON1
+					&& e.getClickCount() == 2) {
+				int srow = table.getSelectedRow();
+				srow = table.convertRowIndexToModel(srow);
+				if (srow < 0) {
+					return;
+				}
+				if (selectedSearchMode instanceof SearchModeResidue) {
+					GlyphI glyph = ((GlyphSearchResultsTableModel)table.getModel()).get(srow);
+					((SearchModeResidue)selectedSearchMode).valueChanged(glyph, ((GlyphSearchResultsTableModel)table.getModel()).seq);
+				}
+				else {
+					SeqSymmetry sym = ((SymSearchResultsTableModel)table.getModel()).get(srow);
+					zoomToSym(sym, ((ISearchModeSym)selectedSearchMode).getAltSymList());
 				}
 			}
+		}
 
 		public void mousePressed(MouseEvent me) {}
 
@@ -422,8 +482,8 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
 		selectedSearchMode = searchModeMap.get(searchMode);
-		if (selectedSearchMode != null) {
-			selectedSearchMode.clear();
+		if (selectedSearchMode != null && selectedSearchMode instanceof SearchModeResidue) {
+			((SearchModeResidue)selectedSearchMode).clear();
 		}
 		clearTable();
 	}
@@ -441,19 +501,6 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.setEnabled(enabled);
 		searchButton.setEnabled(enabled);
 		clearButton.setEnabled(enabled);
-	}
-
-	private static int getRemoteServerCount(AnnotatedSeqGroup group) {
-		if (group == null) {
-			return 0;
-		}
-		int count = 0;
-		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {

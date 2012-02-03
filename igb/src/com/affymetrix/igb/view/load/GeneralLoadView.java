@@ -39,8 +39,9 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.view.DataLoadPrefsView;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
@@ -48,8 +49,10 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
+import java.util.EventObject;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -70,7 +73,7 @@ public final class GeneralLoadView {
 	private static IGBService igbService;
 	//gui components 
 	private static JRPButton all_residuesB;
-	private static javax.swing.JTable dataManagementTable;
+	private static JTableX dataManagementTable;
 	private static JRPButton partial_residuesB;
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
@@ -98,7 +101,9 @@ public final class GeneralLoadView {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
 		dataManagementTableModel = new DataManagementTableModel(this);
+		dataManagementTableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
 		dataManagementTable = new JTableX(dataManagementTableModel);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(dataManagementTable);
 		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
@@ -445,6 +450,7 @@ public final class GeneralLoadView {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
+		dataManagementTable.stopCellEditing(); 
 		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
 
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
@@ -453,8 +459,8 @@ public final class GeneralLoadView {
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(80);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(80);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(120);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
@@ -464,12 +470,12 @@ public final class GeneralLoadView {
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(26);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(26);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(26);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(25);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(25);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(25);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(29);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(29);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(29);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(27);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(27);
+		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(27);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
@@ -490,7 +496,7 @@ public final class GeneralLoadView {
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-		DataManagementTable.setComboBoxEditors((JTableX) dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+		DataManagementTable.setComboBoxEditors(dataManagementTable, !GeneralLoadView.IsGenomeSequence());
 	}
 
 	/**
@@ -595,13 +601,27 @@ public final class GeneralLoadView {
 				
 				if(!syms.isEmpty())
 					gviewer.select(syms, false);
+				
+				TierPrefsView.getSingleton().refreshList();
 			}
 		});
 	}
-
-	public CThreadWorker<Void, Void> removeFeature(final GenericFeature feature, final boolean refresh) {
+	
+	void removeAllFeautres(Set<GenericFeature> features) {
+		for (GenericFeature feature : features) {
+			if (feature.isVisible()) {
+				GeneralLoadView.getLoadView().removeFeature(feature, true);
+			}
+		}
+	}
+	
+	public void removeFeature(final GenericFeature feature, final boolean refresh) {
+		removeFeature(feature, refresh, true);
+	}
+	
+	void removeFeature(final GenericFeature feature, final boolean refresh, final boolean removeLocal) {
 		if (feature == null) {
-			return null;
+			return;
 		}
 
 		CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.featureName) {
@@ -619,14 +639,18 @@ public final class GeneralLoadView {
 
 				feature.clear();
 
-				// If feature is local then remove it from server.
-				GenericVersion version = feature.gVersion;
-				if (version.gServer.serverType.equals(ServerTypeI.LocalFiles)) {
-					if (version.removeFeature(feature)) {
-						SeqGroupView.getInstance().refreshTable();
-						if (gmodel.getSelectedSeqGroup().getSeqCount() > 0 && 
-								!gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
-							gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
+				if (removeLocal) {
+					// If feature is local then remove it from server.
+					GenericVersion version = feature.gVersion;
+					if (version.gServer.serverType.equals(ServerTypeI.LocalFiles)) {
+						if (version.removeFeature(feature)) {
+							SeqGroupView.getInstance().refreshTable();
+							if (gmodel.getSelectedSeqGroup().getSeqCount() > 0
+									&& !gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
+								gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
+							} else {
+								gmodel.setSelectedSeq(null);
+							}
 						}
 					}
 				}
@@ -647,7 +671,6 @@ public final class GeneralLoadView {
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
 
-		return delete;
 	}
 
 	protected GenericAction getRefreshDataAction() {

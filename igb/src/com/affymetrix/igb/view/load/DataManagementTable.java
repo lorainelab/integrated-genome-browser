@@ -5,17 +5,22 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.genoviz.swing.PartialLineBorder;
+import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Component;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +36,12 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
+import java.util.EventObject;
 
 /**
  * A table with two customizations:
@@ -39,7 +50,6 @@ import java.awt.Color;
  */
 public final class DataManagementTable {
 
-	private static JTableX jTable;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
@@ -65,7 +75,6 @@ public final class DataManagementTable {
 	 * @param enabled
 	 */
 	static void setComboBoxEditors(JTableX table, boolean enabled) {
-		jTable = table;
 		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.AUTOLOAD.toString(), IGBConstants.BUNDLE.getString("autoLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
@@ -120,9 +129,9 @@ public final class DataManagementTable {
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
 			action.addEditorForRow(row, buttonEditor);
-			JRPTextField trackNameFieldEditor = new JRPTextField("LoadModeTable_trackNameFieldEditor");
-			DefaultCellEditor textEditor = new DefaultCellEditor(trackNameFieldEditor);
-			text.addEditorForRow(row, textEditor);
+			JRPTextFieldTableCellRenderer trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor",
+					vFeature.getStyle().getTrackName());
+			text.addEditorForRow(row, trackNameFieldEditor);
 			color.addEditorForRow(row, cellEditor);
 		}
 
@@ -144,63 +153,45 @@ public final class DataManagementTable {
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		private final JComboBox comboBox;
 		private final JRPTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
 
 		public ColumnRenderer() {
-			comboBox = new JComboBox();
-			comboBox.setRenderer(comboRenderer);
-			comboBox.setBorder(null);
 
 			textField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
 			textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
 			textField.setBorder(null);
+			textField.setHorizontalAlignment(JRPTextField.CENTER);
 		}
 
 		public Component getTableCellRendererComponent(
 				JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column) {
+			DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
 			if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
 				if (((String) value).equals(textField.getText())) {
 					return textField;
 				} else {
-					comboBox.removeAllItems();
-					comboBox.addItem(value);
-					return comboBox;
+					VirtualFeature vFeature = ftm.getFeature(row);
+					ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+					Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+					renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+					return c;
 				}
 			} else {
-				comboBox.removeAllItems();
-				comboBox.addItem(value);
-				return comboBox;
+				VirtualFeature vFeature = ftm.getFeature(row);
+				ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+				Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+				return c;
 			}
 		}
-	}
-
-	public static void updateVirtualFeatureList() {
-		if (jTable != null) {
-			GeneralLoadView.getLoadView().initDataManagementTable();
-		}
-	}
-
-	public static JTableX getTable() {
-		if (jTable != null) {
-			return jTable;
-		}
-		return null;
-	}
-
-	public static DataManagementTableModel getModel() {
-		if (jTable != null) {
-			return (DataManagementTableModel) jTable.getModel();
-		}
-		return null;
 	}
 }
 
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends JTable implements MouseListener {
+class JTableX extends JTable implements TrackStylePropertyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
@@ -221,15 +212,39 @@ class JTableX extends JTable implements MouseListener {
 
 	public JTableX(TableModel tm) {
 		super(tm);
-		getTableHeader().addMouseListener(this);
 		rmMap = new HashMap<Integer, RowEditorModel>();
 
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
+		init();
+	}
+
+	private void init() {
+		setCellSelectionEnabled(false);
+		setColumnSelectionAllowed(false);
+		setRowSelectionAllowed(false);
+		setFocusable(false);
+		getSelectionModel().setSelectionMode(0);
+
+		setOpaque(true);
+		setBackground(Color.white);
+		setIntercellSpacing(new Dimension(1, 1));
+		setShowGrid(true);
+		setGridColor(new Color(11184810));
+		setRowHeight(20);
 
 
+		JTableHeader header = getTableHeader();
+		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+		header.setForeground(Color.black);
+		header.setBackground(Color.white);
+		header.setReorderingAllowed(false);
+		header.setResizingAllowed(true);
+
+		setAutoscrolls(true);
+		setRequestFocusEnabled(false);
 	}
 
 	void setRowEditorModel(int column, RowEditorModel rm) {
@@ -238,7 +253,7 @@ class JTableX extends JTable implements MouseListener {
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		if (rmMap != null) { 
+		if (rmMap != null) {
 
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
@@ -293,6 +308,9 @@ class JTableX extends JTable implements MouseListener {
 				}
 			}
 
+		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
+			JRPTextFieldTableCellRenderer tcr = new JRPTextFieldTableCellRenderer("DataManagementTable_TrackNameColumnRenderer", vFeature.getStyle().getTrackName());
+			return tcr;
 		}
 		return super.getCellRenderer(row, column);
 	}
@@ -351,6 +369,7 @@ class JTableX extends JTable implements MouseListener {
 
 	protected JTableHeader createDefaultTableHeader() {
 		return new JTableHeader(columnModel) {
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -363,82 +382,97 @@ class JTableX extends JTable implements MouseListener {
 		};
 	}
 
-	public void mouseReleased(MouseEvent e) {
-		//do nothing - functionality removed but not deleted for now.
-//		java.awt.Point p = e.getPoint();
-//		int index = columnModel.getColumnIndexAtX(p.x);
-//
-//		int realIndex = columnModel.getColumn(index).getModelIndex();
-//		LoadModeDataTableModel ftm = (LoadModeDataTableModel) getModel();
-//
-//		switch (realIndex) {
-//			case LoadModeDataTableModel.REFRESH_FEATURE_COLUMN:
-//				if (GeneralLoadView.getIsDisableNecessary()) {
-//					GeneralLoadView.getLoadView().getRefreshDataAction().actionPerformed(null);
-//				}
-//				break;
-//			case LoadModeDataTableModel.DELETE_FEATURE_COLUMN:
-//				int featureSize = ftm.getRowCount();
-//				String message = "Really remove all data sets ?";
-//				if (featureSize > 0 && Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-//						PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-//					List<TierGlyph> tierList = smv.getSeqMap().getTiers();
-//					for (GenericFeature gFeature : ftm.features) {
-//						GeneralLoadView.getLoadView().removeFeature(gFeature, true);
-//					}
-//					ftm.virtualFeatures.clear();
-//				}
-//				break;
-//			case LoadModeDataTableModel.HIDE_FEATURE_COLUMN:
-//				currentTiers = smv.getSeqMap().getTiers();
-//				TableColumn c = this.getColumnModel().getColumn(LoadModeDataTableModel.HIDE_FEATURE_COLUMN);//may be wrong
-//				if (LoadModeTable.iconTest) {
-//					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
-//					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.invisible_icon, true));
-//					LoadModeTable.iconTest = false;
-//
-//					for (TierGlyph tier : currentTiers) {
-//						if (tier.getAnnotStyle().getTrackName() != null) {// need change
-//							if (!tier.getAnnotStyle().getTrackName().equalsIgnoreCase(
-//									TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-//								if (tier.isVisible()) {
-//									smv.getPopup().hideOneTier(tier);
-//								}
-//							}
-//						}
-//					}
-//
-//					refreshSeqMapView();
-//				} else {
-//					c.setCellRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
-//					c.setHeaderRenderer(new LabelTableCellRenderer(LoadModeTable.visible_icon, true));
-//					LoadModeTable.iconTest = true;
-//					smv.getPopup().showAllTiers();
-//				}
-//
-//				this.getTableHeader().repaint();
-//				ftm.fireTableDataChanged();
-//				break;
-//			default:
-//			//System.out.println("Unknown header selected: " + realIndex);
-//		}
+	public void trackstylePropertyChanged(EventObject eo) {
+		if (eo.getSource() == this.getModel()) {
+			return;
+		}
+
+		repaint();
 	}
 
-//	private void refreshSeqMapView() {
-//		if (smv != null) {
-//			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, false);
-//		}
-//	}
-	public void mouseClicked(MouseEvent e) {
+	@Override
+	public Component prepareRenderer(TableCellRenderer tcr, int i, int i2) {
+		Component component = super.prepareRenderer(tcr, i, i2);
+		return setComponentBackground(component, i, i2);
 	}
 
-	public void mousePressed(MouseEvent e) {
+	@Override
+	public Component prepareEditor(TableCellEditor tce, int i, int i2) {
+		Component component = super.prepareEditor(tce, i, i2);
+		return setComponentBackground(component, i, i2);
+	}
+
+	private Component setComponentBackground(Component c, int i, int i2) {
+		if (i2 == DataManagementTable.FOREGROUND_COLUMN
+				|| i2 == DataManagementTable.BACKGROUND_COLUMN) { //using column name to fix buggy behavior with the column number
+			return c;
+		}
+		if (isCellEditable(i, i2)) {
+			c.setBackground(Color.WHITE);
+		} else {
+			c.setBackground(new Color(235, 235, 235));
+		}
+		return c;
+	}
+
+	public void mouseMoved(MouseEvent e) {
+		switchEditors(e);
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		switchEditors(e);
 	}
 
 	public void mouseExited(MouseEvent e) {
+		stopCellEditing();
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mousePressed(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		//do nothing
+	}
+
+	public void mouseDragged(MouseEvent e) {
+		//do nothing
+	}
+
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		//do nothing
+	}
+
+	private void switchEditors(MouseEvent paramMouseEvent) {
+		Point point = paramMouseEvent.getPoint();
+		if (point != null) {
+			int rowIndex = rowAtPoint(point);
+			int columnIndex = columnAtPoint(point);
+			if ((rowIndex != getEditingRow()) || (columnIndex != getEditingColumn())) {
+				if (isEditing()) {
+					TableCellEditor tce = getCellEditor();
+					if (((tce instanceof TableCellEditorRenderer)) && (!((TableCellEditorRenderer) tce).isFullyEngaged())
+							&& (!tce.stopCellEditing())) {
+						tce.cancelCellEditing();
+					}
+				}
+				if ((!isEditing())
+						&& (rowIndex != -1) && (isCellEditable(rowIndex, columnIndex))) {
+					editCellAt(rowIndex, columnIndex);
+				}
+			}
+		}
+	}
+
+	public void stopCellEditing() {
+		TableCellEditor tce = getCellEditor();
+		if (tce != null) {
+			tce.cancelCellEditing();
+		}
 	}
 }
 

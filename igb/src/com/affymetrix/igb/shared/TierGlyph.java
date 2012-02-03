@@ -21,7 +21,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class TierGlyph extends SolidGlyph {
 	private ViewModeGlyph viewModeGlyph;
-   
+
 	public Direction direction = Direction.NONE;
 	/** glyphs to be drawn in the "middleground" --
 	 *    in front of the solid background, but behind the child glyphs
@@ -55,7 +55,7 @@ public class TierGlyph extends SolidGlyph {
 	 */
 	private String label = null;
 	private ITrackStyleExtended style;
-	
+
 	public TierGlyph(ITrackStyleExtended style) {
 		setHitable(false);
 		setStyle(style);
@@ -73,11 +73,11 @@ public class TierGlyph extends SolidGlyph {
 			viewModeGlyph = factory.getViewModeGlyph((SeqSymmetry)getInfo(), style);
 		}
 	}
-		
+
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;
 	}
- 			 
+
 	/**
 	 *  Adds "middleground" glyphs, which are drawn in front of the background but
 	 *    behind all "real" child glyphs.
@@ -114,7 +114,7 @@ public class TierGlyph extends SolidGlyph {
 	public void drawTraversal(ViewI view) {
 		viewModeGlyph.drawTraversal(view);
 	}
-	
+
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view, boolean manual) {
@@ -124,7 +124,7 @@ public class TierGlyph extends SolidGlyph {
 	public List<GlyphI> getMiddle_glyphs() {
 		return middle_glyphs;
 	}
-	
+
 	/**
 	 *  Overridden to allow background shading by a collection of non-child
 	 *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -134,7 +134,7 @@ public class TierGlyph extends SolidGlyph {
 	public void draw(ViewI view) {
 		viewModeGlyph.draw(view);
 	}
-	
+
 	protected boolean shouldDrawToolBar(){
 		return style.drawCollapseControl();
 	}
@@ -213,11 +213,11 @@ public class TierGlyph extends SolidGlyph {
 	public int getActualSlots(){
 		return viewModeGlyph.getActualSlots();
 	}
-	
+
 	public void setPreferredHeight(double height, ViewI view){
 		viewModeGlyph.setPreferredHeight(height, view);
 	}
-	
+
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override
 	protected void drawSelectedFill(ViewI view) {

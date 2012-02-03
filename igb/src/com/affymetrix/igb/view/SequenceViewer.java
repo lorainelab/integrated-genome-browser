@@ -33,7 +33,6 @@ import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.shared.FileTracker;
-import com.jidesoft.utils.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,6 +49,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
+import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 

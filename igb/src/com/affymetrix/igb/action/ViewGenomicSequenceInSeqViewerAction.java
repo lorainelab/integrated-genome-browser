@@ -25,6 +25,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 
 	private ViewGenomicSequenceInSeqViewerAction() {
 		super();
+		this.setEnabled(false);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {
 //			this.putValue(MNEMONIC_KEY, ks.getKeyCode());

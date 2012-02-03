@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
@@ -176,6 +177,7 @@ public final class GeneralLoadUtils {
 				version = versionIterator.next();
 
 				if (version.gServer == server) {
+					GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
 					version.clear();
 					versionIterator.remove();
 				}
@@ -637,7 +639,6 @@ public final class GeneralLoadUtils {
 		}
 
 		iterateSeqList(feature);
-
 	}
 
 	static void iterateSeqList(final GenericFeature feature) {
@@ -682,14 +683,14 @@ public final class GeneralLoadUtils {
 					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 				}
 
-				//	LoadModeTable.updateVirtualFeatureList();
-
 				BioSeq seq = gmodel.getSelectedSeq();
 				if (seq != null) {
 					gviewer.setAnnotatedSeq(seq, true, true);
-				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-					// This can happen when loading a brand-new genome
-					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+				} else if (gmodel.getSelectedSeqGroup() != null) {
+					if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+						// This can happen when loading a brand-new genome
+						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+					}
 				}
 			}
 
@@ -751,6 +752,9 @@ public final class GeneralLoadUtils {
 					SeqGroupView.getInstance().refreshTable();
 				}
 
+				if(this.isCancelled())
+					return;
+				
 				try {
 					boolean result = get();
 					setLastRefreshStatus(feature, result);
@@ -1053,14 +1057,14 @@ public final class GeneralLoadUtils {
 			ScriptFileLoader.runScript(uri.toString());
 			return;
 		}
-		
+			
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
 			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
-
+		
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 
 		if (gFeature == null) {

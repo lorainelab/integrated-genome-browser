@@ -32,18 +32,22 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.concurrent.Executor;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 public class AltSpliceView extends IGBTabPanel
-				implements ActionListener, ComponentListener, ItemListener,
-				SymSelectionListener, SeqSelectionListener,
-				TierLabelManager.PopupListener {
+		implements ActionListener, ComponentListener, ItemListener,
+		SymSelectionListener, SeqSelectionListener, PreferenceChangeListener,
+		TierLabelManager.PopupListener {
+
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 3;
-
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
 	private final JRPTextField buffer_sizeTF;
@@ -60,7 +64,7 @@ public class AltSpliceView extends IGBTabPanel
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view);
-		buffer_sizeTF = new JRPTextField("AltSpliceView_buffer_size", 4);
+		buffer_sizeTF = new JRPNumTextField("AltSpliceView_buffer_size", 4);
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JRPCheckBox("AltSpliceView_slice_by_selectionCB", "Slice By Selection", true);
 
@@ -89,7 +93,8 @@ public class AltSpliceView extends IGBTabPanel
 
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
-
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+		
 		TierLabelManager tlman = spliced_view.getTierManager();
 		if (tlman != null) {
 			tlman.addPopupListener(this);
@@ -167,7 +172,8 @@ public class AltSpliceView extends IGBTabPanel
 
 	private void setSliceBuffer(int buf_size) {
 		Executor exec = spliced_view.setSliceBuffer(buf_size);
-		exec.execute(new Runnable(){
+		exec.execute(new Runnable() {
+
 			public void run() {
 				orf_analyzer.redoOrfs();
 			}
@@ -177,8 +183,9 @@ public class AltSpliceView extends IGBTabPanel
 	private void sliceAndDice(List<SeqSymmetry> syms) {
 		if (syms.size() > 0) {
 			Executor exec = spliced_view.sliceAndDice(syms);
-			
-			exec.execute(new Runnable(){
+
+			exec.execute(new Runnable() {
+
 				public void run() {
 					orf_analyzer.redoOrfs();
 				}
@@ -207,7 +214,7 @@ public class AltSpliceView extends IGBTabPanel
 			pending_selection_change = false;
 		}
 	}
-
+	
 	public void componentHidden(ComponentEvent e) {
 	}
 
@@ -216,8 +223,12 @@ public class AltSpliceView extends IGBTabPanel
 		if (src == buffer_sizeTF) {
 			String str = buffer_sizeTF.getText();
 			if (str != null) {
-				int new_buf_size = Integer.parseInt(str);
-				this.setSliceBuffer(new_buf_size);
+				try {
+					int new_buf_size = Integer.parseInt(str);
+					this.setSliceBuffer(new_buf_size);
+				} catch (NumberFormatException e) {
+					//do nothing
+				}
 			}
 		}
 	}
@@ -235,6 +246,7 @@ public class AltSpliceView extends IGBTabPanel
 		}
 
 		Action hide_action = new GenericAction() {
+
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -250,6 +262,7 @@ public class AltSpliceView extends IGBTabPanel
 		};
 
 		Action restore_all_action = new GenericAction() {
+
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -283,4 +296,17 @@ public class AltSpliceView extends IGBTabPanel
 	public boolean isEmbedded() {
 		return true;
 	}
+
+	public void preferenceChange(PreferenceChangeEvent evt) {
+		if (!evt.getNode().equals(PreferenceUtils.getTopNode())
+				|| !this.isShowing()) {
+			return;
+		}
+
+		if (evt.getKey().equals(OrfAnalyzer.PREF_STOP_CODON_COLOR)
+				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)) {
+			orf_analyzer.redoOrfs();
+		}
+	}
+
 }

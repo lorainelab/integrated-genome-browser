@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: BigWigHandler
+Bundle-SymbolicName: com.gene.bigwighandler.BigWigHandler
+Bundle-Version: @appVersion@
+Bundle-Activator: com.gene.bigwighandler.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: plugin to allow the user to load BigWig files
+Bundle-ClassPath: .
+Bundle-Category: FileTypeHandler-com.gene.bigwighandler.BigWigHandler
+Import-Package: com.affymetrix.common;version="@appVersion@",
+ cern.colt.list,
+ com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.parsers,
+ com.affymetrix.genometryImpl.symloader,
+ com.affymetrix.genometryImpl.symmetry,
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.igb.osgi.service,
+ org.broad.igv.bbfile,
+ org.broad.tribble.util,
+ org.osgi.framework;version="1.5.0",
+ org.osgi.util.tracker;version="1.4.0"

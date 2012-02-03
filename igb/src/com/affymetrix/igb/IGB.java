@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb;
 
+import java.util.Map.Entry;
+import com.jidesoft.plaf.LookAndFeelFactory;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import java.awt.Color;
@@ -121,7 +123,7 @@ public final class IGB extends Application
 	}
 
 	//TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
-	private static void setLaf() {
+	public static void setLaf() {
 
 		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
 		System.setProperty("swing.aatext", "true");
@@ -131,7 +133,7 @@ public final class IGB extends Application
 		// But it also may take away some things, like resizing buttons, that the
 		// user is used to in their operating system, so leave as false.
 		JFrame.setDefaultLookAndFeelDecorated(false);
-
+			
 		// if this is != null, then the user-requested l-and-f has already been applied
 		if (System.getProperty("swing.defaultlaf") == null) {
 			String os = System.getProperty("os.name");
@@ -142,6 +144,11 @@ public final class IGB extends Application
 					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
 					if (look_and_feel.isSupportedLookAndFeel()) {
+						LookAndFeelFactory.installJideExtension();
+						// Is there a better way to do it? HV 03/02/12
+						for(Entry<Object,Object> obj : look_and_feel.getDefaults().entrySet()){
+							UIManager.getDefaults().put(obj.getKey(), obj.getValue());
+						}
 						UIManager.setLookAndFeel(look_and_feel);
 					}
 				} catch (Exception ulfe) {
@@ -284,6 +291,7 @@ public final class IGB extends Application
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
+		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
 	}
@@ -347,8 +355,7 @@ public final class IGB extends Application
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
 		
-		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(getMapView() );
-		windowService.setSeqMapView( MainWorkspaceManager.getWorkspaceManager() );
+		windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
 		
 		windowService.setStatusBar(status_bar);
 		if (tool_bar == null) {

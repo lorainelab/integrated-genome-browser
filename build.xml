@@ -35,10 +35,10 @@
 		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
 		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
-		<property name="SearchModeGeneric"   value="${basedir}/plugins/SearchModeGeneric" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
-		<property name="SearchModeResidue"   value="${basedir}/plugins/SearchModeResidue" />
-		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
+		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
+		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
+		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"     value="${basedir}/ext" />
@@ -49,6 +49,12 @@
 		<property name="bundle.dir"  value="${basedir}/bundles" />
 		<property name="igb.ant.dir" value="${basedir}/plugins/ant" />
 
+		<!-- list the libraries to create bundle -->
+		<property name="include.lib" value="affx_fusion,be.pwnt.jflow_1.0.0,colt,commons-net-2.0,image4j,jide,jlfgr-1_0,log4j-1.2.11,picard,sam,swing-layout,tribble-0.1,ant-1.7.1"/>
+		
+		<!-- list the libraries to copy -->
+		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1"/>
+		
 		<property name="osgi.impl"   value="${osgi.impl.dir}${osgi.impl.file}"/>
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${common}/resources/common.properties"/>
@@ -243,7 +249,7 @@
     </copy>
 	</target>
 
-	<target name="cbc" depends="common-init" description="clear bundle cache">
+	<target name="cbc" depends="compiler-def-args,init" description="clear bundle cache">
 		<mkdir dir="${bundle.dir}" />
 		<subant target="compile" genericantfile="generic.xml" inheritall="true">
 			<dirset dir="${basedir}">
@@ -347,9 +353,6 @@
 	</target>
 
 	<target name="exe" depends="jar,bundles_properties" description="Create a single-jar IGB application">
-		<jar jarfile="${bundle.dir}/igb.jar" update="true">
-			<fileset dir="${igb-18n}/resources" />
-		</jar>
 		<jar jarfile="${igb.jar.name}.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
@@ -405,6 +408,7 @@
 			 <!-- <jvmarg value="-Dsun.java2d.trace=log"/>-->
 <!--			<jvmarg value="-splash:${jnlp.splashicon.path}" />-->
 			<jvmarg line="${apple.jvmargs}" />
+			<arg line="${svn.update.available}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath refid="igb.classpath"/>
@@ -418,7 +422,7 @@
 		</parallel>
 	</target>
 	
-	<target name="classpath" depends="cbc, comp-copy, bundles_properties" >
+	<target name="classpath" depends="common-init, cbc, comp-copy, bundles_properties" >
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />
@@ -426,9 +430,6 @@
 			<dirset dir="${etc.dir}/" />
 			<fileset file="${osgi.impl}" />
 		</path>
-		<jar jarfile="${bundle.dir}/igb.jar" update="true">
-			<fileset dir="${igb-18n}/resources" />
-		</jar>
 	</target>
 	
 	<target name="run_Protannot" depends="compile" description="run Protannot">
@@ -584,7 +585,6 @@
 			</fileset>
 			<fileset dir="${genoviz}">
 				<include name="index.html" />
-				<include name="tutorial/**" />
 				<include name="demo/**" />
 			</fileset>
 		</copy>
@@ -660,7 +660,7 @@
    sudo apt-get install graphviz
    More info for other platforms at:  http://www.graphviz.org/
    -->
-   <target name="umljavadocs" depends="jar">
+   <target name="umljavadocs" depends="jar" description="Build HTML including UML diagrams from JavaDoc. Requires graphviz for the UML diagrams.">
 	   <path id="uml.source.path">
            <pathelement path="${basedir}/igb/src/"/>
            <pathelement path="${basedir}/genoviz_sdk/src/"/>

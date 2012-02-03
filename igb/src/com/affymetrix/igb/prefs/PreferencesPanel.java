@@ -18,15 +18,11 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.action.ExportPreferencesAction;
-import com.affymetrix.igb.view.BundleRepositoryPrefsView;
-import com.affymetrix.igb.view.TierPrefsViewGUI;
-import com.affymetrix.igb.tiers.TrackDefaultViewGUI;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
-import java.util.prefs.Preferences;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -86,10 +82,10 @@ public final class PreferencesPanel extends JPanel {
 
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpvGUI);
 		singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
-		singleton.addPrefEditorComponent(new KeyStrokesView());
+		singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
-		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(new BundleRepositoryPrefsView());
+		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
 
 		return singleton;
 	}

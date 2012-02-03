@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
-public class RemoteSearchDAS2 implements RemoteSearchI {
+public class RemoteSearchDAS2 {
 	public List<SeqSymmetry> searchFeatures(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
 		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
 
@@ -32,6 +32,4 @@ public class RemoteSearchDAS2 implements RemoteSearchI {
 
 		return features;
 	}
-
-
 }

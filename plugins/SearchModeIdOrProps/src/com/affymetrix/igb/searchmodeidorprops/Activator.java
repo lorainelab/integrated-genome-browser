@@ -6,23 +6,20 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.affymetrix.igb.shared.ISearchModeSym;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceRegistration<ISearchMode> searchModeIDRegistration;
-	private ServiceRegistration<ISearchMode> searchModePropsRegistration;
-	private ServiceRegistration<RemoteSearchI> remoteSearchDAS2Registration;
+	private ServiceRegistration<ISearchModeSym> searchModeIDRegistration;
+	private ServiceRegistration<ISearchModeSym> searchModePropsRegistration;
 
 	private void registerService(ServiceReference<IGBService> igbServiceReference) {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-    		searchModeIDRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeID(igbService), null);
-    		searchModePropsRegistration = bundleContext.registerService(ISearchMode.class, new SearchModeProps(igbService), null);
-    		remoteSearchDAS2Registration = bundleContext.registerService(RemoteSearchI.class, new RemoteSearchDAS2(), null);
+    		searchModeIDRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeID(igbService), null);
+    		searchModePropsRegistration = bundleContext.registerService(ISearchModeSym.class, new SearchModeProps(igbService), null);
         }
         catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
@@ -33,7 +30,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, RemoteSearchI.class);
     	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)
@@ -56,6 +52,5 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		searchModeIDRegistration.unregister();
 		searchModePropsRegistration.unregister();
-		remoteSearchDAS2Registration.unregister();
 	}
 }

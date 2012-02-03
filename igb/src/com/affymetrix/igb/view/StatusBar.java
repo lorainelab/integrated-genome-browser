@@ -2,6 +2,8 @@ package com.affymetrix.igb.view;
 
 import java.awt.Dimension;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
@@ -14,19 +16,26 @@ public final class StatusBar extends JPanel{
 	private static final long serialVersionUID = 1l;
 	
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
+	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
 	
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel;
+	private final JButton updateAvailable;
 	public final JProgressBar progressBar;
 		
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
-	
+		final String updateMessage = "You might not be on latest revision.";
+		final String update = "Update";
+		
 		status_ta = new JLabel("");
 		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
+		updateAvailable = new JButton(alertIcon);
+		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
+		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());
 		mainCancel = new JRPButton("StatusBar_mainCancel", closeIcon);
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
@@ -46,19 +55,28 @@ public final class StatusBar extends JPanel{
 		layout.setAutoCreateGaps(true);
 		layout.setHonorsVisibility(false);
 
+		updateAvailable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, updateMessage, update, JOptionPane.INFORMATION_MESSAGE);
+				updateAvailable.setVisible(false);
+			}
+		});
+				
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
-				.addComponent(memory_item, 1, 200, 200));
+				.addComponent(memory_item, 1, 200, 200)
+				.addComponent(updateAvailable));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
-				.addComponent(memory_item));
+				.addComponent(memory_item)
+				.addComponent(updateAvailable));
 		
 	}
 

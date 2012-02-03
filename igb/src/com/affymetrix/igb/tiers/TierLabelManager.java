@@ -343,6 +343,28 @@ public final class TierLabelManager implements PropertyHolder {
 		return tiermap.getTierLabels();
 	}
 
+	/** Returns a list of all TierGlyph items. */
+	public List<TierGlyph> getAllTierGlyphs() {
+		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
+		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
+			if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
+				allTierGlyphs.add(tierlabel.getReferenceTier());
+			}
+		}
+		return allTierGlyphs;
+	}
+
+	/** Returns a list of visible TierGlyph items. */
+	public List<TierGlyph> getVisibleTierGlyphs() {
+		List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
+		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
+			if (tierlabel.getReferenceTier().getAnnotStyle().getShow() && tierlabel.getReferenceTier().isVisible()) {
+				allTierGlyphs.add(tierlabel.getReferenceTier());
+			}
+		}
+		return allTierGlyphs;
+	}
+
 	/** Selects all non-hidden tiers. */
 	void selectAllTiers() {
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {

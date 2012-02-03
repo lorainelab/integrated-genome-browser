@@ -14,6 +14,8 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
+ com.affymetrix.searchmodesymmetryfilter,
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0"
+Export-Package: com.affymetrix.searchmodesymmetryfilter
 

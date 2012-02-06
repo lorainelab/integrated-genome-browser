@@ -51,62 +51,69 @@ public final class TierLabelManager implements PropertyHolder {
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
+	
 	private Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+	private Cursor getCurrentCursor() {
+		return Application.getSingleton().getMapView().getSeqMap().getCursor();
+	}
+	private void setCurrentCursor(Cursor cursor) {
+		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
+	}
+	private void setResizeCursor() {
+		if (getCurrentCursor() != resizeCursor) {
+			setCurrentCursor(resizeCursor);
+		}
+	}
+	private void restoreCursor() {
+		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+	}
 
 	/**
-	 *  Determines whether selecting a tier label of a tier that contains only
-	 *  GraphGlyphs should cause the graphs in that tier to become selected.
+	 * For moving tiers around and adjusting their sizes.
+	 * Use Swing for the future. Otherwise could have used AWT's MouseAdapter.
+	 * Actual dragging around is delegated to a GlyphDragger and a GlyphResizer.
+	 * This is why the mouseDragged method is not implemented.
 	 */
-	private boolean do_graph_selections = false;
+	private final javax.swing.event.MouseInputListener ourTierDragger = new javax.swing.event.MouseInputAdapter() {
 
-	private final MouseMotionListener mouse_motion_listener = new MouseMotionListener() {
-
-		@Override
-		public void mouseDragged(MouseEvent e) {}
+		TierLabelGlyph dragging_label = null;
 
 		@Override
 		public void mouseMoved(MouseEvent evt) {
-			boolean useResizeCursor = false;
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				if (atResizeTop(nevt) || atResizeBottom(nevt)) {
-					useResizeCursor = true;
+				if (atResizeTop(nevt)) {
+					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 				}
-			}
-			if (useResizeCursor) {
-				setCurrentCursor(resizeCursor);
+				else if (atResizeBottom(nevt)) {
+					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+				}
+				else {
+					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				}
 			}
 			else {
 				restoreCursor();
 			}
 		}
-		
-	};
-
-	private final MouseListener mouse_listener = new MouseListener() {
-
-		TierLabelGlyph dragging_label = null;
-
-		public void mouseEntered(MouseEvent evt) {
-		}
-
+		@Override
 		public void mouseExited(MouseEvent evt) {
 			restoreCursor();
 		}
-
-		/** Tests whether the mouse event is due to the 3rd button.
-		 *  (For the sake of Macintosh, considers Meta key and Control key as
-		 *  simulation of 3rd button.)
+		
+		/**
+		 * Should trigger a pop up menu on whatever platform is being used.
+		 * Notice that this differs from
+		 * {@link java.awt.event.MouseEvent#isPopupTrigger() AWT's Version}.
 		 */
 		boolean isOurPopupTrigger(MouseEvent evt) {
 			int mods = evt.getModifiers();
-			return (evt.isMetaDown() || evt.isControlDown()
+			return (evt.isMetaDown()
+					|| evt.isControlDown()  // (for Apple Macintosh Computers)
 					|| ((mods & InputEvent.BUTTON3_MASK) != 0));
 		}
 
-		public void mouseClicked(MouseEvent evt) {
-		}
-
+		@Override
 		public void mousePressed(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -180,6 +187,7 @@ public final class TierLabelManager implements PropertyHolder {
 
 		// if a tier has been dragged, then try to sort out rearrangement of tiers
 		//    in tiermap based on new positions of labels in labelmap
+		@Override
 		public void mouseReleased(MouseEvent evt) {
 			if (evt.getSource() == labelmap && dragging_label != null) {
 				//sortTiers();
@@ -202,7 +210,8 @@ public final class TierLabelManager implements PropertyHolder {
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 		}
 
-	}; // end of mouse listener class
+	}; // End of tier dragging MouseInputListener
+	
 
 	private boolean atResizeTop(NeoMouseEvent nevt) {
 		if (nevt == null || nevt.getItems().isEmpty()) {
@@ -232,35 +241,23 @@ public final class TierLabelManager implements PropertyHolder {
 			(((TierLabelGlyph)topgl).isManuallyResizable() || orderedGlyphs.get(index + 1).isManuallyResizable()));
 	}
 
+	/**
+	 *  Determines whether selecting a tier label of a tier that contains only
+	 *  GraphGlyphs should cause the graphs in that tier to become selected.
+	 */
+	private boolean do_graph_selections = false;
+
 	public TierLabelManager(AffyLabelledTierMap map) {
 		super();
 		tiermap = map;
 		popup = new JPopupMenu();
 
 		labelmap = tiermap.getLabelMap();
-		labelmap.addMouseListener(this.mouse_listener);
-		labelmap.addMouseMotionListener(this.mouse_motion_listener);
+		labelmap.addMouseListener(this.ourTierDragger);
+		labelmap.addMouseMotionListener(this.ourTierDragger);
 
 		labelmap.getScene().setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
-	}
-
-	private Cursor getCurrentCursor() {
-		return Application.getSingleton().getMapView().getSeqMap().getCursor();
-	}
-
-	private void setCurrentCursor(Cursor cursor) {
-		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
-	}
-
-	private void setResizeCursor() {
-		if (getCurrentCursor() != resizeCursor) {
-			setCurrentCursor(resizeCursor);
-		}
-	}
-
-	private void restoreCursor() {
-		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
 	}
 
 	/** Returns a list of TierGlyph items representing the selected tiers. */

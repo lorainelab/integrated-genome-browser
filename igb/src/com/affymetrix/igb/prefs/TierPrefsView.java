@@ -255,8 +255,10 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 
 	public void setRowSelection(ITrackStyle style) {
 		for (int i = 0; i < table.getRowCount(); i++) {
-			if (model.getValueAt(i, 0).equals(style.getTrackName())) {
-				table.addRowSelectionInterval(i, i);
+			if (model != null && style != null) {
+				if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+					table.addRowSelectionInterval(i, i);
+				}
 			}
 		}
 	}

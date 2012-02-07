@@ -4,6 +4,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -167,5 +170,22 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			tglyph.pack(map.getView(), false);
 		}
 		return graph_glyph;
+	}
+
+	@Override
+	public String getName() {
+		return "graph";
+	}
+
+	@Override
+	public boolean isFileSupported(String fileFormat) {
+		if(fileFormat == null) {
+			return false;
+		}
+		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
+		if (fth != null && fth.getFileTypeCategory() == FileTypeCategory.Graph) {
+			return true;
+		}
+		return false;
 	}
 }

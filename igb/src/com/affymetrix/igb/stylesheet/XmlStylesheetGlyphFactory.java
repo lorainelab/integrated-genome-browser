@@ -124,4 +124,9 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean isFileSupported(String format) {
+		return true;
+	}
 }

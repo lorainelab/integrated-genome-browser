@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.logging.Level;
@@ -13,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class MapViewModeHolder {
 	
-	java.util.LinkedHashMap<String, ExtendedMapViewGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, ExtendedMapViewGlyphFactoryI>();
+	java.util.LinkedHashMap<String, MapViewGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, MapViewGlyphFactoryI>();
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
 	
 	public static MapViewModeHolder getInstance(){
@@ -33,7 +32,7 @@ public class MapViewModeHolder {
 		return view2Factory.get(view);
 	}
 	
-	public final void addViewFactory(ExtendedMapViewGlyphFactoryI factory){
+	public final void addViewFactory(MapViewGlyphFactoryI factory){
 		if(factory == null){
 			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add null factory");
 			return;
@@ -46,7 +45,7 @@ public class MapViewModeHolder {
 		view2Factory.put(view, factory);
 	}
 	
-	public final void removeViewFactory(ExtendedMapViewGlyphFactoryI factory){
+	public final void removeViewFactory(MapViewGlyphFactoryI factory){
 		view2Factory.remove(factory.getName());
 	}
 	
@@ -55,8 +54,8 @@ public class MapViewModeHolder {
 		
 		if (file_format != null) {
 			mode.add(TrackConstants.default_view_mode);
-			for (java.util.Map.Entry<String, ExtendedMapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
-				ExtendedMapViewGlyphFactoryI emv = entry.getValue();
+			for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
+				MapViewGlyphFactoryI emv = entry.getValue();
 				if (emv.isFileSupported(file_format)) {
 					mode.add(entry.getKey());
 				}

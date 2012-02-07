@@ -13,8 +13,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 
@@ -22,7 +22,7 @@ import com.affymetrix.igb.shared.TierGlyph;
  *
  * @author hiralv
  */
-public class DepthGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
+public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public String getName(){
 		return "depth";

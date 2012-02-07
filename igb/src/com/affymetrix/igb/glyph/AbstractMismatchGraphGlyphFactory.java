@@ -12,8 +12,8 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -22,7 +22,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  *
  * @author hiralv
  */
-public abstract class AbstractMismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
+public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static final String[] supportedFormat = {"bam", "sam"};
 	

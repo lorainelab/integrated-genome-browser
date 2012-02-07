@@ -7,15 +7,15 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.igb.shared.ExtendedMapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.MismatchPileupGlyph;
 
 /**
  *
  * @author hiralv
  */
-public class MismatchPileupGraphGlyphFactory extends AbstractMismatchGraphGlyphFactory implements ExtendedMapViewGlyphFactoryI {
+public class MismatchPileupGraphGlyphFactory extends AbstractMismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 	public String getName(){
 		return "mismatch pileup";
 	}

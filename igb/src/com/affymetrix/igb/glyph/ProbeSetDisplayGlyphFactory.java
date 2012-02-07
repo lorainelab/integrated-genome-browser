@@ -526,4 +526,14 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		probe_part_glyph.setColor(c);
 		return probe_part_glyph;
 	}
+
+	@Override
+	public String getName() {
+		return "probeset";
+	}
+
+	@Override
+	public boolean isFileSupported(String format) {
+		return false;
+	}
 }

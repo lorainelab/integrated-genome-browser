@@ -45,6 +45,8 @@ import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 
+	private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
+
 	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
 
@@ -263,5 +265,23 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView(), false);
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "scored";
+	}
+
+	@Override
+	public boolean isFileSupported(String fileFormat) {
+		if(fileFormat == null)
+			return false;
+		
+		for(String format : supportedFormat){
+			if(format.equals(fileFormat)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

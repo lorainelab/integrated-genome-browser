@@ -274,7 +274,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 		for (Das2Type das_type : matched_types) {
 			// Set the human name on the tier to the short type name, not the long URL ID
 			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getURI().toString()).setTrackName(das_type.getName());
-			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength() - 1, aseq);
 
 			// if already retrieved chp_array_type coord annotations for this whole sequence (for example
 			//   due to a previously loaded CHP file with same "array_type", then optimizer

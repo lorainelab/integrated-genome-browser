@@ -29,6 +29,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  Want to automatically load location data for probesets on chip
@@ -56,7 +58,7 @@ import java.util.*;
  */
 public final class LazyChpSym extends ScoredContainerSym {
 
-  public static final String PROBESET_SERVER_NAME = "NetAffx";
+  public static final String PROBESET_SERVER_NAME = "IGB Das";
   private final BioSeq aseq;
 
 
@@ -284,8 +286,16 @@ public final class LazyChpSym extends ScoredContainerSym {
 			if (ls == LoadStrategy.NO_LOAD || ls == LoadStrategy.VISIBLE) {
 				ls = LoadStrategy.CHROMOSOME;
 			}
-			GeneralLoadUtils.loadAndDisplaySpan(whole_span, das_type.getFeature());
-
+			SeqSymmetry optimized_sym = das_type.getFeature().optimizeRequest(whole_span);
+			if (optimized_sym != null) {
+				try {
+					GeneralLoadUtils.loadFeaturesForSym(das_type.getFeature(), optimized_sym);
+				} catch (Exception ex) {
+					Logger.getLogger(LazyChpSym.class.getName()).log(Level.SEVERE, null, ex);
+					return;
+				}
+			}
+		
 			TypeContainerAnnot container = (TypeContainerAnnot) aseq.getAnnotation(das_type.getURI().toString()); // should be a TypeContainerAnnot
 
 			// collect probeset annotations for given chp type

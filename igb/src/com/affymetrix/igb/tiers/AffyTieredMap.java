@@ -45,14 +45,12 @@ import javax.swing.*;
  * @version $Id$
  */
 public class AffyTieredMap extends NeoMap {
-   	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	private final List<TierGlyph> tiers = new ArrayList<TierGlyph>();
-
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)
 	private int fixed_pixel_height;
-
 	// the total coord height of visible fixed coord tiers
 	//    (any visible tier that is NOT a fixed pixel tier)
 	//    (recalculated with every packTiers() call)
@@ -69,6 +67,7 @@ public class AffyTieredMap extends NeoMap {
 	 */
 	public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
+
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
 		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
@@ -138,12 +137,18 @@ public class AffyTieredMap extends NeoMap {
 		return tiers;
 	}
 
-	public void setTierStyles(){
+	public void setTierStyles() {
 		for (TierGlyph tier : tiers) {
 			tier.setStyle(tier.getAnnotStyle());
 		}
 	}
-	
+
+	public void setTierLabels() {
+		for (TierGlyph tier : tiers) {
+			tier.setLabel(tier.getAnnotStyle().getTrackName());
+		}
+	}
+
 	@Override
 	public void repack() {
 		// WARNING
@@ -159,7 +164,7 @@ public class AffyTieredMap extends NeoMap {
 	public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers, boolean manual) {
 		packTiers(full_repack, stretch_map, manual);
 	}
-	
+
 	/**
 	 * pack tiers in order.
 	 * @param full_repack if true, packs the contents of the tiers as well
@@ -231,7 +236,7 @@ public class AffyTieredMap extends NeoMap {
 				if (newbox == null) {
 					newbox = new Rectangle2D.Double();
 					newbox.setRect(pbox.x, mtg.getCoordBox().y,
-									pbox.width, mtg.getCoordBox().height);
+							pbox.width, mtg.getCoordBox().height);
 				} else {
 					Rectangle2D.union(newbox, mtg.getCoordBox(), newbox);
 				}
@@ -323,8 +328,8 @@ public class AffyTieredMap extends NeoMap {
 			return;
 		}
 		zoomer_scale[id] = zoomtrans[id].transform(id, zoomer_value[id]);
-		if (scale_constraint[id] == INTEGRAL_PIXELS ||
-						scale_constraint[id] == INTEGRAL_ALL) {
+		if (scale_constraint[id] == INTEGRAL_PIXELS
+				|| scale_constraint[id] == INTEGRAL_ALL) {
 			if (zoomer_scale[id] >= 1) {
 				zoomer_scale[id] = (int) (zoomer_scale[id] + .0001);
 			}
@@ -360,7 +365,7 @@ public class AffyTieredMap extends NeoMap {
 		// (assuming no other state changes / glyph manipulation occur in tiers)
 		// hopefully a constant min_zoom will make zooming less jumpy...
 		//
-
+		
 		//  "actual" max_zoom = max_zoom desired for fixed coord tiers , but then with
 		//                      adjustment for fixed pixel tiers somehow factored in???
 		//    (not worrying about max zoom yet...)
@@ -372,7 +377,7 @@ public class AffyTieredMap extends NeoMap {
 		int mod_pixel_height = canvas.getSize().height - fixed_pixel_height;
 		double mod_coord_height = fixed_coord_height;
 		double minzoom = mod_pixel_height / mod_coord_height;
-		new_trans.setTransform(new_trans.getScaleX(),0,0,minzoom,new_trans.getTranslateX(),new_trans.getTranslateY());
+		new_trans.setTransform(new_trans.getScaleX(), 0, 0, minzoom, new_trans.getTranslateX(), new_trans.getTranslateY());
 		return new_trans;
 	}
 
@@ -382,8 +387,8 @@ public class AffyTieredMap extends NeoMap {
 			super.zoom(id, zoom_scale);
 			return;
 		}
-		if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
-						Double.isNaN(zoom_scale)) {
+		if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY
+				|| Double.isNaN(zoom_scale)) {
 			return;
 		}
 		// should be able to replace many variables calculation here with
@@ -404,7 +409,7 @@ public class AffyTieredMap extends NeoMap {
 		// assume zoom constraint is always to hold middle of previous view constant...
 		if (zoom_behavior[id] == CONSTRAIN_MIDDLE) {
 			fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
-		//      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
+			//      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
 		} // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired
 		//   _coord_ of a glyph that needs to stay fixed in pixel-space may change.
 		//   therefore need a better way of dealing with this...
@@ -438,7 +443,7 @@ public class AffyTieredMap extends NeoMap {
 		trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pix_offset);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
-		packTiers(false, true, false, false); 
+		packTiers(false, true, false, false);
 
 		// BEGIN only section that relies on scene coords
 		Rectangle2D.Double scenebox = scene.getCoordBox();
@@ -490,7 +495,7 @@ public class AffyTieredMap extends NeoMap {
 	}
 
 	/** Prints this component with dialogue box. */
- 	public void print() throws PrinterException {
+	public void print() throws PrinterException {
 		print(PageFormat.LANDSCAPE, false);
 	}
 
@@ -500,15 +505,14 @@ public class AffyTieredMap extends NeoMap {
 	 *	Author: vikram
 	 */
 	public void print(int pageFormat, boolean noDialog) throws PrinterException {
- 		ComponentPagePrinter cpp = new ComponentPagePrinter(this);
+		ComponentPagePrinter cpp = new ComponentPagePrinter(this);
 		if (noDialog) {
 			cpp.print(pageFormat, noDialog);
 		} else {
 			cpp.print();
 		}
- 		cpp = null; // for garbage collection
- 	}
-
+		cpp = null; // for garbage collection
+	}
 
 	/** Sets the data model to the given SeqSymmetry, unless it is a
 	 *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used.
@@ -526,7 +530,8 @@ public class AffyTieredMap extends NeoMap {
 	 *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
 	 */
 	public static final class ActionToggler extends JRPCheckBoxMenuItem implements PropertyChangeListener {
-	   	private static final long serialVersionUID = 1L;
+
+		private static final long serialVersionUID = 1L;
 
 		public ActionToggler(String id, Action action) {
 			super(id, action);
@@ -542,7 +547,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 	}
 
-	public void setToolTip(String text){
+	public void setToolTip(String text) {
 		getNeoCanvas().setToolTipText(text);
 	}
 
@@ -616,7 +621,6 @@ public class AffyTieredMap extends NeoMap {
 		return topgl;
 	}
 
-		
 	public TierGlyph getHitGlyph(double x, double y) {
 		Rectangle2D.Double hitrect = new Rectangle2D.Double(x, y, 1, 1);
 		if (0 < pixelblur) {
@@ -634,5 +638,3 @@ public class AffyTieredMap extends NeoMap {
 		return null;
 	}
 }
-
-

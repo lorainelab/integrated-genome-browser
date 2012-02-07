@@ -16,3 +16,11 @@ R_norvegicus_Nov_2004.png
 S_pombe_Sep_2007.png
 V_vinifera_Mar_2010.png
 Z_mays_B73_Mar_2010.png
+A_gambiae_Jul_2003.png
+C_porcellus_Mar_2008.png
+E_caballus_Sep_2007.png
+F_catus_Dec_2008.png
+L_africana_Jul_2009.png
+P_troglodytes_Mar_2006.png
+T_rubripes_Oct_2004.png
+X_tropicalis_Aug_2003.png

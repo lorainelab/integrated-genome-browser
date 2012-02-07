@@ -378,10 +378,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
 				&& col != INFO_FEATURE_COLUMN
 				&& col != FEATURE_NAME_COLUMN
-				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN) {
+				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN && col != TRACK_NAME_COLUMN) {
 			refreshSeqMapView();
 		}
-
+		if (col == TRACK_NAME_COLUMN) {
+			smv.getSeqMap().setTierLabels();
+			smv.getSeqMap().updateWidget();
+		}
 		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 

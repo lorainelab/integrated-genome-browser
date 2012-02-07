@@ -10,6 +10,7 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.PartialLineBorder;
 import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -128,9 +129,15 @@ public final class DataManagementTable {
 			choices.addEditorForRow(row, featureEditor);
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
 			action.addEditorForRow(row, buttonEditor);
-			JRPTextField trackNameFieldEditor = new JRPTextField("LoadModeTable_trackNameFieldEditor");
-			DefaultCellEditor textEditor = new DefaultCellEditor(trackNameFieldEditor);
-			text.addEditorForRow(row, textEditor);
+			JRPTextFieldTableCellRenderer trackNameFieldEditor;
+			if (vFeature.getStyle() != null) {
+				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
+						vFeature.getStyle().getTrackName());
+			} else {
+				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
+						vFeature.getFeature().featureName);
+			}
+			text.addEditorForRow(row, trackNameFieldEditor);
 			color.addEditorForRow(row, cellEditor);
 		}
 
@@ -284,6 +291,13 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 					return new LabelTableCellRenderer(DataManagementTable.info_icon, true);
 				}
 			}
+		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
+			if (vFeature.getStyle() != null) {
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
+			} else {
+				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);
+			}
+
 		} else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
 			if (!vFeature.isPrimary()) {
 				return new LabelTableCellRenderer(null, false);
@@ -307,7 +321,7 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 				}
 			}
 
-		} 
+		}
 		return super.getCellRenderer(row, column);
 	}
 

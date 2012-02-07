@@ -19,6 +19,7 @@ import javax.swing.undo.CannotUndoException;
  * @author Nick & David
  */
 public class BookmarkManagerViewGUI extends IGBTabPanel {
+
 	private static final long serialVersionUID = 1L;
 	private static BookmarkManagerViewGUI singleton;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
@@ -59,113 +60,35 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
-        PropertiesPanel = new javax.swing.JPanel();
-        nameTextField = bmv.thing.name_text_field;
-        nameLabel = new javax.swing.JLabel();
-        undoNameButton = new javax.swing.JButton();
-        redoNameButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        commentTextArea = bmv.thing.comment_text_area;
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        splitPane = new javax.swing.JSplitPane();
+        bmPanel = new javax.swing.JPanel();
+        bottomPanel = new javax.swing.JPanel();
         backwardActionButton = bmv.backwardButton;
         forwardActionButton = bmv.forwardButton;
-        jScrollPane1 = new javax.swing.JScrollPane();
+        bmScrollPane = new javax.swing.JScrollPane();
         bookmarkTree = bmv.tree;
-        jPanel3 = new javax.swing.JPanel();
+        upPanel = new javax.swing.JPanel();
         addFolderButton = bmv.addFolderButton;
         addBookmarkActionButton = bmv.addBookmarkButton;
         removeBookmarkActionButton = bmv.deleteBookmarkButton;
         importButton = new javax.swing.JButton();
         exportButton = new javax.swing.JButton();
         addSeparator = bmv.addSeparatorButton;
+        tabPane = new javax.swing.JTabbedPane();
+        editorPanel = new javax.swing.JPanel();
+        nameTextField = bmv.thing.name_text_field;
+        nameLabel = new javax.swing.JLabel();
+        undoNameButton = new javax.swing.JButton();
+        redoNameButton = new javax.swing.JButton();
+        cScrollPane = new javax.swing.JScrollPane();
+        commentTextArea = bmv.thing.comment_text_area;
+        commentLabel = new javax.swing.JLabel();
+        propertiesPanel = new javax.swing.JPanel();
+        pScrollPane = new javax.swing.JScrollPane();
+        propertiesTable = bmv.thing.bl_properties.getTable();
 
-        jSplitPane1.setDividerLocation(400);
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-
-        PropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
-
-        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                nameTextFieldKeyReleased(evt);
-            }
-        });
-
-        nameLabel.setText("Name:");
-
-        undoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/undo.png"));
-        undoNameButton.setToolTipText("Undo");
-        undoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        undoNameButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                undoNameButtonActionPerformed(evt);
-            }
-        });
-
-        redoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/redo.png"));
-        redoNameButton.setToolTipText("Redo");
-        redoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        redoNameButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                redoNameButtonActionPerformed(evt);
-            }
-        });
-
-        commentTextArea.setColumns(20);
-        commentTextArea.setLineWrap(true);
-        commentTextArea.setRows(5);
-        commentTextArea.setWrapStyleWord(true);
-        commentTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                commentTextAreaKeyReleased(evt);
-            }
-        });
-        jScrollPane2.setViewportView(commentTextArea);
-
-        jLabel1.setText("Comment:");
-
-        org.jdesktop.layout.GroupLayout PropertiesPanelLayout = new org.jdesktop.layout.GroupLayout(PropertiesPanel);
-        PropertiesPanel.setLayout(PropertiesPanelLayout);
-        PropertiesPanelLayout.setHorizontalGroup(
-            PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PropertiesPanelLayout.createSequentialGroup()
-                .add(jLabel1)
-                .addContainerGap(147, Short.MAX_VALUE))
-            .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, PropertiesPanelLayout.createSequentialGroup()
-                .add(nameLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 120, Short.MAX_VALUE)
-                .add(undoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(4, 4, 4)
-                .add(redoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(jScrollPane2, 0, 0, Short.MAX_VALUE)
-        );
-
-        PropertiesPanelLayout.linkSize(new java.awt.Component[] {redoNameButton, undoNameButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        PropertiesPanelLayout.setVerticalGroup(
-            PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PropertiesPanelLayout.createSequentialGroup()
-                .add(PropertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(undoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(redoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(nameLabel))
-                .add(0, 0, 0)
-                .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(4, 4, 4)
-                .add(jLabel1)
-                .add(4, 4, 4)
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))
-        );
-
-        PropertiesPanelLayout.linkSize(new java.awt.Component[] {redoNameButton, undoNameButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
-
-        undoNameButton.setBorder(null);
-        redoNameButton.setBorder(null);
-
-        jSplitPane1.setBottomComponent(PropertiesPanel);
+        splitPane.setDividerLocation(400);
+        splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         backwardActionButton.setIcon(CommonUtils.getInstance().getIcon("images/backward.png"));
         backwardActionButton.setToolTipText("Click to go back (Previous visited bookmark)");
@@ -186,16 +109,16 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        org.jdesktop.layout.GroupLayout bottomPanelLayout = new org.jdesktop.layout.GroupLayout(bottomPanel);
+        bottomPanel.setLayout(bottomPanelLayout);
+        bottomPanelLayout.setHorizontalGroup(
+            bottomPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(backwardActionButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
             .add(forwardActionButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+        bottomPanelLayout.setVerticalGroup(
+            bottomPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .add(0, 0, 0)
                 .add(backwardActionButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -205,14 +128,14 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         backwardActionButton.setBorder(null);
         forwardActionButton.setBorder(null);
 
-        jScrollPane1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        bmScrollPane.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jScrollPane1MouseDragged(evt);
+                bmScrollPaneMouseDragged(evt);
             }
         });
 
         bookmarkTree.setModel(bmv.thing.def_tree_model);
-        jScrollPane1.setViewportView(bookmarkTree);
+        bmScrollPane.setViewportView(bookmarkTree);
 
         addFolderButton.setIcon(CommonUtils.getInstance().getIcon("images/addFolder.png"));
         addFolderButton.setToolTipText("Add a New Folder");
@@ -269,30 +192,30 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        org.jdesktop.layout.GroupLayout upPanelLayout = new org.jdesktop.layout.GroupLayout(upPanel);
+        upPanel.setLayout(upPanelLayout);
+        upPanelLayout.setHorizontalGroup(
+            upPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(addFolderButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-            .add(jPanel3Layout.createSequentialGroup()
+            .add(upPanelLayout.createSequentialGroup()
                 .add(addSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                 .add(0, 0, 0))
-            .add(jPanel3Layout.createSequentialGroup()
+            .add(upPanelLayout.createSequentialGroup()
                 .add(addBookmarkActionButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                 .add(0, 0, 0))
-            .add(jPanel3Layout.createSequentialGroup()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(upPanelLayout.createSequentialGroup()
+                .add(upPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(removeBookmarkActionButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(importButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .add(exportButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
                 .add(0, 0, 0))
         );
 
-        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, exportButton, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        upPanelLayout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, exportButton, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
+        upPanelLayout.setVerticalGroup(
+            upPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(upPanelLayout.createSequentialGroup()
                 .add(addFolderButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(4, 4, 4)
                 .add(addSeparator, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -306,7 +229,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
                 .add(exportButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel3Layout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        upPanelLayout.linkSize(new java.awt.Component[] {addBookmarkActionButton, addFolderButton, addSeparator, importButton, removeBookmarkActionButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         addFolderButton.setBorder(null);
         addBookmarkActionButton.setBorder(null);
@@ -315,38 +238,141 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         exportButton.setBorder(null);
         addSeparator.setBorder(null);
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        org.jdesktop.layout.GroupLayout bmPanelLayout = new org.jdesktop.layout.GroupLayout(bmPanel);
+        bmPanel.setLayout(bmPanelLayout);
+        bmPanelLayout.setHorizontalGroup(
+            bmPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(bmPanelLayout.createSequentialGroup()
+                .add(bmPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(upPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(bottomPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(1, 1, 1)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
+                .add(bmScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        bmPanelLayout.setVerticalGroup(
+            bmPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(bmPanelLayout.createSequentialGroup()
+                .add(upPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 159, Short.MAX_VALUE)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(bottomPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(15, 15, 15))
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+            .add(bmScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setLeftComponent(jPanel1);
+        splitPane.setLeftComponent(bmPanel);
+
+        tabPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tabPaneStateChanged(evt);
+            }
+        });
+
+        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nameTextFieldKeyReleased(evt);
+            }
+        });
+
+        nameLabel.setText("Name:");
+
+        undoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/undo.png"));
+        undoNameButton.setToolTipText("Undo");
+        undoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        undoNameButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoNameButtonActionPerformed(evt);
+            }
+        });
+
+        redoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/redo.png"));
+        redoNameButton.setToolTipText("Redo");
+        redoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        redoNameButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redoNameButtonActionPerformed(evt);
+            }
+        });
+
+        commentTextArea.setColumns(20);
+        commentTextArea.setLineWrap(true);
+        commentTextArea.setRows(5);
+        commentTextArea.setWrapStyleWord(true);
+        commentTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                commentTextAreaKeyReleased(evt);
+            }
+        });
+        cScrollPane.setViewportView(commentTextArea);
+
+        commentLabel.setText("Comment:");
+
+        org.jdesktop.layout.GroupLayout editorPanelLayout = new org.jdesktop.layout.GroupLayout(editorPanel);
+        editorPanel.setLayout(editorPanelLayout);
+        editorPanelLayout.setHorizontalGroup(
+            editorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(editorPanelLayout.createSequentialGroup()
+                .add(commentLabel)
+                .addContainerGap(134, Short.MAX_VALUE))
+            .add(nameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, editorPanelLayout.createSequentialGroup()
+                .add(nameLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 107, Short.MAX_VALUE)
+                .add(undoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(4, 4, 4)
+                .add(redoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(cScrollPane, 0, 0, Short.MAX_VALUE)
+        );
+
+        editorPanelLayout.linkSize(new java.awt.Component[] {redoNameButton, undoNameButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        editorPanelLayout.setVerticalGroup(
+            editorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(editorPanelLayout.createSequentialGroup()
+                .add(editorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(undoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(redoNameButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(nameLabel))
+                .add(0, 0, 0)
+                .add(nameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(4, 4, 4)
+                .add(commentLabel)
+                .add(4, 4, 4)
+                .add(cScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+        );
+
+        editorPanelLayout.linkSize(new java.awt.Component[] {redoNameButton, undoNameButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        undoNameButton.setBorder(null);
+        redoNameButton.setBorder(null);
+
+        tabPane.addTab("Editor", editorPanel);
+
+        pScrollPane.setViewportView(propertiesTable);
+
+        org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
+        propertiesPanel.setLayout(propertiesPanelLayout);
+        propertiesPanelLayout.setHorizontalGroup(
+            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(pScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+        );
+        propertiesPanelLayout.setVerticalGroup(
+            propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, pScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+        );
+
+        tabPane.addTab("Properties", propertiesPanel);
+
+        splitPane.setRightComponent(tabPane);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+            .add(splitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+            .add(splitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -386,10 +412,10 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_forwardActionButtonActionPerformed
 
-	private void jScrollPane1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseDragged
+	private void bmScrollPaneMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bmScrollPaneMouseDragged
 		Rectangle r = new Rectangle(evt.getX(), evt.getY(), 1, 1);
 		scrollRectToVisible(r);
-	}//GEN-LAST:event_jScrollPane1MouseDragged
+	}//GEN-LAST:event_bmScrollPaneMouseDragged
 
 	private void addBookmarkActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBookmarkActionButtonActionPerformed
 		AddPositionBookmarkAction.getAction().actionPerformed(evt);
@@ -433,28 +459,38 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		bmv.thing.updateBookmarkData();
 	}//GEN-LAST:event_commentTextAreaKeyReleased
 
+	private void tabPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPaneStateChanged
+		if (tabPane.getSelectedIndex() == 1) {
+			bmv.thing.updateProperties();
+		}
+	}//GEN-LAST:event_tabPaneStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel PropertiesPanel;
     private javax.swing.JButton addBookmarkActionButton;
     private javax.swing.JButton addFolderButton;
     private javax.swing.JButton addSeparator;
     private javax.swing.JButton backwardActionButton;
+    private javax.swing.JPanel bmPanel;
+    private javax.swing.JScrollPane bmScrollPane;
     private javax.swing.JTree bookmarkTree;
+    private javax.swing.JPanel bottomPanel;
+    private javax.swing.JScrollPane cScrollPane;
+    private javax.swing.JLabel commentLabel;
     private javax.swing.JTextArea commentTextArea;
+    private javax.swing.JPanel editorPanel;
     private javax.swing.JButton exportButton;
     private javax.swing.JButton forwardActionButton;
     private javax.swing.JButton importButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
+    private javax.swing.JScrollPane pScrollPane;
+    private javax.swing.JPanel propertiesPanel;
+    private javax.swing.JTable propertiesTable;
     private javax.swing.JButton redoNameButton;
     private javax.swing.JButton removeBookmarkActionButton;
+    private javax.swing.JSplitPane splitPane;
+    private javax.swing.JTabbedPane tabPane;
     private javax.swing.JButton undoNameButton;
+    private javax.swing.JPanel upPanel;
     // End of variables declaration//GEN-END:variables
 }

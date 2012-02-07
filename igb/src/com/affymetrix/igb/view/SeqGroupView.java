@@ -607,20 +607,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	}
 
-	private void checkToAddListener() {
-		// Need to refresh species names
-		boolean speciesListener = true;
-		for (ItemListener listener : this.speciesCB.getItemListeners()) {
-			if (listener == this) {
-				speciesListener = false;
-			}
-		}
-
-		if (speciesListener) {
-			this.speciesCB.addItemListener(this);
-		}
-	}
-
 	private void populateSpeciesData() {
 		final Set<GenericServer> servers = new HashSet<GenericServer>();
 		servers.addAll(ServerList.getServerInstance().getEnabledServers());

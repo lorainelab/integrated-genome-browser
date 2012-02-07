@@ -1,5 +1,6 @@
 package com.affymetrix.genoviz.swing;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -112,7 +113,7 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 
 		TreePath parentPath = tree.getClosestPathForLocation(pt.x, pt.y);
 		TreePath rootPath = tree.getPathForRow(0);
-		
+
 		TreePath[] newPaths = new TreePath[selectedPaths.length];
 		TreePath newPath;
 
@@ -136,6 +137,12 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 						selectedRow = tree.getRowForPath(selectedPath);
 
 						dragNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+						
+						if (parentNode.isNodeAncestor(dragNode) && !parentNode.isLeaf()) {
+							ErrorHandler.errorPanel("NOTICE", "The folder \""
+									+ dragNode.getUserObject().toString() +"\" can't be moved into one of its subfolders.");
+							return;
+						}
 
 						model.removeNodeFromParent(dragNode);
 

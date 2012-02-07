@@ -10,7 +10,7 @@
                     <map/>
                     <node name="tutorials">
                         <map>
-                            <entry key="Genentech" value="http://research-pub.gene.com/igb_tutorials"/>
+                            <entry key="Genentech" value="http://localhost/tutorials"/>
                         </map>
                     </node>
                 </node>

@@ -878,7 +878,8 @@ public final class GeneralLoadUtils {
 		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 
-	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
+	//TO DO: Make this private again.
+	public static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		convertSymToSpanList(optimized_sym, spans);

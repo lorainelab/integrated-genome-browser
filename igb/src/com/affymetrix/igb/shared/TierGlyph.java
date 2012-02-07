@@ -35,7 +35,6 @@ public class TierGlyph extends SolidGlyph {
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
    
 	private boolean sorted = true;
-	private boolean ready_for_searching = false;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	public Direction direction = Direction.NONE;
@@ -44,11 +43,6 @@ public class TierGlyph extends SolidGlyph {
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
 	 */
 	private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
-
-	public static enum TierState {
-
-		HIDDEN, COLLAPSED, EXPANDED, FIXED_COORD_HEIGHT
-	};
 
 	public static enum Direction {
 
@@ -60,13 +54,13 @@ public class TierGlyph extends SolidGlyph {
 	 *  Note: You probably do NOT want the TierGlyph to draw a label and for the
 	 *  included GraphGlyph to also draw a label.
 	 */
-	public static final String SHOW_TIER_LABELS_PROPERTY = "Show Track Labels";
+	private static final String SHOW_TIER_LABELS_PROPERTY = "Show Track Labels";
 	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
 	 *  Boolean.TRUE, the tier will draw a handle on the left side.
 	 *  Note: You probably do NOT want the TierGlyph to draw a handle and for the
 	 *  included GraphGlyph to also draw a handle.
 	 */
-	public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
+	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
 
 	/*
@@ -162,7 +156,6 @@ public class TierGlyph extends SolidGlyph {
 			max_child_sofar = null;
 		}
 
-		ready_for_searching = true;
 	}
 
 	@Override
@@ -184,53 +177,7 @@ public class TierGlyph extends SolidGlyph {
 		super.addChild(glyph);
 	}
 
-	/**
-	 *  return a list of all children _prior_ to query_index in child list that
-	 *    overlap (along x) the child at query_index.
-	 *  assumes that child list is already sorted by ascending child.getCoordBox().x
-	 *      and that max_child_sofar list is also populated
-	 *      (via TierGlyph.initForSearching() call)
-	 */
-	public final List<GlyphI> getPriorOverlaps(int query_index) {
-		if ((!ready_for_searching) || (!sorted)) {
-			throw new RuntimeException("must call TierGlyph.initForSearching() before "
-					+ "calling TierGlyph.getPriorOverlaps");
-		}
-		int child_count = getChildCount();
-		if (child_count <= 1) {
-			return null;
-		}
-
-		double query_min = getChild(query_index).getCoordBox().x;
-		int cur_index = query_index;
-
-		while (cur_index > 0) {
-			cur_index--;
-			GlyphI cur_max_glyph = max_child_sofar.get(cur_index);
-			Rectangle2D.Double rect = cur_max_glyph.getCoordBox();
-			double cur_max = rect.x + rect.width;
-			if (cur_max < query_min) {
-				cur_index++;
-				break;
-			}
-		}
-		if (cur_index == query_index) {
-			return null;
-		}
-
-		ArrayList<GlyphI> result = new ArrayList<GlyphI>();
-		for (int i = cur_index; i < query_index; i++) {
-			GlyphI child = getChild(i);
-			Rectangle2D.Double rect = child.getCoordBox();
-			double max = rect.x + rect.width;
-			if (max >= query_min) {
-				result.add(child);
-			}
-		}
-		return result;
-	}
-
-	public void sortChildren(boolean force) {
+	private void sortChildren(boolean force) {
 		int child_count = this.getChildCount();
 		if (((!sorted) || force) && (child_count > 0)) {
 			// make sure child symmetries are sorted by ascending min along search_seq
@@ -335,10 +282,6 @@ public class TierGlyph extends SolidGlyph {
 		}
 	}
 
-	public List<GlyphI> getMiddle_glyphs() {
-		return middle_glyphs;
-	}
-	
 	/**
 	 *  Overridden to allow background shading by a collection of non-child
 	 *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -537,19 +480,6 @@ public class TierGlyph extends SolidGlyph {
 		zoomDisplayer = null;
 	}
 
-	public final TierState getState() {
-		if (!isVisible()) {
-			return TierState.HIDDEN;
-		}
-		if (packer == expand_packer) {
-			return TierState.EXPANDED;
-		}
-		if (packer == collapse_packer) {
-			return TierState.COLLAPSED;
-		}
-		return TierState.FIXED_COORD_HEIGHT;
-	}
-
 	/** Sets the expand packer.  Note that you are responsible for setting
 	 *  any properties of the packer, such as those based on the AnnotStyle.
 	 */
@@ -731,5 +661,4 @@ public class TierGlyph extends SolidGlyph {
 	protected void drawSelectedReverse(ViewI view) {
 		this.drawSelectedOutline(view);
 	}
-
 }

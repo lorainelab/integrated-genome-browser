@@ -570,7 +570,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
 			GeneralLoadView.getLoadView().refreshTreeView();
 			refreshSpeciesCB();
-			checkToAddListener();
 			return;
 		}
 
@@ -606,7 +605,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			}
 		}
 
-		checkToAddListener();
 	}
 
 	private void checkToAddListener() {
@@ -692,7 +690,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	private void refreshSpeciesCB() {
-		speciesCB.removeItemListener(this);
 		int speciesListLength = GeneralLoadUtils.getSpecies2Generic().keySet().size();
 		if (speciesListLength == speciesCB.getItemCount() - 1) {
 			// No new species.  Don't bother refreshing.
@@ -706,6 +703,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
+				speciesCB.removeItemListener(SeqGroupView.this);
 				String oldSpecies = (String) speciesCB.getSelectedItem();
 
 				speciesCB.removeAllItems();
@@ -724,6 +722,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 					// species CB changed
 					speciesCBChanged();
 				}
+				speciesCB.addItemListener(SeqGroupView.this);
 			}
 		});
 	}

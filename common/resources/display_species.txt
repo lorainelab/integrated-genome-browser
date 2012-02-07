@@ -23,4 +23,15 @@ F_catus_Dec_2008.png
 L_africana_Jul_2009.png
 P_troglodytes_Mar_2006.png
 T_rubripes_Oct_2004.png
-X_tropicalis_Aug_2003.png
+X_tropicalis_Aug_2005.png
+A_lyrata_Apr_2011.png
+B_distachyon_Aug_2010.png
+C_albicans_WO-1_Jul_2010.png
+D_discoideum_Ax4_May_2009.png
+G_max_Aug_2010.png
+M_truncatula_Mar_2009.png
+P_patens_Jan_2008.png
+P_persica_Apr_2010.png
+R_communis_May_2008.png
+S_bicolor_Jan_2009.png
+V_carteri_Jul_2010.png

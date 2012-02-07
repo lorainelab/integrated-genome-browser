@@ -36,7 +36,6 @@ public class TierGlyph extends SolidGlyph {
    
 	private boolean sorted = true;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
-	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	public Direction direction = Direction.NONE;
 	/** glyphs to be drawn in the "middleground" --
 	 *    in front of the solid background, but behind the child glyphs
@@ -363,23 +362,15 @@ public class TierGlyph extends SolidGlyph {
 			}
 		}
 
-		if (shouldDrawToolBar()) {
-			drawExpandCollapse(view);
-		}
 		}catch(Exception ex){	
 			System.out.println(ex);
 		}
-	}
-	
-	protected boolean shouldDrawToolBar(){
-		return style.drawCollapseControl();
 	}
 	
 	private boolean shouldDrawLabel() {
 		// graph tiers take care of drawing their own handles and labels.
 		return (!style.isGraphTier() && Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
 	}
-
 
 	private void drawLabelLeft(ViewI view) {
 		if (getLabel() == null) {
@@ -419,39 +410,6 @@ public class TierGlyph extends SolidGlyph {
 		return handle_pixbox;
 	}
 
-	public boolean toolBarHit(Rectangle2D.Double coord_hitbox, ViewI view){
-		if (shouldDrawToolBar() && isVisible() && coord_hitbox.intersects(coordbox)) {
-			// overlapping handle ?  (need to do this one in pixel space?)
-			Rectangle hpix = new Rectangle();
-			view.transformToPixels(coord_hitbox, hpix);
-			if (getToolbarPixel(view).intersects(hpix)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private void drawExpandCollapse(ViewI view) {
-		Rectangle hpix = getToolbarPixel(view);
-		if (hpix != null) {
-			Graphics g = view.getGraphics();
-			g.setColor(Color.WHITE);
-			g.fill3DRect(hpix.x, hpix.y, hpix.width, hpix.height, true);
-//			g.drawOval(hpix.x, hpix.y, hpix.width, hpix.height);
-			g.setColor(Color.BLACK);
-			g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
-			g.drawLine(hpix.x + hpix.width/5, hpix.y + hpix.height/2, hpix.x + hpix.width - hpix.width/5, hpix.y + hpix.height/2);
-			if(style.getCollapsed()){
-				g.drawLine(hpix.x + hpix.width/2, hpix.y + hpix.height/5, hpix.x + hpix.width/2, hpix.y + hpix.height - hpix.height/5);
-			}
-		}
-	}
-	
-	private Rectangle getToolbarPixel(ViewI view){
-		pixel_hitbox.setBounds(pixelbox.x + 4, pixelbox.y + 4, handle_width, handle_width);
-		return pixel_hitbox;
-	}
-	
 	private void drawHandle(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		if (hpix != null) {

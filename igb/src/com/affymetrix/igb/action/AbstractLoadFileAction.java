@@ -38,12 +38,8 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		loadFile(load_dir_tracker, gviewerFrame, getId(), loadSequenceAsTrack());
-	}
-		
-	/** Load a file into the global singleton genometry model. */
-	private void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame, String id, boolean loadAsTrack) {
-		MergeOptionChooser fileChooser = getFileChooser(id);
+
+		MergeOptionChooser fileChooser = getFileChooser(getId());
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));
@@ -67,14 +63,13 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 
 		for (File file : fils) {
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.speciesCB.getSelectedItem(), loadAsTrack);
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.speciesCB.getSelectedItem());
 		}
-
 	}
-
+		
 	public void openURI(URI uri, String fileName) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		openURI(uri, fileName, true, group, group.getOrganism(), false);
+		openURI(uri, fileName, true, group, group.getOrganism());
 	}
 
 

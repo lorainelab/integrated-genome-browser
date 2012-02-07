@@ -2,7 +2,6 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.IGB;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -80,7 +79,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 	
-		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem(), true);
+		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
 		
 	}
 

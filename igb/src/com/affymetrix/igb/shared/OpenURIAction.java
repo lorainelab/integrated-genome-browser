@@ -44,8 +44,8 @@ public abstract class OpenURIAction extends GenericAction {
 	}
 	
 	protected void openURI(URI uri, final String fileName, final boolean mergeSelected, 
-		final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean loadAsTrack) {
-		igbService.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
+		final AnnotatedSeqGroup loadGroup, final String speciesName) {
+		igbService.openURI(uri, fileName, loadGroup, speciesName, loadSequenceAsTrack());
 		
 		if (!mergeSelected) {
 			unknown_group_count++;
@@ -71,7 +71,7 @@ public abstract class OpenURIAction extends GenericAction {
 		if (SELECT_SPECIES.equals(speciesName)) {
 			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
-		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);
+		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
 
 		return true;
 	}

@@ -122,15 +122,15 @@ public class GeneConfiguration extends Configuration {
 
 					g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 							RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-					Font f = new Font("Sans Serif", Font.BOLD, 18);
+					Font f = new Font("Helvetica", Font.BOLD, 20);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color(0xd4d4d4));
 					g.setFont(f);
 					version = version.split(".png")[0];
-					String species = SpeciesLookup.getSpeciesName(version);
+					String species = SpeciesLookup.getSpeciesName(version);					
 					//If name is very long shorten the name by abbreviating the first name.
-					if (species.length() > 20) {
+					if (species.length() > 8) {
 						String delims = "[ ]+";
 						String[] tokens = species.split(delims);
 						species = tokens[0].substring(0, 1).toUpperCase() + ".";

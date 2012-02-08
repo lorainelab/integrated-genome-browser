@@ -204,7 +204,15 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	public boolean isManuallyResizable()  {
-		return ((getInfo() instanceof TierGlyph));
+		Object o = getInfo();
+		if (o instanceof TierGlyph) {
+			TierGlyph t = (TierGlyph) o;
+			if ("Coordinates".equals(t.getLabel())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public void resizeHeight(double top, double height) {

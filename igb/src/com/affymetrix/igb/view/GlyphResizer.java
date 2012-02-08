@@ -23,6 +23,9 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 /**
  * A class to handle generic resizing of Glyphs (border between Glyphs)
  * on a NeoWidget.
+ * So far this is only for vertical resizing and is only used by the TierLabelManager.
+ * Perhaps it should be renamed to reflect this
+ * or generalized to handle other cases.
  */
 public class GlyphResizer implements MouseListener, MouseMotionListener {
 
@@ -32,6 +35,17 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	NeoAbstractWidget widget;
 	SeqMapView gviewer = null;
 	double start;
+	private double ourFloor, ourCeiling;
+	
+	/**
+	 * Tiers should have a minimum height. Perhaps they do. Look into it.
+	 * The minimum height should probably be tall enough to keep the little +/- box discernable.
+	 * That box can be used to expand or collapse, respectively, the tier.
+	 * Hard code this for now.
+	 * This should probably be in pixels rather than scene or view coordinates.
+	 * Or whatever determines the size of the +/- boxes.
+	 */
+	private final double minimumTierHeight = 10.0;
 	
 	public GlyphResizer(NeoAbstractWidget widg, SeqMapView gviewer) {
 		this.widget = widg;
@@ -41,9 +55,9 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	/**
 	 *  Start a drag.
 	 */
-	public void startDrag(TierLabelGlyph upperGl, TierLabelGlyph lowerGl, NeoMouseEvent nevt) {
-		this.upperGl = upperGl;
-		this.lowerGl = lowerGl;
+	public void startDrag(java.util.List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
+		this.upperGl = theRegion.get(0);
+		this.lowerGl = theRegion.get(theRegion.size()-1);
 		// flushing, just in case...
 		widget.removeMouseListener(this);
 		widget.removeMouseMotionListener(this);
@@ -51,6 +65,33 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		widget.addMouseMotionListener(this);
 		
 		start = nevt.getCoordY();
+		
+		ourCeiling = this.upperGl.getCoordBox().getY() + minimumTierHeight;
+		java.awt.geom.Rectangle2D.Double box = this.lowerGl.getCoordBox();
+		ourFloor = box.getY() + box.getHeight() - minimumTierHeight;
+		
+		java.util.List<TierLabelGlyph> fixedInterior = theRegion.subList(1, theRegion.size()-1);
+		for (TierLabelGlyph g: fixedInterior) {
+			System.out.println("adjusting");
+			java.awt.geom.Rectangle2D.Double b = g.getCoordBox();
+			if (b.getY() <= start) {
+				System.out.println("adjusting ceiling");
+				ourCeiling += b.getHeight();
+			}
+			if (start <= b.getY()) {
+				System.out.println("adjusting floor");
+				ourFloor -= b.getHeight();
+			}
+		}
+		/*
+		if (atResizeTop(nevt)) {
+			// adjust bottom up by what? last tier height?
+		}
+		if (atResizeBottom(nevt)) {
+			// adjust ceiling down by what? first tier height?
+		}
+		/* */
+		
 	}
 
 	public void mouseMoved(MouseEvent evt) { }
@@ -59,18 +100,25 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		if (!(evt instanceof NeoMouseEvent)) { return; }
 		NeoMouseEvent nevt = (NeoMouseEvent)evt;
 		double diff = nevt.getCoordY() - start;
-		
-		if (upperGl != null) {
-			double height = upperGl.getCoordBox().getHeight() + diff;
-			upperGl.resizeHeight(upperGl.getCoordBox().getY(), height);
+
+		if (upperGl != null && null != lowerGl) {
+			//if (upperGl.getCoordBox().getY() + minimumTierHeight < nevt.getCoordY() && nevt.getCoordY() + minimumTierHeight < (lowerGl.getCoordBox().getY() + lowerGl.getCoordBox().getHeight())) {
+			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
+				double height = upperGl.getCoordBox().getHeight() + diff;
+				upperGl.resizeHeight(upperGl.getCoordBox().getY(), height);
+				height = lowerGl.getCoordBox().getHeight() - diff;
+				lowerGl.resizeHeight(lowerGl.getCoordBox().getY() + diff, height);
+				gviewer.getSeqMap().updateWidget();
+			}
+			else {
+				System.err.println("Out of bounds.");
+			}
 		}
-		if (lowerGl != null) {
-			double height = lowerGl.getCoordBox().getHeight() - diff;
-			lowerGl.resizeHeight(lowerGl.getCoordBox().getY() + diff, height);
+		else {
+			System.err.println("NO UPPER GLYPH or NO LOWER GLYPH");
 		}
 
 		start = nevt.getCoordY();
-		gviewer.getSeqMap().updateWidget();
 	}
 
 	public void mousePressed(MouseEvent evt) { }
@@ -82,6 +130,8 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		mouseDragged(evt);
 		widget.removeMouseListener(this);
 		widget.removeMouseMotionListener(this);
+		
+		boolean needRepacking = (upperGl != null && lowerGl != null); // KLUDGE for now
 		
 		if(upperGl != null){
 			upperGl.getReferenceTier().setPreferredHeight(upperGl.getCoordBox().getHeight(), gviewer.getSeqMap().getView());
@@ -95,7 +145,14 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			lowerGl = null; // helps with garbage collection
 		}
 		
+		if (needRepacking) {
 		//gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true, true);
 		gviewer.getSeqMap().repackTheTiers(true, true, false);
+			//com.affymetrix.igb.tiers.AffyTieredMap m = gviewer.getSeqMap();
+			//if (m instanceof com.affymetrix.igb.tiers.AffyLabelledTierMap) {
+			//	com.affymetrix.igb.tiers.AffyLabelledTierMap lm = (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
+			//	lm.kludgeRepackingTheTiers(needRepacking, needRepacking, needRepacking);
+			//}
+		}
 	}
 }

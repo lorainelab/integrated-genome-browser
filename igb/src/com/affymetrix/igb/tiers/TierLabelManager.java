@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.MouseInputListener;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -74,9 +76,40 @@ public final class TierLabelManager implements PropertyHolder {
 	 * Actual dragging around is delegated to a GlyphDragger and a GlyphResizer.
 	 * This is why the mouseDragged method is not implemented.
 	 */
-	private final javax.swing.event.MouseInputListener ourTierDragger = new javax.swing.event.MouseInputAdapter() {
+	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
+		
+		
+		/**
+		 * Determines the scope of an expansion of tiers by border drag.
+		 * @param theFirst points to tier just above the border being dragged.
+		 * @param theLast points to the tier just below the border being dragged.
+		 * @return a maximal (possibly empty) expansion of theList.sublist(theFirst, theLast+1)
+		 *         such that the first and last tiers can be resized
+		 *         and none of the others can.
+		 */
+		private List<TierLabelGlyph> pertinentTiers(int theFirst, int theLast, List<TierLabelGlyph> theList) {
+			assert 0 <= theFirst;
+			assert theFirst < theLast;
+			assert theLast < theList.size();
+			int top = theLast, limit = theLast;
+			for (int i = theFirst; 0 <= i; i--) {
+				TierLabelGlyph g = theList.get(i);
+				if (g.isManuallyResizable()) {
+					top = i;
+					break;
+				}
+			}
+			for (int i = theLast; i < theList.size(); i++) {
+				TierLabelGlyph g = theList.get(i);
+				if (g.isManuallyResizable()) {
+					limit = i + 1;
+					break;
+				}
+			}
+			return theList.subList(top, limit);
+		}
 
 		@Override
 		public void mouseMoved(MouseEvent evt) {
@@ -124,28 +157,17 @@ public final class TierLabelManager implements PropertyHolder {
 				}
 				TierLabelGlyph upperGl = null;
 				TierLabelGlyph lowerGl = null;
+				List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+				int index = orderedGlyphs.indexOf(topgl);
+				List<TierLabelGlyph> resizeRegion = null;
 				if (atResizeTop(nevt)) {
-					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-					int index = orderedGlyphs.indexOf(topgl);
-					if (orderedGlyphs.get(index - 1).isManuallyResizable()) {
-						upperGl = orderedGlyphs.get(index - 1);
-					}
-					if (((TierLabelGlyph)topgl).isManuallyResizable()) {
-						lowerGl = (TierLabelGlyph)topgl;
-					}
+					resizeRegion = pertinentTiers(index-1, index, orderedGlyphs);
 				}
 				else if (atResizeBottom(nevt)) {
-					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-					int index = orderedGlyphs.indexOf(topgl);
-					if (((TierLabelGlyph)topgl).isManuallyResizable()) {
-						upperGl = (TierLabelGlyph)topgl;
-					}
-					if (orderedGlyphs.get(index + 1).isManuallyResizable()) {
-						lowerGl = orderedGlyphs.get(index + 1);
-					}
+					resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
 				}
-				if (upperGl != null || lowerGl != null) {
-					resizeBorder(upperGl, lowerGl, nevt);
+				if (null != resizeRegion && 1 < resizeRegion.size()) {
+					resizeBorder(resizeRegion, nevt);
 					return;
 				}
 				// Dispatch track selection event
@@ -196,10 +218,10 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
-		private void resizeBorder(TierLabelGlyph upperGl, TierLabelGlyph lowerGl, NeoMouseEvent nevt) {
+		private void resizeBorder(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
 			setResizeCursor();
 			GlyphResizer resizer = new GlyphResizer((AffyTieredMap) nevt.getSource(), Application.getSingleton().getMapView());
-			resizer.startDrag(upperGl, lowerGl, nevt);
+			resizer.startDrag(theRegion, nevt);
 		}
 
 		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {

@@ -13,8 +13,10 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -160,7 +162,7 @@ public class SymLoaderTabix extends SymLoader {
                 is = new BlockCompressedInputStream(new URL(path + ".tbi"));
             }
             else {
-                is = new BlockCompressedInputStream(new File(path + ".tbi"));
+                is = new BlockCompressedInputStream(new File(URLDecoder.decode(path, GeneralUtils.UTF8) + ".tbi"));
             }
 
             byte[] bytes = new byte[4];

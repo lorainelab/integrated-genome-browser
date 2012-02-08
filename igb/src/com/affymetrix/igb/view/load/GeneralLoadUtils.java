@@ -692,6 +692,7 @@ public final class GeneralLoadUtils {
 						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
 					}
 				}
+				GeneralLoadView.getLoadView().initDataManagementTable();
 			}
 
 			private void loadOnSequence(BioSeq seq) {
@@ -752,6 +753,8 @@ public final class GeneralLoadUtils {
 					SeqGroupView.getInstance().refreshTable();
 				}
 
+				GeneralLoadView.getLoadView().initDataManagementTable();
+				
 				if(this.isCancelled())
 					return;
 				
@@ -1345,8 +1348,7 @@ public final class GeneralLoadUtils {
 					}
 
 					SeqGroupView.getInstance().refreshTable();
-					//Update LoadModeTableModel
-				//	LoadModeTable.updateVirtualFeatureList();
+					GeneralLoadView.getLoadView().initDataManagementTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}

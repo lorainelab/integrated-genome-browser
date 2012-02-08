@@ -15,14 +15,13 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	 * Note that this can create empty tiers.  But if the tiers are not filled with
 	 * something, they will later be removed automatically.
 	 * @param meth  The tier annot; it will be treated as case-insensitive.
-	 * @param next_to_axis Do you want the Tier as close to the axis as possible?
 	 * @param style  a non-null instance of IAnnotStyle; tier label and other properties
 	 * are determined by the IAnnotStyle.
 	 * @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
 	 * The array may instead contain two copies of one mixed-direction tier;
 	 * in this case place glyphs for both forward and revers items into it.
 	 */
-	TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights);
+	TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_heights);
 
 	TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 	

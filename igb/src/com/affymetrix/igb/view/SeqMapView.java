@@ -1872,7 +1872,6 @@ public class SeqMapView extends JPanel
 	 *  Note that this can create empty tiers.  But if the tiers are not filled with
 	 *  something, they will later be removed automatically.
 	 *  @param meth  The tier annot; it will be treated as case-insensitive.
-	 *  @param next_to_axis Do you want the Tier as close to the axis as possible?
 	 *  @param style  a non-null instance of IAnnotStyle; tier label and other properties
 	 *   are determined by the IAnnotStyle.
 	 *  @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
@@ -1880,8 +1879,8 @@ public class SeqMapView extends JPanel
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
 	@Override
-	public TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
-		return TrackView.getTiers(this, next_to_axis, style, constant_heights);
+	public TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_heights) {
+		return TrackView.getTiers(this, style, constant_heights);
 	}
 
 	@Override

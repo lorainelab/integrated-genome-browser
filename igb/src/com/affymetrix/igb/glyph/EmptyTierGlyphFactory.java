@@ -79,7 +79,7 @@ public class EmptyTierGlyphFactory {
 				
 		double height = style.getHeight();
 		if(!style.isGraphTier()){
-			tiers = gviewer.getTiers(false, style, true);
+			tiers = gviewer.getTiers(style, true);
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 		}else {
 			tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);

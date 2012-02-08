@@ -119,7 +119,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
 			int glyph_depth = style.getGlyphDepth();
 
-			TierGlyph[] tiers = smv.getTiers(false, style, true);
+			TierGlyph[] tiers = smv.getTiers(style, true);
 			tiers[0].setInfo(sym);
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {

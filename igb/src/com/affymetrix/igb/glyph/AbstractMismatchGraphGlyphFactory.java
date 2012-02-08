@@ -66,7 +66,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 		
 		MisMatchGraphSym mgsym = getMismatchGraph(syms, aseq, false, meth, startEnd[0], startEnd[1]);
 		
-		TierGlyph[] tiers = smv.getTiers(false, style, true);
+		TierGlyph[] tiers = smv.getTiers(style, true);
 		
 		addToParent(pspan, mgsym, tiers[0], smv);
 	

@@ -40,7 +40,7 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		
-		TierGlyph[] tiers = smv.getTiers(false, style, true);
+		TierGlyph[] tiers = smv.getTiers(style, true);
 		if (style.getSeparate()) {
 			addDepthGraph(meth, sym, tiers[0], tiers[1], smv);			
 		} else {

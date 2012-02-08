@@ -47,13 +47,20 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	 */
 	private final double minimumTierHeight = 10.0;
 	
+	/**
+	 * Construct a resizer with a given widget and view.
+	 * @param widg
+	 * @param gviewer 
+	 */
 	public GlyphResizer(NeoAbstractWidget widg, SeqMapView gviewer) {
 		this.widget = widg;
 		this.gviewer = gviewer;
 	}
 
 	/**
-	 *  Start a drag.
+	 * Establish some context and boundaries for the drag.
+	 * @param theRegion is a list of contiguous tiers affected by the resize.
+	 * @param nevt is the event starting the drag.
 	 */
 	public void startDrag(java.util.List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
 		this.upperGl = theRegion.get(0);
@@ -72,37 +79,29 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		
 		java.util.List<TierLabelGlyph> fixedInterior = theRegion.subList(1, theRegion.size()-1);
 		for (TierLabelGlyph g: fixedInterior) {
-			System.out.println("adjusting");
 			java.awt.geom.Rectangle2D.Double b = g.getCoordBox();
 			if (b.getY() <= start) {
-				System.out.println("adjusting ceiling");
 				ourCeiling += b.getHeight();
 			}
 			if (start <= b.getY()) {
-				System.out.println("adjusting floor");
 				ourFloor -= b.getHeight();
 			}
 		}
-		/*
-		if (atResizeTop(nevt)) {
-			// adjust bottom up by what? last tier height?
-		}
-		if (atResizeBottom(nevt)) {
-			// adjust ceiling down by what? first tier height?
-		}
-		/* */
 		
 	}
 
 	public void mouseMoved(MouseEvent evt) { }
 
+	/**
+	 * Adjust the tiers on either side of the mouse pointer.
+	 * @param evt is the drag event.
+	 */
 	public void mouseDragged(MouseEvent evt) {
 		if (!(evt instanceof NeoMouseEvent)) { return; }
 		NeoMouseEvent nevt = (NeoMouseEvent)evt;
 		double diff = nevt.getCoordY() - start;
 
 		if (upperGl != null && null != lowerGl) {
-			//if (upperGl.getCoordBox().getY() + minimumTierHeight < nevt.getCoordY() && nevt.getCoordY() + minimumTierHeight < (lowerGl.getCoordBox().getY() + lowerGl.getCoordBox().getHeight())) {
 			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
 				double height = upperGl.getCoordBox().getHeight() + diff;
 				upperGl.resizeHeight(upperGl.getCoordBox().getY(), height);
@@ -110,8 +109,9 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 				lowerGl.resizeHeight(lowerGl.getCoordBox().getY() + diff, height);
 				gviewer.getSeqMap().updateWidget();
 			}
-			else {
-				System.err.println("Out of bounds.");
+			else { // then we're out of bounds.
+				// Ignore it.
+				//System.err.println("Out of bounds.");
 			}
 		}
 		else {
@@ -126,6 +126,10 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	public void mouseEntered(MouseEvent evt) { }
 	public void mouseExited(MouseEvent evt) { }
 
+	/**
+	 * Finish the resizing and clean up.
+	 * @param evt is the event ending the mouse drag.
+	 */
 	public void mouseReleased(MouseEvent evt) {
 		mouseDragged(evt);
 		widget.removeMouseListener(this);

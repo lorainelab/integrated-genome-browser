@@ -5,24 +5,32 @@
 
 package com.affymetrix.igb.glyph;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
+
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.Color;
-import java.awt.Font;
-import java.util.List;
-import java.util.regex.Pattern;
 
 public abstract class CytobandGlyph {
 	public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
@@ -45,6 +53,11 @@ public abstract class CytobandGlyph {
 			return null;
 		}
 
+		String meth = BioSeq.determineMethod(cyto_annots);
+		ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+		smv.getGraphTrack(style, TierGlyph.Direction.NONE);
+		
+		
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -84,9 +97,9 @@ public abstract class CytobandGlyph {
 			smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
 
 			if (q <= centromerePoint) {
-				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg);
+				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, axis_tier, efg, style);
 			} else {
-				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, axis_tier, efg);
+				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, axis_tier, efg, style);
 			}
 		}
 
@@ -112,10 +125,11 @@ public abstract class CytobandGlyph {
 		return cytoband_glyph;
 	}
 
-	private static RoundRectMaskGlyph createSingleCytobandGlyph(RoundRectMaskGlyph cytobandGlyph, GlyphI axis_tier, GlyphI efg) {
+	private static RoundRectMaskGlyph createSingleCytobandGlyph(
+			RoundRectMaskGlyph cytobandGlyph, GlyphI axis_tier, GlyphI efg, ITrackStyleExtended style) {
 		if (cytobandGlyph == null) {
-			cytobandGlyph = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
-			cytobandGlyph.setColor(Color.GRAY);
+			cytobandGlyph = new RoundRectMaskGlyphWithStyle(style, axis_tier.getBackgroundColor());
+			//cytobandGlyph.setColor(Color.GRAY);
 			cytobandGlyph.setCoordBox(efg.getCoordBox());
 		}
 		cytobandGlyph.addChild(efg);
@@ -123,4 +137,39 @@ public abstract class CytobandGlyph {
 		return cytobandGlyph;
 	}
 
+	private static class RoundRectMaskGlyphWithStyle extends RoundRectMaskGlyph {
+
+		final ITrackStyleExtended the_style;
+
+		RoundRectMaskGlyphWithStyle(ITrackStyleExtended the_style, Color background) {
+			super(background);
+			this.the_style = the_style;
+		}
+
+		@Override
+		public void setVisibility(boolean isVisible) {
+			the_style.setShow(isVisible);
+			super.setVisibility(isVisible);
+		}
+
+		@Override
+		public boolean isVisible() {
+			return the_style.getShow();
+		}
+		
+		@Override
+		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
+			ViewI view)  {
+			if(isVisible()){
+				super.pickTraversal(pickRect, pickList, view);
+			}
+		}
+		
+		@Override
+		public void drawTraversal(ViewI view)  {
+			if(isVisible()){
+				super.drawTraversal(view);
+			}
+		}
+	}
 }

@@ -27,7 +27,7 @@ import java.awt.geom.RoundRectangle2D;
  * a glyph representing one arm of a chromosome, with the cytobands
  * as children.
  */
-public final class RoundRectMaskGlyph extends Glyph  {
+public class RoundRectMaskGlyph extends Glyph  {
 
   private static final BasicStroke stroke = new BasicStroke(2);
   private final RoundRectangle2D.Double rr2d = new RoundRectangle2D.Double();

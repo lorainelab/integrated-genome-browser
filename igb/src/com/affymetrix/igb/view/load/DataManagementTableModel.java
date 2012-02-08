@@ -429,6 +429,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (style instanceof TrackStyle) {
 					if (tier.getChildCount() > 0) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
+					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)){
+						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (smv.getPixelFloater().getChildren() != null) {
 						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
 						for (GlyphI g : floatingGraphs) {

@@ -14,6 +14,7 @@
 package com.affymetrix.igb.view;
 
 import java.awt.event.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -36,6 +37,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	SeqMapView gviewer = null;
 	double start;
 	private double ourFloor, ourCeiling;
+	private List<TierLabelGlyph> fixedInterior;
 	
 	/**
 	 * Tiers should have a minimum height. Perhaps they do. Look into it.
@@ -62,7 +64,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	 * @param theRegion is a list of contiguous tiers affected by the resize.
 	 * @param nevt is the event starting the drag.
 	 */
-	public void startDrag(java.util.List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
+	public void startDrag(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
 		this.upperGl = theRegion.get(0);
 		this.lowerGl = theRegion.get(theRegion.size()-1);
 		// flushing, just in case...
@@ -77,8 +79,8 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		java.awt.geom.Rectangle2D.Double box = this.lowerGl.getCoordBox();
 		ourFloor = box.getY() + box.getHeight() - minimumTierHeight;
 		
-		java.util.List<TierLabelGlyph> fixedInterior = theRegion.subList(1, theRegion.size()-1);
-		for (TierLabelGlyph g: fixedInterior) {
+		this.fixedInterior = theRegion.subList(1, theRegion.size()-1);
+		for (TierLabelGlyph g: this.fixedInterior) {
 			java.awt.geom.Rectangle2D.Double b = g.getCoordBox();
 			if (b.getY() <= start) {
 				ourCeiling += b.getHeight();
@@ -105,6 +107,14 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
 				double height = upperGl.getCoordBox().getHeight() + diff;
 				upperGl.resizeHeight(upperGl.getCoordBox().getY(), height);
+				
+				// Move the fixed height glyphs in the middle.
+				double y = upperGl.getCoordBox().getY() + upperGl.getCoordBox().getHeight();
+				for (TierLabelGlyph g: this.fixedInterior) {
+					g.resizeHeight(y, g.getCoordBox().getHeight());
+					y += g.getCoordBox().getHeight();
+				}
+				
 				height = lowerGl.getCoordBox().getHeight() - diff;
 				lowerGl.resizeHeight(lowerGl.getCoordBox().getY() + diff, height);
 				gviewer.getSeqMap().updateWidget();

@@ -75,16 +75,19 @@ public class TierGlyph extends SolidGlyph {
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
-	private ITrackStyleExtended style;
+	protected ITrackStyleExtended style;
 	private ZoomDisplayer zoomDisplayer;
 	
+	public TierGlyph() {
+	}
+
 	public TierGlyph(ITrackStyleExtended style) {
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
 	}
 
-	public final void setStyle(ITrackStyleExtended style) {
+	public void setStyle(ITrackStyleExtended style) {
 		this.style = style;
 
 		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
@@ -466,7 +469,7 @@ public class TierGlyph extends SolidGlyph {
 	/** Sets the color used to fill the tier background, or null if no color
 	 *  @param col  A color, or null if no background color is desired.
 	 */
-	public final void setFillColor(Color col) {
+	public void setFillColor(Color col) {
 		if (style.getBackground() != col) {
 			style.setBackground(col);
 		}
@@ -545,7 +548,7 @@ public class TierGlyph extends SolidGlyph {
 		expand_packer.setMaxSlots(max);
 	}
 
-	public final int getActualSlots(){
+	public int getActualSlots(){
 		if(packer == expand_packer)
 			return expand_packer.getActualSlots();
 		return 1;

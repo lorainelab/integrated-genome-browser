@@ -209,17 +209,17 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				}
 				return style.getTrackName();
 			case FOREGROUND_COLUMN:
-				if (style == null) {
+				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
 					return Color.WHITE;
 				}
 				return style.getForeground();
 			case BACKGROUND_COLUMN:
-				if (style == null) {
+				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return Color.WHITE;
 				}
 				return style.getBackground();
 			case SEPARATE_COLUMN:
-				if (style == null) {
+				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return false;
 				}
 				return style.getSeparate();
@@ -249,6 +249,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
+			return false;
+		} else if(vFeature.getStyle().getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
+			if(col == HIDE_FEATURE_COLUMN){
+				return true;
+			}
 			return false;
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary()) {

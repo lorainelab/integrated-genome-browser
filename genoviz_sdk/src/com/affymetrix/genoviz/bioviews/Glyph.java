@@ -48,7 +48,7 @@ public abstract class Glyph implements GlyphI  {
 	private   int min_pixels_width=1;
 	private   int min_pixels_height=1;
 	private   GlyphI parent;
-	protected List<GlyphI> children;
+	private   List<GlyphI> children;
 	private   GlyphStyle glyphStyle;
 
 	private   boolean visible;
@@ -418,6 +418,10 @@ public abstract class Glyph implements GlyphI  {
 
 	public List<GlyphI> getChildren()  {
 		return children;
+	}
+
+	public void resetChildren() {
+		children = new ArrayList<GlyphI>();
 	}
 
 	public void setParent(GlyphI glyph)  {

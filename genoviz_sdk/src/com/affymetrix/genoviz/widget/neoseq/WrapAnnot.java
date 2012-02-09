@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget.neoseq;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.util.*;
 
 /**
  * contains other WrapGlyphs.
@@ -26,7 +25,7 @@ import java.util.*;
 public class WrapAnnot extends WrapGlyph {
 
 	public WrapAnnot() {
-		children = new ArrayList<GlyphI>();
+		resetChildren();
 	}
 
 	@Override

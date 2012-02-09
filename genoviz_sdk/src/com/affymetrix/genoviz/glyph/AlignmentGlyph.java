@@ -179,15 +179,15 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	public void setSequence(SequenceI seq) {
 		this.seq = seq;
 
-		if (children == null) {
+		if (getChildren() == null) {
 			return;
 		}
-		int max = children.size();
+		int max = getChildren().size();
 		AlignedResiduesGlyph child;
 		int seqstart, seqend;
 		for (int i = 0; i < max; i++) {
-			if (children.get(i) instanceof AlignedResiduesGlyph) {
-				child = (AlignedResiduesGlyph) children.get(i);
+			if (getChildren().get(i) instanceof AlignedResiduesGlyph) {
+				child = (AlignedResiduesGlyph) getChildren().get(i);
 				seqstart = child.getParentSeqStart();
 				seqend = child.getParentSeqEnd();
 				setChildResidues(child, seqstart, seqend);
@@ -200,15 +200,15 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setReference(Sequence reference) {
-		if (children == null) {
+		if (getChildren() == null) {
 			return;
 		}
 		this.reference = reference;
-		int max = children.size();
+		int max = getChildren().size();
 		AlignedResiduesGlyph child;
 		for (int i = 0; i < max; i++) {
-			if (children.get(i) instanceof AlignedResiduesGlyph) {
-				child = (AlignedResiduesGlyph) children.get(i);
+			if (getChildren().get(i) instanceof AlignedResiduesGlyph) {
+				child = (AlignedResiduesGlyph) getChildren().get(i);
 				child.setReference(reference);
 				child.setMatchChar(match_char);
 			}
@@ -313,8 +313,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setBackgroundColorArray(Color[] col_array) {
-		if (null != children) {
-			for (GlyphI o : children) {
+		if (null != getChildren()) {
+			for (GlyphI o : getChildren()) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setBackgroundColorArray(col_array);
 					((AlignedResiduesGlyph) o).redoColors();
@@ -324,8 +324,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setBackgroundColorMatrix(Color[][] col_matrix) {
-		if (null != children) {
-			for (GlyphI o : children) {
+		if (null != getChildren()) {
+			for (GlyphI o : getChildren()) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setBackgroundColorMatrix(col_matrix);
 					((AlignedResiduesGlyph) o).redoColors();
@@ -342,8 +342,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setForegroundColorMatrix(Color[][] col_matrix) {
-		if (null != children) {
-			for (GlyphI o : children) {
+		if (null != getChildren()) {
+			for (GlyphI o : getChildren()) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setForegroundColorMatrix(col_matrix);
 					((AlignedResiduesGlyph) o).redoColors();
@@ -479,7 +479,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			//      if (pixels_per_base < 1 || children == null || children.size() <= 0) {
 			// if (pixels_per_base < 1 || children == null || children.size() <= 0) {
 			// GAH 4-28-99 modified to draw only arrows if pixels_per_base is not not integral
-			if (pixels_per_base < 1 || children == null || children.size() <= 0
+			if (pixels_per_base < 1 || getChildren() == null || getChildren().size() <= 0
 					|| ((pixels_per_base - (int) pixels_per_base) != 0)) {
 				if (drawArrow) {
 					arrow.drawTraversal(view);
@@ -537,10 +537,10 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
 		arrow.setSelected(selected);
-		if (children != null) {
-			int size = children.size();
+		if (getChildren() != null) {
+			int size = getChildren().size();
 			for (int i = 0; i < size; i++) {
-				children.get(i).setSelected(selected);
+				getChildren().get(i).setSelected(selected);
 			}
 		}
 	}
@@ -568,8 +568,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	@Override
 	public void setForegroundColor(Color c) {
 		super.setForegroundColor(c);
-		if (null != children) {
-			for (GlyphI o : children) {
+		if (null != getChildren()) {
+			for (GlyphI o : getChildren()) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setForegroundColor(c);
 				}

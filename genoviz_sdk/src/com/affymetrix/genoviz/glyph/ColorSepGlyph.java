@@ -52,10 +52,10 @@ public class ColorSepGlyph extends Glyph  {
 
 	@Override
 	protected void drawChildren(ViewI view) {
-		if (children == null)  { return; }
+		if (getChildren() == null)  { return; }
 		if (colors.length > 0) {
 			for (int colorIndex = 0; colorIndex < colors.length; colorIndex++) {
-				for (GlyphI child : children) {
+				for (GlyphI child : getChildren()) {
 					if (child.getColor() == colors[colorIndex]) {
 						child.drawTraversal(view);
 					}

@@ -109,7 +109,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			}
 
 			// 2.) draw any child glyphs
-			if (children != null) {
+			if (getChildren() != null) {
 				drawChildren(view);
 			}
 

@@ -113,13 +113,13 @@ public final class TransformTierGlyph extends TierGlyph {
 			}
 		}
 
-		if (children != null) {
+		if (getChildren() != null) {
 			// modify pickRect on the way in
 			//   (transform from view coords to local (tier) coords)
 			//    [ an inverse transform? ]
 			LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
 
-			for (GlyphI child : children) {
+			for (GlyphI child : getChildren()) {
 				child.pickTraversal(internal_pickRect, pickList, view);
 			}
 		}

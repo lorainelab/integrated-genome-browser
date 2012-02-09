@@ -191,7 +191,7 @@ public class TierGlyph extends SolidGlyph {
 				prev_min = min;
 			}
 			if (!sorted) {
-				Collections.sort(children, child_sorter);
+				Collections.sort(getChildren(), child_sorter);
 			}
 		}
 		sorted = true;
@@ -286,11 +286,11 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public void drawChildren(ViewI view) {
 		try{
-		if (children != null) {
+		if (getChildren() != null) {
 			GlyphI child;
-			int numChildren = children.size();
+			int numChildren = getChildren().size();
 			for (int i = 0; i < numChildren; i++) {
-				child = children.get(i);
+				child = getChildren().get(i);
 				// TransientGlyphs are usually NOT drawn in standard drawTraversal
 				if (!(child instanceof TransientGlyph) || drawTransients()) {
 					if (child.isOverlapped()) {

@@ -421,11 +421,11 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 					pickList.add(this.labeled);
 				}
 			}
-			if (children != null)  {
+			if (getChildren() != null)  {
 				GlyphI child;
-				int childnum = children.size();
+				int childnum = getChildren().size();
 				for (int i=0; i<childnum; i++) {
-					child = children.get(i);
+					child = getChildren().get(i);
 					child.pickTraversal(pickRect, pickList, view);
 				}
 			}

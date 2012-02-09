@@ -46,11 +46,11 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 	 */
 	public void setCoords(double x, double y, double width, double height) {
 		super.setCoords(x, y, width, height);
-		if (children != null) {
+		if (getChildren() != null) {
 			GlyphI child;
 			Rectangle2D.Double childbox;
-			for (int i=0; i<children.size(); i++) {
-				child = children.get(i);
+			for (int i=0; i<getChildren().size(); i++) {
+				child = getChildren().get(i);
 				childbox = child.getCoordBox();
 				child.setCoords(childbox.x, y, childbox.width, height);
 			}

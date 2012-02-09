@@ -84,10 +84,10 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 
 		font_height = fontmet.getAscent();
 		font_ascent = fontmet.getAscent();
-		if (children != null) {
+		if (getChildren() != null) {
 			Object child;
-			for (int i=0; i<children.size(); i++) {
-				child = children.get(i);
+			for (int i=0; i<getChildren().size(); i++) {
+				child = getChildren().get(i);
 				if (child instanceof ResiduesGlyphI)
 					((ResiduesGlyphI)child).setResidueFont( fnt );
 			}
@@ -128,12 +128,12 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 			seq_beg = (int)(coordbox.y);
 			seq_end = (int)(coordbox.y + coordbox.height);
 		}
-		if (children != null) {
+		if (getChildren() != null) {
 			int i;
 			GlyphI child;
 			Rectangle2D.Double childbox;
-			for (i=0; i<children.size(); i++) {
-				child = children.get(i);
+			for (i=0; i<getChildren().size(); i++) {
+				child = getChildren().get(i);
 				childbox = child.getCoordBox();
 				child.setCoords(childbox.x, y, childbox.width, height);
 			}

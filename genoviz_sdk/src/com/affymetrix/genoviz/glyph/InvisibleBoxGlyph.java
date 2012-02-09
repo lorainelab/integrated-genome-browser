@@ -29,11 +29,11 @@ public final class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
     // This is what gets drawn when the pixelbox of this glyph is too small.
     // Draw all the children as tiny boxes.
 
-    if (children != null)  {
+    if (getChildren() != null)  {
       GlyphI child;
       int numChildren = getChildCount();
       for ( int i = 0; i < numChildren; i++ ) {
-	child = children.get( i );
+	child = getChildren().get( i );
 	// TransientGlyphs are usually NOT drawn in standard drawTraversal
 	if (!(child instanceof TransientGlyph) || drawTransients()) {
           Rectangle pixelbox = view.getScratchPixBox();

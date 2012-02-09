@@ -195,7 +195,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
 	@Override
 	protected void drawChildren(ViewI view) {
-		if (children != null)  {
+		if (getChildren() != null)  {
 			GlyphI child;
 			Rectangle compbox = view.getComponentSizeRect();
 			pixelbox = pixelbox.intersection(compbox);

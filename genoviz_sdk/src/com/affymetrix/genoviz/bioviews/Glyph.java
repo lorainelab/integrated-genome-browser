@@ -42,7 +42,7 @@ public abstract class Glyph implements GlyphI  {
 	protected static final GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
 	protected Rectangle2D.Double coordbox;
-	protected Scene scene;
+	private   Scene scene;
 	private   Rectangle2D.Double cb2= null; // used as a temporary variable
 	protected Rectangle pixelbox;
 	protected int min_pixels_width=1;
@@ -52,13 +52,13 @@ public abstract class Glyph implements GlyphI  {
 	protected GlyphStyle style;
 
 	protected boolean isVisible;
-	private Object info;
-	protected PackerI packer;
+	private   Object info;
+	private   PackerI packer;
 	protected boolean selected;
-	protected int draw_order = DRAW_SELF_FIRST;
+	private   int draw_order = DRAW_SELF_FIRST;
 
-	protected boolean selectable = true;
-	protected boolean overlapped = false;
+	private boolean selectable = true;
+	private boolean overlapped = false;
 
 	public Glyph()
 	{

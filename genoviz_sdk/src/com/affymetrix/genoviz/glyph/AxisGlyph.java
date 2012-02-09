@@ -508,7 +508,7 @@ public class AxisGlyph extends Glyph {
 		if (DEBUG_DRAW) { System.err.println("Pixels: " + pixelbox); }
 		if (DEBUG_DRAW) { System.err.println("Transform: " + view.getTransform());}
 
-		Rectangle2D.Double scenebox = scene.getCoordBox();
+		Rectangle2D.Double scenebox = getScene().getCoordBox();
 		double scene_start, scene_end;
 		if (orient == VERTICAL) {
 			scene_start = scenebox.y;

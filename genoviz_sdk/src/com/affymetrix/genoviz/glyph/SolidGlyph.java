@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class SolidGlyph extends Glyph {
 
-	boolean hitable = true;
+	private boolean hitable = true;
 
 	/**
 	 * @return whether or not this glyph is hitable

@@ -196,7 +196,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		}
 		// expanding damage to ensure this glyph is redrawn if
 		//    view is using damage optimizations
-		scene.expandDamage(this);
+		getScene().expandDamage(this);
 	}
 
 	public void setReference(Sequence reference) {

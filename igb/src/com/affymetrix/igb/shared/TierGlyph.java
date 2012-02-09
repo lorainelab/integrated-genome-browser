@@ -211,7 +211,7 @@ public class TierGlyph extends SolidGlyph {
 		initForSearching();
 		setMaxExpandDepth(style.getMaxDepth());
 		super.pack(view, manual);
-		Rectangle2D.Double mbox = scene.getCoordBox();
+		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
 
 		if (shouldDrawLabel()) {
@@ -489,14 +489,14 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	public int getActualSlots(){
-		if(packer == expand_packer)
+		if(getPacker() == expand_packer)
 			return expand_packer.getActualSlots();
 		return 1;
 	}
 
 	private double getSpacing() {
-		if(packer instanceof AbstractCoordPacker){
-			return ((AbstractCoordPacker)packer).getSpacing();
+		if(getPacker() instanceof AbstractCoordPacker){
+			return ((AbstractCoordPacker)getPacker()).getSpacing();
 		}
 		return 2;
 	}

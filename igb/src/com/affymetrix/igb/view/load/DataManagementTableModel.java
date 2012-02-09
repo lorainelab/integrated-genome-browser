@@ -252,7 +252,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
 		} else if(style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
-			if(col == HIDE_FEATURE_COLUMN){
+			if(col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN){
 				return true;
 			}
 			return false;

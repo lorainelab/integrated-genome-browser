@@ -23,8 +23,8 @@ final class BookmarkTableModel extends AbstractTableModel {
 		infoList.add("start");
 		infoList.add("end");
 		infoList.add("loadresidues");
-//		infoList.add("Create Date");
-//		infoList.add("Modified Date");
+		infoList.add("create");
+		infoList.add("modified");
 
 		return infoList;
 	}

@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -33,6 +35,10 @@ public final class Bookmark implements Serializable {
 	public static final String START = "start";
 	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
 	public static final String END = "end";
+	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
+	public static final String CREATE = "create";
+	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
+	public static final String MODIFIED = "modified";
 	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
 	public static final String SELECTSTART = "selectstart";
 	/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
@@ -108,7 +114,6 @@ public final class Bookmark implements Serializable {
 			return name;
 		}
 	};
-	
 	private static final boolean DEBUG = false;
 	private String name;
 	private String comment;
@@ -236,6 +241,12 @@ public final class Bookmark implements Serializable {
 	 *    or even "http://www.xxx.com?x=1&y=2".
 	 */
 	public static String constructURL(String url_base, Map<String, String[]> props) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+
+		props.put(Bookmark.CREATE, new String[]{dateFormat.format(date)});
+		props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
+
 		StringBuffer sb = new StringBuffer();
 		sb.append(url_base);
 

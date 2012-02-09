@@ -198,7 +198,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		if (getChildren() != null)  {
 			GlyphI child;
 			Rectangle compbox = view.getComponentSizeRect();
-			pixelbox = pixelbox.intersection(compbox);
+			setPixelBox(pixelbox.intersection(compbox));
 			Rectangle2D.Double cbox = new Rectangle2D.Double();
 			view.transformToCoords(pixelbox, cbox);
 			double a = cbox.x;
@@ -226,7 +226,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		// use view pixelbox instead of view's component's pixel box, so will play nice
 		//   with drawing optimizations
 		Rectangle vbox = view.getPixelBox();
-		pixelbox = pixelbox.intersection(pixelbox);
+		setPixelBox(pixelbox.intersection(pixelbox));
 		boolean bottomTier = (pixelbox.y+pixelbox.height==vbox.y+vbox.height);
 
 		if (fill_color != null) {

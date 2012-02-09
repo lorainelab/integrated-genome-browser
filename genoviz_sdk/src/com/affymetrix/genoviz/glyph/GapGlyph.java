@@ -31,7 +31,7 @@ public class GapGlyph extends SolidGlyph  {
 		g.setColor(getBackgroundColor());
 
 		Rectangle compbox = view.getComponentSizeRect();
-		pixelbox = pixelbox.intersection(compbox);
+		setPixelBox(pixelbox.intersection(compbox));
 
 		// draw the box
 		// Note: the cost of the cull test should be miniscule compared with

@@ -56,7 +56,7 @@ public class RoundRectGlyph extends SolidGlyph  {
 
 		// temp fix for AWT drawing bug when rect gets too big -- GAH 2/6/98
 		Rectangle compbox = view.getComponentSizeRect();
-		pixelbox = pixelbox.intersection(compbox);
+		setPixelBox(pixelbox.intersection(compbox));
 		if ( pixelbox.width < changeWidth )
 			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width,
 					pixelbox.height);

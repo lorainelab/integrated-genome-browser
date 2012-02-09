@@ -30,7 +30,7 @@ public class FillRectGlyph extends SolidGlyph  {
 
 		// temp fix for AWT drawing bug when rect gets too big -- GAH 2/6/98
 		Rectangle compbox = view.getComponentSizeRect();
-		pixelbox = pixelbox.intersection(compbox);
+		setPixelBox(pixelbox.intersection(compbox));
 
 		// If the coordbox was specified with negative width or height,
 		// convert pixelbox to equivalent one with positive width and height.

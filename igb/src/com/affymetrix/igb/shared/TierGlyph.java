@@ -76,7 +76,6 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	protected ITrackStyleExtended style;
-	private ZoomDisplayer zoomDisplayer;
 	
 	public TierGlyph() {
 	}
@@ -109,14 +108,6 @@ public class TierGlyph extends SolidGlyph {
 		return style;
 	}
 	
-	public void setZoomDisplayer(ZoomDisplayer zoomDisplayer) {
-		this.zoomDisplayer = zoomDisplayer;
-	}
-
-	public ZoomDisplayer getZoomDisplayer() {
-		return zoomDisplayer;
-	} 
- 			 
 	/**
 	 *  Adds "middleground" glyphs, which are drawn in front of the background but
 	 *    behind all "real" child glyphs.
@@ -214,56 +205,6 @@ public class TierGlyph extends SolidGlyph {
 		return label;
 	}
 
-	public void drawTraversal(ViewI view) {
-		if (zoomDisplayer != null && zoomDisplayer.getZoomGlyph(view) != null) {
-			drawSummary(view);
-			return;
-		}
-		super.drawTraversal(view);
-	}
-	
-	private void drawSummary(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
-		pixelbox.width = Math.max(pixelbox.width, min_pixels_width);
-		pixelbox.height = Math.max(pixelbox.height, min_pixels_height);
-		Graphics g = view.getGraphics();
-		Rectangle vbox = view.getPixelBox();
-		pixelbox = pixelbox.intersection(vbox);
-		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height + 1);
-			}
-		} else {
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height + 1);
-			}
-
-			// cycle through "middleground" glyphs,
-			//   make sure their coord box y and height are set to same as TierGlyph,
-			//   then call mglyph.draw(view)
-			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
-			// See bug 3032785
-			if (other_fill_color != null) {
-				for (GlyphI mglyph : middle_glyphs) {
-					Rectangle2D.Double mbox = mglyph.getCoordBox();
-					mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
-					mglyph.setColor(other_fill_color);
-					mglyph.drawTraversal(view);
-				}
-			}
-		}
-		
-		GlyphI zoomGlyph = zoomDisplayer.getZoomGlyph(view);
-		if (zoomGlyph != null) {
-			zoomGlyph.setCoordBox(this.getCoordBox());
-			zoomGlyph.draw(view);
-		}
-	}
-	
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view, boolean manual) {
@@ -438,7 +379,6 @@ public class TierGlyph extends SolidGlyph {
 		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
 		//     so it is not necessary to call setScene(null) on them.
 		middle_glyphs.clear();
-		zoomDisplayer = null;
 	}
 
 	/** Sets the expand packer.  Note that you are responsible for setting

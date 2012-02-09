@@ -41,10 +41,10 @@ public class LineStretchContainerGlyph extends Glyph {
 			this.setCoords(cbox.x, cbox.y, cbox.width, cbox.height);
 		}
 		else {
-			coordbox.add(cbox);
+			getCoordBox().add(cbox);
 		}
 
-		double ycenter = this.coordbox.y + this.coordbox.height/2;
+		double ycenter = this.getCoordBox().y + this.getCoordBox().height/2;
 		cbox.y = ycenter - cbox.height/2;
 	}
 
@@ -65,13 +65,13 @@ public class LineStretchContainerGlyph extends Glyph {
 			for (int i=1; i<child_glyphs.size(); i++) {
 				child = (GlyphI)child_glyphs.get(i);
 				childbox = child.getCoordBox();
-				coordbox.add(childbox);
+				getCoordBox().add(childbox);
 			}
 		}
 	}
 
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (pixelbox.width == 0) { pixelbox.width = 1; }
 		if (pixelbox.height == 0) { pixelbox.height = 1; }
 		Graphics g = view.getGraphics();
@@ -88,7 +88,7 @@ public class LineStretchContainerGlyph extends Glyph {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 

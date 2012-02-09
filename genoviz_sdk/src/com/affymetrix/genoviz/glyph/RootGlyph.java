@@ -51,18 +51,18 @@ public class RootGlyph extends StretchContainerGlyph {
 		}
 		Rectangle2D.Double childbox = child.getCoordBox();
 		if (expansion_behavior[X] == EXPAND) {
-			double xbeg = Math.min(childbox.x, coordbox.x);
+			double xbeg = Math.min(childbox.x, getCoordBox().x);
 			double xend = Math.max(childbox.x + childbox.width,
-					coordbox.x + coordbox.width);
-			coordbox.x = xbeg;
-			coordbox.width = xend - xbeg;
+					getCoordBox().x + getCoordBox().width);
+			getCoordBox().x = xbeg;
+			getCoordBox().width = xend - xbeg;
 		}
 		else if (expansion_behavior[Y] == EXPAND) {
-			double ybeg = Math.min(childbox.y, coordbox.y);
+			double ybeg = Math.min(childbox.y, getCoordBox().y);
 			double yend = Math.max(childbox.y + childbox.height,
-					coordbox.y + coordbox.height);
-			coordbox.y = ybeg;
-			coordbox.height = yend - ybeg;
+					getCoordBox().y + getCoordBox().height);
+			getCoordBox().y = ybeg;
+			getCoordBox().height = yend - ybeg;
 		}
 		else {
 			// System.err.println("in rootglyph, shouldn't reach this branch!");
@@ -73,7 +73,7 @@ public class RootGlyph extends StretchContainerGlyph {
 	public void drawTraversal(ViewI view) {
 		super.drawTraversal(view);
 		if (show_outline) {
-			view.transformToPixels(coordbox, pixelbox);
+			view.transformToPixels(getCoordBox(), pixelbox);
 			Graphics g= view.getGraphics();
 			g.setColor(Color.green);
 			g.drawRect(pixelbox.x+2, pixelbox.y+2,
@@ -94,7 +94,7 @@ public class RootGlyph extends StretchContainerGlyph {
 		 * Hence, since all glyphs are children of the root glyph,
 		 * no glyphs can get hit. -- Eric 1998-12-12
 		 */
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		super.draw(view);
 	}
 

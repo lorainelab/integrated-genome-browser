@@ -374,8 +374,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			GlyphI child = new GapGlyph();
 			arrow.addChild(child);
 			//System.out.println("adding gap glyph");
-			child.setCoords((double) (refstart), coordbox.y,
-					(double) (refend - refstart), coordbox.height);
+			child.setCoords((double) (refstart), getCoordBox().y,
+					(double) (refend - refstart), getCoordBox().height);
 			child.setColor(new Color(180, 250, 250));
 		}
 	}
@@ -394,8 +394,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		addChild(child);
 
 		// This assumes that refstart <= refend always!!!
-		child.setCoords((double) refstart, coordbox.y,
-				(double) (refend - refstart + 1), coordbox.height);
+		child.setCoords((double) refstart, getCoordBox().y,
+				(double) (refend - refstart + 1), getCoordBox().height);
 		// expand if this grows alignment
 		expandIfNeeded(child);
 		setChildResidues(child, seqstart, seqend);
@@ -468,12 +468,12 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	 */
 	@Override
 	public void drawTraversal(ViewI view) {
-		if (isVisible() && coordbox.intersects(view.getCoordBox())) {
+		if (isVisible() && getCoordBox().intersects(view.getCoordBox())) {
 			if (debugdraw) {
 				System.out.println("now in AlignmentGlyph.drawTraversal(): " + this);
 			}
-			view.transformToPixels(coordbox, pixelbox);
-			double pixels_per_base = pixelbox.width / coordbox.width;
+			view.transformToPixels(getCoordBox(), pixelbox);
+			double pixels_per_base = pixelbox.width / getCoordBox().width;
 			// if resolution is < 1 pixel/base, just draw as an arrow
 			// or if it has no children
 			//      if (pixels_per_base < 1 || children == null || children.size() <= 0) {
@@ -530,7 +530,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	@Override
@@ -600,12 +600,12 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	 */
 	protected void expandIfNeeded(GlyphI child) {
 		Rectangle2D.Double childbox = child.getCoordBox();
-		double oldend = coordbox.x + coordbox.width;
+		double oldend = getCoordBox().x + getCoordBox().width;
 		double newend = childbox.x + childbox.width;
-		if (childbox.x < coordbox.x || newend > oldend) {
-			double newx = Math.min(childbox.x, coordbox.x);
+		if (childbox.x < getCoordBox().x || newend > oldend) {
+			double newx = Math.min(childbox.x, getCoordBox().x);
 			double newwidth = Math.max(oldend, newend) - newx;
-			setCoords(newx, coordbox.y, newwidth, coordbox.height);
+			setCoords(newx, getCoordBox().y, newwidth, getCoordBox().height);
 		}
 	}
 

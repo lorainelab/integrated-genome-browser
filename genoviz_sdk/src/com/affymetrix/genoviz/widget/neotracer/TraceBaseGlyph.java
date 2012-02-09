@@ -136,9 +136,9 @@ public class TraceBaseGlyph extends Glyph  {
 
 		beg = (int)viewbox.x;
 		end = (int)(viewbox.x + viewbox.width);
-		if (end < coordbox.x ) { end++; }
+		if (end < getCoordBox().x ) { end++; }
 		if (beg < 0) { beg = 0; }
-		if ( beg < coordbox.x ) beg = (int)coordbox.x;
+		if ( beg < getCoordBox().x ) beg = (int)getCoordBox().x;
 
 		char theBase;
 		int baseID;
@@ -186,14 +186,14 @@ public class TraceBaseGlyph extends Glyph  {
 		try {
 			for (int i=0; i<baseCount; i++) {
 				if ((calledBase = this.base_calls.getBaseCall(i)) != null) {
-					baseCoordPoint.x = calledBase.getTracePoint() + coordbox.x;
+					baseCoordPoint.x = calledBase.getTracePoint() + getCoordBox().x;
 					if ((baseCoordPoint.x >= minview) && (baseCoordPoint.x <= maxview))  {
 						if (!bases_within_view) {
 							bases_within_view = true;
 						}
 
 						if (showBases) {
-							baseCoordPoint.y = coordbox.y;
+							baseCoordPoint.y = getCoordBox().y;
 							basePixelPoint =
 								view.transformToPixels(baseCoordPoint, basePixelPoint);
 							basePixelPoint.x -= fntWidth/2;
@@ -233,7 +233,7 @@ public class TraceBaseGlyph extends Glyph  {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	public void clearSelection() {

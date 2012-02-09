@@ -81,8 +81,8 @@ class ColoredResiduesGlyph extends SequenceGlyph {
                 seq_end_index = residue_length;
             }
 
-            Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
-                    visible_seq_span, coordbox.height);
+            Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, getCoordBox().y,
+                    visible_seq_span, getCoordBox().height);
             view.transformToPixels(scratchrect, pixelbox);
             pixels_per_base = (view.getTransform()).getScaleX();
 
@@ -173,6 +173,6 @@ class ColoredResiduesGlyph extends SequenceGlyph {
 
     @Override
     public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-        return isVisible() && isHitable() && coord_hitbox.intersects(coordbox);
+        return isVisible() && isHitable() && coord_hitbox.intersects(getCoordBox());
     }
 }

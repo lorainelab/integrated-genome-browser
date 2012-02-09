@@ -13,7 +13,7 @@ public class EfficientPointedGlyph extends PointedGlyph{
 	private static final int ratio = 3;
 	
 	public void draw(ViewI view) {
-		view.transformToPixels(this.coordbox, this.pixelbox);
+		view.transformToPixels(this.getCoordBox(), this.pixelbox);
 		if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
 		if (this.pixelbox.height == 0) { this.pixelbox.height = 1; }
 		
@@ -46,12 +46,12 @@ public class EfficientPointedGlyph extends PointedGlyph{
 		// convert pixelbox to equivalent one with positive width and height.
 		// Constrain abs(width) or abs(height) by min_pixels.
 		// Here I'm relying on the fact that min_pixels is positive.
-		if (coordbox.width < 0) {
+		if (getCoordBox().width < 0) {
 			pixelbox.width = -Math.min(pixelbox.width, -getMinPixelsWidth());
 			pixelbox.x -= pixelbox.width;
 		}
 		else pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
-		if (coordbox.height < 0) {
+		if (getCoordBox().height < 0) {
 			pixelbox.height = -Math.min(pixelbox.height, -getMinPixelsHeight());
 			pixelbox.y -= pixelbox.height;
 		}

@@ -48,7 +48,7 @@ public class RoundRectGlyph extends SolidGlyph  {
 	}
 
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (pixelbox.width == 0) { pixelbox.width = 1; }
 		if (pixelbox.height == 0) { pixelbox.height = 1; }
 		Graphics g = view.getGraphics();

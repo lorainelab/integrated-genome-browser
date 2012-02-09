@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class GapGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (pixelbox.width < mSizeThreshold) { pixelbox.width = mSizeThreshold; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());

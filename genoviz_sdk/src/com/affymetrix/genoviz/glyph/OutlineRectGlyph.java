@@ -37,7 +37,7 @@ public class OutlineRectGlyph extends SolidGlyph  {
 	 * the outline that are visible
 	 */
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (pixelbox.width <= 0) { pixelbox.width = 0; }
 		if (pixelbox.height <= 0) { pixelbox.height = 0; }
 		Graphics g = view.getGraphics();

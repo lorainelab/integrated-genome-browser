@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class FillRectGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
@@ -36,12 +36,12 @@ public class FillRectGlyph extends SolidGlyph  {
 		// convert pixelbox to equivalent one with positive width and height.
 		// Constrain abs(width) or abs(height) by min_pixels.
 		// Here I'm relying on the fact that min_pixels is positive.
-		if (coordbox.width < 0) {
+		if (getCoordBox().width < 0) {
 			pixelbox.width = -Math.min(pixelbox.width, -getMinPixelsWidth());
 			pixelbox.x -= pixelbox.width;
 		}
 		else pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
-		if (coordbox.height < 0) {
+		if (getCoordBox().height < 0) {
 			pixelbox.height = -Math.min(pixelbox.height, -getMinPixelsHeight());
 			pixelbox.y -= pixelbox.height;
 		}

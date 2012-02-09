@@ -22,7 +22,7 @@ public class QualityRect extends Glyph
 {
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		// shrinks slightly to differentiate from possible neighbors
 
 		Graphics g = view.getGraphics();
@@ -56,7 +56,7 @@ public class QualityRect extends Glyph
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return coord_hitbox.intersects(coordbox);
+		return coord_hitbox.intersects(getCoordBox());
 	}
 
 }

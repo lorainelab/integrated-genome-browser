@@ -122,11 +122,11 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 	public void setCoords(double x, double y, double width, double height) {
 		super.setCoords(x, y, width, height);
 		if (orient == HORIZONTAL) {
-			seq_beg = (int)(coordbox.x);
-			seq_end = (int)(coordbox.x + coordbox.width);
+			seq_beg = (int)(getCoordBox().x);
+			seq_end = (int)(getCoordBox().x + getCoordBox().width);
 		} else if (orient == VERTICAL) {
-			seq_beg = (int)(coordbox.y);
-			seq_end = (int)(coordbox.y + coordbox.height);
+			seq_beg = (int)(getCoordBox().y);
+			seq_end = (int)(getCoordBox().y + getCoordBox().height);
 		}
 		if (getChildren() != null) {
 			int i;
@@ -186,32 +186,32 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 		}
 		if (orient == HORIZONTAL) {
 			if (start <= end) {
-				if (start < coordbox.x) {
-					start = (int)coordbox.x; }
-				if (end > (coordbox.x + coordbox.width)) {
-					end = (int)(coordbox.x + coordbox.width); }
+				if (start < getCoordBox().x) {
+					start = (int)getCoordBox().x; }
+				if (end > (getCoordBox().x + getCoordBox().width)) {
+					end = (int)(getCoordBox().x + getCoordBox().width); }
 			}
 			else {
-				if (end < coordbox.x) {
-					end = (int)coordbox.x; }
-				if (start > (coordbox.x + coordbox.width)) {
-					start = (int)(coordbox.x + coordbox.width); }
+				if (end < getCoordBox().x) {
+					end = (int)getCoordBox().x; }
+				if (start > (getCoordBox().x + getCoordBox().width)) {
+					start = (int)(getCoordBox().x + getCoordBox().width); }
 			}
-			sel_glyph.setCoords(start, coordbox.y, end-start, coordbox.height);
+			sel_glyph.setCoords(start, getCoordBox().y, end-start, getCoordBox().height);
 		} else if (orient == VERTICAL) {
 			if (start <= end) {
-				if (start < coordbox.y) {
-					start = (int)coordbox.y; }
-				if (end > (coordbox.y + coordbox.height)) {
-					end = (int)(coordbox.y + coordbox.height); }
+				if (start < getCoordBox().y) {
+					start = (int)getCoordBox().y; }
+				if (end > (getCoordBox().y + getCoordBox().height)) {
+					end = (int)(getCoordBox().y + getCoordBox().height); }
 			}
 			else {
-				if (end < coordbox.y) {
-					end = (int)coordbox.y; }
-				if (start > (coordbox.y + coordbox.height)) {
-					start = (int)(coordbox.y + coordbox.height); }
+				if (end < getCoordBox().y) {
+					end = (int)getCoordBox().y; }
+				if (start > (getCoordBox().y + getCoordBox().height)) {
+					start = (int)(getCoordBox().y + getCoordBox().height); }
 			}
-			sel_glyph.setCoords(coordbox.x, start, coordbox.width, end-start);
+			sel_glyph.setCoords(getCoordBox().x, start, getCoordBox().width, end-start);
 		}
 	}
 

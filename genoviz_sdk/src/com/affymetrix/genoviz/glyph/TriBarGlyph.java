@@ -63,7 +63,7 @@ public class TriBarGlyph extends DirectedGlyph {
 
 	@Override
 	public void calcPixels(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		int xtricenter;
 		int ytricenter;
 

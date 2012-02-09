@@ -102,7 +102,7 @@ public class QualityBases extends Glyph  {
 
 		beg = (int)viewbox.x;
 		end = (int)(viewbox.x + viewbox.width);
-		if (end < coordbox.x ) { end++; }
+		if (end < getCoordBox().x ) { end++; }
 		if (end >= read_length) { end = read_length - 1; }
 		if (beg < 0) { beg = 0; }
 
@@ -142,7 +142,7 @@ public class QualityBases extends Glyph  {
 						firstdisplayed = false;
 					}
 					lastbase = i;
-					baseCoordPoint.y = coordbox.y;
+					baseCoordPoint.y = getCoordBox().y;
 					basePixelPoint =
 						view.transformToPixels(baseCoordPoint, basePixelPoint);
 					theBase = calledBase.getBase();
@@ -185,7 +185,7 @@ public class QualityBases extends Glyph  {
 		g.setColor(numColor);
 		for (i=firstbase; i<=lastbase; i+=increment) {
 			baseCoordPoint.x = i;
-			baseCoordPoint.y = coordbox.y;
+			baseCoordPoint.y = getCoordBox().y;
 			basePixelPoint =
 				view.transformToPixels(baseCoordPoint, basePixelPoint);
 
@@ -208,7 +208,7 @@ public class QualityBases extends Glyph  {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	public void clearSelection() {

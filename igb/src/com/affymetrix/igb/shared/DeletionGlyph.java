@@ -19,7 +19,7 @@ public final class DeletionGlyph extends SolidGlyph {
   @Override
   public void draw(ViewI view) {
     Rectangle pbox = view.getScratchPixBox();
-    view.transformToPixels(this.coordbox, pbox);
+    view.transformToPixels(this.getCoordBox(), pbox);
     Graphics g = view.getGraphics();
 
     //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );

@@ -218,7 +218,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	@Override
 	public void draw(ViewI view) {
 
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
 		pixelbox.height = Math.max ( pixelbox.height, getMinPixelsHeight() );
 

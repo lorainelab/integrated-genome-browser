@@ -139,8 +139,8 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int visible_seq_span = visible_seq_end - visible_seq_beg;
 			// ***** otherwise semantic zooming to show more detail *****
 			if (visible_seq_span > 0) {
-				Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
-						visible_seq_span, coordbox.height);
+				Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, getCoordBox().y,
+						visible_seq_span, getCoordBox().height);
 				view.transformToPixels(scratchrect, pixelbox);
 				int seq_end_index = visible_seq_end - seq_beg;
 				if (seq_end_index > residue_length) {
@@ -231,7 +231,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible() && isHitable() && coord_hitbox.intersects(coordbox);
+		return isVisible() && isHitable() && coord_hitbox.intersects(getCoordBox());
 	}
 
 

@@ -29,7 +29,7 @@ public class PointedGlyph extends DirectedGlyph {
 	int y[] = new int[6];
 	
 	public void draw(ViewI theView) {
-		theView.transformToPixels(this.coordbox, this.pixelbox);
+		theView.transformToPixels(this.getCoordBox(), this.pixelbox);
 		if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
 		if (this.pixelbox.height == 0) { this.pixelbox.height = 1; }
 		Graphics g = theView.getGraphics();

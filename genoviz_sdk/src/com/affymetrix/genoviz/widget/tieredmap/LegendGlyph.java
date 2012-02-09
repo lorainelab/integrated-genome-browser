@@ -36,7 +36,7 @@ public class LegendGlyph extends OutlineRectGlyph {
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
 		int padding = g.getFont().getSize() + 2;
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		g.drawString(primary_label, 5, pixelbox.y + padding);
 		super.draw(view);
 	}

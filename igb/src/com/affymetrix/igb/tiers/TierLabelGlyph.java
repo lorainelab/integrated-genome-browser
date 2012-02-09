@@ -20,7 +20,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	@Override
 	public String toString() {
-		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
+		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
 	}
 
 	/**
@@ -110,7 +110,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 
 		Rectangle pixelbox = new Rectangle();
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 
 		if (bgcolor != null) {
 			g.setColor(bgcolor);

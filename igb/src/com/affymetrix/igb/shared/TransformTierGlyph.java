@@ -86,14 +86,14 @@ public final class TransformTierGlyph extends TierGlyph {
     //       done within tier to keep its
     LinearTransform view_transform = view.getTransform();
     double yscale = 0.0d;
-    if ( 0.0d != coordbox.height ) {
-      yscale = (double)fixedPixHeight / coordbox.height;
+    if ( 0.0d != getCoordBox().height ) {
+      yscale = (double)fixedPixHeight / getCoordBox().height;
     }
 	if ( 0.0d != view_transform.getScaleY() ) {
 	  yscale = yscale / view_transform.getScaleY();
 	}
     tier_transform.setTransform(tier_transform.getScaleX(),0,0,tier_transform.getScaleY() * yscale,tier_transform.getTranslateX(),tier_transform.getTranslateY());
-    coordbox.height = coordbox.height * yscale;
+    getCoordBox().height = getCoordBox().height * yscale;
   }
 
 
@@ -129,8 +129,8 @@ public final class TransformTierGlyph extends TierGlyph {
   // don't move children! just change tier's transform offset
 	@Override
   public void moveRelative(double diffx, double diffy) {
-    coordbox.x += diffx;
-    coordbox.y += diffy;
+   getCoordBox().x += diffx;
+   getCoordBox().y += diffy;
    tier_transform.setTransform(tier_transform.getScaleX(), 0, 0, tier_transform.getScaleY(), tier_transform.getTranslateX(), tier_transform.getTranslateY() + diffy);
   }
 

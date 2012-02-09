@@ -33,7 +33,7 @@ public class TriangleGlyph extends DirectedGlyph  {
 	 */
 	@Override
 	public void calcPixels(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		x = poly.xpoints;
 		y = poly.ypoints;
 		int xcenter = pixelbox.x + pixelbox.width/2;

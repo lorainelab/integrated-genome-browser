@@ -104,32 +104,32 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 		}
 		if (orient == HORIZONTAL) {
 			if (start <= end) {
-				if (start < coordbox.x) {
-					start = (int)coordbox.x; }
-				if (end > (coordbox.x + coordbox.width)) {
-					end = (int)(coordbox.x + coordbox.width); }
+				if (start < getCoordBox().x) {
+					start = (int)getCoordBox().x; }
+				if (end > (getCoordBox().x + getCoordBox().width)) {
+					end = (int)(getCoordBox().x + getCoordBox().width); }
 			}
 			else {
-				if (end < coordbox.x) {
-					end = (int)coordbox.x; }
-				if (start > (coordbox.x + coordbox.width)) {
-					start = (int)(coordbox.x + coordbox.width); }
+				if (end < getCoordBox().x) {
+					end = (int)getCoordBox().x; }
+				if (start > (getCoordBox().x + getCoordBox().width)) {
+					start = (int)(getCoordBox().x + getCoordBox().width); }
 			}
-			sel_glyph.setCoords(start, Math.max(0, coordbox.y - labelThickness), end-start, coordbox.height + labelThickness);
+			sel_glyph.setCoords(start, Math.max(0, getCoordBox().y - labelThickness), end-start, getCoordBox().height + labelThickness);
 		} else if (orient == VERTICAL) {
 			if (start <= end) {
-				if (start < coordbox.y) {
-					start = (int)coordbox.y; }
-				if (end > (coordbox.y + coordbox.height)) {
-					end = (int)(coordbox.y + coordbox.height); }
+				if (start < getCoordBox().y) {
+					start = (int)getCoordBox().y; }
+				if (end > (getCoordBox().y + getCoordBox().height)) {
+					end = (int)(getCoordBox().y + getCoordBox().height); }
 			}
 			else {
-				if (end < coordbox.y) {
-					end = (int)coordbox.y; }
-				if (start > (coordbox.y + coordbox.height)) {
-					start = (int)(coordbox.y + coordbox.height); }
+				if (end < getCoordBox().y) {
+					end = (int)getCoordBox().y; }
+				if (start > (getCoordBox().y + getCoordBox().height)) {
+					start = (int)(getCoordBox().y + getCoordBox().height); }
 			}
-			sel_glyph.setCoords(Math.max(0, coordbox.x - labelThickness), start, coordbox.width + labelThickness, end-start);
+			sel_glyph.setCoords(Math.max(0, getCoordBox().x - labelThickness), start, getCoordBox().width + labelThickness, end-start);
 		}
 	}
 

@@ -44,13 +44,13 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	}
 	
 	public void draw(ViewI view) {
-		double hold_y = coordbox.y;
+		double hold_y = getCoordBox().y;
 
-		coordbox.y = coordbox.y + (coordbox.height / 2);
-		view.transformToPixels(coordbox, pixelbox);
+		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		int offset_center = pixelbox.y;
-		coordbox.y = hold_y;
-		view.transformToPixels(coordbox, pixelbox);
+		getCoordBox().y = hold_y;
+		view.transformToPixels(getCoordBox(), pixelbox);
 		calHead();
 		if(headY < 8 || pixelbox.x + pixelbox.width/2 + headX/2 + buffer_pixel> pixelbox.x + pixelbox.width || 
 				pixelbox.x + pixelbox.width/2 - headX/2 - buffer_pixel< pixelbox.x)

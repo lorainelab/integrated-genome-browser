@@ -271,7 +271,7 @@ public class WrapSequence extends WrapGlyph {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	public int getStartVisible() {
@@ -340,7 +340,7 @@ public class WrapSequence extends WrapGlyph {
 		color_glyph.setSequence(seq);
 		color_glyph.setColor(color);
 		color_glyph.setColorSpan(start,end);
-		color_glyph.setCoordBox(coordbox);
+		color_glyph.setCoordBox(getCoordBox());
 		color_glyph.setWrapSequence(this);
 		font_annot_glyph.addChild(color_glyph);
 		return color_glyph;
@@ -351,7 +351,7 @@ public class WrapSequence extends WrapGlyph {
 		color_glyph.setSequence(seq);
 		color_glyph.setColor(color);
 		color_glyph.setColorSpan(start,end);
-		color_glyph.setCoordBox(coordbox);
+		color_glyph.setCoordBox(getCoordBox());
 		color_glyph.setFill(WrapColors.OUTLINE);
 		outline_annot_glyph.addChild(color_glyph);
 		return color_glyph;
@@ -362,7 +362,7 @@ public class WrapSequence extends WrapGlyph {
 		color_glyph.setSequence(seq);
 		color_glyph.setColor(color);
 		color_glyph.setColorSpan(start,end);
-		color_glyph.setCoordBox(coordbox);
+		color_glyph.setCoordBox(getCoordBox());
 		annot_glyph.addChild(color_glyph);
 		return color_glyph;
 	}
@@ -405,7 +405,7 @@ public class WrapSequence extends WrapGlyph {
 			sel_glyph = new WrapColors();
 			sel_glyph.setSequence(seq);
 			sel_glyph.setColor(sel_color);
-			sel_glyph.setCoordBox(coordbox);
+			sel_glyph.setCoordBox(getCoordBox());
 			sel_glyph.setFill(WrapColors.SELECTED);
 
 			// shouldn't need this at the moment, since drawTraversal has been
@@ -435,7 +435,7 @@ public class WrapSequence extends WrapGlyph {
 	 */
 	@Override
 	public void drawTraversal(ViewI view)  {
-		if (isVisible() && coordbox.intersects(view.getCoordBox())) {
+		if (isVisible() && getCoordBox().intersects(view.getCoordBox())) {
 
 			stripe_glyph.drawTraversal(view);
 

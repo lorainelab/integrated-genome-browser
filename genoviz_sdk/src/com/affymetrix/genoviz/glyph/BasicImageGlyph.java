@@ -183,7 +183,7 @@ public class BasicImageGlyph extends Glyph {
 	// apparent coord box based on center coord, img_width, img_height
 	// GAH  3-26-98
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 

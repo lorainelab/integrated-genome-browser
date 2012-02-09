@@ -95,7 +95,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	 */
 	@Override
 	public void drawTraversal(ViewI view)  {
-		if (isVisible() && coordbox.intersects(view.getCoordBox())) {
+		if (isVisible() && getCoordBox().intersects(view.getCoordBox())) {
 			int sel_style = view.getScene().getSelectionAppearance();
 
 			// 1.) draw background rectangle
@@ -155,8 +155,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			Rectangle2D.Double scratchrect = new Rectangle2D.Double(coordbox.x, visible_seq_beg,
-					coordbox.width, visible_seq_span);
+			Rectangle2D.Double scratchrect = new Rectangle2D.Double(getCoordBox().x, visible_seq_beg,
+					getCoordBox().width, visible_seq_span);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = (view.getTransform()).getScaleY();
 
@@ -226,8 +226,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg,  coordbox.y,
-					visible_seq_span, coordbox.height);
+			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg,  getCoordBox().y,
+					visible_seq_span, getCoordBox().height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = (view.getTransform()).getScaleX();
 			int seq_pixel_offset = pixelbox.x;
@@ -314,7 +314,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	/**
@@ -329,14 +329,14 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 	public void addChild(GlyphI child, int position) {
 		super.addChild(child, position);
-		child.setCoords(child.getCoordBox().x, this.coordbox.y,
-				child.getCoordBox().width, this.coordbox.height);
+		child.setCoords(child.getCoordBox().x, this.getCoordBox().y,
+				child.getCoordBox().width, this.getCoordBox().height);
 	}
 
 	public void addChild(GlyphI child) {
 		super.addChild(child);
-		child.setCoords(child.getCoordBox().x, this.coordbox.y,
-				child.getCoordBox().width, this.coordbox.height);
+		child.setCoords(child.getCoordBox().x, this.getCoordBox().y,
+				child.getCoordBox().width, this.getCoordBox().height);
 	}
 
 	public void setParentSeqStart(int beg)  {

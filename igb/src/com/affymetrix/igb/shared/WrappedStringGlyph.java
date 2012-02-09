@@ -21,7 +21,7 @@ public class WrappedStringGlyph extends StringGlyph {
 	public void draw(ViewI view) {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		
 		Rectangle boundingPixelBox = view.getPixelBox();
 		String label = getString();

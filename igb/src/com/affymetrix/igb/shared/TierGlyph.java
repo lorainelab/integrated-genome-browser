@@ -232,7 +232,7 @@ public class TierGlyph extends SolidGlyph {
 	 */
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 
 		pixelbox.width = Math.max(pixelbox.width, getMinPixelsWidth());
 		pixelbox.height = Math.max(pixelbox.height, getMinPixelsHeight());
@@ -262,7 +262,7 @@ public class TierGlyph extends SolidGlyph {
 			if(other_fill_color != null){
 				for (GlyphI mglyph : middle_glyphs) {
 					Rectangle2D.Double mbox = mglyph.getCoordBox();
-					mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
+					mbox.setRect(mbox.x, getCoordBox().y, mbox.width, getCoordBox().height);
 					mglyph.setColor(other_fill_color);
 					mglyph.drawTraversal(view);
 				}
@@ -341,7 +341,7 @@ public class TierGlyph extends SolidGlyph {
 		if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
 			return null;
 		}
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		Rectangle view_pixbox = view.getPixelBox();
 		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
 		Graphics g = view.getGraphics();

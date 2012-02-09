@@ -28,7 +28,7 @@ public class BridgeGlyph extends SolidGlyph {
 	protected static final double POS = 0.0f;
 
 	public void draw(ViewI theView) {
-		theView.transformToPixels(coordbox, pixelbox);
+		theView.transformToPixels(getCoordBox(), pixelbox);
 		if (0 == pixelbox.width) pixelbox.width = 1;
 		if (0 == pixelbox.height) pixelbox.height = 1;
 		Graphics g = theView.getGraphics();

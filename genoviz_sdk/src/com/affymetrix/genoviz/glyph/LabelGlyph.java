@@ -133,7 +133,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		enclosing_pix = pixelbox.union(labeled_pix);
 		enclosing_coords = view.transformToCoords(enclosing_pix, enclosing_coords);
 		label_coords = view.transformToCoords(pixelbox, label_coords);
-		view.transformToCoords(pixelbox, coordbox);
+		view.transformToCoords(pixelbox, getCoordBox());
 
 		if (DEBUG_PIXELBOX) {
 			g.setColor(Color.red);
@@ -186,7 +186,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		int text_height = (null==this.text)?0:fm.getAscent();
 
 		if (null == this.labeled) {
-			theView.transformToPixels(this.coordbox, this.pixelbox);
+			theView.transformToPixels(this.getCoordBox(), this.pixelbox);
 		} else {
 			theView.transformToPixels(this.labeled.getCoordBox(), this.pixelbox);
 		}
@@ -223,14 +223,14 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 	public boolean intersects(Rectangle2D.Double rect, ViewI view) {
 		this.calcPixels(view);
-		this.setCoordBox(view.transformToCoords(this.pixelbox, this.coordbox));
+		this.setCoordBox(view.transformToCoords(this.pixelbox, this.getCoordBox()));
 		return super.intersects(rect, view);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		calcPixels(view);
-		setCoordBox(view.transformToCoords(pixelbox, coordbox));
-		return coord_hitbox.intersects(coordbox);
+		setCoordBox(view.transformToCoords(pixelbox, getCoordBox()));
+		return coord_hitbox.intersects(getCoordBox());
 	}
 
 

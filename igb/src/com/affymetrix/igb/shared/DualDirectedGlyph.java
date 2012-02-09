@@ -52,7 +52,7 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	}
 	
 	private void drawNone(ViewI view){
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
@@ -65,12 +65,12 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 		// convert pixelbox to equivalent one with positive width and height.
 		// Constrain abs(width) or abs(height) by min_pixels.
 		// Here I'm relying on the fact that min_pixels is positive.
-		if (coordbox.width < 0) {
+		if (getCoordBox().width < 0) {
 			pixelbox.width = -Math.min(pixelbox.width, -getMinPixelsWidth());
 			pixelbox.x -= pixelbox.width;
 		}
 		else pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
-		if (coordbox.height < 0) {
+		if (getCoordBox().height < 0) {
 			pixelbox.height = -Math.min(pixelbox.height, -getMinPixelsHeight());
 			pixelbox.y -= pixelbox.height;
 		}
@@ -85,7 +85,7 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 			drawNone(view);
 			return;
 		}
-		view.transformToPixels(this.coordbox, this.pixelbox);
+		view.transformToPixels(this.getCoordBox(), this.pixelbox);
 		if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
 		if (this.pixelbox.height == 0) { this.pixelbox.height = 1; }
 		Graphics g = view.getGraphics();
@@ -150,11 +150,11 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 		super.setCoords(x, y, width, height);
 		if (HORIZONTAL == this.getOrientation()) {
 			if(isForward()){
-				stcb = new Rectangle2D.Double(coordbox.x, coordbox.y, 3, coordbox.height);
-				edcb = new Rectangle2D.Double(coordbox.x + coordbox.width - 3, coordbox.y, 3, coordbox.height);
+				stcb = new Rectangle2D.Double(getCoordBox().x, getCoordBox().y, 3, getCoordBox().height);
+				edcb = new Rectangle2D.Double(getCoordBox().x + getCoordBox().width - 3, getCoordBox().y, 3, getCoordBox().height);
 			}else{
-				stcb = new Rectangle2D.Double(coordbox.x + coordbox.width - 3, coordbox.y, 3, coordbox.height);
-				edcb = new Rectangle2D.Double(coordbox.x, coordbox.y, 3, coordbox.height);
+				stcb = new Rectangle2D.Double(getCoordBox().x + getCoordBox().width - 3, getCoordBox().y, 3, getCoordBox().height);
+				edcb = new Rectangle2D.Double(getCoordBox().x, getCoordBox().y, 3, getCoordBox().height);
 			}
 		}
 	}

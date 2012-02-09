@@ -356,10 +356,10 @@ public class AxisGlyph extends Glyph {
 	 */
 	protected void setCenter() {
 		if (orient == VERTICAL) {
-			center_line = coordbox.x + coordbox.width/2;
+			center_line = getCoordBox().x + getCoordBox().width/2;
 		}
 		else {
-			center_line = coordbox.y + coordbox.height/2;
+			center_line = getCoordBox().y + getCoordBox().height/2;
 		}
 		this.lastCoordBox = null;
 	}
@@ -374,24 +374,24 @@ public class AxisGlyph extends Glyph {
 
 			// Mark the original placement of our coord box.
 			lastCoordBox = new Rectangle2D.Double
-				(this.coordbox.x,
-				 this.coordbox.y,
-				 this.coordbox.width,
-				 this.coordbox.height);
+				(this.getCoordBox().x,
+				 this.getCoordBox().y,
+				 this.getCoordBox().width,
+				 this.getCoordBox().height);
 
 			// Center the center_line in the original coord box.
-			Rectangle2D.Double centralLine = new Rectangle2D.Double(coordbox.x, coordbox.y, 0f, 0f);
+			Rectangle2D.Double centralLine = new Rectangle2D.Double(getCoordBox().x, getCoordBox().y, 0f, 0f);
 			if (orient == VERTICAL) {
-				center_line = coordbox.x + coordbox.width/2;
+				center_line = getCoordBox().x + getCoordBox().width/2;
 				centralLine.x = center_line;
-				centralLine.height = coordbox.height;
+				centralLine.height = getCoordBox().height;
 			}
 			else {
-				center_line = coordbox.y + coordbox.height/2;
+				center_line = getCoordBox().y + getCoordBox().height/2;
 				centralLine.y = center_line;
-				centralLine.width = coordbox.width;
+				centralLine.width = getCoordBox().width;
 			}
-			theView.transformToPixels(coordbox, pixelbox);
+			theView.transformToPixels(getCoordBox(), pixelbox);
 			Rectangle centralBox = new Rectangle();
 			theView.transformToPixels(centralLine, centralBox);
 
@@ -420,21 +420,21 @@ public class AxisGlyph extends Glyph {
 				}
 			}
 
-			Rectangle2D.Double temp_rect = new Rectangle2D.Double(coordbox.x, coordbox.y,
-					coordbox.width, coordbox.height);
+			Rectangle2D.Double temp_rect = new Rectangle2D.Double(getCoordBox().x, getCoordBox().y,
+					getCoordBox().width, getCoordBox().height);
 			// Readjust the coord box to match the new pixel box.
 			theView.transformToCoords(centralBox, temp_rect);
 
 			if (HORIZONTAL == orient) {
-				coordbox.y = temp_rect.y;
-				coordbox.height = temp_rect.height;
+				getCoordBox().y = temp_rect.y;
+				getCoordBox().height = temp_rect.height;
 				// leave coordbox.x and coordbox.width alone
 				// (temp_rect.width will be pretty close to coordbox.width, but round-off errors in
 				// the transformations can result in problems that manifest as the right
 				// edge of the axis not being drawn when the zoom level is very high)
 			} else if (VERTICAL == orient) {
-				coordbox.x = temp_rect.x;
-				coordbox.width = temp_rect.width;
+				getCoordBox().x = temp_rect.x;
+				getCoordBox().width = temp_rect.width;
 				// leave the y and height coords alone
 			}
 		}
@@ -442,17 +442,17 @@ public class AxisGlyph extends Glyph {
 		else {
 			if (VERTICAL == this.orient) {
 				double r = ( lastCoordBox.x - center_line ) / lastCoordBox.width;
-				center_line = this.coordbox.x - ( r * this.coordbox.width );
+				center_line = this.getCoordBox().x - ( r * this.getCoordBox().width );
 			}
 			else { // (HORIZONTAL == this.orient)
 				double r = ( lastCoordBox.y - center_line ) / lastCoordBox.height;
-				center_line = this.coordbox.y - ( r * this.coordbox.height );
+				center_line = this.getCoordBox().y - ( r * this.getCoordBox().height );
 			}
 		}
-		lastCoordBox.x = coordbox.x;
-		lastCoordBox.y = coordbox.y;
-		lastCoordBox.width = coordbox.width;
-		lastCoordBox.height = coordbox.height;
+		lastCoordBox.x = getCoordBox().x;
+		lastCoordBox.y = getCoordBox().y;
+		lastCoordBox.width = getCoordBox().width;
+		lastCoordBox.height = getCoordBox().height;
 
 	}
 
@@ -470,12 +470,12 @@ public class AxisGlyph extends Glyph {
 	public void rangeChanged() {
 		if (DEBUG_DRAW) System.err.println("Parental Coords: "+getParent().getCoordBox());
 		if (VERTICAL == this.orient) {
-			coordbox.y = getParent().getCoordBox().y;
-			coordbox.height = getParent().getCoordBox().height;
+			getCoordBox().y = getParent().getCoordBox().y;
+			getCoordBox().height = getParent().getCoordBox().height;
 		}
 		else {
-			coordbox.x = getParent().getCoordBox().x;
-			coordbox.width = getParent().getCoordBox().width;
+			getCoordBox().x = getParent().getCoordBox().x;
+			getCoordBox().width = getParent().getCoordBox().width;
 		}
 	}
 
@@ -496,7 +496,7 @@ public class AxisGlyph extends Glyph {
 
 		// Packers do not seem to be calling setCoord method.
 		// So we need to do this in case a packer has moved the axis.
-		if (null == lastCoordBox || !this.coordbox.equals(lastCoordBox)) {
+		if (null == lastCoordBox || !this.getCoordBox().equals(lastCoordBox)) {
 			placeCenter(view);
 		}
 
@@ -504,7 +504,7 @@ public class AxisGlyph extends Glyph {
 		// as it was when it was invisible to packers
 		// by dint of having no intersects or hit methods.
 
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (DEBUG_DRAW) { System.err.println("Pixels: " + pixelbox); }
 		if (DEBUG_DRAW) { System.err.println("Transform: " + view.getTransform());}
 
@@ -515,16 +515,16 @@ public class AxisGlyph extends Glyph {
 			scene_end = scenebox.y + scenebox.height;
 			scratchcoords.x = center_line;
 			scratchcoords.width = 0;
-			scratchcoords.y = coordbox.y;
-			scratchcoords.height = coordbox.height;
+			scratchcoords.y = getCoordBox().y;
+			scratchcoords.height = getCoordBox().height;
 		}
 		else {
 			scene_start = scenebox.x;
 			scene_end = scenebox.x + scenebox.width;
 			scratchcoords.y = center_line;
 			scratchcoords.height = 0;
-			scratchcoords.x = coordbox.x;
-			scratchcoords.width = coordbox.width;
+			scratchcoords.x = getCoordBox().x;
+			scratchcoords.width = getCoordBox().width;
 		}
 		view.transformToPixels(scratchcoords, scratchpixels);
 		cumulative = view.getTransform();
@@ -1014,6 +1014,6 @@ public class AxisGlyph extends Glyph {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isHitable() && coord_hitbox.intersects(coordbox);
+		return isHitable() && coord_hitbox.intersects(getCoordBox());
 	}
 }

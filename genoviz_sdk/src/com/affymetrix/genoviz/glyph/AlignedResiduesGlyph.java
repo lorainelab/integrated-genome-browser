@@ -383,8 +383,8 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		seq_beg_index = visible_seq_beg - seq_beg;
 		seq_end_index = visible_seq_end - seq_beg;
 
-		scratchrect.setRect(visible_seq_beg,  coordbox.y,
-				visible_seq_span, coordbox.height);
+		scratchrect.setRect(visible_seq_beg,  getCoordBox().y,
+				visible_seq_span, getCoordBox().height);
 		view.transformToPixels(scratchrect, pixelbox);
 		pixels_per_residue = ((double)pixelbox.width)/scratchrect.width;
 		int seq_pixel_offset = pixelbox.x;
@@ -636,7 +636,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	public void setUnknownResidueBackground(Color col) {

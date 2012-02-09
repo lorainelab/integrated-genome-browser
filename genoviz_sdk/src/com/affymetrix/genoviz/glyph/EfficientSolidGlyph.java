@@ -39,7 +39,7 @@ public class EfficientSolidGlyph extends Glyph  {
 
 	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible() && coord_hitbox.intersects(this.coordbox);
+    return isVisible() && coord_hitbox.intersects(this.getCoordBox());
   }
 
   /**

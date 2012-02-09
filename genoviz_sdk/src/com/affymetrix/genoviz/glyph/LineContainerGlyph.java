@@ -32,7 +32,7 @@ import java.awt.geom.Rectangle2D;
 public class LineContainerGlyph extends Glyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (pixelbox.width == 0) { pixelbox.width = 1; }
 		if (pixelbox.height == 0) { pixelbox.height = 1; }
 		Graphics g = view.getGraphics();
@@ -55,7 +55,7 @@ public class LineContainerGlyph extends Glyph  {
 		// child.cbox.y is modified, but not child.cbox.height)
 		// center the children of the LineContainerGlyph on the line
 		Rectangle2D.Double cbox = glyph.getCoordBox();
-		double ycenter = this.coordbox.y + this.coordbox.height/2;
+		double ycenter = this.getCoordBox().y + this.getCoordBox().height/2;
 		cbox.y = ycenter - cbox.height/2;
 		super.addChild(glyph);
 	}
@@ -76,7 +76,7 @@ public class LineContainerGlyph extends Glyph  {
 	//    THIS BEHAVIOR COMMENTED OUT FOR NOW
 	//
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 }

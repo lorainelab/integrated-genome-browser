@@ -142,7 +142,7 @@ public class GraphGlyph extends Glyph {
 		super();
 		state = gstate;
 
-		setCoords(coordbox.x, state.getTierStyle().getY(), coordbox.width, state.getTierStyle().getHeight());
+		setCoords(getCoordBox().x, state.getTierStyle().getY(), getCoordBox().width, state.getTierStyle().getHeight());
 
 		Map<String,Object> map = graf.getProperties();
 		boolean toInitialize = isUninitialized();
@@ -268,7 +268,7 @@ public class GraphGlyph extends Glyph {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 
 		Graphics g = view.getGraphics();
 		
@@ -650,8 +650,8 @@ public class GraphGlyph extends Glyph {
 		super.moveRelative(xdelta, ydelta);
 		//Note : for view modes bug
 		if(state.getTierStyle().isGraphTier()){
-			state.getTierStyle().setHeight(coordbox.height);
-			state.getTierStyle().setY(coordbox.y);
+			state.getTierStyle().setHeight(getCoordBox().height);
+			state.getTierStyle().setY(getCoordBox().y);
 		}
 		if (xdelta != 0.0f) {
 			graf.moveX(xdelta);
@@ -676,7 +676,7 @@ public class GraphGlyph extends Glyph {
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
 		// within bounds of graph ?
-		if (isVisible() && coord_hitbox.intersects(coordbox)) {
+		if (isVisible() && coord_hitbox.intersects(getCoordBox())) {
 			// overlapping handle ?  (need to do this one in pixel space?)
 			view.transformToPixels(coord_hitbox, pixel_hitbox);
 			Rectangle hpix = calcHandlePix(view);
@@ -698,7 +698,7 @@ public class GraphGlyph extends Glyph {
 		if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
 			return null;
 		}
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		Rectangle view_pixbox = view.getPixelBox();
 		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
 		Graphics g = view.getGraphics();
@@ -861,8 +861,8 @@ public class GraphGlyph extends Glyph {
 	public void getChildTransform(ViewI view, LinearTransform trans) {
 		double external_yscale = trans.getScaleY();
 		double external_offset = trans.getTranslateY();
-		double internal_yscale = coordbox.height / (getVisibleMaxY() - getVisibleMinY());
-		double internal_offset = coordbox.y + coordbox.height;
+		double internal_yscale = getCoordBox().height / (getVisibleMaxY() - getVisibleMinY());
+		double internal_offset = getCoordBox().y + getCoordBox().height;
 		double new_yscale = internal_yscale * external_yscale * -1;
 		double new_yoffset =
 				(external_yscale * internal_offset) +
@@ -912,8 +912,8 @@ public class GraphGlyph extends Glyph {
 			num = 0.1;
 		} // if scale is 0 or negative, set to a small default instead
 
-		double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
-		double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
+		double yscale = (getCoordBox().height - top_ycoord_inset - bottom_ycoord_inset) / num;
+		double yoffset = getCoordBox().y + getCoordBox().height - bottom_ycoord_inset;
 		lt.setTransform(lt.getScaleX(),0,0,yscale,lt.getTranslateX(),yoffset);
 	}
 
@@ -937,7 +937,7 @@ public class GraphGlyph extends Glyph {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		
 		if (getShowGraph()) {
 			drawGraph(view);
@@ -968,7 +968,7 @@ public class GraphGlyph extends Glyph {
 			return;
 		}
 		GraphType graph_style = getGraphStyle();
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		Graphics g = view.getGraphics();
 		double coords_per_pixel = 1.0F / ( view.getTransform()).getScaleX();
 		getInternalLinearTransform(view, scratch_trans);
@@ -1183,7 +1183,7 @@ public class GraphGlyph extends Glyph {
 		}
 		thresh_glyph.setVisibility(thresh_score >= getVisibleMinY() && thresh_score <= getVisibleMaxY());
 		thresh_ycoord = getCoordValue(view, (float) thresh_score);
-		thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
+		thresh_glyph.setCoords(getCoordBox().x, thresh_ycoord, getCoordBox().width, 1);
 		Graphics g = view.getGraphics();
 		g.setColor(lighter);
 
@@ -1430,7 +1430,7 @@ public class GraphGlyph extends Glyph {
 	@Override
 	public void draw(ViewI view) {
 		if (DEBUG) {
-			System.out.println("called GraphGlyph.draw(), coords = " + coordbox);
+			System.out.println("called GraphGlyph.draw(), coords = " + getCoordBox());
 		}
 		GraphType graph_style = getGraphStyle();
 

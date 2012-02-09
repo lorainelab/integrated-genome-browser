@@ -115,10 +115,10 @@ public class TraceGlyph extends Glyph  {
 		// vertical "holes" in the trace
 		beg = (int)viewbox.x - 1;
 		end = (int)(viewbox.x + viewbox.width) + 1;
-		if (end < coordbox.x ) { end++; }
-		if (end >= dataCount + coordbox.x) { end = dataCount + (int)coordbox.x - 1; }
-		if (beg < coordbox.x ) beg = (int)coordbox.x;
-		if (end > coordbox.x + dataCount - 1) end = (int)coordbox.x + dataCount - 1;
+		if (end < getCoordBox().x ) { end++; }
+		if (end >= dataCount + getCoordBox().x) { end = dataCount + (int)getCoordBox().x - 1; }
+		if (beg < getCoordBox().x ) beg = (int)getCoordBox().x;
+		if (end > getCoordBox().x + dataCount - 1) end = (int)getCoordBox().x + dataCount - 1;
 
 		for (int i=0; i<=3; i++) {
 			if (!showTrace[i]) {
@@ -127,12 +127,12 @@ public class TraceGlyph extends Glyph  {
 			traceArray = allTraces[i];
 			g.setColor(traceColor[i]);
 			prevCoordPoint.x = beg;
-			prevCoordPoint.y = coordbox.height - traceArray[beg - (int)coordbox.x];
+			prevCoordPoint.y = getCoordBox().height - traceArray[beg - (int)getCoordBox().x];
 			prevPixelPoint = view.transformToPixels(prevCoordPoint, prevPixelPoint);
 			// drawing curves along every point j for the given trace i
 			for (int j=beg+1; j<=end; j++) {
 				currCoordPoint.x = j;
-				currCoordPoint.y = coordbox.height - traceArray[j - (int)coordbox.x];
+				currCoordPoint.y = getCoordBox().height - traceArray[j - (int)getCoordBox().x];
 				currPixelPoint =
 					view.transformToPixels(currCoordPoint, currPixelPoint);
 
@@ -154,7 +154,7 @@ public class TraceGlyph extends Glyph  {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible() && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(getCoordBox());
 	}
 
 	public void setTraceColors(Color[] colors) {

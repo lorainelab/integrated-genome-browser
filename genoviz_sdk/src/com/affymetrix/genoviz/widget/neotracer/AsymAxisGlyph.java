@@ -113,7 +113,7 @@ public class AsymAxisGlyph extends Glyph  {
 
 		beg = (int)viewbox.x;
 		end = (int)(viewbox.x + viewbox.width);
-		if (end < coordbox.x ) { end++; }
+		if (end < getCoordBox().x ) { end++; }
 		if (end >= dataCount) { end = dataCount - 1; }
 		if (beg < 0) { beg = 0; }
 
@@ -180,7 +180,7 @@ public class AsymAxisGlyph extends Glyph  {
 						if ( (baseCoordPoint.x >= minview) &&
 								(baseCoordPoint.x <= maxview))  {
 
-							baseCoordPoint.y = coordbox.y;
+							baseCoordPoint.y = getCoordBox().y;
 							basePixelPoint =
 								view.transformToPixels(baseCoordPoint, basePixelPoint);
 

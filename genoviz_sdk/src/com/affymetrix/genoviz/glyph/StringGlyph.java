@@ -29,7 +29,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 
 	@Override
 	public String toString() {
-		return ("StringGlyph: string: \""+str+"\"  +coordbox: "+coordbox);
+		return ("StringGlyph: string: \""+str+"\"  +coordbox: "+getCoordBox());
 	}
 
 	public StringGlyph (String str) {
@@ -75,7 +75,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		int text_height = fm.getAscent();
 		int blank_width = fm.charWidth ('z')*2;
 
-		view.transformToPixels(coordbox, pixelbox);
+		view.transformToPixels(getCoordBox(), pixelbox);
 		if (DEBUG_PIXELBOX) {
 			debug_rect.setBounds(pixelbox.x, pixelbox.y,
 					pixelbox.width, pixelbox.height);

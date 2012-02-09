@@ -41,7 +41,7 @@ public abstract class Glyph implements GlyphI  {
 	protected static final Color default_fg_color = Color.black;
 	protected static final GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
-	protected final Rectangle2D.Double coordbox;
+	private   Rectangle2D.Double coordbox;
 	protected final Rectangle pixelbox;
 	private   Scene scene;
 	private   Rectangle2D.Double cb2= null; // used as a temporary variable
@@ -424,6 +424,10 @@ public abstract class Glyph implements GlyphI  {
 		children = new ArrayList<GlyphI>();
 	}
 
+	public void clearChildren() {
+		children = new ArrayList<GlyphI>();
+	}
+
 	public void setParent(GlyphI glyph)  {
 		parent = glyph;
 		if (glyph != null) {setScene(glyph.getScene());}
@@ -547,10 +551,7 @@ public abstract class Glyph implements GlyphI  {
 	 * @see #setCoords
 	 */
 	public void setCoordBox(Rectangle2D.Double coordbox)   {
-		this.coordbox.x = coordbox.x;
-		this.coordbox.y = coordbox.y;
-		this.coordbox.width = coordbox.width;
-		this.coordbox.height = coordbox.height;
+		this.coordbox = coordbox;
 	}
 
 	public void setForegroundColor(Color color)  {

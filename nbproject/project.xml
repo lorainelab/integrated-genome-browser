@@ -94,21 +94,9 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/SearchModeGeneric/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeGeneric/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/SearchModeIdOrProps/src</label>
                     <type>java</type>
                     <location>plugins/SearchModeIdOrProps/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>plugins/SearchModeResidue/src</label>
-                    <type>java</type>
-                    <location>plugins/SearchModeResidue/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -423,16 +411,8 @@
                         <location>plugins/SearchView/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/SearchModeGeneric/src</label>
-                        <location>plugins/SearchModeGeneric/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/SearchModeIdOrProps/src</label>
                         <location>plugins/SearchModeIdOrProps/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>plugins/SearchModeResidue/src</label>
-                        <location>plugins/SearchModeResidue/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/SearchModeSymmetryFilter/src</label>
@@ -560,8 +540,6 @@
                 <package-root>igb/test</package-root>
                 <package-root>protannot/src</package-root>
                 <package-root>plugins/SearchModeIdOrProps/src</package-root>
-                <package-root>plugins/SearchModeResidue/src</package-root>
-                <package-root>plugins/SearchModeGeneric/src</package-root>
                 <package-root>plugins/BigBedHandler/src</package-root>
                 <package-root>plugins/BigWigHandler/src</package-root>
                 <package-root>plugins/SearchModeSymmetryFilter/src</package-root>

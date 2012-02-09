@@ -348,8 +348,8 @@
             <Container class="javax.swing.JPanel" name="editorPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Comments">
-                    <Property name="tabTitle" type="java.lang.String" value="Comments"/>
+                  <JTabbedPaneConstraints tabName="Comment">
+                    <Property name="tabTitle" type="java.lang.String" value="Comment"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

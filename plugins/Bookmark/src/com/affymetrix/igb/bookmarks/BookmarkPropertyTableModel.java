@@ -11,28 +11,12 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author nick
  */
-final class BookmarkTableModel extends AbstractTableModel {
-
-	private static final long serialVersionUID = 1L;
-	private static final List<String> info_list = getInfoList();
-
-	private static List<String> getInfoList() {
-		List<String> infoList = new ArrayList<String>(20);
-		infoList.add("version");
-		infoList.add("seqid");
-		infoList.add("start");
-		infoList.add("end");
-		infoList.add("loadresidues");
-		infoList.add("create");
-		infoList.add("modified");
-
-		return infoList;
-	}
+public class BookmarkPropertyTableModel extends AbstractTableModel {
 
 	/** A silly little helper class that holds two strings. 
 	 *  A String[2] array would work just as well.
 	 */
-	private static class Duple {
+	public static class Duple {
 
 		public String a;
 		public String b;
@@ -42,18 +26,18 @@ final class BookmarkTableModel extends AbstractTableModel {
 			this.b = b;
 		}
 	}
-	private List<Duple> duples = Collections.<Duple>emptyList();
-	private final String[] names = {"Parameter", "Value"};
+	public List<Duple> duples = Collections.<Duple>emptyList();
+	public final String[] names = {"Parameter", "Value"};
 	/** The number of extra rows to display to give users room to
 	 *  enter extra data into the table.
 	 */
-	private final static int EXTRA_ROWS = 5;
+	public final static int EXTRA_ROWS = 5;
 
 	/** Fills the table model with data from the Map.
 	 *  Some extra empty rows may also be appended to the table to 
 	 *  allow room for extra data.
 	 */
-	public void setPropertyValuesFromMap(Map<String, String[]> map) {
+	public void setValuesFromMap(Map<String, String[]> map) {
 		if (map == null) {
 			throw new IllegalArgumentException("Map was null");
 		}
@@ -61,45 +45,21 @@ final class BookmarkTableModel extends AbstractTableModel {
 		for (Map.Entry<String, String[]> entry : map.entrySet()) {
 			String key = entry.getKey();
 			String[] value = entry.getValue();
-			if (value.length == 0) {
-				duples.add(new Duple(key, ""));
-			} else {
-				for (int i = 0; i < value.length; i++) {
-					Duple duple = new Duple(key, value[i]);
-					duples.add(duple);
+			if (!key.equals(Bookmark.CREATE)
+					&& !key.equals(Bookmark.MODIFIED)) {
+				if (value.length == 0) {
+					duples.add(new Duple(key, ""));
+				} else {
+					for (int i = 0; i < value.length; i++) {
+						Duple duple = new Duple(key, value[i]);
+						duples.add(duple);
+					}
 				}
 			}
 		}
 		for (int i = EXTRA_ROWS; i > 0; i--) {
 			duples.add(new Duple("", ""));
 		}
-		fireTableDataChanged();
-	}
-
-	public void setInfoValuesFromMap(Map<String, String[]> map) {
-		if (map == null) {
-			throw new IllegalArgumentException("Map was null");
-		}
-		duples = new ArrayList<Duple>();
-
-		String key;
-		String[] value;
-		Duple duple;
-
-		for (Map.Entry<String, String[]> entry : map.entrySet()) {
-			key = entry.getKey();
-			value = entry.getValue();
-
-			if (info_list.contains(key)) {
-				if (value.length == 0) {
-					duples.add(new Duple(key, ""));
-				} else {
-					duple = new Duple(key, value[0]);
-					duples.add(duple);
-				}
-			}
-		}
-
 		fireTableDataChanged();
 	}
 
@@ -158,6 +118,15 @@ final class BookmarkTableModel extends AbstractTableModel {
 	@Override
 	public Class<?> getColumnClass(int col) {
 		return String.class;
+	}
+
+	@Override
+	public boolean isCellEditable(int row, int col) {
+		if (col == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public void clear() {

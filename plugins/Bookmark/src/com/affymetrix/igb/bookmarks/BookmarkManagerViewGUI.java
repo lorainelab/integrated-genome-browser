@@ -345,7 +345,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         undoNameButton.setBorder(null);
         redoNameButton.setBorder(null);
 
-        tabPane.addTab("Comments", editorPanel);
+        tabPane.addTab("Comment", editorPanel);
 
         pScrollPane.setViewportView(infoTable);
 

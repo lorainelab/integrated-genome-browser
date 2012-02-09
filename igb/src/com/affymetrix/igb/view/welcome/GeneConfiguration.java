@@ -122,25 +122,27 @@ public class GeneConfiguration extends Configuration {
 
 					g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 							RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-					Font f = new Font("Helvetica", Font.BOLD, 20);
+					Font f = new Font("Helvetica", Font.BOLD, 24);
 					//ImageIO.write( img, "png", new File("saved.png") );
 					FontMetrics metrics = g.getFontMetrics(f);
 					g.setColor(new Color(0xd4d4d4));
 					g.setFont(f);
 					version = version.split(".png")[0];
-					String species = SpeciesLookup.getSpeciesName(version);					
+					String species = SpeciesLookup.getSpeciesName(version);
 					//If name is very long shorten the name by abbreviating the first name.
 					if (species.length() > 8) {
 						String delims = "[ ]+";
 						String[] tokens = species.split(delims);
 						species = tokens[0].substring(0, 1).toUpperCase() + ".";
-						species += " " + tokens[1];
+						for (int j = 1; j < tokens.length; j++) {
+							species += " " + tokens[j];
+						}
 					}
 					int num = metrics.stringWidth(species);
 
 					try {
 						g.setColor(Color.BLACK);
-						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight() + 3));
+						g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight() + 4));
 						//draw the label
 						g.setColor(COLOR_2);
 						g.drawString(species, img.getWidth() / 2 - num / 2, img.getHeight() - 4);

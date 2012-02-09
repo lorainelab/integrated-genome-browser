@@ -57,7 +57,6 @@ public final class DataManagementTable {
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
-	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.png");
 	static final int REFRESH_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
 	static final int FOREGROUND_COLUMN = 2;

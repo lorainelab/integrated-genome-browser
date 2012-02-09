@@ -18,7 +18,7 @@ import javax.swing.*;
  */
 public class ErrorNotificationCellRenderer extends JTextButtonCellRenderer {
 
-	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.png");
+	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/stop.png");
 	private VirtualFeature vFeature;
 
 	public ErrorNotificationCellRenderer(VirtualFeature vFeature) {

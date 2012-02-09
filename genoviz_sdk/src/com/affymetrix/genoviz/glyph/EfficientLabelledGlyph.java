@@ -87,7 +87,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 				// || (getChildCount() <=0)) {
 				// still ends up drawing children for selected, but in general
 				//    only a few glyphs are ever selected at the same time, so should be fine
-				if (selected) {
+				if (isSelected()) {
 					drawSelected(view);
 				} else {
 					fillDraw(view);

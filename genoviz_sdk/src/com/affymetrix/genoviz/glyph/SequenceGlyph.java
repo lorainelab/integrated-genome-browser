@@ -99,7 +99,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			int sel_style = view.getScene().getSelectionAppearance();
 
 			// 1.) draw background rectangle
-			if (selected && sel_style == SceneI.SELECT_FILL) {
+			if (isSelected() && sel_style == SceneI.SELECT_FILL) {
 				full_rect.setSelected(true);
 				full_rect.drawTraversal(view);
 				full_rect.setSelected(false);
@@ -114,7 +114,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			}
 
 			// 3.) draw residues if at appropriate resolution
-			if (selected) { drawSelected(view); }
+			if (isSelected()) { drawSelected(view); }
 			else  { draw(view); }
 		}
 	}

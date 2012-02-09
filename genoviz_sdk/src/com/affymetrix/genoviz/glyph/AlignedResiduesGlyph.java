@@ -401,7 +401,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 			int i, pixelstart, pixelwidth;
 			double doublestart;
 
-			if (selected && view.getScene().getSelectionAppearance() == Scene.SELECT_FILL) {
+			if (isSelected() && view.getScene().getSelectionAppearance() == Scene.SELECT_FILL) {
 				g.setColor(view.getScene().getSelectionColor());
 				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 			}

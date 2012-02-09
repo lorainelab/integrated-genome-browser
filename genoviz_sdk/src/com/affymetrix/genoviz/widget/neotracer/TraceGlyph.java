@@ -238,7 +238,7 @@ public class TraceGlyph extends Glyph  {
 	@Override
 	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
-			if (selected) {
+			if (isSelected()) {
 				return this.getCoordBox();
 			}
 			else {

@@ -105,7 +105,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 
 	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
-			if (selected) {
+			if (isSelected()) {
 				return this.getCoordBox();
 			}
 			else {
@@ -178,7 +178,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 	 * @param end the last residue to be selected.
 	 */
 	public void select(int start, int end) {
-		selected = true;
+		setSelected(true);
 		if (end >= start) { end += 1; }
 		else { start += 1; }
 		if (sel_glyph == null) {

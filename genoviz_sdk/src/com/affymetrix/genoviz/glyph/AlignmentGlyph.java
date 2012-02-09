@@ -493,13 +493,13 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 					}
 				}
 				// special-casing outline selection when at low resolution
-				if (selected && view.getScene().getSelectionAppearance() == Scene.SELECT_OUTLINE) {
+				if (isSelected() && view.getScene().getSelectionAppearance() == Scene.SELECT_OUTLINE) {
 					drawSelectedOutline(view);
 				}
 				return;
 			} else if (alwaysDrawArrow) {
 				arrow.drawTraversal(view);
-				if (selected && view.getScene().getSelectionAppearance() == Scene.SELECT_OUTLINE) {
+				if (isSelected() && view.getScene().getSelectionAppearance() == Scene.SELECT_OUTLINE) {
 					drawSelectedOutline(view);
 				}
 			}

@@ -49,7 +49,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 			if (pixelbox.width <= 3 || pixelbox.height <= 3) {
 				// still ends up drawing children for selected, but in general
 				//    only a few glyphs are ever selected at the same time, so should be fine
-				if (selected) {
+				if (isSelected()) {
 					drawSelected(view);
 				} else {
 					fillDraw(view);

@@ -54,7 +54,7 @@ public abstract class Glyph implements GlyphI  {
 	protected boolean isVisible;
 	private   Object info;
 	private   PackerI packer;
-	protected boolean selected;
+	private   boolean selected;
 	private   int draw_order = DRAW_SELF_FIRST;
 
 	private boolean selectable = true;

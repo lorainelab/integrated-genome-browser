@@ -171,7 +171,7 @@ public class Caret extends WrapGlyph {
 							colorPixelPoint2.y);
 				}
 
-				if (selected) {
+				if (isSelected()) {
 					if (view.getScene().getSelectionAppearance() == Scene.SELECT_OUTLINE ||
 							fill == OUTLINE) {
 						// Forcing outline if fill == OUTLINE,

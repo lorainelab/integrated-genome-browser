@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.view.load.DataManagementTable;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -809,7 +809,7 @@ public class SeqMapView extends JPanel
 		if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
-
+		GeneralLoadView.getLoadView().getLoadModeDataTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers

@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 
-import com.affymetrix.genoviz.swing.JTextButtonCellRenderer;
+import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -242,7 +242,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.add(scroll_pane, BorderLayout.CENTER);
 		table.setCellSelectionEnabled(true);
 
-		JTextButtonCellRenderer ren = new JTextButtonCellRenderer(igbService.getFrame());
+		JTextButtonCellRendererImpl ren = new JTextButtonCellRendererImpl(igbService.getFrame());
 		for(int i=1; i<table.getColumnCount(); i++){
 			table.getColumnModel().getColumn(i).setCellRenderer(ren);
 			table.getColumnModel().getColumn(i).setCellEditor(ren);

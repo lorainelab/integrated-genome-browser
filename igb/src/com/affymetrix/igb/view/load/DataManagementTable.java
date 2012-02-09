@@ -56,16 +56,15 @@ public final class DataManagementTable {
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
 	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/warning.png");
-	static final int INFO_FEATURE_COLUMN = 0;
+	static final int REFRESH_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
-	static final int REFRESH_FEATURE_COLUMN = 2;
-	static final int FOREGROUND_COLUMN = 3;
-	static final int BACKGROUND_COLUMN = 4;
-	static final int SEPARATE_COLUMN = 5;
+	static final int FOREGROUND_COLUMN = 2;
+	static final int BACKGROUND_COLUMN = 3;
+	static final int SEPARATE_COLUMN = 4;
+	static final int TRACK_NAME_COLUMN = 5;
 	static final int LOAD_STRATEGY_COLUMN = 6;
 	static final int FEATURE_NAME_COLUMN = 7;
-	static final int TRACK_NAME_COLUMN = 8;
-	static final int DELETE_FEATURE_COLUMN = 9;
+	static final int DELETE_FEATURE_COLUMN = 8;
 	//public static boolean iconTest;
 
 	/**
@@ -89,8 +88,7 @@ public final class DataManagementTable {
 		RowEditorModel color = new RowEditorModel(featureSize);
 		RowEditorModel bool = new RowEditorModel(featureSize);
 
-		// tell the JTableX which RowEditorModel we are using
-		table.setRowEditorModel(DataManagementTableModel.INFO_FEATURE_COLUMN, action);
+		// tell the JTableX which RowEditorModel we are using		
 		table.setRowEditorModel(DataManagementTableModel.REFRESH_FEATURE_COLUMN, action);
 		table.setRowEditorModel(DataManagementTableModel.HIDE_FEATURE_COLUMN, action);
 		table.setRowEditorModel(DataManagementTableModel.BACKGROUND_COLUMN, color);
@@ -259,8 +257,16 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		if (rmMap != null) {
+		//Special Case
+		if (col == DataManagementTable.FEATURE_NAME_COLUMN) {
+			if (isCellEditable(row, col)) {
+				DataManagementTableModel ftm = (DataManagementTableModel) getModel();
+				VirtualFeature vFeature = ftm.getFeature(row);
+				return new ErrorNotificationCellRenderer(vFeature);
+			}
+		}
 
+		if (rmMap != null) {
 			TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 			if (tmpEditor != null) {
 				return tmpEditor;
@@ -285,10 +291,10 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 				return new LabelTableCellRenderer(null, false);
 			}
 			return new DataManagementTable.ColumnRenderer();
-		} else if (column == DataManagementTableModel.INFO_FEATURE_COLUMN) {
+		} else if (column == DataManagementTableModel.FEATURE_NAME_COLUMN) {
 			switch (vFeature.getLastRefreshStatus()) {
 				case NO_DATA_LOADED: {
-					return new LabelTableCellRenderer(DataManagementTable.info_icon, true);
+					return new ErrorNotificationCellRenderer(vFeature);
 				}
 			}
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {

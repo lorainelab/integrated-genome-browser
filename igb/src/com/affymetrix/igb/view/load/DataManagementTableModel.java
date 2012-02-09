@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -27,20 +26,18 @@ import javax.swing.table.AbstractTableModel;
 public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String[] columnNames = {"", "", "", "FG", "BG", "2 Track",
-		"Load Mode", "Data Set/File Name",
-		"Track Name", ""};
+	private static final String[] columnNames = {"", "", "FG", "BG", "2 Track",
+		"Track Name", "Load Mode", "Data Set/File Name", ""};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	static final int INFO_FEATURE_COLUMN = 0;
+	static final int REFRESH_FEATURE_COLUMN = 0;
 	static final int HIDE_FEATURE_COLUMN = 1;
-	static final int REFRESH_FEATURE_COLUMN = 2;
-	static final int FOREGROUND_COLUMN = 3;
-	static final int BACKGROUND_COLUMN = 4;
-	static final int SEPARATE_COLUMN = 5;
+	static final int FOREGROUND_COLUMN = 2;
+	static final int BACKGROUND_COLUMN = 3;
+	static final int SEPARATE_COLUMN = 4;
+	static final int TRACK_NAME_COLUMN = 5;
 	static final int LOAD_STRATEGY_COLUMN = 6;
 	static final int FEATURE_NAME_COLUMN = 7;
-	static final int TRACK_NAME_COLUMN = 8;
-	static final int DELETE_FEATURE_COLUMN = 9;
+	static final int DELETE_FEATURE_COLUMN = 8;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 	private SeqMapView smv;
@@ -156,15 +153,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		return (virtualFeatures == null) ? 0 : virtualFeatures.size();
 	}
 
-	public void genericFeatureRefreshed(GenericFeature feature) {
-		int row = -1;
-		for (VirtualFeature vFeature : virtualFeatures) {
-			if (vFeature.getFeature().equals(feature)) {
-				row = getRow(vFeature);
+	public void updateFeatureColumn() {
+		for (int row = 0; row < virtualFeatures.size(); row++) {
+			if (row >= 0) {
+				fireTableCellUpdated(row, FEATURE_NAME_COLUMN);
 			}
-		}
-		if (row >= 0) {
-			fireTableCellUpdated(row, INFO_FEATURE_COLUMN);
 		}
 	}
 
@@ -192,8 +185,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		switch (col) {
-			case INFO_FEATURE_COLUMN:
-				return "";
 			case REFRESH_FEATURE_COLUMN:
 				return "";
 			case LOAD_STRATEGY_COLUMN:
@@ -212,9 +203,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				return vFeature.getFeature().featureName;
 			case TRACK_NAME_COLUMN:
 				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
-					return "Uneditable Track";
+					return "";
 				} else if (style == null) {
-					return "No Data Loaded";
+					return "";
 				}
 				return style.getTrackName();
 			case FOREGROUND_COLUMN:
@@ -259,12 +250,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
-		} else if (col == FEATURE_NAME_COLUMN) {
-			return false;
 		} else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 				&& !vFeature.isPrimary()) {
 			return false;
-		} else if (col == INFO_FEATURE_COLUMN) {
+		} else if (col == FEATURE_NAME_COLUMN) {
 			switch (vFeature.getFeature().getLastRefreshStatus()) {
 				case NO_DATA_LOADED:
 					return true;
@@ -307,9 +296,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		switch (col) {
-			case INFO_FEATURE_COLUMN:
-				ErrorHandler.errorPanel(vFeature.getFeature().featureName, vFeature.getLastRefreshStatus().toString());
-				break;
 			case DELETE_FEATURE_COLUMN:
 				String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
 				if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
@@ -376,7 +362,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 		fireTableCellUpdated(row, col);
 		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
-				&& col != INFO_FEATURE_COLUMN
 				&& col != FEATURE_NAME_COLUMN
 				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN && col != TRACK_NAME_COLUMN) {
 			refreshSeqMapView();

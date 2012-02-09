@@ -84,8 +84,7 @@ public class TrackView {
 	public static TierGlyph[] getTiers(
 			SeqMapView smv, ITrackStyleExtended style, boolean constant_heights) {
 		AffyTieredMap map = smv.getSeqMap();
-		TierGlyph axisTier = smv.getAxisTier();
-
+		
 		if (style.isGraphTier()) {
 			constant_heights = false;
 		}
@@ -184,6 +183,10 @@ public class TrackView {
 			if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
+					//Create dummy tier
+					String meth = BioSeq.determineMethod(annotSym);
+					ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+					smv.getTiers(style, true);
 					continue;
 				}
 			}

@@ -55,8 +55,6 @@ public abstract class CytobandGlyph {
 
 		String meth = BioSeq.determineMethod(cyto_annots);
 		ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		smv.getGraphTrack(style, TierGlyph.Direction.NONE);
-		
 		
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 

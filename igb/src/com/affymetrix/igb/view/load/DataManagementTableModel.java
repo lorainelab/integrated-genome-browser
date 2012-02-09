@@ -244,13 +244,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		VirtualFeature vFeature = virtualFeatures.get(row);
-
-		if ((vFeature.getStyle() == null)
+		ITrackStyleExtended style = vFeature.getStyle();
+		
+		if ((style == null)
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
-		} else if(vFeature.getStyle().getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
+		} else if(style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
 			if(col == HIDE_FEATURE_COLUMN){
 				return true;
 			}
@@ -270,7 +271,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
 			for (GlyphI i : floatingGraphs) {
 				GraphGlyph j = (GraphGlyph) i;
-				if (j.getGraphState().getTierStyle() == vFeature.getStyle()) {
+				if (j.getGraphState().getTierStyle() == style) {
 					return false;
 				}
 			}

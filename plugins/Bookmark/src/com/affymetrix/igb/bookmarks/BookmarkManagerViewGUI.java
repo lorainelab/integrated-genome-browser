@@ -85,7 +85,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentLabel = new javax.swing.JLabel();
         propertiesPanel = new javax.swing.JPanel();
         pScrollPane = new javax.swing.JScrollPane();
-        propertiesTable = bmv.thing.bl_properties.getTable();
+        infoTable = bmv.thing.bookmarkData.getInfoTable();
 
         splitPane.setDividerLocation(400);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -345,9 +345,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         undoNameButton.setBorder(null);
         redoNameButton.setBorder(null);
 
-        tabPane.addTab("Editor", editorPanel);
+        tabPane.addTab("Comments", editorPanel);
 
-        pScrollPane.setViewportView(propertiesTable);
+        pScrollPane.setViewportView(infoTable);
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
@@ -360,7 +360,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, pScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
-        tabPane.addTab("Properties", propertiesPanel);
+        tabPane.addTab("Infomation", propertiesPanel);
 
         splitPane.setRightComponent(tabPane);
 
@@ -461,7 +461,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
 	private void tabPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPaneStateChanged
 		if (tabPane.getSelectedIndex() == 1) {
-			bmv.thing.updateProperties();
+			bmv.thing.updateInfoTable();
 		}
 	}//GEN-LAST:event_tabPaneStateChanged
 
@@ -481,11 +481,11 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
     private javax.swing.JButton exportButton;
     private javax.swing.JButton forwardActionButton;
     private javax.swing.JButton importButton;
+    private javax.swing.JTable infoTable;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JScrollPane pScrollPane;
     private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JTable propertiesTable;
     private javax.swing.JButton redoNameButton;
     private javax.swing.JButton removeBookmarkActionButton;
     private javax.swing.JSplitPane splitPane;

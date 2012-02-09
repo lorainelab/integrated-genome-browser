@@ -348,8 +348,8 @@
             <Container class="javax.swing.JPanel" name="editorPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Editor">
-                    <Property name="tabTitle" type="java.lang.String" value="Editor"/>
+                  <JTabbedPaneConstraints tabName="Comments">
+                    <Property name="tabTitle" type="java.lang.String" value="Comments"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -475,8 +475,8 @@
             <Container class="javax.swing.JPanel" name="propertiesPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Properties">
-                    <Property name="tabTitle" type="java.lang.String" value="Properties"/>
+                  <JTabbedPaneConstraints tabName="Infomation">
+                    <Property name="tabTitle" type="java.lang.String" value="Infomation"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -501,9 +501,9 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="propertiesTable">
+                    <Component class="javax.swing.JTable" name="infoTable">
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bl_properties.getTable()"/>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bookmarkData.getInfoTable()"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>

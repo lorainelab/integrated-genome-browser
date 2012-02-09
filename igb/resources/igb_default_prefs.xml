@@ -4,22 +4,21 @@
 
 <!-- servers enabled by default -->
 <!-- server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" order="0" / -->
-<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="4" />
-
-<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" />
-<server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="5" />
 <server type="das2" name="IGB Das" url="http://igbquickload.org/das2/genome" order="0" />
-
-<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="7" />
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="8" />
-
-<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="6" />
+<server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" order="1" />
+<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="2" />
+<server type="quickload" name="NetAffx" url="http://netaffxdas.affymetrix.com/quickload_data" order="3" />
+<server type="quickload" name="IGB Quickload" url="http://igbquickload.org/quickload/" order="4" />
+<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" order="5" />
+<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" order="6" />
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" order="7" />
+<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="8" />
 
 <!-- caching of slow servers (e.g., UCSC and Ensembl) -->
-<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true" order="3" />
+
 
 <!-- servers disabled by default -->
-<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" order="2" />
+
 
 <!-- Specify plugin repositories here with name, and url -->
 

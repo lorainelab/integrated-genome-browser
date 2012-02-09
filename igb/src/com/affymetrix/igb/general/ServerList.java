@@ -102,7 +102,7 @@ public final class ServerList {
 	}
 
 	private int getServerOrder(GenericServer server) {
-		String url = GeneralUtils.URLEncode(ServerUtils.formatURL(server.URL, server.serverType));
+		String url = ServerUtils.formatURL(server.URL, server.serverType);
 		return Integer.parseInt(PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).get(GenericServerPref.ORDER, "0"));
 	}
 

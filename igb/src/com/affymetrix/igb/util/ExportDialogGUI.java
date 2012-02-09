@@ -21,7 +21,7 @@ public class ExportDialogGUI extends JPanel {
 	
 	public static JFrame static_frame = null;
 	private static ExportDialogGUI singleton;
-	private static ExportDialog export;
+	private ExportDialog export;
 	private AffyTieredMap seqMap;
 	private Component wholeFrame;
 	private Component mainView;

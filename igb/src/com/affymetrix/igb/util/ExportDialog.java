@@ -288,14 +288,13 @@ public class ExportDialog implements ExportConstants {
 	public boolean okButtonActionPerformed() throws IOException {
 		String previousPath = exportFile.getAbsolutePath();
 		String newPath = filePathTextField.getText();
-		String ext = ParserController.getExtension(newPath);
-
 		exportFile = new File(newPath);
 
-		if (!isValidExportFile(ext, previousPath)) {
+		if (!isValidExportFile(previousPath)) {
 			return false;
 		}
 
+		String ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 		exportScreenshot(exportFile, ext);
 
 		exportNode.put(PREF_FILE, exportFile.getAbsolutePath());
@@ -306,40 +305,22 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
-	public static void exportScreenshot(File f, String ext) throws IOException {
-		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
-				component.getWidth(), component.getHeight());
-		Graphics g = image.createGraphics();
-		component.paintAll(g);
-
-		if (f != null) {
-
-			if (!f.getName().toLowerCase().endsWith(ext)) {
-				String correctedFilename = f.getAbsolutePath() + ext;
-				f = new File(correctedFilename);
-			}
-
-			image = GraphicsUtil.resizeImage(image,
-					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-
-			writeImage(image, ext, f);
-		}
-	}
-
-	private boolean isValidExportFile(String ext, String path) {
+	private boolean isValidExportFile(String previousPath) {
 		if (!exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The output path is invalid.");
-			filePathTextField.setText(path);
+			filePathTextField.setText(previousPath);
 			filePathTextField.grabFocus();
-			exportFile = new File(path);
+			exportFile = new File(previousPath);
 			return false;
 		}
 
+		String ext = ParserController.getExtension(exportFile.getAbsolutePath());
+
 		if (!isExt(ext)) {
 			// if file format is not exist, add current selected format to the end
-			String newPath = exportFile.getAbsolutePath()
-					+ ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+			ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+			String newPath = exportFile.getAbsolutePath() + ext;
 
 			exportFile = new File(newPath);
 		}
@@ -366,6 +347,26 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		return true;
+	}
+
+	public static void exportScreenshot(File f, String ext) throws IOException {
+		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
+				component.getWidth(), component.getHeight());
+		Graphics g = image.createGraphics();
+		component.paintAll(g);
+
+		if (f != null) {
+
+			if (!f.getName().toLowerCase().endsWith(ext)) {
+				String correctedFilename = f.getAbsolutePath() + ext;
+				f = new File(correctedFilename);
+			}
+
+			image = GraphicsUtil.resizeImage(image,
+					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+
+			writeImage(image, ext, f);
+		}
 	}
 
 	public void resetButtonActionPerformed() {

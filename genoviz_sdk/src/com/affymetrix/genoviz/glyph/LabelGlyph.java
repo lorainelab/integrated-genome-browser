@@ -223,13 +223,13 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 	public boolean intersects(Rectangle2D.Double rect, ViewI view) {
 		this.calcPixels(view);
-		this.coordbox = view.transformToCoords(this.pixelbox, this.coordbox);
+		this.setCoordBox(view.transformToCoords(this.pixelbox, this.coordbox));
 		return super.intersects(rect, view);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		calcPixels(view);
-		coordbox = view.transformToCoords(pixelbox, coordbox);
+		setCoordBox(view.transformToCoords(pixelbox, coordbox));
 		return coord_hitbox.intersects(coordbox);
 	}
 

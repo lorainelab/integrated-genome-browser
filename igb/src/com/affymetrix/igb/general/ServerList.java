@@ -40,19 +40,22 @@ import javax.swing.JFrame;
  * @version $Id$
  */
 public final class ServerList {
+
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
-	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerTypeI.LocalFiles,true,null);
-
+	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null);
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
+
 	private ServerList(String textName) {
 		this.textName = textName;
 	}
+
 	public static final ServerList getServerInstance() {
 		return serverInstance;
 	}
+
 	public static final ServerList getRepositoryInstance() {
 		return repositoryInstance;
 	}
@@ -101,29 +104,24 @@ public final class ServerList {
 		return true;
 	}
 
-	private int getServerOrder(GenericServer server) {
-		String url = GeneralUtils.URLEncode(ServerUtils.formatURL(server.URL, server.serverType));
-		return Integer.parseInt(PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).get(GenericServerPref.ORDER, "0"));
-	}
-
 	public synchronized Collection<GenericServer> getAllServers() {
 		ArrayList<GenericServer> allServers = new ArrayList<GenericServer>(url2server.values());
-		Collections.sort(allServers,
-			new Comparator<GenericServer>() {
-				@Override
-				public int compare(GenericServer o1, GenericServer o2) {
-					return getServerOrder(o1) - getServerOrder(o2);
-				}
+		Collections.sort(allServers, new Comparator<GenericServer>() {
+
+			@Override
+			public int compare(GenericServer o1, GenericServer o2) {
+				return getServerOrder(o1) - getServerOrder(o2);
 			}
-		);
+		});
 		return allServers;
 	}
 
-	public synchronized Collection<GenericServer> getAllServersExceptCached(){
+	public synchronized Collection<GenericServer> getAllServersExceptCached() {
 		Collection<GenericServer> servers = getAllServers();
 		GenericServer server = getPrimaryServer();
-		if(server != null)
+		if (server != null) {
 			servers.remove(server);
+		}
 		return servers;
 	}
 
@@ -173,7 +171,7 @@ public final class ServerList {
 				}
 			}
 		}
-		
+
 		return server;
 	}
 
@@ -202,14 +200,14 @@ public final class ServerList {
 	}
 
 	public GenericServer addServer(Preferences node) {
-		GenericServer server = url2server.get(GeneralUtils.URLDecode( node.get(GenericServerPref.URL, "" ) ) );
+		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")));
 		String url;
 		String name;
 		ServerTypeI serverType;
 		Object info;
 
 		if (server == null) {
-			url = GeneralUtils.URLDecode(node.get( GenericServerPref.URL, "" ));
+			url = GeneralUtils.URLDecode(node.get(GenericServerPref.URL, ""));
 			name = node.get(GenericServerPref.NAME, "Unknown");
 			String type = node.get(GenericServerPref.TYPE, hasTypes() ? ServerTypeI.DEFAULT.getName() : null);
 			serverType = getServerType(type);
@@ -224,7 +222,7 @@ public final class ServerList {
 				}
 			}
 		}
-		
+
 		return server;
 	}
 
@@ -255,24 +253,24 @@ public final class ServerList {
 				//the new one uses a long integer hash, so if the key is not a long
 				//we have the old format.  We can convert the old format to the new one
 				//without loss of data.
-				if( !isLong( serverURL ) ){
-					
-					String url = GeneralUtils.URLDecode( node.name() );
-					System.out.println("Converting old standard server preferences to new standard ("+ url +").");
-					Preferences n_node = getPreferencesNode().node( GenericServer.getHash( url ));
-					n_node.put( GenericServerPref.URL, node.name() );
-					n_node.put( GenericServerPref.LOGIN, node.get(GenericServerPref.LOGIN, ""));
-					n_node.put( GenericServerPref.PASSWORD, node.get(GenericServerPref.PASSWORD, ""));
-					n_node.put( GenericServerPref.NAME, node.get(GenericServerPref.NAME, ""));
-					n_node.put( GenericServerPref.ORDER, node.get(GenericServerPref.ORDER, ""));
-					if( node.get(GenericServerPref.TYPE, null) != null){
-						n_node.put( GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
+				if (!isLong(serverURL)) {
+
+					String url = GeneralUtils.URLDecode(node.name());
+					System.out.println("Converting old standard server preferences to new standard (" + url + ").");
+					Preferences n_node = getPreferencesNode().node(GenericServer.getHash(url));
+					n_node.put(GenericServerPref.URL, node.name());
+					n_node.put(GenericServerPref.LOGIN, node.get(GenericServerPref.LOGIN, ""));
+					n_node.put(GenericServerPref.PASSWORD, node.get(GenericServerPref.PASSWORD, ""));
+					n_node.put(GenericServerPref.NAME, node.get(GenericServerPref.NAME, ""));
+					n_node.put(GenericServerPref.ORDER, node.get(GenericServerPref.ORDER, ""));
+					if (node.get(GenericServerPref.TYPE, null) != null) {
+						n_node.put(GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
 					}
-					n_node.put( GenericServerPref.ENABLED, node.get(GenericServerPref.ENABLED, "true"));
+					n_node.put(GenericServerPref.ENABLED, node.get(GenericServerPref.ENABLED, "true"));
 					node.removeNode();
 					node = n_node;
 				}
-				
+
 				serverType = null;
 				if (node.get(GenericServerPref.TYPE, null) != null) {
 					serverType = getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName()));
@@ -289,16 +287,15 @@ public final class ServerList {
 		}
 	}
 
-	public boolean isLong( String input ){  
-	   try{  
-		  Long.parseLong( input );  
-		  return true;  
-	   }catch( NumberFormatException e )  
-	   {  
-		  return false;  
-	   }  
-	}  
-	
+	public boolean isLong(String input) {
+		try {
+			Long.parseLong(input);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 	/**
 	 * Update the old-style preference nodes to the newer format.  This is now
 	 * called by the PrefsLoader when checking/updating the preferences version.
@@ -314,11 +311,11 @@ public final class ServerList {
 					boolean enabled;
 					//in here, again, the url is actually a hash of type long
 					for (String url : prefServers.keys()) {
-						name        = prefServers.node(GenericServerPref.NAME).get(url, "Unknown");
-						login       = prefServers.node(GenericServerPref.LOGIN).get(url, "");
-						password    = prefServers.node(GenericServerPref.PASSWORD).get(url, "");
-						enabled     = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
-						real_url	= prefServers.node(GenericServerPref.URL).get(url, ""); 
+						name = prefServers.node(GenericServerPref.NAME).get(url, "Unknown");
+						login = prefServers.node(GenericServerPref.LOGIN).get(url, "");
+						password = prefServers.node(GenericServerPref.PASSWORD).get(url, "");
+						enabled = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
+						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
 
 						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type);
 						server.setLogin(login);
@@ -342,29 +339,29 @@ public final class ServerList {
 		Preferences currentServer;
 		String normalizedURL;
 		String decodedURL;
-		
+
 		try {
 			for (String encodedURL : servers.childrenNames()) {
 				try {
-				currentServer = servers.node(encodedURL);
-				decodedURL = GeneralUtils.URLDecode(encodedURL);
-				String serverType = currentServer.get("type", "Unknown");
-				if (serverType.equals("Unknown")) {
-					Logger.getLogger(ServerList.class.getName()).log(
-							Level.WARNING, "server URL: {0} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
-					continue;
-				}
-				
-				normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
-
-				if (!decodedURL.equals(normalizedURL)) {
-					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading " + textName + " URL: ''{0}'' in preferences", decodedURL);
-					Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
-					for (String key : currentServer.keys()) {
-						normalizedServer.put(key, currentServer.get(key, ""));
+					currentServer = servers.node(encodedURL);
+					decodedURL = GeneralUtils.URLDecode(encodedURL);
+					String serverType = currentServer.get("type", "Unknown");
+					if (serverType.equals("Unknown")) {
+						Logger.getLogger(ServerList.class.getName()).log(
+								Level.WARNING, "server URL: {0} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
+						continue;
 					}
-					currentServer.removeNode();
-				}
+
+					normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
+
+					if (!decodedURL.equals(normalizedURL)) {
+						Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading " + textName + " URL: ''{0}'' in preferences", decodedURL);
+						Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
+						for (String key : currentServer.keys()) {
+							normalizedServer.put(key, currentServer.get(key, ""));
+						}
+						currentServer.removeNode();
+					}
 				} catch (Exception ex) {
 					// Allow preferences loading to continue if an exception is encountered.
 					Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
@@ -388,12 +385,12 @@ public final class ServerList {
 	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-		
-		node.put(GenericServerPref.NAME,  name);
+
+		node.put(GenericServerPref.NAME, name);
 		node.put(GenericServerPref.TYPE, type.getName());
 		//Added url to preferences.
 		//long url was bugging the node name since it only accepts 80 char names
-		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url) );
+		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
 
 		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())));
 	}
@@ -407,10 +404,10 @@ public final class ServerList {
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
 	private GenericServer addRepositoryToPrefs(String url, String name) {
-		Preferences node = PreferenceUtils.getRepositoriesNode().node( GenericServer.getHash( url ) );
+		Preferences node = PreferenceUtils.getRepositoriesNode().node(GenericServer.getHash(url));
 
-		node.put( GenericServerPref.NAME, name);
-		node.put( GenericServerPref.URL, GeneralUtils.URLEncode(url));
+		node.put(GenericServerPref.NAME, name);
+		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
 
 		return new GenericServer(node, null, null);
 	}
@@ -424,8 +421,7 @@ public final class ServerList {
 	public void addServerToPrefs(GenericServer server) {
 		if (server.serverType == null) {
 			addRepositoryToPrefs(server.URL, server.serverName);
-		}
-		else {
+		} else {
 			addServerToPrefs(server.URL, server.serverName, server.serverType);
 		}
 	}
@@ -438,14 +434,19 @@ public final class ServerList {
 	 */
 	public void removeServerFromPrefs(String url) {
 		try {
-			getPreferencesNode().node( GenericServer.getHash(url) ).removeNode();
+			getPreferencesNode().node(GenericServer.getHash(url)).removeNode();
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
 	public void setServerOrder(String url, int order) {
-		getPreferencesNode().node(GenericServer.getHash(url)).put( GenericServerPref.ORDER, "" + order);
+		getPreferencesNode().node(GenericServer.getHash(url)).put(GenericServerPref.ORDER, Integer.toString(order));
+	}
+
+	private int getServerOrder(GenericServer server) {
+		String url = ServerUtils.formatURL(server.URL, server.serverType);
+		return Integer.parseInt(PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).get(GenericServerPref.ORDER, "0"));
 	}
 
 	/**
@@ -490,16 +491,15 @@ public final class ServerList {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
 
-			if(!removedManually) {
+			if (!removedManually) {
 				String errorText;
 				if (server.serverType == ServerTypeI.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
-					errorText = siteOK ?
-						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName) :
-						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
+					errorText = siteOK
+							? MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName)
+							: MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadConnectError"), server.serverName);
 					ErrorHandler.errorPanelWithReportBug(server.serverName, errorText);
-				}
-				else {
+				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
 					ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, null);
@@ -508,8 +508,7 @@ public final class ServerList {
 			if (server.serverType != ServerTypeI.LocalFiles) {
 				if (server.serverType == null) {
 					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
-				}
-				else {
+				} else {
 					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
 				}
 			}
@@ -528,10 +527,11 @@ public final class ServerList {
 	 * Gets the primary server if present else returns null.
 	 * @return
 	 */
-	public  GenericServer getPrimaryServer(){
-		for(GenericServer server : getEnabledServers()){
-			if(server.isPrimary())
+	public GenericServer getPrimaryServer() {
+		for (GenericServer server : getEnabledServers()) {
+			if (server.isPrimary()) {
 				return server;
+			}
 		}
 		return null;
 	}

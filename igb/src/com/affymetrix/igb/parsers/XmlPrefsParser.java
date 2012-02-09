@@ -143,13 +143,15 @@ public final class XmlPrefsParser {
 		String server_name = el.getAttribute("name");
 		String server_url = el.getAttribute("url");
 		String en = el.getAttribute("enabled");
+		String orderString = el.getAttribute("order");
+		Integer order = orderString == null || orderString.isEmpty() ? 0 : Integer.valueOf(orderString);
 		Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
 		String pr = el.getAttribute("primary");
 		Boolean primary = pr == null || pr.isEmpty() ? false : Boolean.valueOf(pr);
 		if (IGBConstants.DEBUG) {
 			System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url + ", enabled: " + enabled);
 		}
-		serverList.addServer(server_type, server_name, server_url, enabled, primary);
+		serverList.addServer(server_type, server_name, server_url, enabled, primary, order.intValue());
 	}
 
 	private static ServerTypeI getServerType(String type) {

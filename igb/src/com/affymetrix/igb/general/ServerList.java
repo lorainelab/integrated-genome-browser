@@ -154,7 +154,7 @@ public final class ServerList {
 	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, boolean primary) {
+	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, boolean primary, int order) {
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
@@ -167,7 +167,7 @@ public final class ServerList {
 
 				if (server != null) {
 					url2server.put(url, server);
-					addServerToPrefs(server);
+					addServerToPrefs(server, order);
 				}
 			}
 		}
@@ -196,7 +196,7 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled) {
-		return addServer(serverType, name, url, enabled, false);
+		return addServer(serverType, name, url, enabled, false, 0);
 	}
 
 	public GenericServer addServer(Preferences node) {
@@ -317,7 +317,7 @@ public final class ServerList {
 						enabled = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
 						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
 
-						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type);
+						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, 0);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
 						server.setEnabled(enabled);
@@ -382,12 +382,12 @@ public final class ServerList {
 	 * @param type type of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
-	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type) {
+	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type, int order) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-
 		node.put(GenericServerPref.NAME, name);
 		node.put(GenericServerPref.TYPE, type.getName());
+		node.put(GenericServerPref.ORDER, Integer.toString(order));
 		//Added url to preferences.
 		//long url was bugging the node name since it only accepts 80 char names
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
@@ -418,11 +418,11 @@ public final class ServerList {
 	 *
 	 * @param server GenericServer object of the server to add or update.
 	 */
-	public void addServerToPrefs(GenericServer server) {
+	public void addServerToPrefs(GenericServer server, int order) {
 		if (server.serverType == null) {
 			addRepositoryToPrefs(server.URL, server.serverName);
 		} else {
-			addServerToPrefs(server.URL, server.serverName, server.serverType);
+			addServerToPrefs(server.URL, server.serverName, server.serverType, order);
 		}
 	}
 

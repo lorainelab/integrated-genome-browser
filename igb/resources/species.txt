@@ -76,7 +76,7 @@ Nicotiana tabacum	Tobacco	N_tabacum
 Ochotona princeps	American pika	O_princeps		Ochotona_princeps
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
-Oryza sativa	Rice	O_sativa	
+Oryza sativa japonica	Rice	O_sativa	
 Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
 Otolemur garnettii	Nothern greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
@@ -124,4 +124,4 @@ Xenopus laevis	African clawed frog	X_laevis
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
 Yersinia pestis	Bubonic plague pathogen	Y_pestis
 Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
-Zea mays	Maize	Z_mays
+Zea mays B73	Maize	Z_mays

@@ -128,13 +128,15 @@ public class GeneConfiguration extends Configuration {
 					g.setColor(new Color(0xd4d4d4));
 					g.setFont(f);
 					version = version.split(".png")[0];
-					String species = SpeciesLookup.getSpeciesName(version);					
+					String species = SpeciesLookup.getSpeciesName(version);
 					//If name is very long shorten the name by abbreviating the first name.
 					if (species.length() > 8) {
 						String delims = "[ ]+";
 						String[] tokens = species.split(delims);
 						species = tokens[0].substring(0, 1).toUpperCase() + ".";
-						species += " " + tokens[1];
+						for (int j = 1; j < tokens.length; j++) {
+							species += " " + tokens[j];
+						}
 					}
 					int num = metrics.stringWidth(species);
 

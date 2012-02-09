@@ -95,7 +95,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	 */
 	@Override
 	public void drawTraversal(ViewI view)  {
-		if (isVisible && coordbox.intersects(view.getCoordBox())) {
+		if (isVisible() && coordbox.intersects(view.getCoordBox())) {
 			int sel_style = view.getScene().getSelectionAppearance();
 
 			// 1.) draw background rectangle
@@ -310,11 +310,11 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible && pixel_hitbox.intersects(pixelbox);
+		return  isVisible() && pixel_hitbox.intersects(pixelbox);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(coordbox);
 	}
 
 	/**

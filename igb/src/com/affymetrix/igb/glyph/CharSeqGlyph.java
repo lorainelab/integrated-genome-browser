@@ -221,7 +221,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view) {
-		if (isVisible && isHitable()) {
+		if (isVisible() && isHitable()) {
 			calcPixels(view);
 			return pixel_hitbox.intersects(pixelbox);
 		} else {
@@ -231,7 +231,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible && isHitable() && coord_hitbox.intersects(coordbox);
+		return isVisible() && isHitable() && coord_hitbox.intersects(coordbox);
 	}
 
 

@@ -65,7 +65,7 @@ public abstract class FlyweightPointGlyph extends SolidGlyph  {
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
     super.pickTraversal(pickRect, pickList, view);
-    if (isVisible && intersects(pickRect, view))  {
+    if (isVisible() && intersects(pickRect, view))  {
       if (xcoords != null) {
 	Rectangle2D.Double tbox = template_glyph.getCoordBox();
 	int flycount = xcoords.length;

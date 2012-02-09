@@ -394,7 +394,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
 	@Override
 	public boolean hit (Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible && isHitable() && coord_hitbox.intersects (this.getCoordBox());
+		return isVisible() && isHitable() && coord_hitbox.intersects (this.getCoordBox());
 	}
 
 

@@ -149,12 +149,12 @@ public class TraceGlyph extends Glyph  {
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return isVisible && pixel_hitbox.intersects(pixelbox);
+		return isVisible() && pixel_hitbox.intersects(pixelbox);
 	}
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible && coord_hitbox.intersects(coordbox);
+		return isVisible() && coord_hitbox.intersects(coordbox);
 	}
 
 	public void setTraceColors(Color[] colors) {

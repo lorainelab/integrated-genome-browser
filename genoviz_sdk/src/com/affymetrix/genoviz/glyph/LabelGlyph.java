@@ -414,7 +414,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	 */
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
 			ViewI view)  {
-		if (isVisible && intersects(pickRect, view))  {
+		if (isVisible() && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {
 				pickList.add(this);
 				if (null != this.labeled && !pickList.contains(this.labeled)) {

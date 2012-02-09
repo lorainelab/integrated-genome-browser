@@ -104,7 +104,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
-		if (!isVisible || !intersects(pickRect,view)) {
+		if (!isVisible() || !intersects(pickRect,view)) {
 			return;
 		}
 		if (hit(pickRect, view)) {

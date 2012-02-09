@@ -81,7 +81,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	public void drawTraversal(ViewI view) {
 		Rectangle pixelbox = view.getScratchPixBox();
 		view.transformToPixels(this.getCoordBox(), pixelbox);
-		if (withinView(view) && isVisible) {
+		if (withinView(view) && isVisible()) {
 			if ((pixelbox.width <= 3)
 					|| (pixelbox.height <= 3)) {
 				// || (getChildCount() <=0)) {
@@ -203,7 +203,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible && coord_hitbox.intersects(this.getCoordBox());
+		return isVisible() && coord_hitbox.intersects(this.getCoordBox());
 	}
 
 	public void setLabelLocation(int loc) {

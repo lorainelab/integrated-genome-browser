@@ -51,7 +51,7 @@ public abstract class Glyph implements GlyphI  {
 	protected List<GlyphI> children;
 	private   GlyphStyle glyphStyle;
 
-	protected boolean isVisible;
+	private   boolean visible;
 	private   Object info;
 	private   PackerI packer;
 	private   boolean selected;
@@ -66,7 +66,7 @@ public abstract class Glyph implements GlyphI  {
 		pixelbox = new Rectangle();
 		min_pixels_width=1;
 		min_pixels_height=1;
-		isVisible = true;
+		visible = true;
 
 		glyphStyle = stylefactory.getStyle( default_fg_color, default_bg_color );
 	}
@@ -122,14 +122,14 @@ public abstract class Glyph implements GlyphI  {
 			System.err.println("called Glyph.drawTraversal() on " + this);
 		}
 		if (draw_order == DRAW_SELF_FIRST) {
-			if (isVisible && (withinView(view) || RectangleIntersectHack(view))) {
+			if (visible && (withinView(view) || RectangleIntersectHack(view))) {
 				if (selected) { drawSelected(view); }
 				else { draw(view); }
 				if (children != null) { drawChildren(view); }
 			}
 		}
 		else if (draw_order == DRAW_CHILDREN_FIRST) {
-			if (isVisible && (withinView(view) || RectangleIntersectHack(view))) {
+			if (visible && (withinView(view) || RectangleIntersectHack(view))) {
 				if (children != null)  { drawChildren(view); }
 				if (selected) { drawSelected(view); }
 				else { draw(view); }
@@ -257,7 +257,7 @@ public abstract class Glyph implements GlyphI  {
 
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
 			ViewI view)  {
-		if (isVisible && intersects(pickRect, view))  {
+		if (visible && intersects(pickRect, view))  {
 			if (DEBUG)  {
 				System.out.println("intersects");
 			}
@@ -325,15 +325,15 @@ public abstract class Glyph implements GlyphI  {
 	public boolean isHitable() { return false; }
 
 	public boolean intersects(Rectangle rect)  {
-		return isVisible && rect.intersects(pixelbox);
+		return visible && rect.intersects(pixelbox);
 	}
 
 	public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
-		return isVisible && rect.intersects(getPositiveCoordBox());
+		return visible && rect.intersects(getPositiveCoordBox());
 	}
 
 	public boolean inside(int x, int y)  {
-		return isVisible && this.pixelbox.contains(x,y);
+		return visible && this.pixelbox.contains(x,y);
 	}
 
 	/**
@@ -579,12 +579,12 @@ public abstract class Glyph implements GlyphI  {
 		return info;
 	}
 
-	public void setVisibility(boolean isVisible)  {
-		this.isVisible = isVisible;
+	public void setVisibility(boolean visible)  {
+		this.visible = visible;
 	}
 
 	public boolean isVisible()  {
-		return isVisible;
+		return visible;
 	}
 
 	public GlyphStyle getGlyphStyle() {

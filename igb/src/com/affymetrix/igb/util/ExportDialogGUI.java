@@ -2,7 +2,6 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -20,6 +19,7 @@ import javax.swing.*;
 public class ExportDialogGUI extends JPanel {
 	
 	public static JFrame static_frame = null;
+	private static final String TITLE = "Export Image";
 	private static ExportDialogGUI singleton;
 	private ExportDialog export;
 	private AffyTieredMap seqMap;
@@ -78,16 +78,7 @@ public class ExportDialogGUI extends JPanel {
 		if (static_frame == null) {
 			export.init();
 			
-			static_frame = PreferenceUtils.createFrame("Export Image",
-					getSingleton());
-			
-			Application app = Application.getSingleton();
-			JFrame frame = (app == null) ? null : app.getFrame();
-			
-			Point location = frame.getLocation();
-			// Display frame at center when initialize it
-			static_frame.setLocation(location.x + frame.getWidth() / 2 - static_frame.getWidth() / 2,
-					location.y + frame.getHeight() / 2 - static_frame.getHeight() / 2);
+			static_frame = PreferenceUtils.createFrame(TITLE, singleton);		
 		}
 	}
 	

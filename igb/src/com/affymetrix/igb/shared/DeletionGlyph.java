@@ -23,7 +23,7 @@ public final class DeletionGlyph extends SolidGlyph {
     Graphics g = view.getGraphics();
 
     //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
-    pbox.height = Math.max( pbox.height, min_pixels_height );
+    pbox.height = Math.max( pbox.height, getMinPixelsHeight() );
 
     final int half_height = pbox.height/2;
     final int h = Math.min(half_height, 4);

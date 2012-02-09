@@ -48,8 +48,8 @@ public class RoundRectMaskGlyph extends Glyph  {
     // zoomed in such that the edge of the view is not the edge of the coord space.
     //pixelbox = fixAWTBigRectBug(view, pixelbox);
 
-    if (pixelbox.width < min_pixels_width) { pixelbox.width = min_pixels_width; }
-    if (pixelbox.height < min_pixels_height) { pixelbox.height = min_pixels_height; }
+    if (pixelbox.width < getMinPixelsWidth()) { pixelbox.width = getMinPixelsWidth(); }
+    if (pixelbox.height < getMinPixelsHeight()) { pixelbox.height = getMinPixelsHeight(); }
     Graphics g = view.getGraphics();
     g.setColor(getBackgroundColor());
 

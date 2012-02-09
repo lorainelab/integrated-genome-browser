@@ -45,8 +45,8 @@ public abstract class Glyph implements GlyphI  {
 	private   Scene scene;
 	private   Rectangle2D.Double cb2= null; // used as a temporary variable
 	protected Rectangle pixelbox;
-	protected int min_pixels_width=1;
-	protected int min_pixels_height=1;
+	private   int min_pixels_width=1;
+	private   int min_pixels_height=1;
 	private   GlyphI parent;
 	protected List<GlyphI> children;
 	private   GlyphStyle glyphStyle;
@@ -441,6 +441,14 @@ public abstract class Glyph implements GlyphI  {
 	public Rectangle getPixelBox(ViewI view)  {
 		pixelbox = view.transformToPixels (coordbox, pixelbox);
 		return pixelbox;
+	}
+
+	public int getMinPixelsWidth() {
+		return min_pixels_width;
+	}
+
+	public int getMinPixelsHeight() {
+		return min_pixels_height;
 	}
 
 	/** Sets the minimum size in pixels. If d.width or d.height is negative,

@@ -37,8 +37,8 @@ public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
     
     fixAWTBigRectBug(view, pixelbox);
     
-    pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
-    pixelbox.height = Math.max ( pixelbox.height, min_pixels_height );
+    pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
+    pixelbox.height = Math.max ( pixelbox.height, getMinPixelsHeight() );
     
     // draw the box
     g.setPaint(paint);

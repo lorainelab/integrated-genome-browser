@@ -37,15 +37,15 @@ public class FillRectGlyph extends SolidGlyph  {
 		// Constrain abs(width) or abs(height) by min_pixels.
 		// Here I'm relying on the fact that min_pixels is positive.
 		if (coordbox.width < 0) {
-			pixelbox.width = -Math.min(pixelbox.width, -min_pixels_width);
+			pixelbox.width = -Math.min(pixelbox.width, -getMinPixelsWidth());
 			pixelbox.x -= pixelbox.width;
 		}
-		else pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
+		else pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
 		if (coordbox.height < 0) {
-			pixelbox.height = -Math.min(pixelbox.height, -min_pixels_height);
+			pixelbox.height = -Math.min(pixelbox.height, -getMinPixelsHeight());
 			pixelbox.y -= pixelbox.height;
 		}
-		else pixelbox.height = Math.max ( pixelbox.height, min_pixels_height );
+		else pixelbox.height = Math.max ( pixelbox.height, getMinPixelsHeight() );
 
 		// draw the box
 		g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);

@@ -33,10 +33,10 @@ public class TierGlyph extends SolidGlyph {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
-   
+
 	private boolean sorted = true;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
-	public Direction direction = Direction.NONE;
+	private Direction direction = Direction.NONE;
 	/** glyphs to be drawn in the "middleground" --
 	 *    in front of the solid background, but behind the child glyphs
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
@@ -76,7 +76,7 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	protected ITrackStyleExtended style;
-	
+
 	public TierGlyph() {
 	}
 
@@ -103,11 +103,11 @@ public class TierGlyph extends SolidGlyph {
 		setMaxExpandDepth(style.getMaxDepth());
 		setLabel(style.getTrackName());
 	}
-		
+
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;
 	}
-	
+
 	/**
 	 *  Adds "middleground" glyphs, which are drawn in front of the background but
 	 *    behind all "real" child glyphs.
@@ -233,7 +233,7 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public void draw(ViewI view) {
 		view.transformToPixels(coordbox, pixelbox);
-	
+
 		pixelbox.width = Math.max(pixelbox.width, min_pixels_width);
 		pixelbox.height = Math.max(pixelbox.height, min_pixels_height);
 
@@ -253,7 +253,7 @@ public class TierGlyph extends SolidGlyph {
 				//Hack : Add one to height to resolve black line bug.
 				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height+1);
 			}
-			
+
 			// cycle through "middleground" glyphs,
 			//   make sure their coord box y and height are set to same as TierGlyph,
 			//   then call mglyph.draw(view)
@@ -276,13 +276,13 @@ public class TierGlyph extends SolidGlyph {
 			}
 			if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
 				drawHandle(view);
-			}	
+			}
 		}
 
-		
+
 		super.draw(view);
 	}
-	
+
 	@Override
 	public void drawChildren(ViewI view) {
 		try{
@@ -306,11 +306,11 @@ public class TierGlyph extends SolidGlyph {
 			}
 		}
 
-		}catch(Exception ex){	
+		}catch(Exception ex){
 			System.out.println(ex);
 		}
 	}
-	
+
 	private boolean shouldDrawLabel() {
 		// graph tiers take care of drawing their own handles and labels.
 		return (!style.isGraphTier() && Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
@@ -493,42 +493,42 @@ public class TierGlyph extends SolidGlyph {
 			return expand_packer.getActualSlots();
 		return 1;
 	}
-	
+
 	private double getSpacing() {
 		if(packer instanceof AbstractCoordPacker){
 			return ((AbstractCoordPacker)packer).getSpacing();
 		}
 		return 2;
 	}
-	
+
 	public void setPreferredHeight(double height, ViewI view){
 		if(getChildCount() == 1 && getChild(0) instanceof GraphGlyph){
 			GraphGlyph child = (GraphGlyph)getChild(0);
 			Rectangle2D.Double  coord = child.getCoordBox();
 			child.setCoords(coord.x, coord.y, coord.width, height);
-			//Note : Fix to handle height in a view mode. 
+			//Note : Fix to handle height in a view mode.
 			// But this also causes minor change in height while switching back to default view mode.
 			setCoords(coord.x, coord.y, coord.width, height + 2 * getSpacing());
 			return;
 		}
-		
+
 		float slot_size = getActualSlots();
 		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
-		
+
 		if(useLabel())
 			height = height / 2;
-		
+
 		double percent = ((height * 100)/style.getHeight() - 100)/100;
 		style.setHeight(height);
-		
+
 		setChildHeight(percent, getChildren(), view);
 	}
-	
-	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){	
+
+	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){
 		int sibs_size = sibs.size();
-			
+
 		GlyphI child;
-		Rectangle2D.Double coordbox;	
+		Rectangle2D.Double coordbox;
 		for (int i = 0; i < sibs_size; i++) {
 			child =  sibs.get(i);
 			coordbox = child.getCoordBox();
@@ -538,9 +538,9 @@ public class TierGlyph extends SolidGlyph {
 			}
 			child.pack(view, false);
 		}
-		
+
 	}
-	
+
 	private boolean useLabel() {
 		String label_field = style.getLabelField();
 		boolean use_label = label_field != null && (label_field.trim().length() > 0);
@@ -550,7 +550,7 @@ public class TierGlyph extends SolidGlyph {
 
 		return false;
 	}
-	
+
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
 	@Override
 	protected void drawSelectedFill(ViewI view) {

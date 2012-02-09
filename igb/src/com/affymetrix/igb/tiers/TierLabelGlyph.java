@@ -17,7 +17,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private static int pbBuffer_x = 5;
 	private int position;
 	private static final int placement = CENTER;
-	
+
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
@@ -40,7 +40,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public int getPosition(){
 		return position;
 	}
-	
+
 	/** Overridden such that the info must be of type TierGlyph.  It is used
 	 *  to store the reference tier that will be returned by getReferenceTier().
 	 */
@@ -65,7 +65,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	private static String getDirectionString(TierGlyph tg) {
-		return getDirectionSymbol(tg.direction);
+		return getDirectionSymbol(tg.getDirection());
 	}
 
 	public static String getDirectionSymbol(Direction direction){
@@ -80,7 +80,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				return "";
 		}
 	}
-	
+
 	/**
 	 * Returns the label of the reference tier, or some default string if there isn't one.
 	 * @return string
@@ -102,7 +102,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
-		
+
 		if(reftier.getAnnotStyle() instanceof TrackStyle){
 			TrackStyle trackStyle = (TrackStyle) reftier.getAnnotStyle();
 			Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
@@ -146,7 +146,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				boundingPixelBox.y + boundingPixelBox.height);
 
 		int text_width = fm.stringWidth(label);
-		Direction direction = getReferenceTier() != null? getReferenceTier().direction: Direction.NONE;
+		Direction direction = getReferenceTier() != null? getReferenceTier().getDirection(): Direction.NONE;
 		if (text_width + (pbBuffer_x * 2) > pixelbox.width) {
 			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox, direction);
 		} else {

@@ -468,14 +468,14 @@ public class AxisGlyph extends Glyph {
 	 */
 
 	public void rangeChanged() {
-		if (DEBUG_DRAW) System.err.println("Parental Coords: "+parent.getCoordBox());
+		if (DEBUG_DRAW) System.err.println("Parental Coords: "+getParent().getCoordBox());
 		if (VERTICAL == this.orient) {
-			coordbox.y = parent.getCoordBox().y;
-			coordbox.height = parent.getCoordBox().height;
+			coordbox.y = getParent().getCoordBox().y;
+			coordbox.height = getParent().getCoordBox().height;
 		}
 		else {
-			coordbox.x = parent.getCoordBox().x;
-			coordbox.width = parent.getCoordBox().width;
+			coordbox.x = getParent().getCoordBox().x;
+			coordbox.width = getParent().getCoordBox().width;
 		}
 	}
 

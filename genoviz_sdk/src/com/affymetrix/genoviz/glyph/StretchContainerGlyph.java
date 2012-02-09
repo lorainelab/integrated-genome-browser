@@ -31,8 +31,8 @@ public class StretchContainerGlyph extends Glyph {
 	public void propagateStretch(GlyphI child) {
 		coordbox.add(child.getCoordBox());
 
-		if (this.parent instanceof StretchContainerGlyph) {
-			((StretchContainerGlyph)this.parent).propagateStretch(this);
+		if (this.getParent() instanceof StretchContainerGlyph) {
+			((StretchContainerGlyph)this.getParent()).propagateStretch(this);
 		}
 	}
 

@@ -61,7 +61,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 	public void setResidueFont(Font fnt) {
 		fontmet = GeneralUtils.getFontMetrics(fnt);
 		// change font
-		this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
+		this.setGlyphStyle(stylefactory.getStyle( getGlyphStyle().getForegroundColor(), getGlyphStyle().getBackgroundColor(), fnt ));
 
 		font_width = fontmet.charWidth('C');
 		font_width = Math.max(font_width, fontmet.charWidth('A'));
@@ -94,7 +94,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 		}
 	}
 
-	public Font getResidueFont() { return style.getFont(); }
+	public Font getResidueFont() { return getGlyphStyle().getFont(); }
 	public int getFontWidth() { return font_width; }
 	public int getFontHeight() { return font_height; }
 	public int getFontAscent() { return font_ascent; }

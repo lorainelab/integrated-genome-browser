@@ -47,9 +47,9 @@ public abstract class Glyph implements GlyphI  {
 	protected Rectangle pixelbox;
 	protected int min_pixels_width=1;
 	protected int min_pixels_height=1;
-	protected GlyphI parent;
+	private   GlyphI parent;
 	protected List<GlyphI> children;
-	protected GlyphStyle style;
+	private   GlyphStyle glyphStyle;
 
 	protected boolean isVisible;
 	private   Object info;
@@ -68,7 +68,7 @@ public abstract class Glyph implements GlyphI  {
 		min_pixels_height=1;
 		isVisible = true;
 
-		style = stylefactory.getStyle( default_fg_color, default_bg_color );
+		glyphStyle = stylefactory.getStyle( default_fg_color, default_bg_color );
 	}
 
 	public boolean withinView(ViewI view)
@@ -530,19 +530,19 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void setForegroundColor(Color color)  {
-		this.style = stylefactory.getStyle( color, style.getBackgroundColor(), style.getFont() );
+		this.glyphStyle = stylefactory.getStyle( color, glyphStyle.getBackgroundColor(), glyphStyle.getFont() );
 	}
 
 	public Color getForegroundColor()  {
-		return this.style.getForegroundColor();
+		return this.glyphStyle.getForegroundColor();
 	}
 
 	public void setBackgroundColor(Color color)  {
-		this.style = stylefactory.getStyle( style.getForegroundColor(), color, style.getFont() );
+		this.glyphStyle = stylefactory.getStyle( glyphStyle.getForegroundColor(), color, glyphStyle.getFont() );
 	}
 
 	public Color getBackgroundColor()  {
-		return this.style.getBackgroundColor();
+		return this.glyphStyle.getBackgroundColor();
 	}
 	
 	/** Semi-deprecated. Use {@link #setBackgroundColor(Color)}. */
@@ -564,11 +564,11 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void setFont(Font f) {
-		this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), f );
+		this.glyphStyle = stylefactory.getStyle( glyphStyle.getForegroundColor(), glyphStyle.getBackgroundColor(), f );
 	}
 
 	public Font getFont() {
-		return this.style.getFont();
+		return this.glyphStyle.getFont();
 	}
 
 	public void setInfo(Object info)  {
@@ -585,6 +585,14 @@ public abstract class Glyph implements GlyphI  {
 
 	public boolean isVisible()  {
 		return isVisible;
+	}
+
+	public GlyphStyle getGlyphStyle() {
+		return glyphStyle;
+	}
+
+	public void setGlyphStyle(GlyphStyle glyphStyle) {
+		this.glyphStyle = glyphStyle;
 	}
 
 	public void setPacker(PackerI packer)  {

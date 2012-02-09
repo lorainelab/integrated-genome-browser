@@ -262,12 +262,12 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 
 	public void setFont(Font f) {
-		this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), f );
+		this.setGlyphStyle(stylefactory.getStyle( getGlyphStyle().getForegroundColor(), getGlyphStyle().getBackgroundColor(), f ));
 		setFontExtras();
 	}
 
 	public Font getFont() {
-		return this.style.getFont();
+		return this.getGlyphStyle().getFont();
 	}
 
 	//  since fnt is referenced in setFont(fnt), not copied, it could be

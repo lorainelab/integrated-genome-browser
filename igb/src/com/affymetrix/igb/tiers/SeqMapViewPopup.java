@@ -724,7 +724,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					return name;
 				}
 			};
-			show_tier.addActionListener(new ActionListener() {
+			show_tier.setName(style.getMethodName());
+			show_tier.setAction(new AbstractAction() {
 
 				public void actionPerformed(ActionEvent e) {
 					style.setShow(true);

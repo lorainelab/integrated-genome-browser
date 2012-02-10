@@ -163,7 +163,10 @@ public abstract class SymLoader {
 	}
 
 	public static String getExtension(URI uri){
-		String uriString = uri.toASCIIString().toLowerCase();
+		return getExtension(uri.toASCIIString().toLowerCase());
+	}
+	
+	public static String getExtension(String uriString){
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 		String extension = ParserController.getExtension(unzippedStreamName);
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .

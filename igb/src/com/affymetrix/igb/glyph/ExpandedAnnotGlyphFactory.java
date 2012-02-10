@@ -14,9 +14,11 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
+import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 public final class ExpandedAnnotGlyphFactory extends AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
@@ -27,6 +29,9 @@ public final class ExpandedAnnotGlyphFactory extends AbstractAnnotGlyphFactory i
 	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction) {
 		ViewModeGlyph viewModeGlyph = new ExpandedAnnotationGlyph(style);
 		viewModeGlyph.setDirection(direction);
+		if (direction != Direction.REVERSE) {
+			((FasterExpandPacker)((ExpandedAnnotationGlyph)viewModeGlyph).getPacker()).setMoveType(NeoConstants.UP);
+		}
 		return viewModeGlyph;
 	}
 }

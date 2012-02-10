@@ -29,7 +29,6 @@ import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
 
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
 public abstract class CytobandGlyph {

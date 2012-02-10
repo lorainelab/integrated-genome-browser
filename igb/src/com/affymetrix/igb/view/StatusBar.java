@@ -16,7 +16,7 @@ public final class StatusBar extends JPanel{
 	private static final long serialVersionUID = 1l;
 	
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
-	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
+	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/warning.png");
 	
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;

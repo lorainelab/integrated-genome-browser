@@ -15,6 +15,8 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -79,7 +81,17 @@ public class EmptyTierGlyphFactory {
 				
 		double height = style.getHeight();
 		if(!style.isGraphTier()){
-			tiers = gviewer.getTiers(style, true);
+			String viewmode = TrackUtils.getInstance().useViewMode(style.getMethodName());
+			if (viewmode != null) {
+				style.setViewMode(viewmode);
+				tiers[0] = gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
+				if (style.getSeparate()) {
+					tiers[1] = gviewer.getTrack(null, style, Direction.REVERSE);
+				}
+			}
+			else {
+				tiers = gviewer.getTiers(style, true);
+			}
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 		}else {
 			tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);

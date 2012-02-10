@@ -3,6 +3,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,11 @@ public class MapViewModeHolder {
 		addViewFactory(new DepthGraphGlyphFactory());
 		addViewFactory(new MismatchGraphGlyphFactory());
 		addViewFactory(new MismatchPileupGraphGlyphFactory());
+		addViewFactory(new ExpandedAnnotGlyphFactory());
+		addViewFactory(new CollapsedAnnotGlyphFactory());
+//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
+//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
+//		addViewFactory(expandedAnnotGlyphFactory);
 	}
 	
 	public MapViewGlyphFactoryI getViewFactory(String view){

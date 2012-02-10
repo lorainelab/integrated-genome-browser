@@ -1866,6 +1866,16 @@ public class SeqMapView extends JPanel
 	}
 	
 	/**
+	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
+	 * @param style the style
+	 * @param tier_direction the direction
+	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
+	 */
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		return TrackView.getTrack(this, sym, style, tier_direction);
+	}
+
+	/**
 	 *  Returns a forward and reverse tier for the given method, creating them if they don't
 	 *  already exist.
 	 *  Generally called by the Glyph Factory.

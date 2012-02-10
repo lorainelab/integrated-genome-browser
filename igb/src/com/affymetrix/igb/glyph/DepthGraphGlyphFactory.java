@@ -17,6 +17,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *
@@ -94,5 +95,11 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public boolean isFileSupported(String format) {
 		return true;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -27,6 +27,7 @@ import com.affymetrix.igb.shared.ExpandPacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyphViewMode;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -73,6 +74,50 @@ public class TrackView {
 	// into account when determining how to draw a sym.
 	public static XmlStylesheetGlyphFactory getAnnotationGlyphFactory() {
 		return default_glyph_factory;
+	}
+
+	/**
+	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
+	 * @param smv the SeqMapView
+	 * @param style the style
+	 * @param tier_direction the direction
+	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
+	 */
+	public static TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		AffyTieredMap seqmap = smv.getSeqMap();
+		TierGlyph tierGlyph = null;
+		if (style.isGraphTier()) {
+			tierGlyph = gstyle2track.get(style);
+		}
+		else if (tier_direction == TierGlyph.Direction.REVERSE) {
+			tierGlyph = style2reverseTierGlyph.get(style);
+		}
+		else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
+			tierGlyph = style2forwardTierGlyph.get(style);
+		}
+		if (tierGlyph != null && !(tierGlyph instanceof TierGlyphViewMode)) {
+			seqmap.removeTier(tierGlyph);
+			tierGlyph = null;
+		}
+		if (tierGlyph == null) {
+			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction);
+			tierGlyph.setLabel(style.getTrackName());
+			// do not set packer here, will be set in ViewModeGlyph
+			if (style.isGraphTier()) {
+				gstyle2track.put(style, tierGlyph);
+			}
+			else if (tier_direction == TierGlyph.Direction.REVERSE) {
+				style2reverseTierGlyph.put(style, tierGlyph);
+			}
+			else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
+				style2forwardTierGlyph.put(style, tierGlyph);
+			}
+		}
+		if (seqmap.getTierIndex(tierGlyph) == -1) {
+			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
+			seqmap.addTier(tierGlyph, above_axis);
+		}
+		return tierGlyph;
 	}
 
 	/**

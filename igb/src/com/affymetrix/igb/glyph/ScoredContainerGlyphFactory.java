@@ -41,6 +41,7 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
@@ -283,5 +284,11 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

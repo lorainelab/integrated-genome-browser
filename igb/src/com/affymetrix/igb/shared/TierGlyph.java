@@ -117,7 +117,7 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	 *  The only way to remove these is via removeAllChildren() method,
 	 *    there is currently no external access to them.
 	 */
-	public final void addMiddleGlyph(GlyphI gl) {
+	public void addMiddleGlyph(GlyphI gl) {
 		middle_glyphs.add(gl);
 	}
 
@@ -197,11 +197,11 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		sorted = true;
 	}
 
-	public final void setLabel(String str) {
+	public void setLabel(String str) {
 		label = str;
 	}
 
-	public final String getLabel() {
+	public String getLabel() {
 		return label;
 	}
 
@@ -384,13 +384,13 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	/** Sets the expand packer.  Note that you are responsible for setting
 	 *  any properties of the packer, such as those based on the AnnotStyle.
 	 */
-	public final void setExpandedPacker(FasterExpandPacker packer) {
+	public void setExpandedPacker(FasterExpandPacker packer) {
 		this.expand_packer = packer;
 		setSpacer(getSpacer());
 		setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
 	}
 
-	public final void setCollapsedPacker(CollapsePacker packer) {
+	public void setCollapsedPacker(CollapsePacker packer) {
 		this.collapse_packer = packer;
 		setSpacer(getSpacer());
 		setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
@@ -443,7 +443,7 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 
 	/** Returns the color used to draw the tier background, or null
 	if there is no background. */
-	public final Color getFillColor() {
+	public Color getFillColor() {
 		return style.getBackground();
 	}
 
@@ -469,7 +469,7 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		return getFillColor();
 	}
 
-	public final Direction getDirection() {
+	public Direction getDirection() {
 		return direction;
 	}
 
@@ -477,7 +477,7 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	 *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
 	 *  DIRECTION_BOTH or DIRECTION_NONE.
 	 */
-	public final void setDirection(Direction d) {
+	public void setDirection(Direction d) {
 		this.direction = d;
 	}
 

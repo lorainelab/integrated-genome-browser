@@ -20,6 +20,7 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -187,5 +188,11 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -24,6 +24,7 @@ import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  *  A very glyph factory that can draw glyphs based on a stylesheet.
@@ -128,5 +129,11 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public boolean isFileSupported(String format) {
 		return true;
+	}
+
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

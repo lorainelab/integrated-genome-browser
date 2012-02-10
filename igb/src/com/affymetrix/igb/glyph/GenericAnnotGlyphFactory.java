@@ -52,7 +52,7 @@ import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.tiers.TrackConstants;
 
 /**
@@ -119,7 +119,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
 			int glyph_depth = style.getGlyphDepth();
 
-			TierGlyph[] tiers = smv.getTiers(style, true);
+			StyleGlyphI[] tiers = smv.getTiers(style, true);
 			tiers[0].setInfo(sym);
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
@@ -148,7 +148,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	
 	private void addLeafsToTier(SeqSymmetry sym,
-			TierGlyph ftier, TierGlyph rtier,
+			StyleGlyphI ftier, StyleGlyphI rtier,
 			int desired_leaf_depth) {
 		int depth = getDepth(sym);
 		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -168,8 +168,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 *    the symmetry must have a depth of at least 2.
 	 */
 	private void addToTier(SeqSymmetry insym,
-			TierGlyph forward_tier,
-			TierGlyph reverse_tier,
+			StyleGlyphI forward_tier,
+			StyleGlyphI reverse_tier,
 			boolean parent_and_child) {
 		try {
 			BioSeq annotseq = gviewer.getAnnotatedSeq();
@@ -185,12 +185,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}  // if no span corresponding to seq, then return;
 
-			TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
+			boolean isReverse = !pspan.isForward();
+			StyleGlyphI the_tier = isReverse ? reverse_tier : forward_tier;
 
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(
-					parent_and_child, insym, the_style, the_tier, pspan, sym, annotseq, coordseq));
+					parent_and_child, insym, the_style, isReverse, pspan, sym, annotseq, coordseq));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -198,19 +199,19 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private GlyphI determinePGlyph(
 			boolean parent_and_child, SeqSymmetry insym,
-			ITrackStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
+			ITrackStyleExtended the_style, boolean isReverse, SeqSpan pspan,
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph = null;
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, isReverse, pspan, sym, gviewer);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
 			handleInsertionGlyphs(insym, annotseq, pglyph, the_style.getHeight());
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, sym, gviewer);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, isReverse, pspan, sym, gviewer);
 			GlyphI alignResidueGlyph = handleAlignedResidues(insym, annotseq);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -222,7 +223,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static GlyphI determineGlyph(
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
-			ITrackStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
+			ITrackStyleExtended the_style, SeqSymmetry insym, boolean isReverse,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer)
 			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph = null;
@@ -237,7 +238,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, label_field);
 			String label = (property == null) ? "" : property.toString();
-			if (the_tier.getDirection() == TierGlyph.Direction.REVERSE) {
+			if (isReverse) {
 				lglyph.setLabelLocation(GlyphI.SOUTH);
 			} else {
 				lglyph.setLabelLocation(GlyphI.NORTH);

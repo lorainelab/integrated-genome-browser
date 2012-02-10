@@ -29,7 +29,7 @@ import java.awt.geom.Rectangle2D;
  *  directly to the map.
  *
  */
-public class TierGlyph extends SolidGlyph {
+public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);

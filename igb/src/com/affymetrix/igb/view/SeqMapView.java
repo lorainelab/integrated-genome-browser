@@ -672,7 +672,7 @@ public class SeqMapView extends JPanel
 		Application.getSingleton().getFrame().setTitle(getTitleBar(seq));
 
 		if (seq == null) {
-			clear();
+			//clear();
 			return;
 		}
 
@@ -1192,7 +1192,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		if (seqviewer != null) {
-			seqviewer.setEnabled(seq_selected_sym != null || !seqmap.getSelected().isEmpty());
+			seqviewer.setEnabled(true);
 		}
 	}
 

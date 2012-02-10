@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
@@ -125,7 +126,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
  * residues_syms1 instanceof SupportsCdsSpan) this is true when the selection in IGB has cds start and end.
  */
 	public void startSequenceViewer() {
-
 		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
 		if (syms.size() >= 1) {
 			if (syms.size() == 1) {
@@ -144,7 +144,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 						cdsMax = cdsSpan.getEnd();
 					}
 				}
-				this.isGenomicRequest = false;
+	 this.isGenomicRequest = false;
 			} else {
 				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
 					this.errorMessage = "Multiple selections, please select one feature or a parent";
@@ -177,7 +177,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 						@Override
 						protected Object doInBackground() throws Exception {
 							LoadResidueAction loadResidue = new LoadResidueAction(residues_sym.getSpan(aseq), true);
-							
 							loadResidue.addDoneCallback(doneback);
 							loadResidue.actionPerformed(null);
 							loadResidue.removeDoneCallback(doneback);
@@ -186,8 +185,25 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 					};
 					worker.execute();
 					
-				}else{
-					doneback.actionDone(null);
+				} else {
+					if (residues_sym == null) {
+						final SeqSpan span = seqmapview.getVisibleSpan();
+						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
+						//doneback.actionDone(null);
+						
+						SwingWorker worker = new SwingWorker() {
+
+							@Override
+							protected Object doInBackground() throws Exception {
+								LoadResidueAction loadResidue = new LoadResidueAction(span, true);
+								loadResidue.addDoneCallback(doneback);
+								loadResidue.actionPerformed(null);
+								loadResidue.removeDoneCallback(doneback);
+								return null;
+							}
+						};
+						worker.execute();
+					}
 				}
 			}
 		} catch (Exception e) {

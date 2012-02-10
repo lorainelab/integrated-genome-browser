@@ -44,4 +44,14 @@ public class TrackUtils {
 		style.setTrackName(human_name);
 		return style;
 	}
+
+	public String useViewMode(String method) {
+		if (method != null && method.contains("___.")) {
+			return "expanded";
+		}
+		if (method != null && method.contains("$$$.")) {
+			return "collapsed";
+		}
+		return null;
+	}
 }

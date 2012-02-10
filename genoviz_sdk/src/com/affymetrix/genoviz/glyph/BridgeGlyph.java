@@ -28,15 +28,15 @@ public class BridgeGlyph extends SolidGlyph {
 	protected static final double POS = 0.0f;
 
 	public void draw(ViewI theView) {
-		theView.transformToPixels(getCoordBox(), pixelbox);
-		if (0 == pixelbox.width) pixelbox.width = 1;
-		if (0 == pixelbox.height) pixelbox.height = 1;
+		theView.transformToPixels(getCoordBox(), getPixelBox());
+		if (0 == getPixelBox().width) getPixelBox().width = 1;
+		if (0 == getPixelBox().height) getPixelBox().height = 1;
 		Graphics g = theView.getGraphics();
 		g.setColor(getBackgroundColor());
-		g.fillRect(pixelbox.x, pixelbox.y+(int)Math.round(pixelbox.height*POS),
-				pixelbox.width, 1);// surface
-		g.fillRect(pixelbox.x, pixelbox.y, 1, pixelbox.height); // left edge
-		g.fillRect(pixelbox.x+pixelbox.width, pixelbox.y, 1, pixelbox.height); // right edge
+		g.fillRect(getPixelBox().x, getPixelBox().y+(int)Math.round(getPixelBox().height*POS),
+				getPixelBox().width, 1);// surface
+		g.fillRect(getPixelBox().x, getPixelBox().y, 1, getPixelBox().height); // left edge
+		g.fillRect(getPixelBox().x+getPixelBox().width, getPixelBox().y, 1, getPixelBox().height); // right edge
 		super.draw(theView);
 	}
 

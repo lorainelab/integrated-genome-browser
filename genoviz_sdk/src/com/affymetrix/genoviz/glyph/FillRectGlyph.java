@@ -23,32 +23,32 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class FillRectGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
 
 		// temp fix for AWT drawing bug when rect gets too big -- GAH 2/6/98
 		Rectangle compbox = view.getComponentSizeRect();
-		setPixelBox(pixelbox.intersection(compbox));
+		setPixelBox(getPixelBox().intersection(compbox));
 
 		// If the coordbox was specified with negative width or height,
 		// convert pixelbox to equivalent one with positive width and height.
 		// Constrain abs(width) or abs(height) by min_pixels.
 		// Here I'm relying on the fact that min_pixels is positive.
 		if (getCoordBox().width < 0) {
-			pixelbox.width = -Math.min(pixelbox.width, -getMinPixelsWidth());
-			pixelbox.x -= pixelbox.width;
+			getPixelBox().width = -Math.min(getPixelBox().width, -getMinPixelsWidth());
+			getPixelBox().x -= getPixelBox().width;
 		}
-		else pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
+		else getPixelBox().width = Math.max ( getPixelBox().width, getMinPixelsWidth() );
 		if (getCoordBox().height < 0) {
-			pixelbox.height = -Math.min(pixelbox.height, -getMinPixelsHeight());
-			pixelbox.y -= pixelbox.height;
+			getPixelBox().height = -Math.min(getPixelBox().height, -getMinPixelsHeight());
+			getPixelBox().y -= getPixelBox().height;
 		}
-		else pixelbox.height = Math.max ( pixelbox.height, getMinPixelsHeight() );
+		else getPixelBox().height = Math.max ( getPixelBox().height, getMinPixelsHeight() );
 
 		// draw the box
-		g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 
 		super.draw(view);
 	}

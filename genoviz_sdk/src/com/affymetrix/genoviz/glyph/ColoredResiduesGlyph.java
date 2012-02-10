@@ -32,7 +32,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
             int seqBegIndex,
             int seqEndIndex,
             int pixelStart) {
-        int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+        int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
         String str = residues.substring(seqBegIndex, seqEndIndex);
 
         if (this.font_width <= pixelsPerBase) {
@@ -62,7 +62,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
                 //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
                 int offset = (int) (j * pixelsPerBase);
                 //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-                g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
+                g.fillRect(getPixelBox().x + offset, getPixelBox().y, (int) Math.ceil(pixelsPerBase), getPixelBox().height);
             }
         }
     }

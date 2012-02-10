@@ -22,28 +22,28 @@ public class QualityRect extends Glyph
 {
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		// shrinks slightly to differentiate from possible neighbors
 
 		Graphics g = view.getGraphics();
 
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 
-		if (pixelbox.width >=1 ) {
-			if (pixelbox.width > 2) {
-				pixelbox.x += 1;
-				pixelbox.width -=2;
+		if (getPixelBox().width >=1 ) {
+			if (getPixelBox().width > 2) {
+				getPixelBox().x += 1;
+				getPixelBox().width -=2;
 			}
-			else if (pixelbox.width == 2) {
-				pixelbox.x++;
-				pixelbox.width--;
+			else if (getPixelBox().width == 2) {
+				getPixelBox().x++;
+				getPixelBox().width--;
 			}
 			g.setColor(getBackgroundColor());
-			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		}
 		else {
 			g.setColor(getBackgroundColor());
-			g.fillRect(pixelbox.x, pixelbox.y, 2, 2);
+			g.fillRect(getPixelBox().x, getPixelBox().y, 2, 2);
 		}
 		super.draw(view);
 	}
@@ -51,7 +51,7 @@ public class QualityRect extends Glyph
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  pixel_hitbox.intersects(pixelbox);
+		return  pixel_hitbox.intersects(getPixelBox());
 	}
 
 	@Override

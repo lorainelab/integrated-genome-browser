@@ -42,7 +42,7 @@ public abstract class Glyph implements GlyphI  {
 	protected static final GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
 	private   Rectangle2D.Double coordbox;
-	protected final Rectangle pixelbox;
+	private   Rectangle pixelbox;
 	private   Scene scene;
 	private   Rectangle2D.Double cb2= null; // used as a temporary variable
 	private   int min_pixels_width=1;
@@ -443,20 +443,15 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void setPixelBox(Rectangle pixelbox) {
-		this.pixelbox.x = pixelbox.x;
-		this.pixelbox.y = pixelbox.y;
-		this.pixelbox.width = pixelbox.width;
-		this.pixelbox.height = pixelbox.height;
+		this.pixelbox = pixelbox;
 	}
 
 	public void calcPixels (ViewI view)  {
-		Rectangle pixelrect = view.transformToPixels (coordbox, pixelbox);
-		setPixelBox(pixelrect);
+		pixelbox = view.transformToPixels (coordbox, pixelbox);
 	}
 
 	public Rectangle getPixelBox(ViewI view)  {
-		Rectangle pixelrect = view.transformToPixels (coordbox, pixelbox);
-		setPixelBox(pixelrect);
+		pixelbox = view.transformToPixels (coordbox, pixelbox);
 		return pixelbox;
 	}
 

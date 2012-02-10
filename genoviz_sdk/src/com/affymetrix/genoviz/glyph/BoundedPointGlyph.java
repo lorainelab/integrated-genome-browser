@@ -23,15 +23,15 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class BoundedPointGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (pixelbox.width == 0) { pixelbox.width = 1; }
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (getPixelBox().width == 0) { getPixelBox().width = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
-		g.fillRect(pixelbox.x, pixelbox.y+pixelbox.height/2, pixelbox.width, 1);
-		g.fillRect(pixelbox.x+pixelbox.width/2-1, pixelbox.y, 3, pixelbox.height);
-		g.fillRect(pixelbox.x, pixelbox.y, 1, pixelbox.height);
-		g.fillRect(pixelbox.x+pixelbox.width, pixelbox.y, 1, pixelbox.height);
+		g.fillRect(getPixelBox().x, getPixelBox().y+getPixelBox().height/2, getPixelBox().width, 1);
+		g.fillRect(getPixelBox().x+getPixelBox().width/2-1, getPixelBox().y, 3, getPixelBox().height);
+		g.fillRect(getPixelBox().x, getPixelBox().y, 1, getPixelBox().height);
+		g.fillRect(getPixelBox().x+getPixelBox().width, getPixelBox().y, 1, getPixelBox().height);
 		super.draw(view);
 	}
 

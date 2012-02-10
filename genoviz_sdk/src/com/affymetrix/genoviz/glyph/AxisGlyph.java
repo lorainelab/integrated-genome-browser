@@ -391,7 +391,7 @@ public class AxisGlyph extends Glyph {
 				centralLine.y = center_line;
 				centralLine.width = getCoordBox().width;
 			}
-			theView.transformToPixels(getCoordBox(), pixelbox);
+			theView.transformToPixels(getCoordBox(), getPixelBox());
 			Rectangle centralBox = new Rectangle();
 			theView.transformToPixels(centralLine, centralBox);
 
@@ -504,8 +504,8 @@ public class AxisGlyph extends Glyph {
 		// as it was when it was invisible to packers
 		// by dint of having no intersects or hit methods.
 
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (DEBUG_DRAW) { System.err.println("Pixels: " + pixelbox); }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (DEBUG_DRAW) { System.err.println("Pixels: " + getPixelBox()); }
 		if (DEBUG_DRAW) { System.err.println("Transform: " + view.getTransform());}
 
 		Rectangle2D.Double scenebox = getScene().getCoordBox();
@@ -555,15 +555,15 @@ public class AxisGlyph extends Glyph {
 		int clip_start, clip_width;
 		if (orient == VERTICAL) {
 			axis_loc = scratchpixels.x;
-			axis_start = pixelbox.y;
-			axis_width = pixelbox.height;
+			axis_start = getPixelBox().y;
+			axis_width = getPixelBox().height;
 			clip_start = clipbox.y;
 			clip_width = clipbox.height;
 		}
 		else {
 			axis_loc = scratchpixels.y;
-			axis_start = pixelbox.x;
-			axis_width = pixelbox.width;
+			axis_start = getPixelBox().x;
+			axis_width = getPixelBox().width;
 			clip_start = clipbox.x;
 			clip_width = clipbox.width;
 		}
@@ -603,35 +603,35 @@ public class AxisGlyph extends Glyph {
 		double max_map;    // max tickmark to draw (in map coordinates)
 
 		if (orient == VERTICAL) {
-			if (pixelbox.y < clipbox.y) {
+			if (getPixelBox().y < clipbox.y) {
 				map_loc = (((int)(view.transformToCoords(clipbox, scratchcoords).y /
 								tick_increment)) * tick_increment);
 			}
 			else  {
-				map_loc = view.transformToCoords(pixelbox, scratchcoords).y;
+				map_loc = view.transformToCoords(getPixelBox(), scratchcoords).y;
 			}
-			if (pixelbox.y+pixelbox.height > clipbox.y+clipbox.height)  {
+			if (getPixelBox().y+getPixelBox().height > clipbox.y+clipbox.height)  {
 				view.transformToCoords(clipbox, scratchcoords);
 			}
 			else  {
-				view.transformToCoords(pixelbox, scratchcoords);		
+				view.transformToCoords(getPixelBox(), scratchcoords);		
 			}
 			max_map = scratchcoords.y + scratchcoords.height;
 		}
 		else {
-			if (pixelbox.x < clipbox.x)  {
+			if (getPixelBox().x < clipbox.x)  {
 				map_loc = (((int)(view.transformToCoords(clipbox, scratchcoords).x /
 								tick_increment)) * tick_increment);
 			}
 			else  {
-				map_loc = view.transformToCoords(pixelbox, scratchcoords).x;
+				map_loc = view.transformToCoords(getPixelBox(), scratchcoords).x;
 			}
 
-			if (pixelbox.x+pixelbox.width > clipbox.x+clipbox.width)  {
+			if (getPixelBox().x+getPixelBox().width > clipbox.x+clipbox.width)  {
 				view.transformToCoords(clipbox, scratchcoords);
 			}
 			else  {
-				view.transformToCoords(pixelbox, scratchcoords);	
+				view.transformToCoords(getPixelBox(), scratchcoords);	
 			}
 			max_map = scratchcoords.x + scratchcoords.width;
 		}
@@ -1009,7 +1009,7 @@ public class AxisGlyph extends Glyph {
 
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
-		return isHitable() && pixel_hitbox.intersects(pixelbox);
+		return isHitable() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	@Override

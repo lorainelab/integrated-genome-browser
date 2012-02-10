@@ -198,9 +198,9 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		if (getChildren() != null)  {
 			GlyphI child;
 			Rectangle compbox = view.getComponentSizeRect();
-			setPixelBox(pixelbox.intersection(compbox));
+			setPixelBox(getPixelBox().intersection(compbox));
 			Rectangle2D.Double cbox = new Rectangle2D.Double();
-			view.transformToCoords(pixelbox, cbox);
+			view.transformToCoords(getPixelBox(), cbox);
 			double a = cbox.x;
 			double b = cbox.x + cbox.width;
 			List children_in_range = gsn.getOverlappingGlyphs(a, b);
@@ -218,21 +218,21 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	@Override
 	public void draw(ViewI view) {
 
-		view.transformToPixels(getCoordBox(), pixelbox);
-		pixelbox.width = Math.max ( pixelbox.width, getMinPixelsWidth() );
-		pixelbox.height = Math.max ( pixelbox.height, getMinPixelsHeight() );
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		getPixelBox().width = Math.max ( getPixelBox().width, getMinPixelsWidth() );
+		getPixelBox().height = Math.max ( getPixelBox().height, getMinPixelsHeight() );
 
 		Graphics g = view.getGraphics();
 		// use view pixelbox instead of view's component's pixel box, so will play nice
 		//   with drawing optimizations
 		Rectangle vbox = view.getPixelBox();
-		setPixelBox(pixelbox.intersection(pixelbox));
-		boolean bottomTier = (pixelbox.y+pixelbox.height==vbox.y+vbox.height);
+		setPixelBox(getPixelBox().intersection(getPixelBox()));
+		boolean bottomTier = (getPixelBox().y+getPixelBox().height==vbox.y+vbox.height);
 
 		if (fill_color != null) {
 			g.setColor(fill_color);
-			g.fillRect(pixelbox.x, pixelbox.y,
-					pixelbox.width, pixelbox.height);
+			g.fillRect(getPixelBox().x, getPixelBox().y,
+					getPixelBox().width, getPixelBox().height);
 		}
 		if (outline_color != null) {
 			g.setColor(outline_color);
@@ -245,21 +245,21 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			// outline be drawn outside the rectangle, so it will
 			// get written-over by top pixel of the tier below, but
 			// for the bottom tier, we must draw the bottom outline inside
-			if (bottomTier) g.drawRect(pixelbox.x, pixelbox.y,
-					pixelbox.width-1, pixelbox.height-1);
-			else g.drawRect(pixelbox.x, pixelbox.y,
-					pixelbox.width-1, pixelbox.height);
+			if (bottomTier) g.drawRect(getPixelBox().x, getPixelBox().y,
+					getPixelBox().width-1, getPixelBox().height-1);
+			else g.drawRect(getPixelBox().x, getPixelBox().y,
+					getPixelBox().width-1, getPixelBox().height);
 		}
-		if (label_color != null && label != null && showLabel && pixelbox.height > 4) {
+		if (label_color != null && label != null && showLabel && getPixelBox().height > 4) {
 			// No font is readable at less than 5 pixels!
 			FontMetrics fm = g.getFontMetrics();
 			// 0.8 is a kludge, but getAscent() overestimates the amount
 			// of space needed for normal capital letters; it includes
 			// room for weirdly tall characters like '|' and accents.
 			int fontSize = (int) (0.8*(fm.getAscent() + fm.getDescent()));
-			int textYPos = pixelbox.y + (int) (0.8*fm.getAscent());
+			int textYPos = getPixelBox().y + (int) (0.8*fm.getAscent());
 			int textXPos = 5;
-			int bottom = pixelbox.y + pixelbox.height - fm.getDescent();
+			int bottom = getPixelBox().y + getPixelBox().height - fm.getDescent();
 			if (outline_color != null) {
 				textYPos += 2;
 				bottom -= 1;

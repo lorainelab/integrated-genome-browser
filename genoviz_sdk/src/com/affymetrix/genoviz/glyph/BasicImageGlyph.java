@@ -110,25 +110,25 @@ public class BasicImageGlyph extends Glyph {
 		Graphics g = view.getGraphics();
 		if (TILED == this.primaryFill || TILED == this.secondaryFill) {
 			Image i = ((Component)observer).createImage(
-					this.pixelbox.width, this.pixelbox.height);
+					this.getPixelBox().width, this.getPixelBox().height);
 			Graphics g2 = i.getGraphics();
 			g2.drawImage(img, 0, 0, this.img_width, this.img_height, observer);
 			if (TILED == this.primaryFill) {
-				for (int xd = this.img_width; xd < this.pixelbox.width;
+				for (int xd = this.img_width; xd < this.getPixelBox().width;
 						xd += this.img_width) {
 					g2.copyArea(0, 0, this.img_width, this.img_height, xd, 0);
 						}
 			}
 			if (TILED == this.secondaryFill) {
-				for (int yd = this.img_height; yd < this.pixelbox.height;
+				for (int yd = this.img_height; yd < this.getPixelBox().height;
 						yd += this.img_height) {
-					g2.copyArea(0, 0, this.pixelbox.width, this.img_height, 0, yd);
+					g2.copyArea(0, 0, this.getPixelBox().width, this.img_height, 0, yd);
 						}
 			}
-			g.drawImage(i, this.pixelbox.x, this.pixelbox.y, observer);
+			g.drawImage(i, this.getPixelBox().x, this.getPixelBox().y, observer);
 		} else {
-			g.drawImage(img, this.pixelbox.x, this.pixelbox.y,
-					this.pixelbox.width, this.pixelbox.height, observer);
+			g.drawImage(img, this.getPixelBox().x, this.getPixelBox().y,
+					this.getPixelBox().width, this.getPixelBox().height, observer);
 		}
 
 	}
@@ -163,20 +163,20 @@ public class BasicImageGlyph extends Glyph {
 
 		if (NONE == this.primaryFill) {
 			// Center the image.
-			pixelbox.x = pixelbox.x + pixelbox.width/2 - this.img_width/2;
-			pixelbox.width = this.img_width;
+			getPixelBox().x = getPixelBox().x + getPixelBox().width/2 - this.img_width/2;
+			getPixelBox().width = this.img_width;
 		}
 		if (NONE == this.secondaryFill) {
 			// Center the image.
-			pixelbox.y = pixelbox.y + pixelbox.height/2 - this.img_height/2;
-			pixelbox.height = this.img_height;
+			getPixelBox().y = getPixelBox().y + getPixelBox().height/2 - this.img_height/2;
+			getPixelBox().height = this.img_height;
 		}
 
 	}
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible() && pixel_hitbox.intersects(pixelbox);
+		return  isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	// this isn't going to be very accurate -- really need to back-calculate

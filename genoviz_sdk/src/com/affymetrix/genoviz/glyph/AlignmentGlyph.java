@@ -472,8 +472,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			if (debugdraw) {
 				System.out.println("now in AlignmentGlyph.drawTraversal(): " + this);
 			}
-			view.transformToPixels(getCoordBox(), pixelbox);
-			double pixels_per_base = pixelbox.width / getCoordBox().width;
+			view.transformToPixels(getCoordBox(), getPixelBox());
+			double pixels_per_base = getPixelBox().width / getCoordBox().width;
 			// if resolution is < 1 pixel/base, just draw as an arrow
 			// or if it has no children
 			//      if (pixels_per_base < 1 || children == null || children.size() <= 0) {
@@ -525,7 +525,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view) {
 		calcPixels(view);
-		return isVisible() && pixel_hitbox.intersects(pixelbox);
+		return isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	@Override

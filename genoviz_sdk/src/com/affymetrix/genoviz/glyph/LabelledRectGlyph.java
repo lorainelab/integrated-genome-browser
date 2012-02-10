@@ -48,7 +48,7 @@ public class LabelledRectGlyph extends FillRectGlyph {
 			// before we start getting setting the font and checking metrics.
 			// No need to do this on a 1 px wide rectangle!
 
-			if (pixelbox.width >= min_width_needed_for_text) {
+			if (getPixelBox().width >= min_width_needed_for_text) {
 				Font savefont = g.getFont();
 				Font f2 = this.getFont();
 				if (f2 != savefont) {
@@ -61,10 +61,10 @@ public class LabelledRectGlyph extends FillRectGlyph {
 				FontMetrics fm = g.getFontMetrics();
 				int text_width = fm.stringWidth(this.text);
 
-				int midline = pixelbox.y + pixelbox.height / 2;
+				int midline = getPixelBox().y + getPixelBox().height / 2;
 
-				if(text_width <= pixelbox.width ) {
-					int mid = pixelbox.x + ( pixelbox.width / 2 ) - ( text_width / 2 );
+				if(text_width <= getPixelBox().width ) {
+					int mid = getPixelBox().x + ( getPixelBox().width / 2 ) - ( text_width / 2 );
 					// define adjust such that: ascent-adjust = descent+adjust
 					int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0);
 					g.setColor(this.getForegroundColor());

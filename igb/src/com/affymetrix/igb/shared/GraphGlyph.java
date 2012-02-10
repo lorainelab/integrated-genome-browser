@@ -268,7 +268,7 @@ public class GraphGlyph extends Glyph {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 
 		Graphics g = view.getGraphics();
 		
@@ -287,7 +287,7 @@ public class GraphGlyph extends Glyph {
 		// drawing outline around bounding box
 		if (getShowBounds()) {
 			g.setColor(Color.green);
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width - 1, getPixelBox().height - 1);
 		}
 
 		if (getShowLabel()) {
@@ -313,7 +313,7 @@ public class GraphGlyph extends Glyph {
 		if (yzero == 0) {
 			// zero_point within min/max, so draw
 			g.setColor(Color.gray);
-			g.drawLine(pixelbox.x, zero_point.y, pixelbox.x + pixelbox.width, zero_point.y);
+			g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().x + getPixelBox().width, zero_point.y);
 		}
 
 		g.setColor(this.getColor());
@@ -474,7 +474,7 @@ public class GraphGlyph extends Glyph {
 					heatmap_index = 255;
 				}
 				g.setColor(state.getHeatMap().getColor(heatmap_index));
-				drawRectOrLine(g, curr_point.x, pixelbox.y, Math.max(1, curr_x_plus_width.x - curr_point.x), pixelbox.height + 1);
+				drawRectOrLine(g, curr_point.x, getPixelBox().y, Math.max(1, curr_x_plus_width.x - curr_point.x), getPixelBox().height + 1);
 			}
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
@@ -625,21 +625,21 @@ public class GraphGlyph extends Glyph {
 		Graphics g = view.getGraphics();
 		Color sel_color = view.getScene().getSelectionColor();
 		g.setColor(sel_color);
-		view.transformToPixels(getPositiveCoordBox(), pixelbox);
+		view.transformToPixels(getPositiveCoordBox(), getPixelBox());
 
 		// only outline the handle, not the whole graph
-		g.drawRect(view_pixbox.x, pixelbox.y,
-				handle_width - 1, pixelbox.height - 1);
-		g.drawRect(view_pixbox.x + 1, pixelbox.y + 1,
-				handle_width - 3, pixelbox.height - 3);
+		g.drawRect(view_pixbox.x, getPixelBox().y,
+				handle_width - 1, getPixelBox().height - 1);
+		g.drawRect(view_pixbox.x + 1, getPixelBox().y + 1,
+				handle_width - 3, getPixelBox().height - 3);
 
 		// also draw a little pointing triangle to make the selection stand-out more
 		int[] xs = {view_pixbox.x + handle_width,
 			view_pixbox.x + handle_width + pointer_width,
 			view_pixbox.x + handle_width};
-		int[] ys = {pixelbox.y,
-			pixelbox.y + (int) (0.5 * (pixelbox.height - 1)),
-			pixelbox.y + pixelbox.height - 1};
+		int[] ys = {getPixelBox().y,
+			getPixelBox().y + (int) (0.5 * (getPixelBox().height - 1)),
+			getPixelBox().y + getPixelBox().height - 1};
 		Color c = new Color(sel_color.getRed(), sel_color.getGreen(), sel_color.getBlue(), 128);
 		g.setColor(c);
 		g.fillPolygon(xs, ys, 3);
@@ -698,12 +698,12 @@ public class GraphGlyph extends Glyph {
 		if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
 			return null;
 		}
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		Rectangle view_pixbox = view.getPixelBox();
-		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
+		int xbeg = Math.max(view_pixbox.x, getPixelBox().x);
 		Graphics g = view.getGraphics();
 		g.setFont(default_font);
-		handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, pixelbox.height);
+		handle_pixbox.setBounds(xbeg, getPixelBox().y, handle_width, getPixelBox().height);
 
 		return handle_pixbox;
 	}
@@ -937,7 +937,7 @@ public class GraphGlyph extends Glyph {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		
 		if (getShowGraph()) {
 			drawGraph(view);
@@ -952,7 +952,7 @@ public class GraphGlyph extends Glyph {
 		if (getShowBounds()) {
 			Graphics g = view.getGraphics();
 			g.setColor(Color.green);
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width - 1, getPixelBox().height - 1);
 		}
 		if (getShowLabel()) {
 			drawLabel(view);
@@ -968,7 +968,7 @@ public class GraphGlyph extends Glyph {
 			return;
 		}
 		GraphType graph_style = getGraphStyle();
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		Graphics g = view.getGraphics();
 		double coords_per_pixel = 1.0F / ( view.getTransform()).getScaleX();
 		getInternalLinearTransform(view, scratch_trans);
@@ -1002,7 +1002,7 @@ public class GraphGlyph extends Glyph {
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH || graph_style == GraphType.FILL_BAR_GRAPH) {
 			if (yzero == 0) {
 				g.setColor(Color.gray);
-				g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
+				g.drawLine(getPixelBox().x, zero_point.y, getPixelBox().width, zero_point.y);
 			}
 			if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.FILL_BAR_GRAPH) {
 				g.setColor(darker);
@@ -1275,7 +1275,7 @@ public class GraphGlyph extends Glyph {
 				SeqSymmetry sym = new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
 				region_holder.addChild(sym);
 			} else {
-				drawRectOrLine(g, prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
+				drawRectOrLine(g, prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
 			}
 		}
 	}
@@ -1297,7 +1297,7 @@ public class GraphGlyph extends Glyph {
 				SeqSymmetry sym = new SingletonSeqSymmetry(pass_thresh_start, pass_thresh_end, aseq);
 				region_holder.addChild(sym);
 			} else {
-				drawRectOrLine(g, prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
+				drawRectOrLine(g, prev_point.x, getPixelBox().y + getPixelBox().height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
 			}
 		}
 	}

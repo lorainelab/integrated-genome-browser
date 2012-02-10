@@ -37,14 +37,14 @@ public class OutlineRectGlyph extends SolidGlyph  {
 	 * the outline that are visible
 	 */
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (pixelbox.width <= 0) { pixelbox.width = 0; }
-		if (pixelbox.height <= 0) { pixelbox.height = 0; }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (getPixelBox().width <= 0) { getPixelBox().width = 0; }
+		if (getPixelBox().height <= 0) { getPixelBox().height = 0; }
 		Graphics g = view.getGraphics();
 
 		if (fill_rect) {
 			g.setColor(getBackgroundColor());
-			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		}
 
 		g.setColor(getForegroundColor());
@@ -58,11 +58,11 @@ public class OutlineRectGlyph extends SolidGlyph  {
 		if (comp_size == null) { return; }
 
 		if ((!CHECK_EDGES) ||
-				((pixelbox.x >= 0) &&
-				 (pixelbox.x+pixelbox.width <= comp_size.width) &&
-				 (pixelbox.y >= 0) &&
-				 (pixelbox.y+pixelbox.height <= comp_size.height))) {
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				((getPixelBox().x >= 0) &&
+				 (getPixelBox().x+getPixelBox().width <= comp_size.width) &&
+				 (getPixelBox().y >= 0) &&
+				 (getPixelBox().y+getPixelBox().height <= comp_size.height))) {
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 				 }
 		else {
 			if (DEBUG_EDGES) {
@@ -73,45 +73,45 @@ public class OutlineRectGlyph extends SolidGlyph  {
 
 			//Checking against component dimensions instead of view, to avoid
 			//    conflicts with scrolling & damage optimizations
-			drawXBegEdge = (pixelbox.x >= 0);
-			drawXEndEdge = (pixelbox.x+pixelbox.width <= comp_size.width);
-			drawYBegEdge = (pixelbox.y >= 0);
-			drawYEndEdge = (pixelbox.y+pixelbox.height <= comp_size.height);
+			drawXBegEdge = (getPixelBox().x >= 0);
+			drawXEndEdge = (getPixelBox().x+getPixelBox().width <= comp_size.width);
+			drawYBegEdge = (getPixelBox().y >= 0);
+			drawYEndEdge = (getPixelBox().y+getPixelBox().height <= comp_size.height);
 
 			if (!drawXBegEdge) {
 				if (DEBUG_EDGES) { System.out.println("Not drawing x beg edge"); }
-				pixelbox.width = pixelbox.x + pixelbox.width - vpix.x;
-				pixelbox.x = vpix.x;
+				getPixelBox().width = getPixelBox().x + getPixelBox().width - vpix.x;
+				getPixelBox().x = vpix.x;
 			}
 			if (!drawYBegEdge) {
 				if (DEBUG_EDGES) { System.out.println("Not drawing y beg edge"); }
-				pixelbox.height = pixelbox.y + pixelbox.height - vpix.y;
-				pixelbox.y = vpix.y;
+				getPixelBox().height = getPixelBox().y + getPixelBox().height - vpix.y;
+				getPixelBox().y = vpix.y;
 			}
 			if (!drawXEndEdge) {
 				if (DEBUG_EDGES) { System.out.println("Not drawing x end edge"); }
-				pixelbox.width = vpix.x+vpix.width-pixelbox.x;
+				getPixelBox().width = vpix.x+vpix.width-getPixelBox().x;
 			}
 			if (!drawYEndEdge) {
 				if (DEBUG_EDGES) { System.out.println("Not drawing y end edge"); }
-				pixelbox.height = vpix.y+vpix.height-pixelbox.y;
+				getPixelBox().height = vpix.y+vpix.height-getPixelBox().y;
 			}
 
 			if (drawYBegEdge) {
-				g.drawLine(pixelbox.x, pixelbox.y,
-						pixelbox.x+pixelbox.width-1, pixelbox.y);
+				g.drawLine(getPixelBox().x, getPixelBox().y,
+						getPixelBox().x+getPixelBox().width-1, getPixelBox().y);
 			}
 			if (drawXEndEdge) {
-				g.drawLine(pixelbox.x+pixelbox.width, pixelbox.y,
-						pixelbox.x+pixelbox.width, pixelbox.y+pixelbox.height-1);
+				g.drawLine(getPixelBox().x+getPixelBox().width, getPixelBox().y,
+						getPixelBox().x+getPixelBox().width, getPixelBox().y+getPixelBox().height-1);
 			}
 			if (drawYEndEdge) {
-				g.drawLine(pixelbox.x+pixelbox.width, pixelbox.y+pixelbox.height,
-						pixelbox.x, pixelbox.y+pixelbox.height);
+				g.drawLine(getPixelBox().x+getPixelBox().width, getPixelBox().y+getPixelBox().height,
+						getPixelBox().x, getPixelBox().y+getPixelBox().height);
 			}
 			if (drawXBegEdge) {
-				g.drawLine(pixelbox.x, pixelbox.y+pixelbox.height,
-						pixelbox.x, pixelbox.y+1);
+				g.drawLine(getPixelBox().x, getPixelBox().y+getPixelBox().height,
+						getPixelBox().x, getPixelBox().y+1);
 			}
 
 		}

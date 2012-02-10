@@ -27,24 +27,24 @@ public class SquiggleGlyph extends SolidGlyph  {
 	int preferred_halfsegment = 5;
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (pixelbox.width == 0) { pixelbox.width = 1; }
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (getPixelBox().width == 0) { getPixelBox().width = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 		Graphics g = view.getGraphics();
 
 		g.setColor(getBackgroundColor());
-		if (pixelbox.width < 2*preferred_halfsegment || pixelbox.height < 3) {
-			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		if (getPixelBox().width < 2*preferred_halfsegment || getPixelBox().height < 3) {
+			g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		}
 		else {
-			int halfsegment = Math.min(pixelbox.height-1,preferred_halfsegment);
-			halfsegment = Math.min(pixelbox.width/2, halfsegment);
-			int half_segments = (pixelbox.width-1) / halfsegment;
-			int full_segments = (pixelbox.width-1) / (halfsegment*2);
-			int xleft = pixelbox.x;
+			int halfsegment = Math.min(getPixelBox().height-1,preferred_halfsegment);
+			halfsegment = Math.min(getPixelBox().width/2, halfsegment);
+			int half_segments = (getPixelBox().width-1) / halfsegment;
+			int full_segments = (getPixelBox().width-1) / (halfsegment*2);
+			int xleft = getPixelBox().x;
 			int xright;
-			int ytop = pixelbox.y;
-			int ybot = pixelbox.y+pixelbox.height-1;
+			int ytop = getPixelBox().y;
+			int ybot = getPixelBox().y+getPixelBox().height-1;
 
 			for (int i=0; i<full_segments; i++) {
 				xright = xleft + halfsegment;
@@ -58,7 +58,7 @@ public class SquiggleGlyph extends SolidGlyph  {
 
 			// if even number of half segments, go up on final incomplete segment
 			if (even_segments) {
-				xright = pixelbox.x+pixelbox.width-1;
+				xright = getPixelBox().x+getPixelBox().width-1;
 				int width = xright-xleft;
 				if (width > 1) {
 					g.drawLine(xleft, ybot, xright, ybot-((ybot-ytop)*width)/halfsegment);
@@ -69,7 +69,7 @@ public class SquiggleGlyph extends SolidGlyph  {
 				xright = xleft + halfsegment;
 				g.drawLine(xleft, ybot, xright, ytop);
 				xleft = xright;
-				xright = pixelbox.x+pixelbox.width-1;
+				xright = getPixelBox().x+getPixelBox().width-1;
 				int width = xright-xleft;
 				if (width > 1) {
 					g.drawLine(xleft, ytop, xright, ytop+((ybot-ytop)*width)/halfsegment);

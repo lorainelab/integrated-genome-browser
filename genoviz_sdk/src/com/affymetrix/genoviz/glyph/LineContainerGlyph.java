@@ -32,18 +32,18 @@ import java.awt.geom.Rectangle2D;
 public class LineContainerGlyph extends Glyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (pixelbox.width == 0) { pixelbox.width = 1; }
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (getPixelBox().width == 0) { getPixelBox().width = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
 
 		// temp fix for AWT drawing bug when rect gets too big.
 		Rectangle compbox = view.getComponentSizeRect();
-		setPixelBox(pixelbox.intersection(compbox));
+		setPixelBox(getPixelBox().intersection(compbox));
 
 		// We use fillRect instead of drawLine, because it may be faster.
-		g.fillRect(pixelbox.x, pixelbox.y+pixelbox.height/2, pixelbox.width, 1);
+		g.fillRect(getPixelBox().x, getPixelBox().y+getPixelBox().height/2, getPixelBox().width, 1);
 
 		super.draw(view);
 	}
@@ -67,7 +67,7 @@ public class LineContainerGlyph extends Glyph  {
 	//
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible() && pixel_hitbox.intersects(pixelbox);
+		return  isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	//

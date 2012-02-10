@@ -75,30 +75,30 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		int text_height = fm.getAscent();
 		int blank_width = fm.charWidth ('z')*2;
 
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		if (DEBUG_PIXELBOX) {
-			debug_rect.setBounds(pixelbox.x, pixelbox.y,
-					pixelbox.width, pixelbox.height);
+			debug_rect.setBounds(getPixelBox().x, getPixelBox().y,
+					getPixelBox().width, getPixelBox().height);
 		}
 		if (hPlacement == LEFT) {
 		}
 		else if (hPlacement == RIGHT) {
-			pixelbox.x += pixelbox.width + blank_width;
+			getPixelBox().x += getPixelBox().width + blank_width;
 		}
 		else {
-			pixelbox.x += pixelbox.width/2 - text_width/2;
+			getPixelBox().x += getPixelBox().width/2 - text_width/2;
 		}
 		
 		if (vPlacement == ABOVE) {
 		}
 		else if (vPlacement == BELOW) {
-			pixelbox.y += pixelbox.height;
+			getPixelBox().y += getPixelBox().height;
 		}
 		else {
-			pixelbox.y += pixelbox.height/2 + text_height/2;
+			getPixelBox().y += getPixelBox().height/2 + text_height/2;
 		}
-		pixelbox.width = text_width;
-		pixelbox.height = text_height+1; // +1 for an extra pixel below the text
+		getPixelBox().width = text_width;
+		getPixelBox().height = text_height+1; // +1 for an extra pixel below the text
 		// so letters like 'g' still have at
 		// least one pixel below them
 
@@ -106,8 +106,8 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 			Color bgc = getBackgroundColor();
 			if ( null != bgc ) {
 				g.setColor( getBackgroundColor() );
-				g.fillRect( pixelbox.x, pixelbox.y - pixelbox.height,
-						pixelbox.width, pixelbox.height);
+				g.fillRect( getPixelBox().x, getPixelBox().y - getPixelBox().height,
+						getPixelBox().width, getPixelBox().height);
 			}
 		}
 
@@ -120,13 +120,13 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 			//			int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
 			// changed from -1 to +2 so descent is overhanging (rather than ascent)
 			int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) + 2;
-			g.drawString (str, pixelbox.x, pixelbox.y -pixelbox.height/2 + adjust);
+			g.drawString (str, getPixelBox().x, getPixelBox().y -getPixelBox().height/2 + adjust);
 		}
 
 		if (DEBUG_PIXELBOX) {
 			// testing pixbox...
 			g.setColor(Color.red);
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 			g.setColor(Color.yellow);
 			g.drawRect(debug_rect.x, debug_rect.y,
 					debug_rect.width, debug_rect.height);

@@ -385,9 +385,9 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 
 		scratchrect.setRect(visible_seq_beg,  getCoordBox().y,
 				visible_seq_span, getCoordBox().height);
-		view.transformToPixels(scratchrect, pixelbox);
-		pixels_per_residue = ((double)pixelbox.width)/scratchrect.width;
-		int seq_pixel_offset = pixelbox.x;
+		view.transformToPixels(scratchrect, getPixelBox());
+		pixels_per_residue = ((double)getPixelBox().width)/scratchrect.width;
+		int seq_pixel_offset = getPixelBox().x;
 
 		// ***** draw a normal rect if scale is < 1 pixel per residue ******
 		// ****  or if sequence has not been set ****
@@ -403,11 +403,11 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 
 			if (isSelected() && view.getScene().getSelectionAppearance() == Scene.SELECT_FILL) {
 				g.setColor(view.getScene().getSelectionColor());
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 			}
 			else if (bg_color_strategy == FIXED_COLOR) {
 				g.setColor(this.getBackgroundColor());
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 			}
 			// only draw background shading for each residue if:
 			//   sequence has been set AND
@@ -447,8 +447,8 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 					//   _any_ background  GAH 7-25-98
 					if (last_color != null) {
 						g.setColor(last_color);
-						g.fillRect(pixelstart, pixelbox.y,
-								box_width, pixelbox.height);
+						g.fillRect(pixelstart, getPixelBox().y,
+								box_width, getPixelBox().height);
 					}
 					doublestart += box_width;
 				}
@@ -465,7 +465,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 					((int)pixels_per_residue == font_width)) {
 				doublestart = (double)seq_pixel_offset;
 				pixelstart = (int)doublestart;
-				int baseline = (pixelbox.y+(pixelbox.height/2)) + font_height/2;
+				int baseline = (getPixelBox().y+(getPixelBox().height/2)) + font_height/2;
 
 				if (monospace && (fg_color_strategy == FIXED_COLOR))  {
 					// this call to String.substring() is more efficient than it looks,
@@ -632,7 +632,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return isVisible() && pixel_hitbox.intersects(pixelbox);
+		return isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {

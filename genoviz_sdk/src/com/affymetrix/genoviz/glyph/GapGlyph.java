@@ -25,19 +25,19 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class GapGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
-		if (pixelbox.width < mSizeThreshold) { pixelbox.width = mSizeThreshold; }
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		if (getPixelBox().width < mSizeThreshold) { getPixelBox().width = mSizeThreshold; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
 
 		Rectangle compbox = view.getComponentSizeRect();
-		setPixelBox(pixelbox.intersection(compbox));
+		setPixelBox(getPixelBox().intersection(compbox));
 
 		// draw the box
 		// Note: the cost of the cull test should be miniscule compared with
 		// the cost of what follows when it tests positive.
-		if(pixelbox.width + pixelbox.height > mSizeThreshold)
-			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		if(getPixelBox().width + getPixelBox().height > mSizeThreshold)
+			g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		super.draw(view);
 	}
 

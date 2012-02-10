@@ -21,7 +21,7 @@ public class WrappedStringGlyph extends StringGlyph {
 	public void draw(ViewI view) {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		
 		Rectangle boundingPixelBox = view.getPixelBox();
 		String label = getString();
@@ -35,22 +35,22 @@ public class WrappedStringGlyph extends StringGlyph {
 		int text_height = fm.getHeight();
 
 		// Lower bound of visible glyph
-		int lowerY = Math.max(pixelbox.y, boundingPixelBox.y);
+		int lowerY = Math.max(getPixelBox().y, boundingPixelBox.y);
 
 		// Upper bound of visible glyph
 		int upperY = Math.min(
-				pixelbox.y + pixelbox.height,
+				getPixelBox().y + getPixelBox().height,
 				boundingPixelBox.y + boundingPixelBox.height);
 
 		int text_width = fm.stringWidth(label);
 		
 		
-		if (text_width > pixelbox.width) {
-			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox);
+		if (text_width > getPixelBox().width) {
+			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, getPixelBox());
 		} else {
 			// if glyph's pixelbox wider than text, then center text
-			pixelbox.x += pixelbox.width / 2 - text_width / 2;
-			g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
+			getPixelBox().x += getPixelBox().width / 2 - text_width / 2;
+			g.drawString(label, getPixelBox().x, (lowerY + upperY + text_height) / 2);
 		}
 	}
 	

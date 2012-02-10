@@ -28,23 +28,23 @@ public class CenteredCircleGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
 		calcPixels(view);
-		if (pixelbox.width == 0) { pixelbox.width = 1; }
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		if (getPixelBox().width == 0) { getPixelBox().width = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
-		g.fillOval(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		g.fillOval(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		super.draw(view);
 	}
 
 	public void calcPixels(ViewI view) {
 		super.calcPixels(view);
-		if (pixelbox.width > pixelbox.height) {
-			pixelbox.x = pixelbox.x+pixelbox.width/2-pixelbox.height/2;
-			pixelbox.width = pixelbox.height;
+		if (getPixelBox().width > getPixelBox().height) {
+			getPixelBox().x = getPixelBox().x+getPixelBox().width/2-getPixelBox().height/2;
+			getPixelBox().width = getPixelBox().height;
 		}
-		else if (pixelbox.height > pixelbox.width)  {
-			pixelbox.y = pixelbox.y + pixelbox.height/2 - pixelbox.width/2;
-			pixelbox.height = pixelbox.width;
+		else if (getPixelBox().height > getPixelBox().width)  {
+			getPixelBox().y = getPixelBox().y + getPixelBox().height/2 - getPixelBox().width/2;
+			getPixelBox().height = getPixelBox().width;
 		}
 	}
 

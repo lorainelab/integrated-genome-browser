@@ -83,7 +83,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
 
             Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, getCoordBox().y,
                     visible_seq_span, getCoordBox().height);
-            view.transformToPixels(scratchrect, pixelbox);
+            view.transformToPixels(scratchrect, getPixelBox());
             pixels_per_base = (view.getTransform()).getScaleX();
 
             // ***** background already drawn in drawTraversal(), so just return if
@@ -92,7 +92,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
                 return;
             } // ***** otherwise semantic zooming to show more detail *****
             if (visible_seq_span > 0) {
-                int seq_pixel_offset = pixelbox.x;
+                int seq_pixel_offset = getPixelBox().x;
                 String str = chariter.substring(seq_beg_index, seq_end_index);
                 drawHorizontalResidues(g, pixels_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
             }
@@ -112,7 +112,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
             int seqBegIndex,
             int seqEndIndex,
             int pixelStart) {
-        int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+        int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
 		if(drawRect)
 			drawResidueRectangles(g, pixelsPerBase, str);
@@ -138,7 +138,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
             //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
             int offset = (int) (j * pixelsPerBase);
             //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-            g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
+            g.fillRect(getPixelBox().x + offset, getPixelBox().y, (int) Math.ceil(pixelsPerBase), getPixelBox().height);
         }
     }
 
@@ -165,7 +165,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
     public boolean hit(Rectangle pixel_hitbox, ViewI view) {
         if (isVisible() && isHitable()) {
             calcPixels(view);
-            return pixel_hitbox.intersects(pixelbox);
+            return pixel_hitbox.intersects(getPixelBox());
         } else {
             return false;
         }

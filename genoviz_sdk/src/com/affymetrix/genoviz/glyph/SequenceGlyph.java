@@ -157,7 +157,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 			Rectangle2D.Double scratchrect = new Rectangle2D.Double(getCoordBox().x, visible_seq_beg,
 					getCoordBox().width, visible_seq_span);
-			view.transformToPixels(scratchrect, pixelbox);
+			view.transformToPixels(scratchrect, getPixelBox());
 			pixels_per_base = (view.getTransform()).getScaleY();
 
 			// ***** background already drawn in drawTraversal(), so just return if
@@ -183,11 +183,11 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			int seq_end_index) {
 		int pixelstart;
 		double doublestart;
-		if (((double) ((int) pixels_per_base) == pixels_per_base) && ((int) pixels_per_base >= fontmet.getHeight() - 4) && pixelbox.width >= (fontmet.charWidth('C'))) {
-			doublestart = (double) pixelbox.y;
+		if (((double) ((int) pixels_per_base) == pixels_per_base) && ((int) pixels_per_base >= fontmet.getHeight() - 4) && getPixelBox().width >= (fontmet.charWidth('C'))) {
+			doublestart = (double) getPixelBox().y;
 			int asc = fontmet.getAscent();
 			pixelstart = (int) doublestart + asc;
-			int midline = (pixelbox.x + (pixelbox.width / 2)) - fontmet.charWidth('G') / 2;
+			int midline = (getPixelBox().x + (getPixelBox().width / 2)) - fontmet.charWidth('G') / 2;
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			for (int i = seq_beg_index; i < seq_end_index; i++) {
@@ -228,9 +228,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg,  getCoordBox().y,
 					visible_seq_span, getCoordBox().height);
-			view.transformToPixels(scratchrect, pixelbox);
+			view.transformToPixels(scratchrect, getPixelBox());
 			pixels_per_base = (view.getTransform()).getScaleX();
-			int seq_pixel_offset = pixelbox.x;
+			int seq_pixel_offset = getPixelBox().x;
 
 			// ***** background already drawn in drawTraversal(), so just return if
 			// ***** scale is < 1 pixel per base
@@ -261,7 +261,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 		  int seqBegIndex,
 		  int seqEndIndex,
 		  int pixelStart ) {
-			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+			int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			if (this.font_width < pixelsPerBase) { // Ample room to draw residue letters.
@@ -282,8 +282,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 					g.drawString(str, pixelStart, baseline);
 				}
 			} else { // Not enough room for letters in this font if sequence is dense.
-				int h = Math.max(1, Math.min(this.pixelbox.height, this.fontmet.getAscent()));
-				int y = Math.min(baseline, (this.pixelbox.y + this.pixelbox.height)) - h;
+				int h = Math.max(1, Math.min(this.getPixelBox().height, this.fontmet.getAscent()));
+				int y = Math.min(baseline, (this.getPixelBox().y + this.getPixelBox().height)) - h;
 				for (int i = seqBegIndex; i < seqEndIndex; i++) {
 					if (!Character.isWhitespace(residues.charAt(i))) {
 						int w = (int) Math.max(1, pixelsPerBase - 1);
@@ -310,7 +310,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible() && pixel_hitbox.intersects(pixelbox);
+		return  isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {

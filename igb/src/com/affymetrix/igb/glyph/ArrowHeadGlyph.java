@@ -34,10 +34,10 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	private void calHead(){
 		switch ( this.getOrientation() ) {
 			case NeoConstants.HORIZONTAL:
-				this.headY = pixelbox.height;
+				this.headY = getPixelBox().height;
 				break;
 			case NeoConstants.VERTICAL:
-				this.headY = pixelbox.width;
+				this.headY = getPixelBox().width;
 				break;
 		}
 		this.headX = this.headY/2;
@@ -47,13 +47,13 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		double hold_y = getCoordBox().y;
 
 		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
-		view.transformToPixels(getCoordBox(), pixelbox);
-		int offset_center = pixelbox.y;
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		int offset_center = getPixelBox().y;
 		getCoordBox().y = hold_y;
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		calHead();
-		if(headY < 8 || pixelbox.x + pixelbox.width/2 + headX/2 + buffer_pixel> pixelbox.x + pixelbox.width || 
-				pixelbox.x + pixelbox.width/2 - headX/2 - buffer_pixel< pixelbox.x)
+		if(headY < 8 || getPixelBox().x + getPixelBox().width/2 + headX/2 + buffer_pixel> getPixelBox().x + getPixelBox().width || 
+				getPixelBox().x + getPixelBox().width/2 - headX/2 - buffer_pixel< getPixelBox().x)
 			return;
 		
 		Graphics g = view.getGraphics();
@@ -70,28 +70,28 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		 */
 		switch ( this.getDirection() ) {
 			case EAST:  // forward strand
-				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
-				drawArrowHead (g, pixelbox.x + pixelbox.width/2 + headX/2,
-						pixelbox.x + pixelbox.width/2 - headX/2,
-						offset_center, pixelbox.x + pixelbox.width/2);
+				//bounds.setBounds(getPixelBox().x + getPixelBox().width/2 - headX/2, offset_center, headX, headY);
+				drawArrowHead (g, getPixelBox().x + getPixelBox().width/2 + headX/2,
+						getPixelBox().x + getPixelBox().width/2 - headX/2,
+						offset_center, getPixelBox().x + getPixelBox().width/2);
 				break;
 			case WEST:
-				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
-				drawArrowHead (g, pixelbox.x + pixelbox.width/2 - headX/2,
-						pixelbox.x + pixelbox.width/2 + headX/2,
-						offset_center, pixelbox.x + pixelbox.width/2);
+				//bounds.setBounds(getPixelBox().x + getPixelBox().width/2 - headX/2, offset_center, headX, headY);
+				drawArrowHead (g, getPixelBox().x + getPixelBox().width/2 - headX/2,
+						getPixelBox().x + getPixelBox().width/2 + headX/2,
+						offset_center, getPixelBox().x + getPixelBox().width/2);
 				break;
 			case SOUTH:  // forward strand
-				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
-				drawArrowHead (g, pixelbox.y + pixelbox.height/2 + headX/2,
-						pixelbox.y + pixelbox.height/2 - headX/2,
-						pixelbox.x + pixelbox.width/2, offset_center);
+				//bounds.setBounds(getPixelBox().x + getPixelBox().width/2 - headY/2, getPixelBox().x + getPixelBox().width/2, headY, headX);
+				drawArrowHead (g, getPixelBox().y + getPixelBox().height/2 + headX/2,
+						getPixelBox().y + getPixelBox().height/2 - headX/2,
+						getPixelBox().x + getPixelBox().width/2, offset_center);
 				break;
 			case NORTH:  // reverse strand
-				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
-				drawArrowHead (g, pixelbox.y + pixelbox.height/2 - headX/2,
-						pixelbox.y + pixelbox.height/2 + headX/2,
-						pixelbox.x + pixelbox.width/2, offset_center);
+				//bounds.setBounds(getPixelBox().x + getPixelBox().width/2 - headY/2, getPixelBox().x + getPixelBox().width/2, headY, headX);
+				drawArrowHead (g, getPixelBox().y + getPixelBox().height/2 - headX/2,
+						getPixelBox().y + getPixelBox().height/2 + headX/2,
+						getPixelBox().x + getPixelBox().width/2, offset_center);
 				break;
 			default:
 		}

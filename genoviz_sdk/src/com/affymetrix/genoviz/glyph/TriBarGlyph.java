@@ -63,14 +63,14 @@ public class TriBarGlyph extends DirectedGlyph {
 
 	@Override
 	public void calcPixels(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		int xtricenter;
 		int ytricenter;
 
 		switch ( this.getDirection() ) {
 			case EAST:
-				xtricenter = pixelbox.x + pixelbox.width/2;
-				ytricenter = pixelbox.y + 5;
+				xtricenter = getPixelBox().x + getPixelBox().width/2;
+				ytricenter = getPixelBox().y + 5;
 				x[0] = xtricenter - 5;
 				y[0] = ytricenter - 5;
 				x[1] = xtricenter;
@@ -81,8 +81,8 @@ public class TriBarGlyph extends DirectedGlyph {
 				y[3] = y[0];
 				break;
 			case WEST:
-				xtricenter = pixelbox.x + pixelbox.width/2;
-				ytricenter = pixelbox.y + pixelbox.height - 5;
+				xtricenter = getPixelBox().x + getPixelBox().width/2;
+				ytricenter = getPixelBox().y + getPixelBox().height - 5;
 				x[0] = xtricenter - 5;
 				y[0] = ytricenter + 5;
 				x[1] = xtricenter;
@@ -93,8 +93,8 @@ public class TriBarGlyph extends DirectedGlyph {
 				y[3] = y[0];
 				break;
 			case SOUTH:
-				ytricenter = pixelbox.y + pixelbox.height/2;
-				xtricenter = pixelbox.x + pixelbox.width - 5;
+				ytricenter = getPixelBox().y + getPixelBox().height/2;
+				xtricenter = getPixelBox().x + getPixelBox().width - 5;
 				x[0] = xtricenter + 5;
 				y[0] = ytricenter - 5;
 				x[1] = xtricenter - 5;
@@ -105,8 +105,8 @@ public class TriBarGlyph extends DirectedGlyph {
 				y[3] = y[0];
 				break;
 			case NORTH:
-				ytricenter = pixelbox.y + pixelbox.height/2;
-				xtricenter = pixelbox.x + 5;
+				ytricenter = getPixelBox().y + getPixelBox().height/2;
+				xtricenter = getPixelBox().x + 5;
 				x[0] = xtricenter - 5;
 				y[0] = ytricenter - 5;
 				x[1] = xtricenter + 5;
@@ -123,16 +123,16 @@ public class TriBarGlyph extends DirectedGlyph {
 		switch ( this.getDirection() ) {
 			case EAST:
 			case WEST:
-				this.bar.x = pixelbox.x+pixelbox.width/2-1;
-				this.bar.y = pixelbox.y;
+				this.bar.x = getPixelBox().x+getPixelBox().width/2-1;
+				this.bar.y = getPixelBox().y;
 				this.bar.width = 3;
-				this.bar.height = pixelbox.height;
+				this.bar.height = getPixelBox().height;
 				break;
 			case SOUTH:
 			case NORTH:
-				this.bar.x = pixelbox.x;
-				this.bar.y = pixelbox.y+pixelbox.height/2-1;
-				this.bar.width = pixelbox.width;
+				this.bar.x = getPixelBox().x;
+				this.bar.y = getPixelBox().y+getPixelBox().height/2-1;
+				this.bar.width = getPixelBox().width;
 				this.bar.height = 3;
 				break;
 			default:

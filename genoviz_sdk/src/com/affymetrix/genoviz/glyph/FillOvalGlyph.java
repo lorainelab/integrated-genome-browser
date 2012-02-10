@@ -23,11 +23,11 @@ public class FillOvalGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
 		calcPixels(view);
-		if (pixelbox.width == 0) { pixelbox.width = 1; }
-		if (pixelbox.height == 0) { pixelbox.height = 1; }
+		if (getPixelBox().width == 0) { getPixelBox().width = 1; }
+		if (getPixelBox().height == 0) { getPixelBox().height = 1; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
-		g.fillOval(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		g.fillOval(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		super.draw(view);
 	}
 

@@ -59,10 +59,10 @@ public class ArrowGlyph extends DirectedGlyph  {
 		double hold_y = getCoordBox().y;
 
 		getCoordBox().y = getCoordBox().y + (getCoordBox().height / 2);
-		view.transformToPixels(getCoordBox(), pixelbox);
-		int offset_center = pixelbox.y;
+		view.transformToPixels(getCoordBox(), getPixelBox());
+		int offset_center = getPixelBox().y;
 		getCoordBox().y = hold_y;
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
@@ -78,40 +78,40 @@ public class ArrowGlyph extends DirectedGlyph  {
 		 */
 		switch ( this.getDirection() ) {
 			case EAST:  // forward strand
-				this.stem.x = pixelbox.x;
+				this.stem.x = getPixelBox().x;
 				this.stem.y = offset_center - stemWidth/2;
-				this.stem.width = pixelbox.width - headX;
+				this.stem.width = getPixelBox().width - headX;
 				this.stem.height = stemWidth;
-				drawArrowHead (g, pixelbox.x + pixelbox.width,
-						pixelbox.x + pixelbox.width - headX,
+				drawArrowHead (g, getPixelBox().x + getPixelBox().width,
+						getPixelBox().x + getPixelBox().width - headX,
 						offset_center);
 				break;
 			case WEST:
-				this.stem.x = pixelbox.x + headX;
+				this.stem.x = getPixelBox().x + headX;
 				this.stem.y = offset_center - stemWidth/2;
-				this.stem.width = pixelbox.width - headX;
+				this.stem.width = getPixelBox().width - headX;
 				this.stem.height = stemWidth;
-				drawArrowHead (g, pixelbox.x,
-						pixelbox.x + headX,
+				drawArrowHead (g, getPixelBox().x,
+						getPixelBox().x + headX,
 						offset_center);
 				break;
 			case SOUTH:  // forward strand
-				this.stem.x = pixelbox.x + ( pixelbox.width - stemWidth ) / 2;
-				this.stem.y = pixelbox.y;
+				this.stem.x = getPixelBox().x + ( getPixelBox().width - stemWidth ) / 2;
+				this.stem.y = getPixelBox().y;
 				this.stem.width = stemWidth;
-				this.stem.height = pixelbox.height - headX;
-				drawArrowHead (g, pixelbox.y + pixelbox.height,
-						pixelbox.y + pixelbox.height - headX,
-						pixelbox.x + pixelbox.width/2 );
+				this.stem.height = getPixelBox().height - headX;
+				drawArrowHead (g, getPixelBox().y + getPixelBox().height,
+						getPixelBox().y + getPixelBox().height - headX,
+						getPixelBox().x + getPixelBox().width/2 );
 				break;
 			case NORTH:  // reverse strand
-				this.stem.x = pixelbox.x + ( pixelbox.width - stemWidth ) / 2;
-				this.stem.y = pixelbox.y + headX;
+				this.stem.x = getPixelBox().x + ( getPixelBox().width - stemWidth ) / 2;
+				this.stem.y = getPixelBox().y + headX;
 				this.stem.width = stemWidth;
-				this.stem.height = pixelbox.height - headX;
-				drawArrowHead (g, pixelbox.y,
-						pixelbox.y + headX,
-						pixelbox.x + pixelbox.width/2 );
+				this.stem.height = getPixelBox().height - headX;
+				drawArrowHead (g, getPixelBox().y,
+						getPixelBox().y + headX,
+						getPixelBox().x + getPixelBox().width/2 );
 				break;
 			default:
 		}

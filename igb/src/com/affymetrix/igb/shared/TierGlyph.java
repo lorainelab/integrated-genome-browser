@@ -232,26 +232,26 @@ public class TierGlyph extends SolidGlyph {
 	 */
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 
-		pixelbox.width = Math.max(pixelbox.width, getMinPixelsWidth());
-		pixelbox.height = Math.max(pixelbox.height, getMinPixelsHeight());
+		getPixelBox().width = Math.max(getPixelBox().width, getMinPixelsWidth());
+		getPixelBox().height = Math.max(getPixelBox().height, getMinPixelsHeight());
 
 		Graphics g = view.getGraphics();
 		Rectangle vbox = view.getPixelBox();
-		setPixelBox(pixelbox.intersection(vbox));
+		setPixelBox(getPixelBox().intersection(vbox));
 
 		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
 			if (style.getBackground() != null) {
 				g.setColor(style.getBackground());
 				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height+1);
+				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height+1);
 			}
 		} else {
 			if (style.getBackground() != null) {
 				g.setColor(style.getBackground());
 				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height+1);
+				g.fillRect(getPixelBox().x, getPixelBox().y, 2 * getPixelBox().width, getPixelBox().height+1);
 			}
 
 			// cycle through "middleground" glyphs,
@@ -341,16 +341,16 @@ public class TierGlyph extends SolidGlyph {
 		if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
 			return null;
 		}
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		Rectangle view_pixbox = view.getPixelBox();
-		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
+		int xbeg = Math.max(view_pixbox.x, getPixelBox().x);
 		Graphics g = view.getGraphics();
 		g.setFont(default_font);
 
 		Rectangle handle_pixbox = new Rectangle();
 		FontMetrics fm = g.getFontMetrics();
-		int h = Math.min(fm.getMaxAscent(), pixelbox.height);
-		handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, h);
+		int h = Math.min(fm.getMaxAscent(), getPixelBox().height);
+		handle_pixbox.setBounds(xbeg, getPixelBox().y, handle_width, h);
 		return handle_pixbox;
 	}
 

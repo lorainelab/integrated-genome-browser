@@ -151,7 +151,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 			// ***** semantic zooming to show more detail *****
 			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, getCoordBox().y,
 					visible_seq_span, getCoordBox().height);
-			view.transformToPixels(scratchrect, pixelbox);
+			view.transformToPixels(scratchrect, getPixelBox());
 			int seq_end_index = visible_seq_end - seq_beg;
 			if (seq_end_index > residue_length) {
 				seq_end_index = residue_length;
@@ -161,7 +161,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 				Logger.getLogger(AbstractAlignedTextGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
 				return;
 			}
-			int seq_pixel_offset = pixelbox.x;
+			int seq_pixel_offset = getPixelBox().x;
 			String str = chariter.substring(seq_beg_index, seq_end_index);
 			Graphics g = view.getGraphics();
 			drawHorizontalResidues(g, pixel_width_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
@@ -180,7 +180,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height, getShowMask());
+		drawResidueRectangles(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), getPixelBox().x, getPixelBox().y, getPixelBox().height, getShowMask());
 		drawResidueStrings(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), pixelStart, getShowMask());
 	}
 
@@ -193,7 +193,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
-			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+			int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			int pixelOffset = (int) (pixelsPerBase - this.font_width);
 			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
 			for (int i = 0; i < charArray.length; i++) {
@@ -219,7 +219,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 	public boolean hit(Rectangle pixel_hitbox, ViewI view) {
 		if (isVisible() && isHitable()) {
 			calcPixels(view);
-			return pixel_hitbox.intersects(pixelbox);
+			return pixel_hitbox.intersects(getPixelBox());
 		} else {
 			return false;
 		}

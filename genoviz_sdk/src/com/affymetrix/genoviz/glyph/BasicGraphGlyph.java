@@ -32,7 +32,7 @@ public class BasicGraphGlyph extends Glyph {
 	double ycoords[];
 
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
 		int beg_index = 0;

@@ -117,31 +117,31 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		calcPixels(view);
 
 		// if TOGGLE_BY_WIDTH, only show if LabelGlyph's pixelbox is <= pixels of glyph being labelled
-		if ((! TOGGLE_BY_WIDTH) || (pixelbox.width <= labeled_pix.width)) {
+		if ((! TOGGLE_BY_WIDTH) || (getPixelBox().width <= labeled_pix.width)) {
 			if (show_background) {
 				g.setColor(this.getBackgroundColor());
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 			}
 			g.setColor( this.getTextColor() );
 			// +2 for offsetting text from outline/background
-			g.drawString (text, pixelbox.x+2, this.text_baseline);
+			g.drawString (text, getPixelBox().x+2, this.text_baseline);
 		}
 
 
 		// note that union creates a new Rectangle -- may want to try
 		// doing union calculations here instead to avoid object creation...
-		enclosing_pix = pixelbox.union(labeled_pix);
+		enclosing_pix = getPixelBox().union(labeled_pix);
 		enclosing_coords = view.transformToCoords(enclosing_pix, enclosing_coords);
-		label_coords = view.transformToCoords(pixelbox, label_coords);
-		view.transformToCoords(pixelbox, getCoordBox());
+		label_coords = view.transformToCoords(getPixelBox(), label_coords);
+		view.transformToCoords(getPixelBox(), getCoordBox());
 
 		if (DEBUG_PIXELBOX) {
 			g.setColor(Color.red);
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		}
 		if (show_outline) {
 			g.setColor( this.getOutlineColor() );
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			g.drawRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height);
 		}
 
 		// The only reason I can find for calling super's draw method
@@ -186,50 +186,50 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		int text_height = (null==this.text)?0:fm.getAscent();
 
 		if (null == this.labeled) {
-			theView.transformToPixels(this.getCoordBox(), this.pixelbox);
+			theView.transformToPixels(this.getCoordBox(), this.getPixelBox());
 		} else {
-			theView.transformToPixels(this.labeled.getCoordBox(), this.pixelbox);
+			theView.transformToPixels(this.labeled.getCoordBox(), this.getPixelBox());
 		}
-		labeled_pix.setBounds(pixelbox.x, pixelbox.y,
-				pixelbox.width, pixelbox.height);
+		labeled_pix.setBounds(getPixelBox().x, getPixelBox().y,
+				getPixelBox().width, getPixelBox().height);
 		if (placement == LEFT) {
-			pixelbox.x = pixelbox.x - text_width - pixel_separation;
+			getPixelBox().x = getPixelBox().x - text_width - pixel_separation;
 		}
 		else if (placement == RIGHT) {
-			pixelbox.x = pixelbox.x + pixelbox.width + pixel_separation;
+			getPixelBox().x = getPixelBox().x + getPixelBox().width + pixel_separation;
 		}
 		else {
-			pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
+			getPixelBox().x = getPixelBox().x + getPixelBox().width/2 - text_width/2;
 		}
 		if (placement == ABOVE) {
-			//      pixelbox.y = pixelbox.y - pixel_separation;
-			this.text_baseline = pixelbox.y - pixel_separation;
+			//      getPixelBox().y = getPixelBox().y - pixel_separation;
+			this.text_baseline = getPixelBox().y - pixel_separation;
 		}
 		else if (placement == BELOW) {
-			this.text_baseline = pixelbox.y + pixelbox.height +
+			this.text_baseline = getPixelBox().y + getPixelBox().height +
 				text_height + pixel_separation;
 		}
 		else {
-			this.text_baseline = pixelbox.y + pixelbox.height/2 + text_height/2;
+			this.text_baseline = getPixelBox().y + getPixelBox().height/2 + text_height/2;
 		}
-		pixelbox.width = text_width;
-		pixelbox.height = text_height;
-		pixelbox.y = this.text_baseline - text_height;
+		getPixelBox().width = text_width;
+		getPixelBox().height = text_height;
+		getPixelBox().y = this.text_baseline - text_height;
 
 		// -2/+4 for offsetting outline/background from text position
-		pixelbox.x -= 2;
-		pixelbox.width += 4;
+		getPixelBox().x -= 2;
+		getPixelBox().width += 4;
 	}
 
 	public boolean intersects(Rectangle2D.Double rect, ViewI view) {
 		this.calcPixels(view);
-		this.setCoordBox(view.transformToCoords(this.pixelbox, this.getCoordBox()));
+		this.setCoordBox(view.transformToCoords(this.getPixelBox(), this.getCoordBox()));
 		return super.intersects(rect, view);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		calcPixels(view);
-		setCoordBox(view.transformToCoords(pixelbox, getCoordBox()));
+		setCoordBox(view.transformToCoords(getPixelBox(), getCoordBox()));
 		return coord_hitbox.intersects(getCoordBox());
 	}
 
@@ -238,7 +238,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		if (view != prev_view) {
 			calcPixels(view);
 		}
-		return pixel_hitbox.intersects(pixelbox);
+		return pixel_hitbox.intersects(getPixelBox());
 	}
 
 

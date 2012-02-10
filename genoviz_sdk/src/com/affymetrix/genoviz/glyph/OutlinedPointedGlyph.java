@@ -17,7 +17,7 @@ public class OutlinedPointedGlyph extends PointedGlyph {
 	public void draw(ViewI view) {
 		super.draw(view);
 		Graphics g = view.getGraphics();
-		if (pixelbox.width > 2 && pixelbox.height > 2 && HORIZONTAL == this.getOrientation()) {
+		if (getPixelBox().width > 2 && getPixelBox().height > 2 && HORIZONTAL == this.getOrientation()) {
 			g.setColor(bgcolor);			
 			if (this.isForward()) {	
 				xx[0] = x[0] + 1;

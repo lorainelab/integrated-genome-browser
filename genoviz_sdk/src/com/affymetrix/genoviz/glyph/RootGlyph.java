@@ -73,11 +73,11 @@ public class RootGlyph extends StretchContainerGlyph {
 	public void drawTraversal(ViewI view) {
 		super.drawTraversal(view);
 		if (show_outline) {
-			view.transformToPixels(getCoordBox(), pixelbox);
+			view.transformToPixels(getCoordBox(), getPixelBox());
 			Graphics g= view.getGraphics();
 			g.setColor(Color.green);
-			g.drawRect(pixelbox.x+2, pixelbox.y+2,
-					pixelbox.width-4, pixelbox.height-4);
+			g.drawRect(getPixelBox().x+2, getPixelBox().y+2,
+					getPixelBox().width-4, getPixelBox().height-4);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class RootGlyph extends StretchContainerGlyph {
 		 * Hence, since all glyphs are children of the root glyph,
 		 * no glyphs can get hit. -- Eric 1998-12-12
 		 */
-		view.transformToPixels(getCoordBox(), pixelbox);
+		view.transformToPixels(getCoordBox(), getPixelBox());
 		super.draw(view);
 	}
 

@@ -262,7 +262,7 @@ public final class ServerList {
 					n_node.put(GenericServerPref.LOGIN, node.get(GenericServerPref.LOGIN, ""));
 					n_node.put(GenericServerPref.PASSWORD, node.get(GenericServerPref.PASSWORD, ""));
 					n_node.put(GenericServerPref.NAME, node.get(GenericServerPref.NAME, ""));
-					n_node.put(GenericServerPref.ORDER, node.get(GenericServerPref.ORDER, ""));
+					n_node.putInt(GenericServerPref.ORDER, node.getInt(GenericServerPref.ORDER, 0));
 					if (node.get(GenericServerPref.TYPE, null) != null) {
 						n_node.put(GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
 					}
@@ -387,7 +387,7 @@ public final class ServerList {
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
 		node.put(GenericServerPref.NAME, name);
 		node.put(GenericServerPref.TYPE, type.getName());
-		node.put(GenericServerPref.ORDER, Integer.toString(order));
+		node.putInt(GenericServerPref.ORDER, order);
 		//Added url to preferences.
 		//long url was bugging the node name since it only accepts 80 char names
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
@@ -441,12 +441,12 @@ public final class ServerList {
 	}
 
 	public void setServerOrder(String url, int order) {
-		getPreferencesNode().node(GenericServer.getHash(url)).put(GenericServerPref.ORDER, Integer.toString(order));
+		getPreferencesNode().node(GenericServer.getHash(url)).putInt(GenericServerPref.ORDER, order);
 	}
 
 	private int getServerOrder(GenericServer server) {
 		String url = ServerUtils.formatURL(server.URL, server.serverType);
-		return Integer.parseInt(PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).get(GenericServerPref.ORDER, "0"));
+		return PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).getInt(GenericServerPref.ORDER, 0);
 	}
 
 	/**

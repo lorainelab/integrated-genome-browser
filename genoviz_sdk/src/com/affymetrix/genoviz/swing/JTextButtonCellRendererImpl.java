@@ -29,8 +29,8 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final JTextArea tfa = new JTextArea();
-		final JButton copy = new JButton("Copy & Close");
-		final JButton ok = new JButton("Ok");
+		final JButton copy = new JButton("Copy");
+		final JButton ok = new JButton("Cancel");
 		tfa.setEditable(false);
 		final JDialog dialog = new JDialog(frame, "Value") {
 

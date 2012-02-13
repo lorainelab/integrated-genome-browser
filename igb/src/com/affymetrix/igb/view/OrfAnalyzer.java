@@ -47,8 +47,10 @@ public final class OrfAnalyzer extends JComponent
 
 	public static final String PREF_STOP_CODON_COLOR = "stop codon";
 	public static final String PREF_DYNAMIC_ORF_COLOR = "dynamic orf";
+	public static final String PREF_BACKGROUND_COLOR = "background";
 	public static final Color default_stop_codon_color = new Color(200, 150, 150);
 	public static final Color default_dynamic_orf_color = new Color(100, 200, 100);
+	public static final Color default_background_color = new Color(169, 169, 169); 
 	// GAH 8-23-2004
 	// As IGB is currently configured, smv should be set to the internal SeqMapView of the AltSpliceView...
 	private final SeqMapView smv;
@@ -152,11 +154,11 @@ public final class OrfAnalyzer extends JComponent
 			}
 			//ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
 		}
-			
+		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);			
 		fortier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
-		fortier.setFillColor(Color.darkGray);
+		fortier.setFillColor(bgcol);
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
@@ -165,13 +167,13 @@ public final class OrfAnalyzer extends JComponent
 		revtier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
 		revtier.setLabel("Stop Codons");
 		revtier.setFixedPixHeight(25);
-		revtier.setFillColor(Color.darkGray);
+		revtier.setFillColor(bgcol);
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
 		map.addTier(revtier, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
-
+        
 		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
 
 		span_start = span_mid - (max_analysis_span / 2);

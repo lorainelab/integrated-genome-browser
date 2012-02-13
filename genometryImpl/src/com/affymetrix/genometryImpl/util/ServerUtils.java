@@ -302,7 +302,7 @@ public abstract class ServerUtils {
 
 		if(isSymLoader(current_file)){
 			String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
-			String extension = ParserController.getExtension(stream_name);
+			String extension = SymLoader.getExtension(stream_name);
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, current_file.getName(), extension, type_name);
 			genome.addType(annotTypeName, null);

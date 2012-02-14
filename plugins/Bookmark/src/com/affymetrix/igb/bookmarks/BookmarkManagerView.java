@@ -602,6 +602,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					name_text_field.setEnabled(true);
 					properties_action.setEnabled(true);
 					goto_action.setEnabled(igbService != null);
+					comment_text_area.setText(((Bookmark) user_object).getComment());
 					updateInfoTable();
 				} else if (user_object instanceof Separator) {
 					name_text_field.setText("Separator");
@@ -648,13 +649,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				Bookmark bm = (Bookmark) user_object;
 				bm.setName(name);
 				bm.setComment(comment);
-				def_tree_model.nodeChanged(bl);
 			} else if (user_object instanceof String) {
 				selected_bl.setUserObject(name);
 				selected_bl.setComment(comment);
-				def_tree_model.nodeChanged(bl);
 			}
+
+			def_tree_model.nodeChanged(bl);
 		}
+
 
 		public Action getPropertiesAction() {
 			return properties_action;

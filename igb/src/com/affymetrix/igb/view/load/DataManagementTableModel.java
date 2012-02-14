@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TierPrefsView;
@@ -117,6 +118,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					break;
 				}
 			}
+
 		}
 	}
 
@@ -226,7 +228,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return "Uneditable Track";
 				} else if (style == null) {
-					return "No Data Loaded";
+					return vFeature.getFeature().featureName;
 				}
 				return style.getTrackName();
 			case FOREGROUND_COLUMN:
@@ -441,18 +443,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
-					if (tier.getChildCount() > 0) {
-						stylemap.put((TrackStyle) style, (TrackStyle) style);
-					} else if (smv.getPixelFloater().getChildren() != null) {
-						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
-						for (GlyphI g : floatingGraphs) {
-							GraphGlyph j = (GraphGlyph) g;
-							if (j.getGraphState().getTierStyle() == style) {
-								stylemap.put((TrackStyle) style, (TrackStyle) style);
-							}
-						}
-					}
+					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
+
 			}
 			currentStyleList.addAll(stylemap.values());
 		}

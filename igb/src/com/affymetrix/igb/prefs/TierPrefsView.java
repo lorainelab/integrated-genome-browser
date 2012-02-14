@@ -16,8 +16,10 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.prefs.TierPrefsView.TierPrefsTableModel;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -25,11 +27,15 @@ import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyLis
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 public class TierPrefsView implements ListSelectionListener, TrackStylePropertyListener {
 
@@ -63,7 +69,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	public static final String AUTO_REFRESH = "Auto Refresh";
 	private TierPrefsTableModel model;
 	public ListSelectionModel lsm;
-	public static JTable table;
+	public static TierPrefsTable table;
 	public SeqMapView smv;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
@@ -193,7 +199,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	private void initTable() {
-		table = new JTable();
+		table = new TierPrefsTable(model);
 
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
@@ -220,7 +226,6 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
-		table.setModel(model);
 
 		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
 		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
@@ -869,4 +874,42 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			return fallback;
 		}
 	};
+}
+
+
+class TierPrefsTable extends StyledJTable {
+
+	private static final long serialVersionUID = 1L;
+	private TierPrefsTableModel tableModel;
+
+	public TierPrefsTable(TableModel tm) {
+		super(tm);
+		this.tableModel = (TierPrefsTableModel) tm;
+	}
+
+	@Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
+		
+		return super.getCellRenderer(row, column);
+	}
+
+	@Override
+	public TableCellEditor getCellEditor(int row, int col) {
+		
+		return super.getCellEditor(row, col);
+	}
+	
+	@Override
+	public Component setComponentBackground(Component c, int i, int i2) {
+		if ((i2 == TierPrefsView.COL_FOREGROUND
+				|| i2 == TierPrefsView.COL_BACKGROUND) && isCellEditable(i, i2)) { //using column name to fix buggy behavior with the column number
+			return c;
+		}
+		if (isCellEditable(i, i2)) {
+			c.setBackground(Color.WHITE);
+		} else {
+			c.setBackground(new Color(235, 235, 235));
+		}
+		return c;
+	}
 }

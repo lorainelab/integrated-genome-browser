@@ -383,6 +383,21 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 
 		repaint();
 	}
+
+	
+	@Override
+	public Component setComponentBackground(Component c, int i, int i2) {
+		if ((i2 == DataManagementTable.FOREGROUND_COLUMN
+				|| i2 == DataManagementTable.BACKGROUND_COLUMN) && isCellEditable(i, i2)) { //using column name to fix buggy behavior with the column number
+			return c;
+		}
+		if (isCellEditable(i, i2)) {
+			c.setBackground(Color.WHITE);
+		} else {
+			c.setBackground(new Color(235, 235, 235));
+		}
+		return c;
+	}
 }
 
 /**

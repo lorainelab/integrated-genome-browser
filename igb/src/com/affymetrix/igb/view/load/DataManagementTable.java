@@ -8,6 +8,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.PartialLineBorder;
+import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
@@ -197,7 +198,7 @@ public final class DataManagementTable {
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends JTable implements TrackStylePropertyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+class JTableX extends StyledJTable implements TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
@@ -224,35 +225,10 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
-		init();
-	}
-
-	private void init() {
-		setCellSelectionEnabled(false);
-		setColumnSelectionAllowed(false);
 		setRowSelectionAllowed(false);
-		setFocusable(false);
-		getSelectionModel().setSelectionMode(0);
-
-		setOpaque(true);
-		setBackground(Color.white);
-		setIntercellSpacing(new Dimension(1, 1));
-		setShowGrid(true);
-		setGridColor(new Color(11184810));
-		setRowHeight(20);
-
-
-		JTableHeader header = getTableHeader();
-		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
-		header.setForeground(Color.black);
-		header.setBackground(Color.white);
-		header.setReorderingAllowed(false);
-		header.setResizingAllowed(true);
-
-		setAutoscrolls(true);
-		setRequestFocusEnabled(false);
 	}
 
+	
 	void setRowEditorModel(int column, RowEditorModel rm) {
 		this.rmMap.put(column, rm);
 	}
@@ -406,91 +382,6 @@ class JTableX extends JTable implements TrackStylePropertyListener, MouseListene
 		}
 
 		repaint();
-	}
-
-	@Override
-	public Component prepareRenderer(TableCellRenderer tcr, int i, int i2) {
-		Component component = super.prepareRenderer(tcr, i, i2);
-		return setComponentBackground(component, i, i2);
-	}
-
-	@Override
-	public Component prepareEditor(TableCellEditor tce, int i, int i2) {
-		Component component = super.prepareEditor(tce, i, i2);
-		return setComponentBackground(component, i, i2);
-	}
-
-	private Component setComponentBackground(Component c, int i, int i2) {
-		if ((i2 == DataManagementTable.FOREGROUND_COLUMN
-				|| i2 == DataManagementTable.BACKGROUND_COLUMN) && isCellEditable(i, i2)) { //using column name to fix buggy behavior with the column number
-			return c;
-		}
-		if (isCellEditable(i, i2)) {
-			c.setBackground(Color.WHITE);
-		} else {
-			c.setBackground(new Color(235, 235, 235));
-		}
-		return c;
-	}
-
-	public void mouseMoved(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mouseExited(MouseEvent e) {
-		stopCellEditing();
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mousePressed(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		//do nothing
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		//do nothing
-	}
-
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		//do nothing
-	}
-
-	private void switchEditors(MouseEvent paramMouseEvent) {
-		Point point = paramMouseEvent.getPoint();
-		if (point != null) {
-			int rowIndex = rowAtPoint(point);
-			int columnIndex = columnAtPoint(point);
-			if ((rowIndex != getEditingRow()) || (columnIndex != getEditingColumn())) {
-				if (isEditing()) {
-					TableCellEditor tce = getCellEditor();
-					if (((tce instanceof TableCellEditorRenderer)) && (!((TableCellEditorRenderer) tce).isFullyEngaged())
-							&& (!tce.stopCellEditing())) {
-						tce.cancelCellEditing();
-					}
-				}
-				if ((!isEditing())
-						&& (rowIndex != -1) && (isCellEditable(rowIndex, columnIndex))) {
-					editCellAt(rowIndex, columnIndex);
-				}
-			}
-		}
-	}
-
-	public void stopCellEditing() {
-		TableCellEditor tce = getCellEditor();
-		if (tce != null) {
-			tce.cancelCellEditing();
-		}
 	}
 }
 

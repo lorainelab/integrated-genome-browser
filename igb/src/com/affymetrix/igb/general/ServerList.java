@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.net.URI;

@@ -172,4 +172,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		servers.set(rowIndex + 1, firstServer);
 		this.fireTableDataChanged();
 	}
+
+	public List<GenericServer> getServers() {
+		return servers;
+	}
 }

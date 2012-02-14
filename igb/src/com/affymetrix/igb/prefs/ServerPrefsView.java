@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.genoviz.swing.PartialLineBorder;
 import javax.swing.table.JTableHeader;
 import java.awt.Dimension;
@@ -254,12 +256,14 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected abstract boolean enableCombo();
 }
 
-class JTableX extends JTable {
+class JTableX extends JTable implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
+	private SourceTableModel tableModel;
 
 	public JTableX(TableModel tm) {
 		super(tm);
+		this.tableModel = (SourceTableModel) tm;
 		init();
 	}
 
@@ -311,11 +315,67 @@ class JTableX extends JTable {
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
+		if (column == tableModel.getColumnIndex(SourceTableModel.SourceColumn.Name)) {
+			GenericServer server = tableModel.getServers().get(row);
+			return new JRPTextFieldTableCellRenderer(server.serverName + row, server.serverName);
+		}
 		return super.getCellRenderer(row, column);
 	}
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
+		if (col == tableModel.getColumnIndex(SourceTableModel.SourceColumn.Name)) {
+			GenericServer server = tableModel.getServers().get(row);
+			return new JRPTextFieldTableCellRenderer(server.serverName + row, server.serverName);
+		}
 		return super.getCellEditor(row, col);
+	}
+
+	private void stopCellEditing() {
+		TableCellEditor tce = getCellEditor();
+		if (tce != null) {
+			tce.cancelCellEditing();
+		}
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseExited(MouseEvent e) {
+		stopCellEditing();
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mousePressed(MouseEvent e) {
+		switchEditors(e);
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		//do nothing
+	}
+
+	private void switchEditors(MouseEvent paramMouseEvent) {
+		Point point = paramMouseEvent.getPoint();
+		if (point != null) {
+			int rowIndex = rowAtPoint(point);
+			int columnIndex = columnAtPoint(point);
+			if ((rowIndex != getEditingRow()) || (columnIndex != getEditingColumn())) {
+				if (isEditing()) {
+					TableCellEditor tce = getCellEditor();
+					if (((tce instanceof TableCellEditorRenderer)) && (!((TableCellEditorRenderer) tce).isFullyEngaged())
+							&& (!tce.stopCellEditing())) {
+						tce.cancelCellEditing();
+					}
+				}
+				if ((!isEditing())
+						&& (rowIndex != -1) && (isCellEditable(rowIndex, columnIndex))) {
+					editCellAt(rowIndex, columnIndex);
+				}
+			}
+		}
 	}
 }

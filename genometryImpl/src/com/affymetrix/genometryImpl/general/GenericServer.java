@@ -190,15 +190,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.serverName = name;
 	}
 
-//	public void setServerType(String type) {
-//			node.put(GenericServerPref.TYPE, type);
-//		for (ServerTypeI serverTypeI : ServerUtils.getServerTypes()) {
-//			if (type.equalsIgnoreCase(serverTypeI.getName())) {
-//				this.serverType = serverTypeI;
-//			}
-//		}
-//	}
-
 	public void enableForSession() {
 		this.enabled = true;
 	}

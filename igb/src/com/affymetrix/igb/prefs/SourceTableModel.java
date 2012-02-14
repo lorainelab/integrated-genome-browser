@@ -1,9 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.LoadUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
@@ -14,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
@@ -30,10 +27,6 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	private static final long serialVersionUID = 1l;
 	private final List<GenericServer> servers = new ArrayList<GenericServer>();
-	private final int NAME_COLUMN_INDEX = 0;
-	private final int TYPE_COLUMN_INDEX = 1;
-	private final int URL_COLUMN_INDEX = 2;
-	private final int ENABLED_COLUMN_INDEX = 3;
 
 	public static enum SourceColumn {
 
@@ -119,7 +112,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == NAME_COLUMN_INDEX || col == ENABLED_COLUMN_INDEX) {
+		if (col == tableColumns.indexOf(SourceColumn.Name) || col == tableColumns.indexOf(SourceColumn.Enabled)) {
 			return true;
 		}
 		return false;

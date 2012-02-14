@@ -12,6 +12,12 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.swing.PartialLineBorder;
+import javax.swing.table.JTableHeader;
+import java.awt.Dimension;
+import javax.swing.table.TableModel;
+import java.awt.Color;
+import javax.swing.table.TableCellEditor;
 import java.awt.Point;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -49,7 +55,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected final JPanel sourcePanel;
 	protected final GroupLayout layout;
 	protected ServerList serverList;
-	protected JTable sourcesTable;
+	protected JTableX sourcesTable;
 	protected JScrollPane sourcesScrollPane;
 	protected JRPButton addServerButton;
 	protected JRPButton removeServerButton;
@@ -129,8 +135,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	protected abstract Group getServerButtons(Group group);
 
-	private static JTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
-		final JTable table = new JTable(sourceTableModel);
+	private static JTableX createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
+		final JTableX table = new JTableX(sourceTableModel);
 
 		table.setFillsViewportHeight(true);
 		table.setAutoCreateRowSorter(sortable);
@@ -244,6 +250,72 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected abstract String getViewName();
 
 	protected abstract String getToolTip();
-	
+
 	protected abstract boolean enableCombo();
+}
+
+class JTableX extends JTable {
+
+	private static final long serialVersionUID = 1L;
+
+	public JTableX(TableModel tm) {
+		super(tm);
+		init();
+	}
+
+	private void init() {
+		setCellSelectionEnabled(false);
+		setColumnSelectionAllowed(false);
+		setFocusable(false);
+		getSelectionModel().setSelectionMode(0);
+
+		setOpaque(true);
+		setBackground(Color.white);
+		setIntercellSpacing(new Dimension(1, 1));
+		setShowGrid(true);
+		setGridColor(new Color(11184810));
+		setRowHeight(20);
+
+
+		JTableHeader header = getTableHeader();
+		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+		header.setForeground(Color.black);
+		header.setBackground(Color.white);
+		header.setReorderingAllowed(false);
+		header.setResizingAllowed(true);
+
+		setAutoscrolls(true);
+		setRequestFocusEnabled(false);
+	}
+
+	@Override
+	public Component prepareRenderer(TableCellRenderer tcr, int i, int i2) {
+		Component component = super.prepareRenderer(tcr, i, i2);
+		return setComponentBackground(component, i, i2);
+	}
+
+	@Override
+	public Component prepareEditor(TableCellEditor tce, int i, int i2) {
+		Component component = super.prepareEditor(tce, i, i2);
+		return setComponentBackground(component, i, i2);
+	}
+
+	private Component setComponentBackground(Component c, int i, int i2) {
+		if (isCellEditable(i, i2)) {
+			c.setBackground(Color.WHITE);
+		} else {
+			c.setBackground(new Color(235, 235, 235));
+		}
+		return c;
+	}
+
+	@Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
+		return super.getCellRenderer(row, column);
+	}
+
+	@Override
+	public TableCellEditor getCellEditor(int row, int col) {
+		return super.getCellEditor(row, col);
+	}
 }

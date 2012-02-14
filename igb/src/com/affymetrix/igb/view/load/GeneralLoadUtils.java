@@ -1100,6 +1100,10 @@ public final class GeneralLoadUtils {
 	public static void setFeatureAutoLoad(boolean autoload) {
 		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
 			for (GenericVersion genericVersion : genericVersions) {
+				if(genericVersion.gServer.serverType == ServerType.DAS2 && 
+						genericVersion.gServer.URL.equals("http://netaffxdas.affymetrix.com/das2/genome")){
+					continue;
+				}
 				for (GenericFeature genericFeature : genericVersion.getFeatures()) {
 					if (autoload) {
 						genericFeature.setAutoload(autoload);

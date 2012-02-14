@@ -43,6 +43,9 @@ public final class FeatureLoading {
 			if (DEBUG) {
 				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
 			}
+			if(gVersion.gServer.URL.equals("http://netaffxdas.affymetrix.com/das2/genome")){
+				autoload = false;
+			}
 			// Discover features from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 			for (Das2Type type : version.getTypes().values()) {

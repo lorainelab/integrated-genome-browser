@@ -45,6 +45,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
@@ -488,9 +491,16 @@ public abstract class BookmarkController {
 		}
 
 		bookmarks.set(mark_sym);
-		Map<?, ?> props = mark_sym.getProperties();
+		Map<?, ?> temp = mark_sym.getProperties();
+		
 		@SuppressWarnings("unchecked")
-		String url = Bookmark.constructURL((Map<String, String[]>) props);
+		Map<String, String[]> props = (Map<String, String[]>)temp;		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		props.put(Bookmark.CREATE, new String[]{dateFormat.format(date)});
+		props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
+		
+		String url = Bookmark.constructURL(props);
 		return new Bookmark(default_name, "", url);
 	}
 

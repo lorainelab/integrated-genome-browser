@@ -241,12 +241,6 @@ public final class Bookmark implements Serializable {
 	 *    or even "http://www.xxx.com?x=1&y=2".
 	 */
 	public static String constructURL(String url_base, Map<String, String[]> props) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-
-		props.put(Bookmark.CREATE, new String[]{dateFormat.format(date)});
-		props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
-
 		StringBuffer sb = new StringBuffer();
 		sb.append(url_base);
 

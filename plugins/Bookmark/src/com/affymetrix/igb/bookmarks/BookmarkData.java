@@ -3,6 +3,8 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -25,8 +27,10 @@ public final class BookmarkData {
 		propertyTable = new JTable(propertyModel);
 		propertyTable.setCellSelectionEnabled(true);
 		propertyModel.addTableModelListener(new TableModelListener() {
+
 			public void tableChanged(TableModelEvent e) {
-				setBookmarkFromPropertyGUI(bookmarkList);
+				setBookmarkFromPropertyTable();
+				BookmarkManagerView.getSingleton().thing.updateInfoTable();
 			}
 		});
 
@@ -54,16 +58,16 @@ public final class BookmarkData {
 		return infoModel;
 	}
 
-	public void setPropertyGUIFromBookmark(BookmarkList bl) {
+	public void setPropertyTableFromBookmark(BookmarkList bl) {
 		bookmarkList = bl;
-		setGUIFromBookmark(propertyModel, bl);
+		setTableFromBookmark(propertyModel, bl);
 	}
 
-	public void setInfoGUIFromBookmark(BookmarkList bl) {
-		setGUIFromBookmark(infoModel, bl);
+	public void setInfoTableFromBookmark(BookmarkList bl) {
+		setTableFromBookmark(infoModel, bl);
 	}
 
-	private void setGUIFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
+	private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
 		Bookmark bm = (Bookmark) bl.getUserObject();
 		if (bm == null) {
 			model.setValuesFromMap(Collections.<String, String[]>emptyMap());
@@ -73,22 +77,30 @@ public final class BookmarkData {
 		}
 	}
 
-	public void setBookmarkFromPropertyGUI(BookmarkList bl) {
-		Bookmark bm = (Bookmark) bl.getUserObject();
-		URL url = bm.getURL();
-		String url_base = bm.getURL().toExternalForm();
-		int index = url_base.indexOf('?');
-		if (index > 0) {
-			url_base = url_base.substring(0, index);
-		}
+	public void setBookmarkFromPropertyTable() {
+		if (bookmarkList != null) {
+			Bookmark bm = (Bookmark) bookmarkList.getUserObject();
+			URL url = bm.getURL();
+			String url_base = bm.getURL().toExternalForm();
+			int index = url_base.indexOf('?');
+			if (index > 0) {
+				url_base = url_base.substring(0, index);
+			}
 
-		String str = Bookmark.constructURL(url_base, propertyModel.getValuesAsMap());
-		try {
-			url = new URL(str);
-			bm.setURL(url);
-		} catch (MalformedURLException e) {
-			JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null);
-			ErrorHandler.errorPanel(frame, "Error", "Cannot construct bookmark: " + e.getMessage(), null);
+			// record the modified time
+			Map<String, String[]> props = propertyModel.getValuesAsMap();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Date date = new Date();
+			props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
+			
+			String str = Bookmark.constructURL(url_base, props);
+			try {
+				url = new URL(str);
+				bm.setURL(url);
+			} catch (MalformedURLException e) {
+				JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null);
+				ErrorHandler.errorPanel(frame, "Error", "Cannot construct bookmark: " + e.getMessage(), null);
+			}
 		}
 	}
 }

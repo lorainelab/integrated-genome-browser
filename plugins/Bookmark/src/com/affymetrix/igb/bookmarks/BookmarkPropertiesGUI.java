@@ -49,7 +49,7 @@ public class BookmarkPropertiesGUI extends JFrame {
 	}
 
 	public synchronized void displayPanel(BookmarkList bl) {
-		bp.setPropertyGUIFromBookmark(bl);
+		bp.setPropertyTableFromBookmark(bl);
 		this.setVisible(true);
 	}
 

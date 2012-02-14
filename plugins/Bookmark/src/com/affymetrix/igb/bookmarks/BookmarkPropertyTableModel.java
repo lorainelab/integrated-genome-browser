@@ -45,15 +45,12 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 		for (Map.Entry<String, String[]> entry : map.entrySet()) {
 			String key = entry.getKey();
 			String[] value = entry.getValue();
-			if (!key.equals(Bookmark.CREATE)
-					&& !key.equals(Bookmark.MODIFIED)) {
-				if (value.length == 0) {
-					duples.add(new Duple(key, ""));
-				} else {
-					for (int i = 0; i < value.length; i++) {
-						Duple duple = new Duple(key, value[i]);
-						duples.add(duple);
-					}
+			if (value.length == 0) {
+				duples.add(new Duple(key, ""));
+			} else {
+				for (int i = 0; i < value.length; i++) {
+					Duple duple = new Duple(key, value[i]);
+					duples.add(duple);
 				}
 			}
 		}

@@ -47,12 +47,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public final Action import_action;
 	public final Action export_action;
 	public final Action delete_action;
-	public javax.swing.JButton forwardButton = new javax.swing.JButton();
-	public javax.swing.JButton backwardButton = new javax.swing.JButton();
-	public javax.swing.JButton addBookmarkButton = new javax.swing.JButton();
-	public javax.swing.JButton addSeparatorButton = new javax.swing.JButton();
-	public javax.swing.JButton addFolderButton = new javax.swing.JButton();
-	public javax.swing.JButton deleteBookmarkButton = new javax.swing.JButton();
+	public JButton forwardButton = new javax.swing.JButton();
+	public JButton backwardButton = new javax.swing.JButton();
+	public JButton addBookmarkButton = new javax.swing.JButton();
+	public JButton addSeparatorButton = new javax.swing.JButton();
+	public JButton addFolderButton = new javax.swing.JButton();
+	public JButton deleteBookmarkButton = new javax.swing.JButton();
 	public List<TreePath> bookmark_history;
 	public int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
@@ -61,7 +61,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private boolean doNotShowWarning = false;
 
 	public static void init(IGBService _igbService) {
-		singleton = new BookmarkManagerView(_igbService);
+		if (singleton == null) {
+			singleton = new BookmarkManagerView(_igbService);
+		}
 	}
 
 	public static synchronized BookmarkManagerView getSingleton() {
@@ -93,7 +95,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		delete_action = makeDeleteAction();
 		forwardButton.setEnabled(false);
 		backwardButton.setEnabled(false);
-		
+
 		initPopupMenu();
 
 		tree.addTreeSelectionListener(this);
@@ -140,11 +142,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree_model.setRoot(blist);
 		tree.setSelectionRow(0);
 		tree.clearSelection();
-	}
-
-	private static void setAccelerator(Action a) {
-		KeyStroke ks = PreferenceUtils.getAccelerator("Bookmark Manager / " + a.getValue(Action.NAME));
-		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
 	public void valueChanged(TreeSelectionEvent e) {
@@ -560,7 +557,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				o = selected_bl.getUserObject();
 			}
 			if (o instanceof Bookmark) {
-				bookmarkData.setInfoGUIFromBookmark(selected_bl);
+				bookmarkData.setInfoTableFromBookmark(selected_bl);
 				bookmarkData.getInfoTable().repaint();
 			}
 		}

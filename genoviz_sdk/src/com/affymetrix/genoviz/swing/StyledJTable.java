@@ -10,10 +10,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Vector;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -28,6 +31,37 @@ public class StyledJTable extends JTable implements MouseListener {
 		super(tm);
 		init();
 	}
+	
+	public StyledJTable() {
+		super();
+		init();
+	}
+
+	public StyledJTable(int numRows, int numColumns) {
+		super(numRows, numColumns);
+		init();
+	}
+
+	public StyledJTable(Object[][] rowData, Object[] columnNames) {
+		super(rowData, columnNames);
+		init();
+	}
+
+	public StyledJTable(TableModel dm, TableColumnModel cm) {
+		super(dm, cm);
+		init();
+	}
+
+	public StyledJTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm) {
+		super(dm, cm, sm);
+		init();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public StyledJTable(Vector rowData, Vector columnNames) {
+		super(rowData, columnNames);
+		init();
+	}
 
 	private void init() {
 		setCellSelectionEnabled(false);
@@ -36,8 +70,7 @@ public class StyledJTable extends JTable implements MouseListener {
 		setFocusable(false);
 		getSelectionModel().setSelectionMode(0);
 
-		setOpaque(true);
-		setBackground(Color.white);
+		setOpaque(false);
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
@@ -67,7 +100,7 @@ public class StyledJTable extends JTable implements MouseListener {
 		return setComponentBackground(component, i, i2);
 	}
 
-	private Component setComponentBackground(Component c, int i, int i2) {
+	public Component setComponentBackground(Component c, int i, int i2) {
 		if (isCellEditable(i, i2)) {
 			c.setBackground(Color.WHITE);
 		} else {

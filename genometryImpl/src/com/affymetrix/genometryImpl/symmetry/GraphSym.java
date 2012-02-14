@@ -515,8 +515,8 @@ public class GraphSym extends SimpleSymWithProps {
 
 	@Override
 	public boolean setProperty(String name, Object val) {
-		if (name.equals("id")) {
-			this.setID(name);
+		if (name.equals("id") && val != null) {
+			this.setID(val.toString());
 			return false;
 		}
 		return super.setProperty(name, val);

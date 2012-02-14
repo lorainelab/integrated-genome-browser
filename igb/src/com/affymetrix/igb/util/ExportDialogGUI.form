@@ -24,7 +24,7 @@
               <Component id="imageSizePanel" linkSize="18" alignment="0" max="32767" attributes="1"/>
               <Component id="previewPanel" linkSize="18" alignment="0" max="32767" attributes="3"/>
           </Group>
-          <Component id="topPanel" linkSize="18" alignment="0" min="-2" max="-2" attributes="0"/>
+          <Component id="topPanel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">

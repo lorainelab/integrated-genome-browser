@@ -17,17 +17,12 @@ public class DepthOperator implements Operator {
 	}
 
 	@Override
-	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		if (symList.size() != 1 || !(symList.get(0) instanceof TypeContainerAnnot)) {
 			return null;
 		}
-		String meth = BioSeq.determineMethod(symList.get(0));
 		
-		if (meth == null) {
-			return null;
-		}
-		BioSeq seq = symList.get(0).getSpanSeq(0);
-		return SeqSymSummarizer.getSymmetrySummary(symList, seq, false, meth);
+		return SeqSymSummarizer.getSymmetrySummary(symList, aseq, false, null);
 	}
 
 	@Override

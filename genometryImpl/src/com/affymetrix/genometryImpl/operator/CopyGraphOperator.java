@@ -13,7 +13,7 @@ public final class CopyGraphOperator implements Operator {
 	@Override
 	public String getName() { return "copygraph"; }
 	@Override
-	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		if (symList.size() != 1 || !(symList.get(0) instanceof GraphSym)) {
 			return null;
 		}

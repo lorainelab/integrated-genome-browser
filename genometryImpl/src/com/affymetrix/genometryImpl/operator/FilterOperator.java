@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.operator;
 import java.util.List;
 import java.util.Map;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -22,7 +23,7 @@ public class FilterOperator implements Operator {
 	}
 
 	@Override
-	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		if (symList.size() != 1) {
 			return null;
 		}

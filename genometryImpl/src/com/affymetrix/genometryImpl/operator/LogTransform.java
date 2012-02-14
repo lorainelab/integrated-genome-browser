@@ -72,7 +72,7 @@ public final class LogTransform implements Operator {
 		return true;
 	}
 	@Override
-	public SeqSymmetry operate(List<SeqSymmetry> symList) {
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		if (symList.size() != 1 || !(symList.get(0) instanceof GraphSym)) {
 			return null;
 		}

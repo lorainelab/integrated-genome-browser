@@ -1,7 +1,9 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
@@ -12,12 +14,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
 import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
-
 
 /**
  *
@@ -25,15 +27,22 @@ import javax.swing.table.AbstractTableModel;
  * @version $Id$
  */
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
+
 	private static final long serialVersionUID = 1l;
 	private final List<GenericServer> servers = new ArrayList<GenericServer>();
+	private final int NAME_COLUMN_INDEX = 0;
+	private final int TYPE_COLUMN_INDEX = 1;
+	private final int URL_COLUMN_INDEX = 2;
+	private final int ENABLED_COLUMN_INDEX = 3;
 
-	public static enum SourceColumn { Name, Type, URL, Enabled };
+	public static enum SourceColumn {
 
+		Name, Type, URL, Enabled
+	};
 	public static final List<SortKey> SORT_KEYS;
-
 	private ServerList serverList;
 	private ArrayList<SourceColumn> tableColumns;
+
 	static {
 		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
 		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
@@ -69,7 +78,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	@Override
-    public Class<?> getColumnClass(int col) {
+	public Class<?> getColumnClass(int col) {
 		switch (tableColumns.get(col)) {
 			case Enabled:
 				return Boolean.class;
@@ -78,13 +87,16 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			default:
 				return String.class;
 		}
-    }
+	}
 
-
-	public int getColumnCount() { return tableColumns.size(); }
+	public int getColumnCount() {
+		return tableColumns.size();
+	}
 
 	@Override
-	public String getColumnName(int col) { return tableColumns.get(col).toString(); }
+	public String getColumnName(int col) {
+		return tableColumns.get(col).toString();
+	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		if (columnIndex >= tableColumns.size()) {
@@ -106,37 +118,51 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	@Override
-    public boolean isCellEditable(int row, int col) {
-		return tableColumns.get(col) == SourceColumn.Enabled;
-    }
-
+	public boolean isCellEditable(int row, int col) {
+		if (col == NAME_COLUMN_INDEX || col == ENABLED_COLUMN_INDEX) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
-    public void setValueAt(Object value, int row, int col) {
+	public void setValueAt(Object value, int row, int col) {
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Enabled:
 				server.setEnabled((Boolean) value);
 				if (((Boolean) value).booleanValue()) {
-					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-						@Override
-						protected Void doInBackground() throws Exception {
-							GeneralLoadUtils.discoverServer(server);
-							return null;
-						}
-					};
-					ThreadUtils.getPrimaryExecutor(server).execute(worker);
-					
+					discoverServer(server);
 				} else {
 					serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
 				}
+				break;
+			case Name:
+				server.setName((String) value);
+				break;
+			case URL:
+				//do nothing
+				break;
+			case Type:
+				//do nothing
 				break;
 			default:
 				throw new IllegalArgumentException("columnIndex " + col + " not editable");
 		}
 
 		this.fireTableDataChanged();
+	}
+
+	private void discoverServer(final GenericServer server) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				GeneralLoadUtils.discoverServer(server);
+				return null;
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(server).execute(worker);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {

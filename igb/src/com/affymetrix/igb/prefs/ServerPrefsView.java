@@ -199,7 +199,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			return;
 		}
 		sourceTableModel.init();
-		//ServerList.addServerToPrefs(server);
+		ServerList.getServerInstance().addServerToPrefs(server, 0);
 	}
 
 	protected void removeDataSource(String url) {

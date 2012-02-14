@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -20,6 +21,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -54,6 +56,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
 	private static DataLoadPrefsView singleton;
 	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
+	protected JRPButton editSourceButton;
 	protected JRPButton editAuthButton;
 	protected JRPButton rankUpButton;
 	protected JRPButton rankDownButton;
@@ -101,6 +104,26 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 			}
 		});
 		editAuthButton.setEnabled(false);
+
+		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "EditSource", new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				Object url = sourcesTable.getModel().getValueAt(
+						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+				GenericServer server = ServerList.getServerInstance().getServer((String) url);
+				serverList.removeServer((String) url);
+				serverList.removeServerFromPrefs((String) url);
+				sourceTableModel.init();
+				AddSource editSource = new AddSource(true);
+				editSource.setNameFieldText(server.serverName);
+				editSource.setServerType(server.serverType);
+				editSource.setURL(server.URL);
+				editSource.setName("Edit Source");
+				editSource.setVisible(true);
+			}
+		});
+		editSourceButton.setEnabled(false);
 		ImageIcon up_icon = MenuUtil.getIcon("images/up.png");
 		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
 		rankUpButton.setToolTipText("Increase sequence server priority");
@@ -150,6 +173,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		rankUpButton.setEnabled(enable && sourcesTable.getSelectedRow() > 0);
 		rankDownButton.setEnabled(enable && sourcesTable.getSelectedRow() < sourcesTable.getRowCount() - 1);
 		editAuthButton.setEnabled(enable);
+		editSourceButton.setEnabled(enable);
 	}
 
 	@Override
@@ -159,12 +183,12 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected Group addServerComponents(Group group1, Group group2) {
-		return group1.addComponent(sourcesScrollPane).addComponent(autoload).addGroup(group2.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editAuthButton).addComponent(removeServerButton));
+		return group1.addComponent(sourcesScrollPane).addComponent(autoload).addGroup(group2.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editSourceButton).addComponent(editAuthButton).addComponent(removeServerButton));
 	}
 
 	@Override
 	protected Group getServerButtons(Group group) {
-		return group.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editAuthButton).addComponent(removeServerButton);
+		return group.addComponent(rankUpButton).addComponent(rankDownButton).addComponent(addServerButton).addComponent(editSourceButton).addComponent(editAuthButton).addComponent(removeServerButton);
 	}
 
 	private static JPanel initSynonymsPanel(final JPanel parent) {
@@ -338,6 +362,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	protected String getToolTip() {
 		return "Edit data sources and preferences";
 	}
+
 	@Override
 	protected boolean enableCombo() {
 		return true;

@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.net.URI;
@@ -163,6 +164,10 @@ public final class ServerList {
 			info = serverType == null ? url : serverType.getServerInfo(url, name);
 
 			if (info != null) {
+				Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
+				if (node.get(GenericServerPref.NAME, null) != null) {
+					name = node.get(GenericServerPref.NAME, null); //Apply changes users may have made to server name
+				}
 				server = new GenericServer(name, url, serverType, enabled, info, primary);
 
 				if (server != null) {
@@ -196,7 +201,7 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled) {
-		return addServer(serverType, name, url, enabled, false, 0);
+		return addServer(serverType, name, url, enabled, false, -1);
 	}
 
 	public GenericServer addServer(Preferences node) {
@@ -234,8 +239,10 @@ public final class ServerList {
 	public void removeServer(String url) {
 		GenericServer server = url2server.get(url);
 		url2server.remove(url);
-		server.setEnabled(false);
-		fireServerInitEvent(server, ServerStatus.NotResponding);	// remove it from our lists.
+		if (server != null) {
+			server.setEnabled(false);
+			fireServerInitEvent(server, ServerStatus.NotResponding); // remove it from our lists.
+		}	
 	}
 
 	/**
@@ -317,7 +324,7 @@ public final class ServerList {
 						enabled = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
 						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
 
-						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, 0);
+						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
 						server.setEnabled(enabled);
@@ -385,13 +392,14 @@ public final class ServerList {
 	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type, int order) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-		node.put(GenericServerPref.NAME, name);
-		node.put(GenericServerPref.TYPE, type.getName());
-		node.putInt(GenericServerPref.ORDER, order);
-		//Added url to preferences.
-		//long url was bugging the node name since it only accepts 80 char names
-		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
-
+		if (node.get(GenericServerPref.NAME, null) == null) {
+			node.put(GenericServerPref.NAME, name);
+			node.put(GenericServerPref.TYPE, type.getName());
+			node.putInt(GenericServerPref.ORDER, order);
+			//Added url to preferences.
+			//long url was bugging the node name since it only accepts 80 char names
+			node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
+		}
 		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())));
 	}
 

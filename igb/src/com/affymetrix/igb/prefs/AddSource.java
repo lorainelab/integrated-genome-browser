@@ -32,7 +32,7 @@ import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
  * @author dcnorris
  */
 public class AddSource extends javax.swing.JFrame {
-
+	
 	private boolean enableCombo;
 
 	/** Creates new form AddSource */
@@ -182,12 +182,12 @@ public class AddSource extends javax.swing.JFrame {
 			}
 		}
 	}//GEN-LAST:event_openDirActionPerformed
-
+	
 	private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
 		// TODO add your handling code here:
 		openDir.setEnabled(type.getSelectedItem() == ServerTypeI.QuickLoad);
 	}//GEN-LAST:event_typeActionPerformed
-
+	
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 		// TODO add your handling code here:
 		if (enableCombo) {
@@ -197,7 +197,7 @@ public class AddSource extends javax.swing.JFrame {
 		}
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed
-
+	
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
 		// TODO add your handling code here:
 		this.setVisible(false);
@@ -216,17 +216,29 @@ public class AddSource extends javax.swing.JFrame {
 
 	protected static File fileChooser(int mode, Component parent) throws HeadlessException {
 		JFileChooser chooser = new JFileChooser();
-
+		
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		chooser.setFileSelectionMode(mode);
 		chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
 		chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
 		chooser.rescanCurrentDirectory();
-
+		
 		if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
 			return null;
 		}
-
+		
 		return chooser.getSelectedFile();
+	}
+	
+	public void setNameFieldText(String nameFieldText) {
+		name.setText(nameFieldText);
+	}
+	
+	public void setServerType(ServerTypeI serverType) {
+		type.setSelectedItem(serverType);
+	}
+	
+	public void setURL(String urlString) {
+		url.setText(urlString);
 	}
 }

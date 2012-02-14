@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import java.net.URL;
@@ -20,34 +21,35 @@ import javax.swing.ImageIcon;
  * @version $Id$
  */
 public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
+
 	/**
 	 * Stores this servers settings on Java Preferences
 	 */
-	private final Preferences node;
+	public final Preferences node;
 	/**
 	 * Name of the server.
 	 */
-	public final String serverName;						
+	public String serverName;
 	/**
 	 * URL/file that points to the server.
 	 */
-	public final String URL;							
+	public String URL;
 	/**
 	 * DAS, DAS2, QuickLoad, Unknown (local file)
 	 */
-	public final ServerTypeI serverType;					
+	public ServerTypeI serverType;
 	/**
 	 * to be used by DAS/2 authentication
 	 */
-	private String login = "";							
+	private String login = "";
 	/**
 	 * to be used by DAS/2 authentication
 	 */
-	private String password = "";						
+	private String password = "";
 	/**
 	 * Is this server enabled?
 	 */
-	private boolean enabled = true;						
+	private boolean enabled = true;
 	/**
 	 * Is this only a reference (no annotations) server?
 	 */
@@ -55,19 +57,19 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	/**
 	 * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	 */
-	public final Object serverObj;						 
+	public final Object serverObj;
 	/**
 	 * friendly URL that users may look at.
 	 */
-	public final URL friendlyURL;						
+	public final URL friendlyURL;
 	/**
 	 * friendly icon that users may look at.
 	 */
-	private ImageIcon friendlyIcon = null;				 
+	private ImageIcon friendlyIcon = null;
 	/**
 	 * Don't keep on searching for friendlyIcon
 	 */
-	private boolean friendlyIconAttempted = false;		
+	private boolean friendlyIconAttempted = false;
 	/**
 	 * Is this server initialized?
 	 */
@@ -81,8 +83,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node( getHash(URL) ) :
-									 PreferenceUtils.getServersNode().node( getHash(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
+				: PreferenceUtils.getServersNode().node(getHash(URL)),
 				serverObj, primary);
 	}
 
@@ -93,8 +95,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				serverType == null ? PreferenceUtils.getRepositoriesNode().node( getHash(URL)) :
-					 				 PreferenceUtils.getServersNode().node( getHash(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
+				: PreferenceUtils.getServersNode().node(getHash(URL)),
 				serverObj, false);
 	}
 
@@ -116,15 +118,14 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	 * @return a hash that should be unique enough to create a Preference node where the
 	 *	servers preferences can be stored.
 	 */
-	public static String getHash( String str ){
-		return Long.toString(((long)str.hashCode()+(long)Integer.MAX_VALUE));
+	public static String getHash(String str) {
+		return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
 	}
-	
-	
+
 	private GenericServer(
 			String serverName, String URL, ServerTypeI serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
 		this.serverName = serverName;
-		this.URL = URL;	
+		this.URL = URL;
 		this.serverType = serverType;
 		this.enabled = enabled;
 		this.node = node;
@@ -145,8 +146,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 			if (this.friendlyURL != null) {
 				friendlyIconAttempted = true;
 				this.friendlyIcon = GeneralUtils.determineFriendlyIcon(
-							this.friendlyURL.toString() + "/favicon.ico");
-			}		
+						this.friendlyURL.toString() + "/favicon.ico");
+			}
 		}
 		return friendlyIcon;
 	}
@@ -180,14 +181,28 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	public void setEnabled(boolean enabled) {
-		node.putBoolean( GenericServerPref.ENABLED, enabled);
+		node.putBoolean(GenericServerPref.ENABLED, enabled);
 		this.enabled = enabled;
 	}
 
-	public void enableForSession(){
+	public void setName(String name) {
+		node.put(GenericServerPref.NAME, name);
+		this.serverName = name;
+	}
+
+//	public void setServerType(String type) {
+//			node.put(GenericServerPref.TYPE, type);
+//		for (ServerTypeI serverTypeI : ServerUtils.getServerTypes()) {
+//			if (type.equalsIgnoreCase(serverTypeI.getName())) {
+//				this.serverType = serverTypeI;
+//			}
+//		}
+//	}
+
+	public void enableForSession() {
 		this.enabled = true;
 	}
-	
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
@@ -215,10 +230,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		return this.password;
 	}
 
-	public boolean isPrimary(){
+	public boolean isPrimary() {
 		return this.primary;
 	}
-	
+
 	@Override
 	public String toString() {
 		return serverName;
@@ -239,7 +254,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		if (!(this.serverName.equals(gServer.serverName))) {
 			return this.serverName.compareTo(gServer.serverName);
 		}
-		return this.serverType.compareTo(gServer.serverType);		
+		return this.serverType.compareTo(gServer.serverType);
 	}
 
 	/**

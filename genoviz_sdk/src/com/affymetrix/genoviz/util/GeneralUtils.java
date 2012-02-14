@@ -5,15 +5,23 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
+import java.awt.Component;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.Writer;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * General utilities for use by other classes as static methods.
  */
-public final class GeneralUtils  {
+public final class GeneralUtils {
 
-	private static Hashtable<String,Color> colormap;
+	private static Hashtable<String, Color> colormap;
 	private static final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    private static final Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
+	private static final Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
 
 	/**
 	 * toObjectString(obj) is a debugging tool
@@ -21,7 +29,9 @@ public final class GeneralUtils  {
 	 * overriding of toString() in subclasses if desired
 	 */
 	public static String toObjectString(Object obj) {
-		if (obj == null) { return "null"; }
+		if (obj == null) {
+			return "null";
+		}
 
 		// GAH 12-3-98
 		// uh-oh, no toHexString in jdk1.0.0? (maybe it showed up in 1.0.2?)
@@ -29,12 +39,12 @@ public final class GeneralUtils  {
 		// return (obj.getClass().getName() + "@" + obj.hashCode());
 
 		// assume that everyone is using jdk1.0.2 or higher
-		return (obj.getClass().getName() + "@" +
-				Integer.toHexString(obj.hashCode()));
+		return (obj.getClass().getName() + "@"
+				+ Integer.toHexString(obj.hashCode()));
 	}
 
 	/** a "global" color map of color names to Color objects */
-	public static Hashtable<String,Color> getColorMap() {
+	public static Hashtable<String, Color> getColorMap() {
 		if (colormap == null) {
 			colormap = initColorMap();
 		}
@@ -50,15 +60,15 @@ public final class GeneralUtils  {
 	 * @param option_string string of name, value pairs to be parsed.
 	 * @return option values indexed by name.
 	 */
-	public static Hashtable<String,Object> parseOptions ( String option_string ) {
-		Hashtable<String,Object> hash = new Hashtable<String,Object>(15);
+	public static Hashtable<String, Object> parseOptions(String option_string) {
+		Hashtable<String, Object> hash = new Hashtable<String, Object>(15);
 		String key, value;
 		StringTokenizer tokens = new StringTokenizer(option_string);
 		while (tokens.hasMoreElements()) {
 			key = tokens.nextToken();
 			try {
 				value = tokens.nextToken();
-				hash.put(key,value);
+				hash.put(key, value);
 			} catch (NoSuchElementException e) {
 				System.err.println("ERROR: options must come in name, value pairs");
 				System.err.println("--> " + option_string);
@@ -71,12 +81,12 @@ public final class GeneralUtils  {
 	 * Combines hash1 and hash2 so that any keys that are in both hash1
 	 * and hash2 are taken from hash1.
 	 */
-	public static Hashtable<String,Object> CombineOptions( Hashtable<String,Object> hash1, Hashtable<String,Object> hash2 )  {
+	public static Hashtable<String, Object> CombineOptions(Hashtable<String, Object> hash1, Hashtable<String, Object> hash2) {
 		// for efficiency, deal first with special case where hashes are identical
 		if (hash1 == hash2) {
 			return hash1;
 		}
-		Hashtable<String,Object> return_hash = new Hashtable<String,Object>(hash2);
+		Hashtable<String, Object> return_hash = new Hashtable<String, Object>(hash2);
 		return_hash.putAll(hash1);
 		return return_hash;
 	}
@@ -86,8 +96,8 @@ public final class GeneralUtils  {
 	 *
 	 * @return the AWT colors indexed by name.
 	 */
-	protected static Hashtable<String,Color> initColorMap() {
-		Hashtable<String,Color> cm = new Hashtable<String,Color>();
+	protected static Hashtable<String, Color> initColorMap() {
+		Hashtable<String, Color> cm = new Hashtable<String, Color>();
 		cm.put("black", Color.black);
 		cm.put("blue", Color.blue);
 		cm.put("cyan", Color.cyan);
@@ -104,15 +114,15 @@ public final class GeneralUtils  {
 		return cm;
 	}
 
-  /**
-   * A simple way to get a FontMetrics object without calling the
-   * deprecated method Toolkit.getFontMetrics(Font).
-   * Use Graphics.getFontMetrics() instead whenever possible, but this
-   * will work just as well as Toolkit.getFontMetrics(Font).
-   */
-  public static FontMetrics getFontMetrics(Font fnt) {
-    return g.getFontMetrics(fnt);
-  }
+	/**
+	 * A simple way to get a FontMetrics object without calling the
+	 * deprecated method Toolkit.getFontMetrics(Font).
+	 * Use Graphics.getFontMetrics() instead whenever possible, but this
+	 * will work just as well as Toolkit.getFontMetrics(Font).
+	 */
+	public static FontMetrics getFontMetrics(Font fnt) {
+		return g.getFontMetrics(fnt);
+	}
 
 	/**
 	 *  determines whether for the given character set a font is monospaced
@@ -147,7 +157,7 @@ public final class GeneralUtils  {
 	 */
 	public static int getMaxCharWidth(Font[] fnts, char[] chars) {
 		int width = 0;
-		for (int i=0; i<fnts.length; i++) {
+		for (int i = 0; i < fnts.length; i++) {
 			width = Math.max(width, getMaxCharWidth(fnts[i], chars));
 		}
 		return width;
@@ -160,7 +170,7 @@ public final class GeneralUtils  {
 	public static int getMaxCharWidth(Font fnt, char[] chars) {
 		FontMetrics fontmet = getFontMetrics(fnt);
 		int width = 0;
-		for (int i=0; i<chars.length; i++) {
+		for (int i = 0; i < chars.length; i++) {
 			width = Math.max(width, fontmet.charWidth(chars[i]));
 		}
 		return width;
@@ -170,14 +180,37 @@ public final class GeneralUtils  {
 	 * Safely close a Closeable object.  If it doesn't exist, return.
 	 */
 	public static <S extends Closeable> void safeClose(S s) {
-		if (s == null)
+		if (s == null) {
 			return;
+		}
 		try {
 			s.close();
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
+	public static void exportToSvg(Component component, File selectedFile) {
+		try {
+			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+
+			// Create an instance of org.w3c.dom.Document.
+			String svgNS = "http://www.w3.org/2000/svg";
+			Document document = domImpl.createDocument(svgNS, "svg", null);
+
+			// Create an instance of the SVG Generator.
+			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+			component.paintAll(svgGenerator);
+
+			// Finally, stream out SVG to the standard output using
+			// UTF-8 encoding.
+			boolean useCSS = true; // we want to use CSS style attributes
+			Writer out = new BufferedWriter(new FileWriter(selectedFile));
+			//logger.info("Writing output");
+			svgGenerator.stream(out, useCSS);
+			//logger.info("Done");
+		} catch (Exception e) {
+			ErrorHandler.errorPanel("Error encountered creating SVG file.");
+		}
+	}
 }

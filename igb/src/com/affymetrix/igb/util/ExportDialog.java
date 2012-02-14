@@ -3,6 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -38,10 +39,12 @@ public class ExportDialog implements ExportConstants {
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+	public static final ExportFileType SVG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
 
 	static {
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
+//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
 	JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
@@ -139,35 +142,6 @@ public class ExportDialog implements ExportConstants {
 			extension = filePath.substring(indexOfExtension, filePath.length());
 		}
 		return extension;
-	}
-
-	private static void writeImage(BufferedImage image, String ext, File f) throws IOException {
-		Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
-		while (iw.hasNext()) {
-			ImageWriter writer = iw.next();
-			ImageWriteParam writeParam = writer.getDefaultWriteParam();
-			ImageTypeSpecifier typeSpecifier =
-					ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
-			IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-			if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-				continue;
-			}
-
-			if (ext.equals(EXTENSION[0])) {
-				setJPEG_DPI(metadata);
-			} else {
-				setPNG_DPI(metadata);
-			}
-
-			final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
-			try {
-				writer.setOutput(stream);
-				writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-			} finally {
-				stream.close();
-			}
-			break;
-		}
 	}
 
 	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
@@ -339,22 +313,43 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static void exportScreenshot(File f, String ext) throws IOException {
-		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
-				component.getWidth(), component.getHeight());
-		Graphics g = image.createGraphics();
-		component.paintAll(g);
-
-		if (f != null) {
-
-			if (!f.getName().toLowerCase().endsWith(ext)) {
-				String correctedFilename = f.getAbsolutePath() + ext;
-				f = new File(correctedFilename);
-			}
+		if (ext.equals(EXTENSION[2])) {
+			GeneralUtils.exportToSvg(component, f);
+		} else {
+			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
+					component.getWidth(), component.getHeight());
+			Graphics g = image.createGraphics();
+			component.paintAll(g);
 
 			image = GraphicsUtil.resizeImage(image,
 					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
 
-			writeImage(image, ext, f);
+			Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
+			while (iw.hasNext()) {
+				ImageWriter writer = iw.next();
+				ImageWriteParam writeParam = writer.getDefaultWriteParam();
+				ImageTypeSpecifier typeSpecifier =
+						ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+				IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+				if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+					continue;
+				}
+
+				if (ext.equals(EXTENSION[0])) {
+					setJPEG_DPI(metadata);
+				} else if (ext.equals(EXTENSION[1])) {
+					setPNG_DPI(metadata);
+				}
+
+				final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
+				try {
+					writer.setOutput(stream);
+					writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+				} finally {
+					stream.close();
+				}
+				break;
+			}
 		}
 	}
 

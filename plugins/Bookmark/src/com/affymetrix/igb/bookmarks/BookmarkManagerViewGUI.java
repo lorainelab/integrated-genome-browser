@@ -87,9 +87,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
         PropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Editor"));
 
-        nameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTextFieldActionPerformed(evt);
+        nameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nameTextFieldKeyReleased(evt);
             }
         });
 
@@ -117,9 +117,9 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         commentTextArea.setLineWrap(true);
         commentTextArea.setRows(5);
         commentTextArea.setWrapStyleWord(true);
-        commentTextArea.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                commentTextAreaFocusLost(evt);
+        commentTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                commentTextAreaKeyReleased(evt);
             }
         });
         jScrollPane2.setViewportView(commentTextArea);
@@ -395,10 +395,6 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		AddPositionBookmarkAction.getAction().actionPerformed(evt);
 }//GEN-LAST:event_addBookmarkActionButtonActionPerformed
 
-	private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
-		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_nameTextFieldActionPerformed
-
 	private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
 		bmv.import_action.actionPerformed(evt);
 		BookmarkActionManager.getInstance().rebuildMenus();
@@ -427,9 +423,13 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_redoNameButtonActionPerformed
 
-	private void commentTextAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentTextAreaFocusLost
+	private void nameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameTextFieldKeyReleased
 		bmv.thing.updateBookmarkData();
-	}//GEN-LAST:event_commentTextAreaFocusLost
+	}//GEN-LAST:event_nameTextFieldKeyReleased
+
+	private void commentTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_commentTextAreaKeyReleased
+		bmv.thing.updateBookmarkData();
+	}//GEN-LAST:event_commentTextAreaKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PropertiesPanel;

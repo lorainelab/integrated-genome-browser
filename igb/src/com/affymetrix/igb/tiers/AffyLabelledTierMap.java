@@ -240,7 +240,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void repackTheTiers(boolean full_repack, boolean stretch_vertically, boolean manual) {
     super.repackTheTiers(full_repack, stretch_vertically, manual);  
-    labelmap.repackTheTiers(full_repack, stretch_vertically, manual);  
+    //labelmap.repackTheTiers(full_repack, stretch_vertically, manual);  
   }
 
   /** Prints this component, including the label map. */

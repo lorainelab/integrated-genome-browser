@@ -121,10 +121,14 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
 
 		drawLabel(g, view.getPixelBox(), pixelbox);
+		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 
 		super.draw(view);
 	}
 
+	private int textPixelHeight;
+	private double textCoordHeight;
+	
 	private void drawLabel(Graphics g, Rectangle boundingPixelBox, Rectangle pixelbox) {
 		// assumes that pixelbox coordinates are already computed
 
@@ -136,6 +140,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		FontMetrics fm = g.getFontMetrics();
 		//int text_height = fm.getAscent() + fm.getDescent();
 		int text_height = fm.getHeight();
+		this.textPixelHeight = text_height;
 
 		// Lower bound of visible glyph
 		int lowerY = Math.max(pixelbox.y, boundingPixelBox.y);
@@ -219,4 +224,27 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Rectangle2D.Double cbox = getCoordBox();
 		setCoords(cbox.x, top, cbox.width, height);
 	}
+	
+	/**
+	 * How small can this tier label be made?
+	 * We still want to be able to see the beginning of the text.
+	 * - elb
+	 * @return size in pixels like a JComponent would.
+	 */
+	public Dimension getMinimumSize() {
+		Dimension answer = new Dimension(0, this.textPixelHeight);
+		return answer;
+	}
+	
+	/**
+	 * How short can this tier label be made?
+	 * We still want to be able to see the beginning of the text.
+	 * - elb
+	 * @return height in coordinate space.
+	 */
+	public Double getMinimumHeight() {
+		Double answer = this.textCoordHeight;
+		return answer;
+	}
+	
 }

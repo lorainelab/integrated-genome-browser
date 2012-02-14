@@ -2,7 +2,6 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -18,30 +17,31 @@ import javax.swing.*;
  * @author nick
  */
 public class ExportDialogGUI extends JPanel {
-	
+
 	public static JFrame static_frame = null;
+	private static final String TITLE = "Export Image";
 	private static ExportDialogGUI singleton;
-	private static ExportDialog export;
+	private ExportDialog export;
 	private AffyTieredMap seqMap;
 	private Component wholeFrame;
 	private Component mainView;
 	private Component mainViewWithLabels;
 	private Component slicedView;
-	
+
 	public synchronized void display(boolean isSequenceViewer) {
 		initRadioButton(isSequenceViewer);
-		
+
 		initFrame();
-		
+
 		DisplayUtils.bringFrameToFront(static_frame);
-		
+
 		export.previewImage();
 	}
-	
+
 	private void initRadioButton(boolean isSequenceViewer) {
 		if (!isSequenceViewer) {
 			initView();
-			
+
 			if (svRadioButton.isSelected()) {
 				export.setComponent(slicedView);
 			} else if (mvRadioButton.isSelected()) {
@@ -52,52 +52,44 @@ public class ExportDialogGUI extends JPanel {
 				export.setComponent(wholeFrame);
 				wfRadioButton.setSelected(true);
 			}
-			
+
 			mvRadioButton.setEnabled(seqMap.getTiers().size() != 0);
 			mvlRadioButton.setEnabled(seqMap.getTiers().size() != 0);
 			svRadioButton.setEnabled(seqMap.getSelected().size() != 0);
 		}
-		
+
 		buttonsPanel.setVisible(!isSequenceViewer);
 	}
-	
+
 	private void initView() {
 		seqMap = IGB.getSingleton().getMapView().getSeqMap();
 		wholeFrame = IGB.getSingleton().getFrame().getContentPane();
-		
+
 		mainView = seqMap.getNeoCanvas();
-		
+
 		AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
 		mainViewWithLabels = tm.getSplitPane();
-		
+
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
-	
+
 	private void initFrame() {
 		if (static_frame == null) {
 			export.init();
-			
-			static_frame = PreferenceUtils.createFrame("Export Image",
-					getSingleton());
-			
-			Application app = Application.getSingleton();
-			JFrame frame = (app == null) ? null : app.getFrame();
-			
-			Point location = frame.getLocation();
-			// Display frame at center when initialize it
-			static_frame.setLocation(location.x + frame.getWidth() / 2 - static_frame.getWidth() / 2,
-					location.y + frame.getHeight() / 2 - static_frame.getHeight() / 2);
+			static_frame = PreferenceUtils.createFrame(TITLE, singleton);
+		} else {
+			export.initSpinner((String) unitComboBox.getSelectedItem());
 		}
 	}
-	
+
 	private void setEnable(boolean b) {
 		this.wfRadioButton.setEnabled(!b);
 		this.mvRadioButton.setEnabled(!b);
 		this.mvlRadioButton.setEnabled(!b);
 		this.svRadioButton.setEnabled(!b);
 	}
-	
+
 	public static synchronized ExportDialogGUI getSingleton() {
 		if (singleton == null) {
 			singleton = new ExportDialogGUI();
@@ -108,7 +100,7 @@ public class ExportDialogGUI extends JPanel {
 	/** Creates new form ExportUtils */
 	public ExportDialogGUI() {
 		export = ExportDialog.getSingleton();
-		
+
 		initComponents();
 	}
 
@@ -122,11 +114,6 @@ public class ExportDialogGUI extends JPanel {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
-        filePathTextField = export.filePathTextField;
-        browseButton = new javax.swing.JButton();
-        extComboBox = export.extComboBox;
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
         imageSizePanel = new javax.swing.JPanel();
         widthLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
@@ -144,33 +131,12 @@ public class ExportDialogGUI extends JPanel {
         mvRadioButton = new javax.swing.JRadioButton();
         wfRadioButton = new javax.swing.JRadioButton();
         mvlRadioButton = new javax.swing.JRadioButton();
-
-        browseButton.setText("Browse...");
-        browseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                browseButtonActionPerformed(evt);
-            }
-        });
-
-        extComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                extComboBoxActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        topPanel = new javax.swing.JPanel();
+        browseButton = new javax.swing.JButton();
+        filePathTextField = export.filePathTextField;
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        extComboBox = export.extComboBox;
 
         imageSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
 
@@ -218,7 +184,7 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanelLayout.setHorizontalGroup(
             imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(imageSizePanelLayout.createSequentialGroup()
-                .add(20, 20, 20)
+                .addContainerGap()
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(imageSizePanelLayout.createSequentialGroup()
                         .add(widthLabel)
@@ -327,7 +293,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(15, 15, 15)
                 .add(previewLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         previewPanelLayout.setVerticalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -337,22 +303,62 @@ public class ExportDialogGUI extends JPanel {
 
         previewPanelLayout.linkSize(new java.awt.Component[] {buttonsPanel, previewLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
+        browseButton.setText("Browse...");
+        browseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonActionPerformed(evt);
+            }
+        });
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout topPanelLayout = new org.jdesktop.layout.GroupLayout(topPanel);
+        topPanel.setLayout(topPanelLayout);
+        topPanelLayout.setHorizontalGroup(
+            topPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, topPanelLayout.createSequentialGroup()
+                .add(filePathTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(browseButton))
+            .add(topPanelLayout.createSequentialGroup()
+                .add(extComboBox, 0, 309, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0)
+                .add(okButton))
+        );
+        topPanelLayout.setVerticalGroup(
+            topPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(topPanelLayout.createSequentialGroup()
+                .add(topPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(browseButton)
+                    .add(filePathTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(0, 0, 0)
+                .add(topPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(extComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(cancelButton)
+                    .add(okButton)))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(filePathTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(browseButton))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(extComboBox, 0, 309, Short.MAX_VALUE)
-                .add(0, 0, 0)
-                .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(okButton))
-            .add(imageSizePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+            .add(topPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(imageSizePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {imageSizePanel, previewPanel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -360,33 +366,23 @@ public class ExportDialogGUI extends JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(browseButton)
-                    .add(filePathTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(0, 0, 0)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(extComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cancelButton)
-                    .add(okButton))
+                .add(topPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
                 .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(0, 0, 0)
-                .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 	private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
 		export.browseButtonActionPerformed(this);
 	}//GEN-LAST:event_browseButtonActionPerformed
-	
-	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
-		export.extComboBoxActionPerformed();
-	}//GEN-LAST:event_extComboBoxActionPerformed
-	
+
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
 		static_frame.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
-	
+
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 		try {
 			if (export.okButtonActionPerformed()) {
@@ -396,43 +392,43 @@ public class ExportDialogGUI extends JPanel {
 			Logger.getLogger(ExportDialogGUI.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}//GEN-LAST:event_okButtonActionPerformed
-	
+
 	private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
 		export.widthSpinnerStateChanged();
 	}//GEN-LAST:event_widthSpinnerStateChanged
-	
+
 	private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
 		export.heightSpinnerStateChanged();
 	}//GEN-LAST:event_heightSpinnerStateChanged
-	
+
 	private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
 		export.resetButtonActionPerformed();
 	}//GEN-LAST:event_resetButtonActionPerformed
-	
+
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed
 		export.setComponent(mainView);
 		export.previewImage();
 	}//GEN-LAST:event_mvRadioButtonActionPerformed
-	
+
 	private void mvlRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvlRadioButtonActionPerformed
 		export.setComponent(mainViewWithLabels);
 		export.previewImage();
 	}//GEN-LAST:event_mvlRadioButtonActionPerformed
-	
+
 	private void wfRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wfRadioButtonActionPerformed
 		export.setComponent(wholeFrame);
 		export.previewImage();
 	}//GEN-LAST:event_wfRadioButtonActionPerformed
-	
+
 	private void svRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_svRadioButtonActionPerformed
 		export.setComponent(slicedView);
 		export.previewImage();
 	}//GEN-LAST:event_svRadioButtonActionPerformed
-	
+
 	private void resolutionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resolutionComboBoxActionPerformed
 		export.resolutionComboBoxActionPerformed();
 	}//GEN-LAST:event_resolutionComboBoxActionPerformed
-	
+
 	private void unitComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitComboBoxActionPerformed
 		export.unitComboBoxActionPerformed();
 	}//GEN-LAST:event_unitComboBoxActionPerformed
@@ -455,6 +451,7 @@ public class ExportDialogGUI extends JPanel {
     private javax.swing.JComboBox resolutionComboBox;
     private javax.swing.JLabel sizeLabel;
     private javax.swing.JRadioButton svRadioButton;
+    private javax.swing.JPanel topPanel;
     private javax.swing.JComboBox unitComboBox;
     private javax.swing.JRadioButton wfRadioButton;
     private javax.swing.JLabel widthLabel;

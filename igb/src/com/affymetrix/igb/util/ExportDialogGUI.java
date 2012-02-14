@@ -138,6 +138,8 @@ public class ExportDialogGUI extends JPanel {
         cancelButton = new javax.swing.JButton();
         extComboBox = export.extComboBox;
 
+        setMinimumSize(new java.awt.Dimension(506, 329));
+
         imageSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
 
         widthLabel.setText("Width:");
@@ -356,9 +358,13 @@ public class ExportDialogGUI extends JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(topPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(imageSizePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(20, 20, 20)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(previewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(imageSizePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(topPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(20, 20, 20))
         );
 
         layout.linkSize(new java.awt.Component[] {imageSizePanel, previewPanel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -366,12 +372,13 @@ public class ExportDialogGUI extends JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .add(10, 10, 10)
                 .add(topPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
+                .add(5, 5, 5)
                 .add(imageSizePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
+                .add(10, 10, 10)
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0))
+                .add(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -407,21 +414,25 @@ public class ExportDialogGUI extends JPanel {
 
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed
 		export.setComponent(mainView);
+		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
 	}//GEN-LAST:event_mvRadioButtonActionPerformed
 
 	private void mvlRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvlRadioButtonActionPerformed
 		export.setComponent(mainViewWithLabels);
+		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
 	}//GEN-LAST:event_mvlRadioButtonActionPerformed
 
 	private void wfRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wfRadioButtonActionPerformed
 		export.setComponent(wholeFrame);
+		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
 	}//GEN-LAST:event_wfRadioButtonActionPerformed
 
 	private void svRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_svRadioButtonActionPerformed
 		export.setComponent(slicedView);
+		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
 	}//GEN-LAST:event_svRadioButtonActionPerformed
 

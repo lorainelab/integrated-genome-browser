@@ -12,15 +12,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.shared.CollapsePacker;
-import com.affymetrix.igb.shared.GraphFasterExpandPacker;
-import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.*;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -191,8 +185,12 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		// TODO Auto-generated method stub
-		return null;
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction) {
+		ViewModeGlyph viewModeGlyph = new ExpandedAnnotationGlyph(style);
+		viewModeGlyph.setDirection(direction);
+		if (direction != TierGlyph.Direction.REVERSE) {
+			((FasterExpandPacker)((ExpandedAnnotationGlyph)viewModeGlyph).getPacker()).setMoveType(NeoConstants.UP);
+		}
+		return viewModeGlyph;
 	}
 }

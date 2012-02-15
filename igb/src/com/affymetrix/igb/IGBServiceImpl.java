@@ -121,7 +121,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			final String check, final boolean def_val){
 		return Application.confirmPanel(message, node, check, def_val);
 	}
-	
+
 	@Override
 	public ImageIcon getIcon(String name) {
 		return CommonUtils.getInstance().getIcon("images/" + name);
@@ -143,7 +143,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
 	}
-	
+
 	@Override
 	public void updateGeneralLoadView() {
 		GeneralLoadView.getLoadView().refreshTreeView();
@@ -152,7 +152,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void updateDependentData() {
-		TrackView.updateDependentData();
+		TrackView.getInstance().updateDependentData();
 	}
 
 	@Override
@@ -229,7 +229,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial){
 		return new LoadResidueAction(viewspan, partial);
 	}
-	
+
 	@Override
 	public JFrame getFrame() {
 		return Application.getSingleton().getFrame();
@@ -276,12 +276,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			String method = style.getMethodName();
 			if (method != null) {
-				TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+				TrackView.getInstance().delete((AffyTieredMap)getSeqMap(), method, style);
 			} else {
 				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
 					style = gg.getGraphState().getTierStyle();
 					method = style.getMethodName();
-					TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+					TrackView.getInstance().delete((AffyTieredMap)getSeqMap(), method, style);
 				}
 			}
 		}
@@ -289,10 +289,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	public void deleteGraph(GraphSym gsym) {
-		TrackView.delete((AffyTieredMap)getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
+		TrackView.getInstance().delete((AffyTieredMap)getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
 		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
 	}
-	
+
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
 		AffyTieredMap map = (AffyTieredMap)getSeqMap();
@@ -377,7 +377,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
 		GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
 	}
-	
+
 	@Override
 	public String getSelectedSpecies(){
 		return GeneralLoadView.getLoadView().getSelectedSpecies();

@@ -107,14 +107,14 @@ public final class GeneralLoadUtils {
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
 	static final Map<String, String> versionName2species =
 			new HashMap<String, String>();	// the species associated with the given version.
-	
+
 	public static Map<String, String> getVersionName2Species() {
 		return versionName2species;
 	}
 	public static Map<String, List<GenericVersion>>  getSpecies2Generic() {
 		return species2genericVersionList;
 	}
-	
+
 
 	/**
 	 * Private copy of the default Synonym lookup
@@ -321,7 +321,7 @@ public final class GeneralLoadUtils {
 		return featureList;
 	}
 
-	
+
 	/**
 	* Only want to display features with visible attribute set to true.
 	* @param features
@@ -339,7 +339,7 @@ public final class GeneralLoadUtils {
 
 		return visibleFeatures;
 	}
-	
+
 	/*
 	 * Returns the list of features for currently selected group.
 	 */
@@ -728,14 +728,14 @@ public final class GeneralLoadUtils {
 			protected Boolean runInBackground() {
 				try {
 					boolean result = loadFeaturesForSym(feature, optimized_sym);
-					TrackView.updateDependentData();
+					TrackView.getInstance().updateDependentData();
 					return result;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				return false;
 			}
-									
+
 			@Override
 			protected void finished() {
 				BioSeq aseq = gmodel.getSelectedSeq();
@@ -753,10 +753,10 @@ public final class GeneralLoadUtils {
 				}
 
 				GeneralLoadView.getLoadView().initDataManagementTable();
-				
+
 				if(this.isCancelled())
 					return;
-				
+
 				try {
 					boolean result = get();
 					setLastRefreshStatus(feature, result);
@@ -864,7 +864,7 @@ public final class GeneralLoadUtils {
 			Application.getSingleton().removeNotLockedUpMsg(msg);
 			if (residuesLoaded) {
 				Application.getSingleton().setStatus(MessageFormat.format(
-						"Completed loading sequence for {0} : {1} - {2} from {3}", 
+						"Completed loading sequence for {0} : {1} - {2} from {3}",
 						new Object[]{seq_name,min,max,serverDescription}));
 				return true;
 			}
@@ -1011,7 +1011,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Set autoload variable in features.
-	 * @param autoload	
+	 * @param autoload
 	 */
 	public static void setFeatureAutoLoad(boolean autoload) {
 		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
@@ -1060,14 +1060,14 @@ public final class GeneralLoadUtils {
 			ScriptFileLoader.runScript(uri.toString());
 			return;
 		}
-			
+
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
 			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
-		
+
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 
 		if (gFeature == null) {
@@ -1078,14 +1078,14 @@ public final class GeneralLoadUtils {
 			addChromosomesForUnknownGroup(fileName, gFeature);
 		}
 
-		// force a refresh of this server		
+		// force a refresh of this server
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
-	
+
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
 		if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			loadAllSymmetriesThread(gFeature);
@@ -1142,7 +1142,7 @@ public final class GeneralLoadUtils {
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
-	
+
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
 		GenericFeature gFeature = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
@@ -1188,12 +1188,12 @@ public final class GeneralLoadUtils {
 			gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload);
 
 			version.addFeature(gFeature);
-			
+
 			gFeature.setVisible(); // this should be automatically checked in the feature tree
-			
+
 			GeneralLoadView.addFeatureTier(gFeature);
 		}
-		
+
 		return gFeature;
 	}
 
@@ -1328,7 +1328,7 @@ public final class GeneralLoadUtils {
 			protected Object runInBackground() {
 				try {
 					quickLoad.loadAndAddAllSymmetries(feature);
-					TrackView.updateDependentData();
+					TrackView.getInstance().updateDependentData();
 				} catch (Exception ex) {
 					quickLoad.logException(ex);
 				}

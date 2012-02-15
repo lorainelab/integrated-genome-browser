@@ -108,10 +108,10 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class SeqMapView extends JPanel
 		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder, JRPWidget {
-	
+
 	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
 	public static final boolean default_auto_change_view = false;
-	
+
 	private static final long serialVersionUID = 1L;
 	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
 
@@ -323,16 +323,16 @@ public class SeqMapView extends JPanel
 		MouseShortCut msc = new MouseShortCut(popup);
 
 		tier_manager.setDoGraphSelections(true);
-		
+
 		GraphSelectionManager gsm = new GraphSelectionManager(this);
 		seqmap.addMouseListener(gsm);
-		
+
 		if (add_popups) {
 			//NOTE: popup listeners are called in reverse of the order that they are added
 			// Must use separate instances of GraphSelectioManager if we want to use
 			// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
 			//tier_manager.addPopupListener(new GraphSelectionManager(this));
-			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));	
+			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
 			tier_manager.addPopupListener(gsm);
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
@@ -431,7 +431,7 @@ public class SeqMapView extends JPanel
 
 		this.addPopupListener(new ReadAlignmentView());
 
-		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getSystemStylesheet());
+		TrackView.getInstance().getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getSystemStylesheet());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
@@ -495,7 +495,7 @@ public class SeqMapView extends JPanel
 			}
 		};
 	}
-	
+
 	protected AutoLoadThresholdAction addAutoLoad() {
 		return AutoLoadThresholdAction.getAction();
 	}
@@ -584,7 +584,7 @@ public class SeqMapView extends JPanel
 		aseq = null;
 		this.viewseq = null;
 		clearSelection();
-		TrackView.clear();
+		TrackView.getInstance().clear();
 		match_glyphs.clear();
 		seqmap.setMapRange(default_range[0], default_range[1]);
 		seqmap.setMapOffset(default_offset[0], default_offset[1]);
@@ -904,7 +904,7 @@ public class SeqMapView extends JPanel
 
 		return resultAxisTier;
 	}
-	
+
 	private void shrinkWrap() {
 		/*
 		 *  Shrink wrapping is a little more complicated than one might expect, but it
@@ -1001,18 +1001,18 @@ public class SeqMapView extends JPanel
 	}
 
 	private void addAnnotationTracks() {
-		TrackView.addTracks(this, aseq);
+		TrackView.getInstance().addTracks(this, aseq);
 		addDependentAndEmptyTrack();
-		
+
 		if (aseq.getComposition() != null) {
 			handleCompositionSequence();
 		}
 	}
 
 	protected void addDependentAndEmptyTrack(){
-		TrackView.addDependentAndEmptyTrack(this, aseq);
+		TrackView.getInstance().addDependentAndEmptyTrack(this, aseq);
 	}
-	
+
 	// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 	//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
 	private void handleCompositionSequence() {
@@ -1102,7 +1102,7 @@ public class SeqMapView extends JPanel
 			List<GlyphI> glyphlist = collectGraphs();
 		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
 		GraphGlyph gg;
-		
+
 		//Remove hidden Graphs
 		for(GlyphI g : glyphlist){
 			gg = (GraphGlyph)g;
@@ -1111,9 +1111,9 @@ public class SeqMapView extends JPanel
 			}
 		}
 		glyphlist.clear();
-		
+
 		// convert graph glyphs to GraphSyms via glyphsToSyms
-		
+
 		// Bring them all into the visual area
 		for (GlyphI gl : visibleList) {
 			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
@@ -1864,7 +1864,7 @@ public class SeqMapView extends JPanel
 	public PixelFloaterGlyph getPixelFloater(){
 		return pixel_floater_glyph;
 	}
-	
+
 	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
 	 * @param style the style
@@ -1872,7 +1872,7 @@ public class SeqMapView extends JPanel
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getTrack(this, sym, style, tier_direction);
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
 	}
 
 	/**
@@ -1890,12 +1890,12 @@ public class SeqMapView extends JPanel
 	 */
 	@Override
 	public TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_heights) {
-		return TrackView.getTiers(this, style, constant_heights);
+		return TrackView.getInstance().getTiers(this, style, constant_heights);
 	}
 
 	@Override
 	public TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getGraphTrack(seqmap, style, tier_direction);
+		return TrackView.getInstance().getGraphTrack(seqmap, style, tier_direction);
 	}
 
 	@Override
@@ -2062,7 +2062,7 @@ public class SeqMapView extends JPanel
 	public final AxisGlyph getAxisGlyph() {
 		if(axis_tier == null)
 			return null;
-		
+
 		AxisGlyph ag = null;
 		for (GlyphI child : axis_tier.getChildren()) {
 			if (child instanceof AxisGlyph) {
@@ -2078,11 +2078,11 @@ public class SeqMapView extends JPanel
 		for(TierGlyph tier : seqmap.getTiers()){
 			if(!tier.isVisible())
 				continue;
-			
+
 			slot += tier.getActualSlots();
 			noOfTiers += 1;
 		}
-		
+
 		return slot/noOfTiers;
 	}
 	public final void addToRefreshList(SeqMapRefreshed smr) {

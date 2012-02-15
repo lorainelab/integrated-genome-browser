@@ -71,7 +71,7 @@ public final class GeneralLoadView {
 	private FeatureTreeView feature_tree_view;
 	private static GeneralLoadView singleton;
 	private static IGBService igbService;
-	//gui components 
+	//gui components
 	private static JRPButton all_residuesB;
 	private static JTableX dataManagementTable;
 	private static JRPButton partial_residuesB;
@@ -162,7 +162,7 @@ public final class GeneralLoadView {
 	public void initVersion(String versionName) {
 		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
 		try {
-			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.	 
+			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 		} finally {
 			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 		}
@@ -371,7 +371,7 @@ public final class GeneralLoadView {
 							}
 
 							((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
-							TrackView.updateDependentData();
+							TrackView.getInstance().updateDependentData();
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -441,8 +441,8 @@ public final class GeneralLoadView {
 		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
 		return visibleFeatures;
 	}
-	
-	
+
+
 	public void initDataManagementTable() {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 		int maxFeatureNameLength = 1;
@@ -450,7 +450,7 @@ public final class GeneralLoadView {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
-		dataManagementTable.stopCellEditing(); 
+		dataManagementTable.stopCellEditing();
 		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
 
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
@@ -479,7 +479,7 @@ public final class GeneralLoadView {
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
-	
+
 
 		dataManagementTable.getTableHeader().setReorderingAllowed(false);
 		TableCellRenderer renderer = dataManagementTable.getTableHeader().getDefaultRenderer();
@@ -592,19 +592,19 @@ public final class GeneralLoadView {
 				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
 				if(!syms.isEmpty())
 					gviewer.select(new ArrayList<SeqSymmetry>(1), true);
-		
+
 				gviewer.getSeqMap().packTiers(true, true, false, false);
 				gviewer.getSeqMap().stretchToFit(false, true);
 				gviewer.getSeqMap().updateWidget();
-				
+
 				if(!syms.isEmpty())
 					gviewer.select(syms, false);
-				
+
 				TierPrefsView.getSingleton().refreshList();
 			}
 		});
 	}
-	
+
 	void removeAllFeautres(Set<GenericFeature> features) {
 		for (GenericFeature feature : features) {
 			if (feature.isVisible()) {
@@ -612,11 +612,11 @@ public final class GeneralLoadView {
 			}
 		}
 	}
-	
+
 	public void removeFeature(final GenericFeature feature, final boolean refresh) {
 		removeFeature(feature, refresh, true);
 	}
-	
+
 	void removeFeature(final GenericFeature feature, final boolean refresh, final boolean removeLocal) {
 		if (feature == null) {
 			return;
@@ -629,8 +629,8 @@ public final class GeneralLoadView {
 				if (!feature.getMethods().isEmpty()) {
 					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 						for (String method : feature.getMethods()) {
-							TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
-							TrackView.deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
+							TrackView.getInstance().deleteDependentData(gviewer.getSeqMap(), method, bioseq);
+							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
 						}
 					}
 				}

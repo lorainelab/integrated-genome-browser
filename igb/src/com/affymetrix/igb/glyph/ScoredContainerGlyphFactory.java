@@ -54,7 +54,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {
 	}
-	
+
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 				ScoredIntervalParser.default_attach_graphs);
@@ -65,7 +65,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			}
 			// first draw the little rectangle that will go in an annotation tier
 			// and be used to select regions for the pivot view
-			TrackView.getAnnotationGlyphFactory().createGlyph(sym, smv);
+			TrackView.getInstance().getAnnotationGlyphFactory().createGlyph(sym, smv);
 
 			// then draw the graphs
 			if (attach_graphs) {
@@ -277,7 +277,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	public boolean isFileSupported(String fileFormat) {
 		if(fileFormat == null)
 			return false;
-		
+
 		for(String format : supportedFormat){
 			if(format.equals(fileFormat)){
 				return true;

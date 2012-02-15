@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.glyph.AbstractGraphGlyph;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -47,6 +48,24 @@ public final class GraphGlyphUtils {
 	 *   the glyph's coord box is also its pixel box.
 	 */
 	public static void checkPixelBounds(GraphGlyph gl, NeoMap map) {
+		if (gl.getGraphState().getFloatGraph()) {
+			Rectangle mapbox = map.getView().getPixelBox();
+			Rectangle2D.Double gbox = gl.getCoordBox();
+			if (gbox.y < mapbox.y) {
+				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
+			} else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
+				gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
+			}
+		}
+	}
+
+	/**
+	 * Identical to above, except for new version of GraphGlyph. Remove the above
+	 * when completely converted to new version of GraphGlyph.
+	 * @param gl the graph glyph to check
+	 * @param map the map (AffyTieredMap)
+	 */
+	public static void checkPixelBounds(AbstractGraphGlyph gl, NeoMap map) {
 		if (gl.getGraphState().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();

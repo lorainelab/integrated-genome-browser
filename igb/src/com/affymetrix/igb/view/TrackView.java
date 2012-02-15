@@ -11,14 +11,18 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.glyph.AbstractGraphGlyphFactory;
+import com.affymetrix.igb.glyph.CollapsedAnnotGlyphFactory;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
+import com.affymetrix.igb.glyph.ExpandedAnnotGlyphFactory;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
@@ -136,7 +140,7 @@ public class TrackView {
 	TierGlyph[] getTiers(
 			SeqMapView smv, ITrackStyleExtended style, boolean constant_heights) {
 		AffyTieredMap map = smv.getSeqMap();
-
+		
 		if (style.isGraphTier()) {
 			constant_heights = false;
 		}
@@ -248,7 +252,7 @@ public class TrackView {
 				doMiddlegroundShading((SymWithProps)annotSym, seq);
 			}
 		}
-
+		
 	}
 
 	void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
@@ -263,17 +267,63 @@ public class TrackView {
 				}
 			}
 		}
-
+		
 		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
 			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
 		}
 	}
-
+	
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
+
+		// TODO this will be replaced as we add more ViewModeGlyphs
+		if (determineFactory(annotSym) instanceof ExpandedAnnotGlyphFactory ||
+			determineFactory(annotSym) instanceof CollapsedAnnotGlyphFactory ||
+			determineFactory(annotSym) instanceof AbstractGraphGlyphFactory
+		   ) {
+			String meth = BioSeq.determineMethod(annotSym);
+
+			if (meth != null) {
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+				TierGlyph[] tiers = new TierGlyph[2];
+				tiers[0] = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+				tiers[1] = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+/*
+				if (style.isGraphTier()) {
+					if (style.getSeparate()) {
+						TierGlyph fortier = smv.getGraphTrack(style, Direction.FORWARD);
+						TierGlyph revtier = smv.getGraphTrack(style, Direction.REVERSE);
+						tiers = new TierGlyph[]{fortier, revtier};
+					} else {
+						// put everything in a single tier
+						TierGlyph fortier = smv.getGraphTrack(style, Direction.BOTH);
+						tiers = new TierGlyph[]{fortier, fortier};
+					}
+				}
+				else {
+					tiers = smv.getTiers(style, true);
+				}
+*/
+
+				if (!(tiers[0] instanceof TierGlyphViewMode) || (tiers[1] != null && !(tiers[1] instanceof TierGlyphViewMode))) {
+					ErrorHandler.errorPanel("internal error - viewmode in TrackView.addAnnotationGlyphs()", "internal error - viewmode in TrackView.addAnnotationGlyphs()");
+					throw new RuntimeException("internal error - viewmode in TrackView.addAnnotationGlyphs()");
+				}
+				if (!annotSym.equals(tiers[0].getInfo())) {
+					tiers[0].setInfo(annotSym);
+				}
+				if (tiers[1] != null && !tiers[1].equals(tiers[0])) {
+					tiers[1].setInfo(annotSym);
+				}
+
+				return;
+			}
+		}
 		MapViewGlyphFactoryI factory = null;
 		if (annotSym instanceof ScoredContainerSym) {
 			factory = container_factory;
+		} else if (annotSym instanceof GraphSym) {
+			factory = graph_factory;
 		} else {
 			factory = determineFactory(annotSym);
 		}
@@ -286,20 +336,17 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-
+			
 			// Use alternate view mode if available
 			MapViewGlyphFactoryI view_mode = MapViewModeHolder.getInstance().getViewFactory(style.getViewMode());
 			if(view_mode != null){
 				return view_mode;
 			}
 		}
-
-		if (sym instanceof GraphSym) {
-			return graph_factory;
-		}
+		
 		return getAnnotationGlyphFactory();
 	}
-
+	
 	private void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
@@ -365,7 +412,7 @@ public class TrackView {
 			dd_list = new ArrayList<DependentData>();
 			dependent_list.put(seq, dd_list);
 		}
-
+		
 		dd_list.add(dd);
 		return dd.createTier(seq);
 	}
@@ -374,11 +421,11 @@ public class TrackView {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if (seq == null)
 			return;
-
+		
 		List<DependentData> dd_list = dependent_list.get(seq);
 		if(dd_list == null)
 			return;
-
+		
 		for (DependentData dd : dd_list)
 			dd.createTier(seq);
 	}
@@ -386,7 +433,7 @@ public class TrackView {
 	public void delete(AffyTieredMap map, String method, ITrackStyleExtended style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();
-
+		
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
 			GeneralLoadView.getLoadView().removeFeature(feature, true);
@@ -396,9 +443,9 @@ public class TrackView {
 		deleteDependentData(map, method, seq);
 		deleteSymsOnSeq(map, method, seq, feature);
 	}
-
+	
 	public void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq, GenericFeature feature){
-
+		
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if (sym != null) {
@@ -409,7 +456,7 @@ public class TrackView {
 					}
 				}
 				seq.unloadAnnotation(sym);
-
+				
 				if(feature != null){
 					feature.clear(seq);
 					if(feature.getLoadStrategy() == LoadStrategy.GENOME || feature.getLoadStrategy() == LoadStrategy.AUTOLOAD){
@@ -419,13 +466,13 @@ public class TrackView {
 			}
 		}
 	}
-
+	
 	public void deleteDependentData(AffyTieredMap map, String method, BioSeq seq) {
 		DependentData dd = null;
 		List<DependentData> dd_list = dependent_list.get(seq);
 		if(dd_list == null)
 			return;
-
+		
 		List<DependentData> remove_list = new ArrayList<DependentData>();
 		for (int i = 0; i < dd_list.size(); i++) {
 			dd = dd_list.get(i);
@@ -439,11 +486,11 @@ public class TrackView {
 //				seq.unloadAnnotation(dd.getSym());
 			}
 		}
-
+		
 		for(DependentData r : remove_list){
 			dd_list.remove(r);
 		}
-
+		
 		remove_list.clear();
 	}
 

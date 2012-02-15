@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
@@ -204,7 +205,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	public boolean isManuallyResizable()  {
-		return ((getInfo() instanceof TierGlyph));
+		 return ((getInfo() instanceof TierGlyph) && 
+				 (((TierGlyph)getInfo()).getChildCount() == 1 && 
+				 ((TierGlyph)getInfo()).getChild(0) instanceof GraphGlyph));
 	}
 
 	public void resizeHeight(double top, double height) {

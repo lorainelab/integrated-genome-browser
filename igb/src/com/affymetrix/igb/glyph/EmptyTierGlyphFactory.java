@@ -80,8 +80,8 @@ public class EmptyTierGlyphFactory {
 		TierGlyph[] tiers = new TierGlyph[2];
 				
 		double height = style.getHeight();
+		String viewmode = TrackUtils.getInstance().useViewMode(style.getMethodName());
 		if(!style.isGraphTier()){
-			String viewmode = TrackUtils.getInstance().useViewMode(style.getMethodName());
 			if (viewmode != null) {
 				style.setViewMode(viewmode);
 				tiers[0] = gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
@@ -94,7 +94,12 @@ public class EmptyTierGlyphFactory {
 			}
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 		}else {
-			tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
+			if(viewmode != null){
+				style.setViewMode(viewmode);
+				tiers[0] = gviewer.getTrack(null, style, Direction.NONE);
+			} else {
+				tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
+			}
 		}
 
 		if (style.getSeparate() && !style.isGraphTier()) {

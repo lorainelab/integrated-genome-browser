@@ -267,8 +267,6 @@ public class TrackView {
 		MapViewGlyphFactoryI factory = null;
 		if (annotSym instanceof ScoredContainerSym) {
 			factory = container_factory;
-		} else if (annotSym instanceof GraphSym) {
-			factory = graph_factory;
 		} else {
 			factory = determineFactory(annotSym);
 		}
@@ -289,6 +287,9 @@ public class TrackView {
 			}
 		}
 		
+		if (sym instanceof GraphSym) {
+			return graph_factory;
+		}
 		return getAnnotationGlyphFactory();
 	}
 	

@@ -52,6 +52,12 @@ public class TrackUtils {
 		if (method != null && method.contains("$$$.")) {
 			return "collapsed";
 		}
+		if (method != null && method.contains("!!!.")) {
+			return "not";
+		}
+		if (method != null && method.contains("@@@.")) {
+			return "Natural Log";
+		}
 		return null;
 	}
 }

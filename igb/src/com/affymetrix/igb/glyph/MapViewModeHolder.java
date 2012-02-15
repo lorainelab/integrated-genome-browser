@@ -1,9 +1,10 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.operator.LogTransform;
+import com.affymetrix.genometryImpl.operator.NotOperator;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,11 +22,13 @@ public class MapViewModeHolder {
 	}
 	
 	private MapViewModeHolder(){
-		addViewFactory(new DepthGraphGlyphFactory());
+		//addViewFactory(new DepthGraphGlyphFactory());
 		addViewFactory(new MismatchGraphGlyphFactory());
 		addViewFactory(new MismatchPileupGraphGlyphFactory());
 		addViewFactory(new ExpandedAnnotGlyphFactory());
 		addViewFactory(new CollapsedAnnotGlyphFactory());
+		addViewFactory(new OperatorGlyphFactory(new NotOperator(), new CollapsedAnnotGlyphFactory()));
+		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
 //		addViewFactory(expandedAnnotGlyphFactory);

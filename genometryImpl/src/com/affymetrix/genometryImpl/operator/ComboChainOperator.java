@@ -108,4 +108,13 @@ public class ComboChainOperator implements Operator {
 	public FileTypeCategory getOutputCategory() {
 		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
 	}
+
+	@Override
+	public boolean supportsTwoTrack() {
+		boolean support = true;
+		for (Operator operator : operators) {
+			support &= operator.supportsTwoTrack();
+		}
+		return support;
+	}
 }

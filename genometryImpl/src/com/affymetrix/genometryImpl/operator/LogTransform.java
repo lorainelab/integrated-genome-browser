@@ -123,6 +123,12 @@ public final class LogTransform implements Operator {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean supportsTwoTrack() {
+		return false;
+	}
+
 	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Graph;

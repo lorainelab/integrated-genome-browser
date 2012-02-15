@@ -69,22 +69,31 @@ public class NotOperator implements Operator{
 		return invertedSym;
 	}
 
+	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
 		return category == FileTypeCategory.Annotation ? 1 : 0;
 	}
 
+	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
 		return category == FileTypeCategory.Annotation ? 1 : 0;
 	}
 
+	@Override
 	public Map<String, Class<?>> getParameters() {
 		return null;
 	}
 
+	@Override
 	public boolean setParameters(Map<String, Object> obj) {
 		return false;
 	}
-
+	
+	@Override
+	public boolean supportsTwoTrack() {
+		return false;
+	}
+	
 	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Annotation;

@@ -66,6 +66,11 @@ public class FilterOperator implements Operator {
 	}
 
 	@Override
+	public boolean supportsTwoTrack() {
+		return false;
+	}
+
+	@Override
 	public FileTypeCategory getOutputCategory() {
 		return null;
 	}

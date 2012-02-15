@@ -46,6 +46,11 @@ public class DepthOperator implements Operator {
 	}
 
 	@Override
+	public boolean supportsTwoTrack() {
+		return true;
+	}
+
+	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Graph;
 	}

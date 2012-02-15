@@ -58,6 +58,11 @@ public class CopyAnnotationOperator implements Operator {
 	}
 
 	@Override
+	public boolean supportsTwoTrack() {
+		return false;
+	}
+
+	@Override
 	public FileTypeCategory getOutputCategory() {
 		return FileTypeCategory.Annotation;
 	}

@@ -1,36 +1,36 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.igb.Application;
-import java.awt.Color;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.*;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.prefs.TierPrefsView.TierPrefsTableModel;
-import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
@@ -268,8 +268,9 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		}
 	}
 
-	/** Whether or not changes to the trackOptionsTable should automatically be
-	 *  applied to the view.
+	/**
+	 * Whether or not changes to the trackOptionsTable should automatically be
+	 * applied to the view.
 	 */
 	public boolean autoApplyChanges() {
 		return PreferenceUtils.getBooleanParam(PREF_AUTO_REFRESH,
@@ -339,7 +340,9 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		OtherOptionsView.getSingleton().refresh();
 	}
 
-	/** Called when the user selects a row of the table.
+	/**
+	 * Called when the user selects a row of the table.
+	 *
 	 * @param evt
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
@@ -504,10 +507,10 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	/**
-	 *  Call this whenver this component is removed from the view, due to the
-	 *  tab pane closing or the window closing.  It will decide whether it is
-	 *  necessary to update the SeqMapView in response to changes in settings
-	 *  in this panel.
+	 * Call this whenver this component is removed from the view, due to the tab
+	 * pane closing or the window closing. It will decide whether it is
+	 * necessary to update the SeqMapView in response to changes in settings in
+	 * this panel.
 	 */
 	public void removedFromView() {
 		// if autoApplyChanges(), then the changes were already applied,
@@ -855,10 +858,14 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			settingValueFromTable = false;
 		}
 
-		/** Parse an integer, using the given fallback if any exception occurrs.
-		 *  @param s  The String to parse.
-		 *  @param empty_string  the value to return if the input is an empty string.
-		 *  @param fallback  the value to return if the input String is unparseable.
+		/**
+		 * Parse an integer, using the given fallback if any exception occurrs.
+		 *
+		 * @param s The String to parse.
+		 * @param empty_string the value to return if the input is an empty
+		 * string.
+		 * @param fallback the value to return if the input String is
+		 * unparseable.
 		 */
 		int parseInteger(String s, int empty_string, int fallback) {
 			try {
@@ -876,7 +883,6 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	};
 }
 
-
 class TierPrefsTable extends StyledJTable {
 
 	private static final long serialVersionUID = 1L;
@@ -889,16 +895,22 @@ class TierPrefsTable extends StyledJTable {
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		
+		if (column == TierPrefsView.COL_TRACK_NAME) {
+			TrackStyle style = tableModel.tier_styles.get(row);
+			return new JRPTextFieldTableCellRenderer(style.getTrackName() + " " + row, style.getTrackName());
+		}
 		return super.getCellRenderer(row, column);
 	}
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		
+		if (col == TierPrefsView.COL_TRACK_NAME) {
+			TrackStyle style = tableModel.tier_styles.get(row);
+			return new JRPTextFieldTableCellRenderer(style.getTrackName() + " " + row, style.getTrackName());
+		}
 		return super.getCellEditor(row, col);
 	}
-	
+
 	@Override
 	public Component setComponentBackground(Component c, int i, int i2) {
 		if ((i2 == TierPrefsView.COL_FOREGROUND

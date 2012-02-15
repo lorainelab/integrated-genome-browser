@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl.filter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -10,7 +8,6 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class SymmetryFilterId implements SymmetryFilterI {
-	private static final int ID_RANK = 1000;
 	private Object param;
 	private Pattern regex;
 	private String match;
@@ -42,18 +39,10 @@ public class SymmetryFilterId implements SymmetryFilterI {
 			throw new IllegalStateException("invalid filter");
 		}
 		Matcher matcher = regex.matcher("");
-		int ranking = 0;
 		match = sym.getID();
 		if (match != null) {
 			matcher.reset(match);
-			if (matcher.matches()) {
-				ranking = ID_RANK;
-			}
-			if (ranking > 0) {
-				Map<String,String> searchTerms = new HashMap<String,String>();
-				searchTerms.put("id", sym.getID());
-				passes = true;
-			}
+			passes = true;
 		}
 		return passes;
 	}

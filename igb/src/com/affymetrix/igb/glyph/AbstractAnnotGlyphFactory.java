@@ -113,6 +113,10 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 		
 	}
 
+	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
+		this.gviewer = gviewer;
+	}
+
 	public void createGlyph(final SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);
@@ -605,7 +609,7 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
 			tiers[0] = createViewModeGlyph(style, useDirection);
 			tiers[0].setInfo(sym);
-			tiers[1] = (tier_direction == Direction.BOTH) ? tiers[0] : new ExpandedAnnotationGlyph(style);
+			tiers[1] = (tier_direction == Direction.BOTH) ? tiers[0] : createViewModeGlyph(style, Direction.REVERSE);
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);

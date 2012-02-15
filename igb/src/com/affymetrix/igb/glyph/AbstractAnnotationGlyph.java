@@ -70,6 +70,7 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	protected ITrackStyleExtended style;
 	
 	public AbstractAnnotationGlyph(ITrackStyleExtended style) {
+		super();
 		setPacker(createPacker());
 		setHitable(false);
 		setSpacer(spacer);
@@ -257,16 +258,13 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 			}
 		}
 
-		if (!style.isGraphTier()) {
-			// graph tiers take care of drawing their own handles and labels.
-			if (shouldDrawLabel()) {
-				drawLabelLeft(view);
-			}
-			if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
-				drawHandle(view);
-			}
+		// graph tiers take care of drawing their own handles and labels.
+		if (shouldDrawLabel()) {
+			drawLabelLeft(view);
 		}
-
+		if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
+			drawHandle(view);
+		}
 
 		super.draw(view);
 	}

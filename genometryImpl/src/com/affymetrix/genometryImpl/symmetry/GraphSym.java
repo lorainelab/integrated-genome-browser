@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public class GraphSym extends SimpleSymWithProps {
+public class GraphSym extends SimpleSymWithProps implements RootSeqSymmetry {
 
 	/** A property that can optionally be set to give a hint about the graph strand for display. */
 	public static final String PROP_GRAPH_STRAND = "Graph Strand";
@@ -551,5 +552,10 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	public boolean isSpecialGraph() {
 		return false;
+	}
+
+	@Override
+	public FileTypeCategory getCategory() {
+		return FileTypeCategory.Graph;
 	}
 }

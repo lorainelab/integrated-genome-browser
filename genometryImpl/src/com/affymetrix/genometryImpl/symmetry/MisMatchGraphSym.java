@@ -5,6 +5,7 @@ import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.ResiduesChars;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,7 +24,7 @@ import java.util.Map;
  *
  * @author hiralv
  */
-public class MisMatchGraphSym extends GraphSym {
+public class MisMatchGraphSym extends GraphSym implements RootSeqSymmetry {
 
 	int[][] residuesTot = null;
 	private final File helperIndex;
@@ -347,5 +348,10 @@ public class MisMatchGraphSym extends GraphSym {
 	public void clear(){
 		super.clear();
 		residuesTot = null;
+	}
+
+	@Override
+	public FileTypeCategory getCategory() {
+		return FileTypeCategory.Mismatch;
 	}
 }

@@ -68,7 +68,7 @@ public class StyledJTable extends JTable implements MouseListener {
 		setColumnSelectionAllowed(false);
 		setRowSelectionAllowed(true);
 		setFocusable(true);
-		setSelectionForeground(new Color(255, 102, 51));
+		setSelectionForeground(new Color(255, 184, 47));
 		
 		setOpaque(false);
 		setIntercellSpacing(new Dimension(1, 1));

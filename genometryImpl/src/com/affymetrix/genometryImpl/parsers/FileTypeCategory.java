@@ -5,5 +5,6 @@ public enum FileTypeCategory {
 	Alignment,
 	Graph,
 	Sequence,
-	Variant
+	Variant,
+	Mismatch
 }

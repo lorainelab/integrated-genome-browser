@@ -58,6 +58,27 @@ public class TrackUtils {
 		if (method != null && method.contains("@@@.")) {
 			return "Natural Log";
 		}
+		if (method.contains("__$.")) {
+			return "bargraph";
+		}
+		if (method.contains("_$_.")) {
+			return "dotgraph";
+		}
+		if (method.contains("_$$.")) {
+			return "fillbargraph";
+		}
+		if (method.contains("$__.")) {
+			return "heatmapgraph";
+		}
+		if (method.contains("$_$.")) {
+			return "linegraph";
+		}
+		if (method.contains("$$__.")) {
+			return "minmaxavggraph";
+		}
+		if (method.contains("__$$.")) {
+			return "stairstepgraph";
+		}
 		return null;
 	}
 }

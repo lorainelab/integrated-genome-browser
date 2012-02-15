@@ -354,10 +354,10 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void resetButtonActionPerformed() {
+		unitComboBox.setSelectedItem(UNIT[0]);
 		widthSpinner.setValue(originalInfo.getWidth());
 		heightSpinner.setValue(originalInfo.getHeight());
 		resolutionComboBox.setSelectedItem(originalInfo.getResolution());
-		unitComboBox.setSelectedItem(UNIT[0]);
 	}
 
 	public void previewImage() {

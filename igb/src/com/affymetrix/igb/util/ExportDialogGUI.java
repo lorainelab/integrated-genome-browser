@@ -6,11 +6,12 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import java.awt.*;
+import java.awt.Component;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -186,11 +187,11 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanelLayout.setHorizontalGroup(
             imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(imageSizePanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .add(20, 20, 20)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(imageSizePanelLayout.createSequentialGroup()
                         .add(widthLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(20, 20, 20)
                         .add(widthSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 94, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(sizeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 140, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(18, 18, 18)
@@ -207,7 +208,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(resetButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(unitComboBox, 0, 91, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(0, 0, Short.MAX_VALUE))
         );
 
         imageSizePanelLayout.linkSize(new java.awt.Component[] {heightSpinner, widthSpinner}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -300,7 +301,7 @@ public class ExportDialogGUI extends JPanel {
         previewPanelLayout.setVerticalGroup(
             previewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+            .add(previewLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         previewPanelLayout.linkSize(new java.awt.Component[] {buttonsPanel, previewLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);

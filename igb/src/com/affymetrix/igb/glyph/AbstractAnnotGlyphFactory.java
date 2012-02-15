@@ -346,8 +346,8 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 		}
 				
 		
-		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0, 
-			thin_height, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
+//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, coordseq, coordseq, 0.0, 
+//			thin_height, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

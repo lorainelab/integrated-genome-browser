@@ -5,6 +5,8 @@ import org.osgi.framework.BundleContext;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterProps;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.annotation.*;
 import com.affymetrix.genometryImpl.operator.graph.*;
 import com.affymetrix.genometryImpl.operator.transform.*;
@@ -26,6 +28,7 @@ public class Activator implements BundleActivator {
 		initTransforms();
 		initGraphOperators();
 		initAnnotationOperators();
+		initOperators();
 	}
 
 	@Override
@@ -86,5 +89,14 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(AnnotationOperator.class, new UnionAnnotationOperator(), null);
 		bundleContext.registerService(AnnotationOperator.class, new XorAnnotationOperator(), null);
 		bundleContext.registerService(AnnotationOperator.class, new CopyAnnotationOperator(), null);
+	}
+
+	private void initOperators() {
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyAnnotationOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyGraphOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FilterOperator(new SymmetryFilterProps()), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.LogTransform(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DepthOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.NotOperator(), null);
 	}
 }

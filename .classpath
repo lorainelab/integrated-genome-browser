@@ -83,5 +83,9 @@
 	<classpathentry kind="src" path="plugins/window_service_def/resources"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="protannot/src"/>
+	<classpathentry kind="lib" path="genoviz_sdk/lib/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="genoviz_sdk/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="genoviz_sdk/lib/batik-svggen.jar"/>
+	<classpathentry kind="lib" path="genoviz_sdk/lib/batik-util.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

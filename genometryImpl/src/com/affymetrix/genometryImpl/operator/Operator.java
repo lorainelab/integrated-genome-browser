@@ -14,4 +14,5 @@ public interface Operator  {
 	public int getOperandCountMax(FileTypeCategory category);
 	public Map<String, Class<?>> getParameters();
 	public boolean setParameters( Map<String, Object> obj);
+	public FileTypeCategory getOutputCategory();
 }

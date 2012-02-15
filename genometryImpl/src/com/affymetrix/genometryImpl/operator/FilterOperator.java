@@ -56,4 +56,9 @@ public class FilterOperator implements Operator {
 	public boolean setParameters(Map<String, Object> obj) {
 		return false;
 	}
+
+	@Override
+	public FileTypeCategory getOutputCategory() {
+		return null;
+	}
 }

@@ -7,6 +7,7 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  *  TierGlyphViewMode is an extension of TierGlyph that contains a ViewModeGlyph
  *  that is the "real" top level glyph. All methods are passed to the ViewModeGlyph.
- *  This is an implementation of the Delecation Design Pattern.
+ *  This is an implementation of the Delegation Design Pattern.
  */
 public class TierGlyphViewMode extends TierGlyph {
 	private SeqSymmetry modelSym;
@@ -28,7 +29,7 @@ public class TierGlyphViewMode extends TierGlyph {
 		setStyleWithDirection(style, direction);
 		super.setDirection(direction);
 		setHitable(false);
-		this.setInfo(sym);
+		viewModeGlyph.setInfo(sym);
 	}
 
 	private ViewModeGlyph viewModeGlyph;
@@ -38,6 +39,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 
 	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
+		// TODO cannot access classes in packages outside igb.shared, FIX THIS
 		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
 	}
 
@@ -52,6 +54,13 @@ public class TierGlyphViewMode extends TierGlyph {
 			// TODO get real default / empty factory
 			if (viewModeGlyph == null) {
 //				viewModeGlyph = new ExpandedAnnotationGlyph(style);
+			}
+			else {
+				viewModeGlyph.setParent(super.getParent());
+				// TODO fix this
+				if (viewModeGlyph.getScene() != null) {
+					viewModeGlyph.pack(IGB.getSingleton().getMapView().getSeqMap().getView(), false);
+				}
 			}
 		}
 	}
@@ -290,6 +299,9 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void setInfo(Object info)  {
+		this.modelSym = (SeqSymmetry)info;
+		viewModeGlyph = null; // reset viewModeGlyph
+		setStyleWithDirection(this.style, super.getDirection());
 		viewModeGlyph.setInfo(info);
 	}
 	@Override
@@ -306,6 +318,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void setParent(GlyphI glyph)  {
+		super.setParent(glyph);
 		viewModeGlyph.setParent(glyph);
 	}
 	@Override
@@ -357,6 +370,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void setDirection(Direction d) {
+		super.setDirection(d);
 		viewModeGlyph.setDirection(d);
 	}
 	@Override

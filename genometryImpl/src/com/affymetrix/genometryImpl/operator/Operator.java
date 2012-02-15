@@ -13,6 +13,6 @@ public interface Operator  {
 	public int getOperandCountMin(FileTypeCategory category);
 	public int getOperandCountMax(FileTypeCategory category);
 	public Map<String, Class<?>> getParameters();
-	public boolean setParameters( Map<String, Object> obj);
+	public boolean setParameters( Map<String, Object> parms);
 	public FileTypeCategory getOutputCategory();
 }

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.operator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 
 public class FilterOperator implements Operator {
+	private static final String PARM_NAME = "parameter";
 	private final SymmetryFilterI filter;
 
 	public FilterOperator(SymmetryFilterI filter) {
@@ -49,11 +51,17 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public Map<String, Class<?>> getParameters() {
-		return null;
+		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		parameters.put(PARM_NAME, String.class);
+		return parameters;
 	}
 
 	@Override
-	public boolean setParameters(Map<String, Object> obj) {
+	public boolean setParameters(Map<String, Object> parms) {
+		if (parms.size() == 1 && parms.get(PARM_NAME) instanceof String) {
+			filter.setParam(parms.get(PARM_NAME));
+			return true;
+		}
 		return false;
 	}
 

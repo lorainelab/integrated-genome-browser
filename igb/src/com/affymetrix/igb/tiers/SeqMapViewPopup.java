@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -60,7 +59,6 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.util.concurrent.ExecutionException;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -726,6 +724,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			};
 			show_tier.setName(style.getMethodName());
 			show_tier.setAction(new AbstractAction() {
+				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
 					style.setShow(true);
@@ -934,7 +933,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 
 				DependentData dd = new DependentData(unique_name, pileup ? DependentType.MISMATCH_PILEUP : DependentType.MISMATCH, method);
-				SymWithProps wrapperSym = TrackView.addToDependentList(dd);
+				SymWithProps wrapperSym = TrackView.getInstance().addToDependentList(dd);
 
 				if (wrapperSym == null) {
 					ErrorHandler.errorPanel("Empty Track",
@@ -999,7 +998,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			dd = new DependentData(id, DependentType.SUMMARY, method, atier.getDirection());
 		}
 
-		GraphSym gsym = (GraphSym) TrackView.addToDependentList(dd);
+		GraphSym gsym = (GraphSym) TrackView.getInstance().addToDependentList(dd);
 
 		if (gsym == null) {
 			ErrorHandler.errorPanel("Nothing to Summarize",
@@ -1259,12 +1258,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			String method = style.getMethodName();
 			if (method != null) {
-				TrackView.delete(gviewer.getSeqMap(), method, style);
+				TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);
 			} else {
 				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
 					style = gg.getGraphState().getTierStyle();
 					method = style.getMethodName();
-					TrackView.delete(gviewer.getSeqMap(), method, style);
+					TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);
 				}
 			}
 		}

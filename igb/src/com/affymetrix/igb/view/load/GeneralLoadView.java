@@ -52,7 +52,6 @@ import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
-import java.util.EventObject;
 import javax.swing.table.TableCellRenderer;
 
 /**

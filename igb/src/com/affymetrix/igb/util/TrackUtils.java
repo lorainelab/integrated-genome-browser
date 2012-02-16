@@ -58,6 +58,9 @@ public class TrackUtils {
 		if (method != null && method.contains("@@@.")) {
 			return "Natural Log";
 		}
+		if (method != null && method.contains("***.")) {
+			return "depth";
+		}
 		if (method.contains("__$.")) {
 			return "bargraph";
 		}

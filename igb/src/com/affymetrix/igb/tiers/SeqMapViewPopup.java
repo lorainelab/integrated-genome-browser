@@ -1114,7 +1114,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				add_maximize = true;
 			}
 
-			if (style instanceof ITrackStyleExtended && !style.isGraphTier()) {
+			if (style instanceof ITrackStyleExtended) {
 				String file_format = ((ITrackStyleExtended) style).getFileType();
 
 				Map<String, Action> actions = new HashMap<String, Action>();

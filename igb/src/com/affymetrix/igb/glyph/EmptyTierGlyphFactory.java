@@ -88,6 +88,7 @@ public class EmptyTierGlyphFactory {
 				if (style.getSeparate()) {
 					tiers[1] = gviewer.getTrack(null, style, Direction.REVERSE);
 				}
+				return;
 			}
 			else {
 				tiers = gviewer.getTiers(style, true);
@@ -97,6 +98,7 @@ public class EmptyTierGlyphFactory {
 			if(viewmode != null){
 				style.setViewMode(viewmode);
 				tiers[0] = gviewer.getTrack(null, style, Direction.NONE);
+				return;
 			} else {
 				tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
 			}

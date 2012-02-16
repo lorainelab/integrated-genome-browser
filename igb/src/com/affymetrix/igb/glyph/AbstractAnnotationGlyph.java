@@ -10,8 +10,6 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.StyleGlyphI;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -27,19 +25,13 @@ import java.awt.geom.Rectangle2D;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements StyleGlyphI {
+public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
 
 	private boolean sorted = true;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
-	private Direction direction = Direction.NONE;
-	/** glyphs to be drawn in the "middleground" --
-	 *    in front of the solid background, but behind the child glyphs
-	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
-	 */
-	private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
 	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
 	 *  Boolean.TRUE, the tier will draw a label next to where the handle
@@ -56,18 +48,9 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
 
-	/*
-	 * other_fill_color is derived from fill_color whenever setFillColor() is called.
-	 * if there are any "middle" glyphs, then background is drawn with other_fill_color and
-	 *    middle glyphs are drawn with fill_color
-	 * if no "middle" glyphs, then background is drawn with fill_color
-	 */
-	private Color other_fill_color = null;
-	private String label = null;
 	private static final Font default_font = NeoConstants.default_plain_font;
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
-	protected ITrackStyleExtended style;
 	
 	public AbstractAnnotationGlyph(ITrackStyleExtended style) {
 		super();
@@ -81,33 +64,8 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	protected abstract PackerI createPacker();
 
 	public void setStyle(ITrackStyleExtended style) {
-		this.style = style;
-
-		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
-		// the fg color to the TierLabel glyph, which does pay attention to that color.
-		setForegroundColor(style.getForeground());
-		setFillColor(style.getBackground());
-
-		setVisibility(!style.getShow());
+		super.setStyle(style);
 		setDepth();
-		setLabel(style.getTrackName());
-	}
-
-	public ITrackStyleExtended getAnnotStyle() {
-		return style;
-	}
-
-	/**
-	 *  Adds "middleground" glyphs, which are drawn in front of the background but
-	 *    behind all "real" child glyphs.
-	 *  These are generally not considered children of
-	 *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
-	 *    are not considered children in pickTraversal() method.
-	 *  The only way to remove these is via removeAllChildren() method,
-	 *    there is currently no external access to them.
-	 */
-	public void addMiddleGlyph(GlyphI gl) {
-		middle_glyphs.add(gl);
 	}
 
 	private void initForSearching() {
@@ -186,14 +144,6 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 		sorted = true;
 	}
 
-	public void setLabel(String str) {
-		label = str;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view, boolean manual) {
@@ -221,42 +171,7 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	 */
 	@Override
 	public void draw(ViewI view) {
-		view.transformToPixels(getCoordBox(), getPixelBox());
-
-		getPixelBox().width = Math.max(getPixelBox().width, getMinPixelsWidth());
-		getPixelBox().height = Math.max(getPixelBox().height, getMinPixelsHeight());
-
-		Graphics g = view.getGraphics();
-		Rectangle vbox = view.getPixelBox();
-		setPixelBox(getPixelBox().intersection(vbox));
-
-		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height+1);
-			}
-		} else {
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, 2 * getPixelBox().width, getPixelBox().height+1);
-			}
-
-			// cycle through "middleground" glyphs,
-			//   make sure their coord box y and height are set to same as TierGlyph,
-			//   then call mglyph.draw(view)
-			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
-			// See bug 3032785
-			if(other_fill_color != null){
-				for (GlyphI mglyph : middle_glyphs) {
-					Rectangle2D.Double mbox = mglyph.getCoordBox();
-					mbox.setRect(mbox.x, getCoordBox().y, mbox.width, getCoordBox().height);
-					mglyph.setColor(other_fill_color);
-					mglyph.drawTraversal(view);
-				}
-			}
-		}
+		drawMiddle(view);
 
 		// graph tiers take care of drawing their own handles and labels.
 		if (shouldDrawLabel()) {
@@ -372,29 +287,6 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 		((PaddedPackerI) getPacker()).setParentSpacer(spacer);
 	}
 
-	/** Sets the color used to fill the tier background, or null if no color
-	 *  @param col  A color, or null if no background color is desired.
-	 */
-	public void setFillColor(Color col) {
-		if (style.getBackground() != col) {
-			style.setBackground(col);
-		}
-
-		// Now set the "middleground" color based on the fill color
-		if (col == null) {
-			other_fill_color = Color.DARK_GRAY;
-		} else {
-			int intensity = col.getRed() + col.getGreen() + col.getBlue();
-			if (intensity == 0) {
-				other_fill_color = Color.darkGray;
-			} else if (intensity > (255 + 127)) {
-				other_fill_color = col.darker();
-			} else {
-				other_fill_color = col.brighter();
-			}
-		}
-	}
-
 	// very, very deprecated
 	@Override
 	public Color getColor() {
@@ -405,12 +297,6 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	@Override
 	public void setColor(Color c) {
 		setForegroundColor(c);
-	}
-
-	/** Returns the color used to draw the tier background, or null
-	if there is no background. */
-	public Color getFillColor() {
-		return style.getBackground();
 	}
 
 	@Override
@@ -433,18 +319,6 @@ public abstract class AbstractAnnotationGlyph extends ViewModeGlyph implements S
 	@Override
 	public Color getBackgroundColor() {
 		return getFillColor();
-	}
-
-	public Direction getDirection() {
-		return direction;
-	}
-
-	/**
-	 *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
-	 *  DIRECTION_BOTH or DIRECTION_NONE.
-	 */
-	public void setDirection(Direction d) {
-		this.direction = d;
 	}
 
 	private double getSpacing() {

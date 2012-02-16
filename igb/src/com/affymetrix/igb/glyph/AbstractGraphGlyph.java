@@ -19,9 +19,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
@@ -44,9 +42,8 @@ import java.awt.geom.Point2D;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.ViewPropertyNames;
 
 /**
@@ -54,7 +51,7 @@ import com.affymetrix.igb.shared.ViewPropertyNames;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public abstract class AbstractGraphGlyph extends ViewModeGlyph {
+public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 
@@ -82,10 +79,6 @@ public abstract class AbstractGraphGlyph extends ViewModeGlyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected final GraphState state;
 	private final LinearTransform scratch_trans = new LinearTransform();
-	protected ITrackStyleExtended style;
-	private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
-	private Color other_fill_color = null;
-	private Direction direction = Direction.NONE;
 
 	// specified in coords_per_pixel
 
@@ -185,18 +178,6 @@ public abstract class AbstractGraphGlyph extends ViewModeGlyph {
 //		}
 		
 		resetThreshLabel();
-	}
-
-	public void setStyle(ITrackStyleExtended style) {
-		this.style = style;
-
-		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
-		// the fg color to the TierLabel glyph, which does pay attention to that color.
-		setForegroundColor(style.getForeground());
-		setFillColor(style.getBackground());
-
-		setVisibility(!style.getShow());
-		setLabel(style.getTrackName());
 	}
 
 	private void setColor(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {
@@ -1275,45 +1256,7 @@ public abstract class AbstractGraphGlyph extends ViewModeGlyph {
 
 	@Override
 	public void draw(ViewI view) {
-		if (DEBUG) {
-			System.out.println("called GraphGlyph.draw(), coords = " + getCoordBox());
-		}
-		view.transformToPixels(getCoordBox(), getPixelBox());
-
-		getPixelBox().width = Math.max(getPixelBox().width, getMinPixelsWidth());
-		getPixelBox().height = Math.max(getPixelBox().height, getMinPixelsHeight());
-
-		Graphics g = view.getGraphics();
-		Rectangle vbox = view.getPixelBox();
-		setPixelBox(getPixelBox().intersection(vbox));
-
-		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, getPixelBox().width, getPixelBox().height+1);
-			}
-		} else {
-			if (style.getBackground() != null) {
-				g.setColor(style.getBackground());
-				//Hack : Add one to height to resolve black line bug.
-				g.fillRect(getPixelBox().x, getPixelBox().y, 2 * getPixelBox().width, getPixelBox().height+1);
-			}
-
-			// cycle through "middleground" glyphs,
-			//   make sure their coord box y and height are set to same as TierGlyph,
-			//   then call mglyph.draw(view)
-			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
-			// See bug 3032785
-			if(other_fill_color != null){
-				for (GlyphI mglyph : middle_glyphs) {
-					Rectangle2D.Double mbox = mglyph.getCoordBox();
-					mbox.setRect(mbox.x, getCoordBox().y, mbox.width, getCoordBox().height);
-					mglyph.setColor(other_fill_color);
-					mglyph.drawTraversal(view);
-				}
-			}
-		}
+		drawMiddle(view);
 		
 		// GAH 9-13-2002
 		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
@@ -1356,61 +1299,12 @@ public abstract class AbstractGraphGlyph extends ViewModeGlyph {
 	}
 
 	@Override
-	public Color getFillColor() {
-		return style.getBackground();
-	}
-
-	/** Sets the color used to fill the tier background, or null if no color
-	 *  @param col  A color, or null if no background color is desired.
-	 */
-	@Override
-	public void setFillColor(Color col) {
-		if (style.getBackground() != col) {
-			style.setBackground(col);
-		}
-
-		// Now set the "middleground" color based on the fill color
-		if (col == null) {
-			other_fill_color = Color.DARK_GRAY;
-		} else {
-			int intensity = col.getRed() + col.getGreen() + col.getBlue();
-			if (intensity == 0) {
-				other_fill_color = Color.darkGray;
-			} else if (intensity > (255 + 127)) {
-				other_fill_color = col.darker();
-			} else {
-				other_fill_color = col.brighter();
-			}
-		}
-	}
-
-	@Override
 	public int getActualSlots() {
 		return 1;
 	}
 
 	@Override
-	public ITrackStyleExtended getAnnotStyle() {
-		return style;
-	}
-
-	@Override
 	public void setLabel(String str) {
-	}
-
-	@Override
-	public Direction getDirection() {
-		return direction;
-	}
-
-	@Override
-	public void setDirection(Direction d) {
-		direction = d;
-	}
-
-	@Override
-	public void addMiddleGlyph(GlyphI gl) {
-		middle_glyphs.add(gl);
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.glyph.UnloadedGlyphFactory;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,12 +48,16 @@ public class TierGlyphViewMode extends TierGlyph {
 	private void setStyleWithDirection(ITrackStyleExtended style, Direction direction) {
 		this.style = style;
 		if (viewModeGlyph == null || !viewModeGlyph.getViewMode().equals(style.getViewMode())) {
-			viewModeGlyph = null;
-			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
-			if (factory != null) {
-				viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
+			MapViewGlyphFactoryI factory = UnloadedGlyphFactory.getInstance();
+			if (modelSym != null) {
+				MapViewGlyphFactoryI glyphFactory = getViewGlyphFactory(style.getViewMode());
+				if (glyphFactory != null) {
+					factory = glyphFactory;
+				}
 			}
+			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
 			// TODO get real default / empty factory
+/*
 			if (viewModeGlyph == null) {
 //				viewModeGlyph = new ExpandedAnnotationGlyph(style);
 			}
@@ -62,6 +68,7 @@ public class TierGlyphViewMode extends TierGlyph {
 					viewModeGlyph.pack(IGB.getSingleton().getMapView().getSeqMap().getView(), false);
 				}
 			}
+*/
 		}
 	}
 
@@ -251,6 +258,9 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void pack(ViewI view, boolean manual) {
+		if (viewModeGlyph.getParent() == null) {
+			viewModeGlyph.setParent(super.getParent());
+		}
 		viewModeGlyph.pack(view, manual);
 	}
 	@Override

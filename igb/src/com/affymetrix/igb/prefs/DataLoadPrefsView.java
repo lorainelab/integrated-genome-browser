@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ * Copyright (c) 2006 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.prefs;
 
@@ -112,10 +109,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
 				GenericServer server = ServerList.getServerInstance().getServer((String) url);
-				serverList.removeServer((String) url);
-				serverList.removeServerFromPrefs((String) url);
-				sourceTableModel.init();
-				AddSource editSource = new AddSource(true);
+				AddSource editSource = new AddSource(true, true, (String) url);
 				editSource.setNameFieldText(server.serverName);
 				editSource.setServerType(server.serverType);
 				editSource.setURL(server.URL);
@@ -267,7 +261,9 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(BASELINE).addComponent(vsynonymsLabel).addComponent(vsynonymFile).addComponent(vopenFile)).addGroup(layout.createParallelGroup(BASELINE).addComponent(csynonymsLabel).addComponent(csynonymFile).addComponent(copenFile)));
 
-		/* Load the synonym file from preferences on startup */
+		/*
+		 * Load the synonym file from preferences on startup
+		 */
 		loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile);
 		loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile);
 

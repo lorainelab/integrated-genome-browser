@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -17,11 +16,7 @@ public class DepthOperator implements Operator {
 	}
 
 	@Override
-	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		if (symList.size() != 1 || !(symList.get(0) instanceof TypeContainerAnnot)) {
-			return null;
-		}
-		
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {		
 		return SeqSymSummarizer.getSymmetrySummary(symList, aseq, false, null);
 	}
 

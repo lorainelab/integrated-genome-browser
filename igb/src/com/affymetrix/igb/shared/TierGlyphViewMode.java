@@ -7,7 +7,6 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.UnloadedGlyphFactory;
 
@@ -56,19 +55,6 @@ public class TierGlyphViewMode extends TierGlyph {
 				}
 			}
 			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
-			// TODO get real default / empty factory
-/*
-			if (viewModeGlyph == null) {
-//				viewModeGlyph = new ExpandedAnnotationGlyph(style);
-			}
-			else {
-				viewModeGlyph.setParent(super.getParent());
-				// TODO fix this
-				if (viewModeGlyph.getScene() != null) {
-					viewModeGlyph.pack(IGB.getSingleton().getMapView().getSeqMap().getView(), false);
-				}
-			}
-*/
 		}
 	}
 

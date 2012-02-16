@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -80,6 +79,19 @@ public class TrackView {
 		return default_glyph_factory;
 	}
 
+	private ITrackStyleExtended prefixSearch(Map<ITrackStyleExtended, TierGlyph> style2track, String method, String fileType) {
+		int extensionPos = method.lastIndexOf('.');
+		if (extensionPos > -1 && method.length() >= extensionPos + 1 + fileType.length() && fileType.equals(method.substring(extensionPos + 1, extensionPos + 1 + fileType.length()))) {
+			String prefixMethod = method.substring(0, extensionPos + 1 + fileType.length());
+			for (ITrackStyleExtended style : style2track.keySet()) {
+				if (prefixMethod.equals(style.getMethodName())) {
+					return style;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
 	 * @param smv the SeqMapView
@@ -90,14 +102,20 @@ public class TrackView {
 	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph = null;
+		Map<ITrackStyleExtended, TierGlyph> style2track = null;
 		if (style.isGraphTier()) {
-			tierGlyph = gstyle2track.get(style);
+			style2track = gstyle2track;
 		}
 		else if (tier_direction == TierGlyph.Direction.REVERSE) {
-			tierGlyph = style2reverseTierGlyph.get(style);
+			style2track = style2reverseTierGlyph;
 		}
 		else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
-			tierGlyph = style2forwardTierGlyph.get(style);
+			style2track = style2forwardTierGlyph;
+		}
+		tierGlyph = style2track.get(style);
+		if (tierGlyph == null) {
+			ITrackStyleExtended oldStyle = prefixSearch(style2track, style.getMethodName(), style.getFileType());
+			tierGlyph = style2track.get(oldStyle);
 		}
 		if (tierGlyph != null && !(tierGlyph instanceof TierGlyphViewMode)) {
 			seqmap.removeTier(tierGlyph);
@@ -279,37 +297,16 @@ public class TrackView {
 
 			if (meth != null) {
 				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-				TierGlyph[] tiers = new TierGlyph[2];
-				tiers[0] = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
-				tiers[1] = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
-/*
-				if (style.isGraphTier()) {
-					if (style.getSeparate()) {
-						TierGlyph fortier = smv.getGraphTrack(style, Direction.FORWARD);
-						TierGlyph revtier = smv.getGraphTrack(style, Direction.REVERSE);
-						tiers = new TierGlyph[]{fortier, revtier};
-					} else {
-						// put everything in a single tier
-						TierGlyph fortier = smv.getGraphTrack(style, Direction.BOTH);
-						tiers = new TierGlyph[]{fortier, fortier};
+				TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+				if (!annotSym.equals(mainTier.getInfo())) {
+					mainTier.setInfo(annotSym);
+				}
+				if (style.getSeparate()) {
+					TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+					if (!annotSym.equals(secondTier.getInfo())) {
+						secondTier.setInfo(annotSym);
 					}
 				}
-				else {
-					tiers = smv.getTiers(style, true);
-				}
-*/
-
-				if (!(tiers[0] instanceof TierGlyphViewMode) || (tiers[1] != null && !(tiers[1] instanceof TierGlyphViewMode))) {
-					ErrorHandler.errorPanel("internal error - viewmode in TrackView.addAnnotationGlyphs()", "internal error - viewmode in TrackView.addAnnotationGlyphs()");
-					throw new RuntimeException("internal error - viewmode in TrackView.addAnnotationGlyphs()");
-				}
-				if (!annotSym.equals(tiers[0].getInfo())) {
-					tiers[0].setInfo(annotSym);
-				}
-				if (tiers[1] != null && !tiers[1].equals(tiers[0])) {
-					tiers[1].setInfo(annotSym);
-				}
-
 				return;
 			}
 		}

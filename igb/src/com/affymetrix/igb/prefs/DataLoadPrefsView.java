@@ -11,35 +11,35 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
-
 import java.awt.Color;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.Authenticator;
+import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.Authenticator.RequestorType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
-import javax.swing.GroupLayout.Group;
-import javax.swing.border.TitledBorder;
-
-import static com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
+import javax.swing.GroupLayout.Group;
 import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 /**
  *
@@ -80,6 +80,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authentication\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				sourcesTable.stopCellEditing();
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
@@ -105,6 +106,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "EditSource", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				sourcesTable.stopCellEditing();
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
@@ -125,6 +127,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				new ActionListener() {
 
 					public void actionPerformed(ActionEvent e) {
+						sourcesTable.stopCellEditing();
 						int row = sourcesTable.getSelectedRow();
 						if (row >= 1 && row < sourcesTable.getRowCount()) {
 							((SourceTableModel) sourcesTable.getModel()).switchRows(row - 1);
@@ -145,6 +148,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				new ActionListener() {
 
 					public void actionPerformed(ActionEvent e) {
+						sourcesTable.stopCellEditing();
 						int row = sourcesTable.getSelectedRow();
 						if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
 							((SourceTableModel) sourcesTable.getModel()).switchRows(row);

@@ -12,45 +12,36 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genoviz.swing.StyledJTable;
-import com.affymetrix.genoviz.swing.TableCellEditorRenderer;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
-import com.affymetrix.genoviz.swing.PartialLineBorder;
-import javax.swing.table.JTableHeader;
-import java.awt.Dimension;
-import javax.swing.table.TableModel;
-import java.awt.Color;
-import javax.swing.table.TableCellEditor;
-import java.awt.Point;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
 import javax.swing.GroupLayout.Group;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
-import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.GroupLayout.Alignment.TRAILING;
-import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import javax.swing.table.*;
 
 public abstract class ServerPrefsView extends IPrefEditorComponent {
 

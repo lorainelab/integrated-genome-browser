@@ -23,6 +23,8 @@ public class NotOperator implements Operator{
 
 	private static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq, boolean include_ends) {
 		SeqSymmetry union = SeqSymSummarizer.getUnion(syms, seq);
+		if(union == null)
+			return null;
 		int spanCount = union.getChildCount();
 
 		// rest of this is pretty much pulled directly from SeqUtils.inverse()

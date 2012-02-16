@@ -8,7 +8,6 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -26,6 +25,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	private final Operator operator;
 	private final MapViewGlyphFactoryI factory;
+	private SeqMapViewExtendedI smv;
 	
 	public OperatorGlyphFactory(Operator operator, MapViewGlyphFactoryI factory){
 		this.operator = operator;
@@ -40,44 +40,48 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction) {
-		return factory.getViewModeGlyph(sym, style, tier_direction);
-	}
-
-	public void createGlyph(final SeqSymmetry sym, final SeqMapViewExtendedI smv) {
 		final String meth = BioSeq.determineMethod(sym);
 
 		if (meth == null) {
-			return;
-		}
-
-		final ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-
-		if(!operator.supportsTwoTrack()){
-			style.setSeparate(false);
-		}
-		
-		if (!style.getSeparate() || style.isGraphTier()) {
-			List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
-			list.add(sym);
-			createGlyph(list, smv, meth);
+			return factory.getViewModeGlyph(sym, style, tier_direction);
 		} else {
-			List<List<SeqSymmetry>> lists = getChilds(smv, sym);
-			createGlyph(lists.get(0), smv, meth);
-			createGlyph(lists.get(1), smv, meth);
-		}
 
+			if(!operator.supportsTwoTrack()){
+				style.setSeparate(false);
+			}
+			
+			if (!style.getSeparate()) {
+				List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
+				list.add(sym);
+				return createGlyph(list, meth, style, Direction.BOTH);
+			} else {
+				List<List<SeqSymmetry>> lists = getChilds(smv, sym);
+				if(Direction.FORWARD == tier_direction){
+					return createGlyph(lists.get(0), meth, style, tier_direction);
+				}else{
+					return createGlyph(lists.get(1), meth, style, tier_direction);
+				}
+					
+			}
+		}
 	}
 
-	private void createGlyph(List<SeqSymmetry> list, SeqMapViewExtendedI smv, String meth) {
+	public void createGlyph(final SeqSymmetry sym, final SeqMapViewExtendedI smv) {
+		//not implemented
+	}
+
+	private ViewModeGlyph createGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction) {
 	
 		SymWithProps result_sym = (SymWithProps) operator.operate(smv.getAnnotatedSeq(), list);
 
-		result_sym.setProperty("method", meth);
-		if (result_sym.getProperty("id") == null) {
-			result_sym.setProperty("id", meth);
+		if (result_sym != null) {
+			result_sym.setProperty("method", meth);
+			if (result_sym.getProperty("id") == null) {
+				result_sym.setProperty("id", meth);
+			}
 		}
 
-		factory.createGlyph(result_sym, smv);
+		return factory.getViewModeGlyph(result_sym, style, direction);
 	}
 
 	public boolean isFileSupported(String format) {
@@ -109,5 +113,9 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		lists.add(reverse);
 		
 		return lists;
+	}
+	
+	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
+		this.smv = gviewer;
 	}
 }

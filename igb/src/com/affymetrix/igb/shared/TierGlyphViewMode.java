@@ -46,16 +46,14 @@ public class TierGlyphViewMode extends TierGlyph {
 
 	private void setStyleWithDirection(ITrackStyleExtended style, Direction direction) {
 		this.style = style;
-		if (viewModeGlyph == null || !viewModeGlyph.getViewMode().equals(style.getViewMode())) {
-			MapViewGlyphFactoryI factory = UnloadedGlyphFactory.getInstance();
-			if (modelSym != null) {
-				MapViewGlyphFactoryI glyphFactory = getViewGlyphFactory(style.getViewMode());
-				if (glyphFactory != null) {
-					factory = glyphFactory;
-				}
+		MapViewGlyphFactoryI factory = UnloadedGlyphFactory.getInstance();
+		if (modelSym != null) {
+			MapViewGlyphFactoryI glyphFactory = getViewGlyphFactory(style.getViewMode());
+			if (glyphFactory != null) {
+				factory = glyphFactory;
 			}
-			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
 		}
+		viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
 	}
 
 	@Override

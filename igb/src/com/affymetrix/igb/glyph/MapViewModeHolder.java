@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.operator.LogTransform;
 import com.affymetrix.genometryImpl.operator.NotOperator;
 import com.affymetrix.igb.IGB;
@@ -54,8 +55,17 @@ public class MapViewModeHolder {
 		StairStepGraphGlyphFactory stairStepGraphGlyphFactory = new StairStepGraphGlyphFactory();
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
-		addViewFactory(new OperatorGlyphFactory(new NotOperator(), new CollapsedAnnotGlyphFactory()));
+		OperatorGlyphFactory operator = new OperatorGlyphFactory(new NotOperator(), collapsedAnnotGlyphFactory);
+		operator.setSeqMapView(seqMapView);
+		addViewFactory(operator);
+		OperatorGlyphFactory operator2 = new OperatorGlyphFactory(new DepthOperator(), barGraphGlyphFactory);
+		operator2.setSeqMapView(seqMapView);
+		addViewFactory(operator2);
 		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
+//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
+//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
+//		addViewFactory(expandedAnnotGlyphFactory);
+
 	}
 	
 	public MapViewGlyphFactoryI getViewFactory(String view){

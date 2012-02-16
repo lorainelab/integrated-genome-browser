@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;

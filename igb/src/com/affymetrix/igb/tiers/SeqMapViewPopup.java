@@ -52,6 +52,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.TierGlyphViewMode;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.DependentData;
@@ -1099,7 +1100,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
-			TierGlyph glyph = (TierGlyph) label.getInfo();
+			final TierGlyph glyph = (TierGlyph) label.getInfo();
 			final ITrackStyle style = glyph.getAnnotStyle();
 			boolean is_annotation_type = !style.isGraphTier();
 			summaryMenu.setEnabled(is_annotation_type);
@@ -1137,7 +1138,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 
 				if (actions.size() > 0) {
-					String mode = ((ITrackStyleExtended) style).getViewMode();
+					String mode;
+					if (glyph instanceof TierGlyphViewMode) {
+						mode = ((TierGlyphViewMode)glyph).getViewModeGlyph().getViewMode();
+					}
+					else {
+						mode = ((ITrackStyleExtended) style).getViewMode();
+					}
 					Action action = actions.get(mode);
 					if (action != null) {
 						action.putValue(Action.SELECTED_KEY, true);

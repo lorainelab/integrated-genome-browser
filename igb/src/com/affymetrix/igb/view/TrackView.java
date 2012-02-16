@@ -18,14 +18,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.glyph.AbstractGraphGlyphFactory;
-import com.affymetrix.igb.glyph.CollapsedAnnotGlyphFactory;
-import com.affymetrix.igb.glyph.CytobandGlyph;
-import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
-import com.affymetrix.igb.glyph.ExpandedAnnotGlyphFactory;
-import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
-import com.affymetrix.igb.glyph.MapViewModeHolder;
-import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.ExpandPacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
@@ -275,11 +268,12 @@ public class TrackView {
 	
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
-
+		MapViewGlyphFactoryI factory = determineFactory(annotSym);
 		// TODO this will be replaced as we add more ViewModeGlyphs
-		if (determineFactory(annotSym) instanceof ExpandedAnnotGlyphFactory ||
-			determineFactory(annotSym) instanceof CollapsedAnnotGlyphFactory ||
-			determineFactory(annotSym) instanceof AbstractGraphGlyphFactory
+		if (factory instanceof ExpandedAnnotGlyphFactory  ||
+			factory instanceof CollapsedAnnotGlyphFactory ||
+			factory instanceof AbstractGraphGlyphFactory  ||
+			factory instanceof OperatorGlyphFactory
 		   ) {
 			String meth = BioSeq.determineMethod(annotSym);
 
@@ -319,7 +313,7 @@ public class TrackView {
 				return;
 			}
 		}
-		MapViewGlyphFactoryI factory = null;
+		
 		if (annotSym instanceof ScoredContainerSym) {
 			factory = container_factory;
 		} else if (annotSym instanceof GraphSym) {

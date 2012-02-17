@@ -193,4 +193,8 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		return viewModeGlyph;
 	}
+
+	public SeqMapViewExtendedI getSeqMapView() {
+		return null;
+	}
 }

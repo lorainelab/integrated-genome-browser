@@ -9,9 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class DepthOperator implements Operator {
-	private static FileTypeCategory input[] = new FileTypeCategory[]{FileTypeCategory.Annotation};
-	private static FileTypeCategory output = FileTypeCategory.Graph;
-	
+
 	@Override
 	public String getName() {
 		return "depth";
@@ -49,11 +47,6 @@ public class DepthOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return output;
-	}
-
-	@Override
-	public FileTypeCategory[] getInputCategory() {
-		return input; 
+		return FileTypeCategory.Graph;
 	}
 }

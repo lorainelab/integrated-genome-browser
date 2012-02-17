@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import java.util.*;
 
 public class ComboChainOperator implements Operator {
 	private static final String BASE_NAME = "chain";
@@ -106,27 +105,16 @@ public class ComboChainOperator implements Operator {
 	}
 
 	@Override
+	public FileTypeCategory getOutputCategory() {
+		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
+	}
+
+	@Override
 	public boolean supportsTwoTrack() {
 		boolean support = true;
 		for (Operator operator : operators) {
 			support &= operator.supportsTwoTrack();
 		}
 		return support;
-	}
-
-	@Override
-	public FileTypeCategory getOutputCategory() {
-		return operators.size() == 0 ? null :  operators.get(operators.size() - 1).getOutputCategory();
-	}
-	
-	@Override
-	public FileTypeCategory[] getInputCategory() {
-		Set<FileTypeCategory> input = new HashSet<FileTypeCategory>(operators.size());
-		
-		for(Operator operator : operators){
-			input.addAll(Arrays.asList(operator.getInputCategory()));
-		}
-		
-		return input.toArray(new FileTypeCategory[0]);
 	}
 }

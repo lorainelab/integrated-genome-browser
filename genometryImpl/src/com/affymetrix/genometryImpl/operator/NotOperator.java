@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NotOperator implements Operator{
-	private static FileTypeCategory input[] = new FileTypeCategory[]{FileTypeCategory.Annotation};
-	private static FileTypeCategory output = FileTypeCategory.Annotation;
-	
+
 	@Override
 	public String getName() {
 		return "not";
@@ -100,11 +98,6 @@ public class NotOperator implements Operator{
 	
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return output;
-	}
-
-	@Override
-	public FileTypeCategory[] getInputCategory() {
-		return input; 
+		return FileTypeCategory.Annotation;
 	}
 }

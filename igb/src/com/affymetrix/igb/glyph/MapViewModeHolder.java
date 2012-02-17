@@ -152,7 +152,8 @@ public class MapViewModeHolder {
 			mode.add(TrackConstants.default_operator);
 			for (java.util.Map.Entry<String, Operator> entry : transform2Operator.entrySet()) {
 				Operator emv = entry.getValue();
-				if (Arrays.asList(emv.getInputCategory()).contains(file_category)) {
+				if (emv.getOperandCountMax(file_category) == 1 &&
+						emv.getOperandCountMin(file_category) == 1) {
 					mode.add(entry.getKey());
 				}
 			}

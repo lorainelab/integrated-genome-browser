@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -65,6 +66,13 @@ public class TierGlyphViewMode extends TierGlyph {
 				Operator operator = getOperator(style.getOperator());
 				if(operator != null){
 					factory = new OperatorGlyphFactory(operator, factory);
+				}else{
+					if(modelSym instanceof RootSeqSymmetry){
+						if(!factory.isFileSupported(((RootSeqSymmetry)modelSym).getCategory())){
+							factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
+							style.setViewMode(factory.getName());
+						}
+					}
 				}
 			}
 		}

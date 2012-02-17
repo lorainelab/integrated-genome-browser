@@ -9,8 +9,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -31,7 +29,11 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public OperatorGlyphFactory(Operator operator, MapViewGlyphFactoryI factory){
 		this.operator = operator;
-		this.factory = factory;
+		if(factory.isFileSupported(operator.getOutputCategory())){
+			this.factory = factory;
+		}else{
+			this.factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory());
+		}
 	}
 	
 	public void init(Map<String, Object> options) { }
@@ -47,7 +49,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		if (meth == null) {
 			return factory.getViewModeGlyph(sym, style, tier_direction);
 		} else {
-
+			style.setViewMode(factory.getName());
 			if (!style.getSeparate()) {
 				List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
 				list.add(sym);

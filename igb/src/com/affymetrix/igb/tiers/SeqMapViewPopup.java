@@ -1155,33 +1155,35 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				
 				}
 				
-				Map<String, Action> transform_actions = new HashMap<String, Action>();
-				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(rootSym.getCategory())) {
-					Action action = new GenericAction() {
-						private static final long serialVersionUID = 1L;
+				if (style instanceof TrackStyle) {
+					Map<String, Action> transform_actions = new HashMap<String, Action>();
+					for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle)style).getFileTypeCategory())) {
+						Action action = new GenericAction() {
+							private static final long serialVersionUID = 1L;
 
-						@Override
-						public void actionPerformed(ActionEvent ae) {
-							((ITrackStyleExtended) style).setOperator(transform.toString());
-							refreshMap(false, false);
-						}
+							@Override
+							public void actionPerformed(ActionEvent ae) {
+								((ITrackStyleExtended) style).setOperator(transform.toString());
+								refreshMap(false, false);
+							}
 
-						@Override
-						public String getText() {
-							return transform.toString();
-						}
-					};
-					transform_actions.put(transform.toString(), action);
-					transformMenu.add(new JCheckBoxMenuItem(action));
-				}
-
-				if (transform_actions.size() > 0) {
-					String operator = ((ITrackStyleExtended) style).getOperator();
-					Action action = transform_actions.get(operator);
-					if (action != null) {
-						action.putValue(Action.SELECTED_KEY, true);
+							@Override
+							public String getText() {
+								return transform.toString();
+							}
+						};
+						transform_actions.put(transform.toString(), action);
+						transformMenu.add(new JCheckBoxMenuItem(action));
 					}
-					transformMenu.setEnabled(true);
+
+					if (transform_actions.size() > 0) {
+						String operator = ((ITrackStyleExtended) style).getOperator();
+						Action action = transform_actions.get(operator);
+						if (action != null) {
+							action.putValue(Action.SELECTED_KEY, true);
+						}
+						transformMenu.setEnabled(true);
+					}
 				}
 
 			}

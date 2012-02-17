@@ -1,14 +1,13 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.operator.LogTransform;
-import com.affymetrix.genometryImpl.operator.NotOperator;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.operator.*;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+
+import com.affymetrix.igb.tiers.TrackConstants;
 /**
  *
  * @author hiralv
@@ -25,6 +24,7 @@ public class TransformHolder {
 		// Adding operators
 		addOperator(new NotOperator());
 		addOperator(new LogTransform(2.0));
+		addOperator(new DepthOperator());
 	}
 		
 	public Operator getOperator(String transform){

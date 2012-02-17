@@ -54,6 +54,9 @@ public class GraphSym extends SimpleSymWithProps implements RootSeqSymmetry {
 	private float min_ycoord = Float.POSITIVE_INFINITY;
 	private float max_ycoord = Float.NEGATIVE_INFINITY;
 
+	//To be used for view mode only
+	private GraphState gState = null;
+	
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 
 	 *  but then lock once lockID() is called.
@@ -497,9 +500,17 @@ public class GraphSym extends SimpleSymWithProps implements RootSeqSymmetry {
 	 *  Returns the graph state.  Will never be null.
 	 */
 	public final GraphState getGraphState() {
+		if(gState != null)
+			return this.gState;
+		
 		return DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
 	}
 
+	//To be used by view mode only.
+	public final void setGraphState(GraphState gState){
+		this.gState = gState;
+	}
+	
 	/**
 	 *  Overriding request for property "method" to return graph name.
 	 */

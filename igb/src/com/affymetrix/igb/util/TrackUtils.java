@@ -46,19 +46,22 @@ public class TrackUtils {
 	}
 
 	public String useViewMode(String method) {
-		if (method != null && method.contains("___.")) {
+		if (method == null) {
+			return null;
+		}
+		if (method.contains("___.")) {
 			return "expanded";
 		}
-		if (method != null && method.contains("$$$.")) {
+		if (method.contains("$$$.")) {
 			return "collapsed";
 		}
-		if (method != null && method.contains("!!!.")) {
+		if (method.contains("!!!.")) {
 			return "not";
 		}
-		if (method != null && method.contains("@@@.")) {
+		if (method.contains("@@@.")) {
 			return "Natural Log";
 		}
-		if (method != null && method.contains("***.")) {
+		if (method.contains("***.")) {
 			return "depth";
 		}
 		if (method.contains("__$.")) {

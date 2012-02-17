@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -47,13 +49,28 @@ public class TierGlyphViewMode extends TierGlyph {
 	private void setStyleWithDirection(ITrackStyleExtended style, Direction direction) {
 		this.style = style;
 		MapViewGlyphFactoryI factory = UnloadedGlyphFactory.getInstance();
-		if (modelSym != null) {
+		if (isSymLoaded()) {
 			MapViewGlyphFactoryI glyphFactory = getViewGlyphFactory(style.getViewMode());
 			if (glyphFactory != null) {
 				factory = glyphFactory;
 			}
 		}
 		viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
+	}
+
+	private boolean isSymLoaded() {
+		if (modelSym == null) {
+			return false;
+		}
+		boolean loaded = false;
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		for (int i = 0; i < seq.getAnnotationCount(); i++) {
+			if (modelSym.equals(seq.getAnnotation(i))) {
+				loaded = true;
+				break;
+			}
+		}
+		return loaded;
 	}
 
 	@Override

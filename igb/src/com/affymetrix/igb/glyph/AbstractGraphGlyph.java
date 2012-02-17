@@ -1307,10 +1307,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	public void setLabel(String str) {
 	}
 
-	@Override
-	public void setInfo(Object info) {
-		super.setInfo(info);
-	}
 }
 
 

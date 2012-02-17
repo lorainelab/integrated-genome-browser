@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements StyleGlyphI {
 	protected ITrackStyleExtended style;
@@ -153,5 +156,13 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Sty
 	@Override
 	public void addMiddleGlyph(GlyphI gl) {
 		middle_glyphs.add(gl);
+	}
+	
+	@Override
+	public void setInfo(Object info) {
+		super.setInfo(info);
+		if(!(info instanceof RootSeqSymmetry)){
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "!!!!! {0} is not instance of RootSeqSymmetry !!!!!", info);
+		}
 	}
 }

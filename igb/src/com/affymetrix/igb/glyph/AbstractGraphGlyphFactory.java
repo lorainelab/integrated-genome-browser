@@ -47,6 +47,11 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		this.smv = gviewer;
 	}
 
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return smv;
+	}
+		
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		if (sym instanceof GraphSym) {
 			displayGraph((GraphSym) sym, smv, check_same_seq);

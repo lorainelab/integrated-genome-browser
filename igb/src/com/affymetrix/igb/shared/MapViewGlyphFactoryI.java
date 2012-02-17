@@ -24,4 +24,5 @@ public interface MapViewGlyphFactoryI  {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 	public String getName();
 	public boolean isFileSupported(String format);
+	public SeqMapViewExtendedI getSeqMapView();
 }

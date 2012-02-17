@@ -117,6 +117,11 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 		this.gviewer = gviewer;
 	}
 
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return gviewer;
+	}
+	
 	public void createGlyph(final SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);

@@ -124,4 +124,9 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return null;
+	}
 }

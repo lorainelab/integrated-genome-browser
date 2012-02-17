@@ -73,4 +73,9 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	public void setSeqMapView(SeqMapView gviewer) {
 		this.smv = gviewer;
 	}
+	
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return smv;
+	}
 }

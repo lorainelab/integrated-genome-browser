@@ -102,4 +102,9 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return null;
+	}
 }

@@ -28,7 +28,6 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	private final Operator operator;
 	private final MapViewGlyphFactoryI factory;
-	private SeqMapViewExtendedI smv;
 	
 	public OperatorGlyphFactory(Operator operator, MapViewGlyphFactoryI factory){
 		this.operator = operator;
@@ -49,16 +48,12 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 			return factory.getViewModeGlyph(sym, style, tier_direction);
 		} else {
 
-			if(!operator.supportsTwoTrack()){
-				style.setSeparate(false);
-			}
-			
 			if (!style.getSeparate()) {
 				List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
 				list.add(sym);
 				return createGlyph(list, meth, style, Direction.BOTH);
 			} else {
-				List<List<SeqSymmetry>> lists = getChilds(smv, sym);
+				List<List<SeqSymmetry>> lists = getChilds(factory.getSeqMapView(), sym);
 				if(Direction.FORWARD == tier_direction){
 					return createGlyph(lists.get(0), meth, style, tier_direction);
 				}else{
@@ -75,7 +70,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 
 	private ViewModeGlyph createGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction) {
 	
-		SymWithProps result_sym = (SymWithProps) operator.operate(smv.getAnnotatedSeq(), list);
+		SymWithProps result_sym = (SymWithProps) operator.operate(factory.getSeqMapView().getAnnotatedSeq(), list);
 
 		if (result_sym != null) {
 			result_sym.setProperty("method", meth);
@@ -130,7 +125,8 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		return lists;
 	}
 	
-	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
-		this.smv = gviewer;
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return factory.getSeqMapView();
 	}
 }

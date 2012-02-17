@@ -543,4 +543,9 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public final SeqMapViewExtendedI getSeqMapView(){
+		return gviewer;
+	}
 }

@@ -340,7 +340,7 @@ public class TierGlyphViewMode extends TierGlyph {
 		this.modelSym = (SeqSymmetry)info;
 		viewModeGlyph = null; // reset viewModeGlyph
 		setViewModeGlyph(this.style, super.getDirection());
-		viewModeGlyph.setInfo(info);
+		//viewModeGlyph.setInfo(info); // Let factory setInfo for viewModeGlyph : HV 02/17/12
 	}
 	@Override
 	public void setMinimumPixelBounds(Dimension d)   {

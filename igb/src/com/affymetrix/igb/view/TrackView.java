@@ -80,19 +80,6 @@ public class TrackView {
 		return default_glyph_factory;
 	}
 
-	private ITrackStyleExtended prefixSearch(Map<ITrackStyleExtended, TierGlyph> style2track, String method, String fileType) {
-		int extensionPos = method.lastIndexOf('.');
-		if (extensionPos > -1 && method.length() >= extensionPos + 1 + fileType.length() && fileType.equals(method.substring(extensionPos + 1, extensionPos + 1 + fileType.length()))) {
-			String prefixMethod = method.substring(0, extensionPos + 1 + fileType.length());
-			for (ITrackStyleExtended style : style2track.keySet()) {
-				if (prefixMethod.equals(style.getMethodName())) {
-					return style;
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
 	 * @param smv the SeqMapView
@@ -114,10 +101,6 @@ public class TrackView {
 			style2track = style2forwardTierGlyph;
 		}
 		tierGlyph = style2track.get(style);
-		if (tierGlyph == null) {
-			ITrackStyleExtended oldStyle = prefixSearch(style2track, style.getMethodName(), style.getFileType());
-			tierGlyph = style2track.get(oldStyle);
-		}
 		if (tierGlyph != null && !(tierGlyph instanceof TierGlyphViewMode)) {
 			seqmap.removeTier(tierGlyph);
 			tierGlyph = null;

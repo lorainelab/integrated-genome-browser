@@ -3,10 +3,14 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.prefs.TierPrefsViewGUI;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,12 +32,9 @@ public class ExportDialogGUI extends JPanel {
 	private Component mainView;
 	private Component mainViewWithLabels;
 	private Component slicedView;
-
 	public synchronized void display(boolean isSequenceViewer) {
 		initRadioButton(isSequenceViewer);
-
 		initFrame();
-
 		DisplayUtils.bringFrameToFront(static_frame);
 
 		export.previewImage();
@@ -76,9 +77,10 @@ public class ExportDialogGUI extends JPanel {
 	}
 
 	private void initFrame() {
-		if (static_frame == null) {
+		if (static_frame == null) {			
 			export.init();
 			static_frame = PreferenceUtils.createFrame(TITLE, singleton);
+			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		} else {
 			export.initSpinner((String) unitComboBox.getSelectedItem());
 		}

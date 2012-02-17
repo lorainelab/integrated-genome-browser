@@ -9,6 +9,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.*;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;

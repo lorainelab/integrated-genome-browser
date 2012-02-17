@@ -51,7 +51,7 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
 	 */
 	public AdjustableJSlider( int orientation ) {
 		super( orientation );
-		setInverted ( Adjustable.VERTICAL == orientation );
+		setInverted ( Adjustable.VERTICAL== orientation );
 		setValue( getMinimum() );
 	}
 

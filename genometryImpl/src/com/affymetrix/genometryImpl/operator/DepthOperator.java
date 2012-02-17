@@ -42,7 +42,7 @@ public class DepthOperator implements Operator {
 
 	@Override
 	public boolean supportsTwoTrack() {
-		return true;
+		return false;
 	}
 
 	@Override

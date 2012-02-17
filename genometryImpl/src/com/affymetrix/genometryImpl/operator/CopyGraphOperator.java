@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public final class CopyGraphOperator implements Operator {
+	private static FileTypeCategory input[] = new FileTypeCategory[]{FileTypeCategory.Graph};
+	private static FileTypeCategory output = FileTypeCategory.Graph;
 	public CopyGraphOperator() {}
 	@Override
 	public String getName() { return "copygraph"; }
@@ -59,6 +61,11 @@ public final class CopyGraphOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Graph;
+		return output;
+	}
+
+	@Override
+	public FileTypeCategory[] getInputCategory() {
+		return input; 
 	}
 }

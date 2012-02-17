@@ -16,4 +16,5 @@ public interface Operator  {
 	public boolean setParameters( Map<String, Object> parms);
 	public boolean supportsTwoTrack();
 	public FileTypeCategory getOutputCategory();
+	public FileTypeCategory[] getInputCategory();
 }

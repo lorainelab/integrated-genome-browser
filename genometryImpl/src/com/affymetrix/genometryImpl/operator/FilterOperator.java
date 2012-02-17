@@ -11,6 +11,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 
 public class FilterOperator implements Operator {
+	private static FileTypeCategory input[] = FileTypeCategory.values();
+	private static FileTypeCategory output = null;
 	private static final String PARM_NAME = "parameter";
 	private final SymmetryFilterI filter;
 
@@ -72,6 +74,11 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return null;
+		return output;
+	}
+
+	@Override
+	public FileTypeCategory[] getInputCategory() {
+		return input; 
 	}
 }

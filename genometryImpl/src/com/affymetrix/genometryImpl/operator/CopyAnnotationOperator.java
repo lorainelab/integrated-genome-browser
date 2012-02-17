@@ -10,7 +10,9 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class CopyAnnotationOperator implements Operator {
-
+	private static FileTypeCategory input[] = new FileTypeCategory[]{FileTypeCategory.Annotation};
+	private static FileTypeCategory output = FileTypeCategory.Annotation;
+	
 	@Override
 	public String getName() {
 		return "copyannotation";
@@ -64,6 +66,11 @@ public class CopyAnnotationOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Annotation;
+		return output;
+	}
+
+	@Override
+	public FileTypeCategory[] getInputCategory() {
+		return input; 
 	}
 }

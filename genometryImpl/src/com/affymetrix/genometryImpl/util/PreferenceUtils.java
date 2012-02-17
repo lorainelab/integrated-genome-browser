@@ -649,7 +649,6 @@ public abstract class PreferenceUtils {
 			PreferenceUtils.setWindowSize(frame, pos);
 		}
 
-		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override

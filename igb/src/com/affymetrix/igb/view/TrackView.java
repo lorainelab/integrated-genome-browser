@@ -349,7 +349,7 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			return MapViewModeHolder.getInstance().getOperator(style.getOperator());
+			return TransformHolder.getInstance().getOperator(style.getOperator());
 		}
 		
 		return null;

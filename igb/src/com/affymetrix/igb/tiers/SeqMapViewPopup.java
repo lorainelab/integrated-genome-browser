@@ -47,6 +47,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
+import com.affymetrix.igb.glyph.TransformHolder;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -1150,7 +1151,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 				
 				Map<String, Action> transform_actions = new HashMap<String, Action>();
-				for (final Object transform : MapViewModeHolder.getInstance().getAllTransformFor(file_format)) {
+				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(file_format)) {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 

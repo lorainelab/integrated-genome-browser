@@ -12,6 +12,7 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.OperatorGlyphFactory;
+import com.affymetrix.igb.glyph.TransformHolder;
 import com.affymetrix.igb.glyph.UnloadedGlyphFactory;
 
 import java.awt.Color;
@@ -50,7 +51,7 @@ public class TierGlyphViewMode extends TierGlyph {
 
 	private Operator getOperator(String operator){
 		// TODO cannot access classes in packages outside igb.shared, FIX THIS
-		return MapViewModeHolder.getInstance().getOperator(operator);
+		return TransformHolder.getInstance().getOperator(operator);
 	}
 			
 	

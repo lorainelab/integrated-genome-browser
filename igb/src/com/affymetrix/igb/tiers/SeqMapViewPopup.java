@@ -1130,6 +1130,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
+						@Override
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setViewMode(mode.toString());
 							refreshMap(false, false);
@@ -1153,12 +1154,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					viewModeMenu.setEnabled(true);
 				
 				}
-				String file_format = ((ITrackStyleExtended) style).getFileType();
+				
 				Map<String, Action> transform_actions = new HashMap<String, Action>();
-				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(file_format)) {
+				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(rootSym.getCategory())) {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
+						@Override
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setOperator(transform.toString());
 							refreshMap(false, false);

@@ -5,8 +5,6 @@ import com.affymetrix.genometryImpl.operator.LogTransform;
 import com.affymetrix.genometryImpl.operator.NotOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,25 +51,17 @@ public class TransformHolder {
 		transform2Operator.remove(operator.getName());
 	}
 	
-	public Object[] getAllTransformFor(String file_format) {
+	public Object[] getAllTransformFor(FileTypeCategory category) {
 		java.util.List<Object> mode = new java.util.ArrayList<Object>(transform2Operator.size());
-		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandler(file_format);
-		if(handler == null){
-			return mode.toArray(new Object[0]);
-		}
-		
-		FileTypeCategory file_category = handler.getFileTypeCategory();
-		if (file_category != null) {
-			mode.add(TrackConstants.default_operator);
-			for (java.util.Map.Entry<String, Operator> entry : transform2Operator.entrySet()) {
-				Operator emv = entry.getValue();
-				if (emv.getOperandCountMax(file_category) == 1 &&
-						emv.getOperandCountMin(file_category) == 1) {
-					mode.add(entry.getKey());
-				}
+
+		mode.add(TrackConstants.default_operator);
+		for (java.util.Map.Entry<String, Operator> entry : transform2Operator.entrySet()) {
+			Operator emv = entry.getValue();
+			if (emv.getOperandCountMax(category) == 1) {
+				mode.add(entry.getKey());
 			}
 		}
-		
+
 		return mode.toArray(new Object[0]);
 	}
 }

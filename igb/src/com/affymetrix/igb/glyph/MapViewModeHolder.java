@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -84,22 +85,20 @@ public class MapViewModeHolder {
 		view2Factory.remove(factory.getName());
 	}
 	
-	public Object[] getAllViewModesFor(String file_format) {
+	public Object[] getAllViewModesFor(FileTypeCategory category) {
 		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
-		
-		if (file_format != null) {
-			mode.add(TrackConstants.default_view_mode);
-			for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
-				MapViewGlyphFactoryI emv = entry.getValue();
-				if (emv.isFileSupported(file_format)) {
-					mode.add(entry.getKey());
-				}
-				
+
+		mode.add(TrackConstants.default_view_mode);
+		for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
+			MapViewGlyphFactoryI emv = entry.getValue();
+			if (emv.isFileSupported(category)) {
+				mode.add(entry.getKey());
 			}
+
 		}
-		
+
 		return mode.toArray(new Object[0]);
-		
+
 	}
 	
 }

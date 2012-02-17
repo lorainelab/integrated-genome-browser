@@ -583,16 +583,8 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 	}
 
 	@Override
-	public boolean isFileSupported(String fileFormat) {
-		if(fileFormat == null) {
-			return false;
-		}
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
-		if (fth != null && (
-				fth.getFileTypeCategory() == FileTypeCategory.Annotation ||
-				fth.getFileTypeCategory() == FileTypeCategory.Alignment
-			 )
-			){
+	public boolean isFileSupported(FileTypeCategory category) {
+		if (category == FileTypeCategory.Annotation ||category == FileTypeCategory.Alignment){
 			return true;
 		}
 		return false;

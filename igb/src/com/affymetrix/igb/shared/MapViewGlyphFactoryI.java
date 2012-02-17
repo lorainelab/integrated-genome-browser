@@ -17,12 +17,13 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 public interface MapViewGlyphFactoryI  {
 	public void init(Map<String, Object> options);
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv);
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 	public String getName();
-	public boolean isFileSupported(String format);
+	public boolean isFileSupported(FileTypeCategory category);
 	public SeqMapViewExtendedI getSeqMapView();
 }

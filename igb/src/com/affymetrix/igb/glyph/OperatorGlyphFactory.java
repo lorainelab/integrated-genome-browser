@@ -82,12 +82,8 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		return factory.getViewModeGlyph(result_sym, style, direction);
 	}
 
-	public boolean isFileSupported(String fileFormat) {
-		if(fileFormat == null) {
-			return false;
-		}
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
-		FileTypeCategory category = fth.getFileTypeCategory();
+	@Override
+	public boolean isFileSupported(FileTypeCategory category) {
 		if (operator.getOperandCountMin(category) > 1 || operator.getOperandCountMax(category) < 1) {
 			return false;
 		}

@@ -184,12 +184,8 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 	}
 
 	@Override
-	public boolean isFileSupported(String fileFormat) {
-		if(fileFormat == null) {
-			return false;
-		}
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
-		if (fth != null && fth.getFileTypeCategory() == FileTypeCategory.Graph) {
+	public boolean isFileSupported(FileTypeCategory category) {
+		if (category == FileTypeCategory.Graph){
 			return true;
 		}
 		return false;

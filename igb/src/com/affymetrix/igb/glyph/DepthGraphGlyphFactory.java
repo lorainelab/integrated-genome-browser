@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -93,8 +94,12 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 		tier.setInfo(sym);
 	}
 	
-	public boolean isFileSupported(String format) {
-		return true;
+	@Override
+	public boolean isFileSupported(FileTypeCategory category) {
+		if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment){
+			return true;
+		}
+		return false;
 	}
 
 	@Override

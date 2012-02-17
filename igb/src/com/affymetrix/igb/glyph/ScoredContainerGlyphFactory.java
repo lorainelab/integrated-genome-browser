@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
@@ -274,6 +275,11 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
+	public boolean isFileSupported(FileTypeCategory category) {
+		//TODO Fix This
+		return true;
+	}
+		
 	public boolean isFileSupported(String fileFormat) {
 		if(fileFormat == null)
 			return false;

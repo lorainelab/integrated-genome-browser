@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
@@ -534,8 +535,8 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(String format) {
-		return false;
+	public boolean isFileSupported(FileTypeCategory category) {
+		return true;
 	}
 
 	@Override

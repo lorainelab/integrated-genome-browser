@@ -36,6 +36,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -72,7 +73,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final JMenu changeMenu = new JMenu(BUNDLE.getString("changeMenu"));
 	private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
 	private final JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
-	private final JMenu transformMenu = new JMenu("Transform");
+	private final JMenu transformMenu = new JMenu(BUNDLE.getString("transformMenu"));
 	private final JMenu summaryMenu = new JMenu(BUNDLE.getString("summaryMenu"));
 	private final ActionToggler at1;
 	private final ActionToggler at2;
@@ -1105,6 +1106,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
+			
 			final ITrackStyle style = glyph.getAnnotStyle();
 			boolean is_annotation_type = !style.isGraphTier();
 			summaryMenu.setEnabled(is_annotation_type);
@@ -1118,12 +1120,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_maximize = true;
 			}
-
-			if (style instanceof ITrackStyleExtended) {
-				String file_format = ((ITrackStyleExtended) style).getFileType();
-
+	
+			
+			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
+				RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+				
 				Map<String, Action> actions = new HashMap<String, Action>();
-				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(file_format)) {
+				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory())) {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
@@ -1148,8 +1151,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						action.putValue(Action.SELECTED_KEY, true);
 					}
 					viewModeMenu.setEnabled(true);
-				}
 				
+				}
+				String file_format = ((ITrackStyleExtended) style).getFileType();
 				Map<String, Action> transform_actions = new HashMap<String, Action>();
 				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(file_format)) {
 					Action action = new GenericAction() {

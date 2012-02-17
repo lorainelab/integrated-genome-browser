@@ -5,12 +5,14 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
@@ -25,13 +27,12 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  */
 public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphFactoryI {
 
-	private static final String[] supportedFormat = {"bam", "sam"};
-	
 	public void init(Map<String, Object> options) { }
 	
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		
-		if (sym == null || sym.getChildCount() == 0) {
+		if (sym == null || sym.getChildCount() == 0 || 
+				!(sym instanceof RootSeqSymmetry) || isFileSupported(((RootSeqSymmetry)sym).getCategory())) {
 			return;
 		}
 		
@@ -44,9 +45,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 		
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		
-		if(!isFileSupported(style.getFileType())){
-			return;
-		}
+		
 		
 		BioSeq aseq = smv.getAnnotatedSeq();
 		java.util.List<SeqSymmetry> syms = new java.util.ArrayList<SeqSymmetry>();
@@ -73,14 +72,10 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 	
 	}
 	
-	public boolean isFileSupported(String fileFormat){
-		if(fileFormat == null)
-			return false;
-		
-		for(String format : supportedFormat){
-			if(format.equals(fileFormat)){
-				return true;
-			}
+	@Override
+	public boolean isFileSupported(FileTypeCategory category) {
+		if (category == FileTypeCategory.Alignment){
+			return true;
 		}
 		return false;
 	}

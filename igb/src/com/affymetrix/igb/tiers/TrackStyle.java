@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -822,6 +825,18 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	
 	public String getFileType() {
 		return file_type;
+	}
+	
+	public FileTypeCategory getFileTypeCategory(){
+		if(file_type == null)
+			return null;
+		
+		FileTypeCategory category = null;
+		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(file_type);
+		if (handler != null) {
+			category = handler.getFileTypeCategory();
+		}
+		return category;
 	}
 	
 	public void setDirectionType(DIRECTION_TYPE type) {

@@ -436,7 +436,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			viewModeCB.removeAllItems();
 
 			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
-				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(file_type)));
+				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(selectedStyle.getFileTypeCategory())));
 				String view_mode = selectedStyle.getViewMode();
 				if (view_mode == null) {
 					viewModeCB.setSelectedIndex(0);

@@ -56,6 +56,14 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
+	public boolean isFileSupported(FileTypeCategory category) {
+		//TODO: Fix this for cytobands
+		if (category == FileTypeCategory.Sequence){
+			return false;
+		}
+		return true;
+	}
+		
 	public boolean isFileSupported(String format) {
 		if(format == null) {
 			return false;

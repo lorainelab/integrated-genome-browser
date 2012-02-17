@@ -15,6 +15,7 @@ package com.affymetrix.igb.stylesheet;
 import java.util.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -127,7 +128,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(String format) {
+	public boolean isFileSupported(FileTypeCategory category) {
 		return true;
 	}
 

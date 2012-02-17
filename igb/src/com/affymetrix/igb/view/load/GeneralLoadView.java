@@ -587,7 +587,7 @@ public final class GeneralLoadView {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer);
+				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer, true);
 				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
 				if(!syms.isEmpty())
 					gviewer.select(new ArrayList<SeqSymmetry>(1), true);

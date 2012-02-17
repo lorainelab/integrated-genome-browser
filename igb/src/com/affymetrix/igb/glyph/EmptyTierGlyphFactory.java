@@ -25,7 +25,7 @@ import com.affymetrix.igb.view.SeqMapView;
  */
 public class EmptyTierGlyphFactory {
 	
-	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer) {
+	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer, boolean setViewMode) {
 
 		// No seqeunce selected or if it is cytoband or it is residue file. Then return
 		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND) ||
@@ -50,11 +50,11 @@ public class EmptyTierGlyphFactory {
 				if(style == null)
 					continue;
 				
-				addTierFor(style, gviewer, feature.getRequestSym());
+				addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
 			}
 		} else {
 			style = getStyle(feature.getURI().toString(), feature);
-			addTierFor(style, gviewer, feature.getRequestSym());
+			addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
 			style.setFeature(feature);
 		}
 
@@ -75,7 +75,7 @@ public class EmptyTierGlyphFactory {
 		}
 	}
 	
-	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym) {
+	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
 		int slots = gviewer.getAverageSlots();
 		TierGlyph[] tiers = new TierGlyph[2];
 				
@@ -83,7 +83,9 @@ public class EmptyTierGlyphFactory {
 		String viewmode = TrackUtils.getInstance().useViewMode(style.getMethodName());
 		if(!style.isGraphTier()){
 			if (viewmode != null) {
-				style.setViewMode(viewmode);
+				if(setViewMode){
+					style.setViewMode(viewmode);
+				}
 				tiers[0] = gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
 				if (style.getSeparate()) {
 					tiers[1] = gviewer.getTrack(null, style, Direction.REVERSE);
@@ -96,7 +98,9 @@ public class EmptyTierGlyphFactory {
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 		}else {
 			if(viewmode != null){
-				style.setViewMode(viewmode);
+				if(setViewMode){
+					style.setViewMode(viewmode);
+				}
 				tiers[0] = gviewer.getTrack(null, style, Direction.NONE);
 				return;
 			} else {

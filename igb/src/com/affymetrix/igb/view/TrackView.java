@@ -280,7 +280,7 @@ public class TrackView {
 		}
 		
 		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
-			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv);
+			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv, false);
 		}
 	}
 	

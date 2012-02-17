@@ -92,12 +92,17 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 			return false;
 		}
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
-		if (fth != null && fth.getFileTypeCategory() == operator.getOutputCategory())
-			return true;
-		
-		return false;
+		FileTypeCategory category = fth.getFileTypeCategory();
+		if (operator.getOperandCountMin(category) > 1 || operator.getOperandCountMax(category) < 1) {
+			return false;
+		}
+		for (FileTypeCategory checkCategory : FileTypeCategory.values()) {
+			if (checkCategory != category && operator.getOperandCountMin(checkCategory) > 0) {
+				return false;
+			}
+		}
+		return true;
 	}
-
 	
 	private static List<List<SeqSymmetry>> getChilds(SeqMapViewExtendedI smv, SeqSymmetry parentSym){
 		int initial_size = parentSym.getChildCount()/2;

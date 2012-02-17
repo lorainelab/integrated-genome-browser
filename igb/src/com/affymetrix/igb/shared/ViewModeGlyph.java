@@ -9,7 +9,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class ViewModeGlyph extends SolidGlyph implements StyleGlyphI {
-	public abstract String getViewMode();
 	public abstract void setPreferredHeight(double height, ViewI view);
 	public abstract Color getFillColor();
 	public abstract void setFillColor(Color col);

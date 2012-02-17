@@ -30,7 +30,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Sty
 	 */
 	protected final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 	protected String label = null;
-
+	
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;

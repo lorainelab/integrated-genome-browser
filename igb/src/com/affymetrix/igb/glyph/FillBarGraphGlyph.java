@@ -16,11 +16,6 @@ public class FillBarGraphGlyph extends AbstractGraphGlyph {
 	}
 
 	@Override
-	public String getViewMode() {
-		return "fillbargraph";
-	}
-
-	@Override
 	protected void doBigDraw(Graphics g, GraphSym graphSym,
 			Point curr_x_plus_width, Point max_x_plus_width,
 			float ytemp, int draw_end_index, int i

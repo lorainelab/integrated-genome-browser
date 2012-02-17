@@ -19,11 +19,6 @@ public class CollapsedAnnotationGlyph extends AbstractAnnotationGlyph implements
 	}
 
 	@Override
-	public String getViewMode() {
-		return "collapsed";
-	}
-
-	@Override
 	protected void setDepth() {
 	}
 

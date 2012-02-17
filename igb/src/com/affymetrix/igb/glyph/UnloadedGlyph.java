@@ -55,11 +55,6 @@ public class UnloadedGlyph extends AbstractViewModeGlyph implements StyleGlyphI 
 	}
 
 	@Override
-	public String getViewMode() {
-		return "unloaded";
-	}
-
-	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 	}
 

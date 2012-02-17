@@ -25,11 +25,6 @@ public class ExpandedAnnotationGlyph extends AbstractAnnotationGlyph implements 
 	}
 
 	@Override
-	public String getViewMode() {
-		return "expanded";
-	}
-
-	@Override
 	protected void setDepth() {
 		setMaxExpandDepth(style.getMaxDepth());
 	}

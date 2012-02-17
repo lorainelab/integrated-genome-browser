@@ -8,6 +8,9 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -84,8 +87,15 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		return factory.getViewModeGlyph(result_sym, style, direction);
 	}
 
-	public boolean isFileSupported(String format) {
-		return true;
+	public boolean isFileSupported(String fileFormat) {
+		if(fileFormat == null) {
+			return false;
+		}
+		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(fileFormat);
+		if (fth != null && fth.getFileTypeCategory() == operator.getOutputCategory())
+			return true;
+		
+		return false;
 	}
 
 	

@@ -5,8 +5,6 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -182,10 +180,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction) {
-		ViewModeGlyph viewModeGlyph = new ExpandedAnnotationGlyph(style);
+		ViewModeGlyph viewModeGlyph = ExpandedAnnotGlyphFactory.getViewModeGlyph(style);
 		viewModeGlyph.setDirection(direction);
 		if (direction != TierGlyph.Direction.REVERSE) {
-			((FasterExpandPacker)((ExpandedAnnotationGlyph)viewModeGlyph).getPacker()).setMoveType(NeoConstants.UP);
+			((FasterExpandPacker)viewModeGlyph.getPacker()).setMoveType(NeoConstants.UP);
 		}
 		return viewModeGlyph;
 	}

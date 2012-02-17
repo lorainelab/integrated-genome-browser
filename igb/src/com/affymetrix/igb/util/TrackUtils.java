@@ -55,15 +55,6 @@ public class TrackUtils {
 		if (method.contains("$$$.")) {
 			return "collapsed";
 		}
-		if (method.contains("!!!.")) {
-			return "not";
-		}
-		if (method.contains("@@@.")) {
-			return "Natural Log";
-		}
-		if (method.contains("***.")) {
-			return "depth";
-		}
 		if (method.contains("__$.")) {
 			return "bargraph";
 		}

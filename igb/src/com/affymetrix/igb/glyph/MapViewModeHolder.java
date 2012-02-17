@@ -4,10 +4,15 @@ package com.affymetrix.igb.glyph;
 import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.operator.LogTransform;
 import com.affymetrix.genometryImpl.operator.NotOperator;
+import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.tiers.TrackConstants;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +23,7 @@ import java.util.logging.Logger;
 public class MapViewModeHolder {
 	
 	java.util.LinkedHashMap<String, MapViewGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, MapViewGlyphFactoryI>();
+	java.util.LinkedHashMap<String, Operator> transform2Operator = new java.util.LinkedHashMap<String, Operator>();
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
 	
 	public static MapViewModeHolder getInstance(){
@@ -55,13 +61,13 @@ public class MapViewModeHolder {
 		StairStepGraphGlyphFactory stairStepGraphGlyphFactory = new StairStepGraphGlyphFactory();
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
-		OperatorGlyphFactory operator = new OperatorGlyphFactory(new NotOperator(), collapsedAnnotGlyphFactory);
-		operator.setSeqMapView(seqMapView);
-		addViewFactory(operator);
-		OperatorGlyphFactory operator2 = new OperatorGlyphFactory(new DepthOperator(), barGraphGlyphFactory);
-		operator2.setSeqMapView(seqMapView);
-		addViewFactory(operator2);
-		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
+		
+		
+		// Adding operators
+		addOperator(new NotOperator());
+		addOperator(new LogTransform(2.0));
+		
+//		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
 //		addViewFactory(expandedAnnotGlyphFactory);
@@ -108,5 +114,50 @@ public class MapViewModeHolder {
 		
 		return mode.toArray(new Object[0]);
 		
+	}
+	
+	public Operator getOperator(String transform){
+		if(transform == null){
+			return null;
+		}
+		return transform2Operator.get(transform);
+	}
+		
+	public final void addOperator(Operator operator){
+		if(operator == null){
+			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add null operator");
+			return;
+		}
+		String transform = operator.getName();
+		if(transform2Operator.get(transform) != null){
+			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate operator for {0}", transform);
+			return;
+		}
+		transform2Operator.put(transform, operator);
+	}
+	
+	public final void removeOperator(Operator operator){
+		transform2Operator.remove(operator.getName());
+	}
+	
+	public Object[] getAllTransformFor(String file_format) {
+		java.util.List<Object> mode = new java.util.ArrayList<Object>(transform2Operator.size());
+		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandler(file_format);
+		if(handler == null){
+			return mode.toArray(new Object[0]);
+		}
+		
+		FileTypeCategory file_category = handler.getFileTypeCategory();
+		if (file_category != null) {
+			mode.add(TrackConstants.default_operator);
+			for (java.util.Map.Entry<String, Operator> entry : transform2Operator.entrySet()) {
+				Operator emv = entry.getValue();
+				if (Arrays.asList(emv.getInputCategory()).contains(file_category)) {
+					mode.add(entry.getKey());
+				}
+			}
+		}
+		
+		return mode.toArray(new Object[0]);
 	}
 }

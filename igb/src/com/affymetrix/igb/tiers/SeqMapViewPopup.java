@@ -71,6 +71,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final JMenu changeMenu = new JMenu(BUNDLE.getString("changeMenu"));
 	private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
 	private final JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
+	private final JMenu transformMenu = new JMenu("Transform");
 	private final JMenu summaryMenu = new JMenu(BUNDLE.getString("summaryMenu"));
 	private final ActionToggler at1;
 	private final ActionToggler at2;
@@ -1092,10 +1093,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		change_expand_max_all_action.setEnabled(not_empty);
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 		viewModeMenu.setEnabled(false);
-
+		transformMenu.setEnabled(false);
+		
 		JMenu save_menu = new JMenu("Save Annotations");
 
 		viewModeMenu.removeAll();
+		transformMenu.removeAll();
+
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
@@ -1144,6 +1148,34 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					}
 					viewModeMenu.setEnabled(true);
 				}
+				
+				Map<String, Action> transform_actions = new HashMap<String, Action>();
+				for (final Object transform : MapViewModeHolder.getInstance().getAllTransformFor(file_format)) {
+					Action action = new GenericAction() {
+						private static final long serialVersionUID = 1L;
+
+						public void actionPerformed(ActionEvent ae) {
+							((ITrackStyleExtended) style).setOperator(transform.toString());
+							refreshMap(false, false);
+						}
+
+						@Override
+						public String getText() {
+							return transform.toString();
+						}
+					};
+					transform_actions.put(transform.toString(), action);
+					transformMenu.add(new JCheckBoxMenuItem(action));
+				}
+
+				if (transform_actions.size() > 0) {
+					String operator = ((ITrackStyleExtended) style).getOperator();
+					Action action = transform_actions.get(operator);
+					if (action != null) {
+						action.putValue(Action.SELECTED_KEY, true);
+					}
+					transformMenu.setEnabled(true);
+				}
 
 			}
 		} else {
@@ -1189,6 +1221,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 		popup.add(changeMenu);
 		popup.add(viewModeMenu);
+		popup.add(transformMenu);
 		popup.add(new JSeparator());
 		popup.add(collapse_action);
 		popup.add(expand_action);

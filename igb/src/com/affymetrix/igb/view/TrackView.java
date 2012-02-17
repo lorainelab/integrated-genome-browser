@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -290,13 +291,18 @@ public class TrackView {
 		// TODO this will be replaced as we add more ViewModeGlyphs
 		if (factory instanceof ExpandedAnnotGlyphFactory  ||
 			factory instanceof CollapsedAnnotGlyphFactory ||
-			factory instanceof AbstractGraphGlyphFactory  ||
-			factory instanceof OperatorGlyphFactory
+			factory instanceof AbstractGraphGlyphFactory  
 		   ) {
 			String meth = BioSeq.determineMethod(annotSym);
 
 			if (meth != null) {
 				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+				Operator operator = determineOperator(annotSym);
+				if(operator != null){
+					if(!operator.supportsTwoTrack()){
+						style.setSeparate(false);
+					}
+				}
 				TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 				if (!annotSym.equals(mainTier.getInfo())) {
 					mainTier.setInfo(annotSym);
@@ -338,6 +344,17 @@ public class TrackView {
 		return getAnnotationGlyphFactory();
 	}
 	
+	private Operator determineOperator(SymWithProps sym){
+		String meth = BioSeq.determineMethod(sym);
+
+		if (meth != null) {
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			return MapViewModeHolder.getInstance().getOperator(style.getOperator());
+		}
+		
+		return null;
+	}
+		
 	private void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);

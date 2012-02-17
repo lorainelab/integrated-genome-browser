@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -10,6 +11,7 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.glyph.MapViewModeHolder;
+import com.affymetrix.igb.glyph.OperatorGlyphFactory;
 import com.affymetrix.igb.glyph.UnloadedGlyphFactory;
 
 import java.awt.Color;
@@ -46,6 +48,12 @@ public class TierGlyphViewMode extends TierGlyph {
 		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
 	}
 
+	private Operator getOperator(String operator){
+		// TODO cannot access classes in packages outside igb.shared, FIX THIS
+		return MapViewModeHolder.getInstance().getOperator(operator);
+	}
+			
+	
 	private void setStyleWithDirection(ITrackStyleExtended style, Direction direction) {
 		this.style = style;
 		MapViewGlyphFactoryI factory = UnloadedGlyphFactory.getInstance();
@@ -53,6 +61,10 @@ public class TierGlyphViewMode extends TierGlyph {
 			MapViewGlyphFactoryI glyphFactory = getViewGlyphFactory(style.getViewMode());
 			if (glyphFactory != null) {
 				factory = glyphFactory;
+				Operator operator = getOperator(style.getOperator());
+				if(operator != null){
+					factory = new OperatorGlyphFactory(operator, factory);
+				}
 			}
 		}
 		viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);

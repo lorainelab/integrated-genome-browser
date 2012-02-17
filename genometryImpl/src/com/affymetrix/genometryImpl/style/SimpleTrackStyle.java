@@ -101,4 +101,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	public void setOperator(String o) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public String getOperator() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 }

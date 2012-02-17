@@ -51,6 +51,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setViewMode(String s);
 	String getViewMode();
 	
+	void setOperator(String o);
+	String getOperator();
+	
 	int getDirectionType();
 	
 	String getFileType();

@@ -61,6 +61,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Color start_color = default_start;
 	private Color end_color = default_end;
 	private String view_mode = default_view_mode;
+	private String operator = default_operator;
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
@@ -1070,5 +1071,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		
 		return false;
+	}
+
+	public void setOperator(String o) {
+		operator = o;
+	}
+
+	public String getOperator() {
+		return operator;
 	}
 }

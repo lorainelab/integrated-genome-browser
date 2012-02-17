@@ -308,9 +308,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		if (c == null || getTitle() == null || getTitle().equals("")) {
 			return insets;
 		}
-
 		Font font = getFont(c);
-
 		fm = c.getFontMetrics(font);
 
 		if (fm != null) {

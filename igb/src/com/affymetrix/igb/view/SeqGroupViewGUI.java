@@ -1,12 +1,16 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import java.awt.Cursor;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 
@@ -17,7 +21,13 @@ public class SeqGroupViewGUI extends IGBTabPanel {
 	private final JRPTable seqtable;
 	private static SeqGroupViewGUI singleton;
 	private SeqGroupView seqGroupModel;
+	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
 
+	static {
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+	}
 	public static void init(IGBService _igbService) {
 		singleton = new SeqGroupViewGUI(_igbService);
 	}
@@ -78,7 +88,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSequenceTable = seqtable;
         speciesPanel = new javax.swing.JPanel();
-        speciesCB = seqGroupModel.getSpeciesCB();
+        speciesCB = speciesCB = seqGroupModel.getSpeciesCB();
         genomeVersionPanel = new javax.swing.JPanel();
         versionCB = seqGroupModel.getVersionCB();
 
@@ -92,7 +102,17 @@ public class SeqGroupViewGUI extends IGBTabPanel {
         ));
         jScrollPane1.setViewportView(currentSequenceTable);
 
-        speciesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Species"));
+        speciesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Custom Border at Runtime"));
+        speciesPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                speciesPanelMousePressed(evt);
+            }
+        });
+        speciesPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                speciesPanelMouseMoved(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout speciesPanelLayout = new org.jdesktop.layout.GroupLayout(speciesPanel);
         speciesPanel.setLayout(speciesPanelLayout);
@@ -135,7 +155,26 @@ public class SeqGroupViewGUI extends IGBTabPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
         );
+
+        speciesPanel.setBorder(new CustomTitleBorder("  ", "Species"));
     }// </editor-fold>//GEN-END:initComponents
+
+	private void speciesPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMousePressed
+		Rectangle bounds = new Rectangle(10, 5, 50, 12);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			seqGroupModel.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+		}// TODO add your handling code here:
+	}//GEN-LAST:event_speciesPanelMousePressed
+
+	private void speciesPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMouseMoved
+		Rectangle bounds = new Rectangle(10, 5, 50, 12);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_speciesPanelMouseMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable currentSequenceTable;
     private javax.swing.JPanel genomeVersionPanel;

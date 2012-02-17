@@ -144,7 +144,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     super.packTiers(full_repack, stretch_map, extra_for_now, manual);
     Rectangle2D.Double lbox = labelmap.getCoordBounds();
 	for (TierLabelGlyph label_glyph : label_glyphs) {
-      TierGlyph tier_glyph = (TierGlyph)label_glyph.getInfo();
+      TierGlyph tier_glyph = label_glyph.getReferenceTier();
       Rectangle2D.Double tbox = tier_glyph.getCoordBox();
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setVisibility(tier_glyph.isVisible());

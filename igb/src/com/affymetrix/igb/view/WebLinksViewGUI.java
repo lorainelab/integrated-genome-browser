@@ -3,6 +3,8 @@ package com.affymetrix.igb.view;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.IGB;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -18,7 +20,7 @@ public class WebLinksViewGUI extends JPanel {
 
 	public static synchronized WebLinksViewGUI getSingleton() {
 		if (singleton == null) {
-			singleton = new WebLinksViewGUI();
+			singleton = new WebLinksViewGUI();		
 		}
 		return singleton;
 	}
@@ -27,6 +29,7 @@ public class WebLinksViewGUI extends JPanel {
 		if (static_frame == null) {
 			static_frame = PreferenceUtils.createFrame("Web Links Tool",
 					getSingleton());
+			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());			
 		}
 		DisplayUtils.bringFrameToFront(static_frame);
 		return static_frame;

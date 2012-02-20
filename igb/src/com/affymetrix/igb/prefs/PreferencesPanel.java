@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.view.BundleRepositoryPrefsView;
 import com.affymetrix.igb.view.TierPrefsViewGUI;
@@ -26,7 +27,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
-import java.util.prefs.Preferences;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -56,6 +56,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private PreferencesPanel() {
 		this.setLayout(new BorderLayout());
+			
 		tab_pane = new JTabbedPane();
 
 		this.add(tab_pane, BorderLayout.CENTER);
@@ -82,15 +83,13 @@ public final class PreferencesPanel extends JPanel {
 				singleton.tpvGUI.tpv.removedFromView();
 			}
 		});
-		singleton.getFrame().addWindowListener(singleton.tpvGUI);
-
+		
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpvGUI);
 		singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
 		singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
 		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
-
 		return singleton;
 	}
 
@@ -156,17 +155,22 @@ public final class PreferencesPanel extends JPanel {
 					frame.dispose();
 				}
 			});
-
 			JMenuBar menubar = this.getMenuBar();
-			frame.setJMenuBar(menubar);
-
+			frame.setJMenuBar(menubar);			
 			cont.add(this);
 			frame.pack(); // pack() to set frame to its preferred size
 			Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(558, 582));
 			if (pos != null) {
 				PreferenceUtils.setWindowSize(frame, pos);
-			}
-
+			}			
+			Dimension dim = IGB.getSingleton().getFrame().getSize();
+			int w = frame.getSize().width;
+			int h = frame.getSize().height;
+			int x = (dim.width-w)/2;
+			int y = (dim.height-h)/2;
+			  /*sets the Preferences window at the centre of the IGB window*/
+			frame.addWindowListener(singleton.tpvGUI);
+			frame.setLocation(x, y);
 //		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
 //		if (icon != null) {
 //			frame.setIconImage(icon.getImage());
@@ -236,7 +240,6 @@ public final class PreferencesPanel extends JPanel {
 		dialog.getContentPane().add(button_box, "South");
 		dialog.pack();
 		dialog.setLocationRelativeTo(this);
-
 		Rectangle pos = PreferenceUtils.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
 		if (pos != null) {
 			PreferenceUtils.setWindowSize(dialog, pos);

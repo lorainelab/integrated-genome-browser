@@ -78,6 +78,7 @@ public class ExportDialogGUI extends JPanel {
 		if (static_frame == null) {
 			export.init();
 			static_frame = PreferenceUtils.createFrame(TITLE, singleton);
+			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		} else {
 			export.initSpinner((String) unitComboBox.getSelectedItem());
 		}

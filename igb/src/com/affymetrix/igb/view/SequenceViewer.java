@@ -103,8 +103,8 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		Dimension dim = new Dimension(600,400);
 		seqview.setPreferredSize(dim);
 		mapframe.setPreferredSize(dim);
-		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
-		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
+		Dimension igb_size = IGB.getSingleton().getFrame().getSize();
+		mapframe.setLocation((igb_size.width - pixel_width) / 2, (igb_size.height - pixel_height) / 2);
 	}
 /* This method is used for returning the desired coloring scheme, at present there are two color schemes
  * for the text

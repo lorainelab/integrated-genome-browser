@@ -75,7 +75,17 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 
         jSplitPane1.setDividerLocation(270);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Management Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Custom Border at Runtime", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+        });
+        jPanel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                jPanel2MouseMoved(evt);
+            }
+        });
 
         dataManagementTable.setModel(dataManagementTableModel);
         dataManagementTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
@@ -107,6 +117,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         );
 
         jSplitPane1.setRightComponent(jPanel2);
+        jPanel2.setBorder(new CustomTitleBorder("Data Management Table -", "More Options"));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Custom Border at runtime"));
         jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -169,6 +180,25 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 			this.setCursor(defaultCursor);
 		}
 	}//GEN-LAST:event_jPanel1MouseMoved
+
+	private void jPanel2MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseMoved
+		Rectangle bounds = new Rectangle(160, 10, 100, 12);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_jPanel2MouseMoved
+
+	private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+		Rectangle bounds = new Rectangle(160, 10, 100, 12);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			PreferencesPanel pv = PreferencesPanel.getSingleton();
+			pv.setTab(GeneralLoadView.TAB_DATALOAD_PREFS);
+			javax.swing.JFrame f = pv.getFrame();
+			f.setVisible(true);
+		}
+	}//GEN-LAST:event_jPanel2MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton all_residuesB;

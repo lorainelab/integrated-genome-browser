@@ -75,7 +75,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 
         jSplitPane1.setDividerLocation(270);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Mangement Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Management Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
 
         dataManagementTable.setModel(dataManagementTableModel);
         dataManagementTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.

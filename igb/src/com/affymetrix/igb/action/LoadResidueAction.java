@@ -75,8 +75,7 @@ public class LoadResidueAction extends GenericAction {
 			dialog.pack();
 
 			if (frame != null) {
-				Point location = frame.getLocation();
-				dialog.setLocation(location.x + frame.getWidth() / 2 - dialog.getWidth() / 2, location.y + frame.getHeight() / 2 - dialog.getHeight() / 2);
+				dialog.setLocationRelativeTo(frame);
 			}
 
 

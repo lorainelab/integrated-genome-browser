@@ -6,7 +6,7 @@ public final class LogTransform extends AbsractLogTransform implements Operator{
 	float LOG_1;
 
 	public LogTransform() {
-		super();
+		super("Log");
 	}
 	
 	public LogTransform(Double base) {

@@ -17,10 +17,10 @@ public abstract class AbsractLogTransform extends AbstractFloatTransformer imple
 	final String name;
 	final boolean parameterized;
 	
-	public AbsractLogTransform() {
+	public AbsractLogTransform(String nm) {
 		super();
 		paramPrompt = "Base";
-		name = getName();
+		name = nm;
 		parameterized = true;
 	}
 	public AbsractLogTransform(Double base) {

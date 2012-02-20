@@ -7,6 +7,10 @@ package com.affymetrix.genometryImpl.operator;
  */
 public class InverseLogTransform extends AbsractLogTransform implements Operator{
 	
+	public InverseLogTransform(){
+		super("Inverse Log");
+	}
+	
 	@Override
 	protected String getBaseName() {
 		if (base == Math.E) {

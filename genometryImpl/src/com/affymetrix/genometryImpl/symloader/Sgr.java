@@ -102,13 +102,14 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			
+			// Using whole file path so probably not needed : HV 02/20/12
 			// Making sure the ID is unique on the seq
 			// will make sure the GraphState is also unique on the seq.
-			String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
+			// String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
 			
 			boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 
-			GraphSym sym = createResults(xlist, seq, ylist, gid, sort);
+			GraphSym sym = createResults(xlist, seq, ylist, uri.toString(), sort);
 
 			results.add(sym);
 

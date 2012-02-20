@@ -75,7 +75,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		if(unnamed == null)
 			unnamed = new BioSeq(UNNAMED, null, 0);
 
-		GraphSym sym = parse(unnamed, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+		GraphSym sym = parse(unnamed, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 		if (!isSorted) {
 			FileOutputStream fos = null;
@@ -164,16 +164,12 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 					graf.getGraphYCoordString(i) + "\n");
 		}
 	}
-
-	private GraphSym parse(BioSeq aseq, int min, int max) throws Exception  {
-		return parse(aseq, min, max, true);
-	}
 	
-	private GraphSym parse(BioSeq aseq, int min, int max, boolean ensure_unique_id) throws Exception  {
+	private GraphSym parse(BioSeq aseq, int min, int max) throws Exception  {
 		GraphSym graf = null;
 		String line = null;
 		String headerstr = null;
-		String name = this.featureName;
+		String name = this.uri.toString();
 		boolean hasHeader = false;
 		int count = 0;
 
@@ -273,7 +269,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 			}
 			isSorted = sorted;
 
-			graf = createResults(name, hasHeader, headerstr, xlist, ylist, sorted, ensure_unique_id, aseq);
+			graf = createResults(name, hasHeader, headerstr, xlist, ylist, sorted, aseq);
 
 			System.out.println("loaded graph data, total points = " + count);
 			
@@ -290,7 +286,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private GraphSym createResults(
 			String name, boolean hasHeader, String headerstr, 
 			IntArrayList xlist, FloatArrayList ylist,
-			boolean sorted, boolean ensure_unique_id, BioSeq aseq) {
+			boolean sorted, BioSeq aseq) {
 		GraphSym graf;
 		if (name == null && hasHeader) {
 			name = headerstr;
@@ -302,9 +298,6 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		if (!sorted) {
 			System.err.println("input graph not sorted, sorting by base coord");
 			sortXYDataOnX(xcoords, ycoords);
-		}
-		if (ensure_unique_id) {
-			name = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
 		}
 		graf = new GraphSym(xcoords, ycoords, name, aseq);
 		return graf;

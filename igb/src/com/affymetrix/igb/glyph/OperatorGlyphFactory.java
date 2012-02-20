@@ -79,22 +79,19 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		SymWithProps result_sym = (SymWithProps) operator.operate(factory.getSeqMapView().getAnnotatedSeq(), list);
 		SymWithProps output = result_sym;
 		
-		if (result_sym != null) {	
+		if (result_sym != null) {
 			if(result_sym instanceof GraphSym){
 				if(operator.getOperandCountMin(operator.getOutputCategory()) == 0){
 					((GraphSym)result_sym).setGraphState(new GraphState(style));
 				}
 			}else if(!(result_sym instanceof RootSeqSymmetry)){
 				TypeContainerAnnot container = new TypeContainerAnnot(meth);
-				container.setProperty("id", meth);
 				container.addChild(result_sym);
 				output = container;
-			}else{
-				result_sym.setProperty("method", meth);
-				if (result_sym.getProperty("id") == null) {
-					result_sym.setProperty("id", meth);
-				}
 			}
+			
+			output.setProperty("method", meth);	
+			output.setProperty("id", meth);
 		}
 
 		return factory.getViewModeGlyph(output, style, direction);

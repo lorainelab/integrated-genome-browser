@@ -132,6 +132,15 @@ public final class TrackLineParser {
 	 *  track line itself.
 	 */
 	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name, String file_type) {
+		String human_name = appendTrackName(track_hash, default_track_name);
+		String name = track_hash.get(NAME);
+		
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type);
+		applyTrackProperties(track_hash, style);
+		return style;
+	}
+
+	private static String appendTrackName(Map<String,String> track_hash, String default_track_name){
 		String human_name = new String(track_hash.get(NAME));
 		String name = track_hash.get(NAME);
 		
@@ -168,11 +177,9 @@ public final class TrackLineParser {
 			human_name = name;
 		}
 		
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type);
-		applyTrackProperties(track_hash, style);
-		return style;
+		return human_name;
 	}
-
+	
 	private static String getHumanName(Map<String,String> track_hash, String id, String default_name){
 		String description = track_hash.get(DESCRIPTION);
 		if (description != null && !description.equals(id)) {

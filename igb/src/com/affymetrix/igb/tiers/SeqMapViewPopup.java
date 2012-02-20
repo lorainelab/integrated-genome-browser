@@ -19,8 +19,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -29,6 +31,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -55,6 +58,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
@@ -1037,7 +1041,28 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gviewer.select(new ArrayList<SeqSymmetry>(1), true);
 		handler.repackTheTiers(full_repack, true);
 	}
-	
+
+	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
+		JMenu operationsMenu = null;
+		for (Operator operator : ExtensionPointHandler
+				.getExtensionPoint(Operator.class)
+				.getExtensionPointImpls()) {
+			if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
+				String name = operator.getName();
+				String title = name.substring(0, 1).toUpperCase()
+						+ name.substring(1);
+				JMenuItem operatorMI = new JMenuItem(title);
+				operatorMI.addActionListener(new TierOperationAction(
+						gviewer, operator));
+				if (operationsMenu == null) {
+					operationsMenu = new JMenu("Track Operations");
+				}
+				operationsMenu.add(operatorMI);
+			}
+		}
+		return operationsMenu;
+	}
+
 	public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
 		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selections = labels.size();
@@ -1069,6 +1094,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				any_are_collapsed = any_are_collapsed || style.getCollapsed();
 				any_are_expanded = any_are_expanded || !style.getCollapsed();
 			}
+		}
+
+		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
+		if (operationsMenu != null) {
+			popup.add(operationsMenu);
 		}
 
 		customize_action.setEnabled(true);

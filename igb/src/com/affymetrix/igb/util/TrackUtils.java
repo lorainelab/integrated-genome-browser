@@ -1,10 +1,20 @@
 package com.affymetrix.igb.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 public class TrackUtils {
@@ -43,6 +53,47 @@ public class TrackUtils {
 		}
 		style.setTrackName(human_name);
 		return style;
+	}
+
+	public List<SeqSymmetry> getSymsFromLabelGlyphs(List<TierLabelGlyph> labels) {
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		for (TierLabelGlyph label : labels) {
+			TierGlyph glyph = label.getReferenceTier();
+			SeqSymmetry rootSym = (SeqSymmetry)glyph.getInfo();
+			if (rootSym == null && glyph.getChildCount() > 0) {
+				rootSym = (SeqSymmetry)glyph.getChild(0).getInfo();
+			}
+			syms.add(rootSym);
+		}
+		return syms;
+	}
+
+	private Map<FileTypeCategory, Integer> getTrackCounts(List<SeqSymmetry> syms) {
+		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
+		for (SeqSymmetry sym : syms) {
+			FileTypeCategory category = ((RootSeqSymmetry)sym).getCategory();
+			if (trackCounts.get(category) == null) {
+				trackCounts.put(category, 0);
+			}
+			trackCounts.put(category, trackCounts.get(category) + 1);
+		}
+		return trackCounts;
+	}
+
+	public boolean checkCompatible(List<SeqSymmetry> syms, Operator operator) {
+		if (operator.getParameters() != null) {
+			return false;
+		}
+		Map<FileTypeCategory, Integer> trackCounts = getTrackCounts(syms);
+		for (FileTypeCategory category : FileTypeCategory.values()) {
+			int count =  (trackCounts.get(category) == null) ? 0 : trackCounts.get(category);
+			if (count < operator.getOperandCountMin(category) ||
+				count > operator.getOperandCountMax(category)
+			   ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public String useViewMode(String method) {

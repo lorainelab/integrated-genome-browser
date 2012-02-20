@@ -163,14 +163,9 @@ public final class PreferencesPanel extends JPanel {
 			if (pos != null) {
 				PreferenceUtils.setWindowSize(frame, pos);
 			}			
-			Dimension dim = IGB.getSingleton().getFrame().getSize();
-			int w = frame.getSize().width;
-			int h = frame.getSize().height;
-			int x = (dim.width-w)/2;
-			int y = (dim.height-h)/2;
-			  /*sets the Preferences window at the centre of the IGB window*/
+				  /*sets the Preferences window at the centre of the IGB window*/
 			frame.addWindowListener(singleton.tpvGUI);
-			frame.setLocation(x, y);
+			frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
 //		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
 //		if (icon != null) {
 //			frame.setIconImage(icon.getImage());

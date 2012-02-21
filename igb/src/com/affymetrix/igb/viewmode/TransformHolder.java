@@ -27,7 +27,8 @@ public class TransformHolder {
 		// Adding operators
 		addOperator(new NotOperator());
 		addOperator(new LogTransform(2.0));
-		addOperator(new DepthOperator());
+		addOperator(new DepthOperator(FileTypeCategory.Alignment));
+		addOperator(new DepthOperator(FileTypeCategory.Annotation));
 		addOperator(new MismatchOperator());
 		addOperator(new MismatchPipeupOperator());
 	}

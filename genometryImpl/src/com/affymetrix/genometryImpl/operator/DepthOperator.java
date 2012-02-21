@@ -9,10 +9,16 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class DepthOperator implements Operator {
+	private final FileTypeCategory fileTypeCategory;
+
+	public DepthOperator(FileTypeCategory fileTypeCategory) {
+		super();
+		this.fileTypeCategory = fileTypeCategory;
+	}
 
 	@Override
 	public String getName() {
-		return "depth";
+		return fileTypeCategory.toString() + " depth";
 	}
 
 	@Override
@@ -22,12 +28,12 @@ public class DepthOperator implements Operator {
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment ? 1 : 0;
+		return category == this.fileTypeCategory ? 1 : 0;
 	}
 
 	@Override

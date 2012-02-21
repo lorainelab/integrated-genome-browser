@@ -257,7 +257,7 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 
 	@Override
 	public String getName() {
-		return "semantic zoom"; // default for annotations
+		return "semantic zoom " + depthFactory.getName(); // default for annotations
 	}
 
 	@Override

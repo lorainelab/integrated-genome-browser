@@ -67,8 +67,12 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Annotation, expandedAnnotGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
-		OperatorGlyphFactory depthFactory = new OperatorGlyphFactory(new DepthOperator(), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(depthFactory, expandedAnnotGlyphFactory));
+
+		// Add depth factories
+		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);
+		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, expandedAnnotGlyphFactory));
+		OperatorGlyphFactory annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), barGraphGlyphFactory);
+		addViewFactory(new SemanticZoomGlyphFactory(annotationDepthFactory, expandedAnnotGlyphFactory));
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

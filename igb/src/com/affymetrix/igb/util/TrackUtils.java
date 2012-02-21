@@ -18,7 +18,9 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 public class TrackUtils {
+
 	private static final TrackUtils instance = new TrackUtils();
+
 	public static TrackUtils getInstance() {
 		return instance;
 	}
@@ -26,7 +28,7 @@ public class TrackUtils {
 	private TrackUtils() {
 		super();
 	}
-	
+
 	public void addTrack(SeqSymmetry sym, String method, TrackStyle preferredStyle) {
 		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
@@ -47,8 +49,7 @@ public class TrackUtils {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands
 			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-		}
-		else {
+		} else {
 			style.copyPropertiesFrom(preferredStyle);
 		}
 		style.setTrackName(human_name);
@@ -59,9 +60,9 @@ public class TrackUtils {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
-			SeqSymmetry rootSym = (SeqSymmetry)glyph.getInfo();
+			SeqSymmetry rootSym = (SeqSymmetry) glyph.getInfo();
 			if (rootSym == null && glyph.getChildCount() > 0) {
-				rootSym = (SeqSymmetry)glyph.getChild(0).getInfo();
+				rootSym = (SeqSymmetry) glyph.getChild(0).getInfo();
 			}
 			syms.add(rootSym);
 		}
@@ -71,11 +72,13 @@ public class TrackUtils {
 	private Map<FileTypeCategory, Integer> getTrackCounts(List<SeqSymmetry> syms) {
 		Map<FileTypeCategory, Integer> trackCounts = new HashMap<FileTypeCategory, Integer>();
 		for (SeqSymmetry sym : syms) {
-			FileTypeCategory category = ((RootSeqSymmetry)sym).getCategory();
-			if (trackCounts.get(category) == null) {
-				trackCounts.put(category, 0);
+			if (sym != null) {
+				FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();
+				if (trackCounts.get(category) == null) {
+					trackCounts.put(category, 0);
+				}
+				trackCounts.put(category, trackCounts.get(category) + 1);
 			}
-			trackCounts.put(category, trackCounts.get(category) + 1);
 		}
 		return trackCounts;
 	}
@@ -86,10 +89,9 @@ public class TrackUtils {
 		}
 		Map<FileTypeCategory, Integer> trackCounts = getTrackCounts(syms);
 		for (FileTypeCategory category : FileTypeCategory.values()) {
-			int count =  (trackCounts.get(category) == null) ? 0 : trackCounts.get(category);
-			if (count < operator.getOperandCountMin(category) ||
-				count > operator.getOperandCountMax(category)
-			   ) {
+			int count = (trackCounts.get(category) == null) ? 0 : trackCounts.get(category);
+			if (count < operator.getOperandCountMin(category)
+					|| count > operator.getOperandCountMax(category)) {
 				return false;
 			}
 		}

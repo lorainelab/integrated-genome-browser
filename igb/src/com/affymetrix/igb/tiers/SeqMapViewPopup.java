@@ -991,7 +991,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//    "The selected track is empty. It contains nothing to summarize");
 		//return;
 		//}
-
+		
 		BioSeq aseq = gmodel.getSelectedSeq();
 		String human_name = BUNDLE.getString("depth") + ": " + atier.getLabel();
 		String id = TrackStyle.getUniqueName(human_name);
@@ -1127,7 +1127,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
 		
-		JMenu save_menu = new JMenu("Save Track");
+		JMenu save_menu = new JMenu("Save Annotations");
 
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
@@ -1268,8 +1268,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 
 		popup.add(save_menu);
-		save_menu.add(save_bed_action);
-		save_menu.add(save_wig_action);
+		if(save_bed_action.isEnabled()){
+			save_menu.add(save_bed_action);
+		}else if(save_wig_action.isEnabled()){
+			save_menu.add(save_wig_action);
+		}
 		
 		popup.add(new JSeparator());
 		summaryMenu.removeAll();

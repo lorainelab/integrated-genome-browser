@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-
 public class GenericActionHolder {
 	private static GenericActionHolder instance = new GenericActionHolder();
 	private final List<GenericActionListener> listeners = new ArrayList<GenericActionListener>();

@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;

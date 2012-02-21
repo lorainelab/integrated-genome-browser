@@ -32,12 +32,8 @@ public final class AffyDataSet {
 	private final List<String> chromosomeNames = new ArrayList<String>();
 
 
-	private final AffyGenericChpFile chpFile;
-
-
 	/** Creates a new instance of AffyDataSet */
 	protected AffyDataSet(AffyGenericChpFile chpFile) {
-		this.chpFile = chpFile;
 	}
 
 	public void parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {

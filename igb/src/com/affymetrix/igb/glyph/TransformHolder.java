@@ -8,6 +8,9 @@ import com.affymetrix.genometryImpl.operator.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.view.MismatchOperator;
+import com.affymetrix.igb.view.MismatchPipeupOperator;
+
 /**
  *
  * @author hiralv
@@ -25,6 +28,8 @@ public class TransformHolder {
 		addOperator(new NotOperator());
 		addOperator(new LogTransform(2.0));
 		addOperator(new DepthOperator());
+		addOperator(new MismatchOperator());
+		addOperator(new MismatchPipeupOperator());
 	}
 		
 	public Operator getOperator(String transform){

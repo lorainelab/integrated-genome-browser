@@ -1,13 +1,13 @@
 
 package com.affymetrix.igb.glyph;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.tiers.TrackConstants;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * All implementation of map view mode are stored here.
@@ -25,14 +25,16 @@ public class MapViewModeHolder {
 	
 	private MapViewModeHolder(){
 		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
-		addViewFactory(new MismatchGraphGlyphFactory());
-		addViewFactory(new MismatchPileupGraphGlyphFactory());
+		
+		// Add annot factories
 		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 		expandedAnnotGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(expandedAnnotGlyphFactory);
 		CollapsedAnnotGlyphFactory collapsedAnnotGlyphFactory = new CollapsedAnnotGlyphFactory();
 		collapsedAnnotGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(collapsedAnnotGlyphFactory);
+		
+		// Add graph factories
 		BarGraphGlyphFactory barGraphGlyphFactory = new BarGraphGlyphFactory();
 		barGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(barGraphGlyphFactory);
@@ -55,10 +57,15 @@ public class MapViewModeHolder {
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
 		
+		// Add mismatch factories
+		MismatchGlyphFactory mismatch = new MismatchGlyphFactory();
+		mismatch.setSeqMapView(seqMapView);
+		addViewFactory(mismatch);
+		
 		// Add Default factories
 		addDefaultFactory(FileTypeCategory.Annotation, expandedAnnotGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
-		
+		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

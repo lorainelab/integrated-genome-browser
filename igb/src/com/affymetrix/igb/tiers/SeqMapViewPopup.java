@@ -887,7 +887,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				syms.add((SeqSymmetry) child.getInfo());
 			}
 		}
-		System.out.println("Saving symmetries as BED file: " + syms.size());
+		System.out.println("Saving symmetries as WIG file: " + syms.size());
 
 		JFileChooser chooser = UniFileChooser.getFileChooser("Wig file", "wig");
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());

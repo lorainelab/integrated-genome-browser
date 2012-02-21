@@ -497,6 +497,7 @@ public abstract class BookmarkController {
 		Map<String, String[]> props = (Map<String, String[]>)temp;		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
+//		props.put(Bookmark.USER, new String[]{System.getProperty("user.name")});
 		props.put(Bookmark.CREATE, new String[]{dateFormat.format(date)});
 		props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
 		

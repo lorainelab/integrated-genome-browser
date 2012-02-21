@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ * Copyright (c) 2001-2006 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks;
 
@@ -21,12 +18,12 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
-
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -34,7 +31,7 @@ import javax.swing.tree.*;
 import javax.swing.undo.UndoManager;
 
 /**
- *  A panel for viewing and re-arranging bookmarks in a hierarchy.
+ * A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView implements TreeSelectionListener {
 
@@ -47,12 +44,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public final Action import_action;
 	public final Action export_action;
 	public final Action delete_action;
-	public JButton forwardButton = new javax.swing.JButton();
-	public JButton backwardButton = new javax.swing.JButton();
-	public JButton addBookmarkButton = new javax.swing.JButton();
-	public JButton addSeparatorButton = new javax.swing.JButton();
-	public JButton addFolderButton = new javax.swing.JButton();
-	public JButton deleteBookmarkButton = new javax.swing.JButton();
+	public JButton forwardButton = new JButton();
+	public JButton backwardButton = new JButton();
+	public JButton addBookmarkButton = new JButton();
+	public JButton addSeparatorButton = new JButton();
+	public JButton addFolderButton = new JButton();
+	public JButton deleteBookmarkButton = new JButton();
 	public List<TreePath> bookmark_history;
 	public int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
@@ -70,7 +67,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		return singleton;
 	}
 
-	/** Creates a new instance of Class */
+	/**
+	 * Creates a new instance of Class
+	 */
 	public BookmarkManagerView(IGBService igbService) {
 
 		tree = new BookmarkTree(this);
@@ -200,8 +199,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	/**
-	 *  Tries to import bookmarks into Unibrow.
-	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
+	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
 	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
 		JFileChooser chooser = getJFileChooser();
@@ -444,7 +442,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		FileTracker.DATA_DIR_TRACKER.setFile(file);
 	}
 
-	/** Gets a static re-usable file chooser that prefers "html" files. */
+	/**
+	 * Gets a static re-usable file chooser that prefers "html" files.
+	 */
 	private JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser();
@@ -457,11 +457,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		return static_chooser;
 	}
 
-	/** Returns true or false to indicate that if an item is inserted at
-	 *  the given row it will be inserted "into" (true) or "after" (false)
-	 *  the item currently at that row.  Will return true only if the given
-	 *  row contains a folder and that folder is currently expanded or empty
-	 *  or is the root node.
+	/**
+	 * Returns true or false to indicate that if an item is inserted at the
+	 * given row it will be inserted "into" (true) or "after" (false) the item
+	 * currently at that row. Will return true only if the given row contains a
+	 * folder and that folder is currently expanded or empty or is the root
+	 * node.
 	 */
 	private boolean dropInto(int row) {
 		boolean into = false;
@@ -490,15 +491,17 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree = null;
 	}
 
-	/** A JPanel that listens for TreeSelectionEvents, displays
-	 *  the name(s) of the selected item(s), and may allow you to edit them.
+	/**
+	 * A JPanel that listens for TreeSelectionEvents, displays the name(s) of
+	 * the selected item(s), and may allow you to edit them.
 	 */
 	public class BottomThing extends JPanel implements TreeSelectionListener {
 
 		private static final long serialVersionUID = 1L;
+		public JTabbedPane tabPane = new JTabbedPane();
 		JLabel name_label = new JLabel("Name:");
 		public JRPTextField name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
-		public javax.swing.JTextArea comment_text_area = new javax.swing.JTextArea();
+		public JTextArea comment_text_area = new JTextArea();
 		public BookmarkData bookmarkData;
 		TreePath selected_path = null;
 		public BookmarkList selected_bl = null;
@@ -551,21 +554,28 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			bookmarkData = new BookmarkData();
 		}
 
-		public void updateInfoTable() {
+		public void updateInfoOrDataTable() {
 			Object o = null;
 			if (selected_bl != null) {
 				o = selected_bl.getUserObject();
 			}
 			if (o instanceof Bookmark) {
-				bookmarkData.setInfoTableFromBookmark(selected_bl);
-				bookmarkData.getInfoTable().repaint();
+				switch (tabPane.getSelectedIndex()) {
+					case 1:
+						bookmarkData.setInfoTableFromBookmark(selected_bl);
+						break;
+					case 2:
+						bookmarkData.setDataListTableFromBookmark(selected_bl);
+						break;
+				}
 			}
 		}
 
-		/** Sets the instance of IGBService.  This is the instance
-		 *  in which the bookmarks will be opened when the "GoTo" button
-		 *  is pressed.
-		 *  @param igbService an instance of IGBService; null is ok.
+		/**
+		 * Sets the instance of IGBService. This is the instance in which the
+		 * bookmarks will be opened when the "GoTo" button is pressed.
+		 *
+		 * @param igbService an instance of IGBService; null is ok.
 		 */
 		void setIGBService(IGBService igbService) {
 			this.igbService = igbService;
@@ -596,6 +606,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				name_text_field.setText(selected_bl.getName());
 				comment_text_area.setText(selected_bl.getComment());
 				bookmarkData.getInfoModel().clear();
+				bookmarkData.getDataListModel().clear();
 
 				if (user_object instanceof Bookmark) {
 					comment_text_area.setEnabled(true);
@@ -603,7 +614,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					properties_action.setEnabled(true);
 					goto_action.setEnabled(igbService != null);
 					comment_text_area.setText(((Bookmark) user_object).getComment());
-					updateInfoTable();
+					updateInfoOrDataTable();
 				} else if (user_object instanceof Separator) {
 					name_text_field.setText("Separator");
 					comment_text_area.setText("Uneditable");
@@ -656,7 +667,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			def_tree_model.nodeChanged(bl);
 		}
-
 
 		public Action getPropertiesAction() {
 			return properties_action;

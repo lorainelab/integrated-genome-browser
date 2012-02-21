@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.7" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
@@ -16,7 +16,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="splitPane" alignment="0" pref="224" max="32767" attributes="2"/>
+          <Component id="splitPane" alignment="0" max="32767" attributes="2"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -164,23 +164,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="addFolderButton" linkSize="14" alignment="0" pref="28" max="32767" attributes="1"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="addSeparator" linkSize="14" pref="28" max="32767" attributes="1"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="addBookmarkActionButton" linkSize="14" pref="28" max="32767" attributes="1"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="removeBookmarkActionButton" linkSize="14" alignment="0" min="-2" pref="28" max="-2" attributes="1"/>
-                              <Component id="importButton" linkSize="14" alignment="0" pref="28" max="32767" attributes="1"/>
-                              <Component id="exportButton" linkSize="14" alignment="0" pref="28" max="32767" attributes="1"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="addFolderButton" linkSize="14" alignment="0" max="32767" attributes="1"/>
+                      <Component id="addSeparator" linkSize="14" alignment="0" max="32767" attributes="1"/>
+                      <Component id="addBookmarkActionButton" linkSize="14" alignment="0" max="32767" attributes="1"/>
+                      <Component id="removeBookmarkActionButton" linkSize="14" alignment="0" min="-2" pref="28" max="-2" attributes="1"/>
+                      <Component id="importButton" linkSize="14" alignment="0" max="32767" attributes="1"/>
+                      <Component id="exportButton" linkSize="14" alignment="0" max="32767" attributes="1"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -337,6 +326,9 @@
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="tabPaneStateChanged"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.tabPane"/>
+          </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="right"/>
@@ -345,7 +337,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="editorPanel">
+            <Container class="javax.swing.JPanel" name="commentPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Comment">
@@ -472,7 +464,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="propertiesPanel">
+            <Container class="javax.swing.JPanel" name="informationPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Infomation">
@@ -484,17 +476,17 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="pScrollPane" alignment="0" pref="199" max="32767" attributes="0"/>
+                      <Component id="iScrollPane" alignment="1" pref="199" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="pScrollPane" alignment="1" pref="103" max="32767" attributes="0"/>
+                      <Component id="iScrollPane" pref="103" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="pScrollPane">
+                <Container class="javax.swing.JScrollPane" name="iScrollPane">
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
@@ -504,6 +496,44 @@
                     <Component class="javax.swing.JTable" name="infoTable">
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bookmarkData.getInfoTable()"/>
+                      </AuxValues>
+                    </Component>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="datalistPanel">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Data List">
+                    <Property name="tabTitle" type="java.lang.String" value="Data List"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="dScrollPane" alignment="1" pref="199" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="dScrollPane" alignment="0" pref="103" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JScrollPane" name="dScrollPane">
+                  <AuxValues>
+                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                  </AuxValues>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTable" name="dataTable">
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.thing.bookmarkData.getDataListTable()"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>

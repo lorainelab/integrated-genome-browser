@@ -1,29 +1,13 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author nick
  */
-public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
-
-    static final List<String> info_list = getInfoList();
-
-	static List<String> getInfoList() {
-		List<String> infoList = new ArrayList<String>(20);
-		infoList.add("version");
-		infoList.add("seqid");
-		infoList.add("start");
-		infoList.add("end");
-		infoList.add("loadresidues");
-		infoList.add("create");
-		infoList.add("modified");
-
-		return infoList;
-	}
+public class BookmarkDataListTableModel extends BookmarkInfoTableModel {
 
 	@Override
 	public void setValuesFromMap(Map<String, String[]> map) {
@@ -40,7 +24,7 @@ public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 			key = entry.getKey();
 			value = entry.getValue();
 
-			if (info_list.contains(key)) {
+			if (!info_list.contains(key)) {
 				if (value.length == 0) {
 					duples.add(new Duple(key, ""));
 				} else {
@@ -52,7 +36,7 @@ public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 
 		fireTableDataChanged();
 	}
-	
+
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;

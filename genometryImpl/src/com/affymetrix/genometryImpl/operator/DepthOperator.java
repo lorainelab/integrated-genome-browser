@@ -22,12 +22,12 @@ public class DepthOperator implements Operator {
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment ? 1 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 1 : 0;
+		return category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment ? 1 : 0;
 	}
 
 	@Override

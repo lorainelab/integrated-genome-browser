@@ -274,7 +274,8 @@ public class TrackView {
 		// TODO this will be replaced as we add more ViewModeGlyphs
 		if (factory instanceof ExpandedAnnotGlyphFactory  ||
 			factory instanceof CollapsedAnnotGlyphFactory ||
-			factory instanceof AbstractGraphGlyphFactory  
+			factory instanceof AbstractGraphGlyphFactory || 
+			factory instanceof SemanticZoomGlyphFactory
 		   ) {
 			String meth = BioSeq.determineMethod(annotSym);
 

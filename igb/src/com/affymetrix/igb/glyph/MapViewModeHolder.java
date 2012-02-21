@@ -4,6 +4,7 @@ package com.affymetrix.igb.glyph;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
@@ -66,6 +67,8 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Annotation, expandedAnnotGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
+		OperatorGlyphFactory depthFactory = new OperatorGlyphFactory(new DepthOperator(), barGraphGlyphFactory);
+		addViewFactory(new SemanticZoomGlyphFactory(depthFactory, expandedAnnotGlyphFactory));
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

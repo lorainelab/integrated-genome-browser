@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.TrackUtils;
@@ -30,14 +31,14 @@ public class TierOperationAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		addTier(operator);
+		addTier();
 	}
 
 	public Operator getOperator() {
 		return operator;
 	}
 
-	private void addTier(Operator operator) {
+	private void addTier() {
 		List<TierGlyph> selected = gviewer.getTierManager().getSelectedTiers();
 /////		if (selected.size() < operator.getOperandCountMin() || selected.size() > operator.getOperandCountMax()) {
 /////			ErrorHandler.errorPanel(GeneralUtils.getOperandMessage(selected.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "annotation"));
@@ -65,6 +66,7 @@ public class TierOperationAction extends GenericAction {
 			for (TierGlyph tier : selected) {
 				meth.append(tier.getLabel()).append(", ");
 			}
+			preferredStyle.setViewMode(MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory()).getName());
 			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
 		}
 	}

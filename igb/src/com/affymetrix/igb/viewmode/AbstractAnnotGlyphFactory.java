@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -46,6 +46,7 @@ import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.igb.glyph.GlyphProcessorUtil;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;

@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.viewmode.ExpandedAnnotGlyphFactory;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 

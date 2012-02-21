@@ -49,9 +49,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
-import com.affymetrix.igb.glyph.TransformHolder;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -65,6 +63,8 @@ import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.TransformHolder;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 

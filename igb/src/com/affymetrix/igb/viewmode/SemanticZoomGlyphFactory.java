@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import java.awt.Color;
 import java.awt.Dimension;

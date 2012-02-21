@@ -14,13 +14,13 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.glyph.MapViewModeHolder;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 import java.io.File;
 import java.util.logging.Level;

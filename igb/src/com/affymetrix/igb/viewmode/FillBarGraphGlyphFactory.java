@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,14 +10,12 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
+public class FillBarGraphGlyphFactory extends AbstractGraphGlyphFactory {
 
 	// glyph class
-	private class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
-		private final AbstractGraphGlyph tempViewModeBarGraphGlyph;
-		public MinMaxAvgGraphGlyph(GraphSym graf, GraphState gstate) {
+	public static class FillBarGraphGlyph extends AbstractGraphGlyph {
+		public FillBarGraphGlyph(GraphSym graf, GraphState gstate) {
 			super(graf, gstate);
-			tempViewModeBarGraphGlyph = BarGraphGlyphFactory.getGraphGlyph(graf, gstate);
 		}
 
 		@Override
@@ -25,6 +23,19 @@ public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
 				Point curr_x_plus_width, Point max_x_plus_width,
 				float ytemp, int draw_end_index, int i
 			) {
+//			if(helper != null){
+//			g.setColor(helper.determineResidueColor((char)residues[i]));
+//		}
+
+			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
+			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
+			yheight_pixel = Math.max(1, yheight_pixel);
+			if (!graphSym.hasWidth()) {
+				g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
+			} else {
+				final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+				g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+			}
 		}
 
 		@Override
@@ -44,29 +55,6 @@ public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
 			super.drawSmart(view);
 		}
 
-		private void DrawAvgLine(Graphics g, double coords_per_pixel) {
-			g.setColor(lighter);
-			int prev_index = 0;
-			// find the first pixel position that has a real value in pixel_cache
-			while ((prev_index < pixel_avg_cache.length) && (pixel_avg_cache[prev_index] == Integer.MIN_VALUE)) {
-				prev_index++;
-			}	
-			for (int i = prev_index + 1; i < pixel_avg_cache.length; i++) {
-				// successfully found a real value in pixel cache
-				int yval = pixel_avg_cache[i];
-				if (yval == Integer.MIN_VALUE) {
-					continue;
-				}
-				if (pixel_avg_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
-					g.drawLine(i, yval, i, yval);
-				} else {
-					// last pixel had at least one datapoint, so connect with line
-					g.drawLine(prev_index, pixel_avg_cache[prev_index], i, yval);
-				}
-				prev_index = i;
-			}
-		}
-
 		@Override
 		protected void DrawPoints(double offset, double yscale, ViewI view, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, float yzero, double coords_per_pixel) {
 			if (yzero == 0) {
@@ -75,18 +63,12 @@ public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
 			}
 			g.setColor(darker);
 			super.DrawPoints(offset, yscale, view, g, plot_bottom_ypixel, plot_top_ypixel, yzero, coords_per_pixel);
-			DrawAvgLine(g, coords_per_pixel);
-		}
-
-		@Override
-		protected void colorChange(Graphics g) {
-			g.setColor(darker);
 		}
 
 		@Override
 		protected void drawSingleRect(
 				int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, Graphics g, int ysum, int points_in_pixel, int i) {
-				// cache for drawing later
+			// cache for drawing later
 			if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
 				int yavg_pixel = ysum / points_in_pixel;
 				pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
@@ -95,11 +77,22 @@ public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
 		}
 
 		@Override
+		public void draw(ViewI view) {
+			double xpixels_per_coord = ( view.getTransform()).getScaleX();
+			double xcoords_per_pixel = 1 / xpixels_per_coord;
+			if ((xcoords_per_pixel < mismatch_transition_scale)) {
+				this.oldDraw(view);
+			} else {
+				drawSmart(view);
+			}
+		}
+
+		@Override
 		protected void doDraw(ViewI view) {
 			double xpixels_per_coord = ( view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {
-				tempViewModeBarGraphGlyph.oldDraw(view);
+				this.oldDraw(view);
 			} else {
 				drawSmart(view);
 			}
@@ -109,11 +102,11 @@ public class MinMaxAvgGraphGlyphFactory extends AbstractGraphGlyphFactory {
 
 	@Override
 	public String getName() {
-		return "minmaxavggraph";
+		return "fillbargraph";
 	}
 
 	@Override
 	protected AbstractGraphGlyph createViewModeGlyph(GraphSym graf, GraphState gstate) {
-		return new MinMaxAvgGraphGlyph(graf, gstate);
+		return new FillBarGraphGlyph(graf, gstate);
 	}
 }

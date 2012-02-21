@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;

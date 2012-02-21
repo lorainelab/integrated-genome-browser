@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -7,8 +7,9 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
-import com.affymetrix.igb.glyph.FillBarGraphGlyphFactory.FillBarGraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.affymetrix.igb.viewmode.FillBarGraphGlyphFactory.FillBarGraphGlyph;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.viewmode.AbstractAnnotGlyphFactory;
 
 /**
  *

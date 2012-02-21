@@ -11,10 +11,10 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.glyph.MapViewModeHolder;
-import com.affymetrix.igb.glyph.OperatorGlyphFactory;
-import com.affymetrix.igb.glyph.TransformHolder;
-import com.affymetrix.igb.glyph.UnloadedGlyphFactory;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
+import com.affymetrix.igb.viewmode.TransformHolder;
+import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 import java.awt.Color;
 import java.awt.Dimension;

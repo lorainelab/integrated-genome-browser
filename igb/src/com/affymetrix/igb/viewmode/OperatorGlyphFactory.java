@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.viewmode;
 
 import java.util.ArrayList;
 import java.util.List;

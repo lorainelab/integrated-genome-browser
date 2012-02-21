@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.glyph.AbstractGraphGlyph;
+import com.affymetrix.igb.viewmode.AbstractGraphGlyph;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;

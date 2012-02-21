@@ -29,6 +29,13 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.AbstractGraphGlyphFactory;
+import com.affymetrix.igb.viewmode.CollapsedAnnotGlyphFactory;
+import com.affymetrix.igb.viewmode.ExpandedAnnotGlyphFactory;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.SemanticZoomGlyphFactory;
+import com.affymetrix.igb.viewmode.TransformHolder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -272,11 +279,7 @@ public class TrackView {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = determineFactory(annotSym);
 		// TODO this will be replaced as we add more ViewModeGlyphs
-		if (factory instanceof ExpandedAnnotGlyphFactory  ||
-			factory instanceof CollapsedAnnotGlyphFactory ||
-			factory instanceof AbstractGraphGlyphFactory || 
-			factory instanceof SemanticZoomGlyphFactory
-		   ) {
+		if (factory.getClass().getName().startsWith("com.affymetrix.igb.viewmode")) {
 			String meth = BioSeq.determineMethod(annotSym);
 
 			if (meth != null) {

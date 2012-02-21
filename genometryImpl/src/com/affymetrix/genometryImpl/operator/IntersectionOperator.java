@@ -2,11 +2,9 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -15,14 +13,21 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
-public class IntersectionOperator implements Operator {
+public class IntersectionOperator extends AbstractAnnotationOperator implements Operator {
 
 	@Override
 	public String getName() {
 		return "intersection";
 	}
 
-	private SeqSymmetry intersect(BioSeq seq, SeqSymmetry unionA, SeqSymmetry unionB) {
+	@Override
+	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
+		SeqSymmetry unionA = SeqSymSummarizer.getUnion(findChildSyms(symList.get(0)), aseq);
+		SeqSymmetry unionB = SeqSymSummarizer.getUnion(findChildSyms(symList.get(1)), aseq);
+		return intersect(aseq, unionA, unionB);
+	}
+		
+	private static SeqSymmetry intersect(BioSeq seq, SeqSymmetry unionA, SeqSymmetry unionB) {
 		MutableSeqSymmetry psym = new SimpleSymWithProps();
 		List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
 		symsAB.add(unionA);
@@ -77,48 +82,4 @@ public class IntersectionOperator implements Operator {
 		return psym;
 	}
 
-	@Override
-	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 2 : 0;
-	}
-
-	@Override
-	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation ? 2 : 0;
-	}
-
-	@Override
-	public Map<String, Class<?>> getParameters() {
-		return null;
-	}
-
-	@Override
-	public boolean setParameters(Map<String, Object> parms) {
-		return false;
-	}
-
-	@Override
-	public boolean supportsTwoTrack() {
-		return false;
-	}
-
-	@Override
-	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Annotation;
-	}
-
-	private List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {
-		List<SeqSymmetry> childSyms = new ArrayList<SeqSymmetry>();
-		for (int i = 0; i < sym.getChildCount(); i++) {
-			childSyms.add(sym.getChild(i));
-		}
-		return childSyms;
-	}
-
-	@Override
-	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		SeqSymmetry unionA = SeqSymSummarizer.getUnion(findChildSyms(symList.get(0)), aseq);
-		SeqSymmetry unionB = SeqSymSummarizer.getUnion(findChildSyms(symList.get(1)), aseq);
-		return intersect(aseq, unionA, unionB);
-	}
 }

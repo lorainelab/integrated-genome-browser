@@ -16,9 +16,8 @@ import java.util.logging.Logger;
 public class MapViewModeHolder {
 	
 	java.util.LinkedHashMap<String, MapViewGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, MapViewGlyphFactoryI>();
+	java.util.LinkedHashMap<FileTypeCategory, MapViewGlyphFactoryI> defaultView = new java.util.LinkedHashMap<FileTypeCategory, MapViewGlyphFactoryI>();
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
-	private final AbstractAnnotGlyphFactory default_annot;
-	private final AbstractGraphGlyphFactory default_graph;
 	
 	public static MapViewModeHolder getInstance(){
 		return instance;
@@ -56,8 +55,10 @@ public class MapViewModeHolder {
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
 		
-		default_annot = expandedAnnotGlyphFactory;
-		default_graph = stairStepGraphGlyphFactory;
+		// Add Default factories
+		addDefaultFactory(FileTypeCategory.Annotation, expandedAnnotGlyphFactory);
+		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
+		
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
@@ -89,6 +90,19 @@ public class MapViewModeHolder {
 		view2Factory.remove(factory.getName());
 	}
 	
+	public final void addDefaultFactory(FileTypeCategory category, MapViewGlyphFactoryI factory){
+		if(factory == null){
+			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add null factory for default view");
+			return;
+		}
+		
+		if(defaultView.get(category) != null){
+			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate factory for {0}", category);
+			return;
+		}
+		defaultView.put(category, factory);
+	}
+		
 	public Object[] getAllViewModesFor(FileTypeCategory category) {
 		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
 
@@ -106,10 +120,9 @@ public class MapViewModeHolder {
 	}
 	
 	public MapViewGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
-		switch(category){
-			case Graph:
-				return default_graph;
-		}
-		return default_annot;
+		if(defaultView.get(category) != null)
+			return defaultView.get(category);
+		
+		return defaultView.get(FileTypeCategory.Annotation);
 	}
 }

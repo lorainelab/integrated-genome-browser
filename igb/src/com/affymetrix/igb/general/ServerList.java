@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericServerPref;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -240,6 +241,9 @@ public final class ServerList {
 		url2server.remove(url);
 		if (server != null) {
 			server.setEnabled(false);
+			if(server.serverType == ServerTypeI.QuickLoad){
+				QuickLoadServerModel.removeQLModelForURL(url);
+			}
 			fireServerInitEvent(server, ServerStatus.NotResponding); // remove it from our lists.
 		}	
 	}

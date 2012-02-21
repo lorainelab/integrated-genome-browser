@@ -118,6 +118,15 @@ public final class QuickLoadServerModel {
 		return getQLModelForURL(url, null, null);
 	}
 	
+	/*
+	 * Remove server from list.
+	 */
+	public static synchronized void removeQLModelForURL(String url){
+		if(url2quickload.get(url) != null){
+			url2quickload.remove(url);
+		}
+	}
+	
 	private static boolean getCacheAnnots() {
 		return true;
 	}

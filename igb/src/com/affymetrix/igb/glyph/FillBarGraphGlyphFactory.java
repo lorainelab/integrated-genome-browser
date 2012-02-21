@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class FillBarGraphGlyphFactory extends AbstractGraphGlyphFactory {
 
 	// glyph class
-	private class FillBarGraphGlyph extends AbstractGraphGlyph {
+	public static class FillBarGraphGlyph extends AbstractGraphGlyph {
 		public FillBarGraphGlyph(GraphSym graf, GraphState gstate) {
 			super(graf, gstate);
 		}

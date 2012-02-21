@@ -84,6 +84,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				sourcesTable.stopCellEditing();
 				AddSource addServerPanel = new AddSource(enableCombo());
 				JFrame frame = PreferencesPanel.getSingleton().getFrame();
 				Point location = frame.getLocation();
@@ -95,6 +96,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				sourcesTable.stopCellEditing();
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));

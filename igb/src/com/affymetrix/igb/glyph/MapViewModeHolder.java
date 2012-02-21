@@ -106,7 +106,6 @@ public class MapViewModeHolder {
 	public Object[] getAllViewModesFor(FileTypeCategory category) {
 		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
 
-		mode.add(TrackConstants.default_view_mode);
 		for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 			MapViewGlyphFactoryI emv = entry.getValue();
 			if (emv.isFileSupported(category)) {

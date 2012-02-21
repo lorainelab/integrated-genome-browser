@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.ResiduesChars;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.*;
@@ -76,7 +75,7 @@ public final class SeqSymSummarizer {
 		}
 
 		MisMatchGraphSym summary = createMisMatchGraph(range, yR, start, y, id, seq, pileup);
-		summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
+		//summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
 		
 		//Request Garbage Collection
 		System.gc();
@@ -120,11 +119,11 @@ public final class SeqSymSummarizer {
 		summary = pileup ?
 				new MisMatchPileupGraphSym(_x.elements(), _w.elements(), _y.elements(), 
 				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
-				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq)
+				id, seq)
 				:
 				new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), 
 				_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements(),
-				AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
+				id, seq);
 		return summary;
 	}
 

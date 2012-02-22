@@ -244,19 +244,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 	private static boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
-		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
-		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
-			if (entry.getValue().isEmpty()) {
-				continue;
-			}
-			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
-			// Some format do not annotate. So it might not have method name. e.g bgn
-			if (entry.getKey() != null) {
-				feature.addMethod(entry.getKey());
-			}
-		}
-
-		return (entries != null && !entries.isEmpty());
+		return SymLoader.splitFilterAndAddAnnotation(span, results, feature);
 	}
 
 	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) throws Exception  {

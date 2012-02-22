@@ -36,15 +36,10 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
@@ -357,61 +352,6 @@ public class Das2ServerType implements ServerTypeI {
 	  return track2Results;
  }
 
-	private void filterAndAddAnnotations(
-			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
-		if (feats == null || feats.isEmpty()) {
-			return;
-		}
-		SeqSymmetry originalRequestSym = feature.getRequestSym();
-		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());	
-		if (filteredFeats.isEmpty()) {
-			return;
-		}
-		if (filteredFeats.get(0) instanceof GraphSym) {
-			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-			for(SeqSymmetry feat : filteredFeats) {
-				//grafs.add((GraphSym)feat);
-				if (feat instanceof GraphSym) {
-					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
-				}
-			}
-
-			return;
-		}
-
-		BioSeq seq = span.getBioSeq();
-		for (SeqSymmetry feat : filteredFeats) {
-			seq.addAnnotation(feat);
-		}
-	}
-
-
-	private List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
-		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
-		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
-		for (SeqSymmetry sym : syms) {
-
-			/**
-			 * Since GraphSym is only SeqSymmetry containing all points.
-			 * The intersection may find some points intersecting and
-			 * thus not add whole GraphSym at all. So if GraphSym is encountered
-			 * the it's not checked if it is intersecting. 
-			 */
-			if (sym instanceof GraphSym) {
-				// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
-				return syms;
-			}
-
-			dummySym.clear();
-			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
-				// There is an intersection with previous requests.  Ignore this symmetry
-				continue;
-			}
-			newSyms.add(sym);
-		}
-		return newSyms;
-	}
-
     private boolean LoadFeaturesFromQuery(
             GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
@@ -517,18 +457,7 @@ public class Das2ServerType implements ServerTypeI {
 				return false;
 			}
 			
-			for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(feats).entrySet()) {
-				if (entry.getValue().isEmpty()) {
-					continue;
-				}
-				filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
-
-				// Some format do not annotate. So it might not have method name. e.g bgn
-				if(entry.getKey() != null)
-					feature.addMethod(entry.getKey());
-			}
-			
-            return (feats != null && !feats.isEmpty());
+            return SymLoader.splitFilterAndAddAnnotation(span, feats, feature);
 			
         } catch (Exception ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

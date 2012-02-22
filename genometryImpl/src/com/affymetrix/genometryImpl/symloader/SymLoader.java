@@ -298,6 +298,22 @@ public abstract class SymLoader {
 	  return seq2Results;
   }
 
+	public static boolean splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
+		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
+		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
+			if (entry.getValue().isEmpty()) {
+				continue;
+			}
+			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
+			// Some format do not annotate. So it might not have method name. e.g bgn
+			if (entry.getKey() != null) {
+				feature.addMethod(entry.getKey());
+			}
+		}
+
+		return (entries != null && !entries.isEmpty());
+	}
+	
 	public static void filterAndAddAnnotations(
 			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
 		if (feats == null || feats.isEmpty()) {

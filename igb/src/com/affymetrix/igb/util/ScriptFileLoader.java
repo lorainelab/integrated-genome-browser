@@ -31,13 +31,12 @@ import javax.swing.SwingWorker;
 
 /**
  *
- * @author jnicol
- * Parse actions from IGB response file.
+ * @author jnicol Parse actions from IGB response file.
  */
 public class ScriptFileLoader {
 
 	private static String splitter = "\\s";
-
+	
 	private static enum ExportMode {
 
 		MAIN("mainView"),
@@ -96,6 +95,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Done in a thread to avoid GUI lockup.
+	 *
 	 * @param batchFileStr
 	 */
 	private static void executeScript(String fileName) {
@@ -118,6 +118,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Done in a thread to avoid GUI lockup.
+	 *
 	 * @param batchFileStr
 	 */
 	private static void doActions(final String batchFileStr) {
@@ -157,6 +158,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Read and execute the actions from a file.
+	 *
 	 * @param bis
 	 */
 	private static void doActions(File f) {
@@ -173,6 +175,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Read and execute the actions from the stream.
+	 *
 	 * @param bis
 	 */
 	private static void doActions(BufferedReader br) {
@@ -286,10 +289,33 @@ public class ScriptFileLoader {
 				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
 			}
 		}
+
+//		if (action.startsWith("navigate")) {
+//			action = action.substring(8, action.length());
+//
+//			JComponent c = getWidget(action);
+//			if (c != null) {
+//				if (c instanceof IGBTabPanel) {
+//					IGBTabPanel panel = (IGBTabPanel) c;
+//					panel.select();
+//				}
+//			}
+//		}
 	}
+//
+//	private static JComponent getWidget(String widgetId) {
+//		int pos = widgetId.indexOf('.');
+//		if (pos == -1) {
+//			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(widgetId);
+//		} else {
+//			String mainWidgetId = widgetId.substring(0, pos);
+//			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
+//		}
+//	}
 
 	/**
 	 * Take a snapshot, i.e., export to a file.
+	 *
 	 * @param f
 	 */
 	private static void snapShot(ExportMode exportMode, File f) {
@@ -443,6 +469,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Join fields from startField to end of fields.
+	 *
 	 * @param fields
 	 * @param startField
 	 * @return

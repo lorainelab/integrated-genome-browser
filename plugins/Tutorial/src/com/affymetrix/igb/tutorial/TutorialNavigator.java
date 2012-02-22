@@ -1,12 +1,10 @@
 package com.affymetrix.igb.tutorial;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class TutorialNavigator extends JPanel {
 	private static final long serialVersionUID = 1L;

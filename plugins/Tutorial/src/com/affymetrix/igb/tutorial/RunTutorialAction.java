@@ -1,5 +1,8 @@
 package com.affymetrix.igb.tutorial;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,14 +10,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.Action;
-
 import org.codehaus.jackson.map.ObjectMapper;
-
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public class RunTutorialAction extends GenericAction {
 	private static final long serialVersionUID = 1L;

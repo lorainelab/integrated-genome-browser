@@ -17,6 +17,7 @@ import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genoviz.swing.recordplayback.JRPJPanel;
 import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -32,7 +33,7 @@ import java.awt.event.MouseEvent;
  * 
  * @author jfvillal
  */
-public class MainWorkspaceManager extends JPanel implements ItemListener{
+public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	private static final long serialVersionUID = 1L;
 	public static final String WELCOME_PANE = "WelcomePane";
 	public static final String SEQ_MAP_PANE = "SeqMapPane";
@@ -44,12 +45,13 @@ public class MainWorkspaceManager extends JPanel implements ItemListener{
 	
 	public static MainWorkspaceManager getWorkspaceManager(){
 		if(singleton == null){
-			singleton = new MainWorkspaceManager();
+			singleton = new MainWorkspaceManager("MainWorkspaceManager");
 		}
 		return singleton;
 	}
 	
-	public MainWorkspaceManager(){
+	public MainWorkspaceManager(String id){
+		super(id);
 		this.setLayout( new CardLayout());
 		gmodel = GenometryModel.getGenometryModel();
 	}

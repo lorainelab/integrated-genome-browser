@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 /**
@@ -63,8 +64,10 @@ public class ResidueTrackSymLoader extends SymLoader {
 	
 	private List<? extends SeqSymmetry> getResidueTrack(SeqSpan span) throws Exception{
 		List<SeqSymmetry> list = new ArrayList<SeqSymmetry>();
-		list.add(new SimpleSymWithResidues(uri.toString(), span.getBioSeq(), span.getStart(), span.getEnd(), "", 
-				0.0f, span.isForward(), 0, 0, null, null, getRegionResidues(span)));
+		SymWithProps sym = new SimpleSymWithResidues(uri.toString(), span.getBioSeq(), span.getStart(), span.getEnd(), "", 
+				0.0f, span.isForward(), 0, 0, null, null, getRegionResidues(span));
+		sym.setProperty(BAM.SHOWMASK, false);
+		list.add(sym);
 		return list;
 	}
 }

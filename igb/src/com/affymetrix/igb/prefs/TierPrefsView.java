@@ -482,18 +482,20 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	private void initialLabelField() {
-		if (selectedStyle != null) {
-			SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
-			if (sym != null && sym.getChildCount() > 0) {
-				SeqSymmetry child = sym.getChild(0);
-				SeqSymmetry original = getMostOriginalSymmetry(child);
-				if (original instanceof SymWithProps) {
-					Map<String, Object> props = ((SymWithProps) original).getProperties();
+		if (selectedStyle != null && smv != null) {
+			if (smv.getAnnotatedSeq() != null) { //Fixes NPE
+				SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
+				if (sym != null && sym.getChildCount() > 0) {
+					SeqSymmetry child = sym.getChild(0);
+					SeqSymmetry original = getMostOriginalSymmetry(child);
+					if (original instanceof SymWithProps) {
+						Map<String, Object> props = ((SymWithProps) original).getProperties();
 
-					ArrayList<String> properties = new ArrayList<String>();
-					properties.add((String) TrackConstants.LABELFIELD[0]);
-					properties.addAll(props.keySet());
-					labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+						ArrayList<String> properties = new ArrayList<String>();
+						properties.add((String) TrackConstants.LABELFIELD[0]);
+						properties.addAll(props.keySet());
+						labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+					}
 				}
 			}
 		}

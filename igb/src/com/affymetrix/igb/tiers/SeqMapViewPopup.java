@@ -375,7 +375,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return BUNDLE.getString("saveBEDAction");
+			return "Save Annotations as BED File";//BUNDLE.getString("saveBEDAction");
 		}
 	};
 	private final Action save_wig_action = new GenericAction() {
@@ -1127,7 +1127,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
 		
-		JMenu save_menu = new JMenu("Save Annotations");
+		JMenu save_menu = new JMenu("Save Track");
 
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();

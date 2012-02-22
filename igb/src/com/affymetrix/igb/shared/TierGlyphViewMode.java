@@ -64,6 +64,7 @@ public class TierGlyphViewMode extends TierGlyph {
 				Operator operator = getOperator(style.getOperator());
 				if (operator != null) {
 					factory = new OperatorGlyphFactory(operator, factory);
+					style.setViewMode(((OperatorGlyphFactory)factory).getActualFactoryName());
 				} else {
 					if (modelSym instanceof RootSeqSymmetry) {
 						if (!factory.isFileSupported(((RootSeqSymmetry) modelSym).getCategory())) {

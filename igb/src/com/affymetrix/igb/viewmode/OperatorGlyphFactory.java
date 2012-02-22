@@ -42,10 +42,15 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public void init(Map<String, Object> options) { }
 	
+	@Override
 	public String getName() {
 		return operator.getName();
 	}
 
+	public String getActualFactoryName(){
+		return factory.getName();
+	}
+	
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction) {
 		final String meth = BioSeq.determineMethod(sym);
@@ -53,7 +58,6 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		if (meth == null) {
 			return factory.getViewModeGlyph(sym, style, tier_direction);
 		} else {
-			style.setViewMode(factory.getName());
 			if (!style.getSeparate()) {
 				List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
 				list.add(sym);

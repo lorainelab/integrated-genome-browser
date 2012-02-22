@@ -46,6 +46,7 @@ Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus		Erinaceus_europaeus
 Escherichia coli	E. coli	E_coli
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
+Eucalyptus grandis	E. grandis	E_grandis
 Felis catus	House Cat	F_catus	felCat	Felis_catus
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus

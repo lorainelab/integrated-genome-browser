@@ -48,7 +48,11 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 					glyph.setCoords(0, 0, 0, height);
 					addChild(glyph);
 				}
-
+				
+				if(style.getFeature() != null){
+					sym = style.getFeature().getRequestSym();
+				}
+				
 				// Add middle glyphs.
 				SeqSymmetry inverse = SeqUtils.inverse(sym, seq);
 				int child_count = inverse.getChildCount();

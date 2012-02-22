@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2010 Affymetrix, Inc.
+ * Copyright (c) 2010 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.prefs;
 
@@ -85,11 +82,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
-				AddSource addServerPanel = new AddSource(enableCombo());
-				JFrame frame = PreferencesPanel.getSingleton().getFrame();
-				Point location = frame.getLocation();
-				addServerPanel.setLocation(location.x + frame.getWidth() / 2 - addServerPanel.getWidth() / 2, location.y + addServerPanel.getHeight() / 2 - addServerPanel.getHeight() / 2);
-				addServerPanel.setVisible(true);
+				
+				AddSource.getSingleton().init(false, enableCombo(), "Add Source", null, null);
 			}
 		});
 
@@ -183,6 +177,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	/**
 	 * Add the URL/Directory and server name to the preferences.
+	 *
 	 * @param url
 	 * @param type
 	 * @param name

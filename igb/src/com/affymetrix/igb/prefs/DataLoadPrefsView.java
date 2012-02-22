@@ -23,6 +23,7 @@ import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -77,7 +78,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected JPanel initSourcePanel(String viewName) {
-		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authentication\u2026", new ActionListener() {
+		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authenticate\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
@@ -103,20 +104,17 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		});
 		editAuthButton.setEnabled(false);
 
-		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "EditSource", new ActionListener() {
+		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "Edit\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
+				
 				Object url = sourcesTable.getModel().getValueAt(
 						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
 						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
 				GenericServer server = ServerList.getServerInstance().getServer((String) url);
-				AddSource editSource = new AddSource(true, true, (String) url);
-				editSource.setNameFieldText(server.serverName);
-				editSource.setServerType(server.serverType);
-				editSource.setURL(server.URL);
-				editSource.setName("Edit Source");
-				editSource.setVisible(true);
+
+				AddSource.getSingleton().init(true, true, "Edit Source", server, (String) url);
 			}
 		});
 		editSourceButton.setEnabled(false);

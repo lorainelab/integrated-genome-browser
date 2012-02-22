@@ -10,6 +10,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
@@ -24,32 +25,68 @@ import java.awt.Component;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
+import java.awt.Point;
 import java.io.File;
-import javax.swing.JComboBox;
+import javax.swing.*;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 
 /**
  *
- * @author dcnorris
+ * @author dcnorris Modified by nick
  */
-public class AddSource extends javax.swing.JFrame {
+public class AddSource extends JFrame {
 
 	private boolean enableCombo, isEditPanel;
 	private String serverURL;
+	private static AddSource singleton;
 
-	/**
-	 * Creates new form AddSource
-	 */
-	public AddSource(boolean comboActive) {
-		enableCombo = comboActive;
+	public static AddSource getSingleton() {
+		if (singleton == null) {
+			singleton = new AddSource();
+		}
+
+		return singleton;
+	}
+
+	public AddSource() {
 		initComponents();
 	}
 
-	public AddSource(boolean comboActive, boolean isEditor, String url) {
+	public void init(boolean isEditP, boolean comboActive, String title,
+			GenericServer server, String url) {
 		enableCombo = comboActive;
-		isEditPanel = isEditor;
+		isEditPanel = isEditP;
+
 		serverURL = url;
-		initComponents();
+
+		if (isEditPanel) {
+			nameText.setText(server.serverName);
+			typeCombo.setSelectedItem(server.serverType);
+			urlText.setText(server.URL);
+			addServerButton.setText("Save Changes");
+		} else {
+			nameText.setText("Your server name");
+			typeCombo.setSelectedItem(ServerTypeI.QuickLoad);
+			urlText.setText("http://");
+			addServerButton.setText("Add Server");
+		}
+
+		setTitle(title);
+		resetTypeLabelAndCombo();
+		display();
+	}
+
+	private void resetTypeLabelAndCombo() {
+		typeLabel.setVisible(enableCombo);
+		typeCombo.setVisible(enableCombo);
+	}
+
+	private void display() {
+		JFrame frame = PreferencesPanel.getSingleton().getFrame();
+		Point location = frame.getLocation();
+		setLocation(location.x + frame.getWidth() / 2 - getWidth() / 2,
+				location.y + getHeight() / 2 - getHeight() / 2);
+		setVisible(true);
 	}
 
 	/**
@@ -62,29 +99,29 @@ public class AddSource extends javax.swing.JFrame {
     private void initComponents() {
 
         nameLabelField = new javax.swing.JLabel();
-        name = new JRPTextField("ServerPrefsView_name", "Your server name");
-        typeLabelField = new javax.swing.JLabel();
-        type = new javax.swing.JComboBox();
+        nameText = new JRPTextField("ServerPrefsView_name", "Your server nameText");
+        typeLabel = new javax.swing.JLabel();
+        typeCombo = new javax.swing.JComboBox();
         urlLabelField = new javax.swing.JLabel();
-        url = new JRPTextField("ServerPrefsView_url", "http://");
+        urlText = new JRPTextField("ServerPrefsView_url", "http://");
         openDir = new JRPButton("DataLoadPrefsView_openDir", "\u2026");
         cancelButton = new javax.swing.JButton();
         addServerButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        nameLabelField.setText("Name");
+        nameLabelField.setText("Name:");
 
-        typeLabelField.setText("Type");
+        typeLabel.setText("Type:");
 
-        type = new JComboBox(ServerUtils.getServerTypes().toArray());
-        type.addActionListener(new java.awt.event.ActionListener() {
+        typeCombo = new JComboBox(ServerUtils.getServerTypes().toArray());
+        typeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                typeActionPerformed(evt);
+                typeComboActionPerformed(evt);
             }
         });
 
-        urlLabelField.setText("URL");
+        urlLabelField.setText("URL:");
 
         openDir.setText("...");
         openDir.addActionListener(new java.awt.event.ActionListener() {
@@ -116,31 +153,23 @@ public class AddSource extends javax.swing.JFrame {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, nameLabelField)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, urlLabelField))
+                            .add(nameLabelField)
+                            .add(typeLabel)
+                            .add(urlLabelField))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(urlText)
+                            .add(typeCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(nameText))
+                        .add(8, 8, 8))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(0, 198, Short.MAX_VALUE)
+                        .add(cancelButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(layout.createSequentialGroup()
-                                .add(name, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                                .add(20, 20, 20))
-                            .add(layout.createSequentialGroup()
-                                .add(url, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                                .addContainerGap())))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(cancelButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(addServerButton)
-                        .addContainerGap())))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(26, 26, 26)
-                .add(typeLabelField)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(type, 0, 339, Short.MAX_VALUE)
-                .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(325, Short.MAX_VALUE)
-                .add(openDir)
-                .addContainerGap())
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, openDir)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, addServerButton))
+                        .add(6, 6, 6))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -148,56 +177,45 @@ public class AddSource extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameLabelField)
-                    .add(name, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(nameText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(typeLabelField)
-                    .add(type, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(typeLabel)
+                    .add(typeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(urlLabelField)
-                    .add(url, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(urlText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(openDir)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(addServerButton)
-                    .add(cancelButton)))
+                    .add(cancelButton))
+                .add(0, 0, Short.MAX_VALUE))
         );
 
-        if (!enableCombo){
-            typeLabelField.setVisible(enableCombo);
-        }
-        if (type != null) {
-            type.removeItem(ServerTypeI.LocalFiles);
-            type.setSelectedItem(ServerTypeI.QuickLoad);	// common default
-        }
-        if (!enableCombo){
-            type.setEnabled(enableCombo);
-            type.setVisible(enableCombo);
-        }
+        typeCombo.removeItem(ServerTypeI.LocalFiles);
         openDir.setToolTipText("Open Local Directory");
-        openDir.setEnabled(type != null && type.getSelectedItem() == ServerTypeI.QuickLoad);
+        openDir.setEnabled(typeCombo != null && typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
-		// TODO add your handling code here:
 		File f = fileChooser(DIRECTORIES_ONLY, this);
 		if (f != null && f.isDirectory()) {
 			try {
-				url.setText(f.toURI().toURL().toString());
+				urlText.setText(f.toURI().toURL().toString());
 			} catch (MalformedURLException ex) {
 				Logger.getLogger(ServerPrefsView.class.getName()).log(Level.WARNING, "Unable to convert File '" + f.getName() + "' to URL", ex);
 			}
 		}
 	}//GEN-LAST:event_openDirActionPerformed
 
-	private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
-		// TODO add your handling code here:
-		openDir.setEnabled(type.getSelectedItem() == ServerTypeI.QuickLoad);
-	}//GEN-LAST:event_typeActionPerformed
+	private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
+		openDir.setEnabled(typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
+	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 		if (isEditPanel) {
@@ -206,27 +224,26 @@ public class AddSource extends javax.swing.JFrame {
 			DataLoadPrefsView.getSingleton().sourceTableModel.init();
 		}
 		if (enableCombo) {
-			DataLoadPrefsView.getSingleton().addDataSource((ServerTypeI) type.getSelectedItem(), name.getText(), url.getText());
+			DataLoadPrefsView.getSingleton().addDataSource((ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
 		} else {
-			BundleRepositoryPrefsView.getSingleton().addDataSource(null, name.getText(), url.getText());
+			BundleRepositoryPrefsView.getSingleton().addDataSource(null, nameText.getText(), urlText.getText());
 		}
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-		// TODO add your handling code here:
 		this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerButton;
     private static javax.swing.JButton cancelButton;
-    private static javax.swing.JTextField name;
     private static javax.swing.JLabel nameLabelField;
+    private static javax.swing.JTextField nameText;
     private static javax.swing.JButton openDir;
-    private static javax.swing.JComboBox type;
-    private static javax.swing.JLabel typeLabelField;
-    private static javax.swing.JTextField url;
+    private static javax.swing.JComboBox typeCombo;
+    private static javax.swing.JLabel typeLabel;
     private static javax.swing.JLabel urlLabelField;
+    private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
 
 	protected static File fileChooser(int mode, Component parent) throws HeadlessException {
@@ -243,17 +260,5 @@ public class AddSource extends javax.swing.JFrame {
 		}
 
 		return chooser.getSelectedFile();
-	}
-
-	public void setNameFieldText(String nameFieldText) {
-		name.setText(nameFieldText);
-	}
-
-	public void setServerType(ServerTypeI serverType) {
-		type.setSelectedItem(serverType);
-	}
-
-	public void setURL(String urlString) {
-		url.setText(urlString);
 	}
 }

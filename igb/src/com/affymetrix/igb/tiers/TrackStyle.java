@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
@@ -143,7 +142,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			this.setBackground(CoordinateStyle.default_coordinate_background);
 			Application igb = Application.getSingleton();
 			PreferenceUtils.getTopNode().put(SeqMapView.PREF_COORDINATE_LABEL_FORMAT, SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA);
-			igb.getMapView().setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
+			SeqMapView.setAxisFormatFromPrefs(igb.getMapView().getAxisGlyph());
 		}
 		if (!track_name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 			this.setTrackName(original_track_name);
@@ -1047,7 +1046,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 				+ " '" + unique_name + "' ('" + track_name + "') "
 				+ " persistent: " + is_persistent
 				+ " color: " + getForeground()
-				+ " bg: " + getBackground();
+				+ " bg: " + getBackground()
+				+ " viewmode: " + getViewMode();
 		return s;
 	}
 	

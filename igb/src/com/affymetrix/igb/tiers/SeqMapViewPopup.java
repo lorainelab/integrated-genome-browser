@@ -515,7 +515,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private void showCustomizer() {
 		PreferencesPanel pv = PreferencesPanel.getSingleton();
-		pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
+		pv.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 		pv.tpvGUI.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
 		JFrame f = pv.getFrame();
 		f.setVisible(true);

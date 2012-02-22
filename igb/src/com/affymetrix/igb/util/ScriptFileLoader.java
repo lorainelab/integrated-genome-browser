@@ -293,25 +293,8 @@ public class ScriptFileLoader {
 //		if (action.startsWith("navigate")) {
 //			action = action.substring(8, action.length());
 //
-//			JComponent c = getWidget(action);
-//			if (c != null) {
-//				if (c instanceof IGBTabPanel) {
-//					IGBTabPanel panel = (IGBTabPanel) c;
-//					panel.select();
-//				}
-//			}
 //		}
 	}
-//
-//	private static JComponent getWidget(String widgetId) {
-//		int pos = widgetId.indexOf('.');
-//		if (pos == -1) {
-//			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(widgetId);
-//		} else {
-//			String mainWidgetId = widgetId.substring(0, pos);
-//			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
-//		}
-//	}
 
 	/**
 	 * Take a snapshot, i.e., export to a file.

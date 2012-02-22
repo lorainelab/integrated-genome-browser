@@ -36,7 +36,7 @@ public class PreferencesAction extends GenericAction {
 		}
 
 		PreferencesPanel p = PreferencesPanel.getSingleton();
-		p.setTab(PreferencesPanel.TAB_NUM_TIERS);
+		p.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 		p.tpvGUI.tpv.setTier_label_glyphs(tier_label_glyphs);
 		p.getFrame().setVisible(true);
 	}

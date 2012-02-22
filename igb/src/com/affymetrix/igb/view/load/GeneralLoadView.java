@@ -62,7 +62,6 @@ public final class GeneralLoadView {
 
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	public static int TAB_DATALOAD_PREFS = -1;
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private static GenericAction refreshDataAction;
 	private static SeqMapView gviewer;
@@ -93,7 +92,6 @@ public final class GeneralLoadView {
 		initComponents();
 		GeneralLoadUtils.loadServerMapping();
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
-		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
 	}
 
 	private void initComponents() {

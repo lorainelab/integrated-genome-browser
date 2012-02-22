@@ -1,38 +1,41 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ * Copyright (c) 2001-2006 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.igb.Application;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.ExportPreferencesAction;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.*;
 
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 public final class PreferencesPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+	public static int TAB_TIER_PREFS_VIEW = -1;
+	public static int TAB_TRACK_DEFAULT_VIEW = -1;
+	public static int TAB_KEY_STROKES_VIEW = -1;
+	public static int TAB_GRAPHS_VIEW = -1;
+	public static int TAB_OTHER_OPTIONS_VIEW = -1;
+	public static int TAB_DATALOAD_PREFS = -1;
 	public static int TAB_PLUGIN_PREFS = -1;
+	private static final long serialVersionUID = 1L;
 	private static final String WINDOW_NAME = "Preferences Window";
 	private static final String HELP_WINDOW_NAME = "Preferences Help Window";
 	private JFrame frame = null;
@@ -43,7 +46,6 @@ public final class PreferencesPanel extends JPanel {
 	//Action clear_action;
 	private Action help_action;
 	private Action help_for_tab_action;
-	public static int TAB_NUM_TIERS = -1;
 	private final static String PREFERENCES = BUNDLE.getString("Preferences");
 	private final static String HELP = BUNDLE.getString("helpMenu");
 	public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / " + BUNDLE.getString("Import");
@@ -54,7 +56,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private PreferencesPanel() {
 		this.setLayout(new BorderLayout());
-			
+
 		tab_pane = new JTabbedPane();
 
 		this.add(tab_pane, BorderLayout.CENTER);
@@ -63,9 +65,10 @@ public final class PreferencesPanel extends JPanel {
 		//tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
-	/** Creates an instance of PreferencesView.  It will contain tabs for
-	 *  setting various types of preferences.  You can put this view in any
-	 *  JComponent you wish, but probably the best idea is to use
+	/**
+	 * Creates an instance of PreferencesView. It will contain tabs for setting
+	 * various types of preferences. You can put this view in any JComponent you
+	 * wish, but probably the best idea is to use
 	 *  {@link #getFrame()}.
 	 */
 	public static PreferencesPanel getSingleton() {
@@ -81,17 +84,20 @@ public final class PreferencesPanel extends JPanel {
 				singleton.tpvGUI.tpv.removedFromView();
 			}
 		});
-		
-		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpvGUI);
-		singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
-		singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
-		singleton.addPrefEditorComponent(new GraphsView());
-		singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
+
+		TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
+		TAB_TRACK_DEFAULT_VIEW = singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
+		TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
+		TAB_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
+		TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
 		TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
+		TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
 		return singleton;
 	}
 
-	/** Set the tab pane to the given index. */
+	/**
+	 * Set the tab pane to the given index.
+	 */
 	public void setTab(int i) {
 		if (i < 0 || i >= tab_pane.getComponentCount()) {
 			return;
@@ -104,10 +110,13 @@ public final class PreferencesPanel extends JPanel {
 		}
 	}
 
-	/** Adds the given component as a panel to the tab pane of preference editors.
-	 *  @param pec  An implementation of PrefEditorComponent that must also be an
-	 *              instance of java.awt.Component.
-	 *  @return the index of the added tab in the tab pane.
+	/**
+	 * Adds the given component as a panel to the tab pane of preference
+	 * editors.
+	 *
+	 * @param pec An implementation of PrefEditorComponent that must also be an
+	 * instance of java.awt.Component.
+	 * @return the index of the added tab in the tab pane.
 	 */
 	public int addPrefEditorComponent(final IPrefEditorComponent pec) {
 		tab_pane.add(pec);
@@ -130,7 +139,9 @@ public final class PreferencesPanel extends JPanel {
 		return comps;
 	}
 
-	/** Gets a JFrame containing the PreferencesView */
+	/**
+	 * Gets a JFrame containing the PreferencesView
+	 */
 	public JFrame getFrame() {
 		if (frame == null) {
 			frame = new JFrame(PREFERENCES);
@@ -154,14 +165,16 @@ public final class PreferencesPanel extends JPanel {
 				}
 			});
 			JMenuBar menubar = this.getMenuBar();
-			frame.setJMenuBar(menubar);			
+			frame.setJMenuBar(menubar);
 			cont.add(this);
 			frame.pack(); // pack() to set frame to its preferred size
 			Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(558, 582));
 			if (pos != null) {
 				PreferenceUtils.setWindowSize(frame, pos);
-			}			
-				  /*sets the Preferences window at the centre of the IGB window*/
+			}
+			/*
+			 * sets the Preferences window at the centre of the IGB window
+			 */
 			frame.addWindowListener(singleton.tpvGUI);
 			frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
 //		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
@@ -179,22 +192,22 @@ public final class PreferencesPanel extends JPanel {
 		JMenuBar menu_bar = new JMenuBar();
 		JMenu prefs_menu = new JMenu(PREFERENCES);
 		prefs_menu.setMnemonic('P');
-		
+
 		JMenuItem exp = new JMenuItem(ExportPreferencesAction.getAction());
 		JMenuItem imp = new JMenuItem(getImportAction());
 		MenuUtil.addToMenu(prefs_menu, exp, PREFERENCES);
 		MenuUtil.addToMenu(prefs_menu, imp, PREFERENCES);
-		
+
 		menu_bar.add(prefs_menu);
 
 		JMenu help_menu = new JMenu(HELP);
 		help_menu.setMnemonic('H');
-		
+
 		JMenuItem help = new JMenuItem(getHelpAction());
 		JMenuItem helpTab = new JMenuItem(getHelpTabAction());
 		MenuUtil.addToMenu(help_menu, help, PREFERENCES);
 		MenuUtil.addToMenu(help_menu, helpTab, PREFERENCES);
-		
+
 		menu_bar.add(help_menu);
 		return menu_bar;
 	}

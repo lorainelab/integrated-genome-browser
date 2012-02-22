@@ -153,9 +153,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		if (src == this.serverPrefsB) {
 			// Go to server prefs tab.
 
-			if (GeneralLoadView.TAB_DATALOAD_PREFS != -1) {
+			if (PreferencesPanel.TAB_DATALOAD_PREFS != -1) {
 				PreferencesPanel pv = PreferencesPanel.getSingleton();
-				pv.setTab(GeneralLoadView.TAB_DATALOAD_PREFS);	// Server preferences tab
+				pv.setTab(PreferencesPanel.TAB_DATALOAD_PREFS);	// Server preferences tab
 				JFrame f = pv.getFrame();
 				f.setVisible(true);
 			} else {

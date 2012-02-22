@@ -375,7 +375,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		@Override
 		public String getText() {
-			return "Save Annotations as BED File";//BUNDLE.getString("saveBEDAction");
+			return BUNDLE.getString("saveBEDAction");
 		}
 	};
 	private final Action save_wig_action = new GenericAction() {

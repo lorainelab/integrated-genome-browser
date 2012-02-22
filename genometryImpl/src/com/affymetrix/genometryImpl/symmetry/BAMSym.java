@@ -232,7 +232,9 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 					Arrays.fill(tempArr, '_');		// print deletion as '_'
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.M) {
-					tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
+					if(!isIns){
+						tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
+					}
 					stringPtr += celLength;	// print matches
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.N) {
@@ -245,8 +247,8 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 				}
 
 
-				if (currentPos > start) {
-					int tempOffset = Math.max(tempArr.length - (currentPos - start), 0);
+				if (stringPtr > start) {
+					int tempOffset = Math.max(tempArr.length - (stringPtr - start), 0);
 					int len = Math.min(tempArr.length - tempOffset, sb.length - offset);
 					System.arraycopy(tempArr, tempOffset, sb, offset, len);
 					offset += len;

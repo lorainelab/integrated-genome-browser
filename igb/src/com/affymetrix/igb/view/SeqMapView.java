@@ -66,6 +66,7 @@ import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.ClampViewAction;
@@ -1009,6 +1010,16 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	public void addAnnotationTrackFor(final ITrackStyleExtended style){
+		ThreadUtils.runOnEventQueue(new Runnable(){
+			public void run() {
+				TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
+				SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
+				SeqMapView.this.getSeqMap().updateWidget();
+			}
+		});
+	}
+	
 	protected void addDependentAndEmptyTrack(){
 		TrackView.getInstance().addDependentAndEmptyTrack(this, aseq);
 	}

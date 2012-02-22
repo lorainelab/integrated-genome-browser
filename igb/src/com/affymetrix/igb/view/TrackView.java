@@ -275,6 +275,12 @@ public class TrackView {
 		}
 	}
 	
+	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 
+		String meth = style.getMethodName();
+		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
+		addAnnotationGlyphs(smv, annotSym);
+	}
+	
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = determineFactory(annotSym);

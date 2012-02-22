@@ -46,18 +46,16 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.TrackUtils;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
@@ -991,7 +989,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//    "The selected track is empty. It contains nothing to summarize");
 		//return;
 		//}
-		
+
 		BioSeq aseq = gmodel.getSelectedSeq();
 		String human_name = BUNDLE.getString("depth") + ": " + atier.getLabel();
 		String id = TrackStyle.getUniqueName(human_name);
@@ -1163,7 +1161,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						@Override
 						public void actionPerformed(ActionEvent ae) {
 							((ITrackStyleExtended) style).setViewMode(mode.toString());
-							refreshMap(false, false);
+							gviewer.addAnnotationTrackFor(((ITrackStyleExtended) style));
+							//refreshMap(false, false);
 						}
 
 						@Override

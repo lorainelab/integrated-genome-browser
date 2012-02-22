@@ -161,7 +161,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Sty
 	@Override
 	public void setInfo(Object info) {
 		super.setInfo(info);
-		if(!(info instanceof RootSeqSymmetry)){
+		if(info != null && !(info instanceof RootSeqSymmetry)){
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "!!!!! {0} is not instance of RootSeqSymmetry !!!!!", info);
 		}
 	}

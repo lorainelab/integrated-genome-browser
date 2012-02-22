@@ -3,6 +3,7 @@ package com.affymetrix.igb.viewmode;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,11 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -31,33 +34,29 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		private static final double ZOOM_X_SCALE = 0.002;
 		private final ViewModeGlyph depthGlyph;
 		private final ViewModeGlyph annotationGlyph;
+		private ViewModeGlyph lastUsedGlyph;
 		
 		public SemanticZoomGlyph(ITrackStyleExtended style, ViewModeGlyph depthGlyph, ViewModeGlyph annotationGlyph) {
 			super();
 			this.depthGlyph = depthGlyph;
 			this.annotationGlyph = annotationGlyph;
+			lastUsedGlyph = annotationGlyph;
 			setStyle(style);
-		}
-
-		public void draw(ViewI view) {
-			ViewModeGlyph glyph = getGlyph(view);
-			glyph.setCoordBox(getCoordBox());
-			glyph.draw(view);
-		}
-
-		@Override
-		public void setPreferredHeight(double height, ViewI view) {
-			depthGlyph.setPreferredHeight(height, view);
-			annotationGlyph.setPreferredHeight(height, view);
-		}
-
-		@Override
-		public int getActualSlots() {
-			return 0;
 		}
 
 		private ViewModeGlyph getGlyph(ViewI view) {
 			return view.getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : annotationGlyph;
+		}
+
+		@Override
+		public void setPreferredHeight(double height, ViewI view) {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.setPreferredHeight(height, view);
+		}
+
+		@Override
+		public int getActualSlots() {
+			return lastUsedGlyph.getActualSlots();
 		}
 
 		@Override
@@ -68,51 +67,175 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 
 		// Glyph methods
+	
+		@Override
+		public GlyphI getChild(int index) {
+			return lastUsedGlyph.getChild(index);
+		}
+		@Override
+		public GlyphStyle getGlyphStyle() {
+			return lastUsedGlyph.getGlyphStyle();
+		}
+		@Override
+		public List<GlyphI> getChildren()  {
+			return lastUsedGlyph.getChildren();
+		}
+		@Override
+		public PackerI getPacker()  {
+			throw new IllegalStateException();
+		}
+		@Override
+		public Rectangle getPixelBox()  {
+			return lastUsedGlyph.getPixelBox();
+		}
+		@Override
+		public Rectangle getPixelBox(ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.getPixelBox(view);
+		}
+		@Override
+		public Rectangle2D.Double getCoordBox()   {
+			return lastUsedGlyph.getCoordBox();
+		}
+		@Override
+		public Rectangle2D.Double getSelectedRegion() {
+			return lastUsedGlyph.getSelectedRegion();
+		}
+		@Override
+		public boolean drawTransients() {
+			return lastUsedGlyph.drawTransients();
+		}
+		@Override
+		public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.getGlobalChildTransform(view, trans);
+		}
+		@Override
+		public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.getGlobalTransform(view, trans);
+		}
+		@Override
+		public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.hit(pixel_hitbox, view);
+		}
+		@Override
+		public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.hit(coord_hitbox, view);
+		}
+		@Override
+		public boolean inside(int x, int y)  {
+			return lastUsedGlyph.inside(x, y);
+		}
+		@Override
+		public boolean intersects(Rectangle rect)  {
+			return lastUsedGlyph.intersects(rect);
+		}
+		@Override
+		public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.intersects(rect, view);
+		}
+		@Override
+		public boolean isHitable() {
+			return lastUsedGlyph.isHitable();
+		}
+		@Override
+		public boolean isSelectable() {
+			return lastUsedGlyph.isHitable();
+		}
+		@Override
+		public boolean supportsSubSelection() {
+			return lastUsedGlyph.supportsSubSelection();
+		}
+		@Override
+		public boolean withinView(ViewI view) {
+			lastUsedGlyph = getGlyph(view);
+			return lastUsedGlyph.withinView(view);
+		}
+		@Override
+		public int getChildCount() {
+			return lastUsedGlyph.getChildCount();
+		}
+		@Override
+		public int getDrawOrder() {
+			return lastUsedGlyph.getDrawOrder();
+		}
+		@Override
+		public int getMinPixelsHeight() {
+			return lastUsedGlyph.getMinPixelsHeight();
+		}
+		@Override
+		public int getMinPixelsWidth() {
+			return lastUsedGlyph.getMinPixelsWidth();
+		}
 		@Override
 		public void addChild(GlyphI glyph)  {
-			annotationGlyph.addChild(glyph);
+			lastUsedGlyph.addChild(glyph);
 		}
 		@Override
 		public void addChild(GlyphI glyph, int position) {
-			annotationGlyph.addChild(glyph, position);
+			lastUsedGlyph.addChild(glyph, position);
 		}
 		@Override
-		public void calcPixels(ViewI view)  {
-			getGlyph(view).calcPixels(view);
+		public void calcPixels (ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.calcPixels(view);
+		}
+		@Override
+		public void clearChildren() {
+		}
+		@Override
+		public void draw(ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.draw(view);
+		}
+		@Override
+		public void drawSelected(ViewI view) {
+		}
+		@Override
+		public void drawTraversal(ViewI view)  {
+		}
+		@Override
+		public void getChildTransform(ViewI view, LinearTransform trans) {
 		}
 		@Override
 		public void moveAbsolute(double x, double y) {
 			super.moveAbsolute(x, y);
-			depthGlyph.moveAbsolute(x, y);
-			annotationGlyph.moveAbsolute(x, y);
+			lastUsedGlyph.moveAbsolute(x, y);
 		}
 		@Override
 		public void moveRelative(double diffx, double diffy) {
 			super.moveRelative(diffx, diffy);
-			depthGlyph.moveRelative(diffx, diffy);
-			annotationGlyph.moveRelative(diffx, diffy);
+			lastUsedGlyph.moveRelative(diffx, diffy);
 		}
 		@Override
 		public void pack(ViewI view, boolean manual) {
-			getGlyph(view).pack(view, manual);
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.pack(view, manual);
 		}
 		@Override
 		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
-			getGlyph(view).pickTraversal(pickRect, pickList, view);
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.pickTraversal(pickRect, pickList, view);
 		}
 		@Override
 		public void removeAllChildren() {
-			annotationGlyph.removeAllChildren();
+			lastUsedGlyph.removeAllChildren();
 		}
 		@Override
 		public void removeChild(GlyphI glyph)  {
-			annotationGlyph.removeChild(glyph);
+			lastUsedGlyph.removeChild(glyph);
+		}
+		@Override
+		public void resetChildren() {
 		}
 		@Override
 		public void select(double x, double y, double width, double height) {
 			super.select(x, y, width, height);
-			depthGlyph.select(x, y, width, height);
-			annotationGlyph.select(x, y, width, height);
+			lastUsedGlyph.select(x, y, width, height);
 		}
 		@Override
 		public void setBackgroundColor(Color color)  {
@@ -129,20 +252,17 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setCoordBox(Rectangle2D.Double coordbox)   {
 			super.setCoordBox(coordbox);
-			depthGlyph.setCoordBox(coordbox);
-			annotationGlyph.setCoordBox(coordbox);
+			lastUsedGlyph.setCoordBox(coordbox);
 		}
 		@Override
 		public void setCoords(double x, double y, double width, double height)  {
 			super.setCoords(x, y, width, height);
-			depthGlyph.setCoords(x, y, width, height);
-			annotationGlyph.setCoords(x, y, width, height);
+			lastUsedGlyph.setCoords(x, y, width, height);
 		}
 		@Override
 		public void setDrawOrder(int order) {
 			super.setDrawOrder(order);
-			depthGlyph.setDrawOrder(order);
-			annotationGlyph.setDrawOrder(order);
+			lastUsedGlyph.setDrawOrder(order);
 		}
 		@Override
 		public void setFont(Font f) {
@@ -157,6 +277,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 			annotationGlyph.setForegroundColor(color);
 		}
 		@Override
+		public void setGlyphStyle(GlyphStyle glyphStyle) {
+		}
+		@Override
 		public void setInfo(Object info)  {
 			super.setInfo(info);
 			depthGlyph.setInfo(info);
@@ -165,14 +288,12 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setMinimumPixelBounds(Dimension d)   {
 			super.setMinimumPixelBounds(d);
-			depthGlyph.setMinimumPixelBounds(d);
-			annotationGlyph.setMinimumPixelBounds(d);
+			lastUsedGlyph.setMinimumPixelBounds(d);
 		}
 		@Override
 		public void setOverlapped(boolean overlapped){
 			super.setOverlapped(overlapped);
-			depthGlyph.setOverlapped(overlapped);
-			annotationGlyph.setOverlapped(overlapped);
+			lastUsedGlyph.setOverlapped(overlapped);
 		}
 		@Override
 		public void setPacker(PackerI packer)  {
@@ -185,6 +306,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 			annotationGlyph.setParent(glyph);
 		}
 		@Override
+		public void setPixelBox(Rectangle pixelbox) {
+		}
+		@Override
 		public void setScene(Scene s) {
 			super.setScene(s);
 			depthGlyph.setScene(s);
@@ -193,21 +317,25 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setSelectable(boolean selectability) {
 			super.setSelectable(selectability);
-			depthGlyph.setSelectable(selectability);
 			annotationGlyph.setSelectable(selectability);
 		}
 		@Override
 		public void setSelected(boolean selected) {
 			super.setSelected(selected);
-			depthGlyph.setSelected(selected);
 			annotationGlyph.setSelected(selected);
 		}
 		@Override
-		public void setVisibility(boolean isVisible)  {
-			super.setVisibility(isVisible);
-			depthGlyph.setVisibility(isVisible);
-			annotationGlyph.setVisibility(isVisible);
+		public void setVisibility(boolean visible)  {
+			super.setVisibility(visible);
+			depthGlyph.setVisibility(visible);
+			annotationGlyph.setVisibility(visible);
 		}
+
+
+
+		
+
+
 
 		// SolidGlyph methods
 		public void setHitable(boolean hitable) {

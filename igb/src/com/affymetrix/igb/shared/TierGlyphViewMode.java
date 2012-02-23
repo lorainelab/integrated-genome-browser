@@ -29,25 +29,6 @@ import java.util.List;
  *  This is an implementation of the Delegation Design Pattern.
  */
 public class TierGlyphViewMode extends TierGlyph {
-	// just a dummy entry that will return tg.getChildCount() == 0 for SeqMapView.hideEmptyTierGlyphs()
-	// that used to just require that all the child glyphs were gone, but now that the calls get passed to
-	// a ViewModeGlyph, that glyph must exist and return getChildCount() == 0.
-	private static final ViewModeGlyph CHILDLESS = new ViewModeGlyph() {
-		@Override public void setPreferredHeight(double height, ViewI view) {}
-		@Override public Color getFillColor() { return null; }
-		@Override public void setFillColor(Color col) {}
-		@Override public int getActualSlots() { return 0; }
-		@Override public ITrackStyleExtended getAnnotStyle() { return null; }
-		@Override public String getLabel() { return null; }
-		@Override public void setLabel(String str) {}
- 		@Override public Direction getDirection() { return null; }
-		@Override public void setDirection(Direction d) {}
-		@Override public void addMiddleGlyph(GlyphI gl) {}
-		// only important methods - to get SeqMapView.hideEmptyTierGlyphs() to hide this tier
-//		@Override public int getChildCount() { return 0; }
-		@Override public GlyphI getParent() { return CHILDLESS; }
-		@Override public void setScene(Scene s) {}
-	};
 	private SeqSymmetry modelSym;
 
 	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction) {
@@ -317,8 +298,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void removeAllChildren() {
-		// this method is only called to get SeqMapView.hideEmptyTierGlyphs() to hide this tier
-		viewModeGlyph = CHILDLESS;
+		viewModeGlyph.removeAllChildren();
 	}
 	@Override
 	public void removeChild(GlyphI glyph)  {

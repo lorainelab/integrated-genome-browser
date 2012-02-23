@@ -18,7 +18,6 @@ import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
@@ -270,11 +269,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 		} else {
 			node = null;
-		}
-		// TODO remove this code when we convert completely to the new view mode
-		String viewmode = TrackUtils.getInstance().useViewMode(getMethodName());
-		if (viewmode != null) {
-			setViewMode(viewmode);
 		}
 	}
 

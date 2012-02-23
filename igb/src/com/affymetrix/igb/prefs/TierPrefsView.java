@@ -37,14 +37,18 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+/**
+ *
+ * @author nick
+ */
 public class TierPrefsView implements ListSelectionListener, TrackStylePropertyListener {
 
 	public static final long serialVersionUID = 1l;
 	private static TierPrefsView singleton;
-	public static final String TRACK_NAME = "Display Name";
+	public static final String TRACK_NAME = "Track Name";
 	public static final String FOREGROUND = "Foreground";
 	public static final String BACKGROUND = "Background";
-	public static final String TRACK_NAME_SIZE = "Track Name Size";
+	public static final String TRACK_NAME_SIZE = "Name Size";
 	public final static String[] col_headings = {
 		TRACK_NAME,
 		BACKGROUND, FOREGROUND,

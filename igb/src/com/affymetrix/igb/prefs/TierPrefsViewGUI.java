@@ -46,6 +46,23 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        selectTrackPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        table = tpv.table;
+        restoreToDefaultButton = new javax.swing.JButton();
+        selectAllButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        viewModelPanel = new javax.swing.JPanel();
+        viewModeCB = tpv.viewModeCB;
+        refreshButton = tpv.refreshButton;
+        showStrandPanel = new javax.swing.JPanel();
+        possitiveLabel = new javax.swing.JLabel();
+        negativeLabel = new javax.swing.JLabel();
+        possitiveColorComboBox = tpv.possitiveColorComboBox;
+        negativeColorComboBox = tpv.negativeColorComboBox;
+        colorCheckBox = tpv.colorCheckBox;
+        arrowCheckBox = tpv.arrowCheckBox;
+        autoRefreshCheckBox = tpv.autoRefreshCheckBox;
         propertiesPanel = new javax.swing.JPanel();
         displayNameLabel = new javax.swing.JLabel();
         displayNameTextField = tpv.displayNameTextField;
@@ -65,22 +82,149 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         applyButton = new javax.swing.JButton();
-        selectTrackPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        table = tpv.table;
-        restoreToDefaultButton = new javax.swing.JButton();
-        selectAllButton = new javax.swing.JButton();
-        showStrandPanel = new javax.swing.JPanel();
-        possitiveLabel = new javax.swing.JLabel();
-        negativeLabel = new javax.swing.JLabel();
-        possitiveColorComboBox = tpv.possitiveColorComboBox;
-        negativeColorComboBox = tpv.negativeColorComboBox;
-        colorCheckBox = tpv.colorCheckBox;
-        arrowCheckBox = tpv.arrowCheckBox;
-        viewModelPanel = new javax.swing.JPanel();
-        viewModeCB = tpv.viewModeCB;
-        refreshButton = tpv.refreshButton;
-        autoRefreshCheckBox = tpv.autoRefreshCheckBox;
+
+        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track List"));
+
+        jScrollPane1.setViewportView(table);
+        tpv.refreshList();
+
+        restoreToDefaultButton.setText("Restore to default");
+        restoreToDefaultButton.setToolTipText("Restore selected tracks to default setting.");
+        restoreToDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                restoreToDefaultButtonActionPerformed(evt);
+            }
+        });
+
+        selectAllButton.setText("Select All");
+        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllButtonActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
+        selectTrackPanel.setLayout(selectTrackPanelLayout);
+        selectTrackPanelLayout.setHorizontalGroup(
+            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jScrollPane1)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
+                .add(selectAllButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(restoreToDefaultButton))
+        );
+        selectTrackPanelLayout.setVerticalGroup(
+            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .add(0, 0, 0)
+                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(restoreToDefaultButton)
+                    .add(selectAllButton)))
+        );
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
+
+        viewModeCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewModeCBActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout viewModelPanelLayout = new org.jdesktop.layout.GroupLayout(viewModelPanel);
+        viewModelPanel.setLayout(viewModelPanelLayout);
+        viewModelPanelLayout.setHorizontalGroup(
+            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(viewModeCB, 0, 101, Short.MAX_VALUE)
+        );
+        viewModelPanelLayout.setVerticalGroup(
+            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
+
+        refreshButton.setText("Refresh");
+
+        showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
+
+        possitiveLabel.setText("+");
+
+        negativeLabel.setText("-");
+
+        possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
+        possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        possitiveColorComboBox.setButtonVisible(false);
+        possitiveColorComboBox.setColorValueVisible(false);
+        possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+        possitiveColorComboBox.setStretchToFit(true);
+        possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                possitiveColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
+        negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        negativeColorComboBox.setButtonVisible(false);
+        negativeColorComboBox.setColorValueVisible(false);
+        negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+        negativeColorComboBox.setStretchToFit(true);
+        negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                negativeColorComboBoxActionPerformed(evt);
+            }
+        });
+
+        colorCheckBox.setText("Color");
+        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorCheckBoxActionPerformed(evt);
+            }
+        });
+
+        arrowCheckBox.setText("Arrow");
+        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                arrowCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout showStrandPanelLayout = new org.jdesktop.layout.GroupLayout(showStrandPanel);
+        showStrandPanel.setLayout(showStrandPanelLayout);
+        showStrandPanelLayout.setHorizontalGroup(
+            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(showStrandPanelLayout.createSequentialGroup()
+                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(showStrandPanelLayout.createSequentialGroup()
+                        .add(8, 8, 8)
+                        .add(possitiveLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(negativeLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(colorCheckBox)
+                    .add(arrowCheckBox))
+                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+        showStrandPanelLayout.setVerticalGroup(
+            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(showStrandPanelLayout.createSequentialGroup()
+                .add(arrowCheckBox)
+                .add(5, 5, 5)
+                .add(colorCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(possitiveLabel)
+                    .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(negativeLabel)
+                    .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+
+        autoRefreshCheckBox.setText("Auto Refresh");
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -182,48 +326,48 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(bgLabel)
-                            .add(displayNameLabel)
-                            .add(fgLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(maxDepthLabel))
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(30, 30, 30)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(labelFieldLabel)
-                            .add(trackNameSizeLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 89, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(labelFieldComboBox, 0, 109, Short.MAX_VALUE)))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(applyButton)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(0, 0, 0)
-                .add(show2TracksCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(connectedCheckBox)
-                .add(0, 0, 0)
-                .add(collapsedCheckBox)
-                .add(0, 0, 0))
-            .add(jSeparator2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(jSeparator1)
+            .add(jSeparator2)
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(92, 92, 92)
-                .add(displayNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE))
+                .add(displayNameTextField))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .add(6, 6, 6)
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(propertiesPanelLayout.createSequentialGroup()
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(bgLabel)
+                                    .add(displayNameLabel)
+                                    .add(fgLabel))
+                                .add(6, 6, 6)
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(maxDepthLabel))
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(propertiesPanelLayout.createSequentialGroup()
+                                .add(30, 30, 30)
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(labelFieldLabel)
+                                    .add(trackNameSizeLabel))
+                                .add(6, 6, 6)
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(labelFieldComboBox, 0, 109, Short.MAX_VALUE)
+                                    .add(trackNameSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .add(propertiesPanelLayout.createSequentialGroup()
+                                .add(6, 6, 6)
+                                .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(6, 6, 6)
+                                .add(applyButton))))
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .add(show2TracksCheckBox)
+                        .add(0, 0, 0)
+                        .add(connectedCheckBox)
+                        .add(0, 0, 0)
+                        .add(collapsedCheckBox)))
+                .add(5, 5, 5))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -239,202 +383,74 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                     .add(trackNameSizeLabel)
                     .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(10, 10, 10)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(fgLabel)
                     .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(labelFieldLabel)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(4, 4, 4)
-                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(8, 8, 8)
+                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(7, 7, 7)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(maxDepthLabel)
                     .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(applyButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(6, 6, 6)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(show2TracksCheckBox)
                     .add(connectedCheckBox)
                     .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
 
-        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track List"));
-
-        jScrollPane1.setViewportView(table);
-        tpv.refreshList();
-
-        restoreToDefaultButton.setText("Restore to default");
-        restoreToDefaultButton.setToolTipText("Restore selected tracks to default setting.");
-        restoreToDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreToDefaultButtonActionPerformed(evt);
-            }
-        });
-
-        selectAllButton.setText("Select All");
-        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectAllButtonActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
-        selectTrackPanel.setLayout(selectTrackPanelLayout);
-        selectTrackPanelLayout.setHorizontalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(selectAllButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 222, Short.MAX_VALUE)
-                .add(restoreToDefaultButton))
-        );
-        selectTrackPanelLayout.setVerticalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
-                .add(0, 0, 0)
-                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(restoreToDefaultButton)
-                    .add(selectAllButton)))
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(15, 15, 15)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(autoRefreshCheckBox)
+                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
 
-        showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
+        jPanel1Layout.linkSize(new java.awt.Component[] {showStrandPanel, viewModelPanel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        possitiveLabel.setText("+");
-
-        negativeLabel.setText("-");
-
-        possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        possitiveColorComboBox.setButtonVisible(false);
-        possitiveColorComboBox.setColorValueVisible(false);
-        possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        possitiveColorComboBox.setStretchToFit(true);
-        possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                possitiveColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        negativeColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
-        negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-        negativeColorComboBox.setButtonVisible(false);
-        negativeColorComboBox.setColorValueVisible(false);
-        negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        negativeColorComboBox.setStretchToFit(true);
-        negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                negativeColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        colorCheckBox.setText("Color");
-        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorCheckBoxActionPerformed(evt);
-            }
-        });
-
-        arrowCheckBox.setText("Arrow");
-        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                arrowCheckBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout showStrandPanelLayout = new org.jdesktop.layout.GroupLayout(showStrandPanel);
-        showStrandPanel.setLayout(showStrandPanelLayout);
-        showStrandPanelLayout.setHorizontalGroup(
-            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(showStrandPanelLayout.createSequentialGroup()
-                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(showStrandPanelLayout.createSequentialGroup()
-                        .add(8, 8, 8)
-                        .add(possitiveLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(negativeLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(colorCheckBox)
-                    .add(arrowCheckBox))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        showStrandPanelLayout.setVerticalGroup(
-            showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(showStrandPanelLayout.createSequentialGroup()
-                .add(arrowCheckBox)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(colorCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(possitiveLabel)
-                    .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(negativeLabel)
-                    .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(6, Short.MAX_VALUE))
+                .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(autoRefreshCheckBox)
+                .add(5, 5, 5)
+                .add(refreshButton))
+            .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
-
-        viewModelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
-
-        viewModeCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                viewModeCBActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout viewModelPanelLayout = new org.jdesktop.layout.GroupLayout(viewModelPanel);
-        viewModelPanel.setLayout(viewModelPanelLayout);
-        viewModelPanelLayout.setHorizontalGroup(
-            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeCB, 0, 104, Short.MAX_VALUE)
-        );
-        viewModelPanelLayout.setVerticalGroup(
-            viewModelPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(viewModeCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        );
-
-        refreshButton.setText("Refresh");
-
-        autoRefreshCheckBox.setText("Auto Refresh");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(autoRefreshCheckBox)
-                            .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
+                .add(15, 15, 15)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+            .add(layout.createSequentialGroup()
+                .add(10, 10, 10)
                 .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(10, 10, 10)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(viewModelPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(10, 10, 10)
-                        .add(autoRefreshCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(refreshButton))
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -522,6 +538,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
     private javax.swing.JTextField displayNameTextField;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

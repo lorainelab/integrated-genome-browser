@@ -76,6 +76,7 @@ public final class GeneralLoadView {
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
 	private static Font font = new Font("SansSerif", Font.BOLD, 16);
+	private boolean showLoadingConfirm = false;
 
 	public static void init(IGBService _igbService) {
 		singleton = new GeneralLoadView(_igbService);
@@ -684,5 +685,13 @@ public final class GeneralLoadView {
 			return feature_tree_view;
 		}
 		return null;
+	}
+	
+	public void setShowLoadingConfirm(boolean showLoadingConfirm) {
+		this.showLoadingConfirm = showLoadingConfirm;
+	}
+
+	public boolean isLoadingConfirm() {
+		return showLoadingConfirm;
 	}
 }

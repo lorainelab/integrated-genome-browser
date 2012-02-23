@@ -123,6 +123,8 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
         showCollapseOptionCheckBox = new javax.swing.JCheckBox();
+        confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+            PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
 
@@ -198,7 +200,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(dynamicORFLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -335,20 +337,21 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 335, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 335, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-            .add(askBeforeExitCheckBox)
             .add(keepZoomStripeCheckBox)
             .add(showZoomStripLabelCheckBox)
+            .add(autoChangeView)
+            .add(confirmBeforeLoadCheckBox)
             .add(confirmBeforeDeleteCheckBox)
             .add(showCollapseOptionCheckBox)
-            .add(autoChangeView)
+            .add(askBeforeExitCheckBox)
             .add(layout.createSequentialGroup()
                 .add(44, 44, 44)
                 .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                .add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         layout.linkSize(new java.awt.Component[] {coordinatePanel, edgeMatchPanel, orfAnalyzerPanel, residueColorPanel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -363,21 +366,23 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
                 .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(askBeforeExitCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(confirmBeforeDeleteCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
+                .add(confirmBeforeLoadCheckBox)
+                .add(5, 5, 5)
                 .add(showZoomStripLabelCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(showCollapseOptionCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(autoChangeView)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(5, 5, 5)
                 .add(clear_prefsB)
-                .add(0, 0, Short.MAX_VALUE))
+                .add(5, 5, 5))
         );
 
         clear_prefsB.addActionListener(this);
@@ -430,6 +435,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
+    private javax.swing.JCheckBox confirmBeforeLoadCheckBox;
     private javax.swing.JPanel coordinatePanel;
     private javax.swing.JComboBox coordinates_label_format_CB;
     private javax.swing.JLabel dynamicORFLabel;

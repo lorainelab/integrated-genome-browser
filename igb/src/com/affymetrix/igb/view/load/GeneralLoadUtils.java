@@ -90,8 +90,9 @@ public final class GeneralLoadUtils {
 
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
-	 *  using negative start coord for virtual genome chrom because (at least for human genome)
-	 *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
+	 * using negative start coord for virtual genome chrom because (at least for
+	 * human genome) whole genome start/end/length can't be represented with
+	 * positive 4-byte ints (limit is +/- 2.1 billion)
 	 */
 //    final double default_genome_min = -2100200300;
 	private static final double default_genome_min = -2100200300;
@@ -99,9 +100,9 @@ public final class GeneralLoadUtils {
 	// File name storing directory name associated with server on a cached server.
 	public static final String SERVER_MAPPING = "/serverMapping.txt";
 	/**
-	 * Location of synonym file for correlating versions to species.
-	 * The file lookup is done using {@link Class#getResourceAsStream(String)}.
-	 * The default file is {@value}.
+	 * Location of synonym file for correlating versions to species. The file
+	 * lookup is done using {@link Class#getResourceAsStream(String)}. The
+	 * default file is {@value}.
 	 *
 	 * @see #SPECIES_LOOKUP
 	 */
@@ -123,6 +124,7 @@ public final class GeneralLoadUtils {
 	}
 	/**
 	 * Private copy of the default Synonym lookup
+	 *
 	 * @see SynonymLookup#getDefaultLookup()
 	 */
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
@@ -137,19 +139,23 @@ public final class GeneralLoadUtils {
 		}
 	}
 	/**
-	 * Map to store directory name associated with the server on a cached server.
+	 * Map to store directory name associated with the server on a cached
+	 * server.
 	 */
 	private static Map<String, String> servermapping = new HashMap<String, String>();
 
 	/**
 	 * Add specified server, finding species and versions associated with it.
+	 *
 	 * @param serverName
 	 * @param serverURL
 	 * @param serverType
 	 * @return success of server add.
 	 */
 	public static GenericServer addServer(ServerList serverList, ServerType serverType, String serverName, String serverURL) {
-		/* should never happen */
+		/*
+		 * should never happen
+		 */
 		if (serverType == ServerType.LocalFiles) {
 			return null;
 		}
@@ -239,6 +245,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover species from DAS
+	 *
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
@@ -270,6 +277,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover genomes from DAS/2
+	 *
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
@@ -297,6 +305,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover genomes from Quickload
+	 *
 	 * @param gServer
 	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
@@ -352,6 +361,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
+	 *
 	 * @param aseq
 	 * @return genome version
 	 */
@@ -367,6 +377,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
+	 *
 	 * @param seqgroup
 	 * @return genome version
 	 */
@@ -402,7 +413,8 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Get list of versions for given species.  Create it if it doesn't exist.
+	 * Get list of versions for given species. Create it if it doesn't exist.
+	 *
 	 * @param speciesName
 	 * @return list of versions for the given species.
 	 */
@@ -418,8 +430,8 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 *  Returns the list of features for the genome with the given version name.
-	 *  The list may (rarely) be empty, but never null.
+	 * Returns the list of features for the genome with the given version name.
+	 * The list may (rarely) be empty, but never null.
 	 */
 	public static List<GenericFeature> getFeatures(AnnotatedSeqGroup group) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
@@ -437,6 +449,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Only want to display features with visible attribute set to true.
+	 *
 	 * @param features
 	 * @return list of visible features
 	 */
@@ -463,6 +476,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Returns the list of servers associated with the given versions.
+	 *
 	 * @param features -- assumed to be non-null.
 	 * @return A list of servers associated with the given versions.
 	 */
@@ -480,6 +494,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Make sure this genome version has been initialized.
+	 *
 	 * @param versionName
 	 */
 	public static void initVersionAndSeq(final String versionName) {
@@ -500,9 +515,9 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Load the sequence info for the given group.
-	 * Try loading from DAS/2 before loading from DAS; chances are DAS/2 will be faster, and that the chromosome
-	 * names will be closer to what is expected.
+	 * Load the sequence info for the given group. Try loading from DAS/2 before
+	 * loading from DAS; chances are DAS/2 will be faster, and that the
+	 * chromosome names will be closer to what is expected.
 	 */
 	private static void loadChromInfo(AnnotatedSeqGroup group) {
 
@@ -572,6 +587,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Determine size of spacer between chromosomes in whole genome view.
+	 *
 	 * @param group
 	 * @param chrom_count
 	 * @return
@@ -586,6 +602,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Make sure virtual genome doesn't overflow integer bounds.
+	 *
 	 * @param group
 	 * @return true or false
 	 */
@@ -682,8 +699,9 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Load and display annotations (requested for the specific feature).
-	 * Adjust the load status accordingly.
+	 * Load and display annotations (requested for the specific feature). Adjust
+	 * the load status accordingly.
+	 *
 	 * @param gFeature
 	 * @return true or false
 	 */
@@ -727,6 +745,10 @@ public final class GeneralLoadUtils {
 
 		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
+
+			if (checkBamAndSamLoading(feature, optimized_sym)) {
+				return;
+			}
 
 			loadFeaturesForSym(optimized_sym, feature);
 			return;
@@ -859,9 +881,10 @@ public final class GeneralLoadUtils {
 					SeqGroupView.getInstance().refreshTable();
 				}
 
-				if(this.isCancelled())
+				if (this.isCancelled()) {
 					return;
-				
+				}
+
 				try {
 					boolean result = get();
 					setLastRefreshStatus(feature, result);
@@ -922,6 +945,31 @@ public final class GeneralLoadUtils {
 		return result;
 	}
 
+	private static boolean checkBamAndSamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
+		//start max
+		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();
+		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
+		if (check && optimized_sym != null && feature.getExtension() != null && 
+				(feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
+			String message = "Region in view is big (> 100k), do you want to continue?";
+			int childrenCount = optimized_sym.getChildCount();
+			int spanWidth = 0;
+			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
+				SeqSymmetry child = optimized_sym.getChild(childIndex);
+				for (int spanIndex = 0; spanIndex < child.getSpanCount(); spanIndex++) {
+					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+				}
+			}
+			
+			if (spanWidth > 100000) {
+				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
+			}
+		}
+		return false;
+		//end max
+	}
+
 	private static void setLastRefreshStatus(GenericFeature feature, boolean result) {
 		if (result) {
 			feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
@@ -937,6 +985,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.
+	 *
 	 * @param sym the SeqSymmetry to walk.
 	 */
 	private static void convertSymToSpanList(SeqSymmetry sym, List<SeqSpan> spans) {
@@ -954,10 +1003,10 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Load residues on span.
-	 * First, attempt to load them with DAS/2 servers.
-	 * Second, attempt to load them with QuickLoad servers.
-	 * Third, attempt to load them with DAS/1 servers.
+	 * Load residues on span. First, attempt to load them with DAS/2 servers.
+	 * Second, attempt to load them with QuickLoad servers. Third, attempt to
+	 * load them with DAS/1 servers.
+	 *
 	 * @param aseq
 	 * @param span	-- may be null, if the entire sequence is requested.
 	 * @return true if succeeded.
@@ -965,14 +1014,12 @@ public final class GeneralLoadUtils {
 	static boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 
 		/*
-		 * This test does not work properly, so it's being commented out for now.
+		 * This test does not work properly, so it's being commented out for
+		 * now.
 		 *
-		if (aseq.isComplete()) {
-		if (DEBUG) {
-		System.out.println("already have residues for " + seq_name);
-		}
-		return false;
-		}*/
+		 * if (aseq.isComplete()) { if (DEBUG) { System.out.println("already
+		 * have residues for " + seq_name); } return false; }
+		 */
 
 		// Determine list of servers that might have this chromosome sequence.
 		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
@@ -1000,8 +1047,10 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get synonyms of version.
+	 *
 	 * @param versionName - version name
-	 * @return a friendly HTML string of version synonyms (not including versionName).
+	 * @return a friendly HTML string of version synonyms (not including
+	 * versionName).
 	 */
 	public static String listSynonyms(String versionName) {
 		StringBuilder synonymBuilder = new StringBuilder(100);
@@ -1071,6 +1120,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get directory url on cached server from servermapping map.
+	 *
 	 * @param url	URL of the server.
 	 * @return	Returns a directory if exists else null.
 	 */
@@ -1095,13 +1145,14 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Set autoload variable in features.
-	 * @param autoload	
+	 *
+	 * @param autoload
 	 */
 	public static void setFeatureAutoLoad(boolean autoload) {
 		for (List<GenericVersion> genericVersions : species2genericVersionList.values()) {
 			for (GenericVersion genericVersion : genericVersions) {
-				if(genericVersion.gServer.serverType == ServerType.DAS2 && 
-						genericVersion.gServer.URL.equals("http://netaffxdas.affymetrix.com/das2/genome")){
+				if (genericVersion.gServer.serverType == ServerType.DAS2
+						&& genericVersion.gServer.URL.equals("http://netaffxdas.affymetrix.com/das2/genome")) {
 					continue;
 				}
 				for (GenericFeature genericFeature : genericVersion.getFeatures()) {
@@ -1155,7 +1206,7 @@ public final class GeneralLoadUtils {
 			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
 			return;
 		}
-		
+
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 
 		if (gFeature == null) {
@@ -1283,6 +1334,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Handle file formats that has SeqGroup info.
+	 *
 	 * @param uri
 	 * @param loadGroup
 	 * @param version
@@ -1322,6 +1374,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get AnnotatedSeqGroup for BAR file format.
+	 *
 	 * @param uri
 	 * @param group
 	 * @return
@@ -1353,6 +1406,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Get AnnotatedSeqGroup for USEQ file format.
+	 *
 	 * @param uri
 	 * @param group
 	 * @return

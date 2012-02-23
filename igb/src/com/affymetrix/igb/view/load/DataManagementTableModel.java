@@ -339,6 +339,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			case REFRESH_FEATURE_COLUMN:
 				if (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
 						&& vFeature.getLoadStrategy() != LoadStrategy.GENOME) {
+					GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
 					for (GenericFeature gFeature : features) {
 						if (gFeature.equals(vFeature.getFeature())) {
 							GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);

@@ -21,7 +21,7 @@ M_musculus_Jul_2007.png
 H_sapiens_Feb_2009.png
 A_thaliana_Jun_2009.png
 E_coli_Oct_2007.png
-O_sativa_June_2009.png
+O_sativa_japonica_Jun_2009.png
 S_pombe_Sep_2007.png
 A_lyrata_Apr_2011.png
 B_distachyon_Aug_2010.png

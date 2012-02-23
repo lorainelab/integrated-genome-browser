@@ -633,7 +633,7 @@ public final class GeneralLoadUtils {
 		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerTypeI.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
-			if (checkBamLoading(feature, optimized_sym)) {
+			if (checkBamAndSamLoading(feature, optimized_sym)) {
 				return;
 			}
 
@@ -821,12 +821,12 @@ public final class GeneralLoadUtils {
 		return result;
 	}
 
-	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
+	private static boolean checkBamAndSamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
 		//start max
-		boolean bamCheck = GeneralLoadView.getLoadView().isLoadingConfirm();
+		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();
 		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
-		if (optimized_sym != null && feature.getExtension() != null && 
-				feature.getExtension().endsWith("bam") && bamCheck) {
+		if (check && optimized_sym != null && feature.getExtension() != null && 
+				(feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
 			String message = "Region in view is big (> 100k), do you want to continue?";
 			int childrenCount = optimized_sym.getChildCount();
 			int spanWidth = 0;

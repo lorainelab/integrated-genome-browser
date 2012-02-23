@@ -56,7 +56,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  *
- * @author lorainelab
+ * @author nick & david
  */
 public final class GeneralLoadView {
 
@@ -76,6 +76,7 @@ public final class GeneralLoadView {
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
 	private static Font font = new Font("SansSerif", Font.BOLD, 16);
+	private boolean showLoadingConfirm = false;
 
 	public static void init(IGBService _igbService) {
 		singleton = new GeneralLoadView(_igbService);
@@ -85,7 +86,9 @@ public final class GeneralLoadView {
 		return singleton;
 	}
 
-	/** Creates new form GeneralLoadView */
+	/**
+	 * Creates new form GeneralLoadView
+	 */
 	private GeneralLoadView(IGBService _igbService) {
 		igbService = _igbService;
 		gviewer = Application.getSingleton().getMapView();
@@ -166,7 +169,9 @@ public final class GeneralLoadView {
 	}
 
 	/**
-	 * Handles clicking of partial residue, all residue, and refresh data buttons.
+	 * Handles clicking of partial residue, all residue, and refresh data
+	 * buttons.
+	 *
 	 * @param evt
 	 */
 	public void loadResidues(GenericAction action) {
@@ -280,7 +285,8 @@ public final class GeneralLoadView {
 	}
 
 	/**
-	 * Load any features that have a autoload strategy and haven't already been loaded.
+	 * Load any features that have a autoload strategy and haven't already been
+	 * loaded.
 	 */
 	public static void loadAutoLoadFeatures() {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
@@ -290,7 +296,9 @@ public final class GeneralLoadView {
 	}
 
 	/**
-	 * Load any features that have a whole strategy and haven't already been loaded.
+	 * Load any features that have a whole strategy and haven't already been
+	 * loaded.
+	 *
 	 * @param versionName
 	 */
 	public static void loadWholeRangeFeatures(ServerTypeI serverType) {
@@ -429,6 +437,7 @@ public final class GeneralLoadView {
 			System.out.println("features for " + versionName + ": " + visibleFeatures.toString());
 		}
 		ThreadUtils.runOnEventQueue(new Runnable() {
+
 			public void run() {
 				initDataManagementTable();
 			}
@@ -438,7 +447,6 @@ public final class GeneralLoadView {
 		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
 		return visibleFeatures;
 	}
-
 
 	public void initDataManagementTable() {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
@@ -496,6 +504,7 @@ public final class GeneralLoadView {
 
 	/**
 	 * Check if it is necessary to disable buttons.
+	 *
 	 * @return
 	 */
 	public static boolean getIsDisableNecessary() {
@@ -535,9 +544,8 @@ public final class GeneralLoadView {
 	}
 
 	/**
-	 * Accessor method.
-	 * See if we need to enable/disable the refresh_dataB button
-	 * by looking at the features' load strategies.
+	 * Accessor method. See if we need to enable/disable the refresh_dataB
+	 * button by looking at the features' load strategies.
 	 */
 	void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {
 		if (IsGenomeSequence()) {
@@ -587,15 +595,17 @@ public final class GeneralLoadView {
 			public void run() {
 				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer, true);
 				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
-				if(!syms.isEmpty())
+				if (!syms.isEmpty()) {
 					gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+				}
 
 				gviewer.getSeqMap().packTiers(true, true, false, false);
 				gviewer.getSeqMap().stretchToFit(false, true);
 				gviewer.getSeqMap().updateWidget();
 
-				if(!syms.isEmpty())
+				if (!syms.isEmpty()) {
 					gviewer.select(syms, false);
+				}
 
 				TierPrefsView.getSingleton().refreshList();
 			}
@@ -684,5 +694,13 @@ public final class GeneralLoadView {
 			return feature_tree_view;
 		}
 		return null;
+	}
+
+	public void setShowLoadingConfirm(boolean showLoadingConfirm) {
+		this.showLoadingConfirm = showLoadingConfirm;
+	}
+
+	public boolean isLoadingConfirm() {
+		return showLoadingConfirm;
 	}
 }

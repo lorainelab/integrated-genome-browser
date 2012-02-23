@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * OtherOptions.java
- *
- * Created on May 31, 2011, 12:02:48 PM
- */
 package com.affymetrix.igb.prefs;
 
 import java.awt.BorderLayout;
@@ -22,11 +12,9 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
-import com.affymetrix.igb.action.ToggleHairlineAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.CoordinateStyle;
-import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
@@ -35,10 +23,7 @@ import com.affymetrix.igb.util.ColorUtils;
 
 /**
  *
- * @author lorainelab
- * Please be aware that any changes to the design from the gui builder will
- * result in two variables being generated which must be manually removed to prevent bugs on windows machines
- * jProgressBar1 and colorChooserPanel1
+ * @author nick
  */
 public class OtherOptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener {
 
@@ -190,25 +175,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 
         dynamicORFLabel.setText("Dynamic ORF:");
 
-        StopCodonColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StopCodonColorComboBoxActionPerformed(evt);
-            }
-        });
-
-        DynamicORFColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DynamicORFColorComboBoxActionPerformed(evt);
-            }
-        });
-
         bgLabel.setText("Background: ");
-
-        bgComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bgComboBoxActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout orfAnalyzerPanelLayout = new org.jdesktop.layout.GroupLayout(orfAnalyzerPanel);
         orfAnalyzerPanel.setLayout(orfAnalyzerPanelLayout);
@@ -368,24 +335,25 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(15, 15, 15)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(confirmBeforeDeleteCheckBox)
-                    .add(askBeforeExitCheckBox)
-                    .add(keepZoomStripeCheckBox)
-                    .add(showZoomStripLabelCheckBox)
-                    .add(autoChangeView)
-                    .add(showCollapseOptionCheckBox)
-                    .add(confirmBeforeLoadCheckBox)
-                    .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 320, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(15, 15, 15))
             .add(layout.createSequentialGroup()
-                .add(59, 59, 59)
-                .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(15, 15, 15)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(confirmBeforeDeleteCheckBox)
+                            .add(askBeforeExitCheckBox)
+                            .add(keepZoomStripeCheckBox)
+                            .add(showZoomStripLabelCheckBox)
+                            .add(autoChangeView)
+                            .add(showCollapseOptionCheckBox)
+                            .add(confirmBeforeLoadCheckBox)
+                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 320, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(layout.createSequentialGroup()
+                        .add(59, 59, 59)
+                        .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(15, 15, 15))
         );
 
@@ -455,18 +423,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 	private void OtherColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OtherColorComboBoxActionPerformed
 		TierPrefsView.getSingleton().refreshSeqMapView();
 	}//GEN-LAST:event_OtherColorComboBoxActionPerformed
-
-	private void StopCodonColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopCodonColorComboBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_StopCodonColorComboBoxActionPerformed
-
-	private void DynamicORFColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DynamicORFColorComboBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_DynamicORFColorComboBoxActionPerformed
-
-	private void bgComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgComboBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_bgComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;

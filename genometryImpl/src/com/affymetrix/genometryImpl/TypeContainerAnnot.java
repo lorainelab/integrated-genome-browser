@@ -17,13 +17,12 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
 
 /**
  *  Top-level annots attached to a BioSeq.
  */
-public final class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym, RootSeqSymmetry   {
+public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym   {
 	String type;
 
 	public TypeContainerAnnot(String type) {

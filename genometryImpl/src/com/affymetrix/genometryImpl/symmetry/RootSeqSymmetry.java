@@ -2,6 +2,6 @@ package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
-public interface RootSeqSymmetry {
-	public FileTypeCategory getCategory();
+public abstract class RootSeqSymmetry extends SimpleSymWithProps {
+	public abstract FileTypeCategory getCategory();
 }

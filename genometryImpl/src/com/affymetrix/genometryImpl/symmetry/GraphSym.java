@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public class GraphSym extends SimpleSymWithProps implements RootSeqSymmetry {
+public class GraphSym extends RootSeqSymmetry {
 
 	/** A property that can optionally be set to give a hint about the graph strand for display. */
 	public static final String PROP_GRAPH_STRAND = "Graph Strand";

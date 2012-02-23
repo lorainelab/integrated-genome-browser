@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author hiralv
  */
-public class MisMatchGraphSym extends GraphSym implements RootSeqSymmetry {
+public class MisMatchGraphSym extends GraphSym {
 
 	int[][] residuesTot = null;
 	private final File helperIndex;

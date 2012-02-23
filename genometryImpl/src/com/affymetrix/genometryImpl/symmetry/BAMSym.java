@@ -217,12 +217,12 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 				tempArr= new char[celLength];
 
 				if (cel.getOperator() == CigarOperator.INSERTION) {
-					if (!isIns) {
+					if (isIns && currentPos == start) {
+						return residues.substring(stringPtr, stringPtr + celLength);
+					} else {
 						stringPtr += celLength;
 						continue;
 					}
-					tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
-					stringPtr += celLength;
 				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
 					stringPtr += celLength;	// skip over soft clip
 					continue;

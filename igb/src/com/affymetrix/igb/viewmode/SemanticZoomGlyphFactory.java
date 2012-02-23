@@ -36,8 +36,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		private final ViewModeGlyph annotationGlyph;
 		private ViewModeGlyph lastUsedGlyph;
 		
-		public SemanticZoomGlyph(ITrackStyleExtended style, ViewModeGlyph depthGlyph, ViewModeGlyph annotationGlyph) {
+		public SemanticZoomGlyph(Object sym, ITrackStyleExtended style, ViewModeGlyph depthGlyph, ViewModeGlyph annotationGlyph) {
 			super();
+			super.setInfo(sym);
 			this.depthGlyph = depthGlyph;
 			this.annotationGlyph = annotationGlyph;
 			lastUsedGlyph = annotationGlyph;
@@ -186,6 +187,7 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void clearChildren() {
+			lastUsedGlyph.clearChildren();
 		}
 		@Override
 		public void draw(ViewI view)  {
@@ -194,12 +196,18 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void drawSelected(ViewI view) {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.drawSelected(view);
 		}
 		@Override
 		public void drawTraversal(ViewI view)  {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.drawTraversal(view);
 		}
 		@Override
 		public void getChildTransform(ViewI view, LinearTransform trans) {
+			lastUsedGlyph = getGlyph(view);
+			lastUsedGlyph.getChildTransform(view, trans);
 		}
 		@Override
 		public void moveAbsolute(double x, double y) {
@@ -223,7 +231,8 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void removeAllChildren() {
-			lastUsedGlyph.removeAllChildren();
+			depthGlyph.removeAllChildren();
+			annotationGlyph.removeAllChildren();
 		}
 		@Override
 		public void removeChild(GlyphI glyph)  {
@@ -231,6 +240,7 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void resetChildren() {
+			lastUsedGlyph.resetChildren();
 		}
 		@Override
 		public void select(double x, double y, double width, double height) {
@@ -252,17 +262,20 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setCoordBox(Rectangle2D.Double coordbox)   {
 			super.setCoordBox(coordbox);
-			lastUsedGlyph.setCoordBox(coordbox);
+			depthGlyph.setCoordBox(coordbox);
+			annotationGlyph.setCoordBox(coordbox);
 		}
 		@Override
 		public void setCoords(double x, double y, double width, double height)  {
 			super.setCoords(x, y, width, height);
-			lastUsedGlyph.setCoords(x, y, width, height);
+			depthGlyph.setCoordBox(super.getCoordBox());
+			annotationGlyph.setCoordBox(super.getCoordBox());
 		}
 		@Override
 		public void setDrawOrder(int order) {
 			super.setDrawOrder(order);
-			lastUsedGlyph.setDrawOrder(order);
+			depthGlyph.setDrawOrder(order);
+			annotationGlyph.setDrawOrder(order);
 		}
 		@Override
 		public void setFont(Font f) {
@@ -278,6 +291,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void setGlyphStyle(GlyphStyle glyphStyle) {
+			super.setGlyphStyle(glyphStyle);
+			depthGlyph.setGlyphStyle(glyphStyle);
+			annotationGlyph.setGlyphStyle(glyphStyle);
 		}
 		@Override
 		public void setInfo(Object info)  {
@@ -288,12 +304,14 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setMinimumPixelBounds(Dimension d)   {
 			super.setMinimumPixelBounds(d);
-			lastUsedGlyph.setMinimumPixelBounds(d);
+			depthGlyph.setMinimumPixelBounds(d);
+			annotationGlyph.setMinimumPixelBounds(d);
 		}
 		@Override
 		public void setOverlapped(boolean overlapped){
 			super.setOverlapped(overlapped);
-			lastUsedGlyph.setOverlapped(overlapped);
+			depthGlyph.setOverlapped(overlapped);
+			annotationGlyph.setOverlapped(overlapped);
 		}
 		@Override
 		public void setPacker(PackerI packer)  {
@@ -307,6 +325,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void setPixelBox(Rectangle pixelbox) {
+			super.setPixelBox(pixelbox);
+			depthGlyph.setPixelBox(pixelbox);
+			annotationGlyph.setPixelBox(pixelbox);
 		}
 		@Override
 		public void setScene(Scene s) {
@@ -330,12 +351,6 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 			depthGlyph.setVisibility(visible);
 			annotationGlyph.setVisibility(visible);
 		}
-
-
-
-		
-
-
 
 		// SolidGlyph methods
 		public void setHitable(boolean hitable) {
@@ -380,7 +395,7 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 			ITrackStyleExtended style, Direction tier_direction) {
 		depthGlyph = depthFactory.getViewModeGlyph(sym, style, tier_direction);
 		annotationGlyph = annotFactory.getViewModeGlyph(sym, style, tier_direction);
-		return new SemanticZoomGlyph(style, depthGlyph, annotationGlyph);
+		return new SemanticZoomGlyph(sym, style, depthGlyph, annotationGlyph);
 	}
 
 	@Override

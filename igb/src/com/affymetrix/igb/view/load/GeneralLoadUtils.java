@@ -836,11 +836,11 @@ public final class GeneralLoadUtils {
 					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
 				}
 			}
+			
 			if (spanWidth > 100000) {
 				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
-
 		}
 		return false;
 		//end max

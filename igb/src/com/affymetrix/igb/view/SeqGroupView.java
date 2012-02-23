@@ -174,7 +174,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Refresh seqtable if more chromosomes are added, for example.
 	 */
 	public void refreshTable() {
-		((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
+		((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
 	}
 
 	public void updateTableHeader() {
@@ -262,7 +262,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		if (DEBUG_EVENTS) {
 			System.out.println("####### GeneralLoadView received itemStateChanged event: " + evt);
 		}
-
 		try {
 			if ((src == speciesCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
 				speciesCBChanged(); // make sure display gets updated
@@ -277,10 +276,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	/**
-	 * The species combo box changed.
-	 * If the species changes to SELECT, the SelectedSeqGroup is set to null.
-	 * If the species changes to a specific organism and there's only one choice for the genome versionName, the SelectedSeqGroup is set to that versionName.
-	 * Otherwise, the SelectedSetGroup is set to null.
+	 * The species combo box changed. If the species changes to SELECT, the
+	 * SelectedSeqGroup is set to null. If the species changes to a specific
+	 * organism and there's only one choice for the genome versionName, the
+	 * SelectedSeqGroup is set to that versionName. Otherwise, the
+	 * SelectedSetGroup is set to null.
 	 */
 	private void speciesCBChanged() {
 		String speciesName = (String) speciesCB.getSelectedItem();
@@ -296,9 +296,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	/**
-	 * The versionName combo box changed.
-	 * This changes the selected group (either to null, or to a valid group).
-	 * It is assumed that at this point, the species is valid.
+	 * The versionName combo box changed. This changes the selected group
+	 * (either to null, or to a valid group). It is assumed that at this point,
+	 * the species is valid.
 	 */
 	private void versionCBChanged() {
 		String versionName = (String) versionCB.getSelectedItem();
@@ -408,8 +408,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	/**
-	 * This gets called when the genome versionName is changed.
-	 * This occurs via the combo boxes, or by an external event like bookmarks, or LoadFileAction
+	 * This gets called when the genome versionName is changed. This occurs via
+	 * the combo boxes, or by an external event like bookmarks, or
+	 * LoadFileAction
+	 *
 	 * @param evt
 	 */
 	public void versionNameChanged(GroupSelectionEvent evt) {
@@ -515,6 +517,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	/**
 	 * Changed the selected chromosome.
+	 *
 	 * @param evt
 	 */
 	public void chromosomeChanged(SeqSelectionEvent evt) {
@@ -555,8 +558,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		}
 
 		if (!(GeneralUtils.getPreferredVersionName(gVersions).equals(versionName))) {
-			/*System.out.println("ERROR - versions don't match: " + versionName + "," +
-			GeneralLoadUtils.getPreferredVersionName(gVersions));*/
+			/*
+			 * System.out.println("ERROR - versions don't match: " + versionName
+			 * + "," + GeneralLoadUtils.getPreferredVersionName(gVersions));
+			 */
 			return;
 		}
 
@@ -599,7 +604,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 				// TODO: refresh feature tree view if a version is selected
 				GeneralLoadView.getLoadView().refreshTreeView();
-				if(AutoLoadFeatureAction.getActionCB().isSelected()){
+				if (AutoLoadFeatureAction.getActionCB().isSelected()) {
 					GeneralLoadView.loadWholeRangeFeatures(null);
 				}
 			}
@@ -636,8 +641,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	/**
-	 * group has been created independently of the discovery process (probably by loading a file).
-	 * create new "unknown" species/versionName.
+	 * group has been created independently of the discovery process (probably
+	 * by loading a file). create new "unknown" species/versionName.
 	 */
 	private void createUnknownVersion(AnnotatedSeqGroup group) {
 		gmodel.removeGroupSelectionListener(this);
@@ -715,6 +720,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	/**
 	 * Refresh the genome versions.
+	 *
 	 * @param speciesName
 	 */
 	private void refreshVersionCB(final String speciesName) {
@@ -795,7 +801,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	/**
-	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
+	 * bootstrap bookmark from Preferences for last species/versionName/genome /
+	 * sequence / region
 	 */
 	private void RestorePersistentGenome() {
 		// Get group and seq info from persistent preferences.
@@ -858,7 +865,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			@Override
 			protected void finished() {
 				try {
-					if (Thread.currentThread().isInterrupted() || isCancelled()){
+					if (Thread.currentThread().isInterrupted() || isCancelled()) {
 						return;
 					}
 

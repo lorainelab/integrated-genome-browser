@@ -61,7 +61,9 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-
+		if (field == null || value == null) {
+			return null;
+		}
 		field.setText(value.toString());
 
 		return panel;

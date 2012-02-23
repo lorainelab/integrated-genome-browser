@@ -114,6 +114,12 @@ public class SeqGroupViewGUI extends IGBTabPanel {
             }
         });
 
+        speciesCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                speciesCBActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout speciesPanelLayout = new org.jdesktop.layout.GroupLayout(speciesPanel);
         speciesPanel.setLayout(speciesPanelLayout);
         speciesPanelLayout.setHorizontalGroup(
@@ -174,6 +180,10 @@ public class SeqGroupViewGUI extends IGBTabPanel {
 			this.setCursor(defaultCursor);
 		}
 	}//GEN-LAST:event_speciesPanelMouseMoved
+
+	private void speciesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesCBActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_speciesCBActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable currentSequenceTable;

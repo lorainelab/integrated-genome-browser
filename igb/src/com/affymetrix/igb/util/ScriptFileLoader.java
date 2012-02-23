@@ -36,7 +36,7 @@ import javax.swing.SwingWorker;
 public class ScriptFileLoader {
 
 	private static String splitter = "\\s";
-	
+
 	private static enum ExportMode {
 
 		MAIN("mainView"),
@@ -256,6 +256,9 @@ public class ScriptFileLoader {
 		}
 		if (action.equals("select") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().performSelection(join(fields, 1));
+		}
+		if (action.equals("selectfeature") && fields.length >= 2) {
+			UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(join(fields, 1));
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {

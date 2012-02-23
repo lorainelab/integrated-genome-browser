@@ -1,16 +1,18 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import furbelow.AbstractComponentDecorator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -62,6 +64,10 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		tutorialNavigator.setVisible(false);
 		tutorialDisplayed = false;
 		TweeningZoomAction.getAction();
+		initListeners();
+	}
+
+	private void initListeners() {
 		GenometryModel.getGenometryModel().addGroupSelectionListener(
 				new GroupSelectionListener() {
 
@@ -79,6 +85,27 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 						doWaitFor("groupSelectionChanged" + species + version);
 					}
 				});
+
+		igbService.addSpeciesItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent ie) {
+				if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
+					return;
+				}
+
+				String species = "";
+				species = "." + ie.getItem().toString();
+				doWaitFor("speciesSelectionChanged" + species);
+			}
+		});
+		igbService.addPartialResiduesActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				doWaitFor("LoadResidueAction");
+			}
+		});
 	}
 
 	public void setTutorialDisplayed(boolean tutorialDisplayed) {
@@ -281,6 +308,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	private void doWaitFor(String id) {
+		System.out.println(id);
 		if (id.equals(waitFor)) {
 			advanceStep();
 		} else {

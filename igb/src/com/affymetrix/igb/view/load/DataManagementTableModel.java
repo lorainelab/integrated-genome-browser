@@ -380,7 +380,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 
-	private void setVisibleTracks(ITrackStyle style) {
+	private void setVisibleTracks(ITrackStyleExtended style) {
 		if (style.getShow()) {
 			smv.getPopup().hideOneTier(style);
 		} else {

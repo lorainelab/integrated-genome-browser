@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -11,10 +11,11 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
-import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
-import com.affymetrix.igb.viewmode.TransformHolder;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
+import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,16 +47,13 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 
 	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
-		// TODO cannot access classes in packages outside igb.shared, FIX THIS
 		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
 	}
 
 	private Operator getOperator(String operator){
-		// TODO cannot access classes in packages outside igb.shared, FIX THIS
 		return TransformHolder.getInstance().getOperator(operator);
 	}
-			
-	
+
 	private void setViewModeGlyph(ITrackStyleExtended style, Direction direction) {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
@@ -100,7 +98,7 @@ public class TierGlyphViewMode extends TierGlyph {
 			viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
 		}
 	}
-	
+
 	@Override
 	public void setStyle(ITrackStyleExtended style) {
 		setStyleAndDirection(style, getDirection());

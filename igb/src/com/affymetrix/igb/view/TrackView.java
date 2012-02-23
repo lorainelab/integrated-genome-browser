@@ -24,7 +24,6 @@ import com.affymetrix.igb.shared.ExpandPacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyphViewMode;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -34,6 +33,7 @@ import com.affymetrix.igb.viewmode.CollapsedAnnotGlyphFactory;
 import com.affymetrix.igb.viewmode.ExpandedAnnotGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.SemanticZoomGlyphFactory;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.viewmode.TransformHolder;
 
 import java.util.ArrayList;

@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyphViewMode;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 

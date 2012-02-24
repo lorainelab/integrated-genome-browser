@@ -28,7 +28,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
  *
  * @author hiralv
  */
-public abstract class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
+public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 
 	/*
 	Algorithm for drawing probe-set-display data.
@@ -505,7 +505,7 @@ public abstract class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory category) {
-		return true;
+		return category == FileTypeCategory.ProbeSet;
 	}
 
 	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, TierGlyph.Direction tier_direction){
@@ -563,8 +563,17 @@ public abstract class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 		return null;
 	}
 	
+	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
+		this.gviewer = gviewer;
+	}
+		
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return gviewer;
+	}
+
+	@Override
+	public String getName() {
+		return "probeset";
 	}
 }

@@ -215,6 +215,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			if ("Coordinates".equals(t.getLabel())) {
 				return false;
 			}
+			if (t.getPacker() instanceof com.affymetrix.igb.shared.CollapsePacker) {
+				return false;
+			}
 			return true;
 		}
 		return false;

@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.viewmode.ExpandedAnnotGlyphFactory;
+import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -181,7 +181,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction) {
-		ViewModeGlyph viewModeGlyph = ExpandedAnnotGlyphFactory.getViewModeGlyph(style);
+		ViewModeGlyph viewModeGlyph = AnnotationGlyphFactory.getViewModeGlyph(style);
 		viewModeGlyph.setDirection(direction);
 		if (direction != TierGlyph.Direction.REVERSE) {
 			((FasterExpandPacker)viewModeGlyph.getPacker()).setMoveType(NeoConstants.UP);

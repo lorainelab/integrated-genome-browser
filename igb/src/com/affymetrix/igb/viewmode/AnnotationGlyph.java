@@ -4,12 +4,14 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
+import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.StyleGlyphI;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -25,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
+public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final float default_trans = 0.5f;
     private static final AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, default_trans);
@@ -49,23 +51,26 @@ public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph impl
 	private double spacer = 2;
 
 	private static final Font default_font = NeoConstants.default_plain_font;
+	private FasterExpandPacker expand_packer = new FasterExpandPacker();
+	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	
-	public AbstractAnnotationGlyph(ITrackStyleExtended style) {
+	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();
-		setPacker(createPacker());
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
 	}
 
-	protected abstract void setDepth();
-	protected abstract PackerI createPacker();
-
 	public void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
-		setDepth();
+		if (style.getCollapsed()) {
+			setPacker(collapse_packer);
+		} else {
+			setPacker(expand_packer);
+		}
+		setMaxExpandDepth(style.getMaxDepth());
 	}
 
 	private void initForSearching() {
@@ -148,7 +153,7 @@ public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph impl
 	@Override
 	public void pack(ViewI view, boolean manual) {
 		initForSearching();
-		setDepth();
+		setMaxExpandDepth(style.getMaxDepth());
 		super.pack(view, manual);
 		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
@@ -284,7 +289,8 @@ public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph impl
 
 	private void setSpacer(double spacer) {
 		this.spacer = spacer;
-		((PaddedPackerI) getPacker()).setParentSpacer(spacer);
+		((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
+		((PaddedPackerI) expand_packer).setParentSpacer(spacer);
 	}
 
 	// very, very deprecated
@@ -319,6 +325,20 @@ public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph impl
 	@Override
 	public Color getBackgroundColor() {
 		return getFillColor();
+	}
+
+	/** Changes the maximum depth of the expanded packer.
+	 *  This does not call pack() afterwards.
+	 */
+	private void setMaxExpandDepth(int max) {
+		expand_packer.setMaxSlots(max);
+	}
+
+	@Override
+	public int getActualSlots() {
+		if(getPacker() == expand_packer)
+			return expand_packer.getActualSlots();
+		return 1;
 	}
 
 	private double getSpacing() {
@@ -366,6 +386,14 @@ public abstract class AbstractAnnotationGlyph extends AbstractViewModeGlyph impl
 		}
 
 		return false;
+	}
+
+	@Override
+	public void setDirection(Direction d) {
+		super.setDirection(d);
+		if (direction != Direction.REVERSE) {
+			expand_packer.setMoveType(NeoConstants.UP);
+		}
 	}
 
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */

@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -47,6 +48,9 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 
 	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
+		if ("default".equals(viewMode) && modelSym != null) {
+			return MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
+		}
 		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
 	}
 
@@ -93,9 +97,16 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 
 	private void setStyleAndDirection(ITrackStyleExtended style, Direction direction){
+		ITrackStyleExtended saveStyle = this.style;
 		this.style = style;
 		if(!isSymLoaded()){
 			viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
+		}
+		else if (!saveStyle.getViewMode().equals(style.getViewMode())) {
+			setViewModeGlyph(style, direction);
+		}
+		else if (viewModeGlyph instanceof StyleGlyphI) {
+			((StyleGlyphI)viewModeGlyph).setStyle(style);
 		}
 	}
 

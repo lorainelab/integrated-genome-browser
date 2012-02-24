@@ -60,8 +60,9 @@ import com.affymetrix.igb.tiers.TrackConstants;
  *
  * @version $Id: GenericAnnotGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
-public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI {
+public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 
+	private final FileTypeCategory category;
 	private static final boolean DEBUG = false;
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
@@ -76,7 +77,8 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 	private Class<?> child_glyph_class;
 	private final Class<?> parent_labelled_glyph_class;
 
-	public AbstractAnnotGlyphFactory() {
+	public AnnotationGlyphFactory(FileTypeCategory category) {
+		this.category = category;
 		parent_glyph_class = default_eparent_class;
 		child_glyph_class = default_echild_class;
 		parent_labelled_glyph_class = default_elabelled_parent_class;
@@ -582,14 +584,15 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
-		if (category == FileTypeCategory.Annotation ||category == FileTypeCategory.Alignment){
-			return true;
-		}
-		return false;
+	public boolean isFileSupported(FileTypeCategory checkCategory) {
+		return (checkCategory == category);
 	}
 
-	protected abstract ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction tier_direction);
+	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction) {
+		ViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
+		viewModeGlyph.setDirection(direction);
+		return viewModeGlyph;
+	}
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction) {
@@ -601,19 +604,18 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 		else {
 			int glyph_depth = style.getGlyphDepth();
 
-			ViewModeGlyph[] tiers = new ViewModeGlyph[2];
 			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
-			tiers[0] = createViewModeGlyph(style, useDirection);
-			tiers[0].setInfo(sym);
-			tiers[1] = (tier_direction == Direction.BOTH) ? tiers[0] : createViewModeGlyph(style, Direction.REVERSE);
-			tiers[1].setInfo(sym);
+			ViewModeGlyph ftier = createViewModeGlyph(style, useDirection);
+			ftier.setInfo(sym);
+			ViewModeGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(style, Direction.REVERSE);
+			rtier.setInfo(sym);
 			if (style.getSeparate()) {
-				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+				addLeafsToTier(sym, ftier, rtier, glyph_depth);
 			} else {
 				// use only one tier
-				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
+				addLeafsToTier(sym, ftier, ftier, glyph_depth);
 			}
-			return (tier_direction == Direction.REVERSE) ? tiers[1] : tiers[0];
+			return (tier_direction == Direction.REVERSE) ? rtier : ftier;
 		}
 //		else {  // keep recursing down into child syms if parent sym has no "method" property
 //			int childCount = sym.getChildCount();
@@ -622,5 +624,15 @@ public abstract class AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI 
 //				createGlyph(childSym, gviewer);
 //			}
 //		}
+	}
+
+	@Override
+	public String getName() {
+		return "annotation";
+	}
+
+	// for GenericGraphGlyphFactory, can be removed when that is removed
+	public static ViewModeGlyph getViewModeGlyph(ITrackStyleExtended style) {
+		return new AnnotationGlyph(style);
 	}
 }

@@ -12,18 +12,22 @@
  */
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.viewmode.AbstractAnnotGlyphFactory;
+import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 
 /**
  *
  * @version $Id$
  */
-public final class GenericAnnotGlyphFactory extends AbstractAnnotGlyphFactory implements MapViewGlyphFactoryI {
+public final class GenericAnnotGlyphFactory extends AnnotationGlyphFactory implements MapViewGlyphFactoryI {
+	public GenericAnnotGlyphFactory() {
+		super(null);
+	}
 	@Override
 	public String getName() {
 		return "annotation";
@@ -31,5 +35,10 @@ public final class GenericAnnotGlyphFactory extends AbstractAnnotGlyphFactory im
 	@Override
 	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction tier_direction) {
 		return null;
+	}
+
+	@Override
+	public boolean isFileSupported(FileTypeCategory checkCategory) {
+		return true;
 	}
 }

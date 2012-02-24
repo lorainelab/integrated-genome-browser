@@ -28,11 +28,7 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.AbstractGraphGlyphFactory;
-import com.affymetrix.igb.viewmode.CollapsedAnnotGlyphFactory;
-import com.affymetrix.igb.viewmode.ExpandedAnnotGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
-import com.affymetrix.igb.viewmode.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.viewmode.TransformHolder;
 

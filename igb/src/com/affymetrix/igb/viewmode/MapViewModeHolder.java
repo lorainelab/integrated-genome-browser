@@ -28,12 +28,12 @@ public class MapViewModeHolder {
 		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
 		
 		// Add annot factories
-		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
-		expandedAnnotGlyphFactory.setSeqMapView(seqMapView);
-		addViewFactory(expandedAnnotGlyphFactory);
-		CollapsedAnnotGlyphFactory collapsedAnnotGlyphFactory = new CollapsedAnnotGlyphFactory();
-		collapsedAnnotGlyphFactory.setSeqMapView(seqMapView);
-		addViewFactory(collapsedAnnotGlyphFactory);
+		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Annotation);
+		annotationGlyphFactory.setSeqMapView(seqMapView);
+		addViewFactory(annotationGlyphFactory);
+		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
+		alignmentGlyphFactory.setSeqMapView(seqMapView);
+		addViewFactory(alignmentGlyphFactory);
 		
 		// Add graph factories
 		BarGraphGlyphFactory barGraphGlyphFactory = new BarGraphGlyphFactory();
@@ -64,15 +64,15 @@ public class MapViewModeHolder {
 		addViewFactory(mismatch);
 		
 		// Add Default factories
-		addDefaultFactory(FileTypeCategory.Annotation, expandedAnnotGlyphFactory);
+		addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
 
 		// Add depth factories
 		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, expandedAnnotGlyphFactory));
+		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, alignmentGlyphFactory));
 		OperatorGlyphFactory annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(annotationDepthFactory, expandedAnnotGlyphFactory));
+		addViewFactory(new SemanticZoomGlyphFactory(annotationDepthFactory, annotationGlyphFactory));
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

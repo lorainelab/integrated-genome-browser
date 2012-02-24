@@ -46,8 +46,8 @@ public class ExportFileAction extends GenericAction {
 		fileExporters.put(FileTypeCategory.Alignment, new AlignmentFileExporter());
 		fileExporters.put(FileTypeCategory.Graph, new GraphFileExporter());
 		fileExporters.put(FileTypeCategory.Sequence, new SequenceFileExporter());
-//		fileExporters.put(FileTypeCategory.Variant, null);
-		fileExporters.put(FileTypeCategory.Mismatch, new MismatchFileExporter());
+//		fileExporters.put(FileTypeCategory.Variant, null); // vcf ???
+//		fileExporters.put(FileTypeCategory.Mismatch, new MismatchFileExporter()); // wait until tally format is finalized
 	}
 	public static ExportFileAction getAction() {
 		return ACTION;

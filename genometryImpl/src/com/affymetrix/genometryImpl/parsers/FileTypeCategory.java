@@ -6,5 +6,7 @@ public enum FileTypeCategory {
 	Graph,
 	Sequence,
 	Variant,
-	Mismatch
+	Mismatch,
+	ProbeSet,
+	ScoredContainer
 }

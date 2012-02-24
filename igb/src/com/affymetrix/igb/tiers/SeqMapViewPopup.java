@@ -87,6 +87,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
 
+	private final Action save_track_action = ExportFileAction.getAction();
 	private final Action rename_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -362,42 +363,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		@Override
 		public String getText() {
 			return BUNDLE.getString("mismatchPileupAction");
-		}
-	};
-	private final Action save_bed_action = new GenericAction() {
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			saveAsBedFile(current_tier);
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("saveBEDAction");
-		}
-	};
-	private final Action save_wig_action = new GenericAction() {
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			saveAsWigFile(current_tier);
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("saveWIGAction");
 		}
 	};
 	private final Action maximize_track_action = new GenericAction() {
@@ -1139,8 +1104,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			//sym_summarize_single_action.setEnabled(is_annotation_type);
 			//coverage_action.setEnabled(is_annotation_type);
 			//save_menu.setEnabled(is_annotation_type);
-			save_bed_action.setEnabled(is_annotation_type);
-			save_wig_action.setEnabled(!is_annotation_type);
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_maximize = true;
 			}
@@ -1214,8 +1177,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
 			//coverage_action.setEnabled(false);
-			save_bed_action.setEnabled(false);
-			save_wig_action.setEnabled(false);
 		}
 
 		changeMenu.removeAll();
@@ -1232,12 +1193,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_off_action);
 		popup.add(customize_action);
 		popup.add(changeMenu);
-		popup.add(strandsMenu);
 		popup.add(viewModeMenu);
 		popup.add(transformMenu);
 		popup.add(new JSeparator());
 		popup.add(hide_action);
 		popup.add(showMenu);
+		strandsMenu.removeAll();
+		strandsMenu.add(at1);
+		strandsMenu.add(at2);
+		popup.add(strandsMenu);
 		popup.add(show_all_action);
 		popup.add(new JSeparator());
 		popup.add(CenterAtHairlineAction.getAction());
@@ -1262,14 +1226,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		popup.add(repack_tracks_action);
 		popup.add(delete_action);
 		popup.add(new JSeparator());
-		if(save_bed_action.isEnabled()){
-			popup.add(save_bed_action);
-		}else if(save_wig_action.isEnabled()){
-			popup.add(save_wig_action);
-		}
-		strandsMenu.removeAll();
-		strandsMenu.add(at1);
-		strandsMenu.add(at2);
+		popup.add(save_track_action);		
 //	strandsMenu.add(at3);
 		
 				

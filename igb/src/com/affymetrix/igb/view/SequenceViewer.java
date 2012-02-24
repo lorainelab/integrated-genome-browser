@@ -97,6 +97,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 		this.getTitle();
+		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
@@ -104,7 +105,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		Dimension dim = new Dimension(600,400);
 		seqview.setPreferredSize(dim);
 		mapframe.setPreferredSize(dim);
-		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());
+		
 	}
 /* This method is used for returning the desired coloring scheme, at present there are two color schemes
  * for the text
@@ -151,7 +152,10 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			}
 		} else {
 			residues_sym = seqmapview.getSeqSymmetry();
-			this.isGenomicRequest = true;
+			if(residues_sym!= null)
+				this.isGenomicRequest = false;
+			else
+				this.isGenomicRequest = true;
 		}
 /*This loads the reads for the selection in IGB if they are not already loaded
  *
@@ -433,6 +437,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		addFormattedResidues();
 
 		mapframe.pack();
+		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
 

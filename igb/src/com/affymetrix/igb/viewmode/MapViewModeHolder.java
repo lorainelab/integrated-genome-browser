@@ -60,6 +60,34 @@ public class MapViewModeHolder {
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
 		
+		// ProbeSet factory
+		ProbeSetGlyphFactory probeSet = new ProbeSetGlyphFactory();
+		probeSet.setSeqMapView(seqMapView);
+		addViewFactory(probeSet);
+		
+		// Add ScoredContainer factories
+		ScoredContainerGlyphFactory scoredBar = new ScoredContainerGlyphFactory(barGraphGlyphFactory);
+		scoredBar.setSeqMapView(seqMapView);
+		addViewFactory(scoredBar);
+		ScoredContainerGlyphFactory scoredDot = new ScoredContainerGlyphFactory(dotGraphGlyphFactory);
+		scoredDot.setSeqMapView(seqMapView);
+		addViewFactory(scoredDot);
+		ScoredContainerGlyphFactory scoredFillBar = new ScoredContainerGlyphFactory(fillBarGraphGlyphFactory);
+		scoredFillBar.setSeqMapView(seqMapView);
+		addViewFactory(scoredFillBar);
+		ScoredContainerGlyphFactory scoredHeatMap = new ScoredContainerGlyphFactory(heatMapGraphGlyphFactory);
+		scoredHeatMap.setSeqMapView(seqMapView);
+		addViewFactory(scoredHeatMap);
+		ScoredContainerGlyphFactory scoredLine = new ScoredContainerGlyphFactory(lineGraphGlyphFactory);
+		scoredLine.setSeqMapView(seqMapView);
+		addViewFactory(scoredLine);
+		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(minMaxAvgGraphGlyphFactory);
+		scoredMinMaxAvg.setSeqMapView(seqMapView);
+		addViewFactory(scoredMinMaxAvg);
+		ScoredContainerGlyphFactory scoredStairStep = new ScoredContainerGlyphFactory(stairStepGraphGlyphFactory);
+		scoredStairStep.setSeqMapView(seqMapView);
+		addViewFactory(scoredStairStep);
+		
 		// Add mismatch factories
 		MismatchGlyphFactory mismatch = new MismatchGlyphFactory();
 		mismatch.setSeqMapView(seqMapView);
@@ -69,7 +97,9 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
-
+		addDefaultFactory(FileTypeCategory.ProbeSet, scoredStairStep);
+		addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
+		
 		// Add depth factories
 		SemanticZoomRule defaultRule = new SemanticZoomRule() {
 			private static final double ZOOM_X_SCALE = 0.002;

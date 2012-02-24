@@ -103,7 +103,7 @@ public class TierGlyphViewMode extends TierGlyph {
 		if(!isSymLoaded()){
 			viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
 		}
-		else if (!saveStyle.getViewMode().equals(style.getViewMode())) {
+		else if (saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
 			setViewModeGlyph(style, direction);
 		}
 		else if (viewModeGlyph instanceof StyleGlyphI) {

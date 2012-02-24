@@ -79,6 +79,7 @@ public final class TierLabelManager implements PropertyHolder {
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
+		boolean manualResizingAllowed = false; // temporary switch until resizing works well.
 		
 		
 		/**
@@ -115,11 +116,16 @@ public final class TierLabelManager implements PropertyHolder {
 		public void mouseMoved(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				if (atResizeTop(nevt)) {
-					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-				}
-				else if (atResizeBottom(nevt)) {
-					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+				if (this.manualResizingAllowed) {
+					if (atResizeTop(nevt)) {
+						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+					}
+					else if (atResizeBottom(nevt)) {
+						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+					}
+					else {
+						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					}
 				}
 				else {
 					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -155,20 +161,20 @@ public final class TierLabelManager implements PropertyHolder {
 				if (!selected_glyphs.isEmpty()) {
 					topgl = selected_glyphs.get(selected_glyphs.size() - 1);
 				}
-				TierLabelGlyph upperGl = null;
-				TierLabelGlyph lowerGl = null;
-				List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-				int index = orderedGlyphs.indexOf(topgl);
-				List<TierLabelGlyph> resizeRegion = null;
-				if (atResizeTop(nevt)) {
-					resizeRegion = pertinentTiers(index-1, index, orderedGlyphs);
-				}
-				else if (atResizeBottom(nevt)) {
-					resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
-				}
-				if (null != resizeRegion && 1 < resizeRegion.size()) {
-					resizeBorder(resizeRegion, nevt);
-					return;
+				if (manualResizingAllowed) {
+					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+					int index = orderedGlyphs.indexOf(topgl);
+					List<TierLabelGlyph> resizeRegion = null;
+					if (atResizeTop(nevt)) {
+						resizeRegion = pertinentTiers(index-1, index, orderedGlyphs);
+					}
+					else if (atResizeBottom(nevt)) {
+						resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
+					}
+					if (null != resizeRegion && 1 < resizeRegion.size()) {
+						resizeBorder(resizeRegion, nevt);
+						return;
+					}
 				}
 				// Dispatch track selection event
 				//doTrackSelection(topgl);

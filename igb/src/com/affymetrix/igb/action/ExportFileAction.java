@@ -59,8 +59,13 @@ public class ExportFileAction extends GenericAction {
 		if (current_tiers.size() > 1) {
 			ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
 		}
-		TierGlyph current_tier = (TierGlyph)current_tiers.get(0);
-		saveAsFile(current_tier);
+		else if (current_tiers.size() == 0) {
+			ErrorHandler.errorPanel(BUNDLE.getString("noTrackError"));
+		}
+		else {
+			TierGlyph current_tier = (TierGlyph)current_tiers.get(0);
+			saveAsFile(current_tier);
+		}
 	}
 
 	private void saveAsFile(TierGlyph atier) {

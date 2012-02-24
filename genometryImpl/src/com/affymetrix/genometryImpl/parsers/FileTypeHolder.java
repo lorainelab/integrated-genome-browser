@@ -164,7 +164,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("Binary", new String[]{"brpt"}, FileTypeCategory.Annotation, BrptParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Binary", new String[]{"brs"}, FileTypeCategory.Annotation, BrsParser.class, SymLoaderInst.class);
 		addFileTypeHandler("Binary", new String[]{"bsnp"}, FileTypeCategory.Annotation, BsnpParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Graph", new String[]{"chp"}, FileTypeCategory.Graph, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
+		addFileTypeHandler("Graph", new String[]{"chp"}, FileTypeCategory.ScoredContainer, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
 		addFileTypeHandler("Copy Number", new String[]{"cnt"}, FileTypeCategory.Graph, CntParser.class, SymLoaderInst.class);
 		addFileTypeHandler("Cytobands", new String[]{"cyt"}, FileTypeCategory.Annotation, CytobandParser.class, SymLoaderInst.class);
 		addFileTypeHandler("DAS", new String[]{Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, "das2feature", "das2xml", "x-das-feature"}, FileTypeCategory.Annotation, Das2FeatureSaxParser.class, SymLoaderInstNC.class);
@@ -273,8 +273,8 @@ public class FileTypeHolder {
 					}
 				}
 			);
-		addFileTypeHandler("Scored Interval", new String[]{"sin", "egr", "egr.txt"}, FileTypeCategory.Graph, ScoredIntervalParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Scored Map", new String[]{"map"}, FileTypeCategory.Graph, ScoredMapParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Scored Interval", new String[]{"sin", "egr", "egr.txt"}, FileTypeCategory.ScoredContainer, ScoredIntervalParser.class, SymLoaderInstNC.class);
+		addFileTypeHandler("Scored Map", new String[]{"map"}, FileTypeCategory.ScoredContainer, ScoredMapParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Regions", new String[]{SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, FileTypeCategory.Annotation, SegmenterRptParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Graph", new String[]{"sgr"}, FileTypeCategory.Graph, SgrParser.class, Sgr.class);
 		addFileTypeHandler(".2bit", new String[]{"2bit"}, FileTypeCategory.Sequence, TwoBitParser.class, TwoBit.class);

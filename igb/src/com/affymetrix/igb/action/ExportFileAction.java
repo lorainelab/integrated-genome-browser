@@ -14,6 +14,7 @@ import javax.swing.JFileChooser;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.parsers.AlignmentFileExporter;
 import com.affymetrix.genometryImpl.parsers.AnnotationFileExporter;
 import com.affymetrix.genometryImpl.parsers.FileExporterI;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -42,7 +43,7 @@ public class ExportFileAction extends GenericAction {
 	private static final Map<FileTypeCategory, FileExporterI> fileExporters = new HashMap<FileTypeCategory, FileExporterI>();
 	static {
 		fileExporters.put(FileTypeCategory.Annotation, new AnnotationFileExporter());
-		fileExporters.put(FileTypeCategory.Alignment, new AnnotationFileExporter());
+		fileExporters.put(FileTypeCategory.Alignment, new AlignmentFileExporter());
 		fileExporters.put(FileTypeCategory.Graph, new GraphFileExporter());
 		fileExporters.put(FileTypeCategory.Sequence, new SequenceFileExporter());
 //		fileExporters.put(FileTypeCategory.Variant, null);

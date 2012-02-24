@@ -183,7 +183,7 @@ public class WrapSequence extends WrapGlyph {
 			first_visible_residue + start_line_num * residues_per_line;
 		int last_beg_index =
 			first_visible_residue + end_line_num * residues_per_line;
-
+		
 		for ( line_beg_index = first_beg_index;
 				line_beg_index <= last_beg_index;
 				line_beg_index += residues_per_line ) {

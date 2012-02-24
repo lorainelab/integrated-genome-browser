@@ -200,7 +200,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected int residue_stripe_width = 10;
 
 	protected NeoMap num_map;
-	protected int num_map_pixel_width;
+	protected int num_map_pixel_width = 0;
 
 	protected Font residue_font;
 
@@ -228,7 +228,7 @@ public class NeoSeq extends NeoContainerWidget
 	 */
 	private int preferredWidthInResidues = 0;
 	private int preferredHeightInLines = 0;
-
+	
 	protected boolean residues_selected = false;
 
 	protected boolean widget_ready = false;
@@ -237,7 +237,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	protected int scroll_increment;
 	private final ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
-
+	protected int offset=0;
 	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 	public NeoSeq() {
@@ -670,6 +670,10 @@ public class NeoSeq extends NeoContainerWidget
 		throw new IllegalArgumentException(
 				"can only getPlacement of an AXIS_SCROLLER, RESIDUES, or NUMBERS.");
 	}
+	public void setOffset(int inc)
+	{
+		offset=inc;
+	}
 
 	@Override
 	public void doLayout() {
@@ -701,7 +705,7 @@ public class NeoSeq extends NeoContainerWidget
 
 		if (num_loc == PLACEMENT_LEFT) {
 			// Have to fix the residue_height first!
-			num_width = num_map_pixel_width;
+			num_width = num_map_pixel_width + offset;
 
 			// next set dimensions of residue_map
 			residue_x = num_width;
@@ -709,14 +713,14 @@ public class NeoSeq extends NeoContainerWidget
 			residue_width = dim.width - scroll_size - num_width;
 			residue_height = dim.height;
 			residue_map_pixel_width = residue_width;
-
-			num_x = 0;
+			
+			num_x = 5;
 			num_y = 0;
 			num_height = dim.height;
 		}
 		else if (num_loc == PLACEMENT_RIGHT) {
 			// Have to fix the residue_height first!
-			num_width = num_map_pixel_width;
+			num_width = num_map_pixel_width - offset;
 
 			// next set dimensions of residue_map
 			residue_x = 0;
@@ -778,7 +782,7 @@ public class NeoSeq extends NeoContainerWidget
 		//      changed, no reshape is called
 		Rectangle bbox = residue_map.getBounds();
 		bbox = num_map.getBounds();
-		residue_map.setBounds(residue_x, residue_y, residue_width, residue_height);
+		residue_map.setBounds(residue_x+10, residue_y, residue_width, residue_height);
 		num_map.setBounds(num_x, num_y, num_width, num_height);
 
 		bbox = offsetComp.getBounds();

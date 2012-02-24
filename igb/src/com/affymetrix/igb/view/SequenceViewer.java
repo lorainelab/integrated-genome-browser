@@ -101,11 +101,10 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
-		mapframe.add("Center", seqview);
 		Dimension dim = new Dimension(600,400);
 		seqview.setPreferredSize(dim);
 		mapframe.setPreferredSize(dim);
-		
+		mapframe.add("Center",seqview);
 	}
 /* This method is used for returning the desired coloring scheme, at present there are two color schemes
  * for the text
@@ -471,6 +470,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 				return selectedResidues;
 			}
 		};
+		seqview.setOffset(10);
 		seqview.enableDragScrolling(true);
 		seqview.addKeyListener(new KeyAdapter() {
 

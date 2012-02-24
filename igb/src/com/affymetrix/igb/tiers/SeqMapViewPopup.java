@@ -1126,8 +1126,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
 		
-		JMenu save_menu = new JMenu("Save Track");
-
+		
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
 
@@ -1219,7 +1218,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
 			//coverage_action.setEnabled(false);
-			save_menu.setEnabled(false);
 			save_bed_action.setEnabled(false);
 			save_wig_action.setEnabled(false);
 		}
@@ -1264,12 +1262,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(expand_action);
 //		popup.add(change_expand_max_action);
 		popup.add(new JSeparator());
-
-		popup.add(save_menu);
 		if(save_bed_action.isEnabled()){
-			save_menu.add(save_bed_action);
+			popup.add(save_bed_action);
 		}else if(save_wig_action.isEnabled()){
-			save_menu.add(save_wig_action);
+			popup.add(save_wig_action);
 		}
 		
 		popup.add(new JSeparator());

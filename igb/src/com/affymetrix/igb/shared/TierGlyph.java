@@ -515,8 +515,9 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		float slot_size = getActualSlots();
 		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
 
-		if(useLabel())
+		if(useLabel()) {
 			height = height / 2;
+		}
 
 		double percent = ((height * 100)/style.getHeight() - 100)/100;
 		style.setHeight(height);

@@ -75,11 +75,11 @@ public class MapViewModeHolder {
 			private static final double ZOOM_X_SCALE = 0.002;
 			@Override
 			public String chooseViewMode(ViewI view) {
-				return view.getTransform().getScaleX() < ZOOM_X_SCALE ? "depth" : "expanded";
+				return view.getTransform().getScaleX() < ZOOM_X_SCALE ? "Annotation depth" : "annotation";
 			}
 			@Override
 			public String getName() {
-				return "default";
+				return "semantic zoom";
 			}
 		};
 //		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);

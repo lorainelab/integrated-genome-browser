@@ -77,6 +77,7 @@ public class TierGlyphViewMode extends TierGlyph {
 				}
 			}
 			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
+			viewModeGlyph.setCoordBox(super.getCoordBox()); // so all use the same coordbox
 		}
 		setStyleAndDirection(style, direction);
 	}
@@ -327,10 +328,12 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public void setCoordBox(Rectangle2D.Double coordbox)   {
+		super.setCoordBox(coordbox);
 		viewModeGlyph.setCoordBox(coordbox);
 	}
 	@Override
 	public void setCoords(double x, double y, double width, double height)  {
+		super.setCoords(x, y, width, height);
 		viewModeGlyph.setCoords(x, y, width, height);
 	}
 	@Override

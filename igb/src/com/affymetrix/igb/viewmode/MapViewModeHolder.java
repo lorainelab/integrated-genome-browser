@@ -38,25 +38,25 @@ public class MapViewModeHolder {
 		addViewFactory(alignmentGlyphFactory);
 		
 		// Add graph factories
-		BarGraphGlyphFactory barGraphGlyphFactory = new BarGraphGlyphFactory();
+		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
 		barGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(barGraphGlyphFactory);
-		DotGraphGlyphFactory dotGraphGlyphFactory = new DotGraphGlyphFactory();
+		GraphGlyphFactory dotGraphGlyphFactory = new GraphGlyphFactory(DotGraphGlyph.class);
 		dotGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(dotGraphGlyphFactory);
-		FillBarGraphGlyphFactory fillBarGraphGlyphFactory = new FillBarGraphGlyphFactory();
+		GraphGlyphFactory fillBarGraphGlyphFactory = new GraphGlyphFactory(FillBarGraphGlyph.class);
 		fillBarGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(fillBarGraphGlyphFactory);
-		HeatMapGraphGlyphFactory heatMapGraphGlyphFactory = new HeatMapGraphGlyphFactory();
+		GraphGlyphFactory heatMapGraphGlyphFactory = new GraphGlyphFactory(HeatMapGraphGlyph.class);
 		heatMapGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(heatMapGraphGlyphFactory);
-		LineGraphGlyphFactory lineGraphGlyphFactory = new LineGraphGlyphFactory();
+		GraphGlyphFactory lineGraphGlyphFactory = new GraphGlyphFactory(LineGraphGlyph.class);
 		lineGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(lineGraphGlyphFactory);
-		MinMaxAvgGraphGlyphFactory minMaxAvgGraphGlyphFactory = new MinMaxAvgGraphGlyphFactory();
+		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
 		addViewFactory(minMaxAvgGraphGlyphFactory);
 		minMaxAvgGraphGlyphFactory.setSeqMapView(seqMapView);
-		StairStepGraphGlyphFactory stairStepGraphGlyphFactory = new StairStepGraphGlyphFactory();
+		GraphGlyphFactory stairStepGraphGlyphFactory = new GraphGlyphFactory(StairStepGraphGlyph.class);
 		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(stairStepGraphGlyphFactory);
 		

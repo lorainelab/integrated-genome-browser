@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.igb.shared.ResidueColorHelper;
-import com.affymetrix.igb.viewmode.FillBarGraphGlyphFactory.FillBarGraphGlyph;
 
 import java.awt.Color;
 import java.awt.Graphics;

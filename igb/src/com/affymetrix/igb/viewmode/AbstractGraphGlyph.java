@@ -138,11 +138,13 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	public float[] copyYCoords() {
 		return graf.normalizeGraphYCoords();
 	}
-
+	
 	public AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		this.graf = graf;
-		setStyle(gstate.getTierStyle());
+		if(gstate != null){
+			setStyle(gstate.getTierStyle());
+		}
 		state = gstate;
 
 		if (graf == null || graf.getPointCount() == 0) {
@@ -346,6 +348,8 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 
 	}
 
+	public abstract String getName();
+	
 	protected abstract void doBigDraw(Graphics g, GraphSym graphSym,
 		Point curr_x_plus_width, Point max_x_plus_width,
 		float ytemp, int draw_end_index, int i

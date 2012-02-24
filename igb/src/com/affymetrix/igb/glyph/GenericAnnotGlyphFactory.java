@@ -39,6 +39,6 @@ public final class GenericAnnotGlyphFactory extends AnnotationGlyphFactory imple
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory checkCategory) {
-		return true;
+		return (checkCategory == FileTypeCategory.Annotation || checkCategory == FileTypeCategory.Alignment);
 	}
 }

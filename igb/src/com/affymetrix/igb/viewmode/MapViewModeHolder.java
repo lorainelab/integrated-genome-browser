@@ -1,11 +1,13 @@
 
 package com.affymetrix.igb.viewmode;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -69,10 +71,21 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
 
 		// Add depth factories
-		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, alignmentGlyphFactory));
+		SemanticZoomRule defaultRule = new SemanticZoomRule() {
+			private static final double ZOOM_X_SCALE = 0.002;
+			@Override
+			public String chooseViewMode(ViewI view) {
+				return view.getTransform().getScaleX() < ZOOM_X_SCALE ? "depth" : "expanded";
+			}
+			@Override
+			public String getName() {
+				return "default";
+			}
+		};
+//		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);
+//		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, alignmentGlyphFactory));
 		OperatorGlyphFactory annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(annotationDepthFactory, annotationGlyphFactory));
+		addViewFactory(new SemanticZoomGlyphFactory(Arrays.asList(new MapViewGlyphFactoryI[]{annotationDepthFactory, annotationGlyphFactory}), defaultRule));
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

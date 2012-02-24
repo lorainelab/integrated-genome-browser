@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,29 +25,27 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements MapViewGlyphFactoryI {
 	private SeqMapViewExtendedI smv;
-	private final MapViewGlyphFactoryI depthFactory;
-	private final MapViewGlyphFactoryI annotFactory;
-	private ViewModeGlyph depthGlyph;
-	private ViewModeGlyph annotationGlyph;
+	private List<MapViewGlyphFactoryI> factories;
+	private SemanticZoomRule rule;
 
 	// glyph class
 	private class SemanticZoomGlyph extends AbstractViewModeGlyph {
-		private static final double ZOOM_X_SCALE = 0.002;
-		private final ViewModeGlyph depthGlyph;
-		private final ViewModeGlyph annotationGlyph;
+		private SemanticZoomRule rule;
+		private Map<String, ViewModeGlyph> viewModeGlyphs;
 		private ViewModeGlyph lastUsedGlyph;
 		
-		public SemanticZoomGlyph(Object sym, ITrackStyleExtended style, ViewModeGlyph depthGlyph, ViewModeGlyph annotationGlyph) {
+		public SemanticZoomGlyph(Object sym, ITrackStyleExtended style, SemanticZoomRule rule, Map<String, ViewModeGlyph> viewModeGlyphs) {
 			super();
 			super.setInfo(sym);
-			this.depthGlyph = depthGlyph;
-			this.annotationGlyph = annotationGlyph;
-			lastUsedGlyph = annotationGlyph;
+			this.rule = rule;
+			this.viewModeGlyphs = viewModeGlyphs;
+			lastUsedGlyph = viewModeGlyphs.values().iterator().next();
 			setStyle(style);
 		}
 
 		private ViewModeGlyph getGlyph(ViewI view) {
-			return view.getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : annotationGlyph;
+			String viewMode = rule.chooseViewMode(view);
+			return viewModeGlyphs.get(viewMode);
 		}
 
 		@Override
@@ -63,8 +62,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setFillColor(Color col) {
 			super.setFillColor(col);
-			depthGlyph.setFillColor(col);
-			annotationGlyph.setFillColor(col);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setFillColor(col);
+			}
 		}
 
 		// Glyph methods
@@ -231,8 +231,9 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		}
 		@Override
 		public void removeAllChildren() {
-			depthGlyph.removeAllChildren();
-			annotationGlyph.removeAllChildren();
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.removeAllChildren();
+			}
 		}
 		@Override
 		public void removeChild(GlyphI glyph)  {
@@ -250,68 +251,79 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setBackgroundColor(Color color)  {
 			super.setBackgroundColor(color);
-			depthGlyph.setBackgroundColor(color);
-			annotationGlyph.setBackgroundColor(color);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setBackgroundColor(color);
+			}
 		}
 		@Override
 		public void setColor(Color color)  {
 			super.setColor(color);
-			depthGlyph.setColor(color);
-			annotationGlyph.setColor(color);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setColor(color);
+			}
 		}
 		@Override
 		public void setCoordBox(Rectangle2D.Double coordbox)   {
 			super.setCoordBox(coordbox);
-			depthGlyph.setCoordBox(coordbox);
-			annotationGlyph.setCoordBox(coordbox);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setCoordBox(coordbox);
+			}
 		}
 		@Override
 		public void setCoords(double x, double y, double width, double height)  {
 			super.setCoords(x, y, width, height);
-			depthGlyph.setCoordBox(super.getCoordBox());
-			annotationGlyph.setCoordBox(super.getCoordBox());
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setCoordBox(super.getCoordBox());
+			}
 		}
 		@Override
 		public void setDrawOrder(int order) {
 			super.setDrawOrder(order);
-			depthGlyph.setDrawOrder(order);
-			annotationGlyph.setDrawOrder(order);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setDrawOrder(order);
+			}
 		}
 		@Override
 		public void setFont(Font f) {
 			super.setFont(f);
-			depthGlyph.setFont(f);
-			annotationGlyph.setFont(f);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setFont(f);
+			}
 		}
 		@Override
 		public void setForegroundColor(Color color)  {
 			super.setForegroundColor(color);
-			depthGlyph.setForegroundColor(color);
-			annotationGlyph.setForegroundColor(color);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setForegroundColor(color);
+			}
 		}
 		@Override
 		public void setGlyphStyle(GlyphStyle glyphStyle) {
 			super.setGlyphStyle(glyphStyle);
-			depthGlyph.setGlyphStyle(glyphStyle);
-			annotationGlyph.setGlyphStyle(glyphStyle);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setGlyphStyle(glyphStyle);
+			}
 		}
 		@Override
 		public void setInfo(Object info)  {
 			super.setInfo(info);
-			depthGlyph.setInfo(info);
-			annotationGlyph.setInfo(info);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setInfo(info);
+			}
 		}
 		@Override
 		public void setMinimumPixelBounds(Dimension d)   {
 			super.setMinimumPixelBounds(d);
-			depthGlyph.setMinimumPixelBounds(d);
-			annotationGlyph.setMinimumPixelBounds(d);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setMinimumPixelBounds(d);
+			}
 		}
 		@Override
 		public void setOverlapped(boolean overlapped){
 			super.setOverlapped(overlapped);
-			depthGlyph.setOverlapped(overlapped);
-			annotationGlyph.setOverlapped(overlapped);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setOverlapped(overlapped);
+			}
 		}
 		@Override
 		public void setPacker(PackerI packer)  {
@@ -320,65 +332,76 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 		@Override
 		public void setParent(GlyphI glyph)  {
 			super.setParent(glyph);
-			depthGlyph.setParent(glyph);
-			annotationGlyph.setParent(glyph);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setParent(glyph);
+			}
 		}
 		@Override
 		public void setPixelBox(Rectangle pixelbox) {
 			super.setPixelBox(pixelbox);
-			depthGlyph.setPixelBox(pixelbox);
-			annotationGlyph.setPixelBox(pixelbox);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setPixelBox(pixelbox);
+			}
 		}
 		@Override
 		public void setScene(Scene s) {
 			super.setScene(s);
-			depthGlyph.setScene(s);
-			annotationGlyph.setScene(s);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setScene(s);
+			}
 		}
 		@Override
 		public void setSelectable(boolean selectability) {
 			super.setSelectable(selectability);
-			annotationGlyph.setSelectable(selectability);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setSelectable(selectability);
+			}
 		}
 		@Override
 		public void setSelected(boolean selected) {
 			super.setSelected(selected);
-			annotationGlyph.setSelected(selected);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setSelected(selected);
+			}
 		}
 		@Override
 		public void setVisibility(boolean visible)  {
 			super.setVisibility(visible);
-			depthGlyph.setVisibility(visible);
-			annotationGlyph.setVisibility(visible);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setVisibility(visible);
+			}
 		}
 
 		// SolidGlyph methods
 		public void setHitable(boolean hitable) {
 			super.setHitable(hitable);
-			depthGlyph.setHitable(hitable);
-			annotationGlyph.setHitable(hitable);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setHitable(hitable);
+			}
 		}
 
 		// TierGlyph methods
 		@Override
 		public void setDirection(Direction d) {
 			super.setDirection(d);
-			depthGlyph.setDirection(d);
-			annotationGlyph.setDirection(d);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setDirection(d);
+			}
 		}
 		@Override
 		public void setLabel(String str) {
 			super.setLabel(str);
-			depthGlyph.setLabel(str);
-			annotationGlyph.setLabel(str);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setLabel(str);
+			}
 		}
 	}
 	// end glyph class
 
-	public SemanticZoomGlyphFactory(MapViewGlyphFactoryI depthFactory, MapViewGlyphFactoryI annotFactory) {
+	public SemanticZoomGlyphFactory(List<MapViewGlyphFactoryI> factories, SemanticZoomRule rule) {
 		super();
-		this.depthFactory = depthFactory;
-		this.annotFactory = annotFactory;
+		this.factories = factories;
+		this.rule = rule;
 	}
 
 	@Override
@@ -393,19 +416,26 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction tier_direction) {
-		depthGlyph = depthFactory.getViewModeGlyph(sym, style, tier_direction);
-		annotationGlyph = annotFactory.getViewModeGlyph(sym, style, tier_direction);
-		return new SemanticZoomGlyph(sym, style, depthGlyph, annotationGlyph);
+		Map<String, ViewModeGlyph> viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
+		for (MapViewGlyphFactoryI factory : factories) {
+			ViewModeGlyph ViewModeGlyph = factory.getViewModeGlyph(sym, style, tier_direction);
+			viewModeGlyphs.put(factory.getName(), ViewModeGlyph);
+		}
+		return new SemanticZoomGlyph(sym, style, rule, viewModeGlyphs);
 	}
 
 	@Override
 	public String getName() {
-		return "semantic zoom " + depthFactory.getName(); // default for annotations
+		return "semantic zoom " + rule.getName();
 	}
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory category) {
-		return depthFactory.isFileSupported(category) && annotFactory.isFileSupported(category);
+		boolean fileSupported = true;
+		for (MapViewGlyphFactoryI factory : factories) {
+			fileSupported &= factory.isFileSupported(category);
+		}
+		return fileSupported;
 	}
 	
 	public void setSeqMapView(SeqMapViewExtendedI gviewer) {

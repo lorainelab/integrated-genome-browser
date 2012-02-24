@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -18,6 +20,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 /**
  *
@@ -80,30 +83,27 @@ public class EmptyTierGlyphFactory {
 		TierGlyph[] tiers = new TierGlyph[2];
 				
 		double height = style.getHeight();
-		String viewmode = TrackUtils.getInstance().useViewMode(style.getMethodName());
-		if(!style.isGraphTier()){
-			if (viewmode != null) {
-				if(setViewMode){
-					style.setViewMode(viewmode);
-				}
-				tiers[0] = gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
+		if (TrackUtils.getInstance().useViewMode(style.getMethodName())) {
+			if(setViewMode){
+				FileTypeCategory category = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName()).getFileTypeCategory();
+				String viewmode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category).getName();
+				style.setViewMode(viewmode);
+			}
+			if(!style.isGraphTier()){
+				gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
 				if (style.getSeparate()) {
-					tiers[1] = gviewer.getTrack(null, style, Direction.REVERSE);
+					gviewer.getTrack(null, style, Direction.REVERSE);
 				}
-				return;
+			}else {
+				gviewer.getTrack(null, style, Direction.NONE);
 			}
-			else {
+			return;
+		}
+		else {
+			if(!style.isGraphTier()){
 				tiers = gviewer.getTiers(style, true);
-			}
-			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-		}else {
-			if(viewmode != null){
-				if(setViewMode){
-					style.setViewMode(viewmode);
-				}
-				tiers[0] = gviewer.getTrack(null, style, Direction.NONE);
-				return;
-			} else {
+				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
+			}else {
 				tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
 			}
 		}

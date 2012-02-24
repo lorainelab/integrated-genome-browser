@@ -282,7 +282,7 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 		} else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
 			currentTiers = smv.getSeqMap().getTiers(); //improve later
 			for (TierGlyph tier : currentTiers) {
-				if (vFeature.getStyle() != null
+				if (vFeature.getStyle() != null && tier.isVisible()
 						&& tier.getAnnotStyle().getMethodName() != null) {
 					if (tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
 							vFeature.getStyle().getMethodName()))//need changed

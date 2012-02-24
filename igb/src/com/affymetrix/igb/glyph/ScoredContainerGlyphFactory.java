@@ -16,9 +16,9 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.igb.viewmode.AbstractGraphGlyph;
-import com.affymetrix.igb.viewmode.ScoredGlyphFactory;
+import com.affymetrix.igb.viewmode.AbstractScoredContainerGlyphFactory;
 
-public final class ScoredContainerGlyphFactory extends ScoredGlyphFactory {
+public final class ScoredContainerGlyphFactory extends AbstractScoredContainerGlyphFactory {
 
 	@Override
 	public String getName() {

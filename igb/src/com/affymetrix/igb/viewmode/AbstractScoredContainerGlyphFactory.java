@@ -31,7 +31,7 @@ import com.affymetrix.igb.view.TrackView;
  *
  * @author hiralv
  */
-public abstract class ScoredGlyphFactory implements MapViewGlyphFactoryI {
+public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
 
 	private static final boolean DEBUG = false;
@@ -260,8 +260,7 @@ public abstract class ScoredGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory category) {
-		//TODO Fix This
-		return true;
+		return category == FileTypeCategory.ScoredContainer;
 	}
 		
 	public boolean isFileSupported(String fileFormat) {

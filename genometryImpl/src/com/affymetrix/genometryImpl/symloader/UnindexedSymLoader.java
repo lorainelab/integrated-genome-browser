@@ -200,7 +200,9 @@ public abstract class UnindexedSymLoader extends SymLoader {
 				
 				if (!chrTrack.containsKey(seq_name)) {
 					chrTrack.put(seq_name, true);
-					bw.write(trackLine + "\n");
+					if (trackLine != null) {
+						bw.write(trackLine + "\n");
+					}
 				}
 				
 				bw.write(line + "\n");

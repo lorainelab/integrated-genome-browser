@@ -128,6 +128,15 @@ public class TrackView {
 			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
 			seqmap.addTier(tierGlyph, above_axis);
 		}
+		
+		if (!style.isGraphTier() && (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD)) {
+			if(style.getSeparate()){
+				tierGlyph.setDirection(TierGlyph.Direction.FORWARD);
+			}else{
+				tierGlyph.setDirection(TierGlyph.Direction.BOTH);
+			}
+		}
+		
 		return tierGlyph;
 	}
 

@@ -253,6 +253,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public IGBTabPanel getTabPanel(String viewName) {
 		return ((IGB) IGB.getSingleton()).getView(viewName);
 	}
+	
+	//Easier for scripting if we don't require full name.
+	@Override
+	public IGBTabPanel getTabPanelFromDisplayName(String viewName) {
+		return ((IGB) IGB.getSingleton()).getViewByDisplayName(viewName);
+	}
 
 	@Override
 	public void selectTab(IGBTabPanel panel) {

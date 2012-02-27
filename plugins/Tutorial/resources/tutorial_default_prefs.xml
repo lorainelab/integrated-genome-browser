@@ -10,7 +10,7 @@
                     <map/>
                     <node name="tutorials">
                         <map>
-                            <entry key="Genentech" value="http://localhost/tutorials"/>
+                            <entry key="Genentech" value="http://localhost:8888/tutorials/"/>
                         </map>
                     </node>
                 </node>

@@ -292,11 +292,6 @@ public class ScriptFileLoader {
 				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
 			}
 		}
-
-//		if (action.startsWith("navigate")) {
-//			action = action.substring(8, action.length());
-//
-//		}
 	}
 
 	/**

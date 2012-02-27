@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb;
 
@@ -78,7 +75,7 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 /**
- *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
+ * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  *
  * @version $Id$
  */
@@ -133,7 +130,7 @@ public final class IGB extends Application
 		// But it also may take away some things, like resizing buttons, that the
 		// user is used to in their operating system, so leave as false.
 		JFrame.setDefaultLookAndFeelDecorated(false);
-			
+
 		// if this is != null, then the user-requested l-and-f has already been applied
 		if (System.getProperty("swing.defaultlaf") == null) {
 			String os = System.getProperty("os.name");
@@ -146,7 +143,7 @@ public final class IGB extends Application
 					if (look_and_feel.isSupportedLookAndFeel()) {
 						LookAndFeelFactory.installJideExtension();
 						// Is there a better way to do it? HV 03/02/12
-						for(Entry<Object,Object> obj : look_and_feel.getDefaults().entrySet()){
+						for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
 							UIManager.getDefaults().put(obj.getKey(), obj.getValue());
 						}
 						UIManager.setLookAndFeel(look_and_feel);
@@ -315,9 +312,9 @@ public final class IGB extends Application
 
 	/**
 	 * This will instantiate a custom trust manager to handle untrusted
-	 * certificates when connecting to a DAS/2 server over HTTPS.  (In
-	 * normal situations where the server has a trusted certificate,
-	 * this code is not invoked.)
+	 * certificates when connecting to a DAS/2 server over HTTPS. (In normal
+	 * situations where the server has a trusted certificate, this code is not
+	 * invoked.)
 	 */
 	private void initCustomTrustManager() {
 		TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -354,9 +351,9 @@ public final class IGB extends Application
 	public IGBTabPanel[] setWindowService(final IWindowService windowService) {
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
-		
+
 		windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
-		
+
 		windowService.setStatusBar(status_bar);
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
@@ -364,15 +361,15 @@ public final class IGB extends Application
 //		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(getMenu("view"));
 		windowService.setMenuCreator(
-			new IMenuCreator() {
-				@Override
-				public JMenuBar createMenu(String id) {
-					JMenuBar menubar = new JMenuBar();
-					IGBUtils.loadMenu(menubar, id);
-					return menubar;
-				}
-			}
-		);
+				new IMenuCreator() {
+
+					@Override
+					public JMenuBar createMenu(String id) {
+						JMenuBar menubar = new JMenuBar();
+						IGBUtils.loadMenu(menubar, id);
+						return menubar;
+					}
+				});
 		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
 	}
 
@@ -387,9 +384,11 @@ public final class IGB extends Application
 		tool_bar.add(button);
 	}
 
-	/** Returns the icon stored in the jar file.
-	 *  It is expected to be at com.affymetrix.igb.igb.gif.
-	 *  @return null if the image file is not found or can't be opened.
+	/**
+	 * Returns the icon stored in the jar file. It is expected to be at
+	 * com.affymetrix.igb.igb.gif.
+	 *
+	 * @return null if the image file is not found or can't be opened.
 	 */
 	public Image getIcon() {
 		ImageIcon imageIcon = CommonUtils.getInstance().getIcon("images/igb.gif");
@@ -429,9 +428,17 @@ public final class IGB extends Application
 			props.put("match", matcher.group(0));
 			props.put("pattern", regex.pattern());
 
-			GlyphI gl = new FillRectGlyph(){
-				@Override public void moveAbsolute(double x, double y){};
-				@Override public void moveRelative(double diffx, double diffy){};
+			GlyphI gl = new FillRectGlyph() {
+
+				@Override
+				public void moveAbsolute(double x, double y) {
+				}
+
+				;
+				@Override
+				public void moveRelative(double diffx, double diffy) {
+				}
+			;
 			};
 			gl.setInfo(props);
 			gl.setColor(hitColor);
@@ -467,6 +474,18 @@ public final class IGB extends Application
 	public IGBTabPanel getView(String viewName) {
 		for (IGBTabPanel plugin : windowService.getPlugins()) {
 			if (plugin.getClass().getName().equals(viewName)) {
+				return plugin;
+			}
+		}
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
+		return null;
+	}
+
+	//Easier for scripting if we don't require full name.
+	//This method only take display name of a tab instead of full package+classname
+	public IGBTabPanel getViewByDisplayName(String viewName) {
+		for (IGBTabPanel plugin : windowService.getPlugins()) {
+			if (plugin.getDisplayName().equals(viewName)) {
 				return plugin;
 			}
 		}

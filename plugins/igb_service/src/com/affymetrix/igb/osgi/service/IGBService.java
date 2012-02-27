@@ -174,4 +174,6 @@ public interface IGBService {
 	public void addSpeciesItemListener(ItemListener il);
 
 	public void addPartialResiduesActionListener(ActionListener al);
+	
+	public IGBTabPanel getTabPanelFromDisplayName(String viewName); 
 }

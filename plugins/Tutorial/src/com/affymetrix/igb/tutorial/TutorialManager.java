@@ -5,7 +5,9 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.*;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import furbelow.AbstractComponentDecorator;
@@ -179,6 +181,9 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (step.getScript() != null) {
 			IGBScriptAction.executeScriptAction(step.getScript());
 		}
+		if (step.getTab() != null) {
+			setTab(step.getTab());
+		}
 		if (step.getHighlight() != null) {
 			if (!highlightWidget(step.getHighlight())) {
 				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, unable to find widget " + step.getHighlight());
@@ -255,6 +260,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		if (step.getHighlight() != null) {
 			unhighlightWidget(step.getHighlight());
 		}
+
 		waitFor = null;
 		stepIndex++;
 		nextStep();
@@ -308,7 +314,6 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	private void doWaitFor(String id) {
-		System.out.println(id);
 		if (id.equals(waitFor)) {
 			advanceStep();
 		} else {
@@ -321,11 +326,16 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
 	@Override
 	public void actionDone(GenericAction action) {
-		advanceStep();
+		//	advanceStep();
 		action.removeDoneCallback(this);
 	}
 
 	public void loadState() {
 		igbService.loadState();
+	}
+
+	private void setTab(String tab) {
+		IGBTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
+		igbService.selectTab(panel);
 	}
 }

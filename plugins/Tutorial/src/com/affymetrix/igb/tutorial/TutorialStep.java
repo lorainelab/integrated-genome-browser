@@ -38,11 +38,20 @@ public class TutorialStep {
 	private String trigger;
 	private String waitFor;
 	private TutorialExecute execute;
+	private String tab;
 	private TutorialStep[] subTutorial;
 	private String script;
 
 	public String getText() {
 		return text;
+	}
+
+	public String getTab() {
+		return tab;
+	}
+
+	public void setTab(String tab) {
+		this.tab = tab;
 	}
 
 	public void setText(String text) {

@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -51,6 +52,7 @@ public class TrackUtils {
 			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		} else {
 			style.copyPropertiesFrom(preferredStyle);
+			style.setGlyphDepth(SeqUtils.getDepth(sym) - 1);
 		}
 		style.setTrackName(human_name);
 		return style;

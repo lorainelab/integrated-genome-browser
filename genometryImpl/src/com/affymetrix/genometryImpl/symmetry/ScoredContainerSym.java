@@ -20,6 +20,7 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -30,7 +31,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
  *  {@link IndexedSym}.
  *  Assumes that ScoredContainerSym has only one SeqSpan
  */
-public class ScoredContainerSym extends SimpleSymWithProps {
+public class ScoredContainerSym extends RootSeqSymmetry {
 	private final Map<String,Object> name2scores = new HashMap<String,Object>();
 	private final List<Object> scorevals = new ArrayList<Object>();
 	private final List<String> scorenames = new ArrayList<String>();
@@ -282,5 +283,10 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		style.setExpandable(true);
 		style.setCollapsed(false);
 		return style;
+	}
+
+	@Override
+	public FileTypeCategory getCategory() {
+		return FileTypeCategory.ScoredContainer;
 	}
 }

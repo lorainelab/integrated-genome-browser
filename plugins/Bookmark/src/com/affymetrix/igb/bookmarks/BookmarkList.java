@@ -190,7 +190,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 	/** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
 	 *  format.  Microsoft IE can also read this format.
 	 */
-	public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
+	 public static void exportAsHTML(BookmarkList list, File fil, String appName, String appVersion) throws IOException {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
@@ -218,7 +218,49 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			}
 		}
 	}
-
+	public static void exportAsTEXT(BookmarkList list, File fil, String appName, String appVersion) throws IOException{
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+		try {
+			fw = new FileWriter(fil);
+			bw = new BufferedWriter(fw);
+			bw.write("Bookmarks\n");
+			exportAsTEXT_recursive(list, bw, "\t");
+			bw.write("\n");
+			bw.close();
+		} finally {
+			if (bw != null) {
+				bw.close();
+			}
+			if (fw != null) {
+				fw.close();
+			}
+		}
+	}
+	// Used by exportAsNetscapeHTML
+	private static void exportAsTEXT_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
+		@SuppressWarnings("unchecked")
+		Enumeration<BookmarkList> e = list.children();
+		while (e.hasMoreElements()) {
+			BookmarkList btn = e.nextElement();
+			Object o = btn.getUserObject();
+			if (o instanceof String) {
+				bw.write(indent + " " + o + " "+btn.getComment()+"\n");
+				bw.write(indent + "\n");
+				exportAsTEXT_recursive(btn, bw, indent + "\t");
+				bw.write(indent + "\n");
+			} else if (o instanceof Bookmark) {
+				Bookmark bm = (Bookmark) o;
+				bw.write(bm.getName());
+				bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
+				bw.write(indent +""+ bm.getURL().toExternalForm() + "\"");
+				bw.write("\n");
+			} else if (o instanceof Separator) {
+				bw.write(indent + "\n");
+			}
+		}
+	}
 	// Used by exportAsNetscapeHTML
 	private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
 		// Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes

@@ -21,6 +21,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -264,14 +265,22 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				setLoadDirectory(chooser.getCurrentDirectory());
 				File fil = chooser.getSelectedFile();
 				String full_path = fil.getCanonicalPath();
-
-				if ((!full_path.endsWith(".html"))
-						&& (!full_path.endsWith(".htm"))
-						&& (!full_path.endsWith(".xhtml"))) {
-					fil = new File(full_path + ".html");
+				if(chooser.getFileFilter().getDescription().equals("HTML Files (*.html, *.htm, *.xhtml)")){
+					if ((!full_path.endsWith(".html"))
+							&& (!full_path.endsWith(".htm"))
+							&& (!full_path.endsWith(".xhtml"))) {
+						fil = new File(full_path + ".html");
+					}
+					BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
 				}
-
-				BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+				else if(chooser.getFileFilter().getDescription().equals("TEXT Files (*.txt)")){
+					if ((!full_path.endsWith(".txt")))
+					{
+						fil = new File(full_path + ".txt");
+					}
+					BookmarkList.exportAsTEXT(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+				}
+				
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
 			}
@@ -450,8 +459,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			static_chooser = new JFileChooser();
 			static_chooser.setCurrentDirectory(getLoadDirectory());
 			UniFileFilter filter = new UniFileFilter(
-					new String[]{"html", "htm", "xhtml"}, "HTML Files");
+					new String[]{"html", "htm", "xhtml" }, "HTML Files");
+			UniFileFilter tfilter = new UniFileFilter(
+					new String[]{"txt"}, "TEXT Files");
 			static_chooser.addChoosableFileFilter(filter);
+			static_chooser.addChoosableFileFilter(tfilter);
 		}
 		static_chooser.rescanCurrentDirectory();
 		return static_chooser;

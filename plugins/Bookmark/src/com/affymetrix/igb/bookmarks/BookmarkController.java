@@ -473,7 +473,7 @@ public abstract class BookmarkController {
 
 		String version = "unknown";
 		version = aseq.getVersion();
-
+		
 		String default_name =
 				version + ", " + aseq.getID() + ":" + mark_span.getMin()
 				+ ", " + mark_span.getMax();

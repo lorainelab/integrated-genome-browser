@@ -628,7 +628,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public String getName() {
-		return "annotation";
+		return category.name().toLowerCase();
 	}
 
 	// for GenericGraphGlyphFactory, can be removed when that is removed

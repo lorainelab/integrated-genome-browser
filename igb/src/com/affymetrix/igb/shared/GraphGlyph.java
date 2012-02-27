@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.viewmode.AbstractGraphGlyph;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -50,7 +51,7 @@ import java.text.AttributedString;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public class GraphGlyph extends Glyph {
+public class GraphGlyph extends AbstractGraphGlyph {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 
@@ -76,7 +77,6 @@ public class GraphGlyph extends Glyph {
 	private static final int pointer_width = 10;
 	private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
-	private final GraphState state;
 	private final LinearTransform scratch_trans = new LinearTransform();
 
 	// specified in coords_per_pixel
@@ -139,8 +139,7 @@ public class GraphGlyph extends Glyph {
 	}
 
 	public GraphGlyph(GraphSym graf, GraphState gstate) {
-		super();
-		state = gstate;
+		super(gstate);
 
 		setCoords(getCoordBox().x, state.getTierStyle().getY(), getCoordBox().width, state.getTierStyle().getHeight());
 
@@ -511,7 +510,7 @@ public class GraphGlyph extends Glyph {
 		draw_handle = b;
 	}
 	
-	private void drawAxisLabel(ViewI view) {
+	protected void drawAxisLabel(ViewI view) {
 		if (GraphState.isHeatMapStyle(getGraphStyle())) {
 			return;
 		}
@@ -918,7 +917,7 @@ public class GraphGlyph extends Glyph {
 	}
 
 
-	private void drawSmart(ViewI view) {
+	protected void drawSmart(ViewI view) {
 		if (getGraphStyle() == GraphType.MINMAXAVG || getGraphStyle() == GraphType.FILL_BAR_GRAPH) {
 			// could size cache to just the view's pixelbox, but then may end up creating a
 			//   new int array every time the pixelbox changes (which with view damage or
@@ -1312,7 +1311,7 @@ public class GraphGlyph extends Glyph {
 	 * @param width
 	 * @param height
 	 */
-	private static void drawRectOrLine(Graphics g, int x, int y, int width, int height) {
+	protected static void drawRectOrLine(Graphics g, int x, int y, int width, int height) {
 		if (width <= 0 || height <= 0) {
 			return;
 		}
@@ -1484,6 +1483,17 @@ public class GraphGlyph extends Glyph {
 			return getVisibleMinY();
 		}
 		return Math.min(0, getVisibleMaxY());
+	}
+
+	@Override
+	public String getName() {
+		return "";
+	}
+
+	@Override
+	protected void doBigDraw(Graphics g, GraphSym graphSym,
+			Point curr_x_plus_width, Point max_x_plus_width, float ytemp,
+			int draw_end_index, int i) {
 	}
 }
 

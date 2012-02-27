@@ -144,6 +144,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 		return graf.normalizeGraphYCoords();
 	}
 	
+	public AbstractGraphGlyph(GraphState state) {
+		super();
+		this.state = state;
+	}
+	
 	public AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		this.graf = graf;

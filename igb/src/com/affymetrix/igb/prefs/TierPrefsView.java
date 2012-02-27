@@ -850,7 +850,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 							smv.getSeqMap().repackTheTiers(true, true, false);
 						}
 
-						if (col == COL_TRACK_NAME || col == COL_BACKGROUND) {
+						if (col == COL_TRACK_NAME) {
 							smv.getSeqMap().setTierLabels();
 						}
 

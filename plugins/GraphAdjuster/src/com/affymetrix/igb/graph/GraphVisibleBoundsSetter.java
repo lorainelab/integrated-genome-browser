@@ -30,7 +30,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
@@ -79,8 +79,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//   value at which (i * sliders_per_percent) percent of the y values in the graph
 	//   are below v
 	// assuming abs_min_percent = 0, abs_max_percent = 100, so total_percent = 100
-	// Using glyph's data model instead of glyph itself because GraphGlyph may get
-	//    recreated from data model, but still want new GraphGlyph to hash to same
+	// Using glyph's data model instead of glyph itself because AbstractGraphGlyph may get
+	//    recreated from data model, but still want new AbstractGraphGlyph to hash to same
 	//    cached percent-to-score array
 	//TODO:
 	// WARNING!  this caching currently causes a persistent reference to
@@ -91,7 +91,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//    desire to avoid recalculation of percent-to-score array (which requires a
 	//    sort) every time a graph is selected...
 	private final Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
-	private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+	private final List<AbstractGraphGlyph> graphs = new ArrayList<AbstractGraphGlyph>();
 
 	/*
 	 *  Now trying to map slider values to percentages, such that each slider
@@ -118,10 +118,10 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private static final boolean show_min_and_max = false;
 	private boolean includePercentileControls = true;
 	public ButtonGroup by_val_group = new ButtonGroup();
-	static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
+	static GraphVisibleBoundsSetter showFramedThresholder(AbstractGraphGlyph sgg, NeoAbstractWidget widg) {
 		//    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
 		GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-		List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
+		List<AbstractGraphGlyph> glist = new ArrayList<AbstractGraphGlyph>();
 		glist.add(sgg);
 		thresher.setGraphs(glist);
 		JFrame frm = new JFrame(SimpleGraphTab.BUNDLE.getString("graphPercentileAdjuster"));
@@ -207,14 +207,14 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	}
 
 	/**
-	 *  Set the set of graphs to the given List of GraphGlyph objects.
+	 *  Set the set of graphs to the given List of AbstractGraphGlyph objects.
 	 */
-	public void setGraphs(List<GraphGlyph> newgraphs) {
+	public void setGraphs(List<AbstractGraphGlyph> newgraphs) {
 		turnOffListening();
 		graphs.clear();
 		int gcount = newgraphs.size();
 		for (int i = 0; i < gcount; i++) {
-			GraphGlyph gl = newgraphs.get(i);
+			AbstractGraphGlyph gl = newgraphs.get(i);
 			graphs.add(gl);
 		}
 
@@ -266,7 +266,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		} else {
 
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float min = gl.getGraphMinY();
 				float max = gl.getGraphMaxY();
 				float vismin = gl.getVisibleMinY();
@@ -343,7 +343,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			avg_of_vismins = avg_of_vismaxes = 0;
 		} else {
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float vismin_val = gl.getVisibleMinY();
 				float vismax_val = gl.getVisibleMaxY();
 				float vismin_per = getPercentForValue(gl, vismin_val);
@@ -527,7 +527,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float avg_of_mins = 0;
 			// set values
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float min_per = getPercentForValue(gl, val);
 				min_of_mins = Math.min(min_per, min_of_mins);
 				max_of_mins = Math.max(min_per, max_of_mins);
@@ -570,7 +570,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float max_of_maxes = Float.NEGATIVE_INFINITY;
 			float avg_of_maxes = 0;
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float max_per = getPercentForValue(gl, val);
 				min_of_maxes = Math.min(max_per, min_of_maxes);
 				max_of_maxes = Math.max(max_per, max_of_maxes);
@@ -624,7 +624,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float avg_of_mins = 0;
 			// set percentages
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float min_val = getValueForPercent(gl, percent);
 				min_of_mins = Math.min(min_val, min_of_mins);
 				max_of_mins = Math.max(min_val, max_of_mins);
@@ -682,7 +682,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float max_of_maxes = Float.NEGATIVE_INFINITY;
 			float avg_of_maxes = 0;
 			for (int i = 0; i < gcount; i++) {
-				GraphGlyph gl = graphs.get(i);
+				AbstractGraphGlyph gl = graphs.get(i);
 				float max_val = getValueForPercent(gl, percent);
 				min_of_maxes = Math.min(max_val, min_of_maxes);
 				max_of_maxes = Math.max(max_val, max_of_maxes);
@@ -715,7 +715,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	 *  Gets the percents2scores array for the given graph, creating the array
 	 *  if necessary.
 	 */
-	private float[] getPercents2Scores(GraphGlyph gl) {
+	private float[] getPercents2Scores(AbstractGraphGlyph gl) {
 		Object info = gl.getInfo();
 		if (info == null) {
 			System.err.println("Graph has no info! " + gl);
@@ -730,7 +730,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		return p2score;
 	}
 
-	float getValueForPercent(GraphGlyph gl, float percent) {
+	float getValueForPercent(AbstractGraphGlyph gl, float percent) {
 		float[] percent2score = getPercents2Scores(gl);
 		int index = Math.round(percent * sliders_per_percent);
 
@@ -745,7 +745,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		return percent2score[index];
 	}
 
-	float getPercentForValue(GraphGlyph gl, float value) {
+	float getPercentForValue(AbstractGraphGlyph gl, float value) {
 		float percent = Float.NEGATIVE_INFINITY;
 		float[] percent2score = getPercents2Scores(gl);
 		// do a binary search through percent2score array to find percent bin closest to value

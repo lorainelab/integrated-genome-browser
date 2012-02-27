@@ -3,6 +3,7 @@ package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 
 /**
  *

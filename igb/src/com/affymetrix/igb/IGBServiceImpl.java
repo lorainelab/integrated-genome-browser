@@ -46,6 +46,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -319,10 +320,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		annot_style.setCollapsed(true);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
-		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>) graph_glyphs);
+		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List) graph_glyphs);
 		if (graphSym != null) {
 			getSeqMapView().setAnnotatedSeq(graphSym.getGraphSeq(), true, true);
 		}

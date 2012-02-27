@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
+import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;

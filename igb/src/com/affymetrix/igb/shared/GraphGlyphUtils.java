@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.viewmode.AbstractGraphGlyph;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -60,8 +59,8 @@ public final class GraphGlyphUtils {
 	}
 
 	/**
-	 * Identical to above, except for new version of GraphGlyph. Remove the above
-	 * when completely converted to new version of GraphGlyph.
+	 * Identical to above, except for new version of AbstractGraphGlyph. Remove the above
+	 * when completely converted to new version of AbstractGraphGlyph.
 	 * @param gl the graph glyph to check
 	 * @param map the map (AffyTieredMap)
 	 */
@@ -97,7 +96,7 @@ public final class GraphGlyphUtils {
 	 *   the other must also.)
 	 *  @return null if the graphs are comparable, or an explanation string if they are not.
 	 */
-	public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
+	public static String graphsAreComparable(AbstractGraphGlyph graphA, AbstractGraphGlyph graphB) {
 		// checking that both graphs are non-null
 		if (graphA == null || graphB == null) {
 			return "Must select exactly two graphs";
@@ -155,7 +154,7 @@ public final class GraphGlyphUtils {
 	 * @param gviewer the SeqMapView
 	 * @return GraphSym
 	 */
-	public static GraphSym doOperateGraphs(GraphOperator operator, List<GraphGlyph> graph_glyphs) {
+	public static GraphSym doOperateGraphs(GraphOperator operator, List<AbstractGraphGlyph> graph_glyphs) {
 		GraphSym newsym = null;
 		if (graph_glyphs.size() >= operator.getOperandCountMin() && graph_glyphs.size() <= operator.getOperandCountMax()) {
 			newsym = performOperation(graph_glyphs, operator);
@@ -180,7 +179,7 @@ public final class GraphGlyphUtils {
 	 * @param operator the GraphOperator to use
 	 * @return the graph result of the operation
 	 */
-	private static GraphSym performOperation(List<GraphGlyph> graphs, GraphOperator operator) {
+	private static GraphSym performOperation(List<AbstractGraphGlyph> graphs, GraphOperator operator) {
 		// get the x, y, and w (width) coordinates of the graphs int Lists
 		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<ArrayList<Integer>>();
 		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<ArrayList<Integer>>();
@@ -189,7 +188,7 @@ public final class GraphGlyphUtils {
 		int[] index = new int[graphs.size()];
 		ArrayList<String> labels = new ArrayList<String>();
 		for (int i = 0; i < graphs.size(); i++) {
-			GraphGlyph graph = graphs.get(i);
+			AbstractGraphGlyph graph = graphs.get(i);
 			index[i] = 0;
 			int[] xArray = graph.getXCoords();
 			ArrayList<Integer> xCoordList = new ArrayList<Integer>();

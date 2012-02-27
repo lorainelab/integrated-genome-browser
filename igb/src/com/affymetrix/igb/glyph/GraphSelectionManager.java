@@ -46,6 +46,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
@@ -55,6 +56,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.igb.view.SeqMapView;
+
 import java.awt.geom.Rectangle2D;
 
 
@@ -550,7 +552,8 @@ public final class GraphSelectionManager
     	      new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					GraphSym sym = GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs);
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					GraphSym sym = GraphGlyphUtils.doOperateGraphs(graphOperator, (List<AbstractGraphGlyph>)(List)selected_graph_glyphs);
 					if (sym != null) {
 						gviewer.setAnnotatedSeq(sym.getGraphSeq(), true, true);
 					}

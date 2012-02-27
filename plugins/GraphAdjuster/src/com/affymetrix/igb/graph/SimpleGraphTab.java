@@ -49,6 +49,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -92,7 +93,7 @@ public final class SimpleGraphTab
 	public com.jidesoft.combobox.ColorComboBox bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 	public JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
 	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
-	public final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+	public final List<AbstractGraphGlyph> glyphs = new ArrayList<AbstractGraphGlyph>();
 	public final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
 	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
@@ -261,12 +262,14 @@ public final class SimpleGraphTab
 		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
 
 		// Take the first glyph in the list as a prototype
-		GraphGlyph first_glyph = null;
+		AbstractGraphGlyph first_glyph = null;
 		GraphType graph_style = GraphType.LINE_GRAPH;
 		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
-			graph_style = first_glyph.getGraphStyle();
+			if (first_glyph instanceof GraphGlyph) {
+				graph_style = ((GraphGlyph)first_glyph).getGraphStyle();
+			}
 			if (graph_style == GraphType.HEAT_MAP) {
 				hm = first_glyph.getHeatMap();
 			}
@@ -281,7 +284,7 @@ public final class SimpleGraphTab
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (GraphGlyph gl : glyphs) {
+		for (AbstractGraphGlyph gl : glyphs) {
 			all_are_floating = all_are_floating && gl.getGraphState().getFloatGraph();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
@@ -289,7 +292,10 @@ public final class SimpleGraphTab
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
 
-			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+			if (graph_style == null) {
+				graph_style = GraphType.LINE_GRAPH;
+			}
+			else if (first_glyph instanceof GraphGlyph && gl instanceof GraphGlyph && ((GraphGlyph)first_glyph).getGraphStyle() != ((GraphGlyph)gl).getGraphStyle()) {
 				graph_style = GraphType.LINE_GRAPH;
 			}
 			if (graph_style == GraphType.HEAT_MAP) {
@@ -307,7 +313,7 @@ public final class SimpleGraphTab
 			GraphSym graf_0 = grafs.get(0);
 			selected_graphs_label.setText(graf_0.getGraphName());
 			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
-			GraphGlyph gl = (GraphGlyph) g;
+			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			Color color = gl.getGraphState().getTierStyle().getBackground();
 			bgColorComboBox.setSelectedColor(color);
 			color = gl.getGraphState().getTierStyle().getForeground();
@@ -394,7 +400,7 @@ public final class SimpleGraphTab
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (GlyphI g : multigl) {
-					glyphs.add((GraphGlyph) g);
+					glyphs.add((AbstractGraphGlyph) g);
 				}
 			}
 		}
@@ -452,7 +458,7 @@ public final class SimpleGraphTab
 			// Do Nothing
 		} else if (num_glyphs == 1) {
 			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
-			GraphGlyph gl = (GraphGlyph) g;
+			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			Color color = gl.getGraphState().getTierStyle().getBackground();
 			bgColorComboBox.setSelectedColor(color);
 			color = gl.getGraphState().getTierStyle().getForeground();
@@ -482,15 +488,17 @@ public final class SimpleGraphTab
 			Runnable r = new Runnable() {
 
 				public void run() {
-					GraphGlyph first_glyph = glyphs.get(0);
-					if (style == GraphType.HEAT_MAP) {
+					AbstractGraphGlyph first_glyph = glyphs.get(0);
+					if (style == GraphType.HEAT_MAP && first_glyph instanceof GraphGlyph) {
 						// set to heat map FIRST so that getHeatMap() below will return default map instead of null
-						first_glyph.setGraphStyle(GraphType.HEAT_MAP);
+						((GraphGlyph)first_glyph).setGraphStyle(GraphType.HEAT_MAP);
 					}
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
-					for (GraphGlyph sggl : glyphs) {
+					for (AbstractGraphGlyph sggl : glyphs) {
 						sggl.setShowGraph(true);
-						sggl.setGraphStyle(style); // leave the heat map whatever it was
+						if (sggl instanceof GraphGlyph) {
+							((GraphGlyph)sggl).setGraphStyle(style); // leave the heat map whatever it was
+						}
 						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}
@@ -539,10 +547,16 @@ public final class SimpleGraphTab
 				HeatMap hm = HeatMap.getStandardHeatMap(name);
 
 				if (hm != null) {
-					for (GraphGlyph gl : glyphs) {
-						gl.setShowGraph(true);
-						gl.setGraphStyle(GraphType.HEAT_MAP);
-						gl.setHeatMap(hm);
+					for (AbstractGraphGlyph gl : glyphs) {
+						if (gl instanceof GraphGlyph) {
+							gl.setShowGraph(true);
+							((GraphGlyph)gl).setGraphStyle(GraphType.HEAT_MAP);
+							gl.setHeatMap(hm);
+						}
+						else if ("heatmapgraph".equals(gl.getName())) {
+							gl.setShowGraph(true);
+							gl.setHeatMap(hm);
+						}
 					}
 					igbService.getSeqMap().updateWidget();
 				}
@@ -563,7 +577,7 @@ public final class SimpleGraphTab
 		}
 
 		private void setTheHeights(double height) {
-			for (GraphGlyph gl : glyphs) {
+			for (AbstractGraphGlyph gl : glyphs) {
 				Rectangle2D.Double cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
@@ -862,14 +876,14 @@ public final class SimpleGraphTab
 		}
 
 		private void setShowAxis(boolean b) {
-			for (GraphGlyph gl : glyphs) {
+			for (AbstractGraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
 			igbService.getSeqMap().updateWidget();
 		}
 
 		private void setShowLabels(boolean b) {
-			for (GraphGlyph gl : glyphs) {
+			for (AbstractGraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
 			igbService.getSeqMap().updateWidget();
@@ -890,7 +904,7 @@ public final class SimpleGraphTab
 
 		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
-			for (GraphGlyph gl : glyphs) {
+			for (AbstractGraphGlyph gl : glyphs) {
 				GraphState gstate = gl.getGraphState();
 //				if (gstate.getComboStyle() != null) {
 //					gstate.setComboStyle(null);
@@ -962,12 +976,12 @@ public final class SimpleGraphTab
 	/**
 	 *  Removes a GraphSym from the annotated bio seq it is annotating (if any),
 	 *     and tries to make sure the GraphSym can be garbage collected.
-	 *  Tries to delete the GraphGlyph representing the GraphSym.  If the GraphSym
+	 *  Tries to delete the AbstractGraphGlyph representing the GraphSym.  If the GraphSym
 	 *  happens to be a child of a tier in the widget, and the tier has no children
 	 *  left after deleting the graph, then delete the tier as well.
 	 */
 	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
-		GraphGlyph gl = (GraphGlyph) igbService.getSeqMap().getItem(gsym);
+		AbstractGraphGlyph gl = (AbstractGraphGlyph) igbService.getSeqMap().getItem(gsym);
 
 //		if (gl != null) {
 //			igbService.getSeqMap().removeItem(gl);
@@ -1075,7 +1089,7 @@ public final class SimpleGraphTab
 			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
 			List<GlyphI> glist = igbService.getSeqMap().getItems(graf);
 			for (GlyphI g : glist) {
-				GraphGlyph gl = (GraphGlyph) g;
+				AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 				gl.setColor(color); // this automatically sets the GraphState color
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
@@ -1096,7 +1110,7 @@ public final class SimpleGraphTab
 	private void applyBGColorChange(List<GraphSym> graf_syms, Color color) {
 		for (GraphSym graf : graf_syms) {
 			GlyphI g = igbService.getSeqMap().getItem(graf);
-			GraphGlyph gl = (GraphGlyph) g;
+			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			gl.getGraphState().getTierStyle().setBackground(color);
 			ITrackStyleExtended combo = gl.getGraphState().getComboStyle();
 			if(combo != null){

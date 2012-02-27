@@ -28,7 +28,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.igb.viewmode.AbstractGraphGlyph;
 
 import java.awt.Color;
 import java.awt.Font;

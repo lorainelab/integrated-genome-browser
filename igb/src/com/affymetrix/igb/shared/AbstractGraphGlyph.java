@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -42,9 +42,6 @@ import java.awt.geom.Point2D;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
-import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.StyleGlyphI;
-import com.affymetrix.igb.shared.ViewPropertyNames;
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
@@ -270,7 +267,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 		return state;
 	}
 
-	protected void oldDraw(ViewI view) {
+	public void oldDraw(ViewI view) {
 		if (TIME_DRAWING) {
 			tim.start();
 		}

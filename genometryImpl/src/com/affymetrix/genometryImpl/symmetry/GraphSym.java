@@ -569,4 +569,79 @@ public class GraphSym extends RootSeqSymmetry {
 	public FileTypeCategory getCategory() {
 		return FileTypeCategory.Graph;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + bufStart;
+		result = prime * result + ((gid == null) ? 0 : gid.hashCode());
+		result = prime
+				* result
+				+ ((graph_original_seq == null) ? 0 : graph_original_seq
+						.hashCode());
+		result = prime * result + (hasWidth ? 1231 : 1237);
+		result = prime * result + Float.floatToIntBits(max_ycoord);
+		result = prime * result + Float.floatToIntBits(min_ycoord);
+		result = prime * result + pointCount;
+		result = prime * result + Arrays.hashCode(wBuf);
+		result = prime * result + Arrays.hashCode(xCoords);
+		long temp;
+		temp = Double.doubleToLongBits(xDelta);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + xMax;
+		result = prime * result + xMin;
+		result = prime * result + Arrays.hashCode(yBuf);
+		result = prime * result + Float.floatToIntBits(yFirst);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphSym other = (GraphSym) obj;
+		if (bufStart != other.bufStart)
+			return false;
+		if (gid == null) {
+			if (other.gid != null)
+				return false;
+		} else if (!gid.equals(other.gid))
+			return false;
+		if (graph_original_seq == null) {
+			if (other.graph_original_seq != null)
+				return false;
+		} else if (!graph_original_seq.equals(other.graph_original_seq))
+			return false;
+		if (hasWidth != other.hasWidth)
+			return false;
+		if (Float.floatToIntBits(max_ycoord) != Float
+				.floatToIntBits(other.max_ycoord))
+			return false;
+		if (Float.floatToIntBits(min_ycoord) != Float
+				.floatToIntBits(other.min_ycoord))
+			return false;
+		if (pointCount != other.pointCount)
+			return false;
+		if (!Arrays.equals(wBuf, other.wBuf))
+			return false;
+		if (!Arrays.equals(xCoords, other.xCoords))
+			return false;
+		if (Double.doubleToLongBits(xDelta) != Double
+				.doubleToLongBits(other.xDelta))
+			return false;
+		if (xMax != other.xMax)
+			return false;
+		if (xMin != other.xMin)
+			return false;
+		if (!Arrays.equals(yBuf, other.yBuf))
+			return false;
+		if (Float.floatToIntBits(yFirst) != Float.floatToIntBits(other.yFirst))
+			return false;
+		return true;
+	}
 }

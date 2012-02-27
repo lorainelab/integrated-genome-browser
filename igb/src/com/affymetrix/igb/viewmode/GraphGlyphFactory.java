@@ -3,6 +3,8 @@ package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

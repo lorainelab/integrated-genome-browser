@@ -30,10 +30,12 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.view.GlyphResizer;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -426,24 +428,35 @@ public final class TierLabelManager implements PropertyHolder {
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
-			if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
-				// It would be nice if we could assume that a tier contains only
-				// GraphGlyph's or only non-GraphGlyph's, but that is not true.
-				//
-				// When graph thresholding is turned on, there can be one or
-				// two other EfficientFillRectGlyphs that are a child of the tier glyph
-				// but are not instances of GraphGlyph.  They can be ignored.
-				// (I would like to change them to be children of the GraphGlyph, but
-				// haven't done it yet.)
-
-				// Assume that if first child is a GraphGlyph, then so are all others
-				for (int i = 0; i < child_count; i++) {
-					GlyphI ob = tg.getChild(i);
-					if (!(ob instanceof GraphGlyph)) {
-						// ignore the glyphs that are not GraphGlyph's
-						continue;
+			if (child_count > 0) {
+				if (tg.getChild(0) instanceof GraphGlyph) {
+					// It would be nice if we could assume that a tier contains only
+					// GraphGlyph's or only non-GraphGlyph's, but that is not true.
+					//
+					// When graph thresholding is turned on, there can be one or
+					// two other EfficientFillRectGlyphs that are a child of the tier glyph
+					// but are not instances of GraphGlyph.  They can be ignored.
+					// (I would like to change them to be children of the GraphGlyph, but
+					// haven't done it yet.)
+	
+					// Assume that if first child is a GraphGlyph, then so are all others
+					for (int i = 0; i < child_count; i++) {
+						GlyphI ob = tg.getChild(i);
+						if (!(ob instanceof GraphGlyph)) {
+							// ignore the glyphs that are not GraphGlyph's
+							continue;
+						}
+						SeqSymmetry sym = (SeqSymmetry) ob.getInfo();
+						// sym will be a GraphSym, but we don't need to cast it
+						if (tierlabel.isSelected()) {
+							symmetries.add(sym);
+						} else if (symmetries.contains(sym)) {
+							symmetries.remove(sym);
+						}
 					}
-					SeqSymmetry sym = (SeqSymmetry) ob.getInfo();
+				}
+				else if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph() instanceof AbstractGraphGlyph) {
+					SeqSymmetry sym = (SeqSymmetry) ((TierGlyphViewMode)tg).getViewModeGlyph().getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
 						symmetries.add(sym);

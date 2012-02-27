@@ -1,4 +1,4 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.shared;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,9 +11,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.StyleGlyphI;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

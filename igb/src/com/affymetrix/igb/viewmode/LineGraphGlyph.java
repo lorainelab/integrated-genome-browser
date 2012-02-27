@@ -3,6 +3,8 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

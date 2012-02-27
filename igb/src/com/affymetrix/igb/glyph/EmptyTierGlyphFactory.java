@@ -21,6 +21,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 /**
  *
@@ -30,7 +31,7 @@ public class EmptyTierGlyphFactory {
 	
 	public static void addEmtpyTierfor(GenericFeature feature, SeqMapView gviewer, boolean setViewMode) {
 
-		// No seqeunce selected or if it is cytoband or it is residue file. Then return
+		// No sequence selected or if it is cytoband or it is residue file. Then return
 		if(gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND) ||
 				feature.featureName.toLowerCase().contains(CytobandParser.CYTOBAND) ||
 				(feature.symL != null && (feature.symL.isResidueLoader() || feature.symL.getExtension().equalsIgnoreCase("cyt")))){
@@ -90,12 +91,16 @@ public class EmptyTierGlyphFactory {
 				style.setViewMode(viewmode);
 			}
 			if(!style.isGraphTier()){
-				gviewer.getTrack(null, style, style.getSeparate() ? Direction.FORWARD : Direction.BOTH);
+				Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
+				TierGlyphViewMode tgfor = (TierGlyphViewMode)gviewer.getTrack(null, style, direction);
+				tgfor.reset(style, direction);
 				if (style.getSeparate()) {
-					gviewer.getTrack(null, style, Direction.REVERSE);
+					TierGlyphViewMode tgrev = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.REVERSE);
+					tgrev.reset(style, Direction.REVERSE);
 				}
 			}else {
-				gviewer.getTrack(null, style, Direction.NONE);
+				TierGlyphViewMode tg = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.NONE);
+				tg.reset(style, Direction.NONE);
 			}
 			return;
 		}

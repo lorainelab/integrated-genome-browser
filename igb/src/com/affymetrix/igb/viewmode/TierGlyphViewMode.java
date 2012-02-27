@@ -97,11 +97,21 @@ public class TierGlyphViewMode extends TierGlyph {
 		return loaded;
 	}
 
+	public void reset(ITrackStyleExtended style, Direction direction){
+		if (viewModeGlyph.getChildCount() == 0) { // this means the track is deleted/hidden
+			viewModeGlyph = null;
+			this.style = null;
+		}
+		setStyleAndDirection(style, direction);
+	}
+
 	private void setStyleAndDirection(ITrackStyleExtended style, Direction direction){
 		ITrackStyleExtended saveStyle = this.style;
 		this.style = style;
 		if(!isSymLoaded()){
-			viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
+			if (viewModeGlyph == null) {
+				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
+			}
 		}
 		else if (saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
 			setViewModeGlyph(style, direction);
@@ -235,7 +245,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 	@Override
 	public boolean isVisible()  {
-		return viewModeGlyph.isVisible();
+		return viewModeGlyph == null ? false : viewModeGlyph.isVisible();
 	}
 	@Override
 	public boolean supportsSubSelection() {
@@ -253,7 +263,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	@Override
 	public int getChildCount() {
 /////		
-		return viewModeGlyph.getChildCount();
+		return viewModeGlyph == null ? 0 : viewModeGlyph.getChildCount();
 	}
 	@Override
 	public int getDrawOrder() {

@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2005 Affymetrix, Inc.
+ * Copyright (c) 2001-2005 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.view;
 
@@ -34,23 +31,25 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
- *  OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.  It does
- *  not incorporate content stat graphs (GC, dicodon, etc.).
+ * OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.
+ * It does not incorporate content stat graphs (GC, dicodon, etc.).
  */
 public final class OrfAnalyzer extends JComponent
 		implements ChangeListener, ActionListener {
 	private static final long serialVersionUID = 1L;
-
+	
 	public static final String PREF_STOP_CODON_COLOR = "stop codon";
 	public static final String PREF_DYNAMIC_ORF_COLOR = "dynamic orf";
 	public static final String PREF_BACKGROUND_COLOR = "background";
 	public static final Color default_stop_codon_color = new Color(200, 150, 150);
 	public static final Color default_dynamic_orf_color = new Color(100, 200, 100);
-	public static final Color default_background_color = new Color(169, 169, 169); 
+	public static final Color default_background_color = new Color(169, 169, 169);
 	// GAH 8-23-2004
 	// As IGB is currently configured, smv should be set to the internal SeqMapView of the AltSpliceView...
 	private final SeqMapView smv;
@@ -67,6 +66,7 @@ public final class OrfAnalyzer extends JComponent
 	private boolean show_orfs;
 	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
 	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
+	private int previousBefferSize;
 
 	public OrfAnalyzer(SeqMapView view) {
 		super();
@@ -110,13 +110,18 @@ public final class OrfAnalyzer extends JComponent
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
 		if (src == showCB) {
+			JRPTextField tf = AltSpliceView.getSingleton().getBufferSizeTF();
 			show_orfs = ((JCheckBox) src).isSelected();
 			if (show_orfs) {
-				redoOrfs();
+				previousBefferSize = Integer.parseInt(tf.getText());
+				AltSpliceView.getSingleton().setSliceBuffer(0);
 			} else {
+				AltSpliceView.getSingleton().setSliceBuffer(previousBefferSize);
 				removeTiersAndCleanup();
 				adjustMap();
 			}
+			
+			tf.setEnabled(!show_orfs);
 		}
 	}
 
@@ -126,14 +131,14 @@ public final class OrfAnalyzer extends JComponent
 		}
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq seq = smv.getAnnotatedSeq();
-		if (vseq == null || vseq.getComposition()==null || seq == null) {
+		if (vseq == null || vseq.getComposition() == null || seq == null) {
 			return;
 		}
 		removeTiersAndCleanup();
 		if (!show_orfs) {
 			return;
 		}
-	
+
 		SeqSpan vspan = smv.getVisibleSpan();
 		int span_start = vspan.getMin();
 		int span_end = vspan.getMax();
@@ -143,18 +148,18 @@ public final class OrfAnalyzer extends JComponent
 			showCB.setSelected(false);
 			return;
 		}
-		
+
 		SeqSpan aspan = vseq.getComposition().getSpan(seq);
 		if (!(seq.isAvailable(aspan))) {
 			//Load Residues
-			if(!GeneralLoadView.getLoadView().loadResidues(aspan, true)){
+			if (!GeneralLoadView.getLoadView().loadResidues(aspan, true)) {
 				show_orfs = false;
 				showCB.setSelected(false);
 				return;
 			}
 			//ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
 		}
-		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);			
+		Color bgcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_BACKGROUND_COLOR, default_background_color);
 		fortier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
@@ -173,7 +178,7 @@ public final class OrfAnalyzer extends JComponent
 
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
-        
+
 		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
 
 		span_start = span_mid - (max_analysis_span / 2);
@@ -252,13 +257,12 @@ public final class OrfAnalyzer extends JComponent
 				seq_index = res_index + residue_offset;
 				if (forward_codon) {
 					frame = res_index % 3;	 // forward frames = (0, 1, 2)
-				}
-				else {
+				} else {
 					frame = 3 + (res_index % 3); // reverse frames = (3, 4, 5)
 				}
 
 				frame_lists[frame].add(seq_index);
-				res_index = caseInsensitiveIndexOfHack(vseq, codon, res_index+1);
+				res_index = caseInsensitiveIndexOfHack(vseq, codon, res_index + 1);
 			}
 		}
 		return frame_lists;

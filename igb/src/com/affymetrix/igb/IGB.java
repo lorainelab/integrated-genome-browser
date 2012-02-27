@@ -373,7 +373,7 @@ public final class IGB extends Application
 				}
 			}
 		);
-		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
+		return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
 	}
 
 	public JRPMenu addTopMenu(String id, String text) {

@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.view;
 
@@ -34,6 +31,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -46,6 +44,7 @@ public class AltSpliceView extends IGBTabPanel
 		SymSelectionListener, SeqSelectionListener, PreferenceChangeListener,
 		TierLabelManager.PopupListener {
 
+	private static AltSpliceView singleton;
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 3;
 	private final AltSpliceSeqMapView spliced_view;
@@ -57,6 +56,14 @@ public class AltSpliceView extends IGBTabPanel
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
+
+	public static AltSpliceView getSingleton() {
+		if (singleton == null) {
+			singleton = new AltSpliceView(IGBServiceImpl.getInstance());
+		}
+
+		return singleton;
+	}
 
 	public AltSpliceView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), false, TAB_POSITION);
@@ -94,7 +101,7 @@ public class AltSpliceView extends IGBTabPanel
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
-		
+
 		TierLabelManager tlman = spliced_view.getTierManager();
 		if (tlman != null) {
 			tlman.addPopupListener(this);
@@ -102,12 +109,11 @@ public class AltSpliceView extends IGBTabPanel
 	}
 
 	/**
-	 *  This method is notified when selected symmetries change.
-	 *  It usually triggers a re-computation of the sliced symmetries to draw.
-	 *  If no selected syms, then don't change.
-	 *  Any Graphs in the selected symmetries will be ignored
-	 *  (because graphs currently span entire sequence and slicing on them can
-	 *  use too much memory).
+	 * This method is notified when selected symmetries change. It usually
+	 * triggers a re-computation of the sliced symmetries to draw. If no
+	 * selected syms, then don't change. Any Graphs in the selected symmetries
+	 * will be ignored (because graphs currently span entire sequence and
+	 * slicing on them can use too much memory).
 	 */
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		if (IGBService.DEBUG_EVENTS) {
@@ -137,6 +143,7 @@ public class AltSpliceView extends IGBTabPanel
 
 	/**
 	 * takes a list of SeqSymmetries and removes any GraphSyms from it.
+	 *
 	 * @param syms
 	 * @return
 	 */
@@ -170,7 +177,8 @@ public class AltSpliceView extends IGBTabPanel
 		slice_by_selection_on = b;
 	}
 
-	private void setSliceBuffer(int buf_size) {
+	public void setSliceBuffer(int buf_size) {
+		buffer_sizeTF.setText(String.valueOf(buf_size));
 		Executor exec = spliced_view.setSliceBuffer(buf_size);
 		exec.execute(new Runnable() {
 
@@ -214,7 +222,7 @@ public class AltSpliceView extends IGBTabPanel
 			pending_selection_change = false;
 		}
 	}
-	
+
 	public void componentHidden(ComponentEvent e) {
 	}
 
@@ -305,9 +313,12 @@ public class AltSpliceView extends IGBTabPanel
 
 		if (evt.getKey().equals(OrfAnalyzer.PREF_STOP_CODON_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)
-				 || evt.getKey().equals(OrfAnalyzer.PREF_BACKGROUND_COLOR)) {
+				|| evt.getKey().equals(OrfAnalyzer.PREF_BACKGROUND_COLOR)) {
 			orf_analyzer.redoOrfs();
 		}
 	}
 
+	public JRPTextField getBufferSizeTF() {
+		return this.buffer_sizeTF;
+	}
 }

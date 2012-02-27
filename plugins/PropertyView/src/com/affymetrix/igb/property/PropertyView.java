@@ -26,7 +26,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 	private static final int TAB_POSITION = 1;
-
+	
 	// the table showing name-value pairs
 	private static final JRPTable table = new JRPTable("PropertyView_table");
 	private final JScrollPane scroll_pane = new JScrollPane();
@@ -34,7 +34,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final String PROPERTY = "property";
 	private static final List<String> prop_order = determineOrder();
 	private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
-	
+
 	PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
 		determineOrder();
@@ -134,27 +134,26 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		@SuppressWarnings("unchecked")
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
-		this.showProperties(prop_array, prop_order, "");
+		this.showProperties(prop_array, prop_order, "", false);
 	}
 
 	@Override
 	// implement GroupSelectionListener
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
-		if(evt.getSelectedGroup() == null){
+		if (evt.getSelectedGroup() == null) {
 			table.setModel(new DefaultTableModel());
 			propertyChanged(0);
 		}
 	}
 
 	/**
-	 * Return headings for columns.  If we're laying out
-	 * values in a row, then column headings will be the
-	 * names associated with each value.  If we're laying
-	 * out values in a column, then column headings will
-	 * be PROPERTY and then labels for the item whose
-	 * values are being presented.
-	 * @param name_values - a List containing name-values for a
-	 *   one or more Properties
+	 * Return headings for columns. If we're laying out values in a row, then
+	 * column headings will be the names associated with each value. If we're
+	 * laying out values in a column, then column headings will be PROPERTY and
+	 * then labels for the item whose values are being presented.
+	 *
+	 * @param name_values - a List containing name-values for a one or more
+	 * Properties
 	 * @param props - the list of Properties
 	 */
 	private static String[] getColumnHeadings(Map<String, Object>[] props) {
@@ -182,13 +181,12 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	/**
-	 * Build and return rows for the table to be shown in
-	 * this PropertySheet.
-	 * If there are no Properties to be shown, then returns
-	 * default rows.
-	 * @param name_values - a List containing name-values for a
-	 *   one or more Properties
-	 * @param props  the list of Properties
+	 * Build and return rows for the table to be shown in this PropertySheet. If
+	 * there are no Properties to be shown, then returns default rows.
+	 *
+	 * @param name_values - a List containing name-values for a one or more
+	 * Properties
+	 * @param props the list of Properties
 	 */
 	private static String[][] buildRows(List<String[]> name_values, Map<String, Object>[] props) {
 		int num_vals = name_values.size();
@@ -202,16 +200,17 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	/**
-	 * Show data associated with the given properties.
-	 * Uses buildRows() to retrieve ordered
-	 * name-value pairs.
-	 * @param props  the given Properties
+	 * Show data associated with the given properties. Uses buildRows() to
+	 * retrieve ordered name-value pairs.
+	 *
+	 * @param props the given Properties
 	 * @param preferred_prop_order the preferred order of columns
 	 * @param noData the value to use when a property value is null
 	 */
-	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
+	private void showProperties(Map<String, Object>[] props, 
+			List<String> preferred_prop_order, String noData, boolean limited) {
 
-		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData, false);
+		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData, limited);
 		String[] col_headings = getColumnHeadings(props);
 
 		//start
@@ -226,7 +225,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		TableModel model = new DefaultTableModel(rows, col_headings);
 		table.setModel(model);
-		
+
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);
 
@@ -247,7 +246,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			table.getColumnModel().getColumn(i).setCellRenderer(ren);
 			table.getColumnModel().getColumn(i).setCellEditor(ren);
 		}
-		
+
 		validate();
 		table.getColumnModel().getColumn(0).setMinWidth(100);
 		table.getColumnModel().getColumn(0).setPreferredWidth(150);
@@ -257,26 +256,40 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	@SuppressWarnings("unchecked")
 	@Override
 	// implement PropertyHandler
-	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder){
+	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder) {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = propertyHolder.determineProps(sym);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),toolTipOrder(),"", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), toolTipOrder(), "", true);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	// implement PropertyHandler
-	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder){
+	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder) {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = propertyHolder.determineProps(sym);
 		props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
 		propList.add(props);
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
+
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]), graphToolTipOrder(), "", true);
 	}
 
-	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited){
+	@SuppressWarnings("unchecked")
+	@Override
+	public void showGraphProperties(GraphSym sym, int x, PropertyHolder propertyHolder) {
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> props = propertyHolder.determineProps(sym);
+		props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
+		propList.add(props);
+
+		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
+
+		this.showProperties(prop_array, graphToolTipOrder(), "", true);
+	}
+
+	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited) {
 		List<String[]> name_values = getNameValues(props, noData);
 		if (preferred_prop_order != null) {
 			name_values = reorderNames(name_values, preferred_prop_order, limited);
@@ -285,15 +298,16 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	/**
-	 * take name_values and return a new ArrayList that
-	 *  starts with the names found in preferred_ordering in the specified order,
-	 *  and then adds entries in name_values that were not found in preferred_ordering.
+	 * take name_values and return a new ArrayList that starts with the names
+	 * found in preferred_ordering in the specified order, and then adds entries
+	 * in name_values that were not found in preferred_ordering.
 	 *
-	 *  WARNING! this destroys integrity of original name_values!
-	 *  also assumes that there are no null entries in name_values
+	 * WARNING! this destroys integrity of original name_values! also assumes
+	 * that there are no null entries in name_values
 	 *
-	 * @param name_values   a List of String[]s
-	 * @param preferred_ordering a List of Strings with the preferred order of column names
+	 * @param name_values a List of String[]s
+	 * @param preferred_ordering a List of Strings with the preferred order of
+	 * column names
 	 * @return String array of re-ordered names
 	 */
 	private static List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering, boolean limited) {
@@ -323,17 +337,16 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return reordered;
 	}
 
-
 	/**
-   * Fills up a Vector with arrays containing names and values
-   * for each of the given Properties.
-   * e.g., {name,value0,value1,value2,...,valueN} for
-   * N different Properties Objects.
-   * @param props  the list of Properties derived from SeqFeatures.
-   * @param noData  the String value to use to represent cases where
-   *   there is no value of the property for a given key
-   */
-    private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
+	 * Fills up a Vector with arrays containing names and values for each of the
+	 * given Properties. e.g., {name,value0,value1,value2,...,valueN} for N
+	 * different Properties Objects.
+	 *
+	 * @param props the list of Properties derived from SeqFeatures.
+	 * @param noData the String value to use to represent cases where there is
+	 * no value of the property for a given key
+	 */
+	private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
 		List<String[]> result = new ArrayList<String[]>();
 		// collect all possible names from the given Properties
 		int num_props = props.length;
@@ -341,7 +354,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		for (int i = 0; i < num_props; i++) {
 			for (String name : props[i].keySet()) {
 				if (name != null && rows_thus_far.containsKey(name)) {
-						continue;
+					continue;
 				}
 
 				String name_value[] = new String[num_props + 1];
@@ -362,8 +375,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return result;
 	}
 
-	private void propertyChanged(int prop_displayed){
-		for(PropertyListener pl : propertyListeners){
+	private void propertyChanged(int prop_displayed) {
+		for (PropertyListener pl : propertyListeners) {
 			pl.propertyDisplayed(prop_displayed);
 		}
 	}
@@ -380,5 +393,3 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return true;
 	}
 }
-
-

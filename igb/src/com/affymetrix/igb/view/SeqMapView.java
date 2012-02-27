@@ -2005,6 +2005,19 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
+	
+	public void showProperties(int x, GraphGlyph glyph)
+	{
+		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+		glyphs.add(glyph);
+		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
+
+		if (!sym.isEmpty()) {
+			if (propertyHandler != null) {
+				propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, this);
+			}
+		}
+	}
 
 	private static String convertPropsToString(Map<String, Object> properties) {
 		if (properties == null) {

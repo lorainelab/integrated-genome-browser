@@ -34,10 +34,11 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	// glyph class
 	private class UnloadedGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
 
-		public UnloadedGlyph(BioSeq seq, SeqSymmetry sym, int slots, double height, ITrackStyleExtended style) {
+		public UnloadedGlyph(BioSeq seq, SeqSymmetry sym, int slots, double height, ITrackStyleExtended style, Direction tier_direction) {
 			super();
 			setStyle(style);
 			this.setPacker(new FasterExpandPacker());
+			this.setDirection(tier_direction);
 			if (getChildCount() <= 0) {
 				Glyph glyph;
 
@@ -127,7 +128,7 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 		if(!style.isGraphTier()){
 			height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 		}
-		return new UnloadedGlyph(seq, useSym, slots, height, style);
+		return new UnloadedGlyph(seq, useSym, slots, height, style, tier_direction);
 	}
 
 	@Override

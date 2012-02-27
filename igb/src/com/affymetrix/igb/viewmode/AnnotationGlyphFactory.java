@@ -197,13 +197,13 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}  // if no span corresponding to seq, then return;
 
-			boolean isReverse = !pspan.isForward();
-			StyleGlyphI the_tier = isReverse ? reverse_tier : forward_tier;
-
+			StyleGlyphI the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
+			boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
+			
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(
-					parent_and_child, insym, the_style, isReverse, pspan, sym, annotseq, coordseq));
+					parent_and_child, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -211,19 +211,19 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 
 	private GlyphI determinePGlyph(
 			boolean parent_and_child, SeqSymmetry insym,
-			ITrackStyleExtended the_style, boolean isReverse, SeqSpan pspan,
+			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph = null;
 		if (parent_and_child && insym.getChildCount() > 0) {
-			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, isReverse, pspan, sym, gviewer);
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, pspan, the_style, annotseq, pglyph, coordseq);
 			handleInsertionGlyphs(insym, annotseq, pglyph, the_style.getHeight());
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, isReverse, pspan, sym, gviewer);
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
 			GlyphI alignResidueGlyph = handleAlignedResidues(insym, annotseq);
 			if(alignResidueGlyph != null){
 				alignResidueGlyph.setCoordBox(pglyph.getCoordBox());
@@ -235,7 +235,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static GlyphI determineGlyph(
 			Class<?> glyphClass, Class<?> labelledGlyphClass,
-			ITrackStyleExtended the_style, SeqSymmetry insym, boolean isReverse,
+			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer)
 			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph = null;
@@ -250,7 +250,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, label_field);
 			String label = (property == null) ? "" : property.toString();
-			if (isReverse) {
+			if (labelInSouth) {
 				lglyph.setLabelLocation(GlyphI.SOUTH);
 			} else {
 				lglyph.setLabelLocation(GlyphI.NORTH);

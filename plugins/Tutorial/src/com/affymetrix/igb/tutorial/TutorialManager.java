@@ -3,6 +3,7 @@ package com.affymetrix.igb.tutorial;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -10,13 +11,16 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import furbelow.AbstractComponentDecorator;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -24,7 +28,7 @@ import javax.swing.event.MenuListener;
 public class TutorialManager implements GenericActionListener, GenericActionDoneCallback {
 
 	private final TutorialNavigator tutorialNavigator;
-	private final IGBService igbService;
+	protected final IGBService igbService;
 	private boolean tutorialDisplayed = false;
 	private TutorialStep[] tutorial = null;
 	private String waitFor = null;
@@ -180,6 +184,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		}
 		if (step.getScript() != null) {
 			IGBScriptAction.executeScriptAction(step.getScript());
+		}
+		if (step.getCheckServer() != null) {
+			if (!checkServer(step.getCheckServer())) {
+				stop();
+			}
 		}
 		if (step.getTab() != null) {
 			setTab(step.getTab());
@@ -337,5 +346,31 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private void setTab(String tab) {
 		IGBTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
 		igbService.selectTab(panel);
+	}
+
+	//Manual check to ensure IGB Quickload is Enabled
+	private boolean checkServer(String serverName) {
+		Set<GenericServer> enabledServers = igbService.getEnabledServerList();
+		for (GenericServer server : enabledServers) {
+			if (server.serverName.equalsIgnoreCase(serverName)) {
+				return true;
+			}
+		}
+		//if it is not enabled offer option to enable or cancel tutorial
+		Container frame = igbService.getFrame();
+		String message = "IGB Quickload is required for this tutorial, but it is not enabled. Would you like to enable it and continue?";
+		Object[] params = {message};
+		int yes = JOptionPane.showConfirmDialog(frame, params, "Continue?", JOptionPane.YES_NO_OPTION);
+		if (yes == JOptionPane.YES_OPTION) {
+			for (GenericServer server : igbService.getAllServersList()) {
+				if (server.serverName.equalsIgnoreCase(serverName)) {
+					server.setEnabled(true);
+					igbService.discoverServer(server);
+					return true;
+				}
+			}
+			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, could not find " + serverName + " in serves.");
+		}
+		return false;
 	}
 }

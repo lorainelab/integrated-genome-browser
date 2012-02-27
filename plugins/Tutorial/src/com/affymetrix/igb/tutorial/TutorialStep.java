@@ -41,6 +41,7 @@ public class TutorialStep {
 	private String tab;
 	private TutorialStep[] subTutorial;
 	private String script;
+	private String checkServer;
 
 	public String getText() {
 		return text;
@@ -64,6 +65,14 @@ public class TutorialStep {
 
 	public void setScript(String script) {
 		this.script = script;
+	}
+	
+	public String getCheckServer() {
+		return checkServer;
+	}
+
+	public void setCheckServer(String checkServer) {
+		this.checkServer = checkServer;
 	}
 
 	public String getHighlight() {

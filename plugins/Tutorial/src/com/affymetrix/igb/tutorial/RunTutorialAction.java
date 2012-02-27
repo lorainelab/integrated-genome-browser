@@ -2,7 +2,6 @@ package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,6 +13,7 @@ import javax.swing.Action;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class RunTutorialAction extends GenericAction {
+
 	private static final long serialVersionUID = 1L;
 	private static final String TUTORIAL_EXT = "txt";
 	private static final String SESSION_EXT = "xml";
@@ -37,11 +37,13 @@ public class RunTutorialAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
-			URL sessionUrl = new URL(uri + "." + SESSION_EXT);
-			PreferenceUtils.importPreferences(sessionUrl);
-			tutorialManager.loadState();
-		}
-		catch (Exception x) {
+			//URL sessionUrl = new URL(uri + "." + SESSION_EXT);
+			//PreferenceUtils.importPreferences(sessionUrl);
+			//Validate Enabled Servers
+		
+				tutorialManager.loadState();
+			
+		} catch (Exception x) {
 			// OK if session not loaded
 		}
 		try {
@@ -54,8 +56,7 @@ public class RunTutorialAction extends GenericAction {
 				}
 			}
 			rdr.close();
-		}
-		catch (Exception x) {
+		} catch (Exception x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load tutorial " + uri, x);
 			ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri);
 		}
@@ -66,8 +67,7 @@ public class RunTutorialAction extends GenericAction {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			tutorial = mapper.readValue(reader, TutorialStep[].class);
-		}
-		catch (Exception x) {
+		} catch (Exception x) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load tutorial " + uri, x);
 			ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri);
 		}

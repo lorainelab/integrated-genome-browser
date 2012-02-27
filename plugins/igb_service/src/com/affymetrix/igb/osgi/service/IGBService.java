@@ -19,7 +19,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -176,4 +178,8 @@ public interface IGBService {
 	public void addPartialResiduesActionListener(ActionListener al);
 	
 	public IGBTabPanel getTabPanelFromDisplayName(String viewName); 
+	
+	public Set<GenericServer> getEnabledServerList();
+	public Collection<GenericServer> getAllServersList();
+	public void discoverServer(final GenericServer server);
 }

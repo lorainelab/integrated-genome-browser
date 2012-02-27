@@ -52,11 +52,14 @@ import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -253,7 +256,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public IGBTabPanel getTabPanel(String viewName) {
 		return ((IGB) IGB.getSingleton()).getView(viewName);
 	}
-	
+
 	//Easier for scripting if we don't require full name.
 	@Override
 	public IGBTabPanel getTabPanelFromDisplayName(String viewName) {
@@ -407,5 +410,28 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void addPartialResiduesActionListener(ActionListener al) {
 		GeneralLoadView.getLoadView().getPartial_residuesButton().addActionListener(al);
+	}
+
+	@Override
+	public Set<GenericServer> getEnabledServerList() {
+		return ServerList.getServerInstance().getEnabledServers();
+	}
+
+	@Override
+	public Collection<GenericServer> getAllServersList() {
+		return ServerList.getServerInstance().getAllServers();
+	}
+
+	@Override
+	public void discoverServer(final GenericServer server) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				GeneralLoadUtils.discoverServer(server);
+				return null;
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(server).execute(worker);
 	}
 }

@@ -111,6 +111,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	protected Color darker;
 	private boolean draw_handle = true;
 	
+	@Override
+	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
+		setCoordBox(getCoordBox()); // so all use the same coordbox
+	}
+
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);
 	}

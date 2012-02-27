@@ -77,7 +77,7 @@ public class TierGlyphViewMode extends TierGlyph {
 				}
 			}
 			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
-//			viewModeGlyph.setCoordBox(super.getCoordBox()); // so all use the same coordbox
+			viewModeGlyph.processParentCoordBox(super.getCoordBox());
 		}
 		setStyleAndDirection(style, direction);
 	}

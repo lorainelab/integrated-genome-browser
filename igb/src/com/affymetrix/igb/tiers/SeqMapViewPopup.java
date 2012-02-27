@@ -828,6 +828,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (new_label != null && new_label.length() > 0) {
 			style.setTrackName(new_label);
 			tier.setLabel(new_label);
+			gviewer.getSeqMap().setTierLabels();
 		}
 		gviewer.getSeqMap().updateWidget();
 	}

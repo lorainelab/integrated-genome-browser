@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.recordplayback.*;
-import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
@@ -66,6 +65,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		tutorialNavigator.setVisible(false);
 		tutorialDisplayed = false;
 		TweeningZoomAction.getAction();
+		VerticalStretchZoomAction.getAction();
 		initListeners();
 	}
 

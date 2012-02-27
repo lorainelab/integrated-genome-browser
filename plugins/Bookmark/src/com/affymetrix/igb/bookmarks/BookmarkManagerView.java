@@ -21,7 +21,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -263,24 +262,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
 				setLoadDirectory(chooser.getCurrentDirectory());
-				File fil = chooser.getSelectedFile();
-				String full_path = fil.getCanonicalPath();
-				if(chooser.getFileFilter().getDescription().equals("HTML Files (*.html, *.htm, *.xhtml)")){
-					if ((!full_path.endsWith(".html"))
-							&& (!full_path.endsWith(".htm"))
-							&& (!full_path.endsWith(".xhtml"))) {
-						fil = new File(full_path + ".html");
-					}
-					BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
-				}
-				else if(chooser.getFileFilter().getDescription().equals("TEXT Files (*.txt)")){
-					if ((!full_path.endsWith(".txt")))
-					{
-						fil = new File(full_path + ".txt");
-					}
-					BookmarkList.exportAsTEXT(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
-				}
-				
+				((ExportFileFilter)chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());		
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
 			}
@@ -457,13 +439,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser();
+			static_chooser.setAcceptAllFileFilterUsed(false);
 			static_chooser.setCurrentDirectory(getLoadDirectory());
-			UniFileFilter filter = new UniFileFilter(
-					new String[]{"html", "htm", "xhtml" }, "HTML Files");
-			UniFileFilter tfilter = new UniFileFilter(
-					new String[]{"txt"}, "TEXT Files");
-			static_chooser.addChoosableFileFilter(filter);
-			static_chooser.addChoosableFileFilter(tfilter);
+			static_chooser.addChoosableFileFilter(new HTMLExportFileFilter(new UniFileFilter(
+					new String[]{"html", "htm", "xhtml" }, "HTML Files")));
+			static_chooser.addChoosableFileFilter(new TextExportFileFilter(new UniFileFilter(
+					new String[]{"txt"}, "TEXT Files")));
 		}
 		static_chooser.rescanCurrentDirectory();
 		return static_chooser;
@@ -759,5 +740,67 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarkController.viewBookmark(igbService, bm);
 			}
 		}
+	}
+	
+	private abstract class ExportFileFilter extends javax.swing.filechooser.FileFilter{
+		final UniFileFilter filter;
+
+		public ExportFileFilter(UniFileFilter filter){
+			this.filter = filter;
+		}
+		
+		@Override
+		public boolean accept(File f) {
+			return filter.accept(f);
+		}
+
+		@Override
+		public String getDescription() {
+			return filter.getDescription();
+		}
+		
+		public void export(BookmarkList main_bookmark_list, File fil) throws Exception {
+			String full_path = fil.getCanonicalPath();
+			boolean extSet = false;
+			for (String ext : filter.getExtensions()) {
+				if (full_path.endsWith("."+ext)) {
+					extSet = true;
+					break;
+				}
+			}
+			if (!extSet) {
+				fil = new File(full_path + "." + filter.getExtensions().iterator().next());
+			} 
+			
+			write(main_bookmark_list, fil);
+		}
+	
+		protected abstract void write(BookmarkList main_bookmark_list, File fil) throws Exception;
+	}
+	
+	private class HTMLExportFileFilter extends ExportFileFilter{
+
+		public HTMLExportFileFilter(UniFileFilter filter){
+			super(filter);
+		}
+		
+		@Override
+		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
+			BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+		}
+		
+	}
+	
+	private class TextExportFileFilter extends ExportFileFilter{
+
+		public TextExportFileFilter(UniFileFilter filter){
+			super(filter);
+		}
+		
+		@Override
+		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
+			BookmarkList.exportAsTEXT(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+		}
+		
 	}
 }

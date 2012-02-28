@@ -23,39 +23,38 @@ import org.w3c.dom.NodeList;
 
 /**
  * A class to get meta data from all servers.
+ *
  * @author hiralv
  */
 public class CacheScript extends Thread {
 
 	private static final String temp = "temp";
-
-	/** boolean to indicate should script continue to run if error occurs **/
-	
-	/** Local path where data is cached. **/
+	/**
+	 * boolean to indicate should script continue to run if error occurs *
+	 */
+	/**
+	 * Local path where data is cached. *
+	 */
 	private final String path;
-	/** List of server to be cached. **/
+	/**
+	 * List of server to be cached. *
+	 */
 	private final Set<GenericServer> server_list;
+	/**
+	 * Default server list. *
+	 */
+	private static final String defaultList = " <servers> "
+			+ //												" <server type='das2' name='NetAffx Das2' url='http://netaffxdas.affymetrix.com/das2/genome' />" +
+			//												" <server type='quickload' name='NetAffx Quickload' url='http://netaffxdas.affymetrix.com/quickload_data' />" +
+			//												" <server type='das2' name='Bioviz Das2' url='http://bioviz.org/das2/genome' />" +
+			//												" <server type='quickload' name='Bioviz Quickload' url='http://bioviz.org/quickload/' />" +
+			" <server type='das' name='UCSC Das' url='http://genome.cse.ucsc.edu/cgi-bin/das/dsn' />"
+			+ //												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/' />" +
+			" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />"
+			+ //												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
+			" </servers> ";
 
-	/** Default server list. **/
-	private static final String defaultList =	" <servers> " +
-
-//												" <server type='das2' name='NetAffx Das2' url='http://netaffxdas.affymetrix.com/das2/genome' />" +
-//												" <server type='quickload' name='NetAffx Quickload' url='http://netaffxdas.affymetrix.com/quickload_data' />" +
-
-//												" <server type='das2' name='Bioviz Das2' url='http://bioviz.org/das2/genome' />" +
-//												" <server type='quickload' name='Bioviz Quickload' url='http://bioviz.org/quickload/' />" +
-
-												" <server type='das' name='UCSC Das' url='http://genome.cse.ucsc.edu/cgi-bin/das/dsn' />" +
-
-//												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/' />" +
-
-
-												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
-//												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
-
-												" </servers> ";
-
-	public CacheScript(String path, Set<GenericServer> server_list){
+	public CacheScript(String path, Set<GenericServer> server_list) {
 		this.path = path;
 		this.server_list = server_list;
 	}
@@ -73,8 +72,9 @@ public class CacheScript extends Thread {
 
 				protected Void doInBackground() {
 					ser_tim.start();
-					if(processServer(gServer, path))
-						copyDirectoryFor(path,gServer.serverName);
+					if (processServer(gServer, path)) {
+						copyDirectoryFor(path, gServer.serverName);
+					}
 					return null;
 				}
 
@@ -89,10 +89,12 @@ public class CacheScript extends Thread {
 	}
 
 	/**
-	 * Create serverMapping.txt and adds server name and corresponding directory to it.
+	 * Create serverMapping.txt and adds server name and corresponding directory
+	 * to it.
+	 *
 	 * @param server_list
 	 */
-	public void writeServerMapping(){
+	public void writeServerMapping() {
 		FileOutputStream fos = null;
 		PrintStream out = null;
 		try {
@@ -112,14 +114,15 @@ public class CacheScript extends Thread {
 	}
 
 	/**
-	 * Creates directory of server name.
-	 * Determines the server type and process it accordingly.
+	 * Creates directory of server name. Determines the server type and process
+	 * it accordingly.
+	 *
 	 * @param gServer	GenericServer to be processed.
 	 */
-	private static boolean processServer(GenericServer gServer, String path){
+	private static boolean processServer(GenericServer gServer, String path) {
 		Logger.getLogger(CacheScript.class.getName()).log(Level.FINE, "Caching {0} at path {1}", new Object[]{gServer.serverName, path});
 
-		String serverCachePath = path+gServer.serverName+temp;
+		String serverCachePath = path + gServer.serverName + temp;
 		GeneralUtils.makeDir(serverCachePath);
 
 		return gServer.serverType.processServer(gServer, path);
@@ -127,18 +130,21 @@ public class CacheScript extends Thread {
 
 	/**
 	 * Returns true if file may not exist else false.
+	 *
 	 * @param fileName
 	 * @return
 	 */
-	public static boolean getFileAvailability(String fileName){
-		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
+	public static boolean getFileAvailability(String fileName) {
+		if (fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
 			return true;
+		}
 
 		return false;
 	}
 
 	/**
 	 * Parses xml mapping of server list.
+	 *
 	 * @param istr
 	 * @return	Returns a list of generic server.
 	 */
@@ -163,14 +169,16 @@ public class CacheScript extends Thread {
 				el = (Element) child;
 				if (name.equalsIgnoreCase("server")) {
 					ServerTypeI server_type = getServerType(el.getAttribute("type"));
-					String server_name = el.getAttribute("name").replaceAll("\\W","");
+					String server_name = el.getAttribute("name").replaceAll("\\W", "");
 					String server_url = el.getAttribute("url");
 					String en = el.getAttribute("enabled");
 					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
-
+					String d = el.getAttribute("default");
+					Boolean isDefault = d == null || d.isEmpty() ? true : Boolean.valueOf(d);
 					String serverURL = ServerUtils.formatURL(server_url, server_type);
 					Object serverInfo = server_type.getServerInfo(serverURL, server_name);
-					GenericServer server = new GenericServer(server_name, serverURL, server_type, enabled, serverInfo);
+					GenericServer server = new GenericServer(server_name, serverURL,
+							server_type, enabled, serverInfo, isDefault);
 					serverList.add(server);
 				}
 			}
@@ -181,6 +189,7 @@ public class CacheScript extends Thread {
 
 	/**
 	 * Returns server type.
+	 *
 	 * @param type	Type name.
 	 * @return
 	 */
@@ -195,24 +204,26 @@ public class CacheScript extends Thread {
 
 	/**
 	 * Recursively copies data from source to destination.
+	 *
 	 * @param source	Source directory.
-	 * @param dest		Destination directory.
+	 * @param dest	Destination directory.
 	 */
-	private static void copyRecursively(File source, File dest){
-		for(File file: source.listFiles()){
-			if(file.isDirectory()){
-				copyRecursively(file,GeneralUtils.makeDir(dest.getPath()+ "/" +file.getName()));
-			}else{
-				GeneralUtils.moveFileTo(file,file.getName(),dest.getPath());
+	private static void copyRecursively(File source, File dest) {
+		for (File file : source.listFiles()) {
+			if (file.isDirectory()) {
+				copyRecursively(file, GeneralUtils.makeDir(dest.getPath() + "/" + file.getName()));
+			} else {
+				GeneralUtils.moveFileTo(file, file.getName(), dest.getPath());
 			}
 		}
 	}
 
 	/**
 	 * Recursively copies directory data for given server name.
+	 *
 	 * @param servername	Name of the server.
 	 */
-	private static void copyDirectoryFor(String path, String servername){
+	private static void copyDirectoryFor(String path, String servername) {
 		File temp_dir = new File(path + servername + temp);
 
 		String perm_path = path + servername;
@@ -220,20 +231,21 @@ public class CacheScript extends Thread {
 
 		File perm_dir = new File(perm_path);
 
-		copyRecursively(temp_dir,perm_dir);
+		copyRecursively(temp_dir, perm_dir);
 	}
 
-	static public void main(String[] args){
+	static public void main(String[] args) {
 		InputStream istr = null;
 		try {
 			istr = new ByteArrayInputStream(defaultList.getBytes());
 			String path = "/";
 
-			if(args.length >= 1)
+			if (args.length >= 1) {
 				path = args[0];
-			
+			}
+
 			Set<GenericServer> server_list = parseServerList(istr);
-			CacheScript script = new CacheScript(path,server_list);
+			CacheScript script = new CacheScript(path, server_list);
 			script.start();
 			script.writeServerMapping();
 		} catch (Exception ex) {
@@ -241,7 +253,6 @@ public class CacheScript extends Thread {
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
-				
-	}
 
+	}
 }

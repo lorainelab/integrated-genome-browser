@@ -159,7 +159,6 @@ public final class GeneralLoadUtils {
 		}
 		if (!discoverServer(gServer)) {
 			gServer.setEnabled(false);
-			//ServerList.removeServer(serverURL);
 			return null;
 		}
 

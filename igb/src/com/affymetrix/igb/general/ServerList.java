@@ -44,7 +44,7 @@ public final class ServerList {
 
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
-	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null);
+	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false);
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
@@ -155,7 +155,8 @@ public final class ServerList {
 	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, boolean primary, int order) {
+	public GenericServer addServer(ServerTypeI serverType, String name, String url, 
+			boolean enabled, boolean primary, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
@@ -168,7 +169,7 @@ public final class ServerList {
 				if (node.get(GenericServerPref.NAME, null) != null) {
 					name = node.get(GenericServerPref.NAME, null); //Apply changes users may have made to server name
 				}
-				server = new GenericServer(name, url, serverType, enabled, info, primary);
+				server = new GenericServer(name, url, serverType, enabled, info, primary, isDefault);
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -201,7 +202,7 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled) {
-		return addServer(serverType, name, url, enabled, false, -1);
+		return addServer(serverType, name, url, enabled, false, -1, false);
 	}
 
 	public GenericServer addServer(Preferences node) {
@@ -210,6 +211,7 @@ public final class ServerList {
 		String name;
 		ServerTypeI serverType;
 		Object info;
+		boolean isDefault;
 
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.get(GenericServerPref.URL, ""));
@@ -218,9 +220,10 @@ public final class ServerList {
 			serverType = getServerType(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = (serverType == null) ? url : serverType.getServerInfo(url, name);
+			isDefault = Boolean.valueOf(node.get(GenericServerPref.DEFAULT, "true"));
 
 			if (info != null) {
-				server = new GenericServer(node, info, serverType);
+				server = new GenericServer(node, info, serverType, isDefault);
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -276,7 +279,8 @@ public final class ServerList {
 					if (node.get(GenericServerPref.TYPE, null) != null) {
 						n_node.put(GenericServerPref.TYPE, node.get(GenericServerPref.TYPE, null));
 					}
-					n_node.put(GenericServerPref.ENABLED, node.get(GenericServerPref.ENABLED, "true"));
+					n_node.putBoolean(GenericServerPref.ENABLED, node.getBoolean(GenericServerPref.ENABLED, true));
+					n_node.putBoolean(GenericServerPref.DEFAULT, node.getBoolean(GenericServerPref.DEFAULT, true));
 					node.removeNode();
 					node = n_node;
 				}
@@ -318,16 +322,17 @@ public final class ServerList {
 				if (getPreferencesNode().nodeExists(type.toString())) {
 					Preferences prefServers = getPreferencesNode().node(type.toString());
 					String name, login, password, real_url;
-					boolean enabled;
+					boolean enabled, isDefault;
 					//in here, again, the url is actually a hash of type long
 					for (String url : prefServers.keys()) {
 						name = prefServers.node(GenericServerPref.NAME).get(url, "Unknown");
 						login = prefServers.node(GenericServerPref.LOGIN).get(url, "");
 						password = prefServers.node(GenericServerPref.PASSWORD).get(url, "");
-						enabled = Boolean.parseBoolean(prefServers.node(GenericServerPref.ENABLED).get(url, "true"));
+						enabled = prefServers.node(GenericServerPref.ENABLED).getBoolean(url, true);
 						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
-
-						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1);
+						isDefault = prefServers.node(GenericServerPref.DEFAULT).getBoolean(url, true);
+						
+						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1, isDefault);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
 						server.setEnabled(enabled);
@@ -392,7 +397,8 @@ public final class ServerList {
 	 * @param type type of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
-	private GenericServer addServerToPrefs(String url, String name, ServerTypeI type, int order) {
+	private GenericServer addServerToPrefs(String url, String name, 
+			ServerTypeI type, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
 		if (node.get(GenericServerPref.NAME, null) == null) {
@@ -402,8 +408,12 @@ public final class ServerList {
 			//Added url to preferences.
 			//long url was bugging the node name since it only accepts 80 char names
 			node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
+			node.putBoolean(GenericServerPref.DEFAULT, isDefault);
+			
 		}
-		return new GenericServer(node, null, getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())));
+		return new GenericServer(node, null, 
+				getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())),
+				node.getBoolean(GenericServerPref.DEFAULT, true));
 	}
 
 	/**
@@ -420,7 +430,7 @@ public final class ServerList {
 		node.put(GenericServerPref.NAME, name);
 		node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
 
-		return new GenericServer(node, null, null);
+		return new GenericServer(node, null, null, false);
 	}
 
 	/**
@@ -433,7 +443,8 @@ public final class ServerList {
 		if (server.serverType == null) {
 			addRepositoryToPrefs(server.URL, server.serverName);
 		} else {
-			addServerToPrefs(server.URL, server.serverName, server.serverType, order);
+			addServerToPrefs(server.URL, server.serverName, 
+					server.serverType, order, server.isDefault());
 		}
 	}
 

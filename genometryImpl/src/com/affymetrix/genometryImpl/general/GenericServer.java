@@ -74,8 +74,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	 */
 	private ServerStatus serverStatus = ServerStatus.NotInitialized;
 	private final boolean primary;
+	private final boolean isDefault;
 
-	public GenericServer(String serverName, String URL, ServerTypeI serverType, boolean enabled, Object serverObj, boolean primary) {
+	public GenericServer(String serverName, String URL, ServerTypeI serverType,
+			boolean enabled, Object serverObj, boolean primary, boolean isDefault) {
 		this(
 				serverName,
 				URL,
@@ -84,10 +86,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				false,
 				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
 				: PreferenceUtils.getServersNode().node(getHash(URL)),
-				serverObj, primary);
+				serverObj, primary, isDefault);
 	}
 
-	public GenericServer(String serverName, String URL, ServerTypeI serverType, boolean enabled, Object serverObj) {
+	public GenericServer(String serverName, String URL, ServerTypeI serverType,
+			boolean enabled, Object serverObj, boolean isDefault) {
 		this(
 				serverName,
 				URL,
@@ -96,10 +99,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				false,
 				serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
 				: PreferenceUtils.getServersNode().node(getHash(URL)),
-				serverObj, false);
+				serverObj, false, isDefault);
 	}
 
-	public GenericServer(Preferences node, Object serverObj, ServerTypeI serverType) {
+	public GenericServer(Preferences node, Object serverObj,
+			ServerTypeI serverType, boolean isDefault) {
 		this(
 				node.get(GenericServerPref.NAME, "Unknown"),
 				GeneralUtils.URLDecode(node.get(GenericServerPref.URL, "")),
@@ -107,22 +111,25 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				true,
 				false,
 				node,
-				serverObj, false);
+				serverObj, false, isDefault);
 	}
 
 	/**
-	 * returns the positive has of the string.  For this class, the String is a 
+	 * returns the positive has of the string. For this class, the String is a
 	 * URI for a local or network path.
+	 *
 	 * @param str path on the network or local space
-	 * @return a hash that should be unique enough to create a Preference node where the
-	 *	servers preferences can be stored.
+	 * @return a hash that should be unique enough to create a Preference node
+	 * where the servers preferences can be stored.
 	 */
 	public static String getHash(String str) {
 		return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
 	}
 
 	private GenericServer(
-			String serverName, String URL, ServerTypeI serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
+			String serverName, String URL, ServerTypeI serverType,
+			boolean enabled, boolean referenceOnly, Preferences node,
+			Object serverObj, boolean primary, boolean isDefault) {
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
@@ -138,6 +145,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 
 		this.node.addPreferenceChangeListener(this);
 		this.primary = primary;
+		this.isDefault = isDefault;
 	}
 
 	public ImageIcon getFriendlyIcon() {
@@ -224,16 +232,18 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		return this.primary;
 	}
 
+	public boolean isDefault() {
+		return this.isDefault;
+	}
+
 	@Override
 	public String toString() {
 		return serverName;
 	}
 
 	/**
-	 * Order by:
-	 * enabled/disabled,
-	 * then server name,
-	 * then DAS2, DAS, Quickload.
+	 * Order by: enabled/disabled, then server name, then DAS2, DAS, Quickload.
+	 *
 	 * @param gServer
 	 * @return comparison integer
 	 */
@@ -248,8 +258,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	}
 
 	/**
-	 * React to modifications of the Java preferences.  This should probably
-	 * fire an event notifying listeners that this generic server has changed.
+	 * React to modifications of the Java preferences. This should probably fire
+	 * an event notifying listeners that this generic server has changed.
 	 *
 	 * @param evt
 	 */
@@ -257,7 +267,9 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		final String key = evt.getKey();
 
 		if (key.equals(GenericServerPref.NAME) || key.equals(GenericServerPref.TYPE)) {
-			/* Ignore */
+			/*
+			 * Ignore
+			 */
 		} else if (key.equals(GenericServerPref.LOGIN)) {
 			this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
 		} else if (key.equals(GenericServerPref.PASSWORD)) {

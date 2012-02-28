@@ -40,4 +40,6 @@ public class GenericServerPref {
 	 * Key to retrieve ??
 	 */
 	public static final String ORDER = "order";
+	
+	public static final String DEFAULT = "default";
 }

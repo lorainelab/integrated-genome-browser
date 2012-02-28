@@ -22,7 +22,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -56,14 +55,18 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		layout = new GroupLayout(this);
 		serverList = serverList_;
 		sourceTableModel = new SourceTableModel(serverList);
+
 		sourcePanel = initSourcePanel(getViewName());
 
 		this.setName(getViewName());
 		this.setToolTipText(getToolTip());
 
 		this.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+
+		layout.setAutoCreateGaps(
+				true);
+		layout.setAutoCreateContainerGaps(
+				true);
 	}
 
 	protected JPanel initSourcePanel(String viewName) {
@@ -82,7 +85,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
-				
+
 				AddSource.getSingleton().init(false, enableCombo(), "Add Source", null, null);
 			}
 		});
@@ -103,10 +106,22 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
 			public void valueChanged(ListSelectionEvent event) {
-				int viewRow = sourcesTable.getSelectedRow();
-				boolean enable = viewRow >= 0;
+				enableServerButtons(false);
 
-				enableServerButtons(enable);
+				if (sourcesTable.getSelectedRowCount() == 1) {
+					Object url = sourcesTable.getModel().getValueAt(
+							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+					GenericServer server = ServerList.getServerInstance().getServer((String) url);
+
+					if (server == null) {
+						server = ServerList.getRepositoryInstance().getServer((String) url);
+					}
+
+					if (!server.isDefault()) {
+						enableServerButtons(true);
+					}
+				}
 			}
 		});
 
@@ -116,6 +131,8 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	}
 
 	protected void enableServerButtons(boolean enable) {
+		DataLoadPrefsView.getSingleton().editAuthButton.setEnabled(enable);
+		DataLoadPrefsView.getSingleton().editSourceButton.setEnabled(enable);
 		removeServerButton.setEnabled(enable);
 	}
 

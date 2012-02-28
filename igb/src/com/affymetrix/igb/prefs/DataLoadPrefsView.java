@@ -23,7 +23,6 @@ import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -54,8 +53,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
 	private static DataLoadPrefsView singleton;
 	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
-	protected JRPButton editSourceButton;
-	protected JRPButton editAuthButton;
+	public JRPButton editSourceButton;
+	public JRPButton editAuthButton;
 	protected JRPButton rankUpButton;
 	protected JRPButton rankDownButton;
 

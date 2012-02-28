@@ -322,7 +322,7 @@ public final class GeneralLoadView {
 	public static void AutoloadQuickloadFeature() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
-					|| gFeature.gVersion.gServer.serverType != ServerType.QuickLoad) {
+					|| gFeature.gVersion.gServer.serverType != ServerType.Quickload) {
 				continue;
 			}
 

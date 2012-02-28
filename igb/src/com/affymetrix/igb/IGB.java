@@ -473,4 +473,15 @@ public final class IGB extends Application
 		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
 		return null;
 	}
+	//Easier for scripting if we don't require full name.
+	//This method only take display name of a tab instead of full package+classname
+	public IGBTabPanel getViewByDisplayName(String viewName) {
+		for (IGBTabPanel plugin : windowService.getPlugins()) {
+			if (plugin.getDisplayName().equals(viewName)) {
+				return plugin;
+			}
+		}
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
+		return null;
+	}
 }

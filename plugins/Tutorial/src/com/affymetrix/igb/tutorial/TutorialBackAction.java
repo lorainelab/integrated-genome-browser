@@ -1,8 +1,7 @@
 package com.affymetrix.igb.tutorial;
 
-import java.awt.event.ActionEvent;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
+import java.awt.event.ActionEvent;
 
 public class TutorialBackAction extends GenericAction {
 	private static final long serialVersionUID = 1L;

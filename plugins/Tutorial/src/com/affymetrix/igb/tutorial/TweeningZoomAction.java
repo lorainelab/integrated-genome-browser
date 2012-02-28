@@ -1,12 +1,10 @@
 package com.affymetrix.igb.tutorial;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.SwingWorker;
-
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import java.awt.event.ActionEvent;
+import javax.swing.SwingWorker;
 
 public class TweeningZoomAction extends GenericAction implements IAmount {
 	private static final long serialVersionUID = 1L;

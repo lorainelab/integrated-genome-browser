@@ -1,13 +1,5 @@
 package com.affymetrix.igb.osgi.service;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -22,10 +14,18 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
@@ -172,4 +172,13 @@ public interface IGBService {
 
 	public void addTrack(SeqSymmetry sym, String method);
 
+	public void addSpeciesItemListener(ItemListener il);
+
+	public void addPartialResiduesActionListener(ActionListener al);
+	
+	public IGBTabPanel getTabPanelFromDisplayName(String viewName); 
+	
+	public Set<GenericServer> getEnabledServerList();
+	public Collection<GenericServer> getAllServersList();
+	public void discoverServer(final GenericServer server);
 }

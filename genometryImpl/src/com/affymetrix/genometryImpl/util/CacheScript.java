@@ -155,7 +155,7 @@ public class CacheScript extends Thread {
 		GeneralUtils.makeDir(serverCachePath);
 
 		switch(gServer.serverType){
-			case QuickLoad:
+			case Quickload:
 				return processQuickLoad(gServer, serverCachePath);
 				
 
@@ -253,7 +253,7 @@ public class CacheScript extends Thread {
 		Set<String> files = null;
 
 		switch(gServer.serverType){
-			case QuickLoad:
+			case Quickload:
 				files = quickloadFiles;
 				break;
 

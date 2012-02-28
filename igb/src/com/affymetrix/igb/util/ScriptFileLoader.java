@@ -31,8 +31,7 @@ import javax.swing.SwingWorker;
 
 /**
  *
- * @author jnicol
- * Parse actions from IGB response file.
+ * @author jnicol Parse actions from IGB response file.
  */
 public class ScriptFileLoader {
 
@@ -96,6 +95,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Done in a thread to avoid GUI lockup.
+	 *
 	 * @param batchFileStr
 	 */
 	private static void executeScript(String fileName) {
@@ -118,6 +118,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Done in a thread to avoid GUI lockup.
+	 *
 	 * @param batchFileStr
 	 */
 	private static void doActions(final String batchFileStr) {
@@ -157,6 +158,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Read and execute the actions from a file.
+	 *
 	 * @param bis
 	 */
 	private static void doActions(File f) {
@@ -173,6 +175,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Read and execute the actions from the stream.
+	 *
 	 * @param bis
 	 */
 	private static void doActions(BufferedReader br) {
@@ -254,6 +257,9 @@ public class ScriptFileLoader {
 		if (action.equals("select") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().performSelection(join(fields, 1));
 		}
+		if (action.equals("selectfeature") && fields.length >= 2) {
+			UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(join(fields, 1));
+		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
 				int sleepTime = Integer.parseInt(fields[1]);
@@ -265,15 +271,15 @@ public class ScriptFileLoader {
 		if (action.startsWith("snapshot")) {
 			// determine the export mode
 			action = action.substring(8, action.length());
-			ExportMode exportMode = ExportMode.WHOLEFRAME;
-			if (action.length() == 0 || action.equalsIgnoreCase(ExportMode.WHOLEFRAME.toString())) {
-				exportMode = ExportMode.WHOLEFRAME;
-			} else if (action.equalsIgnoreCase(ExportMode.MAIN.toString())) {
-				exportMode = ExportMode.MAIN;
-			} else if (action.equalsIgnoreCase(ExportMode.MAINWITHLABELS.toString())) {
-				exportMode = ExportMode.MAINWITHLABELS;
-			} else if (action.equalsIgnoreCase(ExportMode.SLICEDWITHLABELS.toString())) {
-				exportMode = ExportMode.SLICEDWITHLABELS;
+			ScriptFileLoader.ExportMode exportMode = ScriptFileLoader.ExportMode.WHOLEFRAME;
+			if (action.length() == 0 || action.equalsIgnoreCase(ScriptFileLoader.ExportMode.WHOLEFRAME.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.WHOLEFRAME;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.MAIN.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.MAIN;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.MAINWITHLABELS.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.MAINWITHLABELS;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.SLICEDWITHLABELS.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.SLICEDWITHLABELS;
 			}
 
 			// determine the file name, and export.
@@ -290,9 +296,10 @@ public class ScriptFileLoader {
 
 	/**
 	 * Take a snapshot, i.e., export to a file.
+	 *
 	 * @param f
 	 */
-	private static void snapShot(ExportMode exportMode, File f) {
+	private static void snapShot(ScriptFileLoader.ExportMode exportMode, File f) {
 		Logger.getLogger(ScriptFileLoader.class.getName()).log(
 				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
 		String ext = ParserController.getExtension(f.getName().toLowerCase());
@@ -443,6 +450,7 @@ public class ScriptFileLoader {
 
 	/**
 	 * Join fields from startField to end of fields.
+	 *
 	 * @param fields
 	 * @param startField
 	 * @return

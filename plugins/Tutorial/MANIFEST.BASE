@@ -9,6 +9,7 @@ Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tutorials
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.general,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.igb.shared,
@@ -24,4 +25,3 @@ Bundle-ClassPath: .,
  lib/jackson-all-1.7.9.jar,
  lib/furbelow.jar
 Bundle-Description: Plugin to run IGB tutorials
-

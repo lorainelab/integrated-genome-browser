@@ -88,7 +88,7 @@ public final class Das2ServerInfo  {
 	private void setPrimaryURL(URL primary_url) {
 		if (primary_url != null) {
 			try {
-				this.primary_uri = new URI(ServerUtils.formatURL(primary_url.toExternalForm(), ServerType.QuickLoad));
+				this.primary_uri = new URI(ServerUtils.formatURL(primary_url.toExternalForm(), ServerType.Quickload));
 			} catch (URISyntaxException ex) {
 				Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}

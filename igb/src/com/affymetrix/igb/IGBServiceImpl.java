@@ -1,32 +1,15 @@
 /**
- *   Copyright (c) 2010 Affymetrix, Inc.
+ * Copyright (c) 2010 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.io.InputStream;
-import java.net.URI;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -55,30 +38,42 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.IGBUtils;
+import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.SwingWorker;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
- * implementation of the IGBService, using the IGB instance for
- * all of the methods. This is the way for bundles to access
- * IGB functionality that is not public.
+ * implementation of the IGBService, using the IGB instance for all of the
+ * methods. This is the way for bundles to access IGB functionality that is not
+ * public.
  *
  */
 public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	private static IGBServiceImpl instance = new IGBServiceImpl();
+
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
@@ -108,6 +103,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void setStatus(final String message) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
+
 			public void run() {
 				Application.getSingleton().setStatus(message);
 			}
@@ -121,10 +117,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public boolean confirmPanel(final String message, final Preferences node,
-			final String check, final boolean def_val){
+			final String check, final boolean def_val) {
 		return Application.confirmPanel(message, node, check, def_val);
 	}
-	
+
 	@Override
 	public ImageIcon getIcon(String name) {
 		return CommonUtils.getInstance().getIcon("images/" + name);
@@ -132,13 +128,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public JRPMenu getMenu(String menuName) {
-		IGB igb = (IGB)IGB.getSingleton();
+		IGB igb = (IGB) IGB.getSingleton();
 		return igb.getMenu(menuName);
 	}
 
 	@Override
 	public JRPMenu addTopMenu(String id, String text) {
-		IGB igb = (IGB)IGB.getSingleton();
+		IGB igb = (IGB) IGB.getSingleton();
 		return igb.addTopMenu(id, text);
 	}
 
@@ -146,7 +142,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
 	}
-	
+
 	@Override
 	public void updateGeneralLoadView() {
 		GeneralLoadView.getLoadView().refreshTreeView();
@@ -196,19 +192,19 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
-		return ((IGB)IGB.getSingleton()).searchForRegexInResidues(
+		return ((IGB) IGB.getSingleton()).searchForRegexInResidues(
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
 	}
 
 	@Override
 	public void zoomToCoord(String seqID, int start, int end) {
-		((SeqMapView)getSeqMapView()).getMapRangeBox().zoomToSeqAndSpan(((SeqMapView)getSeqMapView()), seqID, start, end);
+		((SeqMapView) getSeqMapView()).getMapRangeBox().zoomToSeqAndSpan(((SeqMapView) getSeqMapView()), seqID, start, end);
 	}
 
 	@Override
 	public void mapRefresh(List<GlyphI> glyphs) {
-		TransformTierGlyph axis_tier = ((SeqMapView)getSeqMapView()).getAxisTier();
-		for(GlyphI glyph : glyphs){
+		TransformTierGlyph axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
+		for (GlyphI glyph : glyphs) {
 			axis_tier.addChild(glyph);
 		}
 	}
@@ -229,10 +225,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial){
+	public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial) {
 		return new LoadResidueAction(viewspan, partial);
 	}
-	
+
 	@Override
 	public JFrame getFrame() {
 		return Application.getSingleton().getFrame();
@@ -240,37 +236,37 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void saveState() {
-		((IGB)IGB.getSingleton()).getWindowService().saveState();
-		((SeqMapView)getSeqMapView()).saveSession();
-		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
+		((IGB) IGB.getSingleton()).getWindowService().saveState();
+		((SeqMapView) getSeqMapView()).saveSession();
+		for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
 			panel.saveSession();
 		}
 	}
 
 	@Override
 	public void loadState() {
-		((IGB)IGB.getSingleton()).getWindowService().restoreState();
+		((IGB) IGB.getSingleton()).getWindowService().restoreState();
 		SeqMapView mapView = Application.getSingleton().getMapView();
 		mapView.loadSession();
-		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
+		for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
 			panel.loadSession();
 		}
 	}
 
 	@Override
 	public IGBTabPanel getTabPanel(String viewName) {
-		return ((IGB)IGB.getSingleton()).getView(viewName);
+		return ((IGB) IGB.getSingleton()).getView(viewName);
 	}
 
 	@Override
 	public void selectTab(IGBTabPanel panel) {
-		((IGB)IGB.getSingleton()).getWindowService().selectTab(panel);
+		((IGB) IGB.getSingleton()).getWindowService().selectTab(panel);
 	}
 
 	@Override
 	public void deleteGlyph(GlyphI glyph) {
 		List<TierLabelGlyph> tiers = new ArrayList<TierLabelGlyph>();
-		for (TierLabelGlyph tierLabelGlyph : ((AffyLabelledTierMap)getSeqMap()).getTierLabels()) {
+		for (TierLabelGlyph tierLabelGlyph : ((AffyLabelledTierMap) getSeqMap()).getTierLabels()) {
 			if (tierLabelGlyph.getInfo() == glyph) {
 				tiers.add(tierLabelGlyph);
 			}
@@ -279,26 +275,26 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			String method = style.getMethodName();
 			if (method != null) {
-				TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+				TrackView.delete((AffyTieredMap) getSeqMap(), method, style);
 			} else {
 				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
 					style = gg.getGraphState().getTierStyle();
 					method = style.getMethodName();
-					TrackView.delete((AffyTieredMap)getSeqMap(), method, style);
+					TrackView.delete((AffyTieredMap) getSeqMap(), method, style);
 				}
 			}
 		}
-		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
+		((SeqMapView) getSeqMapView()).dataRemoved();	// refresh
 	}
 
 	public void deleteGraph(GraphSym gsym) {
-		TrackView.delete((AffyTieredMap)getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
-		((SeqMapView)getSeqMapView()).dataRemoved();	// refresh
+		TrackView.delete((AffyTieredMap) getSeqMap(), gsym.getID(), gsym.getGraphState().getTierStyle());
+		((SeqMapView) getSeqMapView()).dataRemoved();	// refresh
 	}
-	
+
 	@Override
 	public void packMap(boolean fitx, boolean fity) {
-		AffyTieredMap map = (AffyTieredMap)getSeqMap();
+		AffyTieredMap map = (AffyTieredMap) getSeqMap();
 		map.packTiers(false, true, false, false);
 		map.stretchToFit(fitx, fity);
 		map.updateWidget();
@@ -306,7 +302,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public View getView() {
-		return ((AffyTieredMap)getSeqMap()).getView();
+		return ((AffyTieredMap) getSeqMap()).getView();
 	}
 
 	@Override
@@ -321,7 +317,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
-		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs);
+		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>) graph_glyphs);
 		if (graphSym != null) {
 			getSeqMapView().setAnnotatedSeq(graphSym.getGraphSeq(), true, true);
 		}
@@ -331,7 +327,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
 		List<Glyph> allTierGlyphs = new ArrayList<Glyph>();
-		for (TierLabelGlyph labelGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getAllTierLabels()) {
+		for (TierLabelGlyph labelGlyph : ((SeqMapView) getSeqMapView()).getTierManager().getAllTierLabels()) {
 			allTierGlyphs.add(labelGlyph.getReferenceTier());
 		}
 		return allTierGlyphs;
@@ -340,7 +336,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public List<Glyph> getSelectedTierGlyphs() {
 		List<Glyph> selectedTierGlyphs = new ArrayList<Glyph>();
-		for (TierGlyph tierGlyph : ((SeqMapView)getSeqMapView()).getTierManager().getSelectedTiers()) {
+		for (TierGlyph tierGlyph : ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers()) {
 			selectedTierGlyphs.add(tierGlyph);
 		}
 		return selectedTierGlyphs;
@@ -380,9 +376,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
 		GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
 	}
-	
+
 	@Override
-	public String getSelectedSpecies(){
+	public String getSelectedSpecies() {
 		return GeneralLoadView.getLoadView().getSelectedSpecies();
 	}
 
@@ -399,5 +395,44 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void addTrack(SeqSymmetry sym, String method) {
 		TrackUtils.getInstance().addTrack(sym, method, null);
+	}
+
+	@Override
+	public void addSpeciesItemListener(ItemListener il) {
+		SeqGroupView.getInstance().getSpeciesCB().addItemListener(il);
+	}
+
+	@Override
+	public void addPartialResiduesActionListener(ActionListener al) {
+		GeneralLoadView.getLoadView().getPartial_residuesButton().addActionListener(al);
+	}
+
+	@Override
+	public Set<GenericServer> getEnabledServerList() {
+		return ServerList.getServerInstance().getEnabledServers();
+	}
+
+	@Override
+	public Collection<GenericServer> getAllServersList() {
+		return ServerList.getServerInstance().getAllServers();
+	}
+
+	@Override
+	public void discoverServer(final GenericServer server) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				GeneralLoadUtils.discoverServer(server);
+				return null;
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(server).execute(worker);
+	}
+
+	//Easier for scripting if we don't require full name.
+	@Override
+	public IGBTabPanel getTabPanelFromDisplayName(String viewName) {
+		return ((IGB) IGB.getSingleton()).getViewByDisplayName(viewName);
 	}
 }

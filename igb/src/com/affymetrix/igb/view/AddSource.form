@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
@@ -48,13 +48,14 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="addServerButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="openDir" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addServerButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="openDir" alignment="1" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -119,7 +120,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (type != null) {&#xa; type.removeItem(LoadUtils.ServerType.LocalFiles);&#xa; type.setSelectedItem(LoadUtils.ServerType.QuickLoad);&#x9;// common default&#xa;}&#xa;&#xa;if (!enableCombo){&#xa;type.setEnabled(enableCombo);&#xa;type.setVisible(enableCombo);&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (type != null) {&#xa; type.removeItem(LoadUtils.ServerType.LocalFiles);&#xa; type.setSelectedItem(LoadUtils.ServerType.Quickload);&#x9;// common default&#xa;}&#xa;&#xa;if (!enableCombo){&#xa;type.setEnabled(enableCombo);&#xa;type.setVisible(enableCombo);&#xa;}"/>
         <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="type = new JComboBox(LoadUtils.ServerType.values());"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
       </AuxValues>
@@ -146,7 +147,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openDirActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="openDir.setToolTipText(&quot;Open Local Directory&quot;);&#xa;openDir.setEnabled(type != null &amp;&amp; type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="openDir.setToolTipText(&quot;Open Local Directory&quot;);&#xa;openDir.setEnabled(type != null &amp;&amp; type.getSelectedItem() == LoadUtils.ServerType.Quickload);"/>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPButton(&quot;DataLoadPrefsView_openDir&quot;, &quot;\u2026&quot;)"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
       </AuxValues>

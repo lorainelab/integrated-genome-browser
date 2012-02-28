@@ -10,19 +10,19 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import java.util.logging.Logger;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-import com.affymetrix.igb.shared.FileTracker;
-import javax.swing.JFileChooser;
-import java.awt.HeadlessException;
-import java.awt.Component;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.shared.FileTracker;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 
 /**
@@ -118,12 +118,12 @@ public class AddSource extends javax.swing.JFrame {
                                 .add(type, 0, 328, Short.MAX_VALUE)
                                 .addContainerGap())))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(cancelButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(addServerButton)
-                        .addContainerGap())
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(openDir)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(cancelButton)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(addServerButton))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, openDir))
                         .addContainerGap())))
         );
 
@@ -157,7 +157,7 @@ public class AddSource extends javax.swing.JFrame {
         }
         if (type != null) {
             type.removeItem(LoadUtils.ServerType.LocalFiles);
-            type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
+            type.setSelectedItem(LoadUtils.ServerType.Quickload);	// common default
         }
 
         if (!enableCombo){
@@ -165,7 +165,7 @@ public class AddSource extends javax.swing.JFrame {
             type.setVisible(enableCombo);
         }
         openDir.setToolTipText("Open Local Directory");
-        openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+        openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.Quickload);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -184,7 +184,7 @@ public class AddSource extends javax.swing.JFrame {
 
 	private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
 		// TODO add your handling code here:
-		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.Quickload);
 	}//GEN-LAST:event_typeActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed

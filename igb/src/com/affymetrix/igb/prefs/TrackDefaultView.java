@@ -22,7 +22,6 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Map.Entry;
@@ -32,8 +31,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -90,7 +87,7 @@ public final class TrackDefaultView implements ListSelectionListener {
 	private ColorComboBox possitiveColorComboBox;
 	private JRPButton removeTrackDefaultButton;
 	private JRPCheckBox show2TracksCheckBox;
-	private TrackDefualtViewTable table;
+	private StyledJTable table;
 	private JTextField trackDefaultTextField;
 	private JComboBox trackNameSizeComboBox;
 	private static TrackDefaultView singleton;
@@ -139,7 +136,9 @@ public final class TrackDefaultView implements ListSelectionListener {
 		negativeColorComboBox = new ColorComboBox();
 		colorCheckBox = new JRPCheckBox("TrackDefaultView_colorCheckBox");
 		arrowCheckBox = new JRPCheckBox("TrackDefaultView_arrowCheckBox");
-		table = new TrackDefualtViewTable();
+		table = new StyledJTable();
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		bgColorComboBox = new ColorComboBox();
@@ -773,39 +772,5 @@ public final class TrackDefaultView implements ListSelectionListener {
 			}
 			return i;
 		}
-	}
-}
-
-class TrackDefualtViewTable extends StyledJTable {
-
-	private static final long serialVersionUID = 1L;
-
-	public TrackDefualtViewTable() {
-		super();
-	}
-
-	@Override
-	public TableCellRenderer getCellRenderer(int row, int column) {
-		return super.getCellRenderer(row, column);
-	}
-
-	@Override
-	public TableCellEditor getCellEditor(int row, int col) {
-
-		return super.getCellEditor(row, col);
-	}
-
-	@Override
-	public Component setComponentBackground(Component c, int i, int i2) {
-		if ((i2 == TrackDefaultView.COL_FOREGROUND
-				|| i2 == TrackDefaultView.COL_BACKGROUND) && isCellEditable(i, i2)) { //using column name to fix buggy behavior with the column number
-			return c;
-		}
-		if (isCellEditable(i, i2)) {
-			c.setBackground(Color.WHITE);
-		} else {
-			c.setBackground(new Color(235, 235, 235));
-		}
-		return c;
 	}
 }

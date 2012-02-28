@@ -97,24 +97,31 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			return null;
 		}
 		switch (tableColumns.get(columnIndex)) {
-			case Enabled:
-				return servers.get(rowIndex).isEnabled();
 			case Name:
 				return servers.get(rowIndex).serverName;
 			case Type:
 				return servers.get(rowIndex).serverType;
 			case URL:
 				return servers.get(rowIndex).URL;
+			case Enabled:
+				return servers.get(rowIndex).isEnabled();
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
 		}
+
 	}
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == tableColumns.indexOf(SourceColumn.Name) || col == tableColumns.indexOf(SourceColumn.Enabled)) {
+		if (!servers.get(row).isDefault()
+				&& col == tableColumns.indexOf(SourceColumn.Name)) {
 			return true;
 		}
+
+		if (col == tableColumns.indexOf(SourceColumn.Enabled)) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -159,7 +166,9 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
-		/* It is easier to rebuild than try and find out what changed */
+		/*
+		 * It is easier to rebuild than try and find out what changed
+		 */
 		this.init();
 	}
 

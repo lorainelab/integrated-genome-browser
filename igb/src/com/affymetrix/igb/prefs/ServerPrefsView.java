@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
@@ -45,7 +44,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected final JPanel sourcePanel;
 	protected final GroupLayout layout;
 	protected ServerList serverList;
-	protected JTableX sourcesTable;
+	protected StyledJTable sourcesTable;
 	protected JScrollPane sourcesScrollPane;
 	protected JRPButton addServerButton;
 	protected JRPButton removeServerButton;
@@ -74,6 +73,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		final GroupLayout layout = new GroupLayout(sourcePanel);
 
 		sourcesTable = createSourcesTable(sourceTableModel, isSortable());
+		sourcesTable.setCellSelectionEnabled(true);
 		sourcesScrollPane = new JScrollPane(sourcesTable);
 
 		sourcePanel.setLayout(layout);
@@ -142,11 +142,11 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	protected abstract Group getServerButtons(Group group);
 
-	private static JTableX createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
-		final JTableX table = new JTableX(sourceTableModel);
-
+	private static StyledJTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
+		final StyledJTable table = new StyledJTable(sourceTableModel);
 		table.setFillsViewportHeight(true);
 		table.setAutoCreateRowSorter(sortable);
+
 		if (sortable) {
 			table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
 		}
@@ -260,33 +260,4 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	protected abstract String getToolTip();
 
 	protected abstract boolean enableCombo();
-}
-
-class JTableX extends StyledJTable {
-
-	private static final long serialVersionUID = 1L;
-	private SourceTableModel tableModel;
-
-	public JTableX(TableModel tm) {
-		super(tm);
-		this.tableModel = (SourceTableModel) tm;
-	}
-
-	@Override
-	public TableCellRenderer getCellRenderer(int row, int column) {
-		if (column == tableModel.getColumnIndex(SourceTableModel.SourceColumn.Name)) {
-			GenericServer server = tableModel.getServers().get(row);
-			return new JRPTextFieldTableCellRenderer(server.serverName + row, server.serverName);
-		}
-		return super.getCellRenderer(row, column);
-	}
-
-	@Override
-	public TableCellEditor getCellEditor(int row, int col) {
-		if (col == tableModel.getColumnIndex(SourceTableModel.SourceColumn.Name)) {
-			GenericServer server = tableModel.getServers().get(row);
-			return new JRPTextFieldTableCellRenderer(server.serverName + row, server.serverName);
-		}
-		return super.getCellEditor(row, col);
-	}
 }

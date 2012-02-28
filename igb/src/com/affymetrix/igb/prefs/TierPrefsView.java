@@ -24,7 +24,6 @@ import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,8 +32,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
@@ -73,7 +70,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	public static final String AUTO_REFRESH = "Auto Refresh";
 	private TierPrefsTableModel model;
 	public ListSelectionModel lsm;
-	public static TierPrefsTable table;
+	public static StyledJTable table;
 	public SeqMapView smv;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
@@ -203,8 +200,10 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	private void initTable() {
-		table = new TierPrefsTable(model);
-
+		table = new StyledJTable(model);
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
+		
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -887,47 +886,4 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			return fallback;
 		}
 	};
-}
-
-class TierPrefsTable extends StyledJTable {
-
-	private static final long serialVersionUID = 1L;
-	private TierPrefsTableModel tableModel;
-
-	public TierPrefsTable(TableModel tm) {
-		super(tm);
-		this.tableModel = (TierPrefsTableModel) tm;
-	}
-
-	@Override
-	public TableCellRenderer getCellRenderer(int row, int column) {
-		if (column == TierPrefsView.COL_TRACK_NAME) {
-			TrackStyle style = tableModel.tier_styles.get(row);
-			return new JRPTextFieldTableCellRenderer(style.getTrackName() + " " + row, style.getTrackName());
-		}
-		return super.getCellRenderer(row, column);
-	}
-
-	@Override
-	public TableCellEditor getCellEditor(int row, int col) {
-		if (col == TierPrefsView.COL_TRACK_NAME) {
-			TrackStyle style = tableModel.tier_styles.get(row);
-			return new JRPTextFieldTableCellRenderer(style.getTrackName() + " " + row, style.getTrackName());
-		}
-		return super.getCellEditor(row, col);
-	}
-
-	@Override
-	public Component setComponentBackground(Component c, int i, int i2) {
-		if ((i2 == TierPrefsView.COL_FOREGROUND
-				|| i2 == TierPrefsView.COL_BACKGROUND) && isCellEditable(i, i2)) { //using column name to fix buggy behavior with the column number
-			return c;
-		}
-		if (isCellEditable(i, i2)) {
-			c.setBackground(Color.WHITE);
-		} else {
-			c.setBackground(new Color(235, 235, 235));
-		}
-		return c;
-	}
 }

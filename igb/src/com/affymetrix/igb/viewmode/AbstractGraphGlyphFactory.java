@@ -198,7 +198,7 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		else if (sym instanceof GraphSym) {
 			return (ViewModeGlyph)displayGraph((GraphSym) sym, smv, check_same_seq);
 		} else {
-			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "
+			System.err.println("GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return null;

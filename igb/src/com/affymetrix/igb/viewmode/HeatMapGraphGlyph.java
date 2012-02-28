@@ -9,12 +9,18 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- *
- * @author lfrohman
- */
 class HeatMapGraphGlyph extends AbstractGraphGlyph {
+	private static final Map<String,Class<?>> PREFERENCES;
+	static {
+		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		temp.put("low_color", Color.class);
+		temp.put("high_color", Color.class);
+		PREFERENCES = Collections.unmodifiableMap(temp);
+	}
 
 	public HeatMapGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);
@@ -66,5 +72,16 @@ class HeatMapGraphGlyph extends AbstractGraphGlyph {
 			drawSmart(view);
 		}
 	}
-    
+
+	@Override
+	public Map<String, Class<?>> getPreferences() {
+		Map<String,Class<?>> preferences = new HashMap<String,Class<?>>(PREFERENCES);
+		preferences.putAll(super.getPreferences());
+		return preferences;
+	}
+
+	@Override
+	public void setPreferences(Map<String, Object> preferences) {
+	}
+
 }

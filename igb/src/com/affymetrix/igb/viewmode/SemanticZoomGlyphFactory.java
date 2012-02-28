@@ -24,7 +24,7 @@ import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements MapViewGlyphFactoryI {
+public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	private SeqMapViewExtendedI smv;
 	private List<MapViewGlyphFactoryI> factories;
 	private SemanticZoomRule rule;
@@ -65,6 +65,23 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 			super.setFillColor(col);
 			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
 				viewModeGlyph.setFillColor(col);
+			}
+		}
+
+		@Override
+		public Map<String, Class<?>> getPreferences() {
+			Map<String, Class<?>> preferences = new HashMap<String, Class<?>>();
+			// TODO - error message if two ViewModeGlyph have the same key and different values
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				preferences.putAll(viewModeGlyph.getPreferences());
+			}
+			return preferences;
+		}
+
+		@Override
+		public void setPreferences(Map<String, Object> preferences) {
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setPreferences(preferences);
 			}
 		}
 
@@ -446,14 +463,5 @@ public class SemanticZoomGlyphFactory extends AbstractViewModeGlyph implements M
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return smv;
-	}
-
-	@Override
-	public void setPreferredHeight(double height, ViewI view) {
-	}
-
-	@Override
-	public int getActualSlots() {
-		return 0;
 	}
 }

@@ -51,6 +51,12 @@ import java.text.AttributedString;
 public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
+	private static final Map<String,Class<?>> PREFERENCES;
+	static {
+		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		temp.put("y_axis", Boolean.class);
+		PREFERENCES = Collections.unmodifiableMap(temp);
+	}
 
 	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
@@ -1318,6 +1324,14 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	public void setLabel(String str) {
 	}
 
+	@Override
+	public Map<String, Class<?>> getPreferences() {
+		return new HashMap<String, Class<?>>(PREFERENCES);
+	}
+
+	@Override
+	public void setPreferences(Map<String, Object> preferences) {
+	}
 }
 
 

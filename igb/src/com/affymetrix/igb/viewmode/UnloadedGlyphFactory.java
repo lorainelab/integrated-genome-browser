@@ -1,6 +1,8 @@
 package com.affymetrix.igb.viewmode;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -26,6 +28,11 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
+	private static final Map<String,Class<?>> PREFERENCES;
+	static {
+		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		PREFERENCES = Collections.unmodifiableMap(temp);
+	}
 	private static final UnloadedGlyphFactory instance = new UnloadedGlyphFactory();
 	public static UnloadedGlyphFactory getInstance() {
 		return instance;
@@ -101,6 +108,15 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 		public void draw(ViewI view) {
 			drawMiddle(view);
 			super.draw(view);
+		}
+
+		@Override
+		public Map<String, Class<?>> getPreferences() {
+			return PREFERENCES;
+		}
+
+		@Override
+		public void setPreferences(Map<String, Object> preferences) {
 		}
 	}
 	// end glyph class

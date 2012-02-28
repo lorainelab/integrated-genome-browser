@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -19,6 +20,8 @@ public abstract class ViewModeGlyph extends SolidGlyph implements StyleGlyphI {
 	public abstract void setLabel(String str);
 	public abstract Direction getDirection();
 	public abstract void setDirection(Direction d);
+	public abstract Map<String,Class<?>> getPreferences();
+	public abstract void setPreferences(Map<String,Object> preferences);
 	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 		setCoordBox(parentCoordBox); // so all use the same coordbox
 	}

@@ -38,7 +38,7 @@ public class TutorialStep {
 	private String trigger;
 	private String waitFor;
 	private TutorialExecute execute;
-	private String tab;
+	private String[] tab;
 	private TutorialStep[] subTutorial;
 	private String script;
 	private String checkServer;
@@ -47,11 +47,11 @@ public class TutorialStep {
 		return text;
 	}
 
-	public String getTab() {
+	public String[] getTab() {
 		return tab;
 	}
 
-	public void setTab(String tab) {
+	public void setTab(String[] tab) {
 		this.tab = tab;
 	}
 
@@ -66,7 +66,7 @@ public class TutorialStep {
 	public void setScript(String script) {
 		this.script = script;
 	}
-	
+
 	public String getCheckServer() {
 		return checkServer;
 	}

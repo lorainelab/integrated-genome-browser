@@ -343,9 +343,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		igbService.loadState();
 	}
 
-	private void setTab(String tab) {
-		IGBTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
-		igbService.selectTab(panel);
+	private void setTab(String[] tabs) {
+		for (String tab : tabs) {
+			IGBTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
+			igbService.selectTab(panel);
+		}
 	}
 
 	//Manual check to ensure IGB Quickload is Enabled

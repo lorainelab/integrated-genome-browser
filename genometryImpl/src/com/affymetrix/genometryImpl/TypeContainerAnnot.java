@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.symmetry.TypedSym;
  *  Top-level annots attached to a BioSeq.
  */
 public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym   {
+	private static final FileTypeCategory DEFAULT_CATEGORY = FileTypeCategory.Annotation;
 	String type;
 
 	public TypeContainerAnnot(String type) {
@@ -40,6 +41,9 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(type);
 		if (handler != null) {
 			category = handler.getFileTypeCategory();
+		}
+		if (category == null) {
+			category = DEFAULT_CATEGORY;
 		}
 		return category;
 	}

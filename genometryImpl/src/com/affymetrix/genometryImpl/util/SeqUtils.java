@@ -3,7 +3,6 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
@@ -18,6 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 import java.util.*;
 

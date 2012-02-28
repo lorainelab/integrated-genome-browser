@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.symmetry.IndexedSym;
 import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSymWithIntId;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
@@ -23,7 +24,6 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.general.ServerList;

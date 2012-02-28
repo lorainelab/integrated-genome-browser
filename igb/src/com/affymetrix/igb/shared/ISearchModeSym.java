@@ -3,8 +3,8 @@ package com.affymetrix.igb.shared;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 public interface ISearchModeSym extends ISearchMode {
 	/**

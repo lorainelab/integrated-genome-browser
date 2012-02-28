@@ -3,7 +3,6 @@ package org.bioviz.protannot;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -12,6 +11,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.ArrayList;
@@ -231,7 +231,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
-     * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
+     * @see     com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
     private static void processSimHit(BioSeq query_seq, Element elem, String method) {
@@ -424,7 +424,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.symmetry.SymWithProps
-     * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
+     * @see     com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void processMRNA(BioSeq genomic, Element elem) {
@@ -711,7 +711,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.symmetry.SeqSymmetry
-     * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
+     * @see     com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void processCDS(BioSeq genomic, Element elem, SimpleSymWithProps m2gSym,

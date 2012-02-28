@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 public class CopyAnnotationOperator implements Operator {
 

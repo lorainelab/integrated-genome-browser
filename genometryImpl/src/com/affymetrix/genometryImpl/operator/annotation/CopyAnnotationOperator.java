@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
 public class CopyAnnotationOperator implements AnnotationOperator {
 

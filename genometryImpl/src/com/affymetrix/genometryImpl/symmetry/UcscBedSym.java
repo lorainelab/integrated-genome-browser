@@ -330,6 +330,14 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithPr
 
 	}
 
+	public int[] getBlockMins() {
+		return blockMins;
+	}
+
+	public int[] getBlockMaxs() {
+		return blockMaxs;
+	}
+
 	protected void outputAdditional(DataOutputStream out) throws IOException  {}
 }
 

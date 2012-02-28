@@ -52,7 +52,7 @@ public class TrackUtils {
 			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		} else {
 			style.copyPropertiesFrom(preferredStyle);
-			style.setGlyphDepth(SeqUtils.getDepth(sym) - 1);
+			style.setGlyphDepth(Math.max(1, SeqUtils.getDepth(sym) - 1));
 		}
 		style.setTrackName(human_name);
 		return style;

@@ -51,6 +51,17 @@ public class SequenceGlyph extends AbstractViewModeGlyph implements StyleGlyphI 
 		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 	}
 
+	/**
+	 *  Overridden to allow background shading by a collection of non-child
+	 *    "middleground" glyphs.  These are rendered after the solid background but before
+	 *    all of the children (which could be considered the "foreground").
+	 */
+	@Override
+	public void draw(ViewI view) {
+		drawMiddle(view);
+		super.draw(view);
+	}
+
 	private void setSpacer(double spacer) {
 		this.spacer = spacer;
 		((PaddedPackerI) packer).setParentSpacer(spacer);

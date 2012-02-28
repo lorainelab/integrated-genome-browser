@@ -33,13 +33,13 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction) {
 		ViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
-		SeqSpan pspan = gviewer.getViewSeqSpan(sym);
+		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
+		SeqSpan pspan = gviewer.getViewSeqSpan(childSym);
 		if (pspan == null || pspan.getLength() == 0) {
 			return viewModeGlyph;
 		}  // if no span corresponding to seq, then return;
 		viewModeGlyph.setDirection(direction);
 		viewModeGlyph.setInfo(sym);
-		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
 		FillRectGlyph childGlyph = new FillRectGlyph();
 		double pheight = style.getHeight() + 0.0001;
 		childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);

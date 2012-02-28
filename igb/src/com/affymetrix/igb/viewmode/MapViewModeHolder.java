@@ -36,7 +36,12 @@ public class MapViewModeHolder {
 		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
 		alignmentGlyphFactory.setSeqMapView(seqMapView);
 		addViewFactory(alignmentGlyphFactory);
-		
+
+		// add sequence factory
+		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
+		sequenceGlyphFactory.setSeqMapView(seqMapView);
+		addViewFactory(sequenceGlyphFactory);
+
 		// Add graph factories
 		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
 		barGraphGlyphFactory.setSeqMapView(seqMapView);
@@ -95,6 +100,8 @@ public class MapViewModeHolder {
 		
 		// Add Default factories
 		addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
+		addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
+		addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
 		addDefaultFactory(FileTypeCategory.ProbeSet, scoredStairStep);

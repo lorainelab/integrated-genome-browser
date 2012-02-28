@@ -117,8 +117,8 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 
 	@Override
 	public void addChild(GlyphI glyph, int position) {
-		throw new RuntimeException("TierGlyph.addChild(glyph, position) not allowed, "
-				+ "use TierGlyph.addChild(glyph) instead");
+		throw new RuntimeException("AnnotationGlyph.addChild(glyph, position) not allowed, "
+				+ "use AnnotationGlyph.addChild(glyph) instead");
 	}
 
 	// overriding addChild() to keep track of whether children are sorted

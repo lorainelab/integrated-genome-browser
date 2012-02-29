@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.TrackUtils;
@@ -62,9 +63,14 @@ public class TierOperationAction extends GenericAction {
 		result_sym = operator.operate(aseq, seqSymList);
 		if (result_sym != null) {
 			StringBuilder meth = new StringBuilder();
-			meth.append(operator.getName() + ": ");
-			for (TierGlyph tier : selected) {
-				meth.append(tier.getLabel()).append(", ");
+			if (result_sym instanceof UcscBedSym) {
+				meth.append(((UcscBedSym)result_sym).getType());
+			}
+			else {
+				meth.append(operator.getName() + ": ");
+				for (TierGlyph tier : selected) {
+					meth.append(tier.getLabel()).append(", ");
+				}
 			}
 			preferredStyle.setViewMode(MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory()).getName());
 			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);

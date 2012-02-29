@@ -15,15 +15,16 @@ import javax.swing.SwingWorker;
  * @author dcnorris
  */
 public class VerticalStretchZoomAction extends GenericAction implements IAmount {
+
 	private static final long serialVersionUID = 1L;
 	private static final int STEPS = 30;
 	private static final VerticalStretchZoomAction ACTION = new VerticalStretchZoomAction();
 	private double amount = 0.2;
-	
+
 	public static VerticalStretchZoomAction getAction() {
 		return ACTION;
 	}
-	
+
 	private VerticalStretchZoomAction() {
 		super();
 	}
@@ -39,18 +40,19 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 
 	private SwingWorker<Void, Void> getSw(final RPAdjustableJSlider yzoomer, final int nextValue, final int endValue, final int step) {
 		return new SwingWorker<Void, Void>() {
+
 			@Override
 			protected Void doInBackground() throws Exception {
 				yzoomer.setValue(nextValue);
 				return null;
 			}
+
 			@Override
 			protected void done() {
 				int newNextValue = nextValue + step;
 				if (Math.abs(newNextValue - endValue) < Math.abs(2 * step)) {
 					actionDone();
-				}
-				else {
+				} else {
 					getSw(yzoomer, newNextValue, endValue, step).execute();
 				}
 			}
@@ -58,20 +60,21 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 	}
 
 	public void execute() {
-		final RPAdjustableJSlider yzoomer = (RPAdjustableJSlider)RecordPlaybackHolder.getInstance().getWidget("SeqMapView_yzoomer");
+		final RPAdjustableJSlider yzoomer = (RPAdjustableJSlider) RecordPlaybackHolder.getInstance().getWidget("SeqMapView_yzoomer");
 		int min = yzoomer.getMinimum();
 		int max = yzoomer.getMaximum();
-		int zoomAmount = (int)((max - min) * amount);
+		int zoomAmount = (int) ((max - min) * amount);
 		int newValue = yzoomer.getValue();
-		if (newValue + zoomAmount < min) {
-			newValue = min - zoomAmount;
-		}
-		else if (newValue + zoomAmount > max) {
-			newValue = max - zoomAmount;
-		}
+//		if (newValue + zoomAmount < min) {
+//			newValue = min - zoomAmount;
+//		}
+//		else if (newValue + zoomAmount > max) {
+//			newValue = max - zoomAmount;
+//		}
 		yzoomer.setValue(newValue);
 		int startValue = newValue;
-		int endValue = newValue + zoomAmount;
+		//int endValue = newValue + zoomAmount;
+		int endValue = zoomAmount;
 		int step = (endValue - startValue) / STEPS;
 		getSw(yzoomer, startValue + step, endValue, step).execute();
 	}

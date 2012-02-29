@@ -335,7 +335,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
 	@Override
 	public void actionDone(GenericAction action) {
-		//	advanceStep();
+		advanceStep();
 		action.removeDoneCallback(this);
 	}
 

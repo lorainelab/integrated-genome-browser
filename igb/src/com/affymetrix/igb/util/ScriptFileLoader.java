@@ -15,6 +15,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -205,17 +206,17 @@ public class ScriptFileLoader {
 	public static void doSingleAction(String line) {
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
-		if (action.equals("genome") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
 			// go to genome
 			goToGenome(join(fields, 1));
 			return;
 		}
-		if (action.equals("goto") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("goto") && fields.length >= 2) {
 			// go to region
 			goToRegion(join(fields, 1));
 			return;
 		}
-		if (action.equals("load")) {
+		if (action.equalsIgnoreCase("load")) {
 			// Allowing multiple files to be specified, split by commas
 			String[] loadFiles = join(fields, 1).split(",");
 			for (int i = 0; i < loadFiles.length; i++) {
@@ -230,18 +231,18 @@ public class ScriptFileLoader {
 			}
 			return;
 		}
-		if (action.equals("loadfromserver")) {
+		if (action.equalsIgnoreCase("loadfromserver")) {
 			if (fields.length >= 2) {
 				loadData(fields[1], join(fields, 2));
 				return;
 			}
 		}
-		if (action.equals("loadmode")) {
+		if (action.equalsIgnoreCase("loadmode")) {
 			if (fields.length >= 2) {
 				loadMode(fields[1], join(fields, 2));
 			}
 		}
-		if (action.equals("print")) {
+		if (action.equalsIgnoreCase("print")) {
 			if (fields.length == 1) {
 				try {
 					Application.getSingleton().getMapView().getSeqMap().print(0, true);
@@ -251,14 +252,19 @@ public class ScriptFileLoader {
 				return;
 			}
 		}
-		if (action.equals("refresh")) {
+		if (action.equalsIgnoreCase("refresh")) {
 			GeneralLoadView.getLoadView().loadVisibleFeatures();
 		}
-		if (action.equals("select") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("select") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().performSelection(join(fields, 1));
 		}
-		if (action.equals("selectfeature") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("selectfeature") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(join(fields, 1));
+		}
+		if (action.equalsIgnoreCase("setZoomStripePosition") && fields.length >= 2) {
+			double position = Double.parseDouble(join(fields, 1));
+			IGB.getSingleton().getMapView().setZoomSpotX(position);
+			IGB.getSingleton().getMapView().setZoomSpotY(0);
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
@@ -291,6 +297,9 @@ public class ScriptFileLoader {
 						: GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
 				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
 			}
+		}
+		if (action.startsWith("homescreen")) {
+			SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
 		}
 	}
 

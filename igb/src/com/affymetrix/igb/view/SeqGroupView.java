@@ -62,11 +62,9 @@ import java.awt.Component;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -85,7 +83,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 	private static final boolean DEBUG_EVENTS = false;
-	static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
+	public static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};

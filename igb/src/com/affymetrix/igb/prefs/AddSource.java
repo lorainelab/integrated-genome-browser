@@ -54,9 +54,8 @@ public class AddSource extends JFrame {
 
 	public void init(boolean isEditP, boolean comboActive, String title,
 			GenericServer server, String url) {
-		enableCombo = comboActive;
+		enableCombo = comboActive; // server type combobox will be hide in repository panel 
 		isEditPanel = isEditP;
-
 		serverURL = url;
 
 		if (isEditPanel) {
@@ -65,10 +64,16 @@ public class AddSource extends JFrame {
 			urlText.setText(server.URL);
 			addServerButton.setText("Save Changes");
 		} else {
-			nameText.setText("Your server name");
-			typeCombo.setSelectedItem(ServerTypeI.QuickLoad);
+			if (enableCombo) {
+				nameText.setText("Your server name");
+				typeCombo.setSelectedItem(ServerTypeI.QuickLoad);
+				addServerButton.setText("Add Server");
+			} else {
+				nameText.setText("Your repository name");
+				addServerButton.setText("Add Repository");
+			}
+
 			urlText.setText("http://");
-			addServerButton.setText("Add Server");
 		}
 
 		setTitle(title);
@@ -197,7 +202,6 @@ public class AddSource extends JFrame {
 
         typeCombo.removeItem(ServerTypeI.LocalFiles);
         openDir.setToolTipText("Open Local Directory");
-        openDir.setEnabled(typeCombo != null && typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

@@ -138,7 +138,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openDirActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="openDir.setToolTipText(&quot;Open Local Directory&quot;);&#xa;openDir.setEnabled(typeCombo != null &amp;&amp; typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="openDir.setToolTipText(&quot;Open Local Directory&quot;);"/>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPButton(&quot;DataLoadPrefsView_openDir&quot;, &quot;\u2026&quot;)"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
       </AuxValues>

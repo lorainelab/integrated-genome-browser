@@ -11,6 +11,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericServerPref;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
@@ -27,6 +29,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.general.ServerList;
 import java.awt.Point;
 import java.io.File;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 
@@ -223,14 +226,22 @@ public class AddSource extends JFrame {
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 		if (isEditPanel) {
+			Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(serverURL));
+			int order = node.getInt(GenericServerPref.ORDER, -1);
 			ServerList.getServerInstance().removeServer(serverURL);
 			ServerList.getServerInstance().removeServerFromPrefs(serverURL);
-			DataLoadPrefsView.getSingleton().sourceTableModel.init();
-		}
-		if (enableCombo) {
-			DataLoadPrefsView.getSingleton().addDataSource((ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
+			DataLoadPrefsView.getSingleton().addDataSource(
+					(ServerTypeI) typeCombo.getSelectedItem(),
+					nameText.getText(), urlText.getText(), order);
 		} else {
-			BundleRepositoryPrefsView.getSingleton().addDataSource(null, nameText.getText(), urlText.getText());
+			if (enableCombo) {
+				DataLoadPrefsView.getSingleton().addDataSource(
+						(ServerTypeI) typeCombo.getSelectedItem(),
+						nameText.getText(), urlText.getText(), -1);
+			} else {
+				BundleRepositoryPrefsView.getSingleton().addDataSource(null,
+						nameText.getText(), urlText.getText(), -1);
+			}
 		}
 		this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed

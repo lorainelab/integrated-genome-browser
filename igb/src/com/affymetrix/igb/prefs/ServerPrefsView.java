@@ -197,12 +197,13 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	public void addDataSource(ServerTypeI type, String name, String url) {
+	public void addDataSource(ServerTypeI type, String name, String url, int order) {
 		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
 			return;
 		}
 
-		GenericServer server = GeneralLoadUtils.addServer(serverList, type, name, url);
+		GenericServer server = GeneralLoadUtils.addServer(serverList, 
+				type, name, url, order);
 
 		if (server == null) {
 			ErrorHandler.errorPanel(
@@ -212,7 +213,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		}
 		
 		sourceTableModel.init();
-		ServerList.getServerInstance().addServerToPrefs(server, 0);
+		ServerList.getServerInstance().addServerToPrefs(server, order);
 	}
 
 	protected void removeDataSource(String url) {

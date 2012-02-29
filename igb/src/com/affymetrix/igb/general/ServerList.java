@@ -201,8 +201,8 @@ public final class ServerList {
 	 * @param enabled
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled) {
-		return addServer(serverType, name, url, enabled, false, -1, false);
+	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, int order) {
+		return addServer(serverType, name, url, enabled, false, order, false);
 	}
 
 	public GenericServer addServer(Preferences node) {

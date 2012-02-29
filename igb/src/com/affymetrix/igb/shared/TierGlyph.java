@@ -501,6 +501,14 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		return 2;
 	}
 
+	/**
+	 * Set the preferred height for a tier.
+	 * Note that resizing a tier on one side (+/-) is problematic,
+	 * because the style for glyphs in a tier is shared
+	 * by it's corresponding tier on the other side (+/-).
+	 * @param height new height in scene (coord) space.
+	 * @param view onto the scene with these coordinates (units).
+	 */
 	public void setPreferredHeight(double height, ViewI view){
 		if(getChildCount() == 1 && getChild(0) instanceof GraphGlyph){
 			GraphGlyph child = (GraphGlyph)getChild(0);
@@ -511,18 +519,19 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 			setCoords(coord.x, coord.y, coord.width, height + 2 * getSpacing());
 			return;
 		}
-
-		float slot_size = getActualSlots();
-		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
-
+		int numberOfSlotsInUse = getActualSlots();
+		double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
+		double newHeightForGlyphsInOneSlot = (height - totalInteriorSpacing)/numberOfSlotsInUse;
+		height = newHeightForGlyphsInOneSlot - 2 * getSpacing(); // Because packer adds this later?
+		
 		if(useLabel()) {
-			height = height / 2;
+			height = height / 2; // because annotGlyphFactory multiplies by 2 when labeled.
 		}
 
-		double percent = ((height * 100)/style.getHeight() - 100)/100;
+		double scale = height/style.getHeight() - 1;
 		style.setHeight(height);
 
-		setChildHeight(percent, getChildren(), view);
+		setChildHeight(scale, getChildren(), view);
 	}
 
 	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){

@@ -157,9 +157,9 @@ public final class GeneralLoadUtils {
 		if (gServer == null) {
 			return null;
 		}
+		
 		if (!discoverServer(gServer)) {
 			gServer.setEnabled(false);
-			return null;
 		}
 
 		return gServer;

@@ -212,6 +212,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 					"Unable to load " + type + " data source '" + url + "'.");
 			return;
 		}
+		
 		sourceTableModel.init();
 		ServerList.getServerInstance().addServerToPrefs(server, 0);
 	}

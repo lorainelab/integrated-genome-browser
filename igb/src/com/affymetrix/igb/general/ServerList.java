@@ -511,8 +511,6 @@ public final class ServerList {
 
 	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
-			GeneralLoadUtils.removeServer(server);
-
 			if (!removedManually) {
 				String errorText;
 				if (server.serverType == ServerTypeI.QuickLoad) {

@@ -56,8 +56,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements Sty
 	}
 
 	/**
-	 *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
-	 *  DIRECTION_BOTH or DIRECTION_NONE.
+	 * Sets direction.
 	 */
 	@Override
 	public void setDirection(Direction d) {

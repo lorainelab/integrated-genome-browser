@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.operator;
 
 
-public final class LogTransform extends AbsractLogTransform implements Operator{
+public final class LogTransform extends AbstractLogTransform implements Operator{
 	double LN_BASE;
 	float LOG_1;
 

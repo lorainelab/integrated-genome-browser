@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author lfrohman
  */
-public abstract class AbsractLogTransform extends AbstractFloatTransformer implements Operator{
+public abstract class AbstractLogTransform extends AbstractFloatTransformer implements Operator{
 
 	protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
 	double base;
@@ -17,13 +17,13 @@ public abstract class AbsractLogTransform extends AbstractFloatTransformer imple
 	final String name;
 	final boolean parameterized;
 	
-	public AbsractLogTransform(String nm) {
+	public AbstractLogTransform(String nm) {
 		super();
 		paramPrompt = "Base";
 		name = nm;
 		parameterized = true;
 	}
-	public AbsractLogTransform(Double base) {
+	public AbstractLogTransform(Double base) {
 		super();
 		this.base = base;
 		paramPrompt = null;

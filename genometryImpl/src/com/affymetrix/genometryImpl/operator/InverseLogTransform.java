@@ -5,7 +5,7 @@ package com.affymetrix.genometryImpl.operator;
  *
  * @author auser
  */
-public class InverseLogTransform extends AbsractLogTransform implements Operator{
+public class InverseLogTransform extends AbstractLogTransform implements Operator{
 	
 	public InverseLogTransform(){
 		super("Inverse Log");

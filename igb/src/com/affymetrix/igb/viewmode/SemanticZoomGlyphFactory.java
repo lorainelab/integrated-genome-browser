@@ -5,10 +5,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -416,10 +418,23 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	// end glyph class
 
-	public SemanticZoomGlyphFactory(List<MapViewGlyphFactoryI> factories, SemanticZoomRule rule) {
+	public SemanticZoomGlyphFactory(SemanticZoomRule rule) {
 		super();
-		this.factories = factories;
 		this.rule = rule;
+		factories = new ArrayList<MapViewGlyphFactoryI>();
+		for (String factoryName : rule.getMapViewGlyphFactories()) {
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(factoryName);
+			if (factory == null) {
+				Operator operator = TransformHolder.getInstance().getOperator(factoryName);
+				if (operator != null) {
+					factory = new OperatorGlyphFactory(operator, MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory()));
+				}
+			}
+			if (factory == null) {
+				throw new IllegalStateException("SemanticZoomGlyphFactory cannot find factory for " + factoryName);
+			}
+			factories.add(factory);
+		}
 	}
 
 	@Override
@@ -444,7 +459,7 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public String getName() {
-		return "semantic zoom " + rule.getName();
+		return rule.getName();
 	}
 
 	@Override

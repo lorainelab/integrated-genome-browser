@@ -2,10 +2,10 @@
 package com.affymetrix.igb.viewmode;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
@@ -23,9 +23,14 @@ public class MapViewModeHolder {
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
 	
 	public static MapViewModeHolder getInstance(){
+		if (!instance.initialized) {
+			instance.init();
+		}
 		return instance;
 	}
-	
+
+	private boolean initialized;
+
 	private MapViewModeHolder(){
 		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
 		
@@ -106,6 +111,15 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
 		addDefaultFactory(FileTypeCategory.ProbeSet, scoredStairStep);
 		addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
+//		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
+//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
+//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
+//		addViewFactory(expandedAnnotGlyphFactory);
+		initialized = false;
+	}
+
+	private void init() {
+		initialized = true; // must be first
 		
 		// Add depth factories
 		SemanticZoomRule defaultRule = new SemanticZoomRule() {
@@ -118,18 +132,14 @@ public class MapViewModeHolder {
 			public String getName() {
 				return "semantic zoom";
 			}
+			@Override
+			public List<String> getMapViewGlyphFactories() {
+				return Arrays.asList(new String[]{"annotation", "Annotation depth"});
+			}
 		};
-//		OperatorGlyphFactory alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), barGraphGlyphFactory);
-//		addViewFactory(new SemanticZoomGlyphFactory(alignmentDepthFactory, alignmentGlyphFactory));
-		OperatorGlyphFactory annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), barGraphGlyphFactory);
-		addViewFactory(new SemanticZoomGlyphFactory(Arrays.asList(new MapViewGlyphFactoryI[]{annotationDepthFactory, annotationGlyphFactory}), defaultRule));
-//		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
-//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
-//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
-//		addViewFactory(expandedAnnotGlyphFactory);
-
+		addViewFactory(new SemanticZoomGlyphFactory(defaultRule));
 	}
-	
+
 	public MapViewGlyphFactoryI getViewFactory(String view){
 		if(view == null){
 			return null;

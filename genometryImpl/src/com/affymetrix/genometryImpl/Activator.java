@@ -95,6 +95,7 @@ public class Activator implements BundleActivator {
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyAnnotationOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.MergeAnnotationOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.CopyGraphOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FilterOperator(new SymmetryFilterProps()), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.LogTransform(), null);

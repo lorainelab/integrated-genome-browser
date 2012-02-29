@@ -22,7 +22,6 @@ public class Activator implements BundleActivator {
         try
         {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
-			System.out.println("searchModeSymmetryFilterRegistrations.registerService");
         	searchModeSymmetryFilterRegistrations.add(bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterProps(), 2000), null));
 //        	searchModeSymmetryFilterRegistrations.add(bundleContext.registerService(ISearchModeSym.class, new SearchModeSymmetryFilter(igbService, new SymmetryFilterSearchId(), 4000), null));
         }

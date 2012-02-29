@@ -131,8 +131,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	}
 
 	protected void enableServerButtons(boolean enable) {
-		DataLoadPrefsView.getSingleton().editAuthButton.setEnabled(enable);
-		DataLoadPrefsView.getSingleton().editSourceButton.setEnabled(enable);
 		removeServerButton.setEnabled(enable);
 	}
 

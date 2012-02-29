@@ -53,8 +53,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
 	private static DataLoadPrefsView singleton;
 	private static final JCheckBox autoload = AutoLoadFeatureAction.getActionCB();
-	public JRPButton editSourceButton;
-	public JRPButton editAuthButton;
+	protected JRPButton editSourceButton;
+	protected JRPButton editAuthButton;
 	protected JRPButton rankUpButton;
 	protected JRPButton rankDownButton;
 
@@ -165,9 +165,9 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	@Override
 	protected void enableServerButtons(boolean enable) {
 		super.enableServerButtons(enable);
-		rankUpButton.setEnabled(enable && sourcesTable.getSelectedRow() > 0);
-		rankDownButton.setEnabled(enable && sourcesTable.getSelectedRow() < sourcesTable.getRowCount() - 1);
-		editAuthButton.setEnabled(enable);
+		rankUpButton.setEnabled(sourcesTable.getSelectedRow() > 0);
+		rankDownButton.setEnabled(sourcesTable.getSelectedRow() < sourcesTable.getRowCount() - 1);
+		editAuthButton.setEnabled(sourcesTable.getSelectedRowCount() == 1);
 		editSourceButton.setEnabled(enable);
 	}
 

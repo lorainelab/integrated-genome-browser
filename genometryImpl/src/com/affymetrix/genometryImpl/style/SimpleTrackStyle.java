@@ -17,10 +17,31 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
+	
+	/** for height on the reverse strand. To help with track resizing. */
+	private double reverseHeight;
+	public void setReverseHeight(double theNewHeight) {
+		this.reverseHeight = theNewHeight;
+	}
+	public double getReverseHeight() {
+		return this.reverseHeight;
+	}
+	public void setForwardHeight(double theNewHeight) {
+		super.setHeight(theNewHeight);
+	}
+	public double getForwardHeight() {
+		return super.getHeight();
+	}
+	@Override
+	public void setHeight(double theNewHeight) {
+		super.setHeight(theNewHeight);
+		this.reverseHeight = super.getHeight();
+	}
 
 	// Should be called only from within package or from StateProvider.
 	public SimpleTrackStyle(String name, boolean is_graph) {
 		super(name, is_graph);
+		this.reverseHeight = super.getHeight();
 	}
 
 	String url;

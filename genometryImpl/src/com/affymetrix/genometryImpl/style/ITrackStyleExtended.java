@@ -26,7 +26,7 @@ public interface ITrackStyleExtended extends ITrackStyle {
 
 	/** Controls a parameter of the GenericAnnotGlyphFactory. */
 	void setGlyphDepth(int i);
-	/** Returns a parameter useb by the GenericAnnotGlyphFactory. */
+	/** Returns a parameter used by the GenericAnnotGlyphFactory. */
 	int getGlyphDepth();
 
 	/** Controls whether plus and minus strands will be drawn separately. */
@@ -57,4 +57,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	int getDirectionType();
 	
 	String getFileType();
+	
+	void setForwardHeight(double theNewHeight);
+	double getForwardHeight();
+	void setReverseHeight(double theNewHeight);
+	double getReverseHeight();
 }

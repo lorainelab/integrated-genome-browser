@@ -798,6 +798,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			}
 			getNode().putDouble(PREF_HEIGHT, h);
 		}
+		this.reverseHeight = this.height;
 	}
 	
 	public float getTrackNameSize() {
@@ -1094,5 +1095,22 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public String getOperator() {
 		return operator;
+	}
+	
+	/** for height on the reverse strand. To help with track resizing. */
+	private double reverseHeight = this.default_height;
+	public void setReverseHeight(double theNewHeight) {
+		this.reverseHeight = theNewHeight;
+	}
+	public double getReverseHeight() {
+		return this.reverseHeight;
+	}
+	public void setForwardHeight(double theNewHeight) {
+		double rh = this.reverseHeight;
+		this.setHeight(theNewHeight); // Because it also does something else. Should that same thing be done for setReverseHeight? - elb
+		this.reverseHeight = rh; // Because setHeight sets both forward and reverse.
+	}
+	public double getForwardHeight() {
+		return this.getHeight();
 	}
 }

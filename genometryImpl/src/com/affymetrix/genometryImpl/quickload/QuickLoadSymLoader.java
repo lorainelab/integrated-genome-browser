@@ -187,7 +187,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 		boolean ret = false;
 		if (results != null) {
-			ret = addSymmtries(span, results, feature, extension);
+			ret = addSymmtries(span, results, feature);
 		}
 
 		return ret;
@@ -226,7 +226,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		for (Entry<BioSeq, List<SeqSymmetry>> seq_sym : seq_syms.entrySet()) {
 			seq = seq_sym.getKey();
 			span = new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq);
-			addSymmtries(span, seq_sym.getValue(), feature, extension);
+			addSymmtries(span, seq_sym.getValue(), feature);
 			feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 		}
 
@@ -242,7 +242,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		//style.setFeature(feature);
 	}
 
-	private static boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
+	protected boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
 		return SymLoader.splitFilterAndAddAnnotation(span, results, feature);
 	}

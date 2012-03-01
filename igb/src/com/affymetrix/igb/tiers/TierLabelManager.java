@@ -81,7 +81,7 @@ public final class TierLabelManager implements PropertyHolder {
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
-		boolean manualResizingAllowed = false; // temporary switch until resizing works well.
+		boolean manualResizingAllowed = true; // temporary switch until resizing works well.
 		
 		
 		/**
@@ -181,7 +181,7 @@ public final class TierLabelManager implements PropertyHolder {
 				// Dispatch track selection event
 				//doTrackSelection(topgl);
 
-				// Normally, clicking will clear previons selections before selecting new things.
+				// Normally, clicking will clear previous selections before selecting new things.
 				// but we preserve the current selections if:
 				//  1. shift or alt key is pressed, or
 				//  2. the pop-up key is being pressed

@@ -151,13 +151,11 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		if (this.upperGl != null) {
 			com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
 			gl.setPreferredHeight(this.upperGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
-			this.upperGl = null; // helps with garbage collection
-			
 		}
+		
 		if (this.lowerGl != null) {
 			com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
 			gl.setPreferredHeight(this.lowerGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
-			this.lowerGl = null; // helps with garbage collection
 		}
 		
 		if (needRepacking) {
@@ -176,10 +174,13 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			// We would like the label sizes and positions to remain as they are before this call.
 			// - elb
 			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
-			assert ((com.affymetrix.igb.tiers.AffyLabelledTierMap) m).getLabelMap() == this.widget : "Whaa?";
+			assert ((com.affymetrix.igb.tiers.AffyLabelledTierMap) m).getLabelMap() == this.widget : "this.widget is not this.gviewer.getSeqMap().getLabelMap().";
 			com.affymetrix.igb.tiers.AffyLabelledTierMap lm = (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-			boolean full_repack = true, stretch_vertically = true, manual = true;
+			boolean full_repack = true, stretch_vertically = true, manual = false;
 			lm.repackTheTiers(full_repack, stretch_vertically, manual);
+			//lm.repackTiersToLabels();
+			// The above repack (either one I think) changes (enlarges) the tier map's bounds. This probably affects the tiers' spacing. - elb 2012-02-21
+			
 			// Vanilla repack seems to have worse symptoms.
 			//m.repack();
 			//m.packTiers(true, false, false, true);
@@ -205,6 +206,9 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			//this.widget.updateWidget(true); // full repacking
 
 		}
+
+		this.upperGl = null; // helps with garbage collection
+		this.lowerGl = null; // helps with garbage collection
 	}
 	
 }

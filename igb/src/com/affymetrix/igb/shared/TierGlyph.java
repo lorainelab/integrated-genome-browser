@@ -88,7 +88,6 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 
 	public void setStyle(ITrackStyleExtended style) {
 		this.style = style;
-
 		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
 		// the fg color to the TierLabel glyph, which does pay attention to that color.
 		setForegroundColor(style.getForeground());
@@ -474,8 +473,10 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	}
 
 	/**
-	 *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
-	 *  DIRECTION_BOTH or DIRECTION_NONE.
+	 * Sets direction.
+	 * @param d use one of the constants:
+	 *  Direction.FORWARD, Direction.REVERSE,
+	 *  Direction.BOTH, or Direction.NONE.
 	 */
 	public void setDirection(Direction d) {
 		this.direction = d;
@@ -503,9 +504,6 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 
 	/**
 	 * Set the preferred height for a tier.
-	 * Note that resizing a tier on one side (+/-) is problematic,
-	 * because the style for glyphs in a tier is shared
-	 * by it's corresponding tier on the other side (+/-).
 	 * @param height new height in scene (coord) space.
 	 * @param view onto the scene with these coordinates (units).
 	 */
@@ -519,36 +517,52 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 			setCoords(coord.x, coord.y, coord.width, height + 2 * getSpacing());
 			return;
 		}
+        height = height - 2 * getSpacing(); // remove the padding at top and bottom.
 		int numberOfSlotsInUse = getActualSlots();
 		double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
-		double newHeightForGlyphsInOneSlot = (height - totalInteriorSpacing)/numberOfSlotsInUse;
-		height = newHeightForGlyphsInOneSlot - 2 * getSpacing(); // Because packer adds this later?
+		double newSlotHeight = (height - totalInteriorSpacing)/numberOfSlotsInUse;
+		// height is now the new height for each slot.
 		
 		if(useLabel()) {
-			height = height / 2; // because annotGlyphFactory multiplies by 2 when labeled.
+			newSlotHeight = newSlotHeight / 2; // Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
 		}
 
-		double scale = height/style.getHeight() - 1;
-		style.setHeight(height);
+		double scale;
+		switch (this.direction) {
+			case FORWARD:
+				scale = newSlotHeight/style.getForwardHeight();
+				style.setForwardHeight(newSlotHeight);
+				break;
+			case REVERSE:
+				scale = newSlotHeight/style.getReverseHeight();
+				style.setReverseHeight(newSlotHeight);
+				break;
+			default:
+			case BOTH:
+			case NONE:
+			case AXIS:
+				scale = newSlotHeight/style.getHeight();
+				style.setHeight(newSlotHeight);
+		}
 
-		setChildHeight(scale, getChildren(), view);
+		scaleChildHeights(scale, getChildren(), view);
 	}
 
-	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){
-		int sibs_size = sibs.size();
-
+	private static void scaleChildHeights(double theScale, List<GlyphI> theSiblings, ViewI theView) {
+		int numberOfSiblings = theSiblings.size();
 		GlyphI child;
 		Rectangle2D.Double coordbox;
-		for (int i = 0; i < sibs_size; i++) {
-			child =  sibs.get(i);
+		for (int i = 0; i < numberOfSiblings; i++) {
+			child =  theSiblings.get(i);
 			coordbox = child.getCoordBox();
-			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height + (coordbox.height * percent));
-			if(child.getChildCount() > 0){
-				setChildHeight(percent, child.getChildren(), view);
+			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height * theScale);
+			if (0 < child.getChildCount()) {
+				// The above test is needed as of 2011-03-01
+				// because child.getChildren() returns null instead of an empty list.
+				scaleChildHeights(theScale, child.getChildren(), theView);
 			}
-			child.pack(view, false);
+			child.pack(theView, false);
 		}
-
 	}
 
 	private boolean useLabel() {

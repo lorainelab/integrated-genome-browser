@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -86,7 +87,8 @@ public class EmptyTierGlyphFactory {
 		double height = style.getHeight();
 		if (TrackUtils.getInstance().useViewMode(style.getMethodName())) {
 			if(setViewMode){
-				FileTypeCategory category = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName()).getFileTypeCategory();
+				FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
+				FileTypeCategory category = (fth == null) ? FileTypeCategory.Annotation : fth.getFileTypeCategory();
 				String viewmode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category).getName();
 				style.setViewMode(viewmode);
 			}

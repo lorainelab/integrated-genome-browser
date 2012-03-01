@@ -291,7 +291,6 @@ public class TrackView {
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = determineFactory(annotSym);
-		// TODO this will be replaced as we add more ViewModeGlyphs
 		if (factory.getClass().getName().startsWith("com.affymetrix.igb.viewmode")) {
 			String meth = BioSeq.determineMethod(annotSym);
 
@@ -313,20 +312,17 @@ public class TrackView {
 				return;
 			}
 		}
-		
-		if (annotSym instanceof ScoredContainerSym) {
-			factory = container_factory;
-		} else if (annotSym instanceof GraphSym) {
-			factory = graph_factory;
-		} else {
-			factory = determineFactory(annotSym);
-		}
 
 		factory.createGlyph(annotSym, smv);
 	}
 
 	private MapViewGlyphFactoryI determineFactory(SymWithProps sym){
-				String meth = BioSeq.determineMethod(sym);
+		if (sym instanceof ScoredContainerSym && !TrackUtils.getInstance().useViewMode(((ScoredContainerSym)sym).getID())) {
+			return container_factory;
+		} else if (sym instanceof GraphSym && !TrackUtils.getInstance().useViewMode(((GraphSym)sym).getID())) {
+			return graph_factory;
+		}
+		String meth = BioSeq.determineMethod(sym);
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);

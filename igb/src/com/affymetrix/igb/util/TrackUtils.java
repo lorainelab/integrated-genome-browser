@@ -101,7 +101,8 @@ public class TrackUtils {
 	}
 
 	public boolean useViewMode(String method) {
-		if (method != null && method.contains("$.")) {
+//		return true;
+		if (method != null && method.contains("$")) {
 			return true;
 		}
 		else {

@@ -157,7 +157,7 @@ public class AddSource extends javax.swing.JFrame {
         }
         if (type != null) {
             type.removeItem(LoadUtils.ServerType.LocalFiles);
-            type.setSelectedItem(LoadUtils.ServerType.Quickload);	// common default
+            type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
         }
 
         if (!enableCombo){
@@ -165,7 +165,7 @@ public class AddSource extends javax.swing.JFrame {
             type.setVisible(enableCombo);
         }
         openDir.setToolTipText("Open Local Directory");
-        openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.Quickload);
+        openDir.setEnabled(type != null && type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -184,7 +184,7 @@ public class AddSource extends javax.swing.JFrame {
 
 	private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
 		// TODO add your handling code here:
-		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.Quickload);
+		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
 	}//GEN-LAST:event_typeActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed

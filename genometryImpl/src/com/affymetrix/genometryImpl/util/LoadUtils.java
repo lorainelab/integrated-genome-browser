@@ -40,7 +40,7 @@ public final class LoadUtils {
 	public static enum ServerType {
 		DAS2 ("DAS2"),
 		DAS ("DAS"),
-		Quickload ("Quickload"),
+		QuickLoad ("QuickLoad"),
 		LocalFiles ("Local Files");
 
 		private String name;

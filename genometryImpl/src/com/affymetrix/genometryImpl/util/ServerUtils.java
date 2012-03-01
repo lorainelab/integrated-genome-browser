@@ -1031,7 +1031,7 @@ public abstract class ServerUtils {
 		Object info = null;
 
 		try {
-			if (serverType == ServerType.Quickload) {
+			if (serverType == ServerType.QuickLoad) {
 				info = ServerUtils.formatURL(url, serverType);
 			} else if (serverType == ServerType.DAS) {
 				info = new DasServerInfo(url);
@@ -1074,7 +1074,7 @@ public abstract class ServerUtils {
 					url = url.substring(0, url.length()-1);
 				}
 				return url;
-			case Quickload:
+			case QuickLoad:
 				return url.endsWith("/") ? url : url + "/";
 			default:
 				return url;

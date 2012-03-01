@@ -218,7 +218,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				return vFeature.getLoadStrategy().toString();
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
-				if (vFeature.getServer() == ServerType.Quickload) {
+				if (vFeature.getServer() == ServerType.QuickLoad) {
 					return vFeature.getFeature().featureName;
 				} else if (!vFeature.isPrimary()) {
 					return "";

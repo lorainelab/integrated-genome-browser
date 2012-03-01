@@ -219,7 +219,7 @@ public final class GeneralLoadUtils {
 				// should never happen
 				return false;
 			}
-			if (gServer.serverType == ServerType.Quickload) {
+			if (gServer.serverType == ServerType.QuickLoad) {
 				if (!getQuickLoadSpeciesAndVersions(gServer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
@@ -732,7 +732,7 @@ public final class GeneralLoadUtils {
 	public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
 		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
-		if ((feature.gVersion.gServer.serverType == ServerType.Quickload || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
 				&& ((QuickLoad) feature.symL).extension.endsWith("chp")) {
 			feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
 			optimized_sym = new SimpleMutableSeqSymmetry();
@@ -755,7 +755,7 @@ public final class GeneralLoadUtils {
 		}
 
 		//Since Das1 does not have whole genome return if it is not Quickload or LocalFile
-		if (feature.gVersion.gServer.serverType != ServerType.Quickload && feature.gVersion.gServer.serverType != ServerType.LocalFiles) {
+		if (feature.gVersion.gServer.serverType != ServerType.QuickLoad && feature.gVersion.gServer.serverType != ServerType.LocalFiles) {
 			return;
 		}
 
@@ -926,7 +926,7 @@ public final class GeneralLoadUtils {
 					}
 					break;
 
-				case Quickload:
+				case QuickLoad:
 				case LocalFiles:
 					if (((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
 						result = true;

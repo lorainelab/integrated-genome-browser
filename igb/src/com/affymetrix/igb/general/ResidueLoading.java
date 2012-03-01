@@ -82,7 +82,7 @@ public final class ResidueLoading {
 					residuesLoaded = true;
 				}
 				break;
-			case Quickload:
+			case QuickLoad:
 				if (getQuickLoadResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 					residuesLoaded = true;
 				}

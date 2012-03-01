@@ -480,7 +480,7 @@ public final class ServerList {
 
 			if(!removedManually) {
 				String errorText;
-				if (server.serverType == ServerType.Quickload) {
+				if (server.serverType == ServerType.QuickLoad) {
 					boolean siteOK = LocalUrlCacher.isValidURL(server.URL);
 					errorText = siteOK ?
 						MessageFormat.format(IGBConstants.BUNDLE.getString("quickloadContentError"), server.serverName) :

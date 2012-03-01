@@ -70,7 +70,7 @@ public final class DasServerInfo {
 	private void setPrimaryURL(URL primaryURL) {
 		if (primaryURL != null) {
 			try {
-				this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerType.Quickload));
+				this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerType.QuickLoad));
 			} catch (MalformedURLException ex) {
 				Logger.getLogger(DasServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}

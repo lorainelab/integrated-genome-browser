@@ -75,7 +75,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.Quickload) {
+		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
 			// Discover feature names from QuickLoad
 
 			try {

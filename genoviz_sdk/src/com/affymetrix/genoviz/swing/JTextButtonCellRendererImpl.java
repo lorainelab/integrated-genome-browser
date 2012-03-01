@@ -1,10 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genoviz.swing;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -16,9 +12,10 @@ import javax.swing.*;
  * @author lorainelab
  */
 public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
-
+	private final JFrame frame;
+	
 	public JTextButtonCellRendererImpl(JFrame frame) {
-		super(frame);
+		this.frame = frame;
 	}
 
 	@Override

@@ -20,15 +20,14 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 	protected final JLabel field;
 	protected final JButton button;
 	protected final JPanel panel;
-	protected final JFrame frame;
+	
 	protected String temp;
 
-	public JTextButtonCellRenderer(final JFrame frame) {
+	public JTextButtonCellRenderer() {
 		super();
 		panel = new JPanel();
 		field = new JLabel();
 		button = getButton();
-		this.frame = frame;
 		button.addActionListener(this);
 		field.addMouseListener(this);
 		panel.addMouseListener(this);

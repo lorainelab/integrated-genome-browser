@@ -317,10 +317,14 @@ public class TrackView {
 	}
 
 	private MapViewGlyphFactoryI determineFactory(SymWithProps sym){
-		if (sym instanceof ScoredContainerSym && !TrackUtils.getInstance().useViewMode(((ScoredContainerSym)sym).getID())) {
-			return container_factory;
-		} else if (sym instanceof GraphSym && !TrackUtils.getInstance().useViewMode(((GraphSym)sym).getID())) {
-			return graph_factory;
+		if (!TrackUtils.getInstance().useViewMode(sym.getID())) {
+			if (sym instanceof ScoredContainerSym) {
+				return container_factory;
+			} else if (sym instanceof GraphSym) {
+				return graph_factory;
+			} else {
+				return default_glyph_factory;
+			}
 		}
 		String meth = BioSeq.determineMethod(sym);
 

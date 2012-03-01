@@ -37,11 +37,15 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		private Map<String, ViewModeGlyph> viewModeGlyphs;
 		private ViewModeGlyph lastUsedGlyph;
 		
-		public SemanticZoomGlyph(Object sym, ITrackStyleExtended style, SemanticZoomRule rule, Map<String, ViewModeGlyph> viewModeGlyphs) {
+		public SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SemanticZoomRule rule) {
 			super();
 			super.setInfo(sym);
 			this.rule = rule;
-			this.viewModeGlyphs = viewModeGlyphs;
+			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
+			for (MapViewGlyphFactoryI factory : factories) {
+				ViewModeGlyph ViewModeGlyph = factory.getViewModeGlyph(sym, style, tier_direction);
+				viewModeGlyphs.put(factory.getName(), ViewModeGlyph);
+			}
 			lastUsedGlyph = viewModeGlyphs.values().iterator().next();
 			setStyle(style);
 		}
@@ -449,12 +453,7 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction tier_direction) {
-		Map<String, ViewModeGlyph> viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-		for (MapViewGlyphFactoryI factory : factories) {
-			ViewModeGlyph ViewModeGlyph = factory.getViewModeGlyph(sym, style, tier_direction);
-			viewModeGlyphs.put(factory.getName(), ViewModeGlyph);
-		}
-		return new SemanticZoomGlyph(sym, style, rule, viewModeGlyphs);
+		return new SemanticZoomGlyph(sym, style, tier_direction, rule);
 	}
 
 	@Override
@@ -464,11 +463,12 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory category) {
-		boolean fileSupported = true;
 		for (MapViewGlyphFactoryI factory : factories) {
-			fileSupported &= factory.isFileSupported(category);
+			if (!factory.isFileSupported(category)) {
+				return false;
+			}
 		}
-		return fileSupported;
+		return true;
 	}
 	
 	public void setSeqMapView(SeqMapViewExtendedI gviewer) {

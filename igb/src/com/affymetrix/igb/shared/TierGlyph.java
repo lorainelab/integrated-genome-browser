@@ -521,7 +521,6 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		int numberOfSlotsInUse = getActualSlots();
 		double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
 		double newSlotHeight = (height - totalInteriorSpacing)/numberOfSlotsInUse;
-		// height is now the new height for each slot.
 		
 		if(useLabel()) {
 			newSlotHeight = newSlotHeight / 2; // Hiral says: because annotGlyphFactory multiplies by 2 when labeled.

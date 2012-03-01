@@ -252,7 +252,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
 			for (GenericFeature feature : features) {
-				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server) && canHandleFeature(feature)) {
+				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server) /*&& canHandleFeature(feature)*/) {
 					addOrFindNode(serverRoot, feature, feature.featureName);
 				}
 			}

@@ -50,14 +50,10 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
 	 *  Boolean.TRUE, the tier will draw a label next to where the handle
 	 *  would be.
-	 *  Note: You probably do NOT want the TierGlyph to draw a label and for the
-	 *  included GraphGlyph to also draw a label.
 	 */
 	private static final String SHOW_TIER_LABELS_PROPERTY = "Show Track Labels";
 	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
 	 *  Boolean.TRUE, the tier will draw a handle on the left side.
-	 *  Note: You probably do NOT want the TierGlyph to draw a handle and for the
-	 *  included GraphGlyph to also draw a handle.
 	 */
 	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
@@ -190,7 +186,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	public void draw(ViewI view) {
 		drawMiddle(view);
 
-		// graph tiers take care of drawing their own handles and labels.
 		if (shouldDrawLabel()) {
 			drawLabelLeft(view);
 		}
@@ -230,8 +225,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	}
 
 	private boolean shouldDrawLabel() {
-		// graph tiers take care of drawing their own handles and labels.
-		return (!style.isGraphTier() && Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
+		return (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
 	}
 
 	private void drawLabelLeft(ViewI view) {
@@ -393,7 +387,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	private boolean useLabel() {
 		String label_field = style.getLabelField();
 		boolean use_label = label_field != null && (label_field.trim().length() > 0);
-		if (!style.isGraphTier() && use_label) {
+		if (use_label) {
 			return true;
 		}
 

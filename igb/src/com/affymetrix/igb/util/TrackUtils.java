@@ -101,12 +101,13 @@ public class TrackUtils {
 	}
 
 	public boolean useViewMode(String method) {
-//		return true;
+		//return true; /* Uncomment this line (the inital //) to enable "viewmode".
 		if (method != null && method.contains("$")) {
 			return true;
 		}
 		else {
 			return false;
-		}
+		}/* */
 	}
+
 }

@@ -379,7 +379,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("maximizeTrackAction");
 		}
 	};
-/* not ready yet
+/* not ready yet. Add // at the beginnin of the line to enable for now.
 	private final Action repack_tracks_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -393,7 +393,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("repackTracksAction");
 		}
 	};
-*/
+/* */
 	private final Action change_expand_max_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 

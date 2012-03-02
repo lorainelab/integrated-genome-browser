@@ -15,9 +15,11 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private static int pbBuffer_x = 5;
+	private static Color IGBTrackMakerColor = Color.YELLOW;
 	private int position;
 	private static final int placement = CENTER;
-
+	private final boolean isIGBTrack;
+	
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
@@ -31,6 +33,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
 		setPosition(position);
+		isIGBTrack = (reference_tier.getAnnotStyle().getFeature() != null && reference_tier.getAnnotStyle().getFeature().typeObj instanceof java.util.List);
 	}
 
 	public void setPosition(int position){
@@ -119,7 +122,13 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		g.setColor(fgcolor);
 		g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height);
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
-
+		
+		if(isIGBTrack){
+			g.setColor(IGBTrackMakerColor);
+			g.fillRect(pixelbox.x + 1, pixelbox.y + 1, pbBuffer_x, pixelbox.height - 3);
+			g.setColor(fgcolor);
+		}
+		
 		drawLabel(g, view.getPixelBox(), pixelbox);
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 

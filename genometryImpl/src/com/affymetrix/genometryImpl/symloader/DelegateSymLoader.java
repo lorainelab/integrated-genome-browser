@@ -25,20 +25,24 @@ import java.util.logging.Logger;
  * @author hiralv
  */
 public class DelegateSymLoader extends QuickLoadSymLoader {
+	private static final List<LoadUtils.LoadStrategy> defaultStrategyList = new ArrayList<LoadUtils.LoadStrategy>();
+	static {
+		defaultStrategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
+		defaultStrategyList.add(LoadUtils.LoadStrategy.VISIBLE);
+	}
+	
+	
 	private final Operator operator;
 	private final List<String> symsStr;
+	private final List<LoadUtils.LoadStrategy> strategyList;
 	
 	public DelegateSymLoader(URI uri, String featureName, GenericVersion version,
 			Operator operator, List<String> symsStr) {
 		super(uri, featureName, version, null);
 		this.operator = operator;
 		this.symsStr = symsStr;
-	}
-	
-	private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<LoadUtils.LoadStrategy>();
-	static {
-		strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
-		strategyList.add(LoadUtils.LoadStrategy.VISIBLE);
+		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
+		strategyList.addAll(defaultStrategyList);
 	}
 	
 	/**
@@ -72,6 +76,9 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 		List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		
+		if(symsStr.isEmpty())
+			return result;
+		
 		for(String symStr : symsStr){
 			if(overlapSpan.getBioSeq().getAnnotation(symStr) == null)
 				return result;
@@ -91,9 +98,20 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 	@SuppressWarnings("unchecked")
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
+		boolean notUpdatable = false;
 		if (feature.typeObj instanceof List) {
 			List<GenericFeature> features = (List<GenericFeature>) feature.typeObj;
+			
+			if(features.isEmpty())
+				return false;
+			
 			for (GenericFeature f : features) {
+				if(!f.isVisible()){
+					notUpdatable = true;
+					Thread.currentThread().interrupt();
+					break;
+				}
+				
 				while (f.optimizeRequest(overlapSpan) != null) {
 					try {
 						Thread.sleep(500);
@@ -105,6 +123,17 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 			}
 
 		}
+		
+		if(notUpdatable){
+			symsStr.clear();
+			((List<GenericFeature>) feature.typeObj).clear();
+			
+			//TODO : Make this work
+			//strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
+			//feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
+			return false;
+		}
+		
 		return super.loadFeatures(overlapSpan, feature);
 	}
 	
@@ -119,6 +148,7 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 			if (results.size() == 1 && graphSym.isSpecialGraph()) {
 				BioSeq seq = graphSym.getGraphSeq();
 				seq.addAnnotation(graphSym);
+				feature.addMethod(uri.toString());
 			}
 			else {
 				// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
@@ -126,10 +156,11 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 					//grafs.add((GraphSym)feat);
 					if (feat instanceof GraphSym) {
 						GraphSymUtils.addChildGraph((GraphSym) feat, uri.toString(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+						feature.addMethod(uri.toString());
 					}
 				}
 			}
-
+			
 			return true;
 		}
 
@@ -145,6 +176,7 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 			seq.addAnnotation(feat);
 		}
 		
+		feature.addMethod(uri.toString());
 		return true;
 	}
 }

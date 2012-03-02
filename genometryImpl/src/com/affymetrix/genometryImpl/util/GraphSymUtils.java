@@ -177,15 +177,6 @@ public final class GraphSymUtils {
 		return fth.getParser() instanceof GraphParser;
 	}
 
-	/** Detects whether the given filename ends with a recognized ending for
-	 *  a graph filetype. Compression endings like gz and zip are removed
-	 *  before testing the name.
-	 */
-	public static boolean isAGraphFilename(String name) {
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(name);
-		return fth.getParser() instanceof GraphParser;
-	}
-
 	/**
 	 *  Reads one or more graphs from an input stream.
 	 *  Some graph file formats can contain only one graph, others contain

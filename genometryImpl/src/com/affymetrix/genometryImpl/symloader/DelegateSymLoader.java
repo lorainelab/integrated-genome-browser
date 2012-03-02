@@ -127,10 +127,8 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 		if(notUpdatable){
 			symsStr.clear();
 			((List<GenericFeature>) feature.typeObj).clear();
-			
-			//TODO : Make this work
-			//strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
-			//feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
+			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
+			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
 			return false;
 		}
 		

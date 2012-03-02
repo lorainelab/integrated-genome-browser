@@ -291,7 +291,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		// This cell is only editable if the feature isn't already fully loaded.
-		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME);
+		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME
+				&& getFeature(row).getLoadChoices().size() > 1);
 	}
 
 	@Override
@@ -329,6 +330,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			case LOAD_STRATEGY_COLUMN:
 				if (vFeature.getFeature().getLoadStrategy() == LoadStrategy.GENOME) {
 					return;	// We can't change strategies once we've loaded the entire genome.
+				}
+				if (vFeature.getFeature().getLoadChoices().size() <= 1) {
+					return;	
 				}
 				String valueString = value.toString();
 				if (!vFeature.getFeature().getLoadStrategy().toString().equals(valueString)) {

@@ -152,32 +152,39 @@ public final class DataManagementTable {
 	static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		private final JRPTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
-
+		private final JRPTextField gtextField;	// If an entire genome is loaded in, change the combo box to a text field.
+		private final JRPTextField dtextField;	// If only do not load is available, change the combo box to a text field.
+		
 		public ColumnRenderer() {
 
-			textField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
-			textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
-			textField.setBorder(null);
-			textField.setHorizontalAlignment(JRPTextField.CENTER);
+			gtextField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
+			gtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
+			gtextField.setBorder(null);
+			gtextField.setHorizontalAlignment(JRPTextField.CENTER);
+			
+			dtextField = new JRPTextField("LoadModeTable_textField", LoadStrategy.NO_LOAD.toString());
+			//dtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	
+			dtextField.setBorder(null);
+			dtextField.setHorizontalAlignment(JRPTextField.CENTER);
 		}
 
 		public Component getTableCellRendererComponent(
 				JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column) {
 			DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
+			VirtualFeature vFeature = ftm.getFeature(row);
 			if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
-				if (((String) value).equals(textField.getText())) {
-					return textField;
-				} else {
-					VirtualFeature vFeature = ftm.getFeature(row);
+				if (((String) value).equals(gtextField.getText())) {
+					return gtextField;
+				} else if(vFeature.getLoadChoices().size() == 1 && ((String) value).equals(dtextField.getText())){
+					return dtextField;
+				}else {
 					ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
 					Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 					renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
 					return c;
 				}
 			} else {
-				VirtualFeature vFeature = ftm.getFeature(row);
 				ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
 				Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());

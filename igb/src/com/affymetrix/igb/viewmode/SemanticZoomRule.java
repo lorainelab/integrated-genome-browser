@@ -1,11 +1,12 @@
 package com.affymetrix.igb.viewmode;
 
-import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public interface SemanticZoomRule {
-	public String chooseViewMode(ViewI view);
-	public String getName();
-	public List<String> getMapViewGlyphFactories();
+	public ViewModeGlyph getGlyph(ViewI view);
+	public ViewModeGlyph getDefaultGlyph();
+	public Map<String, ViewModeGlyph> getAllViewModeGlyphs();
 }

@@ -5,13 +5,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -26,10 +23,8 @@ import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
+public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	private SeqMapViewExtendedI smv;
-	private List<MapViewGlyphFactoryI> factories;
-	private SemanticZoomRule rule;
 
 	// glyph class
 	private class SemanticZoomGlyph extends AbstractViewModeGlyph {
@@ -41,18 +36,13 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 			super();
 			super.setInfo(sym);
 			this.rule = rule;
-			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-			for (MapViewGlyphFactoryI factory : factories) {
-				ViewModeGlyph ViewModeGlyph = factory.getViewModeGlyph(sym, style, tier_direction);
-				viewModeGlyphs.put(factory.getName(), ViewModeGlyph);
-			}
-			lastUsedGlyph = viewModeGlyphs.values().iterator().next();
+			viewModeGlyphs = rule.getAllViewModeGlyphs();
+			lastUsedGlyph = rule.getDefaultGlyph();
 			setStyle(style);
 		}
 
 		private ViewModeGlyph getGlyph(ViewI view) {
-			String viewMode = rule.chooseViewMode(view);
-			return viewModeGlyphs.get(viewMode);
+			return rule.getGlyph(view);
 		}
 
 		@Override
@@ -107,7 +97,8 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		@Override
 		public PackerI getPacker()  {
-			throw new IllegalStateException();
+			return lastUsedGlyph.getPacker();
+			//throw new IllegalStateException();
 		}
 		@Override
 		public Rectangle getPixelBox()  {
@@ -424,25 +415,6 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	// end glyph class
 
-	public SemanticZoomGlyphFactory(SemanticZoomRule rule) {
-		super();
-		this.rule = rule;
-		factories = new ArrayList<MapViewGlyphFactoryI>();
-		for (String factoryName : rule.getMapViewGlyphFactories()) {
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(factoryName);
-			if (factory == null) {
-				Operator operator = TransformHolder.getInstance().getOperator(factoryName);
-				if (operator != null) {
-					factory = new OperatorGlyphFactory(operator, MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory()));
-				}
-			}
-			if (factory == null) {
-				throw new IllegalStateException("SemanticZoomGlyphFactory cannot find factory for " + factoryName);
-			}
-			factories.add(factory);
-		}
-	}
-
 	@Override
 	public void init(Map<String, Object> options) {
 	}
@@ -452,27 +424,16 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		// not implemented
 	}
 
+	protected abstract SemanticZoomRule getRule(SeqSymmetry sym,
+			ITrackStyleExtended style, Direction direction);
+
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction tier_direction) {
-		return new SemanticZoomGlyph(sym, style, tier_direction, rule);
+			ITrackStyleExtended style, Direction direction) {
+		SemanticZoomRule rule = getRule(sym, style, direction);
+		return new SemanticZoomGlyph(sym, style, direction, rule);
 	}
 
-	@Override
-	public String getName() {
-		return rule.getName();
-	}
-
-	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
-		for (MapViewGlyphFactoryI factory : factories) {
-			if (!factory.isFileSupported(category)) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
 		this.smv = gviewer;
 	}

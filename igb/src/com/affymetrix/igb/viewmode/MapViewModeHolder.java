@@ -1,13 +1,11 @@
 
 package com.affymetrix.igb.viewmode;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -23,13 +21,8 @@ public class MapViewModeHolder {
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
 	
 	public static MapViewModeHolder getInstance(){
-		if (!instance.initialized) {
-			instance.init();
-		}
 		return instance;
 	}
-
-	private boolean initialized;
 
 	private MapViewModeHolder(){
 		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
@@ -115,29 +108,10 @@ public class MapViewModeHolder {
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
 //		addViewFactory(expandedAnnotGlyphFactory);
-		initialized = false;
-	}
-
-	private void init() {
-		initialized = true; // must be first
-		
-		// Add depth factories
-		SemanticZoomRule defaultRule = new SemanticZoomRule() {
-			private static final double ZOOM_X_SCALE = 0.002;
-			@Override
-			public String chooseViewMode(ViewI view) {
-				return view.getTransform().getScaleX() < ZOOM_X_SCALE ? "Annotation depth" : "annotation";
-			}
-			@Override
-			public String getName() {
-				return "semantic zoom";
-			}
-			@Override
-			public List<String> getMapViewGlyphFactories() {
-				return Arrays.asList(new String[]{"annotation", "Annotation depth"});
-			}
-		};
-		addViewFactory(new SemanticZoomGlyphFactory(defaultRule));
+		MapViewGlyphFactoryI depthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
+		addViewFactory(new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, depthFactory));
+		addViewFactory(new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory));
+		addViewFactory(new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory));
 	}
 
 	public MapViewGlyphFactoryI getViewFactory(String view){

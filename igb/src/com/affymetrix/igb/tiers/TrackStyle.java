@@ -832,7 +832,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			return null;
 		
 		FileTypeCategory category = null;
-		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(file_type);
+		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
 		if (handler != null) {
 			category = handler.getFileTypeCategory();
 		}

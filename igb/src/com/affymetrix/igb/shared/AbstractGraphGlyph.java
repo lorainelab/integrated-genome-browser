@@ -38,6 +38,8 @@ import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.geom.Point2D;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
@@ -1266,9 +1268,14 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	@Override
 	public void pack(ViewI view, boolean manual) {
 		super.pack(view, manual);
-		Rectangle2D.Double mbox = getScene().getCoordBox();
-		Rectangle2D.Double cbox = this.getCoordBox();
-		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
+		if (getScene() == null) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Scene is null in " + this.getClass().getSimpleName() + ".pack()");
+		}
+		else {
+			Rectangle2D.Double mbox = getScene().getCoordBox();
+			Rectangle2D.Double cbox = this.getCoordBox();
+			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
+		}
 	}
 
 	@Override

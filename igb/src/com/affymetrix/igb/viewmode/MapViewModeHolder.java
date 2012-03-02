@@ -109,7 +109,7 @@ public class MapViewModeHolder {
 		addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
-		addDefaultFactory(FileTypeCategory.ProbeSet, scoredStairStep);
+		addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
 		addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();

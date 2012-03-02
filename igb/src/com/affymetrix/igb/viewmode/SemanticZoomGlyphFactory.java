@@ -246,7 +246,9 @@ public class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		@Override
 		public void pack(ViewI view, boolean manual) {
 			lastUsedGlyph = getGlyph(view);
-			lastUsedGlyph.pack(view, manual);
+			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
+				vmg.pack(view, manual);
+			}
 		}
 		@Override
 		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {

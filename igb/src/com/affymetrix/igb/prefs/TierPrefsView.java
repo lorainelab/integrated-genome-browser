@@ -38,7 +38,7 @@ import javax.swing.table.TableModel;
  *
  * @author nick
  */
-public class TierPrefsView implements ListSelectionListener, TrackStylePropertyListener {
+public class TierPrefsView extends TrackPreferences implements ListSelectionListener, TrackStylePropertyListener {
 
 	public static final long serialVersionUID = 1l;
 	private static TierPrefsView singleton;
@@ -53,51 +53,24 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	};
 	//subclass variables
 	public static final int COL_TRACK_NAME = 0;
-	public static final int COL_BACKGROUND = 1;
-	public static final int COL_FOREGROUND = 2;
-	public static final int COL_TRACK_NAME_SIZE = 3;
-	public static final int COL_COLLAPSED = 4;
-	public static final int COL_MAX_DEPTH = 5;
-	public static final int COL_SHOW2TRACKS = 6;
-	public static final int COL_LABEL_FIELD = 7;
-	public static final int COL_CONNECTED = 8;
-	public static final int COL_DIRECTION_TYPE = 9;
-	public static final int COL_POS_STRAND_COLOR = 10;
-	public static final int COL_NEG_STRAND_COLOR = 11;
 	public static final int COL_VIEW_MODE = 12;
 	public static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
-	private TierPrefsTableModel model;
 	public ListSelectionModel lsm;
 	public static StyledJTable table;
 	public SeqMapView smv;
-	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
-	public boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
-	public int[] selectedRows;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
 	public TrackStyle selectedStyle;
 	public List<TierGlyph> currentTiers;
 	public List<TrackStyle> currentStyles;
 	public JRPButton applyToAllButton;
-	public JRPCheckBox arrowCheckBox;
 	public JCheckBox autoRefreshCheckBox;
-	public ColorComboBox bgColorComboBox;
-	public JRPCheckBox collapsedCheckBox;
-	public JRPCheckBox colorCheckBox;
-	public JRPCheckBox connectedCheckBox;
 	public JRPTextField displayNameTextField;
 	public JButton applyDisplayNameButton;
-	public ColorComboBox fgColorComboBox;
-	public JRPComboBox labelFieldComboBox;
-	public JRPTextField maxDepthTextField;
-	public ColorComboBox negativeColorComboBox;
-	public ColorComboBox possitiveColorComboBox;
 	public JRPButton refreshButton;
-	public JRPCheckBox show2TracksCheckBox;
 	public ButtonGroup showStrandButtonGroup;
-	public JRPComboBox trackNameSizeComboBox;
 	public JRPComboBox viewModeCB;
 	public JLabel applyToAllTip;
 
@@ -118,7 +91,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 
 		initComponents();
 	}
-
+	
 	private void initComponents() {
 		model = new TierPrefsTableModel();
 
@@ -328,7 +301,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		}
 
 		if (!isContained) {
-			model.setStyles(customizables);
+			((TierPrefsTableModel)model).setStyles(customizables);
 			model.fireTableDataChanged();
 		}
 	}
@@ -338,7 +311,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	}
 
 	public void clearTable() {
-		model.clear();
+		((TierPrefsTableModel)model).clear();
 		//also refresh options panel to ensure coordinate track colors stay synchronized
 		OtherOptionsView.getSingleton().refresh();
 	}
@@ -348,6 +321,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 	 *
 	 * @param evt
 	 */
+	@Override
 	public void valueChanged(ListSelectionEvent evt) {
 		displayNameTextField.setEnabled(true);
 		applyDisplayNameButton.setEnabled(true);
@@ -411,7 +385,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 		}
 
 		if (selectedRows.length == 1) {
-			selectedStyle = model.getStyles().get(selectedRows[0]);
+			selectedStyle = ((TierPrefsTableModel)model).getStyles().get(selectedRows[0]);
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
 					|| selectedStyle.isGraphTier()) {
@@ -535,37 +509,12 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			table.setRowSelectionInterval(0, table.getRowCount() - 2);
 		}
 	}
-
-	public void show2TracksCheckBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), 0, COL_SHOW2TRACKS);
-		}
-	}
-
-	public void connectedCheckBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
-		}
-	}
-
-	public void collapsedCheckBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(collapsedCheckBox.isSelected(), 0, COL_COLLAPSED);
-		}
-	}
-
 	public void displayNameTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(displayNameTextField.getText(), 0, COL_TRACK_NAME);
 		}
 	}
-
-	public void maxDepthTextField() {
-		if (!settingValueFromTable) {
-			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
-		}
-	}
-
+	@Override
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
@@ -575,81 +524,6 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			}
 		}
 	}
-
-	public void fgColorComboBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
-		}
-	}
-
-	public void bgColorComboBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(bgColorComboBox.getSelectedColor(), 0, COL_BACKGROUND);
-		}
-	}
-
-	public void labelFieldComboBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(labelFieldComboBox.getSelectedItem(), 0, COL_LABEL_FIELD);
-		}
-	}
-
-	public void possitiveColorComboBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(possitiveColorComboBox.getSelectedColor(), 0, COL_POS_STRAND_COLOR);
-		}
-	}
-
-	public void negativeColorComboBox() {
-		if (!settingValueFromTable) {
-			model.setValueAt(negativeColorComboBox.getSelectedColor(), 0, COL_NEG_STRAND_COLOR);
-		}
-	}
-
-	public void colorCheckBox() {
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-							0, COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-							0, COL_DIRECTION_TYPE);
-				}
-			} else {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-							0, COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-							0, COL_DIRECTION_TYPE);
-				}
-			}
-		}
-	}
-
-	public void arrowCheckBox() {
-		if (!settingValueFromTable) {
-			if (colorCheckBox.isSelected()) {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH,
-							0, COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR,
-							0, COL_DIRECTION_TYPE);
-				}
-			} else {
-				if (arrowCheckBox.isSelected()) {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW,
-							0, COL_DIRECTION_TYPE);
-				} else {
-					model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE,
-							0, COL_DIRECTION_TYPE);
-				}
-			}
-		}
-	}
-
 	public void viewModeCB() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
@@ -666,7 +540,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 			int[] previousSelectedRows = selectedRows;
 			for (int i = 0; i < selectedRows.length; i++) {
 				row = selectedRows[i];
-				style = model.getStyles().get(row);
+				style = ((TierPrefsTableModel)model).getStyles().get(row);
 				style.restoreToDefault();
 			}
 
@@ -809,7 +683,7 @@ public class TierPrefsView implements ListSelectionListener, TrackStylePropertyL
 						case COL_DIRECTION_TYPE:
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
-						case COL_SHOW2TRACKS:
+						case Col_Show_2_Tracks:
 							style.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_CONNECTED:

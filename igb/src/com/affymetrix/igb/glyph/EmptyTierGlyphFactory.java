@@ -87,7 +87,7 @@ public class EmptyTierGlyphFactory {
 		double height = style.getHeight();
 		if (TrackUtils.getInstance().useViewMode(style.getMethodName())) {
 			if(setViewMode){
-				FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
+				FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getFileType());
 				FileTypeCategory category = (fth == null) ? FileTypeCategory.Annotation : fth.getFileTypeCategory();
 				String viewmode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category).getName();
 				style.setViewMode(viewmode);

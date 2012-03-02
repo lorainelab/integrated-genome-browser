@@ -161,20 +161,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		return true;
 	}
-		
-	public boolean isFileSupported(String format) {
-		if(format == null) {
-			return false;
-		}
-		if ("cyt".equalsIgnoreCase(format)) {
-			return false;
-		}
-		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(format);
-		if (fth != null && fth.getFileTypeCategory() == FileTypeCategory.Sequence) {
-			return false;
-		}
-		return true;
-	}
 	
 	public void setSeqMapView(SeqMapView gviewer) {
 		this.smv = gviewer;

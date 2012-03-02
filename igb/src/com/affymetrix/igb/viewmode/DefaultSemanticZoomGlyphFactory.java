@@ -12,27 +12,27 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
-	private final MapViewGlyphFactoryI annotationGlyphFactory;
+	private final MapViewGlyphFactoryI detailGlyphFactory;
 	private final MapViewGlyphFactoryI depthFactory;
 
 	private class DefaultSemanticZoomRule implements SemanticZoomRule {
 		private static final double ZOOM_X_SCALE = 0.002;
 		private final ViewModeGlyph depthGlyph; 
-		private final ViewModeGlyph annotationGlyph; 
+		private final ViewModeGlyph detailGlyph; 
 		private final Map<String, ViewModeGlyph> allViewModeGlyphs;
 		private DefaultSemanticZoomRule(SeqSymmetry sym,
 				ITrackStyleExtended style, Direction direction) {
 			super();
 			allViewModeGlyphs = new HashMap<String, ViewModeGlyph>();
 			depthGlyph = depthFactory.getViewModeGlyph(sym, style, direction);
-			allViewModeGlyphs.put("Annotation depth", depthGlyph);
-			annotationGlyph = annotationGlyphFactory.getViewModeGlyph(sym, style, direction);
-			allViewModeGlyphs.put("annotation", annotationGlyph);
+			allViewModeGlyphs.put(depthFactory.getName(), depthGlyph);
+			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, style, direction);
+			allViewModeGlyphs.put(detailGlyphFactory.getName(), detailGlyph);
 		}
 
 		@Override
 		public ViewModeGlyph getGlyph(ViewI view) {
-			return view.getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : annotationGlyph;
+			return view.getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : detailGlyph;
 		}
 
 		@Override
@@ -46,19 +46,19 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		}
 	}
 
-	public DefaultSemanticZoomGlyphFactory(MapViewGlyphFactoryI annotationGlyphFactory, MapViewGlyphFactoryI depthFactory) {
-		this.annotationGlyphFactory = annotationGlyphFactory;
+	public DefaultSemanticZoomGlyphFactory(MapViewGlyphFactoryI detailGlyphFactory, MapViewGlyphFactoryI depthFactory) {
+		this.detailGlyphFactory = detailGlyphFactory;
 		this.depthFactory = depthFactory;
 	}
 
 	@Override
 	public String getName() {
-		return "semantic zoom";
+		return "semantic zoom " + detailGlyphFactory.getName();
 	}
 
 	@Override
 	public boolean isFileSupported(FileTypeCategory category) {
-		return category == FileTypeCategory.Annotation;
+		return detailGlyphFactory.isFileSupported(category);
 	}
 
 	@Override

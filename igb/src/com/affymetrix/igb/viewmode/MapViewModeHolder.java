@@ -108,8 +108,10 @@ public class MapViewModeHolder {
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
 //		addViewFactory(expandedAnnotGlyphFactory);
-		MapViewGlyphFactoryI depthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
-		addViewFactory(new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, depthFactory));
+		MapViewGlyphFactoryI alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), stairStepGraphGlyphFactory);
+		addViewFactory(new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory));
+		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
+		addViewFactory(new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory));
 		addViewFactory(new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory));
 		addViewFactory(new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory));
 	}

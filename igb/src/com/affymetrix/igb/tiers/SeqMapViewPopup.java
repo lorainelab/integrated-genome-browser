@@ -1192,51 +1192,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(new JSeparator());
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
-		popup.add(customize_action);
-		popup.add(changeMenu);
-		popup.add(viewModeMenu);
-		popup.add(transformMenu);
-		popup.add(new JSeparator());
-		popup.add(hide_action);
-		popup.add(showMenu);
-		strandsMenu.removeAll();
-		strandsMenu.add(at1);
-		strandsMenu.add(at2);
-		popup.add(strandsMenu);
-		popup.add(show_all_action);
-		popup.add(new JSeparator());
-		popup.add(CenterAtHairlineAction.getAction());
-		if (add_maximize) {
-			popup.add(maximize_track_action);
-		}
-		popup.add(collapse_action);
-		popup.add(expand_action);
-		popup.add(new JSeparator());
-		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
-		if (operationsMenu != null) {
-			popup.add(operationsMenu);
-		}
-		summaryMenu.removeAll();
-		summaryMenu.add(sym_summarize_single_action);
-		if (!show_two_tiers.isEnabled()) // If showing both track then give a option to create
-		{
-			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
-		}
-		popup.add(summaryMenu);
-		popup.add(new JSeparator());
-//		popup.add(repack_tracks_action);
-		popup.add(delete_action);
-		popup.add(new JSeparator());
-		popup.add(save_track_action);		
-//	strandsMenu.add(at3);
-		
-				
-//		popup.add(change_expand_max_action);
-		
-		
-		
-		//popup.add(coverage_action);
-
+		popup.add(save_track_action);
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
@@ -1256,11 +1212,56 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 				
 				if (feature.friendlyURL != null) {
-					popup.add(new JSeparator());
 					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
 				}
 			}
 		}
+		popup.add(new JSeparator());
+		popup.add(customize_action);
+		popup.add(changeMenu);
+		popup.add(viewModeMenu);
+		popup.add(new JSeparator());
+		popup.add(hide_action);
+		popup.add(showMenu);
+		popup.add(show_all_action);
+		strandsMenu.removeAll();
+		strandsMenu.add(at1);
+		strandsMenu.add(at2);
+		popup.add(strandsMenu);
+		popup.add(new JSeparator());
+		popup.add(CenterAtHairlineAction.getAction());
+		if (add_maximize) {
+			popup.add(maximize_track_action);
+		}
+		popup.add(collapse_action);
+		popup.add(expand_action);
+		popup.add(new JSeparator());
+		popup.add(transformMenu);
+		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));
+		if (operationsMenu != null) {
+			popup.add(operationsMenu);
+		}
+		summaryMenu.removeAll();
+		summaryMenu.add(sym_summarize_single_action);
+		if (!show_two_tiers.isEnabled()) // If showing both track then give a option to create
+		{
+			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
+		}
+		popup.add(summaryMenu);
+		popup.add(new JSeparator());
+//		popup.add(repack_tracks_action);
+		popup.add(delete_action);
+				
+//	strandsMenu.add(at3);
+		
+				
+//		popup.add(change_expand_max_action);
+		
+		
+		
+		//popup.add(coverage_action);
+
+		
 		if(gviewer.getAutoLoad() != null){
 			popup.add(new JSeparator());
 			popup.add(new JMenuItem(gviewer.getAutoLoad()));

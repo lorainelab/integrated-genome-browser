@@ -22,11 +22,17 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
  */
 public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym   {
 	private static final FileTypeCategory DEFAULT_CATEGORY = FileTypeCategory.Annotation;
+	private final String ext;
 	String type;
 
 	public TypeContainerAnnot(String type) {
+		this(type,"");
+	}
+
+	public TypeContainerAnnot(String type, String ext) {
 		super();
 		this.type = type;
+		this.ext = ext;
 		this.setProperty("method", type);
 		this.setProperty(CONTAINER_PROP, Boolean.TRUE);
 	}
@@ -36,7 +42,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
 	@Override
 	public FileTypeCategory getCategory() {
 		FileTypeCategory category = null;
-		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(type);
+		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandler(ext);
 		if (handler != null) {
 			category = handler.getFileTypeCategory();
 		}

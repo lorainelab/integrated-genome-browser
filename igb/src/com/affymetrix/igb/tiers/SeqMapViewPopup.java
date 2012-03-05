@@ -295,7 +295,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	};
 	private final Action sym_summarize_single_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
-
+	
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
@@ -1152,7 +1152,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							@Override
 							public void actionPerformed(ActionEvent ae) {
 								style.setOperator(transform.toString());
-								refreshMap(false, false);
+								gviewer.addAnnotationTrackFor(style);
+								//refreshMap(false, false);
 							}
 
 							@Override

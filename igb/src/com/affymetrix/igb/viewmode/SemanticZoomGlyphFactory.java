@@ -226,13 +226,17 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		@Override
 		public void moveAbsolute(double x, double y) {
-			super.moveAbsolute(x, y);
-			lastUsedGlyph.moveAbsolute(x, y);
+//			super.moveAbsolute(x, y);
+			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
+				vmg.moveAbsolute(x, y);
+			}
 		}
 		@Override
 		public void moveRelative(double diffx, double diffy) {
-			super.moveRelative(diffx, diffy);
-			lastUsedGlyph.moveRelative(diffx, diffy);
+//			super.moveRelative(diffx, diffy);
+			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
+				vmg.moveRelative(diffx, diffy);
+			}
 		}
 		@Override
 		public void pack(ViewI view, boolean manual) {

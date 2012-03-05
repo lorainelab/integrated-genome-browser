@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public class BigWigSymLoader extends SymLoader {
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -42,7 +43,7 @@ public class BigWigSymLoader extends SymLoader {
 	private BBFileReader bbReader;
 	private BBFileHeader bbFileHdr;
 	private List<BioSeq> chromosomeList;
-	private Map<String, String> cleanSeq2Seq;
+	private Map<String, String> realSeq2Seq;
 
 	public BigWigSymLoader(URI uri, String featureName, AnnotatedSeqGroup group){
 		super(uri, featureName, group);
@@ -82,18 +83,19 @@ public class BigWigSymLoader extends SymLoader {
 			seqMap.put(seq.getID(), seq);
 		}
 		chromosomeList = new ArrayList<BioSeq>();
-		cleanSeq2Seq = new HashMap<String, String>();
+		realSeq2Seq = new HashMap<String, String>();
 		Map<String, Integer> chromosomeNameMap = new HashMap<String, Integer>();
 		findAllChromosomeNamesAndSizes(bbReader.getChromosomeIDTree().getRootNode(), chromosomeNameMap);
 
 		for (String seqID : chromosomeNameMap.keySet()) {
 			String cleanSeqID = seqID;
-			int pos = seqID.indexOf((char)0);
+			int pos = seqID.indexOf((char)0); // sometimes file has chromosome with hex 00 at the end
 			if (pos > -1) {
 				cleanSeqID = seqID.substring(0, pos);
 			}
-			cleanSeq2Seq.put(cleanSeqID, seqID);
-			BioSeq seq = seqMap.get(cleanSeqID);
+			String realSeqId = SynonymLookup.getChromosomeLookup().getPreferredName(cleanSeqID);
+			realSeq2Seq.put(realSeqId, seqID);
+			BioSeq seq = seqMap.get(realSeqId);
 			if (seq == null) {
 				chromosomeList.add(group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString()));
 			}
@@ -124,7 +126,7 @@ public class BigWigSymLoader extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
 		init();
-		String seqString = cleanSeq2Seq.get(seq.getID());
+		String seqString = realSeq2Seq.get(seq.getID());
 		return parse(seq, bbReader.getBigWigIterator(seqString, 0, seqString, Integer.MAX_VALUE, true));
 	}
 
@@ -132,7 +134,7 @@ public class BigWigSymLoader extends SymLoader {
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
 		List<? extends SeqSymmetry> regions = null;
 		init();
-		String seqString = cleanSeq2Seq.get(span.getBioSeq().getID());
+		String seqString = realSeq2Seq.get(span.getBioSeq().getID());
 		try {
 			regions = parse(span.getBioSeq(), bbReader.getBigWigIterator(seqString, span.getStart(), seqString, span.getEnd(), true));
 		}

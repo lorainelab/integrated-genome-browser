@@ -9,6 +9,7 @@ import java.util.*;
 import java.net.URL;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.Parser;
@@ -167,14 +168,11 @@ public final class GraphSymUtils {
 	}
 
 	public static boolean isAGraphExtension(String ext) {
-		if(ext == null || ext.isEmpty())
+		if(ext == null || ext.isEmpty()) {
 			return false;
-	
+		}
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(ext);
-		if(fth == null)
-			return false;
-		
-		return fth.getParser() instanceof GraphParser;
+		return fth != null && fth.getFileTypeCategory() == FileTypeCategory.Graph;
 	}
 
 	/**

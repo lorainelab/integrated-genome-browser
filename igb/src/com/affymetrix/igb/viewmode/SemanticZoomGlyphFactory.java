@@ -37,6 +37,7 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 			super.setInfo(sym);
 			this.rule = rule;
 			viewModeGlyphs = rule.getAllViewModeGlyphs();
+			setDirection(tier_direction);
 			lastUsedGlyph = rule.getDefaultGlyph();
 			setStyle(style);
 		}

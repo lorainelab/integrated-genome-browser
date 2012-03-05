@@ -42,7 +42,7 @@ public class BigWigHandler implements FileTypeHandler {
 
 	@Override
 	public Parser getParser() {
-		return null;
+		return new BigWigParser();
 	}
 
 	@Override

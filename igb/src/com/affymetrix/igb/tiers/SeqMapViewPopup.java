@@ -11,10 +11,6 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -29,22 +25,17 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.igb.IGB;
@@ -52,7 +43,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -877,68 +867,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		refreshMap(false, false);
-	}
-
-	private static void saveAsBedFile(TierGlyph atier) {
-		int childcount = atier.getChildCount();
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
-		for (int i = 0; i < childcount; i++) {
-			GlyphI child = atier.getChild(i);
-			if (child.getInfo() instanceof SeqSymmetry) {
-				syms.add((SeqSymmetry) child.getInfo());
-			}
-		}
-		System.out.println("Saving symmetries as BED file: " + syms.size());
-
-		JFileChooser chooser = UniFileChooser.getFileChooser("Bed file", "bed");
-		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-
-		int option = chooser.showSaveDialog(null);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-			BioSeq aseq = gmodel.getSelectedSeq();
-			DataOutputStream dos = null;
-			try {
-				File fil = chooser.getSelectedFile();
-				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-				BedParser.writeBedFormat(dos, syms, aseq);
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Problem saving file", ex);
-			} finally {
-				GeneralUtils.safeClose(dos);
-			}
-		}
-	}
-
-	private static void saveAsWigFile(TierGlyph atier) {
-		int childcount = atier.getChildCount();
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
-		for (int i = 0; i < childcount; i++) {
-			GlyphI child = atier.getChild(i);
-			if (child.getInfo() instanceof SeqSymmetry) {
-				syms.add((SeqSymmetry) child.getInfo());
-			}
-		}
-		System.out.println("Saving symmetries as WIG file: " + syms.size());
-
-		JFileChooser chooser = UniFileChooser.getFileChooser("Wig file", "wig");
-		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-
-		int option = chooser.showSaveDialog(null);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-			BioSeq aseq = gmodel.getSelectedSeq();
-			DataOutputStream dos = null;
-			try {
-				File fil = chooser.getSelectedFile();
-				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-				Wiggle.writeAnnotations(syms, aseq, dos);
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Problem saving file", ex);
-			} finally {
-				GeneralUtils.safeClose(dos);
-			}
-		}
 	}
 
 	public static void addMisMatchTier(final TierGlyph atier, final String prefix) {

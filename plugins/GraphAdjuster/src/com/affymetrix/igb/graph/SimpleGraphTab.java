@@ -13,6 +13,7 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -31,15 +32,13 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
-import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
-import com.affymetrix.genometryImpl.operator.transform.IdentityTransform;
+import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
-import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -48,12 +47,16 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
+import com.affymetrix.igb.action.TrackOperationAction;
+import com.affymetrix.igb.action.TrackTransformAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -74,6 +77,16 @@ public final class SimpleGraphTab
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
 	private static SimpleGraphTab singleton;
+	private static final Map<GraphType, String> graphType2ViewMode = new HashMap<GraphType, String>();
+	static {
+		graphType2ViewMode.put(GraphType.BAR_GRAPH, "bargraph");
+		graphType2ViewMode.put(GraphType.DOT_GRAPH, "dotgraph");
+		graphType2ViewMode.put(GraphType.FILL_BAR_GRAPH, "fillbargraph");
+		graphType2ViewMode.put(GraphType.HEAT_MAP, "heatmapgraph");
+		graphType2ViewMode.put(GraphType.LINE_GRAPH, "linegraph");
+		graphType2ViewMode.put(GraphType.MINMAXAVG, "minmaxavggraph");
+		graphType2ViewMode.put(GraphType.STAIRSTEP_GRAPH, "stairstepgraph");
+	}
 	BioSeq current_seq;
 	GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
@@ -217,19 +230,11 @@ public final class SimpleGraphTab
 		score_thresh_adjuster.showFrame();
 	}
 
-	public void addFloatTransformer(FloatTransformer floatTransformer) {
-		advanced_panel.loadTransforms();
-	}
-
-	public void removeFloatTransformer(FloatTransformer floatTransformer) {
-		advanced_panel.loadTransforms();
-	}
-
-	public void addGraphOperator(GraphOperator graphOperator) {
+	public void addOperator(Operator operator) {
 		advanced_panel.loadOperators();
 	}
 
-	public void removeGraphOperator(GraphOperator graphOperator) {
+	public void removeOperator(Operator operator) {
 		advanced_panel.loadOperators();
 	}
 
@@ -267,9 +272,7 @@ public final class SimpleGraphTab
 		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
-			if (first_glyph instanceof GraphGlyph) {
-				graph_style = ((GraphGlyph)first_glyph).getGraphStyle();
-			}
+			graph_style = first_glyph.getGraphStyle();
 			if (graph_style == GraphType.HEAT_MAP) {
 				hm = first_glyph.getHeatMap();
 			}
@@ -469,6 +472,15 @@ public final class SimpleGraphTab
 		}
 	}
 
+	private TierGlyphViewMode getParentGlyph(AbstractGraphGlyph sggl) {
+		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
+			if (glyph instanceof TierGlyphViewMode && ((TierGlyphViewMode)glyph).getViewModeGlyph() == sggl) {
+				return (TierGlyphViewMode)glyph;
+			}
+		}
+		return null;
+	}
+
 	private final class GraphStyleSetter implements ActionListener {
 
 		GraphType style = GraphType.LINE_GRAPH;
@@ -498,6 +510,10 @@ public final class SimpleGraphTab
 						sggl.setShowGraph(true);
 						if (sggl instanceof GraphGlyph) {
 							((GraphGlyph)sggl).setGraphStyle(style); // leave the heat map whatever it was
+						}
+						else {
+							TierGlyphViewMode parent = getParentGlyph(sggl);
+							parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
 						}
 						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
@@ -611,13 +627,13 @@ public final class SimpleGraphTab
 			public void mouseEntered(MouseEvent e) {
 				JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 				String selection = (String) comp.getSelectedItem();
-				GraphOperator operator = name2operator.get(selection);
+				Operator operator = name2operator.get(selection);
 
-				if (grafs.size() >= operator.getOperandCountMin()
-						&& grafs.size() <= operator.getOperandCountMax()) {
+				if (grafs.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
+						&& grafs.size() <= operator.getOperandCountMax(FileTypeCategory.Graph)) {
 					setGraphName(comp, operator);
 				} else {
-					comp.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
+					comp.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(FileTypeCategory.Graph), operator.getOperandCountMax(FileTypeCategory.Graph), "graph"));
 				}
 			}
 
@@ -627,8 +643,8 @@ public final class SimpleGraphTab
 				unsetGraphName(name2operator.get(selection));
 			}
 
-			public void setGraphName(JRPComboBoxWithSingleListener comp, GraphOperator operator) {
-				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
+			public void setGraphName(JRPComboBoxWithSingleListener comp, Operator operator) {
+				if (operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
 					A = grafs.get(0).getGraphName();
 					B = grafs.get(1).getGraphName();
 
@@ -645,8 +661,8 @@ public final class SimpleGraphTab
 				}
 			}
 
-			public void unsetGraphName(GraphOperator operator) {
-				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
+			public void unsetGraphName(Operator operator) {
+				if (operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
 					if (A != null && B != null && grafs.size() > 1) {
 						grafs.get(0).setGraphName(A);
 						grafs.get(1).setGraphName(B);
@@ -664,8 +680,8 @@ public final class SimpleGraphTab
 				}
 			}
 		}
-		private final Map<String, FloatTransformer> name2transform;
-		private final Map<String, GraphOperator> name2operator;
+		private final Map<String, Operator> name2transform;
+		private final Map<String, Operator> name2operator;
 		public final JRPButton transformationGoB = new JRPButton("SimpleGraphTab_transformationGoB", BUNDLE.getString("goButton"));
 		public final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
 		public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("SimpleGraphTab_transformation");
@@ -682,8 +698,8 @@ public final class SimpleGraphTab
 		};
 
 		public AdvancedGraphPanel() {
-			name2transform = new HashMap<String, FloatTransformer>();
-			name2operator = new HashMap<String, GraphOperator>();
+			name2transform = new HashMap<String, Operator>();
+			name2operator = new HashMap<String, Operator>();
 			hovereffect = new HoverEffect();
 			paramT.setText("");
 			paramT.setEditable(false);
@@ -696,9 +712,9 @@ public final class SimpleGraphTab
 					if (selection == null) {
 						paramT.setEditable(false);
 					} else {
-						FloatTransformer trans = name2transform.get(selection);
-						String paramPrompt = trans.getParamPrompt();
-						if (paramPrompt == null) {
+						Operator trans = name2transform.get(selection);
+						Map<String, Class<?>> params = trans.getParameters();
+						if (params == null) {
 							paramT.setEditable(false);
 						} else {
 							paramT.setEditable(true);
@@ -713,7 +729,10 @@ public final class SimpleGraphTab
 			transformationGoB.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					doTransformGraphs();
+					String selection = (String) transformationCB.getSelectedItem();
+					Operator operator = name2transform.get(selection);
+					SeqMapViewI gviewer = igbService.getSeqMapView();
+					new TrackTransformAction(gviewer, operator).actionPerformed(e);
 				}
 			});
 
@@ -721,11 +740,9 @@ public final class SimpleGraphTab
 
 				public void actionPerformed(ActionEvent e) {
 					String selection = (String) operationCB.getSelectedItem();
-					GraphOperator operator = name2operator.get(selection);
-					hovereffect.unsetGraphName(operator);
-					if (igbService.doOperateGraphs(operator, glyphs)) {
-						updateViewer();
-					}
+					Operator operator = name2operator.get(selection);
+					SeqMapViewI gviewer = igbService.getSeqMapView();
+					new TrackOperationAction(gviewer, operator).actionPerformed(e);
 				}
 			});
 
@@ -764,39 +781,61 @@ public final class SimpleGraphTab
 			});
 		}
 
-		public void loadTransforms() {
-			transformationCB.removeAllItems();
-			name2transform.clear();
-			TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
-				new Comparator<FloatTransformer>() {
-					@Override
-					public int compare(FloatTransformer o1, FloatTransformer o2) {
-						return o1.getName().compareTo(o2.getName());
+		private boolean isGraphOperator(Operator operator) {
+			for (FileTypeCategory category : FileTypeCategory.values()) {
+				if (category == FileTypeCategory.Graph) {
+					if (operator.getOperandCountMin(category) < 2) {
+						return false;
 					}
 				}
-			);
-			floatTransformers.addAll(ExtensionPointHandler.getExtensionPoint(FloatTransformer.class).getExtensionPointImpls());
-			for (FloatTransformer transformer : floatTransformers) {
-				name2transform.put(transformer.getName(), transformer);
-				transformationCB.addItem(transformer.getName());
+				else {
+					if (operator.getOperandCountMax(category) > 0) {
+						return false;
+					}
+				}
 			}
+			return true;
 		}
 
-		public void loadOperators() {
+		private boolean isGraphTransform(Operator operator) {
+			for (FileTypeCategory category : FileTypeCategory.values()) {
+				if (category == FileTypeCategory.Graph) {
+					if (operator.getOperandCountMin(category) != 1) {
+						return false;
+					}
+				}
+				else {
+					if (operator.getOperandCountMax(category) > 0) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		private void loadOperators() {
+			transformationCB.removeAllItems();
+			name2transform.clear();
 			operationCB.removeAllItems();
 			name2operator.clear();
-			TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
-				new Comparator<GraphOperator>() {
+			TreeSet<Operator> operators = new TreeSet<Operator>(
+				new Comparator<Operator>() {
 					@Override
-					public int compare(GraphOperator o1, GraphOperator o2) {
+					public int compare(Operator o1, Operator o2) {
 						return o1.getName().compareTo(o2.getName());
 					}
 				}
 			);
-			graphOperators.addAll(ExtensionPointHandler.getExtensionPoint(GraphOperator.class).getExtensionPointImpls());
-			for (GraphOperator graphOperator : graphOperators) {
-				name2operator.put(graphOperator.getName(), graphOperator);
-				operationCB.addItem(graphOperator.getName());
+			operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+			for (Operator operator : operators) {
+				if (isGraphOperator(operator)) {
+					name2operator.put(operator.getName(), operator);
+					operationCB.addItem(operator.getName());
+				}
+				if (isGraphTransform(operator)) {
+					name2transform.put(operator.getName(), operator);
+					transformationCB.addItem(operator.getName());
+				}
 			}
 		}
 
@@ -889,19 +928,6 @@ public final class SimpleGraphTab
 			igbService.getSeqMap().updateWidget();
 		}
 
-		private void doTransformGraphs() {
-			String selection = (String) transformationCB.getSelectedItem();
-			FloatTransformer trans = name2transform.get(selection);
-			if (trans.setParameter(paramT.getText())) {
-				List<GraphSym> newgrafs = transformGraphs(grafs, trans.getDisplay(), trans);
-				if (!newgrafs.isEmpty()) {
-					updateViewer();
-				}
-			} else {
-				ErrorHandler.errorPanel(MessageFormat.format(BUNDLE.getString("invalidParam"), paramT.getText(), trans.getParamPrompt()));
-			}
-		}
-
 		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
 			for (AbstractGraphGlyph gl : glyphs) {
@@ -949,15 +975,15 @@ public final class SimpleGraphTab
 			paramT.setEnabled(transformationGoB.isEnabled());
 			operationCB.setEnabled(grafs.size() >= 2);
 			String selection = (String) operationCB.getSelectedItem();
-			GraphOperator operator = name2operator.get(selection);
+			Operator operator = name2operator.get(selection);
 			boolean canGraph = (operator != null
-					&& grafs.size() >= operator.getOperandCountMin()
-					&& grafs.size() <= operator.getOperandCountMax());
+					&& grafs.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
+					&& grafs.size() <= operator.getOperandCountMax(FileTypeCategory.Graph));
 			operationGoB.setEnabled(operationCB.isEnabled() && canGraph);
 			if (canGraph || operator == null) {
 				operationGoB.setToolTipText(null);
 			} else {
-				operationGoB.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
+				operationGoB.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(FileTypeCategory.Graph), operator.getOperandCountMax(FileTypeCategory.Graph), "graph"));
 			}
 		}
 	}
@@ -1035,53 +1061,6 @@ public final class SimpleGraphTab
 				ErrorHandler.errorPanel(MessageFormat.format(SimpleGraphTab.BUNDLE.getString("graphSaveError1"), ex));
 			}
 		}
-	}
-
-	private List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
-		List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
-		for (GraphSym graf : grafs) {
-			float[] new_ycoords;
-
-			if (transformer instanceof IdentityTransform && graf instanceof GraphSym) {
-				new_ycoords = (graf).getGraphYCoords();
-			} else {
-				int pcount = graf.getPointCount();
-				new_ycoords = new float[pcount];
-				for (int k = 0; k < pcount; k++) {
-					new_ycoords[k] = transformer.transform(graf.getGraphYCoord(k));
-				}
-			}
-			String newname = trans_name + " (" + graf.getGraphName() + ") ";
-
-			// Transforming on this one seq only, not the whole genome
-			String newid = trans_name + " (" + graf.getID() + ") ";
-			newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
-			GraphSym newgraf;
-			if (graf instanceof GraphIntervalSym) {
-				newgraf = new GraphIntervalSym(graf.getGraphXCoords(),
-						((GraphIntervalSym) graf).getGraphWidthCoords(),
-						new_ycoords, newid, graf.getGraphSeq());
-			} else {
-				newgraf = new GraphSym(graf.getGraphXCoords(),
-						new_ycoords, newid, graf.getGraphSeq());
-			}
-
-			newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
-
-
-			GraphState newstate = newgraf.getGraphState();
-			newstate.copyProperties(graf.getGraphState());
-			newstate.getTierStyle().setTrackName(newname); // this is redundant
-			if (!(transformer instanceof IdentityTransform)) {
-				// unless this is an identity transform, do not copy the min-max range
-				newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);
-				newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
-			}
-
-			newgraf.getGraphSeq().addAnnotation(newgraf);
-			newgrafs.add(newgraf);
-		}
-		return newgrafs;
 	}
 
 	private void applyFGColorChange(List<GraphSym> graf_syms, Color color) {

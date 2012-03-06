@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2005-2007 Affymetrix, Inc.
+ * Copyright (c) 2005-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.tiers;
 
@@ -70,7 +67,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
 
-
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private static final boolean DEBUG = false;
@@ -87,9 +83,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
-
 	private final Action save_track_action = ExportFileAction.getAction();
 	private final Action rename_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -109,6 +105,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action customize_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -127,6 +124,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action expand_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -141,6 +139,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action expand_all_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -155,6 +154,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action collapse_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -169,6 +169,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action collapse_all_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -183,6 +184,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action hide_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -197,6 +199,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action show_all_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -225,6 +228,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action change_bg_color_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -239,6 +243,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action color_by_score_on_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -253,6 +258,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action color_by_score_off_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -267,6 +273,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action show_two_tiers = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -281,6 +288,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action show_single_tier = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -295,8 +303,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action sym_summarize_single_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
-	
+
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
@@ -313,6 +322,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action sym_summarize_both_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -331,6 +341,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action mismatch_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -349,6 +360,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action mismatch_pileup_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -367,6 +379,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action maximize_track_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -382,6 +395,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	};
 ///* not ready yet. Add // at the beginnin of the line to enable for now.
 	private final Action repack_tracks_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -403,7 +417,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						break;
 				}
 			}
-		    // Now repack again with the newly appointed maxima.
+			// Now repack again with the newly appointed maxima.
 			repack(true);
 		}
 
@@ -412,8 +426,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("repackTracksAction");
 		}
 	};
-/* */
+	/*
+	 *
+	 */
 	private final Action change_expand_max_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -428,6 +445,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action change_expand_max_all_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -442,6 +460,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action delete_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -449,7 +468,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			BioSeq seq = gmodel.getSelectedSeq();
 
 			if (IGB.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmDelete"), seq.getID()), PreferenceUtils.getTopNode(),
-									PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
+					PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 				removeTiers(handler.getSelectedTierLabels());
 			}
 		}
@@ -460,6 +479,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action change_font_size_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -474,6 +494,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 	private final Action use_as_reference_seq_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
@@ -494,7 +515,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("useAsReferenceSeqAction");
 		}
 	};
-	
+
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
@@ -602,22 +623,20 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		MaxSlotsChooser chooser = new MaxSlotsChooser(BUNDLE.getString("maxHeight"), ourLimit, ourOptimum);
-		
+
 		int isOK = JOptionPane.showConfirmDialog(
 				null,
 				chooser,
 				BUNDLE.getString("changeMaxHeight"),
-				JOptionPane.OK_CANCEL_OPTION
-				);
+				JOptionPane.OK_CANCEL_OPTION);
 		switch (isOK) {
 			case JOptionPane.OK_OPTION:
 				try {
 					ourLimit = chooser.getValue();
-				}
-				catch (NumberFormatException nex) {
-				    ErrorHandler.errorPanel(nex.getLocalizedMessage()
-						+ " Maximum must be an integer: "
-						+ chooser.toString());
+				} catch (NumberFormatException nex) {
+					ErrorHandler.errorPanel(nex.getLocalizedMessage()
+							+ " Maximum must be an integer: "
+							+ chooser.toString());
 					return;
 				}
 				break;
@@ -666,8 +685,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 
-	/** Hides one tier and creates a JMenuItem that can be used to show it again.
-	 *  Does not re-pack the given tier, or any other tiers.
+	/**
+	 * Hides one tier and creates a JMenuItem that can be used to show it again.
+	 * Does not re-pack the given tier, or any other tiers.
 	 */
 	public void hideOneTier(final TierGlyph tier) {
 		final ITrackStyleExtended style = tier.getAnnotStyle();
@@ -708,8 +728,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		tier.setVisibility(false);
 	}
 
-	/** Hides one tier and creates a JMenuItem that can be used to show it again.
-	 *  Does not re-pack the given tier, or any other tiers.
+	/**
+	 * Hides one tier and creates a JMenuItem that can be used to show it again.
+	 * Does not re-pack the given tier, or any other tiers.
 	 */
 	//Called from LodeModeTableModel to hide tracks selectively from the eye icon.
 	public void hideOneTier(final ITrackStyleExtended style) {
@@ -738,6 +759,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			};
 			show_tier.setName(style.getMethodName());
 			show_tier.setAction(new AbstractAction() {
+
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
@@ -752,8 +774,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		style.setShow(false);
 	}
 
-	/** Hides multiple tiers and then repacks.
-	 *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
+	/**
+	 * Hides multiple tiers and then repacks.
+	 *
+	 * @param tiers a List of GlyphI objects for each of which getInfo() returns
+	 * a TierGlyph.
 	 */
 	void hideTiers(List<TierLabelGlyph> tiers) {
 		for (TierLabelGlyph g : tiers) {
@@ -765,9 +790,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		repack(false);
 
-		/** Possible bug : When all strands are hidden.
-		 * tier label and tier do appear at same position.
-		 **/
+		/**
+		 * Possible bug : When all strands are hidden. tier label and tier do
+		 * appear at same position.
+		 *
+		 */
 		// NOTE: Below call to stretchToFit is not redundancy. It is there
 		//       to solve above mentioned bug.
 		repack(false);
@@ -805,14 +832,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							style.setBackground(chooser.getColor());
 						}
 					}
-				  for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-					  if (fg) {
-						  gg.setColor(chooser.getColor());
-						  gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
-					  } else {
-						  gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
-					  }
-				  }
+					for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+						if (fg) {
+							gg.setColor(chooser.getColor());
+							gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
+						} else {
+							gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
+						}
+					}
 				}
 			}
 		};
@@ -905,7 +932,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-				Wiggle.writeAnnotations(syms,aseq,dos);
+				Wiggle.writeAnnotations(syms, aseq, dos);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Problem saving file", ex);
 			} finally {
@@ -916,12 +943,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	public static void addMisMatchTier(final TierGlyph atier, final String prefix) {
 		final BioSeq aseq = gmodel.getSelectedSeq();
-		
+
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
-				boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);		
+				boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);
 				String human_name = prefix + ": " + atier.getLabel();
 				String unique_name = TrackStyle.getUniqueName(human_name);
 				String method = atier.getAnnotStyle().getMethodName();
@@ -965,11 +992,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 				return true;
 			}
-			
+
 			@Override
-			public void done(){
+			public void done() {
 				try {
-					if(get()){
+					if (get()) {
 						IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 					}
 				} catch (Exception ex) {
@@ -1042,16 +1069,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	public void repack(boolean full_repack){
+	public void repack(boolean full_repack) {
 		gviewer.getSeqMap().clearSelected();
 		handler.repackTheTiers(full_repack, true);
 	}
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
 		JMenu operationsMenu = null;
-		for (Operator operator : ExtensionPointHandler
-				.getExtensionPoint(Operator.class)
-				.getExtensionPointImpls()) {
+		for (Operator operator : ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls()) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
 				String name = operator.getName();
 				String title = name.substring(0, 1).toUpperCase()
@@ -1099,7 +1124,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 
-
 		customize_action.setEnabled(true);
 
 		hide_action.setEnabled(num_selections > 0);
@@ -1125,8 +1149,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
-		
-		
+
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
 
@@ -1134,7 +1157,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			// Check whether this selection is a graph or an annotation
 			final TierLabelGlyph label = labels.get(0);
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
-			
+
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			boolean is_annotation_type = !style.isGraphTier();
 			summaryMenu.setEnabled(is_annotation_type);
@@ -1146,14 +1169,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_maximize = true;
 			}
-	
-			
+
+
 			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 				RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
-				
+
 				Map<String, Action> actions = new HashMap<String, Action>();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory())) {
 					Action action = new GenericAction() {
+
 						private static final long serialVersionUID = 1L;
 
 						@Override
@@ -1178,13 +1202,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						action.putValue(Action.SELECTED_KEY, true);
 					}
 					viewModeMenu.setEnabled(true);
-				
+
 				}
-				
+
 				if (style instanceof TrackStyle) {
 					Map<String, Action> transform_actions = new HashMap<String, Action>();
-					for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle)style).getFileTypeCategory())) {
+					for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
 						Action action = new GenericAction() {
+
 							private static final long serialVersionUID = 1L;
 
 							@Override
@@ -1221,6 +1246,19 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			//coverage_action.setEnabled(false);
 		}
 
+		// Gray out several options, if the selected track is coordinates.
+		for (TierLabelGlyph label : labels) {
+			String name = label.getReferenceTier().getAnnotStyle().getTrackName();
+			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+				save_track_action.setEnabled(false);
+				strandsMenu.setEnabled(false);
+				summaryMenu.setEnabled(false);
+				repack_tracks_action.setEnabled(false);
+				delete_action.setEnabled(false);
+				break;
+			}
+		}
+
 		changeMenu.removeAll();
 		changeMenu.add(change_color_action);
 		changeMenu.add(change_bg_color_action);
@@ -1247,11 +1285,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					popup.add(mismatch_pileup_action);
 				}
 
-				if(FileTypeHolder.getInstance().isSequence(file_type)){
+				if (FileTypeHolder.getInstance().isSequence(file_type)) {
 					popup.add(new JSeparator());
 					popup.add(use_as_reference_seq_action);
 				}
-				
+
 				if (feature.friendlyURL != null) {
 					popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
 				}
@@ -1292,18 +1330,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		popup.add(new JSeparator());
 		popup.add(repack_tracks_action); // experimental
 		popup.add(delete_action);
-				
+
 //	strandsMenu.add(at3);
-		
-				
+
+
 //		popup.add(change_expand_max_action);
-		
-		
-		
+
+
+
 		//popup.add(coverage_action);
 
-		
-		if(gviewer.getAutoLoad() != null){
+
+		if (gviewer.getAutoLoad() != null) {
 			popup.add(new JSeparator());
 			popup.add(new JMenuItem(gviewer.getAutoLoad()));
 		}
@@ -1337,12 +1375,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gviewer.dataRemoved();	// refresh
 	}
 
-	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception{
+	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception {
 		ITrackStyleExtended style = tier.getAnnotStyle();
 		GenericFeature feature = style.getFeature();
 		GeneralLoadView.getLoadView().useAsRefSequence(feature);
 	}
-	
+
 	// purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {

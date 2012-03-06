@@ -1281,6 +1281,11 @@ public class SeqMapView extends JPanel
 
 	}
 
+	@Override
+	public List<? extends GlyphI> getSelectedTiers() {
+		return tier_manager.getSelectedTiers();
+	}
+		
 	/**
 	 *  Determines which SeqSymmetry's are selected by looking at which Glyph's
 	 *  are currently selected.  The list will not include the selected sequence

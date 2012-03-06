@@ -1013,6 +1013,7 @@ public class SeqMapView extends JPanel
 	public void addAnnotationTrackFor(final ITrackStyleExtended style){
 		ThreadUtils.runOnEventQueue(new Runnable(){
 			public void run() {
+				SeqMapView.this.getSeqMap().clearSelected();
 				TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
 				SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
 				SeqMapView.this.getSeqMap().updateWidget();

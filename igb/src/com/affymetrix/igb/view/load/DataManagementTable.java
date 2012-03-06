@@ -39,9 +39,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A table with two customizations:
- * 1.  An always-visible combo box. For a user, this differentiates the field from a text box, and thus indicates they have a choice.
- * 2.  Different combo box elements per row.  This allows different behavior per server type.
+ * A table with two customizations: 1. An always-visible combo box. For a user,
+ * this differentiates the field from a text box, and thus indicates they have a
+ * choice. 2. Different combo box elements per row. This allows different
+ * behavior per server type.
  */
 public final class DataManagementTable {
 
@@ -62,7 +63,9 @@ public final class DataManagementTable {
 	//public static boolean iconTest;
 
 	/**
-	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
+	 * Set the columns to use the ComboBox DAScb and renderer (which also
+	 * depends on the row/server type)
+	 *
 	 * @param table
 	 * @param column
 	 * @param enabled
@@ -154,14 +157,14 @@ public final class DataManagementTable {
 		private static final long serialVersionUID = 1L;
 		private final JRPTextField gtextField;	// If an entire genome is loaded in, change the combo box to a text field.
 		private final JRPTextField dtextField;	// If only do not load is available, change the combo box to a text field.
-		
+
 		public ColumnRenderer() {
 
 			gtextField = new JRPTextField("LoadModeTable_textField", LoadStrategy.GENOME.toString());
 			gtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
 			gtextField.setBorder(null);
 			gtextField.setHorizontalAlignment(JRPTextField.CENTER);
-			
+
 			dtextField = new JRPTextField("LoadModeTable_textField", LoadStrategy.NO_LOAD.toString());
 			//dtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	
 			dtextField.setBorder(null);
@@ -176,9 +179,9 @@ public final class DataManagementTable {
 			if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
 				if (((String) value).equals(gtextField.getText())) {
 					return gtextField;
-				} else if(vFeature.getLoadChoices().size() == 1 && ((String) value).equals(dtextField.getText())){
+				} else if (vFeature.getLoadChoices().size() == 1 && ((String) value).equals(dtextField.getText())) {
 					return dtextField;
-				}else {
+				} else {
 					ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
 					Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 					renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
@@ -218,10 +221,10 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 
 	public JTableX(TableModel tm) {
 		super(tm);
-		
+
 		this.list.add(DataManagementTable.BACKGROUND_COLUMN);
 		this.list.add(DataManagementTable.FOREGROUND_COLUMN);
-		
+
 		rmMap = new HashMap<Integer, RowEditorModel>();
 
 		Application igb = Application.getSingleton();
@@ -231,7 +234,6 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 		setRowSelectionAllowed(false);
 	}
 
-	
 	void setRowEditorModel(int column, RowEditorModel rm) {
 		this.rmMap.put(column, rm);
 	}
@@ -291,23 +293,19 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 			}
 			return new LabelTableCellRenderer(DataManagementTable.delete_icon, true);
 		} else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
-			currentTiers = smv.getSeqMap().getTiers(); //improve later
+			currentTiers = smv.getSeqMap().getTiers();
 			for (TierGlyph tier : currentTiers) {
-				if (vFeature.getStyle() != null && tier.isVisible()
-						&& tier.getAnnotStyle().getMethodName() != null) {
-					if (tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
-							vFeature.getStyle().getMethodName()))//need changed
-					{
-						if (tier.getAnnotStyle().getShow()) {
-							return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
-
-						} else {
-							return new LabelTableCellRenderer(DataManagementTable.invisible_icon, true);
-						}
+				if (vFeature.getStyle() != null && tier.getAnnotStyle().getMethodName() != null
+						&& tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
+						vFeature.getStyle().getMethodName()))//need changed
+				{
+					if (tier.getAnnotStyle().getShow()) {
+						return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
+					} else {
+						return new LabelTableCellRenderer(DataManagementTable.invisible_icon, true);
 					}
 				}
 			}
-
 		}
 		return super.getCellRenderer(row, column);
 	}

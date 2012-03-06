@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.window.service.IWindowService;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
@@ -32,20 +33,24 @@ public class Activator implements BundleActivator {
 			JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
 			Properties tutorials = new Properties();
 			Preferences tutorialsNode = getTutorialsNode();
-			for (String key : tutorialsNode.keys()) {
-				String tutorialUri = tutorialsNode.get(key, null);
-				tutorials.clear();
-				tutorials.load(new URL(tutorialUri + "/tutorials.properties").openStream());
-				Enumeration<?> tutorialNames = tutorials.propertyNames();
-				while (tutorialNames.hasMoreElements()) {
-					String name = (String) tutorialNames.nextElement();
-					String description = (String) tutorials.get(name);
-					RunTutorialAction rta = new RunTutorialAction(tutorialManager, name + " - " + description, tutorialUri + "/" + name);
-					JMenuItem item = new JMenuItem(rta);
-					tutorialMenu.add(item);
+			try {
+				for (String key : tutorialsNode.keys()) {
+					String tutorialUri = tutorialsNode.get(key, null);
+					tutorials.clear();
+					tutorials.load(new URL(tutorialUri + "/tutorials.properties").openStream());
+					Enumeration<?> tutorialNames = tutorials.propertyNames();
+					while (tutorialNames.hasMoreElements()) {
+						String name = (String) tutorialNames.nextElement();
+						String description = (String) tutorials.get(name);
+						RunTutorialAction rta = new RunTutorialAction(tutorialManager, name + " - " + description, tutorialUri + "/" + name);
+						JMenuItem item = new JMenuItem(rta);
+						tutorialMenu.add(item);
+					}
 				}
+				help_menu.add(tutorialMenu);
+			} catch (FileNotFoundException e) {
+				//do nothing
 			}
-			help_menu.add(tutorialMenu);
 		} catch (Exception ex) {
 			System.out.println(this.getClass().getName() + " - Exception in handleWindowService() -> " + ex.getMessage());
 			ex.printStackTrace(System.out);

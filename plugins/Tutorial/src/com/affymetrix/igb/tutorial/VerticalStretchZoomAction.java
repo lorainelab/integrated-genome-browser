@@ -20,6 +20,7 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 	private static final int STEPS = 30;
 	private static final VerticalStretchZoomAction ACTION = new VerticalStretchZoomAction();
 	private double amount = 0.2;
+	private boolean lastStep;
 
 	public static VerticalStretchZoomAction getAction() {
 		return ACTION;
@@ -50,7 +51,11 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 			@Override
 			protected void done() {
 				int newNextValue = nextValue + step;
-				if (Math.abs(newNextValue - endValue) < Math.abs(2 * step)) {
+				if (Math.abs(newNextValue - endValue) <= Math.abs(step) && !lastStep) {
+					int finalStep = step - Math.abs(newNextValue - endValue);
+					lastStep = true;
+					getSw(yzoomer, newNextValue, endValue, finalStep).execute();
+				} else if (lastStep) {
 					actionDone();
 				} else {
 					getSw(yzoomer, newNextValue, endValue, step).execute();
@@ -65,17 +70,16 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 		int max = yzoomer.getMaximum();
 		int zoomAmount = (int) ((max - min) * amount);
 		int newValue = yzoomer.getValue();
-//		if (newValue + zoomAmount < min) {
-//			newValue = min - zoomAmount;
-//		}
-//		else if (newValue + zoomAmount > max) {
-//			newValue = max - zoomAmount;
-//		}
-		yzoomer.setValue(newValue);
-		int startValue = newValue;
-		//int endValue = newValue + zoomAmount;
-		int endValue = zoomAmount;
+		if (newValue + zoomAmount < min) {
+			newValue = 0;
+		} else if (newValue + zoomAmount > max) {
+			newValue = max;
+		}
+		//yzoomer.setValue(newValue);
+		int startValue = yzoomer.getValue();
+		int endValue = newValue + zoomAmount;
 		int step = (endValue - startValue) / STEPS;
+		lastStep = false;
 		getSw(yzoomer, startValue + step, endValue, step).execute();
 	}
 

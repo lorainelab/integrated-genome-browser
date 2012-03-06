@@ -12,6 +12,7 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 	private static final int STEPS = 30;
 	private static final TweeningZoomAction ACTION = new TweeningZoomAction();
 	private double amount = 0.2;
+	private boolean lastStep;
 
 	public static TweeningZoomAction getAction() {
 		return ACTION;
@@ -42,7 +43,11 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 			@Override
 			protected void done() {
 				int newNextValue = nextValue + step;
-				if (Math.abs(newNextValue - endValue) < Math.abs(2 * step)) {
+				if (Math.abs(newNextValue - endValue) <= Math.abs(step) && !lastStep) {
+					int finalStep = step - Math.abs(newNextValue - endValue);
+					lastStep = true;
+					getSw(xzoomer, newNextValue, endValue, finalStep).execute();
+				} else if (lastStep) {
 					actionDone();
 				} else {
 					getSw(xzoomer, newNextValue, endValue, step).execute();
@@ -57,17 +62,16 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 		int max = xzoomer.getMaximum();
 		int zoomAmount = (int) ((max - min) * amount);
 		int newValue = xzoomer.getValue();
-//		if (newValue + zoomAmount < min) {
-//			newValue = min - zoomAmount;
-//		}
-//		else if (newValue + zoomAmount > max) {
-//			newValue = max - zoomAmount;
-//		}
-		xzoomer.setValue(newValue);
-		int startValue = newValue;
-		//int endValue = newValue + zoomAmount;
-		int endValue = zoomAmount;
+		if (newValue + zoomAmount < min) {
+			newValue = 0;
+		} else if (newValue + zoomAmount > max) {
+			newValue = max;
+		}
+		//xzoomer.setValue(newValue);
+		int startValue = xzoomer.getValue();
+		int endValue = newValue + zoomAmount;
 		int step = (endValue - startValue) / STEPS;
+		lastStep = false;
 		getSw(xzoomer, startValue + step, endValue, step).execute();
 	}
 

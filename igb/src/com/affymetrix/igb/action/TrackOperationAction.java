@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.symloader.DelegateSymLoader;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -59,7 +59,7 @@ public class TrackOperationAction extends GenericAction {
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		java.net.URI uri = java.net.URI.create("file:/"+method);
 		
-		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new DelegateSymLoader(uri, meth.toString(), version, operator, symsStr), features, false);
+		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, symsStr), features, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree	
 		

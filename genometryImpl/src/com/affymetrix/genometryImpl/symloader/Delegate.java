@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
-public class DelegateSymLoader extends QuickLoadSymLoader {
+public class Delegate extends QuickLoadSymLoader {
 	private static final List<LoadUtils.LoadStrategy> defaultStrategyList = new ArrayList<LoadUtils.LoadStrategy>();
 	static {
 		defaultStrategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
@@ -36,7 +36,7 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 	private final List<String> symsStr;
 	private final List<LoadUtils.LoadStrategy> strategyList;
 	
-	public DelegateSymLoader(URI uri, String featureName, GenericVersion version,
+	public Delegate(URI uri, String featureName, GenericVersion version,
 			Operator operator, List<String> symsStr) {
 		super(uri, featureName, version, null);
 		this.operator = operator;
@@ -116,7 +116,7 @@ public class DelegateSymLoader extends QuickLoadSymLoader {
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException ex) {
-						Logger.getLogger(DelegateSymLoader.class.getName()).log(Level.SEVERE, null, ex);
+						Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, null, ex);
 						return false;
 					}
 				}

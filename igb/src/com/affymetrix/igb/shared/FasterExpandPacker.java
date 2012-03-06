@@ -229,19 +229,119 @@ public class FasterExpandPacker extends ExpandPacker {
 
 		slot_maxes.trimToSize();
 		
-		actual_slots = slot_maxes.size();
-		if(max_slots_allowed > 0){
-			actual_slots = Math.min(slot_maxes.size(), max_slots_allowed);
-		}
+		setActualSlots(slot_maxes.size());
 		
 		return null;
 	}
+	
+	/**
+	 * Get an optimal number of slots.
+	 * This is copied and pasted from pack(),
+	 * but without actually moving anything
+	 * and ignoring glyphs outside the view.
+	 * @param parent the glyph (tier) containing glyphs displayed
+	 * @theView in which the glyphs appear. Glyphs outside this view are not considered.
+	 * @return number of slots that would be used if packed.
+	 */
+	public int getSlotsNeeded(GlyphI parent, ViewI theView) {
+		
+		Rectangle2D.Double inView = theView.getCoordBox();
+		
+		int child_count = parent.getChildCount();
+		if (child_count == 0) {
+			return 0;
+		}
 
+		/*  A potential improvement to this layout algorithm is to also keep track of
+		 *  the the _minimum_ xmax (prev_min_xmax) of all slots that were checked for the
+		 *  previous child being packed (including the new xmax of the slot the prev child
+		 *  was placed in), as well as the index of the slot the prev child was placed in
+		 *  (prev_slot_index)
+		 */
+
+		Rectangle2D.Double cbox;
+		double ymin = Double.POSITIVE_INFINITY;
+		DoubleArrayList slot_maxes = new DoubleArrayList(1000);
+		double prev_min_xmax = Double.POSITIVE_INFINITY;
+		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
+		int prev_slot_index = 0;
+
+		Rectangle2D intersection;
+		for (int i = 0; i < child_count; i++) {
+			GlyphI child = parent.getChild(i);
+			child.setVisibility(true);
+			child.setOverlapped(false);
+			cbox = child.getCoordBox();
+			intersection = cbox.createIntersection(inView);
+			if (intersection.getWidth() <= 0) {
+				continue;
+			}
+			double child_min = cbox.x;
+			double child_max = child_min + cbox.width;
+			boolean child_placed = false;
+			int start_slot_index = 0;
+			if (prev_min_xmax >= child_min) {
+				// no point in checking slots prior to and including prev_slot_index, so
+				//  modify start_slot_index to be prev_slot_index++;
+				start_slot_index = prev_slot_index + 1;
+			}
+			int slot_count = slot_maxes.size();
+			for (int slot_index = start_slot_index; slot_index < slot_count; slot_index++) {
+				double slot_max = slot_maxes.get(slot_index);
+				if (slot_max < prev_min_xmax) {
+					min_xmax_slot_index = slot_index;
+					prev_min_xmax = slot_max;
+				}
+				if (slot_max < child_min) {
+					child_placed = true;
+					slot_maxes.set(slot_index, child_max);
+					prev_slot_index = slot_index;
+					if (slot_index == min_xmax_slot_index) {
+						prev_slot_index = 0;
+						min_xmax_slot_index = 0;
+						prev_min_xmax = slot_maxes.get(0);
+					} else if (child_max < prev_min_xmax) {
+						prev_min_xmax = child_max;
+						min_xmax_slot_index = slot_index;
+					}
+					break;
+				}
+			}
+			if (!child_placed) {
+				// need a new slot for child (unless already have max number of slots allowed,
+
+				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
+					int slot_index = slot_maxes.size() - 1;
+					prev_slot_index = slot_index;
+
+				} else {
+					slot_maxes.add(child_max);
+					int slot_index = slot_maxes.size() - 1;
+					if (child_max < prev_min_xmax) {
+						min_xmax_slot_index = slot_index;
+						prev_min_xmax = child_max;
+					}
+					prev_slot_index = slot_index;
+				}
+			}
+			ymin = Math.min(cbox.y, ymin);
+		}
+
+		slot_maxes.trimToSize();
+		
+		return slot_maxes.size();
+	}
+
+	/**
+	 * Get the number of slots used the last time packed.
+	 * Note that this should not be greater than the maximum set for a tier.
+	 * @return number of slots used to pack the visible data.
+	 */
 	public int getActualSlots(){
 		return actual_slots;
 	}
 	
-	private double getMaxChildHeight(GlyphI parent) {
+	protected double getMaxChildHeight(GlyphI parent) {
 		if (constant_heights) {
 			return parent.getChild(0).getCoordBox().height;
 		}
@@ -253,11 +353,23 @@ public class FasterExpandPacker extends ExpandPacker {
 		return max;
 	}
 
-	private static double determineYCoord(int moveType, int slot_index, double slot_height, double spacing) {
-		if (moveType == NeoConstants.UP) {
-			return -((slot_index * slot_height) + spacing);		// stacking up for layout
-		}
-		return (slot_index * slot_height) + spacing;	// stacking down for layout
+    protected static double determineYCoord(int moveType, int slot_index, 
+            double slot_height, double spacing) {
+        if (moveType == NeoConstants.UP) {
+            return -((slot_index * slot_height) + spacing);		// stacking up for layout
+        }
+        return (slot_index * slot_height) + spacing;	// stacking down for layout
+    }
+
+    protected void setActualSlots(int theNumber) {
+        actual_slots = theNumber;
+        if (0 < max_slots_allowed) {
+            actual_slots = Math.min(theNumber, max_slots_allowed);
+        }
+    }
+
+	protected int getMaxSlots() {
+		return this.max_slots_allowed;
 	}
 
 }

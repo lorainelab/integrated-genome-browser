@@ -1113,4 +1113,21 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public double getForwardHeight() {
 		return this.getHeight();
 	}
+	
+	/** for maximum depth of stacked glyphs on the reverse strand. To help with resizing. */
+	private int reverseMaxDepth = 0;
+	public void setReverseMaxDepth(int theNewDepth) {
+		this.reverseMaxDepth = theNewDepth;
+	}
+	public int getReverseMaxDepth() {
+		return this.reverseMaxDepth;
+	}
+	public void setForwardMaxDepth(int theNewDepth) {
+		int rd = this.getMaxDepth();
+		this.setMaxDepth(theNewDepth);
+		this.reverseMaxDepth = rd;
+	}
+	public int getForwardMaxDepth() {
+		return this.getMaxDepth();
+	}
 }

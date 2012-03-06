@@ -489,6 +489,12 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 		expand_packer.setMaxSlots(max);
 	}
 
+	public int getSlotsNeeded(ViewI theView) {
+		if(getPacker() == expand_packer) {
+			return expand_packer.getSlotsNeeded(this, theView);
+		}
+		return 1;
+	}
 	public int getActualSlots(){
 		if(getPacker() == expand_packer)
 			return expand_packer.getActualSlots();

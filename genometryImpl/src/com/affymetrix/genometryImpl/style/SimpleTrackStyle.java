@@ -32,6 +32,24 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public double getForwardHeight() {
 		return super.getHeight();
 	}
+		
+	/** for maximum depth of stacked glyphs on the reverse strand. To help with resizing. */
+	private int reverseMaxDepth = 0;
+	public void setReverseMaxDepth(int theNewDepth) {
+		this.reverseMaxDepth = theNewDepth;
+	}
+	public int getReverseMaxDepth() {
+		return this.reverseMaxDepth;
+	}
+	public void setForwardMaxDepth(int theNewDepth) {
+		int rd = this.getMaxDepth();
+		this.setMaxDepth(theNewDepth);
+		this.reverseMaxDepth = rd;
+	}
+	public int getForwardMaxDepth() {
+		return this.getMaxDepth();
+	}
+
 	@Override
 	public void setHeight(double theNewHeight) {
 		super.setHeight(theNewHeight);

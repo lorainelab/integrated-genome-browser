@@ -71,6 +71,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 		setStyle(style);
 	}
 
+	@Override
 	public void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
 		if (style.getCollapsed()) {
@@ -354,34 +355,57 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 		return 2;
 	}
 
+	/**
+	 * Set the preferred height for a tier.
+	 * @param height new height in scene (coord) space.
+	 * @param view onto the scene with these coordinates (units).
+	 */
 	public void setPreferredHeight(double height, ViewI view){
-		float slot_size = getActualSlots();
-		height = ((height - (slot_size-1) * getSpacing())/slot_size) - 2 * getSpacing();
-
-		if(useLabel())
-			height = height / 2;
-
-		double percent = ((height * 100)/style.getHeight() - 100)/100;
-		style.setHeight(height);
-
-		setChildHeight(percent, getChildren(), view);
-	}
-
-	private static void setChildHeight(double percent, List<GlyphI> sibs, ViewI view){
-		int sibs_size = sibs.size();
-
-		GlyphI child;
-		Rectangle2D.Double coordbox;
-		for (int i = 0; i < sibs_size; i++) {
-			child =  sibs.get(i);
-			coordbox = child.getCoordBox();
-			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height + (coordbox.height * percent));
-			if(child.getChildCount() > 0){
-				setChildHeight(percent, child.getChildren(), view);
-			}
-			child.pack(view, false);
+        height = height - 2 * getSpacing(); // remove the padding at top and bottom.
+		int numberOfSlotsInUse = getActualSlots();
+		double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
+		double newSlotHeight = (height - totalInteriorSpacing)/numberOfSlotsInUse;
+		
+		if(useLabel()) {
+			newSlotHeight = newSlotHeight / 2; // Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
 		}
 
+		double scale;
+		switch (this.direction) {
+			case FORWARD:
+				scale = newSlotHeight/style.getForwardHeight();
+				style.setForwardHeight(newSlotHeight);
+				break;
+			case REVERSE:
+				scale = newSlotHeight/style.getReverseHeight();
+				style.setReverseHeight(newSlotHeight);
+				break;
+			default:
+			case BOTH:
+			case NONE:
+			case AXIS:
+				scale = newSlotHeight/style.getHeight();
+				style.setHeight(newSlotHeight);
+		}
+
+		scaleChildHeights(scale, getChildren(), view);
+	}
+
+	private static void scaleChildHeights(double theScale, List<GlyphI> theSiblings, ViewI theView) {
+		int numberOfSiblings = theSiblings.size();
+		GlyphI child;
+		Rectangle2D.Double coordbox;
+		for (int i = 0; i < numberOfSiblings; i++) {
+			child =  theSiblings.get(i);
+			coordbox = child.getCoordBox();
+			child.setCoords(coordbox.x, 0, coordbox.width, coordbox.height * theScale);
+			if (0 < child.getChildCount()) {
+				// The above test is needed as of 2011-03-01
+				// because child.getChildren() returns null instead of an empty list.
+				scaleChildHeights(theScale, child.getChildren(), theView);
+			}
+			child.pack(theView, false);
+		}
 	}
 
 	private boolean useLabel() {

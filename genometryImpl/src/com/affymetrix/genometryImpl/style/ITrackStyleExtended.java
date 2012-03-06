@@ -62,4 +62,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	double getForwardHeight();
 	void setReverseHeight(double theNewHeight);
 	double getReverseHeight();
+	
+	void setForwardMaxDepth(int theNewDepth);
+	int getForwardMaxDepth();
+	void setReverseMaxDepth(int theNewDepth);
+	int getReverseMaxDepth();
 }

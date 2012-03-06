@@ -48,6 +48,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -379,13 +380,31 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("maximizeTrackAction");
 		}
 	};
-/* not ready yet. Add // at the beginnin of the line to enable for now.
+///* not ready yet. Add // at the beginnin of the line to enable for now.
 	private final Action repack_tracks_action = new GenericAction() {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
-			gviewer.getSeqMap().repackTheTiers(true, true, true);
+			List<TierLabelGlyph> tiers = handler.getAllTierLabels();
+			ViewI ourView = gviewer.getSeqMap().getView();
+			for (TierLabelGlyph tl : tiers) {
+				TierGlyph t = (TierGlyph) tl.getInfo();
+				int a = t.getSlotsNeeded(ourView);
+				ITrackStyleExtended style = t.getAnnotStyle();
+				TierGlyph.Direction d = t.getDirection();
+				switch (d) {
+					case REVERSE:
+						style.setReverseMaxDepth(a);
+						break;
+					default:
+					case FORWARD:
+						style.setForwardMaxDepth(a);
+						break;
+				}
+			}
+		    // Now repack again with the newly appointed maxima.
+			repack(true);
 		}
 
 		@Override
@@ -553,41 +572,60 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gviewer.getSeqMap().updateWidget();
 	}
 
-	public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
-		if (tier_labels == null || tier_labels.isEmpty()) {
+	public void changeExpandMax(List<TierLabelGlyph> theTiers) {
+		if (theTiers == null || theTiers.isEmpty()) {
 			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
 			return;
 		}
 
-		String initial_value = "0";
-		if (tier_labels.size() == 1) {
-			TierLabelGlyph tlg = tier_labels.get(0);
+		int ourLimit = 0;
+		// Shouldn't we set the limit to the max of the limits in the tiers (remember n < 0 for all n).
+		// Then we could combine this with the loop below.
+		if (theTiers.size() == 1) {
+			TierLabelGlyph tlg = theTiers.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tg.getAnnotStyle();
 			if (style != null) {
-				initial_value = "" + style.getMaxDepth();
+				ourLimit = style.getMaxDepth();
 			}
 		}
 
-		String input =
-				(String) JOptionPane.showInputDialog(null,
-						BUNDLE.getString("maxHeight"),
-				BUNDLE.getString("changeMaxHeight"), JOptionPane.PLAIN_MESSAGE,
-				null, null, initial_value);
-
-		if (input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
-			return;
+		// TODO figure out optimum. Not just 5.
+		int ourOptimum = 1;
+		for (TierLabelGlyph tlg : theTiers) {
+			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(this.gviewer.getSeqMap().getView()));
+			// Hmmm. What is this getActualSlots() number?
+			// Seems to be the maximum of either the limit for slots or the highest (deepest) stack in the data loaded.
+			// repackTheTiers seems to figure out what we want.
+			// Maybe we can add a slotsShown() method to TierGlyph or it's packer?
 		}
 
-		int newmax;
-		try {
-			newmax = Integer.parseInt(input);
-		} catch (NumberFormatException ex) {
-			ErrorHandler.errorPanel("Couldn't parse new track max '" + input + "'");
-			return;
+		MaxSlotsChooser chooser = new MaxSlotsChooser(BUNDLE.getString("maxHeight"), ourLimit, ourOptimum);
+		
+		int isOK = JOptionPane.showConfirmDialog(
+				null,
+				chooser,
+				BUNDLE.getString("changeMaxHeight"),
+				JOptionPane.OK_CANCEL_OPTION
+				);
+		switch (isOK) {
+			case JOptionPane.OK_OPTION:
+				try {
+					ourLimit = chooser.getValue();
+				}
+				catch (NumberFormatException nex) {
+				    ErrorHandler.errorPanel(nex.getLocalizedMessage()
+						+ " Maximum must be an integer: "
+						+ chooser.toString());
+					return;
+				}
+				break;
+			default:
+				return;
 		}
 
-		changeExpandMax(tier_labels, newmax);
+		changeExpandMax(theTiers, ourLimit);
 	}
 
 	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
@@ -1252,7 +1290,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		popup.add(summaryMenu);
 		popup.add(new JSeparator());
-//		popup.add(repack_tracks_action);
+		popup.add(repack_tracks_action); // experimental
 		popup.add(delete_action);
 				
 //	strandsMenu.add(at3);

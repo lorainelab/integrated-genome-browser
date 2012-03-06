@@ -1,18 +1,11 @@
 package com.affymetrix.igb.tutorial;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import com.affymetrix.genoviz.swing.recordplayback.SubRegionFinder;
+import furbelow.AbstractComponentDecorator;
+import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.JComponent;
-
-import com.affymetrix.genoviz.swing.recordplayback.SubRegionFinder;
-
-import furbelow.AbstractComponentDecorator;
 
 public class Marquee extends AbstractComponentDecorator {
     final int LINE_WIDTH = 4;

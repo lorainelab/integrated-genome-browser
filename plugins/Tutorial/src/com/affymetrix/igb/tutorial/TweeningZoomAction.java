@@ -7,10 +7,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.SwingWorker;
 
 public class TweeningZoomAction extends GenericAction implements IAmount {
+
 	private static final long serialVersionUID = 1L;
 	private static final int STEPS = 30;
 	private static final TweeningZoomAction ACTION = new TweeningZoomAction();
 	private double amount = 0.2;
+	private boolean lastStep;
 
 	public static TweeningZoomAction getAction() {
 		return ACTION;
@@ -31,18 +33,23 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 
 	private SwingWorker<Void, Void> getSw(final RPAdjustableJSlider xzoomer, final int nextValue, final int endValue, final int step) {
 		return new SwingWorker<Void, Void>() {
+
 			@Override
 			protected Void doInBackground() throws Exception {
 				xzoomer.setValue(nextValue);
 				return null;
 			}
+
 			@Override
 			protected void done() {
 				int newNextValue = nextValue + step;
-				if (Math.abs(newNextValue - endValue) < Math.abs(2 * step)) {
+				if (Math.abs(newNextValue - endValue) <= Math.abs(step) && !lastStep) {
+					int finalStep = step - Math.abs(newNextValue - endValue);
+					lastStep = true;
+					getSw(xzoomer, newNextValue, endValue, finalStep).execute();
+				} else if (lastStep) {
 					actionDone();
-				}
-				else {
+				} else {
 					getSw(xzoomer, newNextValue, endValue, step).execute();
 				}
 			}
@@ -50,21 +57,21 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 	}
 
 	public void execute() {
-		final RPAdjustableJSlider xzoomer = (RPAdjustableJSlider)RecordPlaybackHolder.getInstance().getWidget("SeqMapView_xzoomer");
+		final RPAdjustableJSlider xzoomer = (RPAdjustableJSlider) RecordPlaybackHolder.getInstance().getWidget("SeqMapView_xzoomer");
 		int min = xzoomer.getMinimum();
 		int max = xzoomer.getMaximum();
-		int zoomAmount = (int)((max - min) * amount);
+		int zoomAmount = (int) ((max - min) * amount);
 		int newValue = xzoomer.getValue();
 		if (newValue + zoomAmount < min) {
-			newValue = min - zoomAmount;
+			newValue = 0;
+		} else if (newValue + zoomAmount > max) {
+			newValue = max;
 		}
-		else if (newValue + zoomAmount > max) {
-			newValue = max - zoomAmount;
-		}
-		xzoomer.setValue(newValue);
-		int startValue = newValue;
+		//xzoomer.setValue(newValue);
+		int startValue = xzoomer.getValue();
 		int endValue = newValue + zoomAmount;
 		int step = (endValue - startValue) / STEPS;
+		lastStep = false;
 		getSw(xzoomer, startValue + step, endValue, step).execute();
 	}
 

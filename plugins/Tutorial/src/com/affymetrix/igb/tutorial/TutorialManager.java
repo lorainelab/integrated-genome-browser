@@ -32,6 +32,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private boolean tutorialDisplayed = false;
 	private TutorialStep[] tutorial = null;
 	private String waitFor = null;
+	private boolean isRunning = false;
 	private Map<String, TutorialStep[]> triggers = new HashMap<String, TutorialStep[]>();
 	private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<String, AbstractComponentDecorator>();
 	private MenuListener menuListener = new MenuListener() {
@@ -239,10 +240,15 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	public void runTutorial(TutorialStep[] tutorial) {
+		if (isRunning) {
+			stop();
+		}
+		isRunning = true;
 		waitFor = null;
 		stepIndex = 0;
 		this.tutorial = tutorial;
 		nextStep();
+
 	}
 
 	private void nextStep() {
@@ -282,6 +288,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		tutorialNavigator.setVisible(false);
 		tutorialDisplayed = false;
 		triggers.clear();
+		isRunning = false;
 	}
 
 	public void back() {
@@ -335,7 +342,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
 	@Override
 	public void actionDone(GenericAction action) {
-		//	advanceStep();
+		advanceStep();
 		action.removeDoneCallback(this);
 	}
 

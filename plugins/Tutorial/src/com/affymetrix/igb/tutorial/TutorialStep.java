@@ -37,7 +37,7 @@ public class TutorialStep {
 	private int timeout;
 	private String trigger;
 	private String waitFor;
-	private TutorialExecute execute;
+	private TutorialStep.TutorialExecute execute;
 	private String[] tab;
 	private TutorialStep[] subTutorial;
 	private String script;
@@ -107,11 +107,11 @@ public class TutorialStep {
 		this.waitFor = waitFor;
 	}
 
-	public TutorialExecute getExecute() {
+	public TutorialStep.TutorialExecute getExecute() {
 		return execute;
 	}
 
-	public void setExecute(TutorialExecute execute) {
+	public void setExecute(TutorialStep.TutorialExecute execute) {
 		this.execute = execute;
 	}
 

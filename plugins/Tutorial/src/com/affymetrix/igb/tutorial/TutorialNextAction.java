@@ -14,7 +14,7 @@ public class TutorialNextAction extends GenericAction {
 
 	@Override
 	public String getText() {
-		return "next";
+		return "Next";
 	}
 
 	@Override

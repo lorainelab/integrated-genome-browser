@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  * @author hiralv
  */
 public class Delegate extends QuickLoadSymLoader {
+	public static final String EXT = "igbtrack";
 	private static final List<LoadUtils.LoadStrategy> defaultStrategyList = new ArrayList<LoadUtils.LoadStrategy>();
 	static {
 		defaultStrategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
@@ -43,6 +44,7 @@ public class Delegate extends QuickLoadSymLoader {
 		this.operator = operator;
 		this.symsStr = symsStr;
 		this.features = features;
+		this.extension = EXT;
 		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
 		strategyList.addAll(defaultStrategyList);
 	}

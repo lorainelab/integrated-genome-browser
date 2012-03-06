@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import com.affymetrix.genometryImpl.util.StringUtils;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -33,7 +34,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
 		setPosition(position);
-		isIGBTrack = (reference_tier.getAnnotStyle().getFeature() != null && reference_tier.getAnnotStyle().getFeature().typeObj instanceof java.util.List);
+		isIGBTrack = Delegate.EXT.equalsIgnoreCase(reference_tier.getAnnotStyle().getFileType());
 	}
 
 	public void setPosition(int position){

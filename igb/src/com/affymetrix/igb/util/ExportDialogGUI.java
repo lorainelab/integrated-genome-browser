@@ -6,11 +6,12 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
-import java.awt.*;
+import java.awt.Component;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -27,12 +28,9 @@ public class ExportDialogGUI extends JPanel {
 	private Component mainView;
 	private Component mainViewWithLabels;
 	private Component slicedView;
-
 	public synchronized void display(boolean isSequenceViewer) {
 		initRadioButton(isSequenceViewer);
-
 		initFrame();
-
 		DisplayUtils.bringFrameToFront(static_frame);
 
 		export.previewImage();
@@ -75,7 +73,7 @@ public class ExportDialogGUI extends JPanel {
 	}
 
 	private void initFrame() {
-		if (static_frame == null) {
+		if (static_frame == null) {			
 			export.init();
 			static_frame = PreferenceUtils.createFrame(TITLE, singleton);
 			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
@@ -327,6 +325,12 @@ public class ExportDialogGUI extends JPanel {
             }
         });
 
+        extComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                extComboBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout topPanelLayout = new org.jdesktop.layout.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
         topPanelLayout.setHorizontalGroup(
@@ -444,6 +448,11 @@ public class ExportDialogGUI extends JPanel {
 	private void unitComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitComboBoxActionPerformed
 		export.unitComboBoxActionPerformed();
 	}//GEN-LAST:event_unitComboBoxActionPerformed
+
+	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
+		export.extComboBoxActionPerformed();
+	}//GEN-LAST:event_extComboBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.ButtonGroup buttonGroup;

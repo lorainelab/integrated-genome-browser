@@ -26,6 +26,7 @@ public class ExportFileChooser extends JFileChooser {
 		super(directory);
 		this.selectedFilter = selectedFilter;
 		setPreviousFile(selectedFile);
+		this.setAcceptAllFileFilterUsed(false);
 		init();
 	}
 

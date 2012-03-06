@@ -827,7 +827,7 @@ public final class GeneralLoadUtils {
 		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
 		if (check && optimized_sym != null && feature.getExtension() != null && 
 				(feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
-			String message = "Region in view is big (> 100k), do you want to continue?";
+			String message = "Region in view is big (> 500k), do you want to continue?";
 			int childrenCount = optimized_sym.getChildCount();
 			int spanWidth = 0;
 			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
@@ -837,7 +837,7 @@ public final class GeneralLoadUtils {
 				}
 			}
 			
-			if (spanWidth > 100000) {
+			if (spanWidth > 500000) {
 				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}

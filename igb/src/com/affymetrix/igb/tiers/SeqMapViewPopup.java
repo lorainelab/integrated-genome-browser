@@ -1100,7 +1100,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 
 			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
-				RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory())) {
@@ -1112,6 +1112,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 						public void actionPerformed(ActionEvent ae) {
 							(style).setViewMode(mode.toString());
 							gviewer.addAnnotationTrackFor(style);
+							List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+							syms.add(rootSym);
+							gmodel.setSelectedSymmetries(syms, gviewer); // kludge to get GraphAdjuster tab to update Style box (graph type)
 							//refreshMap(false, false);
 						}
 

@@ -521,8 +521,10 @@ public final class SimpleGraphTab
 						// don't bother to change the displayed heat map name
 					}
 					for (AbstractGraphGlyph sggl : glyphs) {
-						ITrackStyleExtended style = sggl.getAnnotStyle();
-						igbService.getSeqMapView().addAnnotationTrackFor(style);
+						if (!(sggl instanceof GraphGlyph)) {
+							ITrackStyleExtended style = sggl.getAnnotStyle();
+							igbService.getSeqMapView().addAnnotationTrackFor(style);
+						}
 					}
 				}
 			};

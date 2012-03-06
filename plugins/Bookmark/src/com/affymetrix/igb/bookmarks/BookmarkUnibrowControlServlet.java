@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import javax.swing.SwingWorker;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -99,102 +100,107 @@ public final class BookmarkUnibrowControlServlet {
 			return;
 		}
 
-		String seqid = getStringParameter(parameters, Bookmark.SEQID);
-		String version = getStringParameter(parameters, Bookmark.VERSION);
-		String start_param = getStringParameter(parameters, Bookmark.START);
-		String end_param = getStringParameter(parameters, Bookmark.END);
-//		String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
-		String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
-		String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
-		boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));
-		// For historical reasons, there are two ways of specifying graphs in a bookmark
-		// Eventually, they should be treated more similarly, but for now some
-		// differences remain
-		// parameter "graph_file" can be handled by goToBookmark()
-		//    Does not check whether the file was previously loaded
-		//    Loads in GUI-friendly thread
-		//    Must be a file name, not a generic URL
-		// parameter "graph_source_url_0", "graph_source_url_1", ... is handled elsewhere
-		//    Checks to avoid double-loading of files
-		//    Loading can freeze the GUI
-		//    Can be any URL, not just a file
-		boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
-		boolean loaddata = true;
-		boolean loaddas2data = true;
+		new SwingWorker() {
 
-		int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
-		int start = values[0],
-				end = values[1];
+			@Override
+			protected Object doInBackground() throws Exception {				
+				String seqid = getStringParameter(parameters, Bookmark.SEQID);
+				String version = getStringParameter(parameters, Bookmark.VERSION);
+				String start_param = getStringParameter(parameters, Bookmark.START);
+				String end_param = getStringParameter(parameters, Bookmark.END);
+//				String comment_param = getStringParameter(parameters, Bookmark.COMMENT);
+				String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
+				String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
+				boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));
+				// For historical reasons, there are two ways of specifying graphs in a bookmark
+				// Eventually, they should be treated more similarly, but for now some
+				// differences remain
+				// parameter "graph_file" can be handled by goToBookmark()
+				//    Does not check whether the file was previously loaded
+				//    Loads in GUI-friendly thread
+				//    Must be a file name, not a generic URL
+				// parameter "graph_source_url_0", "graph_source_url_1", ... is handled elsewhere
+				//    Checks to avoid double-loading of files
+				//    Loading can freeze the GUI
+				//    Can be any URL, not just a file
+				boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
+				boolean loaddata = true;
+				boolean loaddas2data = true;
 
-		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
-		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
-		GenericServer[] gServers = null;
+				int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
+				int start = values[0],
+						end = values[1];
 
-		if (server_urls == null || query_urls == null
-				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
-			loaddata = false;
-		} else {
-			gServers = loadServers(igbService, server_urls);
-		}
+				String[] server_urls = parameters.get(Bookmark.SERVER_URL);
+				String[] query_urls = parameters.get(Bookmark.QUERY_URL);
+				GenericServer[] gServers = null;
 
-		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+				if (server_urls == null || query_urls == null
+						|| query_urls.length == 0 || server_urls.length != query_urls.length) {
+					loaddata = false;
+				} else {
+					gServers = loadServers(igbService, server_urls);
+				}
 
-		GenericServer[] gServers2 = null;
+				String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+				String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 
-		if (das2_server_urls == null || das2_query_urls == null
-				|| das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
-			loaddas2data = false;
-		} else {
-			gServers2 = loadServers(igbService, das2_server_urls);
-		}
+				GenericServer[] gServers2 = null;
 
-		final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
+				if (das2_server_urls == null || das2_query_urls == null
+						|| das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
+					loaddas2data = false;
+				} else {
+					gServers2 = loadServers(igbService, das2_server_urls);
+				}
+				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
-		if (null == seq) {
-			return; /* user cancelled the change of genome, or something like that */
-		}
+				if (null == seq) {
+					return null; /* user cancelled the change of genome, or something like that */
+				}
 
-		if (loaddata) {
-			GenericFeature[] gFeatures = loadData(igbService, gServers, query_urls, start, end);
+				if (loaddata) {
+					GenericFeature[] gFeatures = loadData(igbService, gServers, query_urls, start, end);
 
-			if (has_properties) {
-				List<String> graph_urls = getGraphUrls(parameters);
+					if (has_properties) {
+						List<String> graph_urls = getGraphUrls(parameters);
 
-				for (int i = 0; i < gFeatures.length; i++) {
-					final GenericFeature feature = gFeatures[i];
+						for (int i = 0; i < gFeatures.length; i++) {
+							final GenericFeature feature = gFeatures[i];
 
-					if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
+							if (feature != null && graph_urls.contains(feature.getURI().toString())) {
+								ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
-							public void run() {
-								BookmarkController.applyProperties(igbService, seq, parameters, feature);
+									public void run() {
+										BookmarkController.applyProperties(igbService, seq, parameters, feature);
+									}
+								});
 							}
-						});
+						}
 					}
 				}
+
+				if (loaddas2data) {
+					loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
+				}
+
+				//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
+				//String[] data_urls = parameters.get(Bookmark.DATA_URL);
+				//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
+				//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
+				String selectParam = getStringParameter(parameters, "select");
+				if (selectParam != null) {
+					igbService.performSelection(selectParam);
+				}
+
+				if (loadResidue) {
+					BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
+					SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
+					igbService.loadResidues(span, true);
+				}
+				return null;
 			}
-		}
-
-		if (loaddas2data) {
-			loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
-		}
-
-		//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
-		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
-		//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
-		String selectParam = getStringParameter(parameters, "select");
-		if (selectParam != null) {
-			igbService.performSelection(selectParam);
-		}
-
-		if (loadResidue) {
-			BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
-			SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-			igbService.loadResidues(span, true);
-		}
-
+		}.execute();
 	}
 
 	public List<String> getGraphUrls(Map<String, String[]> map) {

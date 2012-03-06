@@ -13,7 +13,6 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -472,15 +471,6 @@ public final class SimpleGraphTab
 		}
 	}
 
-	private TierGlyphViewMode getParentGlyph(AbstractGraphGlyph sggl) {
-		for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
-			if (glyph instanceof TierGlyphViewMode && ((TierGlyphViewMode)glyph).getViewModeGlyph() == sggl) {
-				return (TierGlyphViewMode)glyph;
-			}
-		}
-		return null;
-	}
-
 	private final class GraphStyleSetter implements ActionListener {
 
 		GraphType style = GraphType.LINE_GRAPH;
@@ -512,7 +502,7 @@ public final class SimpleGraphTab
 							((GraphGlyph)sggl).setGraphStyle(style); // leave the heat map whatever it was
 						}
 						else {
-							TierGlyphViewMode parent = getParentGlyph(sggl);
+							TierGlyphViewMode parent = (TierGlyphViewMode)sggl.getTierGlyph();
 							parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
 						}
 						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -530,7 +520,10 @@ public final class SimpleGraphTab
 						heat_mapCB.setEnabled(false);
 						// don't bother to change the displayed heat map name
 					}
-					igbService.getSeqMap().updateWidget();
+					for (AbstractGraphGlyph sggl : glyphs) {
+						ITrackStyleExtended style = sggl.getAnnotStyle();
+						igbService.getSeqMapView().addAnnotationTrackFor(style);
+					}
 				}
 			};
 

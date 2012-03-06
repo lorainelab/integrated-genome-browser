@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -1339,6 +1340,8 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 	@Override
 	public void setPreferences(Map<String, Object> preferences) {
 	}
+	// this should not be here, only for backwards compatibility
+	public abstract GraphType getGraphStyle();
 }
 
 

@@ -1,9 +1,11 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Color;
@@ -11,11 +13,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-/**
- *
- * @author lfrohman
- */
-class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
+class MinMaxAvgGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
 	private final AbstractGraphGlyph tempViewModeBarGraphGlyph;
 
 	public MinMaxAvgGraphGlyph(GraphSym graf, GraphState gstate) {
@@ -119,5 +117,9 @@ class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 			drawSmart(view);
 		}
 	}
-    
+
+	@Override
+	public GraphType getGraphStyle() {
+		return GraphType.MINMAXAVG;
+	}
 }

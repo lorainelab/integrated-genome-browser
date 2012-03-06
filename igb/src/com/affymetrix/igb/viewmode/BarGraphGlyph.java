@@ -1,17 +1,15 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-/**
- *
- * @author lfrohman
- */
-public class BarGraphGlyph extends AbstractGraphGlyph {
+public class BarGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
 
 	public BarGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);
@@ -35,5 +33,10 @@ public class BarGraphGlyph extends AbstractGraphGlyph {
 			final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 			g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 		}
+	}
+
+	@Override
+	public GraphType getGraphStyle() {
+		return GraphType.BAR_GRAPH;
 	}
 }

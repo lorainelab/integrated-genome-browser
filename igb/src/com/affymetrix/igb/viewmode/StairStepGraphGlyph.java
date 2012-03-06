@@ -1,17 +1,15 @@
 package com.affymetrix.igb.viewmode;
 
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-/**
- *
- * @author lfrohman
- */
-class StairStepGraphGlyph extends AbstractGraphGlyph {
+class StairStepGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
 
 	public StairStepGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);
@@ -40,5 +38,9 @@ class StairStepGraphGlyph extends AbstractGraphGlyph {
 			drawRectOrLine(g, curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
 		}
 	}
-    
+
+	@Override
+	public GraphType getGraphStyle() {
+		return GraphType.STAIRSTEP_GRAPH;
+	}
 }

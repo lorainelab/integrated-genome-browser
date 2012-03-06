@@ -15,6 +15,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -205,17 +206,17 @@ public class ScriptFileLoader {
 	public static void doSingleAction(String line) {
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
-		if (action.equals("genome") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
 			// go to genome
 			goToGenome(join(fields, 1));
 			return;
 		}
-		if (action.equals("goto") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("goto") && fields.length >= 2) {
 			// go to region
 			goToRegion(join(fields, 1));
 			return;
 		}
-		if (action.equals("load")) {
+		if (action.equalsIgnoreCase("load")) {
 			// Allowing multiple files to be specified, split by commas
 			String[] loadFiles = join(fields, 1).split(",");
 			for (int i = 0; i < loadFiles.length; i++) {
@@ -230,18 +231,18 @@ public class ScriptFileLoader {
 			}
 			return;
 		}
-		if (action.equals("loadfromserver")) {
+		if (action.equalsIgnoreCase("loadfromserver")) {
 			if (fields.length >= 2) {
 				loadData(fields[1], join(fields, 2));
 				return;
 			}
 		}
-		if (action.equals("loadmode")) {
+		if (action.equalsIgnoreCase("loadmode")) {
 			if (fields.length >= 2) {
 				loadMode(fields[1], join(fields, 2));
 			}
 		}
-		if (action.equals("print")) {
+		if (action.equalsIgnoreCase("print")) {
 			if (fields.length == 1) {
 				try {
 					Application.getSingleton().getMapView().getSeqMap().print(0, true);
@@ -251,14 +252,19 @@ public class ScriptFileLoader {
 				return;
 			}
 		}
-		if (action.equals("refresh")) {
+		if (action.equalsIgnoreCase("refresh")) {
 			GeneralLoadView.getLoadView().loadVisibleFeatures();
 		}
-		if (action.equals("select") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("select") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().performSelection(join(fields, 1));
 		}
-		if (action.equals("selectfeature") && fields.length >= 2) {
+		if (action.equalsIgnoreCase("selectfeature") && fields.length >= 2) {
 			UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(join(fields, 1));
+		}
+		if (action.equalsIgnoreCase("setZoomStripePosition") && fields.length >= 2) {
+			double position = Double.parseDouble(join(fields, 1));
+			IGB.getSingleton().getMapView().setZoomSpotX(position);
+			IGB.getSingleton().getMapView().setZoomSpotY(0);
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
@@ -271,15 +277,15 @@ public class ScriptFileLoader {
 		if (action.startsWith("snapshot")) {
 			// determine the export mode
 			action = action.substring(8, action.length());
-			ExportMode exportMode = ExportMode.WHOLEFRAME;
-			if (action.length() == 0 || action.equalsIgnoreCase(ExportMode.WHOLEFRAME.toString())) {
-				exportMode = ExportMode.WHOLEFRAME;
-			} else if (action.equalsIgnoreCase(ExportMode.MAIN.toString())) {
-				exportMode = ExportMode.MAIN;
-			} else if (action.equalsIgnoreCase(ExportMode.MAINWITHLABELS.toString())) {
-				exportMode = ExportMode.MAINWITHLABELS;
-			} else if (action.equalsIgnoreCase(ExportMode.SLICEDWITHLABELS.toString())) {
-				exportMode = ExportMode.SLICEDWITHLABELS;
+			ScriptFileLoader.ExportMode exportMode = ScriptFileLoader.ExportMode.WHOLEFRAME;
+			if (action.length() == 0 || action.equalsIgnoreCase(ScriptFileLoader.ExportMode.WHOLEFRAME.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.WHOLEFRAME;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.MAIN.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.MAIN;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.MAINWITHLABELS.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.MAINWITHLABELS;
+			} else if (action.equalsIgnoreCase(ScriptFileLoader.ExportMode.SLICEDWITHLABELS.toString())) {
+				exportMode = ScriptFileLoader.ExportMode.SLICEDWITHLABELS;
 			}
 
 			// determine the file name, and export.
@@ -292,6 +298,9 @@ public class ScriptFileLoader {
 				snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
 			}
 		}
+		if (action.startsWith("homescreen")) {
+			SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+		}
 	}
 
 	/**
@@ -299,7 +308,7 @@ public class ScriptFileLoader {
 	 *
 	 * @param f
 	 */
-	private static void snapShot(ExportMode exportMode, File f) {
+	private static void snapShot(ScriptFileLoader.ExportMode exportMode, File f) {
 		Logger.getLogger(ScriptFileLoader.class.getName()).log(
 				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
 		String ext = ParserController.getExtension(f.getName().toLowerCase());

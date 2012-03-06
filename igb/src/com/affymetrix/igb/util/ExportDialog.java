@@ -202,8 +202,15 @@ public class ExportDialog implements ExportConstants {
 
 		if (fileChooser.getSelectedFile() != null) {
 			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
-			filter = fileChooser.getFileFilter();
-			ExportFileType type = getType(filter.getDescription());
+			String ext = ParserController.getExtension(newPath);
+			String des = getDescription(ext);
+			
+			if (!isExt(ext)) {
+				filter = fileChooser.getFileFilter();
+				des = filter.getDescription();
+			}
+			
+			ExportFileType type = getType(des);
 			extComboBox.setSelectedItem(type);
 			filePathTextField.setText(newPath);
 			exportFile = new File(newPath);

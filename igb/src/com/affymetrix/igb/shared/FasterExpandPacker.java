@@ -1,10 +1,9 @@
 package com.affymetrix.igb.shared;
 
 import cern.colt.list.DoubleArrayList;
-import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -236,6 +235,7 @@ public class FasterExpandPacker extends ExpandPacker {
 	
 	/**
 	 * Get an optimal number of slots.
+	 * i.e. what is the minimum number of slots needed to show all the glyphs in view?
 	 * This is copied and pasted from pack(),
 	 * but without actually moving anything
 	 * and ignoring glyphs outside the view.
@@ -307,22 +307,14 @@ public class FasterExpandPacker extends ExpandPacker {
 					break;
 				}
 			}
-			if (!child_placed) {
-				// need a new slot for child (unless already have max number of slots allowed,
-
-				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
-					int slot_index = slot_maxes.size() - 1;
-					prev_slot_index = slot_index;
-
-				} else {
-					slot_maxes.add(child_max);
-					int slot_index = slot_maxes.size() - 1;
-					if (child_max < prev_min_xmax) {
-						min_xmax_slot_index = slot_index;
-						prev_min_xmax = child_max;
-					}
-					prev_slot_index = slot_index;
+			if (!child_placed) { // then we need a new slot for the child
+				slot_maxes.add(child_max);
+				int slot_index = slot_maxes.size() - 1;
+				if (child_max < prev_min_xmax) {
+					min_xmax_slot_index = slot_index;
+					prev_min_xmax = child_max;
 				}
+				prev_slot_index = slot_index;
 			}
 			ymin = Math.min(cbox.y, ymin);
 		}

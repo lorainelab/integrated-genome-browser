@@ -59,7 +59,7 @@ public class TrackOperationAction extends GenericAction {
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		java.net.URI uri = java.net.URI.create("file:/"+method);
 		
-		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, symsStr), features, false);
+		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, symsStr, features), null, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree	
 		

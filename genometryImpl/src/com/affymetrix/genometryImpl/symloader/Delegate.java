@@ -34,13 +34,15 @@ public class Delegate extends QuickLoadSymLoader {
 	
 	private final Operator operator;
 	private final List<String> symsStr;
+	private final List<GenericFeature> features;
 	private final List<LoadUtils.LoadStrategy> strategyList;
 	
 	public Delegate(URI uri, String featureName, GenericVersion version,
-			Operator operator, List<String> symsStr) {
+			Operator operator, List<String> symsStr, List<GenericFeature> features) {
 		super(uri, featureName, version, null);
 		this.operator = operator;
 		this.symsStr = symsStr;
+		this.features = features;
 		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
 		strategyList.addAll(defaultStrategyList);
 	}
@@ -95,43 +97,39 @@ public class Delegate extends QuickLoadSymLoader {
     }
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
 		boolean notUpdatable = false;
-		if (feature.typeObj instanceof List) {
-			List<GenericFeature> features = (List<GenericFeature>) feature.typeObj;
-			
-			if(features.isEmpty())
-				return false;
-			
-			for (GenericFeature f : features) {
-				if(!f.isVisible()){
-					notUpdatable = true;
-					Thread.currentThread().interrupt();
-					break;
-				}
-				
-				while (f.optimizeRequest(overlapSpan) != null) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ex) {
-						Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, null, ex);
-						return false;
-					}
-				}
+
+		if (features.isEmpty()) {
+			return false;
+		}
+
+		for (GenericFeature f : features) {
+			if (!f.isVisible()) {
+				notUpdatable = true;
+				Thread.currentThread().interrupt();
+				break;
 			}
 
+			while (f.optimizeRequest(overlapSpan) != null) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, null, ex);
+					return false;
+				}
+			}
 		}
-		
-		if(notUpdatable){
+
+		if (notUpdatable) {
 			symsStr.clear();
-			((List<GenericFeature>) feature.typeObj).clear();
+			features.clear();
 			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
 			return false;
 		}
-		
+
 		return super.loadFeatures(overlapSpan, feature);
 	}
 	

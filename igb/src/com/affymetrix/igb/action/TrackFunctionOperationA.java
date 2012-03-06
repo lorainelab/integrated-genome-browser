@@ -37,7 +37,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		meth.append(operator.getName()).append(": ");
 
 
-		for (GlyphI tier : gviewer.getSelectedTiers()) {
+		for (GlyphI tier : tiers) {
 			symsStr.add(((TierGlyph)tier).getAnnotStyle().getMethodName());
 			meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
 			features.add(((TierGlyph)tier).getAnnotStyle().getFeature());

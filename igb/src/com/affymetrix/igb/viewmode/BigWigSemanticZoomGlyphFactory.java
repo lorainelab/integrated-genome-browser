@@ -73,7 +73,7 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 //			this.sym = sym;
 			this.style = style;
 //			this.direction = direction;
-			String method = BioSeq.determineMethod(sym);
+			String method = (sym == null) ? style.getMethodName() : BioSeq.determineMethod(sym);
 			if (direction == null) {
 				direction = Direction.BOTH;
 			}
@@ -212,12 +212,8 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		return method + suffix + "." + BIGWIG_ZOOM_DISPLAYER_EXTENSION;
 	}
 
-	private boolean hasBigWig(SeqSymmetry sym) {
-		String meth = BioSeq.determineMethod(sym);
-		return meth != null &&
-			GeneralUtils.urlExists(getBigWigFileName(meth, Direction.FORWARD)) &&
-			GeneralUtils.urlExists(getBigWigFileName(meth, Direction.REVERSE)) &&
-			GeneralUtils.urlExists(getBigWigFileName(meth, Direction.BOTH));
+	private boolean hasBigWig(String uri) {
+		return GeneralUtils.urlExists(getBigWigFileName(uri, Direction.BOTH));
 	}
 
 	@Override

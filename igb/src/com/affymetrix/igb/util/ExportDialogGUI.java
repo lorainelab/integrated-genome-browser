@@ -329,6 +329,12 @@ public class ExportDialogGUI extends JPanel {
             }
         });
 
+        extComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                extComboBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout topPanelLayout = new org.jdesktop.layout.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
         topPanelLayout.setHorizontalGroup(
@@ -446,6 +452,11 @@ public class ExportDialogGUI extends JPanel {
 	private void unitComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitComboBoxActionPerformed
 		export.unitComboBoxActionPerformed();
 	}//GEN-LAST:event_unitComboBoxActionPerformed
+
+	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
+		export.extComboBoxActionPerformed();
+	}//GEN-LAST:event_extComboBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.ButtonGroup buttonGroup;

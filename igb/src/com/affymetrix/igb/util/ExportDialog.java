@@ -28,7 +28,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * 
+ *
  * @author nick
  */
 public class ExportDialog implements ExportConstants {
@@ -37,15 +37,16 @@ public class ExportDialog implements ExportConstants {
 	private static ExportDialog singleton;
 	private JFileChooser fileChooser;
 	private File exportFile;
+	private String selectedExt;
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
-	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
-	public static final ExportFileType SVG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
 
 	static {
-		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
-		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 //		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
+		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 	}
 	JComboBox extComboBox = new JComboBox(FILTER_LIST.keySet().toArray());
 	JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
@@ -88,6 +89,7 @@ public class ExportDialog implements ExportConstants {
 
 		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
 		extComboBox.setSelectedItem(type);
+		selectedExt = type.getExtension();
 		resolutionComboBox.setSelectedItem(imageInfo.getResolution());
 
 		unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
@@ -133,16 +135,6 @@ public class ExportDialog implements ExportConstants {
 
 		widthSpinner.setValue((double) component.getWidth());
 		heightSpinner.setValue((double) component.getHeight());
-	}
-
-	public static String getFileExtension(String filePath) {
-		String extension = null;
-
-		int indexOfExtension = filePath.lastIndexOf(".");
-		if (indexOfExtension >= 0) {
-			extension = filePath.substring(indexOfExtension, filePath.length());
-		}
-		return extension;
 	}
 
 	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
@@ -194,7 +186,6 @@ public class ExportDialog implements ExportConstants {
 	public void browseButtonActionPerformed(JPanel panel) {
 		String previousFile = exportFile.getAbsolutePath();
 		String path = filePathTextField.getText();
-		String ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 		FileFilter filter = null;
 
 		exportFile = new File(path);
@@ -204,7 +195,7 @@ public class ExportDialog implements ExportConstants {
 			filePathTextField.setText(previousFile);
 		}
 
-		filter = getFilter(ext);
+		filter = getFilter(selectedExt);
 		fileChooser = new ExportFileChooser(exportFile.getParentFile(), exportFile, filter);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");
@@ -214,11 +205,6 @@ public class ExportDialog implements ExportConstants {
 			filter = fileChooser.getFileFilter();
 			ExportFileType type = getType(filter.getDescription());
 			extComboBox.setSelectedItem(type);
-			if (isExt(ParserController.getExtension(newPath))) {
-				int periodIndex = newPath.lastIndexOf(".");
-				newPath = newPath.substring(0, periodIndex);
-			}
-
 			filePathTextField.setText(newPath);
 			exportFile = new File(newPath);
 		}
@@ -244,6 +230,16 @@ public class ExportDialog implements ExportConstants {
 		return null;
 	}
 
+	private String getDescription(String ext) {
+		if (ext.equalsIgnoreCase(ExportConstants.EXTENSION[0])) {
+			return ExportConstants.DESCRIPTION[0];
+		} else if (ext.equalsIgnoreCase(ExportConstants.EXTENSION[1])) {
+			return ExportConstants.DESCRIPTION[1];
+		} else {
+			return ExportConstants.DESCRIPTION[2];
+		}
+	}
+
 	public boolean okButtonActionPerformed() throws IOException {
 		String previousPath = exportFile.getAbsolutePath();
 		String newPath = filePathTextField.getText();
@@ -253,15 +249,14 @@ public class ExportDialog implements ExportConstants {
 			return false;
 		}
 
-		String ext = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
-		exportScreenshot(exportFile, ext);
+		exportScreenshot(exportFile, selectedExt);
 
 		String path = exportFile.getAbsolutePath();
-		int periodIndex = path.lastIndexOf(".");
-		path = path.substring(0, periodIndex);
+		String ext = ParserController.getExtension(path);
+		String description = getDescription(ext);
 
 		exportNode.put(PREF_FILE, path);
-		exportNode.put(PREF_EXT, extComboBox.getSelectedItem().toString());
+		exportNode.put(PREF_EXT, description);
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
 
@@ -272,22 +267,18 @@ public class ExportDialog implements ExportConstants {
 		if (!exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The output path is invalid.");
-
-			String ext = ParserController.getExtension(exportFile.getAbsolutePath());
-			if (isExt(ext)) {
-				int periodIndex = previousPath.lastIndexOf(".");
-				previousPath = previousPath.substring(0, periodIndex);
-			}
-
 			filePathTextField.setText(previousPath);
 			filePathTextField.grabFocus();
 			exportFile = new File(previousPath);
 			return false;
 		}
 
-		String selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
-		String newPath = exportFile.getAbsolutePath() + selectedExt;
-		exportFile = new File(newPath);
+		String ext = ParserController.getExtension(exportFile.getAbsolutePath());
+
+		if (!isExt(ext)) {
+			String newPath = exportFile.getAbsolutePath() + selectedExt;
+			exportFile = new File(newPath);
+		}
 
 		// if image size is too large...
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
@@ -314,7 +305,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static void exportScreenshot(File f, String ext) throws IOException {
-		if (ext.equals(EXTENSION[2])) {
+		if (ext.equals(EXTENSION[0])) {
 			GeneralUtils.exportToSvg(component, f);
 		} else {
 			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
@@ -336,10 +327,10 @@ public class ExportDialog implements ExportConstants {
 					continue;
 				}
 
-				if (ext.equals(EXTENSION[0])) {
-					setJPEG_DPI(metadata);
-				} else if (ext.equals(EXTENSION[1])) {
+				if (ext.equals(EXTENSION[1])) {
 					setPNG_DPI(metadata);
+				} else {
+					setJPEG_DPI(metadata);
 				}
 
 				final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
@@ -375,8 +366,8 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static boolean isExt(String ext) {
-		for (ExportFileType type : FILTER_LIST.keySet()) {
-			if (type.getExtension().equals(ext)) {
+		for (String s : ExportConstants.EXTENSION) {
+			if (s.equalsIgnoreCase(ext)) {
 				return true;
 			}
 		}
@@ -407,6 +398,22 @@ public class ExportDialog implements ExportConstants {
 			isHeightSpinner = false;
 
 			resetWidthHeight(newWidth, newHeight);
+		}
+	}
+
+	public void extComboBoxActionPerformed() {
+		String path = filePathTextField.getText();
+		String ext = ParserController.getExtension(path);
+		selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+
+		if (!ext.equalsIgnoreCase(selectedExt)) {
+			if (path.lastIndexOf(".") >= 0) {
+				path = path.substring(0, path.lastIndexOf("."));
+			}
+			path += selectedExt;
+			exportFile = new File(path);
+			filePathTextField.setText(path);
+			filePathTextField.grabFocus();
 		}
 	}
 

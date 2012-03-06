@@ -13,11 +13,11 @@ public interface ExportConstants {
 	static final String PREF_EXT = "Ext";
 	static final String PREF_RESOLUTION = "Resolution"; // Horizontal and Vertical resolution will be the same value
 	static final String PREF_UNIT = "Unit";
-	static final String[] EXTENSION = {".jpeg", ".png", ".svg"};
+	static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
 	static final String[] DESCRIPTION = {
-		"Joint Photographic Experts Group (*.jpeg)",
+		"Scalable Vector Graphics (*.svg)",
 		"Portable Network Graphics (*.png)",
-		"Scalable Vector Graphics (*.svg)"
+		"Joint Photographic Experts Group (*.jpeg)",
 	};
 	static final String DEFAULT_FILE = "export.png";
 	static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600};

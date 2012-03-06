@@ -11,19 +11,19 @@ import com.affymetrix.genometryImpl.symloader.DelegateSymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 
 public class TrackOperationAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
-	private final SeqMapViewI gviewer;
+	private final SeqMapView gviewer;
 	private final Operator operator;
 	
-	public TrackOperationAction(SeqMapViewI gviewer, Operator operator) {
+	public TrackOperationAction(SeqMapView gviewer, Operator operator) {
 		super();
 		this.gviewer = gviewer;
 		this.operator = operator;
@@ -42,7 +42,7 @@ public class TrackOperationAction extends GenericAction {
 		meth.append(operator.getName()).append(": ");
 	
 		
-		for (TierGlyph tier : gviewer.getSelectedTiers()) {
+		for (TierGlyph tier : gviewer.getTierManager().getSelectedTiers()) {
 			symsStr.add(tier.getAnnotStyle().getMethodName());
 			meth.append(tier.getLabel()).append(", ");
 			features.add(tier.getAnnotStyle().getFeature());

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph;
 
 /**
@@ -92,6 +93,5 @@ public interface SeqMapViewI {
 	public void addPopupListener(ContextualPopupListener listener);
 	public void selectAllGraphs();
 	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
-	public Iterable<TierGlyph> getSelectedTiers();
-
+	
 }

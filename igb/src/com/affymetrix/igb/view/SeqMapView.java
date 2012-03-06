@@ -102,6 +102,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.*;
 
 /**
  *
@@ -1278,14 +1279,6 @@ public class SeqMapView extends JPanel
 
 		}
 
-	}
-
-	/**
-	 * Returns list of selected tiers.
-	 * @return 
-	 */
-	public Iterable<TierGlyph> getSelectedTiers() {
-		return tier_manager.getSelectedTiers();
 	}
 
 	/**

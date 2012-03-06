@@ -33,7 +33,7 @@ public class TutorialStep {
 		}
 	}
 	private String text;
-	private String highlight;
+	private String[] highlight;
 	private int timeout;
 	private String trigger;
 	private String waitFor;
@@ -75,11 +75,11 @@ public class TutorialStep {
 		this.checkServer = checkServer;
 	}
 
-	public String getHighlight() {
+	public String[] getHighlight() {
 		return highlight;
 	}
 
-	public void setHighlight(String highlight) {
+	public void setHighlight(String[] highlight) {
 		this.highlight = highlight;
 	}
 

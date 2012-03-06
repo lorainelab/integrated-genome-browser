@@ -146,26 +146,30 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		return ((JRPHierarchicalWidget) mainWidget).getSubRegionFinder(subId);
 	}
 
-	private boolean highlightWidget(String widgetId) {
-		JComponent widget = getWidget(widgetId);
-		if (widget == null) {
-			return false;
+	private boolean highlightWidget(String[] widgetId) {
+		for (String s : widgetId) {
+			JComponent widget = getWidget(s);
+			if (widget == null) {
+				return false;
+			}
+			SubRegionFinder subRegionFinder = getSubRegionFinder(s);
+			Marquee m = new Marquee(widget, subRegionFinder);
+			decoratorMap.put(s, m);
 		}
-		SubRegionFinder subRegionFinder = getSubRegionFinder(widgetId);
-		Marquee m = new Marquee(widget, subRegionFinder);
-		decoratorMap.put(widgetId, m);
 //		saveBackgroundColor = widget.getBackground();
 //		widget.setBackground(HIGHLIGHT_COLOR);
 //		widget.requestFocusInWindow();
 		return true;
 	}
 
-	private void unhighlightWidget(String widgetId) {
-		AbstractComponentDecorator decorator = decoratorMap.get(widgetId);
-		if (decorator != null) {
-			decorator.setVisible(false);
-			decorator.dispose();
-			decoratorMap.remove(widgetId);
+	private void unhighlightWidget(String[] widgetId) {
+		for (String s : widgetId) {
+			AbstractComponentDecorator decorator = decoratorMap.get(s);
+			if (decorator != null) {
+				decorator.setVisible(false);
+				decorator.dispose();
+				decoratorMap.remove(s);
+			}
 		}
 //		JComponent widget = getWidget(widgetId);
 //		if (widget != null) {

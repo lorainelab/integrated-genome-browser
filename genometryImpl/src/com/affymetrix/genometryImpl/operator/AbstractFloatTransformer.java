@@ -61,7 +61,7 @@ public abstract class AbstractFloatTransformer implements Operator{
 	
 	@Override
 	public boolean setParameters(Map<String, Object> parms) {
-		return false;
+		return parms.isEmpty();
 	}
 	
 	@Override

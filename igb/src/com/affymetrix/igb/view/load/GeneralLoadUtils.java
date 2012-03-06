@@ -160,9 +160,7 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 		
-		if (!discoverServer(gServer)) {
-			gServer.setEnabled(false);
-		}
+		discoverServer(gServer);
 
 		return gServer;
 	}
@@ -229,6 +227,7 @@ public final class GeneralLoadUtils {
 				URL primaryURL = getServerDirectory(gServer.URL);
 				if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
 					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					gServer.setEnabled(false);
 					return false;
 				}
 			}

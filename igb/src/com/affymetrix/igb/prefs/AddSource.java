@@ -39,6 +39,7 @@ import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
  */
 public class AddSource extends JFrame {
 
+	// server type combobox will be hide in repository panel - enableCombo
 	private boolean enableCombo, isEditPanel;
 	private String serverURL;
 	private static AddSource singleton;
@@ -57,7 +58,7 @@ public class AddSource extends JFrame {
 
 	public void init(boolean isEditP, boolean comboActive, String title,
 			GenericServer server, String url) {
-		enableCombo = comboActive; // server type combobox will be hide in repository panel 
+		enableCombo = comboActive;
 		isEditPanel = isEditP;
 		serverURL = url;
 

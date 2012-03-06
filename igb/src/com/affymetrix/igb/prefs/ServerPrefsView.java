@@ -9,9 +9,12 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
+import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -41,6 +44,7 @@ import javax.swing.table.*;
 public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	private static final long serialVersionUID = 2l;
+	private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("images/refresh16.png");
 	protected final JPanel sourcePanel;
 	protected final GroupLayout layout;
 	protected ServerList serverList;
@@ -73,7 +77,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		final GroupLayout layout = new GroupLayout(sourcePanel);
 
 		sourcesTable = createSourcesTable(sourceTableModel, isSortable());
-		sourcesTable.setCellSelectionEnabled(true);
 		sourcesScrollPane = new JScrollPane(sourcesTable);
 
 		sourcePanel.setLayout(layout);
@@ -170,6 +173,11 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			SourceTableModel.SourceColumn current = SourceTableModel.SourceColumn.valueOf((String) column.getHeaderValue());
 
 			switch (current) {
+				case Refresh:
+					column.setMaxWidth(20);
+					column.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
+					column.setCellEditor(new ButtonTableCellEditor(refresh_icon));
+					break;
 				case Name:
 					column.setPreferredWidth(100);
 					break;
@@ -202,7 +210,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			return;
 		}
 
-		GenericServer server = GeneralLoadUtils.addServer(serverList, 
+		GenericServer server = GeneralLoadUtils.addServer(serverList,
 				type, name, url, order);
 
 		if (server == null) {
@@ -211,7 +219,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 					"Unable to load " + type + " data source '" + url + "'.");
 			return;
 		}
-		
+
 		sourceTableModel.init();
 		ServerList.getServerInstance().addServerToPrefs(server, order);
 	}

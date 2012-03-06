@@ -1,7 +1,9 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
@@ -12,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
@@ -30,7 +33,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	public static enum SourceColumn {
 
-		Name, Type, URL, Enabled
+		Refresh, Name, Type, URL, Enabled
 	};
 	public static final List<SortKey> SORT_KEYS;
 	private ServerList serverList;
@@ -97,6 +100,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			return null;
 		}
 		switch (tableColumns.get(columnIndex)) {
+			case Refresh:
+				return "";
 			case Name:
 				return servers.get(rowIndex).serverName;
 			case Type:
@@ -108,7 +113,6 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
 		}
-
 	}
 
 	@Override
@@ -118,7 +122,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			return true;
 		}
 
-		if (col == tableColumns.indexOf(SourceColumn.Enabled)) {
+		if (col == tableColumns.indexOf(SourceColumn.Refresh)
+				|| col == tableColumns.indexOf(SourceColumn.Enabled)) {
 			return true;
 		}
 
@@ -129,6 +134,14 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	public void setValueAt(Object value, int row, int col) {
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
+			case Refresh:
+				Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(server.URL));
+				int order = node.getInt(GenericServerPref.ORDER, -1);
+				ServerList.getServerInstance().removeServer(server.URL);
+				ServerList.getServerInstance().removeServerFromPrefs(server.URL);
+				DataLoadPrefsView.getSingleton().addDataSource(
+						server.serverType, server.serverName, server.URL, order);
+				break;
 			case Enabled:
 				server.setEnabled((Boolean) value);
 				if (((Boolean) value).booleanValue()) {

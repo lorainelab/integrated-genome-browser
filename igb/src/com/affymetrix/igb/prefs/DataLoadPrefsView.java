@@ -76,7 +76,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 	}
 
 	@Override
-	protected JPanel initSourcePanel(String viewName) {
+	protected JPanel initSourcePanel(String viewName) {		
 		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authenticate\u2026", new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

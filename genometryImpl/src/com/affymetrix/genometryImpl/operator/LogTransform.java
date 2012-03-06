@@ -21,7 +21,7 @@ public final class LogTransform extends AbstractLogTransform implements Operator
 			return "Natural Log";
 		}
 		else {
-			return "Log" + DF.format(base);
+			return "Log" + (base == 0 ? "" : DF.format(base));
 		}
 	}
 	

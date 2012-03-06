@@ -11,13 +11,17 @@ public class InverseLogTransform extends AbstractLogTransform implements Operato
 		super("Inverse Log");
 	}
 	
+	public InverseLogTransform(Double base) {
+		super(base);
+	}
+
 	@Override
 	protected String getBaseName() {
 		if (base == Math.E) {
 			return "Inverse Ln";
 		}
 		else {
-			return "Inverse Log" + DF.format(base);
+			return "Inverse Log" + (base == 0 ? "" : DF.format(base));
 		}
 	}
 	

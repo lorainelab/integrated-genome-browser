@@ -471,8 +471,8 @@ public final class SimpleGraphTab
 		}
 	}
 
-	private final class GraphStyleSetter implements ActionListener {
-
+	private final class GraphStyleSetter extends GenericAction implements ActionListener {
+		private static final long serialVersionUID = 1L;
 		GraphType style = GraphType.LINE_GRAPH;
 
 		public GraphStyleSetter(GraphType style) {
@@ -480,6 +480,7 @@ public final class SimpleGraphTab
 		}
 
 		public void actionPerformed(ActionEvent event) {
+			super.actionPerformed(event);
 			if (DEBUG_EVENTS) {
 				System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
 			}
@@ -531,6 +532,11 @@ public final class SimpleGraphTab
 			};
 
 			SwingUtilities.invokeLater(r);
+		}
+
+		@Override
+		public String getText() {
+			return null;
 		}
 	}
 

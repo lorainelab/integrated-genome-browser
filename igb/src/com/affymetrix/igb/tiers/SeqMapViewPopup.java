@@ -1094,7 +1094,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
-			TierLabelGlyph label = labels.get(0);
+			final TierLabelGlyph label = labels.get(0);
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
 			
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
@@ -1152,8 +1152,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							@Override
 							public void actionPerformed(ActionEvent ae) {
 								style.setOperator(transform.toString());
-								gviewer.addAnnotationTrackFor(style);
-								//refreshMap(false, false);
+								//For now now do not preserve selection
+								gviewer.getSeqMap().clearSelected();
+								//gviewer.addAnnotationTrackFor(style);
+								refreshMap(false, false);
 							}
 
 							@Override

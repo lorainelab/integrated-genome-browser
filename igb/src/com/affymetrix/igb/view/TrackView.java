@@ -317,7 +317,9 @@ public class TrackView {
 	}
 
 	private MapViewGlyphFactoryI determineFactory(SymWithProps sym){
-		if (!TrackUtils.getInstance().useViewMode(sym.getID())) {
+		String meth = BioSeq.determineMethod(sym);
+		
+		if (!TrackUtils.getInstance().useViewMode(meth)) {
 			if (sym instanceof ScoredContainerSym) {
 				return container_factory;
 			} else if (sym instanceof GraphSym) {
@@ -326,8 +328,7 @@ public class TrackView {
 				return default_glyph_factory;
 			}
 		}
-		String meth = BioSeq.determineMethod(sym);
-
+		
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			if ("default".equals(style.getViewMode()) && TrackUtils.getInstance().useViewMode(meth)) {

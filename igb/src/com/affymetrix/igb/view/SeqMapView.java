@@ -1281,6 +1281,14 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
+	 * Returns list of selected tiers.
+	 * @return 
+	 */
+	public Iterable<TierGlyph> getSelectedTiers() {
+		return tier_manager.getSelectedTiers();
+	}
+
+	/**
 	 *  Determines which SeqSymmetry's are selected by looking at which Glyph's
 	 *  are currently selected.  The list will not include the selected sequence
 	 *  region, if any.  Use getSelectedRegion() for that.

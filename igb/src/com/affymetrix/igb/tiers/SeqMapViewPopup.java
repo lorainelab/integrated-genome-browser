@@ -1005,7 +1005,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	public void repack(boolean full_repack){
-		gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+		gviewer.getSeqMap().clearSelected();
 		handler.repackTheTiers(full_repack, true);
 	}
 

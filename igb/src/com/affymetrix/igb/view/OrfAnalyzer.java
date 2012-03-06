@@ -296,7 +296,7 @@ public final class OrfAnalyzer extends JComponent
 				AffyTieredMap tiermap = smv.getSeqMap();
 				List<SeqSymmetry> syms = smv.getSelectedSyms();
 				if (!syms.isEmpty()) {
-					smv.select(new ArrayList<SeqSymmetry>(1), true);
+					smv.getSeqMap().clearWidget();
 				}
 
 				tiermap.repack();

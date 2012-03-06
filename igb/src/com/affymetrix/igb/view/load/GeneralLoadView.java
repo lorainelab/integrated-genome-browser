@@ -596,7 +596,7 @@ public final class GeneralLoadView {
 				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer, true);
 				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
 				if (!syms.isEmpty()) {
-					gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+					gviewer.getSeqMap().clearSelected();
 				}
 
 				gviewer.getSeqMap().packTiers(true, true, false, false);

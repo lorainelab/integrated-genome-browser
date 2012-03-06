@@ -1014,7 +1014,7 @@ public class SeqMapView extends JPanel
 		ThreadUtils.runOnEventQueue(new Runnable(){
 			public void run() {
 				//For now now do not preserve selection
-				SeqMapView.this.select(new ArrayList<SeqSymmetry>(), true);
+				SeqMapView.this.seqmap.clearSelected();
 				TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
 				SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
 				SeqMapView.this.getSeqMap().updateWidget();

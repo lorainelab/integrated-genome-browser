@@ -62,7 +62,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
-import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -102,7 +101,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.*;
 
 /**
  *

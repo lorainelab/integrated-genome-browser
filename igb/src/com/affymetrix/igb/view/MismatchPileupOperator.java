@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author hiralv
  */
-public class MismatchPipeupOperator extends AbstractMismatchOperator implements Operator {
+public class MismatchPileupOperator extends AbstractMismatchOperator implements Operator {
 
 	@Override
 	public String getName() {

@@ -229,6 +229,6 @@ public class Activator implements BundleActivator {
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
-		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPipeupOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
 	}
 }

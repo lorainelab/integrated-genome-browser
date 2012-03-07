@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.MismatchOperator;
-import com.affymetrix.igb.view.MismatchPipeupOperator;
+import com.affymetrix.igb.view.MismatchPileupOperator;
 
 /**
  *
@@ -30,7 +30,7 @@ public class TransformHolder {
 		addOperator(new DepthOperator(FileTypeCategory.Alignment));
 		addOperator(new DepthOperator(FileTypeCategory.Annotation));
 		addOperator(new MismatchOperator());
-		addOperator(new MismatchPipeupOperator());
+		addOperator(new MismatchPileupOperator());
 	}
 		
 	public Operator getOperator(String transform){

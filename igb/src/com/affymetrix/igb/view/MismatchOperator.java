@@ -15,7 +15,7 @@ public class MismatchOperator extends AbstractMismatchOperator implements Operat
 
 	@Override
 	public String getName() {
-		return "mismatch";
+		return "mismatch graph";
 	}
 
 	@Override

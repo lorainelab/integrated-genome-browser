@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.view.MismatchOperator;
+import com.affymetrix.igb.view.MismatchPileupOperator;
 
 /**
  * All implementation of map view mode are stored here.
@@ -92,16 +94,21 @@ public class MapViewModeHolder {
 		addViewFactory(scoredStairStep);
 		
 		// Add mismatch factories
-		MismatchGlyphFactory mismatch = new MismatchGlyphFactory();
-		mismatch.setSeqMapView(seqMapView);
-		addViewFactory(mismatch);
+		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
+		mismatchGlyphFactory.setSeqMapView(seqMapView);
+		addViewFactory(mismatchGlyphFactory);
+
+		MapViewGlyphFactoryI mismatchFactory = new OperatorGlyphFactory(new MismatchOperator(), mismatchGlyphFactory);
+		addViewFactory(mismatchFactory);
+		MapViewGlyphFactoryI mismatchPileupFactory = new OperatorGlyphFactory(new MismatchPileupOperator(), mismatchGlyphFactory);
+		addViewFactory(mismatchPileupFactory);
 		
 		// Add Default factories
 		addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
-		addDefaultFactory(FileTypeCategory.Mismatch, mismatch);
+		addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
 		addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
 //		addViewFactory(new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));

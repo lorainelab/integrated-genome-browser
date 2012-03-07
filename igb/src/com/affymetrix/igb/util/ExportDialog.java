@@ -168,6 +168,11 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		String path = file.getAbsolutePath();
+		String ext = ParserController.getExtension(path);
+		if (ext.equalsIgnoreCase(extension)) {
+			return file;
+		}
+
 		String newPath = "";
 		String filename = file.getName().trim();
 
@@ -202,11 +207,11 @@ public class ExportDialog implements ExportConstants {
 		if (fileChooser.getSelectedFile() != null) {
 			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
 			String ext = ParserController.getExtension(newPath);
-			String des = getDescription(ext);
+			String des = fileChooser.getFileFilter().getDescription();
 
-			if (!isExt(ext)) {
-				filter = fileChooser.getFileFilter();
-				des = filter.getDescription();
+			// the output file extension is based on user's input
+			if (isExt(ext) && !des.equals(getDescription(ext))) {
+				des = getDescription(ext);
 			}
 
 			ExportFileType type = getType(des);
@@ -237,12 +242,12 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	private String getDescription(String ext) {
-		if (ext.equalsIgnoreCase(ExportConstants.EXTENSION[0])) {
-			return ExportConstants.DESCRIPTION[0];
-		} else if (ext.equalsIgnoreCase(ExportConstants.EXTENSION[1])) {
-			return ExportConstants.DESCRIPTION[1];
+		if (ext.equalsIgnoreCase(EXTENSION[0])) {
+			return DESCRIPTION[0];
+		} else if (ext.equalsIgnoreCase(EXTENSION[1])) {
+			return DESCRIPTION[1];
 		} else {
-			return ExportConstants.DESCRIPTION[2];
+			return DESCRIPTION[2];
 		}
 	}
 
@@ -255,14 +260,33 @@ public class ExportDialog implements ExportConstants {
 			return false;
 		}
 
-		exportScreenshot(exportFile, selectedExt);
-
 		String path = exportFile.getAbsolutePath();
 		String ext = ParserController.getExtension(path);
-		String description = getDescription(ext);
+
+		if (!isExt(ext)) {
+			ext = selectedExt;
+
+			int index = path.lastIndexOf(".");
+			int length = 0;
+			if (index > 0) {
+				length = path.substring(index).length();
+			}
+			if (length < 2) {
+				if (length == 1) {
+					path = path.substring(0, index);
+				}
+				path += selectedExt;
+				exportFile = new File(path);
+			}
+		}
+
+		exportScreenshot(exportFile, selectedExt);
+
+		String des = getDescription(ext);
+		extComboBox.setSelectedItem(getType(des));
 
 		exportNode.put(PREF_FILE, path);
-		exportNode.put(PREF_EXT, description);
+		exportNode.put(PREF_EXT, des);
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
 
@@ -277,13 +301,6 @@ public class ExportDialog implements ExportConstants {
 			filePathTextField.grabFocus();
 			exportFile = new File(previousPath);
 			return false;
-		}
-
-		String ext = ParserController.getExtension(exportFile.getAbsolutePath());
-
-		if (!isExt(ext)) {
-			String newPath = exportFile.getAbsolutePath() + selectedExt;
-			exportFile = new File(newPath);
 		}
 
 		// if image size is too large...
@@ -372,7 +389,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static boolean isExt(String ext) {
-		for (String s : ExportConstants.EXTENSION) {
+		for (String s : EXTENSION) {
 			if (s.equalsIgnoreCase(ext)) {
 				return true;
 			}
@@ -412,14 +429,31 @@ public class ExportDialog implements ExportConstants {
 		String ext = ParserController.getExtension(path);
 		selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-		if (isExt(ext) && path.lastIndexOf(".") >= 0) {
-			path = path.substring(0, path.lastIndexOf("."));
+		int index = path.lastIndexOf(".");
+		int length = 0;
+		if (index > 0) {
+			length = path.substring(index).length();
 		}
 
-		path += selectedExt;
-		exportFile = new File(path);
-		filePathTextField.setText(path);
-		filePathTextField.grabFocus();
+		// keep user input extension, if it's not a support extension
+		if (!isExt(ext) && length > 1) {
+			return;
+		} else {
+			if (!ext.equalsIgnoreCase(selectedExt)) {
+				if (selectedExt.equals(EXTENSION[2]) &&
+					ext.equalsIgnoreCase(EXTENSION[3])) { // special case for jpg
+					return;
+				}
+
+				if (length > 0) {
+					path = path.substring(0, index);
+				}
+				path += selectedExt;
+				exportFile = new File(path);
+				filePathTextField.setText(path);
+				filePathTextField.grabFocus();
+			}
+		}
 	}
 
 	public void unitComboBoxActionPerformed() {

@@ -84,17 +84,6 @@ public class StyledJTable extends JTable {
 		TableCellEditor editor = this.getDefaultEditor(String.class);
 		((DefaultCellEditor) editor).setClickCountToStart(1);
 		this.setDefaultEditor(String.class, editor);
-
-		this.addMouseListener(new java.awt.event.MouseAdapter() {
-
-			public void mouseEntered(java.awt.event.MouseEvent evt) {
-				switchEditors(evt);
-			}
-			
-			public void mouseExisted(java.awt.event.MouseEvent evt) {
-				stopCellEditing();
-			}
-		});
 	}
 
 	@Override
@@ -125,27 +114,6 @@ public class StyledJTable extends JTable {
 		TableCellEditor tce = getCellEditor();
 		if (tce != null) {
 			tce.cancelCellEditing();
-		}
-	}
-
-	private void switchEditors(MouseEvent paramMouseEvent) {
-		Point point = paramMouseEvent.getPoint();
-		if (point != null) {
-			int rowIndex = rowAtPoint(point);
-			int columnIndex = columnAtPoint(point);
-			if ((rowIndex != getEditingRow()) || (columnIndex != getEditingColumn())) {
-				if (isEditing()) {
-					TableCellEditor tce = getCellEditor();
-					if (((tce instanceof TableCellEditorRenderer)) && (!((TableCellEditorRenderer) tce).isFullyEngaged())
-							&& (!tce.stopCellEditing())) {
-						tce.cancelCellEditing();
-					}
-				}
-				if ((!isEditing())
-						&& (rowIndex != -1) && (isCellEditable(rowIndex, columnIndex))) {
-					editCellAt(rowIndex, columnIndex);
-				}
-			}
 		}
 	}
 }

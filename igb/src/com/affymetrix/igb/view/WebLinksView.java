@@ -5,18 +5,15 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.igb.prefs.WebLink.RegexType;
 import com.affymetrix.igb.shared.FileTracker;
 import java.util.List;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -31,7 +28,7 @@ public final class WebLinksView implements ListSelectionListener {
 	private static WebLinksView singleton;
 	public JTable serverTable;
 	public JTable localTable;
-	public WebLinksTableModel defaultModel;
+	public WebLinksTableModel serverModel;
 	public WebLinksTableModel localModel;
 	public ListSelectionModel lsm;
 	private static JFileChooser static_chooser = null;
@@ -58,9 +55,6 @@ public final class WebLinksView implements ListSelectionListener {
 	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
 	public int previousSelectedRow;
-	private String previousName;
-	private String previousUrl;
-	private String previousRegex;
 
 	public static synchronized WebLinksView getSingleton() {
 		if (singleton == null) {
@@ -72,17 +66,15 @@ public final class WebLinksView implements ListSelectionListener {
 	private WebLinksView() {
 		super();
 
-		serverTable = new JTable();
+		serverTable = new StyledJTable();
 		localTable = new JTable();
 
-		defaultModel = new WebLinksTableModel();
+		serverModel = new WebLinksTableModel();
 		localModel = new WebLinksTableModel();
 
 		initTable(serverTable);
-		serverTable.setCellSelectionEnabled(true);
-
 		initTable(localTable);
-
+		
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
 		regexTextField = new JTextField();
@@ -93,8 +85,6 @@ public final class WebLinksView implements ListSelectionListener {
 
 		if (localTable.getRowCount() > 0) {
 			localTable.setRowSelectionInterval(0, 0);
-		} else {
-			serverTable.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -107,8 +97,8 @@ public final class WebLinksView implements ListSelectionListener {
 			table.setModel(localModel);
 			localModel.setLinks(WebLink.getLocalWebList());
 		} else {
-			table.setModel(defaultModel);
-			defaultModel.setLinks(WebLink.getDefaultWebList());
+			table.setModel(serverModel);
+			serverModel.setLinks(WebLink.getServerWebList());
 		}
 
 		table.getColumnModel().getColumn(COL_NAME).setPreferredWidth(120);
@@ -320,14 +310,11 @@ public final class WebLinksView implements ListSelectionListener {
 		if (localTable.getSelectedRowCount() == 0) {
 			setEnabled(false);
 			clear();
-			return;
-		} else if (selectedRows.length == 1) {
+		} else if (selectedRows.length == 1) {			
 			WebLink selectedLink = localModel.getLinks().get(selectedRows[0]);
 
-			previousName = selectedLink.getName();
-			nameTextField.setText(previousName);
-			previousUrl = selectedLink.getUrl();
-			urlTextField.setText(previousUrl);
+			nameTextField.setText(selectedLink.getName());
+			urlTextField.setText(selectedLink.getUrl());
 			String regex = selectedLink.getRegex();
 
 			if (regex == null) {
@@ -335,7 +322,7 @@ public final class WebLinksView implements ListSelectionListener {
 			} else if (regex.startsWith("(?i)")) {
 				regex = regex.substring(4);
 			}
-			previousRegex = regex;
+
 			regexTextField.setText(regex);
 			if (selectedLink.getRegexType() == RegexType.TYPE) {
 				nameRadioButton.setSelected(true);

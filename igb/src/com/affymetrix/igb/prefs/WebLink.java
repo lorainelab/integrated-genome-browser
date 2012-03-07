@@ -44,7 +44,7 @@ public final class WebLink {
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
 	private static final List<WebLink> local_weblink_list = new ArrayList<WebLink>();
-	private static final List<WebLink> default_weblink_list = new ArrayList<WebLink>();
+	private static final List<WebLink> server_weblink_list = new ArrayList<WebLink>();
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
 	public static final String LOCAL = "local";
 	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
@@ -89,8 +89,8 @@ public final class WebLink {
 		}
 
 		if (!wl.getType().equals(LOCAL)) {
-			if (!isContained(default_weblink_list, wl)) {
-				default_weblink_list.add(wl);
+			if (!isContained(server_weblink_list, wl)) {
+				server_weblink_list.add(wl);
 			}
 		} else {
 			local_weblink_list.add(wl);
@@ -98,7 +98,7 @@ public final class WebLink {
 	}
 
 	public static void sortList() {
-		Collections.sort(default_weblink_list, webLinkComp);
+		Collections.sort(server_weblink_list, webLinkComp);
 		Collections.sort(local_weblink_list, webLinkComp);
 	}
 
@@ -186,7 +186,7 @@ public final class WebLink {
 	private static List<WebLink> getWebLink(SeqSymmetry sym, String method) {
 		List<WebLink> results = new ArrayList<WebLink>();
 		List<WebLink> temp = new ArrayList<WebLink>();
-		temp.addAll(default_weblink_list);
+		temp.addAll(server_weblink_list);
 		temp.addAll(local_weblink_list);
 
 		for (WebLink link : temp) {
@@ -233,8 +233,8 @@ public final class WebLink {
 		return results;
 	}
 
-	public static List<WebLink> getDefaultWebList() {
-		return default_weblink_list;
+	public static List<WebLink> getServerWebList() {
+		return server_weblink_list;
 	}
 
 	public static List<WebLink> getLocalWebList() {

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genoviz.swing;
 
 import java.awt.Color;
@@ -9,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
@@ -23,12 +18,11 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author lorainelab
+ * @author david and nick
  */
-public class StyledJTable extends JTable implements MouseListener {
+public class StyledJTable extends JTable {
 
 	private static final long serialVersionUID = 1L;
-	
 	// The list will save all the unchangeable column num
 	public ArrayList<Integer> list = new ArrayList<Integer>();
 
@@ -70,8 +64,7 @@ public class StyledJTable extends JTable implements MouseListener {
 
 	private void init() {
 		setCellSelectionEnabled(true);
-		setFocusable(true);
-		setSelectionForeground(Color.BLUE);
+		setSelectionForeground(Color.BLACK);
 
 		setOpaque(false);
 		setIntercellSpacing(new Dimension(1, 1));
@@ -87,11 +80,21 @@ public class StyledJTable extends JTable implements MouseListener {
 		header.setResizingAllowed(true);
 
 		setAutoscrolls(true);
-		setRequestFocusEnabled(false);
 
 		TableCellEditor editor = this.getDefaultEditor(String.class);
 		((DefaultCellEditor) editor).setClickCountToStart(1);
 		this.setDefaultEditor(String.class, editor);
+
+		this.addMouseListener(new java.awt.event.MouseAdapter() {
+
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
+				switchEditors(evt);
+			}
+			
+			public void mouseExisted(java.awt.event.MouseEvent evt) {
+				stopCellEditing();
+			}
+		});
 	}
 
 	@Override
@@ -123,26 +126,6 @@ public class StyledJTable extends JTable implements MouseListener {
 		if (tce != null) {
 			tce.cancelCellEditing();
 		}
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mouseExited(MouseEvent e) {
-		stopCellEditing();
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mousePressed(MouseEvent e) {
-		switchEditors(e);
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		//do nothing
 	}
 
 	private void switchEditors(MouseEvent paramMouseEvent) {

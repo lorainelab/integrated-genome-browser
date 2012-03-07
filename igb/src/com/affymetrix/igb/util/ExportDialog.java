@@ -203,12 +203,12 @@ public class ExportDialog implements ExportConstants {
 			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
 			String ext = ParserController.getExtension(newPath);
 			String des = getDescription(ext);
-			
+
 			if (!isExt(ext)) {
 				filter = fileChooser.getFileFilter();
 				des = filter.getDescription();
 			}
-			
+
 			ExportFileType type = getType(des);
 			extComboBox.setSelectedItem(type);
 			filePathTextField.setText(newPath);
@@ -412,15 +412,14 @@ public class ExportDialog implements ExportConstants {
 		String ext = ParserController.getExtension(path);
 		selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
 
-		if (!ext.equalsIgnoreCase(selectedExt)) {
-			if (path.lastIndexOf(".") >= 0) {
-				path = path.substring(0, path.lastIndexOf("."));
-			}
-			path += selectedExt;
-			exportFile = new File(path);
-			filePathTextField.setText(path);
-			filePathTextField.grabFocus();
+		if (isExt(ext) && path.lastIndexOf(".") >= 0) {
+			path = path.substring(0, path.lastIndexOf("."));
 		}
+
+		path += selectedExt;
+		exportFile = new File(path);
+		filePathTextField.setText(path);
+		filePathTextField.grabFocus();
 	}
 
 	public void unitComboBoxActionPerformed() {

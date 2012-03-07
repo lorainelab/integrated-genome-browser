@@ -1012,7 +1012,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				String title = name.substring(0, 1).toUpperCase()
 						+ name.substring(1);
 				JMenuItem operatorMI = new JMenuItem(title);
-				operatorMI.addActionListener(new TierOperationAction(
+				operatorMI.addActionListener(new TrackOperationAction(
 						gviewer, operator));
 				if (operationsMenu == null) {
 					operationsMenu = new JMenu("Track Operations");

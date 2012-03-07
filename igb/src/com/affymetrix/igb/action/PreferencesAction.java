@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.prefs.TierPrefsView;
 
 /**
  *
@@ -37,7 +38,7 @@ public class PreferencesAction extends GenericAction {
 
 		PreferencesPanel p = PreferencesPanel.getSingleton();
 		p.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-		p.tpvGUI.tpv.setTier_label_glyphs(tier_label_glyphs);
+		((TierPrefsView)p.tpvGUI.tdv).setTier_label_glyphs(tier_label_glyphs);
 		p.getFrame().setVisible(true);
 	}
 

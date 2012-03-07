@@ -56,9 +56,9 @@ public class RunTutorialAction extends GenericAction {
 				}
 			}
 			rdr.close();
-		} catch (Exception x) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load tutorial " + uri, x);
+		} catch (Exception x) {			
 			ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri);
+			this.setEnabled(false);
 		}
 	}
 

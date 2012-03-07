@@ -18,6 +18,7 @@ import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
@@ -138,6 +139,8 @@ public class Activator implements BundleActivator {
 				GeneralLoadView.getLoadView().refreshTreeView();
 			}
 		});
+		
+		initOperators();
 	}
 
 	@Override
@@ -221,5 +224,11 @@ public class Activator implements BundleActivator {
 			},
 			null
 		);
+	}
+
+	private void initOperators() {
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
+		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPipeupOperator(), null);
 	}
 }

@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Color;
@@ -15,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class HeatMapGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
+class HeatMapGraphGlyph extends AbstractGraphGlyph {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();

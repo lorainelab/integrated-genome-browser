@@ -3,13 +3,12 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-public class BarGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
+public class BarGraphGlyph extends AbstractGraphGlyph {
 
 	public BarGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);

@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Color;
@@ -13,7 +12,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-class MinMaxAvgGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
+class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	private final AbstractGraphGlyph tempViewModeBarGraphGlyph;
 
 	public MinMaxAvgGraphGlyph(GraphSym graf, GraphState gstate) {

@@ -318,7 +318,7 @@ public abstract class NeoAbstractWidget extends Container
     // therefore check and see if already a glyph associated with this datamodel
     // if so, create a List and add glyphs to it (or extend the pre-exisiting one)
     Object previous = model_hash.get(datamodel);
-    if (previous == null || glyph instanceof UniqueGlyphMarker) {
+    if (previous == null) {
       model_hash.put(datamodel, glyph);
     }
     else {

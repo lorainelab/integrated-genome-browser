@@ -4,13 +4,12 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genoviz.widget.UniqueGlyphMarker;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-class DotGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
+class DotGraphGlyph extends AbstractGraphGlyph {
 
 	public DotGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);
@@ -34,5 +33,5 @@ class DotGraphGlyph extends AbstractGraphGlyph implements UniqueGlyphMarker {
 	public GraphType getGraphStyle() {
 		return GraphType.DOT_GRAPH;
 	}
-    
+
 }

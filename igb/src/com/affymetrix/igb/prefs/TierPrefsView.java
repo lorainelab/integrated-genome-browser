@@ -11,7 +11,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.prefs.TierPrefsView.TierPrefsTableModel;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
@@ -34,7 +33,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -301,10 +299,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 	}
 
-	private void updateTable() {
-		model.fireTableDataChanged();
-	}
-
 	public void clearTable() {
 		((TierPrefsTableModel)model).clear();
 		//also refresh options panel to ensure coordinate track colors stay synchronized
@@ -404,11 +398,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
-			String file_type = selectedStyle.getFileType();
 			viewModeCB.removeAllItems();
 
 			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
-				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(selectedStyle.getFileTypeCategory())));
+				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(selectedStyle.getFileTypeCategory(), null)));
 				String view_mode = selectedStyle.getViewMode();
 				if (view_mode == null) {
 					viewModeCB.setSelectedIndex(0);

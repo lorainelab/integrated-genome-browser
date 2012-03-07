@@ -259,7 +259,7 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.ScoredContainer;
 	}
 		

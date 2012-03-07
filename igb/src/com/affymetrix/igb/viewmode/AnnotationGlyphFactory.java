@@ -584,7 +584,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory checkCategory) {
+	public boolean isCategorySupported(FileTypeCategory checkCategory) {
 		return (checkCategory == category);
 	}
 
@@ -634,5 +634,15 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	// for GenericGraphGlyphFactory, can be removed when that is removed
 	public static ViewModeGlyph getViewModeGlyph(ITrackStyleExtended style) {
 		return new AnnotationGlyph(style);
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

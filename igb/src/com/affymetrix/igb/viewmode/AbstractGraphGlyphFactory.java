@@ -183,7 +183,7 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		if (category == FileTypeCategory.Graph){
 			return true;
 		}
@@ -202,5 +202,15 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

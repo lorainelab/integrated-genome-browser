@@ -222,13 +222,23 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
-		return defaultGlyphFactory.isFileSupported(category);
+	public boolean isCategorySupported(FileTypeCategory category) {
+		return defaultGlyphFactory.isCategorySupported(category);
 	}
 
 	@Override
 	protected SemanticZoomRule getRule(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction) {
 		return new BigWigSemanticZoomRule(sym, style, direction);
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return hasBigWig(uri);
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return hasBigWig(uri);
 	}
 }

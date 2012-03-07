@@ -1105,7 +1105,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();
-				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory())) {
+				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
 					Action action = new GenericAction() {
 
 						private static final long serialVersionUID = 1L;

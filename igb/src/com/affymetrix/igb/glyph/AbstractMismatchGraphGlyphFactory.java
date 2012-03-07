@@ -32,7 +32,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		
 		if (sym == null || sym.getChildCount() == 0 || 
-				!(sym instanceof RootSeqSymmetry) || isFileSupported(((RootSeqSymmetry)sym).getCategory())) {
+				!(sym instanceof RootSeqSymmetry) || isCategorySupported(((RootSeqSymmetry)sym).getCategory())) {
 			return;
 		}
 		
@@ -73,7 +73,7 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 	}
 	
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		if (category == FileTypeCategory.Alignment){
 			return true;
 		}
@@ -123,5 +123,15 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return null;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

@@ -172,7 +172,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		if (category == FileTypeCategory.Graph){
 			return true;
 		}
@@ -191,5 +191,15 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	public SeqMapViewExtendedI getSeqMapView() {
 		return null;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

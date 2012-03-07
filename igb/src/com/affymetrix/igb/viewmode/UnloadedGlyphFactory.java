@@ -152,7 +152,7 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		//TODO: Fix this for cytobands
 		if (category == FileTypeCategory.Sequence){
 			return false;
@@ -167,5 +167,15 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return smv;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return true;
 	}
 }

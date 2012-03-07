@@ -133,7 +133,7 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 	}
 	
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		if (category == FileTypeCategory.Mismatch){
 			return true;
 		}

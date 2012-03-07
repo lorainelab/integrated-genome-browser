@@ -57,8 +57,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
-		return detailGlyphFactory.isFileSupported(category);
+	public boolean isCategorySupported(FileTypeCategory category) {
+		return detailGlyphFactory.isCategorySupported(category);
 	}
 
 	@Override

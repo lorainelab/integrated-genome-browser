@@ -153,12 +153,12 @@ public class MapViewModeHolder {
 		defaultView.put(category, factory);
 	}
 		
-	public Object[] getAllViewModesFor(FileTypeCategory category) {
+	public Object[] getAllViewModesFor(FileTypeCategory category, String uri) {
 		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
 
 		for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 			MapViewGlyphFactoryI emv = entry.getValue();
-			if (emv.isFileSupported(category)) {
+			if (emv.isCategorySupported(category) && emv.isURISupported(uri)) {
 				mode.add(entry.getKey());
 			}
 

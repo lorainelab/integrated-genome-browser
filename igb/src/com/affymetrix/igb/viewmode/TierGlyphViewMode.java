@@ -69,7 +69,7 @@ public class TierGlyphViewMode extends TierGlyph {
 					style.setViewMode(((OperatorGlyphFactory)factory).getActualFactoryName());
 				} else {
 					if (modelSym instanceof RootSeqSymmetry) {
-						if (!factory.isFileSupported(((RootSeqSymmetry) modelSym).getCategory())) {
+						if (!factory.isCategorySupported(((RootSeqSymmetry) modelSym).getCategory()) || !factory.isURISupported(style.getMethodName())) {
 							factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry) modelSym).getCategory());
 							style.setViewMode(factory.getName());
 						}

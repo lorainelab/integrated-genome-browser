@@ -31,7 +31,17 @@ public final class ScoredContainerGlyphFactory extends AbstractScoredContainerGl
 	}
 	
 	@Override
-	public boolean isFileSupported(FileTypeCategory checkCategory) {
+	public boolean isCategorySupported(FileTypeCategory checkCategory) {
 		return true;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

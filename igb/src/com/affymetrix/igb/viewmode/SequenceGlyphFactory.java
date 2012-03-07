@@ -99,7 +99,7 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.Sequence;
 	}
 
@@ -110,5 +110,15 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return gviewer;
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

@@ -447,4 +447,14 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return smv;
 	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
+	}
 }

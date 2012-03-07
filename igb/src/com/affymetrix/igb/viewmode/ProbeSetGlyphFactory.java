@@ -504,7 +504,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.ProbeSet;
 	}
 
@@ -575,5 +575,15 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public String getName() {
 		return "probeset";
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

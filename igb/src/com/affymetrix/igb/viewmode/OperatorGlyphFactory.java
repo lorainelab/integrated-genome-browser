@@ -33,7 +33,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	
 	public OperatorGlyphFactory(Operator operator, MapViewGlyphFactoryI factory){
 		this.operator = operator;
-		if(factory.isFileSupported(operator.getOutputCategory())){
+		if(factory.isCategorySupported(operator.getOutputCategory())){
 			this.factory = factory;
 		}else{
 			this.factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory());
@@ -102,7 +102,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public boolean isFileSupported(FileTypeCategory category) {
+	public boolean isCategorySupported(FileTypeCategory category) {
 		if (operator.getOperandCountMin(category) > 1 || operator.getOperandCountMax(category) < 1) {
 			return false;
 		}
@@ -143,5 +143,15 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public final SeqMapViewExtendedI getSeqMapView(){
 		return factory.getSeqMapView();
+	}
+
+	@Override
+	public boolean isURISupported(String uri) {
+		return true;
+	}
+
+	@Override
+	public boolean canAutoLoad(String uri) {
+		return false;
 	}
 }

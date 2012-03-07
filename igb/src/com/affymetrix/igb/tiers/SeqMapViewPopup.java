@@ -9,16 +9,7 @@
  */
 package com.affymetrix.igb.tiers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
-
 import com.affymetrix.common.ExtensionPointHandler;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -35,16 +26,12 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-
 import com.affymetrix.genoviz.bioviews.ViewI;
-
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -58,6 +45,13 @@ import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -80,6 +74,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			List<TierGlyph> current_tiers = handler.getSelectedTiers();
@@ -100,6 +95,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			showCustomizer();
@@ -119,6 +115,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), false);
@@ -134,6 +131,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), false);
@@ -149,6 +147,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getSelectedTierLabels(), true);
@@ -164,6 +163,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTiersCollapsed(handler.getAllTierLabels(), true);
@@ -179,6 +179,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			hideTiers(handler.getSelectedTierLabels());
@@ -194,6 +195,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			showAllTiers();
@@ -208,6 +210,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), true);
@@ -223,6 +226,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeColor(handler.getSelectedTierLabels(), false);
@@ -238,6 +242,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), true);
@@ -253,6 +258,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setColorByScore(handler.getSelectedTierLabels(), false);
@@ -268,6 +274,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), true);
@@ -283,6 +290,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			setTwoTiers(handler.getSelectedTierLabels(), false);
@@ -374,6 +382,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			TierGlyph current_tier = handler.getSelectedTiers().get(0);
@@ -385,39 +394,64 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("maximizeTrackAction");
 		}
 	};
-///* not ready yet. Add // at the beginnin of the line to enable for now.
-	private final Action repack_tracks_action = new GenericAction() {
+
+	/**
+	 * Handles tier (track) repacking actions.
+	 * @param theTiers generally either all or selected tiers.
+	 */
+	private void repackTiers(List<TierLabelGlyph> theTiers) {
+		ViewI ourView = gviewer.getSeqMap().getView();
+		for (TierLabelGlyph tl : theTiers) {
+			TierGlyph t = (TierGlyph) tl.getInfo();
+			int a = t.getSlotsNeeded(ourView);
+			ITrackStyleExtended style = t.getAnnotStyle();
+			TierGlyph.Direction d = t.getDirection();
+			switch (d) {
+				case REVERSE:
+					style.setReverseMaxDepth(a);
+					break;
+				default:
+				case FORWARD:
+					style.setForwardMaxDepth(a);
+					break;
+			}
+		}
+	    // Now repack again with the newly appointed maxima.
+		repack(true);
+	}
+	
+	private final Action repack_selected_tracks_action = new GenericAction() {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
-			List<TierLabelGlyph> tiers = handler.getAllTierLabels();
-			ViewI ourView = gviewer.getSeqMap().getView();
-			for (TierLabelGlyph tl : tiers) {
-				TierGlyph t = (TierGlyph) tl.getInfo();
-				int a = t.getSlotsNeeded(ourView);
-				ITrackStyleExtended style = t.getAnnotStyle();
-				TierGlyph.Direction d = t.getDirection();
-				switch (d) {
-					case REVERSE:
-						style.setReverseMaxDepth(a);
-						break;
-					default:
-					case FORWARD:
-						style.setForwardMaxDepth(a);
-						break;
-				}
-			}
-			// Now repack again with the newly appointed maxima.
-			repack(true);
+			repackTiers(handler.getSelectedTierLabels());
 		}
 
 		@Override
 		public String getText() {
-			return BUNDLE.getString("repackTracksAction");
+			return BUNDLE.getString("repackSelectedTracksAction");
 		}
 	};
+
+	private final Action repack_all_tracks_action = new GenericAction() {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			super.actionPerformed(e);
+			repackTiers(handler.getAllTierLabels());
+		}
+
+		@Override
+		public String getText() {
+			return BUNDLE.getString("repackAllTracksAction");
+		}
+
+	};
+
 	/*
 	 *
 	 */
@@ -425,6 +459,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeExpandMax(handler.getSelectedTierLabels());
@@ -440,6 +475,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeExpandMax(handler.getAllTierLabels());
@@ -455,6 +491,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			BioSeq seq = gmodel.getSelectedSeq();
@@ -474,6 +511,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			changeFontSize(handler.getSelectedTierLabels());
@@ -489,6 +527,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				super.actionPerformed(e);
@@ -967,7 +1006,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		String human_name = BUNDLE.getString("depth") + ": " + atier.getLabel();
 		String id = TrackStyle.getUniqueName(human_name);
-		DependentData dd = null;
+		DependentData dd;
 		String method = atier.getAnnotStyle().getMethodName();
 		if (bothDirection) {
 			human_name += getSymbol(Direction.BOTH);
@@ -1089,7 +1128,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
-
+		this.repack_selected_tracks_action.setEnabled(0 < this.handler.getSelectedTierLabels().size());
+		
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
 
@@ -1196,7 +1236,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				save_track_action.setEnabled(false);
 				strandsMenu.setEnabled(false);
 //				summaryMenu.setEnabled(false);
-				repack_tracks_action.setEnabled(false);
+				repack_selected_tracks_action.setEnabled(false);
+				repack_all_tracks_action.setEnabled(false);
 				delete_action.setEnabled(false);
 				break;
 			}
@@ -1271,8 +1312,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		}
 //		popup.add(summaryMenu);
 		popup.add(new JSeparator());
-		popup.add(repack_tracks_action); // experimental
-		popup.add(delete_action);
+		popup.add(delete_action); // Remove data from selected tracks.
+		popup.add(this.repack_selected_tracks_action);
+		popup.add(this.repack_all_tracks_action);
 
 //	strandsMenu.add(at3);
 

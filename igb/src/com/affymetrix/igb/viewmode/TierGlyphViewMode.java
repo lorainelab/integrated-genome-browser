@@ -89,10 +89,12 @@ public class TierGlyphViewMode extends TierGlyph {
 		}
 		boolean loaded = false;
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		for (int i = 0; i < seq.getAnnotationCount(); i++) {
-			if (modelSym.equals(seq.getAnnotation(i))) {
-				loaded = true;
-				break;
+		if (seq != null) {
+			for (int i = 0; i < seq.getAnnotationCount(); i++) {
+				if (modelSym.equals(seq.getAnnotation(i))) {
+					loaded = true;
+					break;
+				}
 			}
 		}
 		return loaded;

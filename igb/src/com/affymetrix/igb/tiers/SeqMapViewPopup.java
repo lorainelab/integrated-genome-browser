@@ -521,11 +521,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		pv.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 		pv.tpvGUI.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
 
-		// If only 1 selected track and it's coordinate track, will open 'Other Options' panel 
-		final TierLabelGlyph label = handler.getSelectedTierLabels().get(0);
-		String name = label.getReferenceTier().getAnnotStyle().getTrackName();
-		if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-			pv.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
+		// If and only if the selected track is coordinate track, will open 'Other Options' panel 
+		if (handler.getSelectedTierLabels().size() == 1) {
+			final TierLabelGlyph label = handler.getSelectedTierLabels().get(0);
+			String name = label.getReferenceTier().getAnnotStyle().getTrackName();
+			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+				pv.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
+			}
 		}
 
 		JFrame f = pv.getFrame();

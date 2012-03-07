@@ -75,10 +75,15 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	/**
 	 * Creates new form FileTypeViewNew
 	 */
-	public TrackDefaultView() {
+	private TrackDefaultView() {
 		model = new TrackDefaultPrefTableModel();
+		title = "Track Default List";
+		b1Text = "Add";
+		b2Text = "Delete";
+		track = "Track Type";
 		((TrackDefaultPrefTableModel)model).setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		initializeFileTypes();
+		initCommonComponents();
 		initComponents();
 		table.setRowSelectionInterval(0, 0);
 	}
@@ -104,42 +109,11 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	private void initComponents() {
 		trackDefaultTextField = new JTextField();
-		possitiveColorComboBox = new ColorComboBox();
-		negativeColorComboBox = new ColorComboBox();
-		colorCheckBox = new JRPCheckBox("TrackDefaultView_colorCheckBox");
-		arrowCheckBox = new JRPCheckBox("TrackDefaultView_arrowCheckBox");
 		table = new StyledJTable();
 		table.list.add(TierPrefsView.COL_BACKGROUND);
 		table.list.add(TierPrefsView.COL_FOREGROUND);
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
-		bgColorComboBox = new ColorComboBox();
-		trackNameSizeComboBox = new JComboBox();
-		fgColorComboBox = new ColorComboBox();
-		labelFieldComboBox = new JComboBox();
-		maxDepthTextField = new JRPNumTextField("TrackDefaultView_maxDepth");
-		show2TracksCheckBox = new JRPCheckBox("TrackDefaultView_show2TracksCheckBox");
-		connectedCheckBox = new JRPCheckBox("TrackDefaultView_connectedCheckBox");
-		collapsedCheckBox = new JRPCheckBox("TrackDefaultView_collapsedCheckBox");
-
-		possitiveColorComboBox.setBackground(new Color(255, 255, 255));
-		possitiveColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
-		possitiveColorComboBox.setButtonVisible(false);
-		possitiveColorComboBox.setColorValueVisible(false);
-		possitiveColorComboBox.setMaximumSize(new Dimension(150, 20));
-		possitiveColorComboBox.setStretchToFit(true);
-
-		negativeColorComboBox.setBackground(new Color(255, 255, 255));
-		negativeColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
-		negativeColorComboBox.setButtonVisible(false);
-		negativeColorComboBox.setColorValueVisible(false);
-		negativeColorComboBox.setMaximumSize(new Dimension(150, 20));
-		negativeColorComboBox.setStretchToFit(true);
-
-		colorCheckBox.setText("Color");
-
-		arrowCheckBox.setText("Arrow");
-
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -184,30 +158,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		addTrackDefaultButton.setText("Add");
 
 		removeTrackDefaultButton.setText("Remove");
-
-		bgColorComboBox.setBackground(new Color(255, 255, 255));
-		bgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
-		bgColorComboBox.setButtonVisible(false);
-		bgColorComboBox.setColorValueVisible(false);
-		bgColorComboBox.setMaximumSize(new Dimension(150, 20));
-		bgColorComboBox.setStretchToFit(true);
-
-		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-
-		fgColorComboBox.setBackground(new Color(255, 255, 255));
-		fgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
-		fgColorComboBox.setButtonVisible(false);
-		fgColorComboBox.setColorValueVisible(false);
-		fgColorComboBox.setMaximumSize(new Dimension(150, 20));
-		fgColorComboBox.setStretchToFit(true);
-
-		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
-
-		show2TracksCheckBox.setText("Show (+/-) tracks");
-
-		connectedCheckBox.setText("Connected");
-
-		collapsedCheckBox.setText("Collapsed");
 	}
 	@Override
 	public void trackNameSizeComboBox() {

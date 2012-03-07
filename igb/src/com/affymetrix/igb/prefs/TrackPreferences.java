@@ -6,10 +6,15 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
@@ -46,7 +51,63 @@ public abstract class TrackPreferences {
 	public static final int COL_NEG_STRAND_COLOR = 11;
 	public static final int COL_DIRECTION_TYPE = 9;
 	protected float trackNameSize;
-	//protected abstract void initComponents();
+	public String b1Text,b2Text,track,title;
+	public void initCommonComponents()
+	{
+		possitiveColorComboBox = new ColorComboBox();
+		negativeColorComboBox = new ColorComboBox();
+		colorCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_colorCheckBox");
+		arrowCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_arrowCheckBox");
+		bgColorComboBox = new ColorComboBox();
+		trackNameSizeComboBox = new JComboBox();
+		fgColorComboBox = new ColorComboBox();
+		labelFieldComboBox = new JComboBox();
+		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName()+"_maxDepth");
+		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_show2TracksCheckBox");
+		connectedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_connectedCheckBox");
+		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_collapsedCheckBox");
+        colorCheckBox.setText("Color");
+		arrowCheckBox.setText("Arrow");
+		
+		possitiveColorComboBox.setBackground(new Color(255, 255, 255));
+		possitiveColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
+		possitiveColorComboBox.setButtonVisible(false);
+		possitiveColorComboBox.setColorValueVisible(false);
+		possitiveColorComboBox.setMaximumSize(new Dimension(150, 20));
+		possitiveColorComboBox.setStretchToFit(true);
+
+		negativeColorComboBox.setBackground(new Color(255, 255, 255));
+		negativeColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
+		negativeColorComboBox.setButtonVisible(false);
+		negativeColorComboBox.setColorValueVisible(false);
+		negativeColorComboBox.setMaximumSize(new Dimension(150, 20));
+		negativeColorComboBox.setStretchToFit(true);
+		
+		bgColorComboBox.setBackground(new Color(255, 255, 255));
+		bgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
+		bgColorComboBox.setButtonVisible(false);
+		bgColorComboBox.setColorValueVisible(false);
+		bgColorComboBox.setMaximumSize(new Dimension(150, 20));
+		bgColorComboBox.setStretchToFit(true);
+
+		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
+
+		fgColorComboBox.setBackground(new Color(255, 255, 255));
+		fgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
+		fgColorComboBox.setButtonVisible(false);
+		fgColorComboBox.setColorValueVisible(false);
+		fgColorComboBox.setMaximumSize(new Dimension(150, 20));
+		fgColorComboBox.setStretchToFit(true);
+		
+		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
+
+		show2TracksCheckBox.setText("Show (+/-) tracks");
+
+		connectedCheckBox.setText("Connected");
+
+		collapsedCheckBox.setText("Collapsed");
+
+	}
 	public abstract void valueChanged(ListSelectionEvent evt);
 	public void bgColorComboBox(){
 		if (!settingValueFromTable) {

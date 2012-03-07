@@ -24,11 +24,13 @@ import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -58,7 +60,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
 	public ListSelectionModel lsm;
-	public static StyledJTable table;
+	public StyledJTable table;
 	public SeqMapView smv;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
@@ -83,12 +85,16 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		return singleton;
 	}
 
-	public TierPrefsView() {
+	private TierPrefsView() {
+		title = "Track List";
+		b1Text = "Select All";
+		b2Text = "Restore to Default";
+		track = "Track Name";
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
-
+		initCommonComponents();
 		initComponents();
 	}
 	
@@ -99,19 +105,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		applyDisplayNameButton = new JRPButton("TierPrefsView_applyDisplayNameButton");
-		fgColorComboBox = new ColorComboBox();
-		bgColorComboBox = new ColorComboBox();
-		trackNameSizeComboBox = new JRPComboBox("TierPrefsView_trackNameSizeComboBox");
-		maxDepthTextField = new JRPNumTextField("TierPrefsView_maxDepthTextField");
-		labelFieldComboBox = new JRPComboBox("TierPrefsView_labelFieldComboBox");
-		show2TracksCheckBox = new JRPCheckBox("TierPrefsView_show2TracksCheckBox");
-		connectedCheckBox = new JRPCheckBox("TierPrefsView_connectedCheckBox");
-		collapsedCheckBox = new JRPCheckBox("TierPrefsView_collapsedCheckBox");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
 		possitiveColorComboBox = new ColorComboBox();
-		negativeColorComboBox = new ColorComboBox();
-		colorCheckBox = new JRPCheckBox("TierPrefsView_colorCheckBox");
-		arrowCheckBox = new JRPCheckBox("TierPrefsView_arrowCheckBox");
 		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");

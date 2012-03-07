@@ -55,7 +55,6 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -455,7 +454,7 @@ public final class SimpleGraphTab
 
 	private void setColorCombobox() {
 		int num_glyphs = glyphs.size();
-		
+
 		if (num_glyphs == 0) {
 			// Do Nothing
 		} else if (num_glyphs == 1) {
@@ -503,7 +502,7 @@ public final class SimpleGraphTab
 							((GraphGlyph)sggl).setGraphStyle(style); // leave the heat map whatever it was
 						}
 						else {
-							TierGlyphViewMode parent = (TierGlyphViewMode)sggl.getTierGlyph();
+							TierGlyph parent = sggl.getTierGlyph();
 							parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
 						}
 						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -865,7 +864,7 @@ public final class SimpleGraphTab
 				}
 				colorMap.put(col, c);
 			}
-			
+
 			// otherwise, construct a new combo style
 			if (combo_style == null) {
 				combo_style = new SimpleTrackStyle("Joined Graphs", true);
@@ -1016,7 +1015,7 @@ public final class SimpleGraphTab
 //			// clean-up references to the graph, allowing garbage-collection, etc.
 //			igbService.getSeqMapView().select(Collections.<SeqSymmetry>emptyList());
 //		}
-//		
+//
 //		BioSeq aseq = gsym.getGraphSeq();
 //		if (aseq != null) {
 //			aseq.unloadAnnotation(gsym);
@@ -1125,7 +1124,7 @@ public final class SimpleGraphTab
 	public void bgColorComboBoxActionPerformed() {
 		changeColor(grafs, bgColorComboBox);
 	}
-	
+
 	public void trackstylePropertyChanged(EventObject eo) {
 		setColorCombobox();
 	}

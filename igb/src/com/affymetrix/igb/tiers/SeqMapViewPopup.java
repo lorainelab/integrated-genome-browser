@@ -71,7 +71,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
 	private final JMenu viewModeMenu = new JMenu(BUNDLE.getString("viewModeMenu"));
 	private final JMenu transformMenu = new JMenu(BUNDLE.getString("transformMenu"));
-	private final JMenu summaryMenu = new JMenu(BUNDLE.getString("summaryMenu"));
+//	private final JMenu summaryMenu = new JMenu(BUNDLE.getString("summaryMenu"));
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
@@ -294,82 +294,82 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("showSingleTierAction");
 		}
 	};
-	private final Action sym_summarize_single_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			addSymSummaryTier(current_tier, false);
-		}
-
-		@Override
-		public String getText() {
-			return "";
-		}
-	};
-	private final Action sym_summarize_both_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			addSymSummaryTier(current_tier, true);
-		}
-
-		@Override
-		public String getText() {
-			return "";
-		}
-	};
-	private final Action mismatch_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			addMisMatchTier(current_tier, "mismatch");
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("mismatchAction");
-		}
-	};
-	private final Action mismatch_pileup_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() > 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("mismatchPileupAction");
-		}
-	};
+//	private final Action sym_summarize_single_action = new GenericAction() {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		public void actionPerformed(ActionEvent e) {
+//			super.actionPerformed(e);
+//			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+//			if (current_tiers.size() > 1) {
+//				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
+//			}
+//			TierGlyph current_tier = current_tiers.get(0);
+//			addSymSummaryTier(current_tier, false);
+//		}
+//
+//		@Override
+//		public String getText() {
+//			return "";
+//		}
+//	};
+//	private final Action sym_summarize_both_action = new GenericAction() {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		public void actionPerformed(ActionEvent e) {
+//			super.actionPerformed(e);
+//			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+//			if (current_tiers.size() > 1) {
+//				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
+//			}
+//			TierGlyph current_tier = current_tiers.get(0);
+//			addSymSummaryTier(current_tier, true);
+//		}
+//
+//		@Override
+//		public String getText() {
+//			return "";
+//		}
+//	};
+//	private final Action mismatch_action = new GenericAction() {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		public void actionPerformed(ActionEvent e) {
+//			super.actionPerformed(e);
+//			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+//			if (current_tiers.size() > 1) {
+//				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
+//			}
+//			TierGlyph current_tier = current_tiers.get(0);
+//			addMisMatchTier(current_tier, "mismatch");
+//		}
+//
+//		@Override
+//		public String getText() {
+//			return BUNDLE.getString("mismatchAction");
+//		}
+//	};
+//	private final Action mismatch_pileup_action = new GenericAction() {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		public void actionPerformed(ActionEvent e) {
+//			super.actionPerformed(e);
+//			List<TierGlyph> current_tiers = handler.getSelectedTiers();
+//			if (current_tiers.size() > 1) {
+//				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
+//			}
+//			TierGlyph current_tier = current_tiers.get(0);
+//			addMisMatchTier(current_tier, MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER);
+//		}
+//
+//		@Override
+//		public String getText() {
+//			return BUNDLE.getString("mismatchPileupAction");
+//		}
+//	};
 	private final Action maximize_track_action = new GenericAction() {
 
 		private static final long serialVersionUID = 1L;
@@ -1090,9 +1090,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			boolean is_annotation_type = !style.isGraphTier();
-			summaryMenu.setEnabled(is_annotation_type);
-			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
-			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
+//			summaryMenu.setEnabled(is_annotation_type);
+//			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
+//			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
 			//sym_summarize_single_action.setEnabled(is_annotation_type);
 			//coverage_action.setEnabled(is_annotation_type);
 			//save_menu.setEnabled(is_annotation_type);
@@ -1174,7 +1174,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 			}
 		} else {
-			summaryMenu.setEnabled(false);
+//			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
 			//coverage_action.setEnabled(false);
 		}
@@ -1185,7 +1185,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				save_track_action.setEnabled(false);
 				strandsMenu.setEnabled(false);
-				summaryMenu.setEnabled(false);
+//				summaryMenu.setEnabled(false);
 				repack_tracks_action.setEnabled(false);
 				delete_action.setEnabled(false);
 				break;
@@ -1213,10 +1213,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			GenericFeature feature = style.getFeature();
 			if (feature != null) {
 				String file_type = style.getFileType();
-				if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
-					popup.add(mismatch_action);
-					popup.add(mismatch_pileup_action);
-				}
+//				if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {
+//					popup.add(mismatch_action);
+//					popup.add(mismatch_pileup_action);
+//				}
 
 				if (FileTypeHolder.getInstance().isSequence(file_type)) {
 					popup.add(new JSeparator());
@@ -1253,13 +1253,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (operationsMenu != null) {
 			popup.add(operationsMenu);
 		}
-		summaryMenu.removeAll();
-		summaryMenu.add(sym_summarize_single_action);
-		if (!show_two_tiers.isEnabled()) // If showing both track then give a option to create
-		{
-			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
-		}
-		popup.add(summaryMenu);
+//		summaryMenu.removeAll();
+//		summaryMenu.add(sym_summarize_single_action);
+//		if (!show_two_tiers.isEnabled()) // If showing both track then give a option to create
+//		{
+//			summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
+//		}
+//		popup.add(summaryMenu);
 		popup.add(new JSeparator());
 		popup.add(repack_tracks_action); // experimental
 		popup.add(delete_action);

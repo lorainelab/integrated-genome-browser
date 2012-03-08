@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -10,7 +6,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
@@ -22,12 +17,9 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.util.Map.Entry;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;

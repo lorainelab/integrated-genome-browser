@@ -194,9 +194,13 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = new File(path);
 
-		if (!exportFile.getParentFile().isDirectory()) {
-			exportFile = new File(previousFile);
-			filePathTextField.setText(previousFile);
+		if (!exportFile.isDirectory() && !exportFile.isFile()) {
+			exportFile = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
+		} else {
+			if (!exportFile.getParentFile().isDirectory()) {
+				exportFile = new File(previousFile);
+				filePathTextField.setText(previousFile);
+			}
 		}
 
 		filter = getFilter(selectedExt);

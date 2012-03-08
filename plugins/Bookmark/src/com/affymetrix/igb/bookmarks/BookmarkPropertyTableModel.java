@@ -9,8 +9,9 @@ import javax.swing.table.AbstractTableModel;
  */
 public class BookmarkPropertyTableModel extends AbstractTableModel {
 
-	/** A silly little helper class that holds two strings. 
-	 *  A String[2] array would work just as well.
+	/**
+	 * A silly little helper class that holds two strings. A String[2] array
+	 * would work just as well.
 	 */
 	public static class Duple {
 
@@ -24,14 +25,15 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 	}
 	public List<Duple> duples = Collections.<Duple>emptyList();
 	public final String[] names = {"Parameter", "Value"};
-	/** The number of extra rows to display to give users room to
-	 *  enter extra data into the table.
+	/**
+	 * The number of extra rows to display to give users room to enter extra
+	 * data into the table.
 	 */
 	public final static int EXTRA_ROWS = 5;
 
-	/** Fills the table model with data from the Map.
-	 *  Some extra empty rows may also be appended to the table to 
-	 *  allow room for extra data.
+	/**
+	 * Fills the table model with data from the Map. Some extra empty rows may
+	 * also be appended to the table to allow room for extra data.
 	 */
 	public void setValuesFromMap(Map<String, String[]> map) {
 		if (map == null) {
@@ -56,10 +58,11 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
-	/** Returns the current contents of the table model as a Map.
-	 *  The returned Map will be a new map, not the same as the one passed in to
-	 *  {@link #setValuesFromMap(Map)}.
-	 *  Any item with an empty key or value will not be included in the Map.
+	/**
+	 * Returns the current contents of the table model as a Map. The returned
+	 * Map will be a new map, not the same as the one passed in to
+	 *  {@link #setValuesFromMap(Map)}. Any item with an empty key or value will
+	 * not be included in the Map.
 	 */
 	Map<String, String[]> getValuesAsMap() {
 		Map<String, String[]> m = new LinkedHashMap<String, String[]>();
@@ -115,11 +118,11 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == 0) {
-			return false;
-		} else {
+		if (col == 1) {
 			return true;
 		}
+
+		return false;
 	}
 
 	public void clear() {

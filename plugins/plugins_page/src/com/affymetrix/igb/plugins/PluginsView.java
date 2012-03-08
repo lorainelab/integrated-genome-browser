@@ -56,10 +56,9 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
+import com.affymetrix.genoviz.swing.recordplayback.JRPStyledTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.plugins.BundleTableModel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 /**
@@ -115,7 +114,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private BundleContext bundleContext;
 	private JScrollPane jScrollPane;
 	private final BundleTableModel bundleTableModel;
-	private final JRPTable bundleTable;
+	private final JRPStyledTable bundleTable;
 	private JRPCheckBox installedBundlesCheckbox;
 	private JRPCheckBox uninstalledBundlesCheckbox;
 	private JRPButton updateAllBundlesButton;
@@ -140,7 +139,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		setLayout(new BorderLayout());
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
 		bundleTableModel = new BundleTableModel();
-		bundleTable = new JRPTable("PluginsView_bundleTable", bundleTableModel) {
+		bundleTable = new JRPStyledTable("PluginsView_bundleTable", bundleTableModel) {
 			private static final long serialVersionUID = 1L;
 			public void valueChanged(ListSelectionEvent e) {
 				super.valueChanged(e);
@@ -219,7 +218,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private Bundle getNameInfoBundle(Point p) {
         int row = bundleTable.rowAtPoint(p);
         int column = bundleTable.columnAtPoint(p);
-		if (column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME)) {
+		if (column == bundleTableModel.getColumnIndex(BUNDLE_NAME)) {
             Bundle bundle = getBundleAtRow(row);
             Rectangle r = bundleTable.getCellRect(row, column, false);
             NameInfoPanel nameInfoPanel = NameInfoPanel.getPanel(bundle); // kludge

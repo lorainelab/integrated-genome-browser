@@ -107,9 +107,6 @@ public final class WebLinksView implements ListSelectionListener {
 		table.getColumnModel().getColumn(COL_REGEX).setMaxWidth(400);
 		table.getColumnModel().getColumn(COL_TYPE).setPreferredWidth(90);
 		table.getColumnModel().getColumn(COL_TYPE).setMaxWidth(90);
-
-		Font f = new Font("SansSerif", Font.BOLD, 12);
-		table.getTableHeader().setFont(f);
 	}
 
 	private static void setAccelerator(Action a) {

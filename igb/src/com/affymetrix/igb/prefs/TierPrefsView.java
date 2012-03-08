@@ -23,13 +23,11 @@ import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -205,9 +203,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
-
-		Font f = new Font("SansSerif", Font.BOLD, 12);
-		table.getTableHeader().setFont(f);
 	}
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {

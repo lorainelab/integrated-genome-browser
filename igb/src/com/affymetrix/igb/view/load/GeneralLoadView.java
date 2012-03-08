@@ -485,15 +485,6 @@ public final class GeneralLoadView {
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
 		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
 
-
-		dataManagementTable.getTableHeader().setReorderingAllowed(false);
-		TableCellRenderer renderer = dataManagementTable.getTableHeader().getDefaultRenderer();
-		JLabel label = (JLabel) renderer;
-		label.setHorizontalAlignment(JLabel.CENTER);
-		dataManagementTable.getTableHeader().setDefaultRenderer(renderer);
-
-		Font f = new Font("SansSerif", Font.BOLD, 12);
-		dataManagementTable.getTableHeader().setFont(f);
 		dataManagementTable.setRowSelectionAllowed(false);
 		dataManagementTable.setCellSelectionEnabled(true);
 

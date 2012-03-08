@@ -152,9 +152,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
 
-		Font f = new Font("SansSerif", Font.BOLD, 12);
-		table.getTableHeader().setFont(f);
-
 		addTrackDefaultButton.setText("Add");
 
 		removeTrackDefaultButton.setText("Remove");

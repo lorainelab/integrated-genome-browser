@@ -1140,6 +1140,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
 
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
+			String meth = style.getMethodName();
 			boolean is_annotation_type = !style.isGraphTier();
 //			summaryMenu.setEnabled(is_annotation_type);
 //			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
@@ -1152,7 +1153,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 
 
-			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
+			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry && 
+					TrackUtils.getInstance().useViewMode(meth)) {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();

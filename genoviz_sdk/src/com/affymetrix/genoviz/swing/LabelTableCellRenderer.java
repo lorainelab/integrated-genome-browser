@@ -2,16 +2,16 @@ package com.affymetrix.genoviz.swing;
 
 import java.awt.Component;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
  *
  * @author hiralv
  */
-public final class LabelTableCellRenderer extends JComponent implements TableCellRenderer {
+public final class LabelTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
 
 	private final JLabel label;
 
@@ -29,6 +29,7 @@ public final class LabelTableCellRenderer extends JComponent implements TableCel
 		label = new JLabel();
 	}
 
+	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 

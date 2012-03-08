@@ -3,22 +3,15 @@ package com.affymetrix.genoviz.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Vector;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
+import javax.swing.*;
+import javax.swing.table.*;
 
 /**
  *
- * @author david and nick
+ * @author david, modified by nick
  */
 public class StyledJTable extends JTable {
 
@@ -65,25 +58,33 @@ public class StyledJTable extends JTable {
 	private void init() {
 		setCellSelectionEnabled(true);
 		setSelectionForeground(Color.BLACK);
-
-		setOpaque(false);
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
-		setRowHeight(20);
 
 		JTableHeader header = getTableHeader();
-		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
-		header.setForeground(Color.black);
-		header.setBackground(Color.white);
 		header.setReorderingAllowed(false);
-		header.setResizingAllowed(true);
+		header.setBorder(new PartialLineBorder(Color.black, 1, "B"));
+		TableCellRenderer renderer = header.getDefaultRenderer();
+		JLabel label = (JLabel) renderer;
+		label.setHorizontalAlignment(JLabel.CENTER);
+		header.setDefaultRenderer(renderer);
 
-		setAutoscrolls(true);
+		Font f = new Font("SansSerif", Font.BOLD, 12);
+		header.setFont(f);
 
-		TableCellEditor editor = this.getDefaultEditor(String.class);
+		TableCellEditor editor = getDefaultEditor(String.class);
 		((DefaultCellEditor) editor).setClickCountToStart(1);
-		this.setDefaultEditor(String.class, editor);
+		setDefaultEditor(String.class, editor);
+	}
+
+	@Override
+	public TableCellRenderer getCellRenderer(int r, int c) {
+		TableCellRenderer renderer = super.getCellRenderer(r, c);
+		if (!isCellEditable(r, c)) {
+			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.CENTER);
+		}
+		return renderer;
 	}
 
 	@Override

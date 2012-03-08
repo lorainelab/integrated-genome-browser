@@ -1,6 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genoviz.swing.StyledJTable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -31,7 +32,7 @@ public final class BookmarkData {
 
 	public BookmarkData() {
 		propertyModel = new BookmarkPropertyTableModel();
-		propertyTable = new JTable(propertyModel);
+		propertyTable = new StyledJTable(propertyModel);
 		propertyTable.setCellSelectionEnabled(true);
 
 		propertyModel.addTableModelListener(new TableModelListener() {
@@ -43,11 +44,11 @@ public final class BookmarkData {
 		});
 
 		infoModel = new BookmarkInfoTableModel();
-		infoTable = new JTable(infoModel);
+		infoTable = new StyledJTable(infoModel);
 		infoTable.setCellSelectionEnabled(true);
 
 		datalistModel = new BookmarkDataListTableModel();
-		datalistTable = new JTable(datalistModel);
+		datalistTable = new StyledJTable(datalistModel);
 		datalistTable.setCellSelectionEnabled(true);
 	}
 

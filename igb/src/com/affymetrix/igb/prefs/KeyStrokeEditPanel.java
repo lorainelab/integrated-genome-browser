@@ -38,7 +38,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 	private String the_key = null;
 
 	/** Creates a new instance of KeyStrokesView */
-	public KeyStrokeEditPanel() {
+	public KeyStrokeEditPanel() {		
 		key_field.addKeyListener(new KeyListener() {
 
 			public void keyPressed(KeyEvent evt) {
@@ -78,7 +78,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 		key_field.addFocusListener(new java.awt.event.FocusAdapter() {
 
 			public void focusLost(java.awt.event.FocusEvent evt) {
-				key_fieldFocusLost(evt);
+				applyAction();
 			}
 		});
 
@@ -91,11 +91,6 @@ public final class KeyStrokeEditPanel extends JPanel {
 		});
 
 		setEnabled(false);
-	}
-
-	private void key_fieldFocusLost(java.awt.event.FocusEvent evt) {
-		applyAction();
-
 	}
 
 	private String isCommandInUse(String command) {

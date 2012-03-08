@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *    
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.  
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.prefs;
 
@@ -19,10 +16,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.StyledJTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 /**
- *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
+ * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
 public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
@@ -30,14 +30,15 @@ public final class KeyStrokesView implements ListSelectionListener,
 	private static final long serialVersionUID = 1L;
 	public final KeyStrokeViewTable table = new KeyStrokeViewTable();
 //  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
-	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();;
+	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
+	;
 	public static final int KeySrokeColumn = 1;
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
 	private static KeyStrokesView singleton;
 	private int selected = -1;
-	
+
 	public static synchronized KeyStrokesView getSingleton() {
 		if (singleton == null) {
 			singleton = new KeyStrokesView();
@@ -51,12 +52,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		//sorter = new TableRowSorter<KeyStrokeViewTableModel>(model);
-
 		table.setModel(model);
-		//table.setRowSorter(sorter);
-		table.setRowSelectionAllowed(true);
-		table.setEnabled(true);
+		table.setRowHeight(20);
 
 		edit_panel = new KeyStrokeEditPanel();
 		edit_panel.setEnabled(false);
@@ -91,28 +88,32 @@ public final class KeyStrokesView implements ListSelectionListener,
 		return rows;
 	}
 
-	/** Re-populates the table with the shortcut data. */
+	/**
+	 * Re-populates the table with the shortcut data.
+	 */
 	private void refresh() {
 		Object[][] rows = null;
 //    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
 		rows = buildRows(PreferenceUtils.getKeystrokesNode());
 		model.setRows(rows);
 	}
-	
+
 	public void invokeRefreshTable() { //Should fix the problems associated with updating entire table at every preference change.
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            refresh();
-			model.fireTableDataChanged();
-			if(selected > 0){
-				table.setRowSelectionInterval(selected, selected);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			public void run() {
+				refresh();
+				model.fireTableDataChanged();
+				if (selected > 0) {
+					table.setRowSelectionInterval(selected, selected);
+				}
 			}
-        }
-    }); 
+		});
 
-  }
+	}
 
-	/** This is called when the user selects a row of the table;
+	/**
+	 * This is called when the user selects a row of the table;
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
@@ -141,12 +142,13 @@ public final class KeyStrokesView implements ListSelectionListener,
 		invokeRefreshTable();
 	}
 
-	/*public void destroy() {
-	removeAll();
-	if (lsm != null) {lsm.removeListSelectionListener(this);}
-	PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this);
-	}*/
-	class KeyStrokeViewTable extends JTable {
+	/*
+	 * public void destroy() { removeAll(); if (lsm != null)
+	 * {lsm.removeListSelectionListener(this);}
+	 * PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this);
+	}
+	 */
+	class KeyStrokeViewTable extends StyledJTable {
 
 		private static final long serialVersionUID = 1L;
 
@@ -158,6 +160,13 @@ public final class KeyStrokesView implements ListSelectionListener,
 				return textEditor;
 			}
 			return super.getCellEditor(row, col);
+		}
+
+		@Override
+		public TableCellRenderer getCellRenderer(int row, int col) {
+			TableCellRenderer renderer = super.getCellRenderer(row, col);
+			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);
+			return renderer;
 		}
 	}
 }

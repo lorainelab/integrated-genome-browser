@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class KeyStrokeViewTableModel extends AbstractTableModel {
 
-	private final static String[] columnNames = {"Action", "Key Stroke"};
+	private final static String[] columnNames = {"Action", "Key Stroke (Double Click to Edit)"};
 	private Object[][] rows;
 
 	public int getRowCount() {

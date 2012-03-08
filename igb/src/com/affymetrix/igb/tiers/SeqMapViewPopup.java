@@ -1235,10 +1235,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				save_track_action.setEnabled(false);
 				strandsMenu.setEnabled(false);
-//				summaryMenu.setEnabled(false);
 				repack_selected_tracks_action.setEnabled(false);
 				repack_all_tracks_action.setEnabled(false);
 				delete_action.setEnabled(false);
+				show_two_tiers.setEnabled(false);
+				color_by_score_on_action.setEnabled(false);
 				break;
 			}
 		}

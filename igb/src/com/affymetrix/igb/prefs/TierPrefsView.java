@@ -92,7 +92,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		initCommonComponents();
 		initComponents();
 	}
-	
+
 	private void initComponents() {
 		model = new TierPrefsTableModel();
 
@@ -106,22 +106,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
-		displayNameTextField.setEnabled(false);
-		applyDisplayNameButton.setEnabled(false);
-		bgColorComboBox.setEnabled(false);
-		fgColorComboBox.setEnabled(false);
-		trackNameSizeComboBox.setEnabled(false);
-		labelFieldComboBox.setEnabled(false);
-		maxDepthTextField.setEnabled(false);
-		show2TracksCheckBox.setEnabled(false);
-		connectedCheckBox.setEnabled(false);
-		collapsedCheckBox.setEnabled(false);
-		colorCheckBox.setEnabled(false);
-		arrowCheckBox.setEnabled(false);
-		possitiveColorComboBox.setEnabled(false);
-		negativeColorComboBox.setEnabled(false);
-		viewModeCB.setEnabled(false);
-		applyToAllButton.setEnabled(false);
+		setEnabled(false);
 
 		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
 
@@ -166,7 +151,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		table = new StyledJTable(model);
 		table.list.add(TierPrefsView.COL_BACKGROUND);
 		table.list.add(TierPrefsView.COL_FOREGROUND);
-		
+
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(this);
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -288,15 +273,36 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 
 		if (!isContained) {
-			((TierPrefsTableModel)model).setStyles(customizables);
+			((TierPrefsTableModel) model).setStyles(customizables);
 			model.fireTableDataChanged();
 		}
 	}
 
 	public void clearTable() {
-		((TierPrefsTableModel)model).clear();
+		((TierPrefsTableModel) model).clear();
 		//also refresh options panel to ensure coordinate track colors stay synchronized
 		OtherOptionsView.getSingleton().refresh();
+	}
+
+	private void setEnabled(boolean b) {
+		displayNameTextField.setEnabled(b);
+		applyDisplayNameButton.setEnabled(b);
+		viewModeCB.setEnabled(b);
+		labelFieldComboBox.setEnabled(b);
+		maxDepthTextField.setEnabled(b);
+		connectedCheckBox.setEnabled(b);
+		collapsedCheckBox.setEnabled(b);
+		colorCheckBox.setEnabled(b);
+		arrowCheckBox.setEnabled(b);
+		possitiveColorComboBox.setEnabled(b);
+		negativeColorComboBox.setEnabled(b);
+		show2TracksCheckBox.setEnabled(b);
+		bgColorComboBox.setEnabled(b);
+		fgColorComboBox.setEnabled(b);
+		trackNameSizeComboBox.setEnabled(b);
+		applyToAllButton.setEnabled(b);
+		labelFieldComboBox.setEnabled(b);
+		maxDepthTextField.setEnabled(b);
 	}
 
 	/**
@@ -306,47 +312,13 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	 */
 	@Override
 	public void valueChanged(ListSelectionEvent evt) {
-		displayNameTextField.setEnabled(true);
-		applyDisplayNameButton.setEnabled(true);
-		viewModeCB.setEnabled(true);
-		labelFieldComboBox.setEnabled(true);
-		maxDepthTextField.setEnabled(true);
-		connectedCheckBox.setEnabled(true);
-		collapsedCheckBox.setEnabled(true);
-		colorCheckBox.setEnabled(true);
-		arrowCheckBox.setEnabled(true);
-		possitiveColorComboBox.setEnabled(true);
-		negativeColorComboBox.setEnabled(true);
-		show2TracksCheckBox.setEnabled(true);
-		bgColorComboBox.setEnabled(true);
-		fgColorComboBox.setEnabled(true);
-		trackNameSizeComboBox.setEnabled(true);
-		applyToAllButton.setEnabled(true);
-		labelFieldComboBox.setEnabled(true);
-		maxDepthTextField.setEnabled(true);
+		setEnabled(true);
 		selectedRows = table.getSelectedRows();
 
 		initializationDetector = true;
 
 		if (table.getRowCount() == 0) {
-			displayNameTextField.setEnabled(false);
-			applyDisplayNameButton.setEnabled(false);
-			viewModeCB.setEnabled(false);
-			labelFieldComboBox.setEnabled(false);
-			maxDepthTextField.setEnabled(false);
-			connectedCheckBox.setEnabled(false);
-			collapsedCheckBox.setEnabled(false);
-			colorCheckBox.setEnabled(false);
-			arrowCheckBox.setEnabled(false);
-			possitiveColorComboBox.setEnabled(false);
-			negativeColorComboBox.setEnabled(false);
-			show2TracksCheckBox.setEnabled(false);
-			bgColorComboBox.setEnabled(false);
-			fgColorComboBox.setEnabled(false);
-			trackNameSizeComboBox.setEnabled(false);
-			applyToAllButton.setEnabled(false);
-			labelFieldComboBox.setEnabled(false);
-			maxDepthTextField.setEnabled(false);
+			setEnabled(false);
 		}
 
 		if (selectedRows.length > 1) {
@@ -368,7 +340,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 
 		if (selectedRows.length == 1) {
-			selectedStyle = ((TierPrefsTableModel)model).getStyles().get(selectedRows[0]);
+			selectedStyle = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
 					|| selectedStyle.isGraphTier()) {
@@ -491,11 +463,13 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			table.setRowSelectionInterval(0, table.getRowCount() - 2);
 		}
 	}
+
 	public void displayNameTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(displayNameTextField.getText(), 0, COL_TRACK_NAME);
 		}
 	}
+
 	@Override
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
@@ -506,6 +480,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			}
 		}
 	}
+
 	public void viewModeCB() {
 		if (!settingValueFromTable) {
 			for (int i = 0; i < selectedRows.length; i++) {
@@ -522,7 +497,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			int[] previousSelectedRows = selectedRows;
 			for (int i = 0; i < selectedRows.length; i++) {
 				row = selectedRows[i];
-				style = ((TierPrefsTableModel)model).getStyles().get(row);
+				style = ((TierPrefsTableModel) model).getStyles().get(row);
 				style.restoreToDefault();
 			}
 
@@ -600,6 +575,12 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 
 		public Object getValueAt(int row, int column) {
+			// set all components unable to edit, if no track has been selected.
+			if (table.getSelectedRow() == -1 &&
+					row == 0 && column == 0) {
+				setEnabled(false);
+			}
+
 			TrackStyle style;
 			style = tier_styles.get(row);
 			switch (column) {

@@ -194,9 +194,13 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = new File(path);
 
-		if (!exportFile.getParentFile().isDirectory()) {
-			exportFile = new File(previousFile);
-			filePathTextField.setText(previousFile);
+		if (!exportFile.isDirectory() && !exportFile.isFile()) {
+			exportFile = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
+		} else {
+			if (!exportFile.getParentFile().isDirectory()) {
+				exportFile = new File(previousFile);
+				filePathTextField.setText(previousFile);
+			}
 		}
 
 		filter = getFilter(selectedExt);
@@ -440,8 +444,8 @@ public class ExportDialog implements ExportConstants {
 			return;
 		} else {
 			if (!ext.equalsIgnoreCase(selectedExt)) {
-				if (selectedExt.equals(EXTENSION[2]) &&
-					ext.equalsIgnoreCase(EXTENSION[3])) { // special case for jpg
+				if (selectedExt.equals(EXTENSION[2])
+						&& ext.equalsIgnoreCase(EXTENSION[3])) { // special case for jpg
 					return;
 				}
 

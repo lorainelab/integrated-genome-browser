@@ -19,6 +19,8 @@ import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -168,6 +170,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			if (decorator != null) {
 				decorator.setVisible(false);
 				decorator.dispose();
+			
 				decoratorMap.remove(s);
 			}
 		}

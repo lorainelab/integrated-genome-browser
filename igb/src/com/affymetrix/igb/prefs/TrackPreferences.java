@@ -4,25 +4,29 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author auser
  */
-public abstract class TrackPreferences {
+public abstract class TrackPreferences implements ListSelectionListener{
 	AbstractTableModel model;
 	public int[] selectedRows;
 	protected boolean settingValueFromTable;
@@ -38,6 +42,11 @@ public abstract class TrackPreferences {
 	public ColorComboBox negativeColorComboBox;
 	public JRPCheckBox colorCheckBox;
 	public JRPCheckBox arrowCheckBox;
+	public javax.swing.JComboBox viewModeCB;
+	public JCheckBox autoRefreshCheckBox;
+	public JRPButton refreshButton;
+	public StyledJTable table;
+	public ListSelectionModel lsm;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	public static final int COL_MAX_DEPTH = 5;
 	public static final int COL_LABEL_FIELD = 7;
@@ -52,10 +61,54 @@ public abstract class TrackPreferences {
 	public static final int COL_DIRECTION_TYPE = 9;
 	protected float trackNameSize;
 	public String b1Text,b2Text,track,title;
+	public void initTable() {
+		table = new StyledJTable(model);
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
+
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(this);
+		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		table.setRowSelectionAllowed(true);
+
+		ColorCellEditor cellEditor = new ColorCellEditor() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected ColorComboBox createColorComboBox() {
+				final ColorComboBox combobox = new ColorComboBox();
+				combobox.setColorValueVisible(false);
+				combobox.setCrossBackGroundStyle(false);
+				combobox.setButtonVisible(false);
+				combobox.setStretchToFit(true);
+				return combobox;
+			}
+		};
+		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
+		table.setDefaultEditor(Color.class, cellEditor);
+		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
+		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
+
+		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
+		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
+		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
+		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
+	}
 	public void initCommonComponents()
 	{
 		possitiveColorComboBox = new ColorComboBox();
 		negativeColorComboBox = new ColorComboBox();
+		viewModeCB = new javax.swing.JComboBox();
+		autoRefreshCheckBox = new JCheckBox();
+		refreshButton = new JRPButton(this.getClass().getCanonicalName()+"_refreshButton");
 		colorCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_colorCheckBox");
 		arrowCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_arrowCheckBox");
 		bgColorComboBox = new ColorComboBox();
@@ -109,6 +162,55 @@ public abstract class TrackPreferences {
 
 	}
 	public abstract void valueChanged(ListSelectionEvent evt);
+	public abstract JTextField getTrackDefaultTextField();
+	public ColorComboBox getPossitiveColorCombo() {
+		return possitiveColorComboBox;
+	}
+
+	public ColorComboBox getNegativeColorComboBox() {
+		return negativeColorComboBox;
+	}
+
+	public JRPCheckBox getColorCheckBox() {
+		return colorCheckBox;
+	}
+
+	public JRPCheckBox getArrowCheckBox() {
+		return arrowCheckBox;
+	}
+	public JTable getTable() {
+		return table;
+	}
+		public ColorComboBox getBgColorComboBox() {
+		return bgColorComboBox;
+	}
+
+	public JComboBox getTrackNameSizeComboBox() {
+		return trackNameSizeComboBox;
+	}
+
+	public ColorComboBox getFgColorComboBox() {
+		return fgColorComboBox;
+	}
+
+	public JComboBox getLabelFieldComboBox() {
+		return labelFieldComboBox;
+	}
+
+	public JTextField getMaxDepthTextField() {
+		return maxDepthTextField;
+	}
+	public JCheckBox getShow2TracksCheckBox() {
+		return show2TracksCheckBox;
+	}
+
+	public JCheckBox getConnectedCheckBox() {
+		return connectedCheckBox;
+	}
+
+	public JCheckBox getCollapsedCheckBox() {
+		return collapsedCheckBox;
+	}
 	public void bgColorComboBox(){
 		if (!settingValueFromTable) {
 			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);

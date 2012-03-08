@@ -55,7 +55,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
 	public ListSelectionModel lsm;
-	public StyledJTable table;
+
 	public SeqMapView smv;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
@@ -63,12 +63,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public List<TierGlyph> currentTiers;
 	public List<TrackStyle> currentStyles;
 	public JRPButton applyToAllButton;
-	public JCheckBox autoRefreshCheckBox;
 	public JRPTextField displayNameTextField;
 	public JButton applyDisplayNameButton;
-	public JRPButton refreshButton;
 	public ButtonGroup showStrandButtonGroup;
-	public JRPComboBox viewModeCB;
 	public JLabel applyToAllTip;
 
 	public static synchronized TierPrefsView getSingleton() {
@@ -101,7 +98,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		applyDisplayNameButton = new JRPButton("TierPrefsView_applyDisplayNameButton");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
-		possitiveColorComboBox = new ColorComboBox();
 		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
@@ -147,47 +143,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 	}
 
-	private void initTable() {
-		table = new StyledJTable(model);
-		table.list.add(TierPrefsView.COL_BACKGROUND);
-		table.list.add(TierPrefsView.COL_FOREGROUND);
-
-		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(this);
-		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-		table.setRowSelectionAllowed(true);
-
-		ColorCellEditor cellEditor = new ColorCellEditor() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected ColorComboBox createColorComboBox() {
-				final ColorComboBox combobox = new ColorComboBox();
-				combobox.setColorValueVisible(false);
-				combobox.setCrossBackGroundStyle(false);
-				combobox.setButtonVisible(false);
-				combobox.setStretchToFit(true);
-				return combobox;
-			}
-		};
-		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
-		table.setDefaultEditor(Color.class, cellEditor);
-		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
-
-		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
-	}
+	
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
@@ -215,7 +171,9 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			}
 		}
 	}
-
+	public JTextField getTrackDefaultTextField() {
+		return displayNameTextField;
+	}
 	/**
 	 * Whether or not changes to the trackOptionsTable should automatically be
 	 * applied to the view.
@@ -314,9 +272,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public void valueChanged(ListSelectionEvent evt) {
 		setEnabled(true);
 		selectedRows = table.getSelectedRows();
-
 		initializationDetector = true;
-
+		
 		if (table.getRowCount() == 0) {
 			setEnabled(false);
 		}

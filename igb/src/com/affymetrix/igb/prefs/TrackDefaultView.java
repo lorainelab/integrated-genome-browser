@@ -40,7 +40,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		TRACK_NAME_SIZE,};
 	public static final int COL_TRACK_DEFAULT = 0;
 	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance();
-	private ListSelectionModel lsm;
 	private Object[] temp;
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
@@ -52,7 +51,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private TrackStyle selectedStyle;
 	private JRPButton addTrackDefaultButton;
 	private JRPButton removeTrackDefaultButton;
-	private StyledJTable table;
 	private JTextField trackDefaultTextField;
 	private static TrackDefaultView singleton;
 
@@ -101,51 +99,10 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	private void initComponents() {
 		trackDefaultTextField = new JTextField();
-		table = new StyledJTable();
-		table.list.add(TierPrefsView.COL_BACKGROUND);
-		table.list.add(TierPrefsView.COL_FOREGROUND);
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
-		lsm = table.getSelectionModel();
-		lsm.addListSelectionListener(this);
-		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-		table.setRowSelectionAllowed(true);
-
-		ColorCellEditor cellEditor = new ColorCellEditor() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected ColorComboBox createColorComboBox() {
-				final ColorComboBox combobox = new ColorComboBox();
-				combobox.setColorValueVisible(false);
-				combobox.setCrossBackGroundStyle(false);
-				combobox.setButtonVisible(false);
-				combobox.setStretchToFit(true);
-				return combobox;
-			}
-		};
-		table.setModel(model);
-		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
-		table.setDefaultEditor(Color.class, cellEditor);
-		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
-		table.getColumnModel().getColumn(COL_FOREGROUND).setPreferredWidth(80);
-
-
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMinWidth(80);
-		table.getColumnModel().getColumn(COL_FOREGROUND).setMaxWidth(80);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setPreferredWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMinWidth(82);
-		table.getColumnModel().getColumn(COL_BACKGROUND).setMaxWidth(82);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
-		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
-
+		initTable();
 		addTrackDefaultButton.setText("Add");
-
 		removeTrackDefaultButton.setText("Remove");
 	}
 	@Override
@@ -293,27 +250,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 		}
 	}
-
-	public ColorComboBox getPossitiveColorCombo() {
-		return possitiveColorComboBox;
-	}
-
-	public ColorComboBox getNegativeColorComboBox() {
-		return negativeColorComboBox;
-	}
-
-	public JRPCheckBox getColorCheckBox() {
-		return colorCheckBox;
-	}
-
-	public JRPCheckBox getArrowCheckBox() {
-		return arrowCheckBox;
-	}
-
-	public JTable getTable() {
-		return table;
-	}
-
 	public JRPButton getAddTrackDefaultButton() {
 		return addTrackDefaultButton;
 	}
@@ -325,39 +261,6 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	public JTextField getTrackDefaultTextField() {
 		return trackDefaultTextField;
 	}
-
-	public ColorComboBox getBgColorComboBox() {
-		return bgColorComboBox;
-	}
-
-	public JComboBox getTrackNameSizeComboBox() {
-		return trackNameSizeComboBox;
-	}
-
-	public ColorComboBox getFgColorComboBox() {
-		return fgColorComboBox;
-	}
-
-	public JComboBox getLabelFieldComboBox() {
-		return labelFieldComboBox;
-	}
-
-	public JTextField getMaxDepthTextField() {
-		return maxDepthTextField;
-	}
-
-	public JCheckBox getShow2TracksCheckBox() {
-		return show2TracksCheckBox;
-	}
-
-	public JCheckBox getConnectedCheckBox() {
-		return connectedCheckBox;
-	}
-
-	public JCheckBox getCollapsedCheckBox() {
-		return collapsedCheckBox;
-	}
-
 	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
 
 		private static final long serialVersionUID = 1L;

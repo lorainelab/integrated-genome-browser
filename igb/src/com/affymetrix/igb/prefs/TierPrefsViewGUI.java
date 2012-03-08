@@ -155,7 +155,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         possitiveColorComboBox.setBackground(new java.awt.Color(255, 255, 255));
         possitiveColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         possitiveColorComboBox.setButtonVisible(false);
-        possitiveColorComboBox.setColorValueVisible(false);
         possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         possitiveColorComboBox.setStretchToFit(true);
         possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {

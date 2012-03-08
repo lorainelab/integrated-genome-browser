@@ -52,8 +52,7 @@ public final class PreferencesPanel extends JPanel {
 	public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / " + BUNDLE.getString("Export");
 	public final static String HELP_ACTION_COMMAND = WINDOW_NAME + " / " + HELP;
 	public final static String HELP_TAB_ACTION_COMMAND = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
-	public TierPrefsViewGUI tpvGUI = null;
-
+	public TrackPreferencesPanel tpvGUI = null;
 	private PreferencesPanel() {
 		this.setLayout(new BorderLayout());
 
@@ -76,17 +75,17 @@ public final class PreferencesPanel extends JPanel {
 			return singleton;
 		}
 		singleton = new PreferencesPanel();
-		singleton.tpvGUI = new TierPrefsViewGUI();
+		singleton.tpvGUI = new TierPreferencesPanel();
 		singleton.tpvGUI.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
-				singleton.tpvGUI.tpv.removedFromView();
+				((TierPrefsView)(singleton.tpvGUI.tdv)).removedFromView();
 			}
 		});
 
 		TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
-		TAB_TRACK_DEFAULT_VIEW = singleton.addPrefEditorComponent(new TrackDefaultViewGUI());
+		TAB_TRACK_DEFAULT_VIEW = singleton.addPrefEditorComponent(new TrackDefaultsPanel());
 		TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(KeyStrokesViewGUI.getSingleton());
 		TAB_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
 		TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(OtherOptionsView.getSingleton());
@@ -158,7 +157,7 @@ public final class PreferencesPanel extends JPanel {
 					// if it is not being displayed, then its changes have already been applied in componentHidden()
 					if (singleton.tpvGUI != null) {
 						if (singleton.tab_pane.getSelectedComponent() == singleton.tpvGUI) {
-							singleton.tpvGUI.tpv.removedFromView();
+							((TierPrefsView)(singleton.tpvGUI.tdv)).removedFromView();
 						}
 					}
 					frame.dispose();

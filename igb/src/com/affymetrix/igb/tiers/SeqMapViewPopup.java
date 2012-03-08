@@ -32,6 +32,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -558,7 +559,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void showCustomizer() {
 		PreferencesPanel pv = PreferencesPanel.getSingleton();
 		pv.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-		pv.tpvGUI.tpv.setTier_label_glyphs(handler.getSelectedTierLabels());
+		((TierPrefsView)pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
 
 		// If and only if the selected track is coordinate track, will open 'Other Options' panel 
 		if (handler.getSelectedTierLabels().size() == 1) {

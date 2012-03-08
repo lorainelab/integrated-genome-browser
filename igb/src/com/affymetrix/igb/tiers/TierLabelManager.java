@@ -72,6 +72,8 @@ public final class TierLabelManager implements PropertyHolder {
 		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
 	}
 
+	public boolean manualResizingAllowed = true; // temporary switch until resizing works well.
+
 	/**
 	 * For moving tiers around and adjusting their sizes.
 	 * Use Swing for the future. Otherwise could have used AWT's MouseAdapter.
@@ -81,7 +83,7 @@ public final class TierLabelManager implements PropertyHolder {
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
-		boolean manualResizingAllowed = true; // temporary switch until resizing works well.
+		public boolean manualResizingAllowed = TierLabelManager.this.manualResizingAllowed; // temporary switch until resizing works well.
 		
 		
 		/**
@@ -118,20 +120,7 @@ public final class TierLabelManager implements PropertyHolder {
 		public void mouseMoved(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				if (this.manualResizingAllowed) {
-					if (atResizeTop(nevt)) {
-						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-					}
-					else if (atResizeBottom(nevt)) {
-						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
-					}
-					else {
-						setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-					}
-				}
-				else {
-					setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				}
+				setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 			else {
 				restoreCursor();
@@ -163,7 +152,7 @@ public final class TierLabelManager implements PropertyHolder {
 				if (!selected_glyphs.isEmpty()) {
 					topgl = selected_glyphs.get(selected_glyphs.size() - 1);
 				}
-				if (manualResizingAllowed) {
+				if (this.manualResizingAllowed) {
 					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
 					int index = orderedGlyphs.indexOf(topgl);
 					List<TierLabelGlyph> resizeRegion = null;
@@ -173,8 +162,11 @@ public final class TierLabelManager implements PropertyHolder {
 					else if (atResizeBottom(nevt)) {
 						resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
 					}
-					if (null != resizeRegion && 1 < resizeRegion.size()) {
-						resizeBorder(resizeRegion, nevt);
+					if (null != resizeRegion && 1 < resizeRegion.size()) { // then resizer can handle it.
+						if (false == this.manualResizingAllowed) {
+							resizeBorder(resizeRegion, nevt); // Actually, never want to do this.
+						}
+						// Screen the event from the dragger.
 						return;
 					}
 				}
@@ -226,6 +218,7 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
+		@Deprecated
 		private void resizeBorder(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
 			setResizeCursor();
 			GlyphResizer resizer = new GlyphResizer((AffyTieredMap) nevt.getSource(), Application.getSingleton().getMapView());
@@ -288,6 +281,16 @@ public final class TierLabelManager implements PropertyHolder {
 
 		labelmap.getScene().setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
+		
+		// Trying something new, a less dependent resizer:
+		MouseInputListener resizer = new TierResizer(this.tiermap);
+		if (!this.manualResizingAllowed) {
+			resizer = new MouseInputAdapter() {
+				// Stub out resizing to disable it.
+			};
+		}
+		labelmap.addMouseListener(resizer);
+		labelmap.addMouseMotionListener(resizer);
 	}
 
 	/** Returns a list of TierGlyph items representing the selected tiers. */

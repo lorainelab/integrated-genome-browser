@@ -1,0 +1,12 @@
+Index: trunk/src/furbelow/AbstractComponentDecorator.java
+===================================================================
+--- trunk/src/furbelow/AbstractComponentDecorator.java	(revision 17)
++++ trunk/src/furbelow/AbstractComponentDecorator.java	(working copy)
+@@ -425,6 +425,7 @@
+             setFocusable(false);
+         }
+         public boolean isShowing() {
++            if(getComponent() == null) return false;
+             return getComponent().isShowing();
+         }
+         public JComponent getComponent() {

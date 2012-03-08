@@ -3,6 +3,8 @@ package com.affymetrix.igb.tutorial;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -21,6 +23,9 @@ public class TutorialNavigator extends JPanel {
 		add(cancelButton, BorderLayout.WEST);
 		instructions = new JLabel("", JLabel.CENTER);
 		instructions.setHorizontalTextPosition(JLabel.CENTER);
+		instructions.setForeground(Color.RED);
+		Font font = new Font("SansSerif", Font.BOLD, 16);
+		instructions.setFont(font);
 		add(instructions, BorderLayout.CENTER);
 		JRPButton nextButton = new JRPButton("TutorialNavigator_next", nextAction);
 		add(nextButton, BorderLayout.EAST);

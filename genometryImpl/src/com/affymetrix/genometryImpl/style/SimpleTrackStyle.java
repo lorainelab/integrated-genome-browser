@@ -109,7 +109,7 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	}
 
 	public String getFileType() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return "";
 	}
 
 	public int getDirectionType() {

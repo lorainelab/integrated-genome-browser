@@ -62,14 +62,14 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		}
 		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).setViewMode("default");
 
-		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
+		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		java.net.URI uri = java.net.URI.create("file:/"+method);
 
 		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, symsStr, features), null, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree
 
-		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
 
 //		SeqGroupView.getInstance().setSelectedGroup(feature.gVersion.group.getID());
 

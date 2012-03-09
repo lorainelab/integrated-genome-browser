@@ -45,6 +45,7 @@ public final class ServerList {
 	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
 	private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false);
+	private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", ServerTypeI.LocalFiles, true, null, false);
 	private static ServerList serverInstance = new ServerList("server");
 	private static ServerList repositoryInstance = new ServerList("repository");
 	private final String textName;
@@ -68,7 +69,7 @@ public final class ServerList {
 	public boolean hasTypes() {
 		return this == serverInstance;
 	}
-
+	
 	public Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
 		for (GenericServer gServer : getAllServers()) {
@@ -93,6 +94,10 @@ public final class ServerList {
 		return localFilesServer;
 	}
 
+	public GenericServer getIGBFilesServer() {
+		return igbFilesServer;
+	}
+	
 	public boolean areAllServersInited() {
 		for (GenericServer gServer : getAllServers()) {
 			if (!gServer.isEnabled()) {

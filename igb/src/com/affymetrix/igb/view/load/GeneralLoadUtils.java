@@ -255,6 +255,10 @@ public final class GeneralLoadUtils {
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 
+	public static GenericVersion getIGBFilesVersion(AnnotatedSeqGroup group, String speciesName) {
+		return getXFilesVersion(ServerList.getServerInstance().getIGBFilesServer(), group, speciesName);
+	}
+	
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
@@ -263,21 +267,24 @@ public final class GeneralLoadUtils {
 	 * @return genome version
 	 */
 	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup group, String speciesName) {
+		return getXFilesVersion(ServerList.getServerInstance().getLocalFilesServer(), group, speciesName);
+	}
+
+	private static GenericVersion getXFilesVersion(GenericServer server, AnnotatedSeqGroup group, String speciesName){
 		String versionName = group.getID();
 		if (speciesName == null) {
 			speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
 		}
-		GenericServer server = ServerList.getServerInstance().getLocalFilesServer();
-
+		
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
-			if (gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
+			if (gVersion.gServer == server) {
 				return gVersion;
 			}
 		}
 
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
-
+		
 	private static synchronized GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
 		// Make sure we use the preferred synonym for the genome version.
 		String preferredVersionName = LOOKUP.getPreferredName(versionName);

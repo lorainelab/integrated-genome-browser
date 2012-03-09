@@ -301,7 +301,9 @@ public class TrackView {
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = determineFactory(annotSym);
-		if (factory.getClass().getName().startsWith("com.affymetrix.igb.viewmode")) {
+		if (!factory.getClass().getName().startsWith("com.affymetrix.igb.glyph") &&
+			!factory.getClass().getName().startsWith("com.affymetrix.igb.stylesheet")
+			) {
 			String meth = BioSeq.determineMethod(annotSym);
 
 			if (meth != null) {

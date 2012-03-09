@@ -19,6 +19,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
+import java.awt.ComponentOrientation;
 import java.awt.Cursor;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -46,17 +47,11 @@ public final class TierLabelManager implements PropertyHolder {
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
 	
-	private Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
 	private Cursor getCurrentCursor() {
 		return Application.getSingleton().getMapView().getSeqMap().getCursor();
 	}
 	private void setCurrentCursor(Cursor cursor) {
 		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
-	}
-	private void setResizeCursor() {
-		if (getCurrentCursor() != resizeCursor) {
-			setCurrentCursor(resizeCursor);
-		}
 	}
 	private void restoreCursor() {
 		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
@@ -109,7 +104,6 @@ public final class TierLabelManager implements PropertyHolder {
 		@Override
 		public void mouseMoved(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
-				NeoMouseEvent nevt = (NeoMouseEvent) evt;
 				setCurrentCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 			else {

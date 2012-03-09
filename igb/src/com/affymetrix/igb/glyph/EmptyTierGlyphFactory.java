@@ -17,11 +17,11 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
-import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 /**

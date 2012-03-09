@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.operator.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.MismatchOperator;
 import com.affymetrix.igb.view.MismatchPileupOperator;

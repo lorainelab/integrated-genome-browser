@@ -1,11 +1,10 @@
 
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.shared;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
  * All implementation of map view mode are stored here.

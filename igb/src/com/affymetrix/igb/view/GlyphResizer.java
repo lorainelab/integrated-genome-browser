@@ -27,7 +27,9 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
  * So far this is only for vertical resizing and is only used by the TierLabelManager.
  * Perhaps it should be renamed to reflect this
  * or generalized to handle other cases.
+ * @deprecated replaced by com.affymetrix.igb.tiers.TierResizer - elb
  */
+@Deprecated
 public class GlyphResizer implements MouseListener, MouseMotionListener {
 
 	TierLabelGlyph lowerGl;

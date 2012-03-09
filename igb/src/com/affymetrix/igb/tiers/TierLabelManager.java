@@ -1,30 +1,14 @@
 package com.affymetrix.igb.tiers;
 
-import java.awt.Cursor;
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.MouseInputListener;
-
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.PropertyHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genoviz.bioviews.GlyphDragger;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -34,11 +18,17 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.igb.view.GlyphResizer;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
-
+import java.awt.Cursor;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
+import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.MouseInputListener;
 
 /**
  *
@@ -163,10 +153,8 @@ public final class TierLabelManager implements PropertyHolder {
 						resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
 					}
 					if (null != resizeRegion && 1 < resizeRegion.size()) { // then resizer can handle it.
-						if (false == this.manualResizingAllowed) {
-							resizeBorder(resizeRegion, nevt); // Actually, never want to do this.
-						}
 						// Screen the event from the dragger.
+						// Resizer should have handled it.
 						return;
 					}
 				}
@@ -216,13 +204,6 @@ public final class TierLabelManager implements PropertyHolder {
 				rearrangeTiers();
 				dragging_label = null;
 			}
-		}
-
-		@Deprecated
-		private void resizeBorder(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
-			setResizeCursor();
-			GlyphResizer resizer = new GlyphResizer((AffyTieredMap) nevt.getSource(), Application.getSingleton().getMapView());
-			resizer.startDrag(theRegion, nevt);
 		}
 
 		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
@@ -608,7 +589,7 @@ public final class TierLabelManager implements PropertyHolder {
 	public void sortTiers() {
 		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
 		Collections.sort(label_glyphs, new Comparator<TierLabelGlyph>(){
-
+			@Override
 			public int compare(TierLabelGlyph g1, TierLabelGlyph g2) {
 				return Double.compare(g1.getPosition(), g2.getPosition());
 			}
@@ -666,7 +647,7 @@ public final class TierLabelManager implements PropertyHolder {
 		if(tiers.isEmpty())
 			return;
 
-		String label = null;
+		String label;
 		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getFeature() != null)
 			label = tiers.get(0).getAnnotStyle().getFeature().featureName;
 		else
@@ -686,7 +667,7 @@ public final class TierLabelManager implements PropertyHolder {
 	public TierGlyph getTierGlyph(NeoMouseEvent nevt){
 		Rectangle2D.Double coordrect = new Rectangle2D.Double(nevt.getCoordX(),nevt.getCoordY(),1,1);
 		TierGlyph tglyph = null;
-		TierGlyph temp = null;
+		TierGlyph temp;
 
 		for(TierLabelGlyph tlg : tiermap.getTierLabels()){
 			if(tlg.getInfo() instanceof TierGlyph){
@@ -768,4 +749,5 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 		return props;
 	}
+
 }

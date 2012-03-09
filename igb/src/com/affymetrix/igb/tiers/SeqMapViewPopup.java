@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;

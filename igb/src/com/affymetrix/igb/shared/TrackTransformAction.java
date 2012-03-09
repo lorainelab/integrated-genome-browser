@@ -1,11 +1,12 @@
 
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.action.TrackFunctionOperationA;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
 public class TrackTransformAction extends TrackFunctionOperationA {

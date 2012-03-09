@@ -46,8 +46,8 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-import com.affymetrix.igb.action.TrackOperationAction;
-import com.affymetrix.igb.action.TrackTransformAction;
+import com.affymetrix.igb.shared.TrackOperationAction;
+import com.affymetrix.igb.shared.TrackTransformAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;

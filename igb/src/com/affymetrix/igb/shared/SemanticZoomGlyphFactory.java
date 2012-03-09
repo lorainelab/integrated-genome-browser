@@ -1,4 +1,4 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.igb.shared;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,22 +17,18 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
-	private SeqMapViewExtendedI smv;
+	protected SeqMapViewExtendedI smv;
 
 	// glyph class
-	private class SemanticZoomGlyph extends AbstractViewModeGlyph {
-		private SemanticZoomRule rule;
+	protected class SemanticZoomGlyph extends AbstractViewModeGlyph {
+		protected SemanticZoomRule rule;
 		private Map<String, ViewModeGlyph> viewModeGlyphs;
 		private ViewModeGlyph lastUsedGlyph;
 		
-		public SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SemanticZoomRule rule) {
+		protected SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SemanticZoomRule rule) {
 			super();
 			super.setInfo(sym);
 			this.rule = rule;

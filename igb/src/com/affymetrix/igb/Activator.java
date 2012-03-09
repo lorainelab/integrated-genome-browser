@@ -39,7 +39,6 @@ import com.affymetrix.igb.view.MismatchPileupOperator;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.viewmode.BarGraphGlyph;
-import com.affymetrix.igb.viewmode.BigWigSemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.DefaultSemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.DotGraphGlyph;
 import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
@@ -360,11 +359,5 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory), null);
 		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory), null);
-		BigWigSemanticZoomGlyphFactory annotationBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory);
-		annotationBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationBigWigSemanticZoomGlyphFactory, null);
-		BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory);
-		alignmentBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
 	}
 }

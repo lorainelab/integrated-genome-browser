@@ -18,7 +18,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
-	private SeqMapViewExtendedI gviewer;
 
 	@Override
 	public void init(Map<String, Object> options) {
@@ -34,7 +33,7 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 		Direction direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
 		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
-		SeqSpan pspan = gviewer.getViewSeqSpan(childSym);
+		SeqSpan pspan = smv.getViewSeqSpan(childSym);
 		if (pspan == null || pspan.getLength() == 0) {
 			return viewModeGlyph;
 		}  // if no span corresponding to seq, then return;
@@ -44,8 +43,8 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 		double pheight = style.getHeight() + 0.0001;
 		childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
 		childGlyph.setColor(style.getForeground());
-		gviewer.setDataModelFromOriginalSym(childGlyph, childSym);
-		BioSeq annotseq = gviewer.getAnnotatedSeq();
+		smv.setDataModelFromOriginalSym(childGlyph, childSym);
+		BioSeq annotseq = smv.getAnnotatedSeq();
 		GlyphI alignResidueGlyph = handleAlignedResidues(childSym, annotseq);
 		alignResidueGlyph.setCoordBox(childGlyph.getCoordBox());
 		childGlyph.addChild(alignResidueGlyph);
@@ -101,15 +100,6 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.Sequence;
-	}
-
-	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
-		this.gviewer = gviewer;
-	}
-
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return gviewer;
 	}
 
 	@Override

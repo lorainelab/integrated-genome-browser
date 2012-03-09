@@ -63,7 +63,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 				list.add(sym);
 				return getViewModeGlyph(list, meth, style, Direction.BOTH, smv);
 			} else {
-				List<List<SeqSymmetry>> lists = getChilds(factory.getSeqMapView(), sym);
+				List<List<SeqSymmetry>> lists = getChilds(smv, sym);
 				if(Direction.FORWARD == tier_direction){
 					return getViewModeGlyph(lists.get(0), meth, style, tier_direction, smv);
 				}else{
@@ -80,7 +80,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 
 	private ViewModeGlyph getViewModeGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 	
-		SymWithProps result_sym = (SymWithProps) operator.operate(factory.getSeqMapView().getAnnotatedSeq(), list);
+		SymWithProps result_sym = (SymWithProps) operator.operate(smv.getAnnotatedSeq(), list);
 		SymWithProps output = result_sym;
 		
 		if (result_sym != null) {
@@ -138,11 +138,6 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		lists.add(reverse);
 		
 		return lists;
-	}
-	
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return factory.getSeqMapView();
 	}
 
 	@Override

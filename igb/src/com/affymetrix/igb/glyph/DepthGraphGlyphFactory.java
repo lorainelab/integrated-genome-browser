@@ -109,11 +109,6 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	
 	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return null;
-	}
-
-	@Override
 	public boolean isURISupported(String uri) {
 		return true;
 	}

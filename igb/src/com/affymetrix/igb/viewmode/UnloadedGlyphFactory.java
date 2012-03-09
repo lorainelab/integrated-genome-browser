@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
@@ -23,7 +22,6 @@ import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	private static final Map<String,Class<?>> PREFERENCES;
@@ -35,7 +33,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	public static UnloadedGlyphFactory getInstance() {
 		return instance;
 	}
-	private SeqMapView smv;
 
 	// glyph class
 	private class UnloadedGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
@@ -121,7 +118,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 
 	private UnloadedGlyphFactory() {
 		super();
-		this.smv = IGB.getSingleton().getMapView();
 	}
 
 	@Override
@@ -160,15 +156,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 		return true;
 	}
 	
-	public void setSeqMapView(SeqMapView gviewer) {
-		this.smv = gviewer;
-	}
-	
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return smv;
-	}
-
 	@Override
 	public boolean isURISupported(String uri) {
 		return true;

@@ -43,10 +43,12 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	private IGBService igbService;
 
 	private class BigWigSemanticZoomGlyph extends SemanticZoomGlyph {
+		private final SeqMapViewExtendedI smv;
 		private boolean mousePressed;
 		private ViewI detailNeedsDrawingView;
-		protected BigWigSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SemanticZoomRule rule) {
+		protected BigWigSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SemanticZoomRule rule, SeqMapViewExtendedI smv) {
 			super(sym, style, direction, rule);
+			this.smv = smv;
 			detailNeedsDrawingView = null;
 			Toolkit.getDefaultToolkit().addAWTEventListener(
 				new AWTEventListener() {
@@ -270,7 +272,7 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
 		SemanticZoomRule rule = getRule(sym, style, direction, smv);
-		return new BigWigSemanticZoomGlyph(sym, style, direction, rule);
+		return new BigWigSemanticZoomGlyph(sym, style, direction, rule, smv);
 	}
 
 	public void setIgbService(IGBService igbService) {

@@ -62,7 +62,6 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	private static final Color ps_color = Color.PINK;
 	private static final Color poly_a_site_color = Color.BLUE;
 	private static final Color poly_a_stack_color = Color.CYAN;
-	private SeqMapViewExtendedI gviewer;
 	/**
 	 * Whether to put an outline around the probe glyphs in the same probeset.
 	 */
@@ -74,8 +73,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	public void init(Map<String, Object> options) {
 	}
 
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		gviewer = smv;
+	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth == null) {
@@ -104,7 +102,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 				label_field = style.getLabelField();
 
 				TierGlyph[] tiers = gviewer.getTiers(style, true);
-				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+				addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);
 			} catch (Exception ex) {
 				Logger.getLogger(ProbeSetDisplayGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -121,19 +119,19 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param depth_of_consensuses  Depth at which consensus sequences symmetries will
 	 *      be found. Normally should be set to 2.
 	 */
-	private void addLeafsToTier(SeqSymmetry sym,
+	private void addLeafsToTier(SeqMapViewExtendedI gviewer, SeqSymmetry sym,
 			StyleGlyphI ftier, StyleGlyphI rtier,
 			int depth_of_consensuses) throws InstantiationException, IllegalAccessException {
 		int depth = SeqUtils.getDepth(sym);
 		if (depth > depth_of_consensuses) {
 			for (int i = 0; i < sym.getChildCount(); i++) {
 				SeqSymmetry child = sym.getChild(i);
-				addLeafsToTier(child, ftier, rtier, depth_of_consensuses);
+				addLeafsToTier(gviewer, child, ftier, rtier, depth_of_consensuses);
 			}
 		} else if (depth < 1) {
 			System.out.println("ERROR in ProbeSetDisplayGlyphFactory: at wrong depth.");
 		} else {  // 1 <= depth <= depth_of_consensus
-			addToTier(sym, ftier, rtier);
+			addToTier(gviewer, sym, ftier, rtier);
 		}
 	}
 
@@ -142,7 +140,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *      probe set alignments
 	 *      includes transformations used by slice view and other alternative coordinate systems
 	 */
-	private GlyphI addToTier(SeqSymmetry consensus_sym, StyleGlyphI forward_tier, StyleGlyphI reverse_tier) throws InstantiationException, IllegalAccessException {
+	private GlyphI addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry consensus_sym, StyleGlyphI forward_tier, StyleGlyphI reverse_tier) throws InstantiationException, IllegalAccessException {
 
 		if (SeqUtils.getDepth(consensus_sym) != glyph_depth) {
 			System.out.println("ProbeSetDisplayGlyphFactory: at wrong depth!");
@@ -236,7 +234,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 
 		BioSeq consensus_seq = getConsensusSeq(consensus_sym, annotseq);
 		if (consensus_seq != null) {
-			drawConsensusAnnotations(consensus_seq, consensus_sym, pglyph, the_tier, child_y, child_height);
+			drawConsensusAnnotations(gviewer, consensus_seq, consensus_sym, pglyph, the_tier, child_y, child_height);
 		}
 
 		return pglyph;
@@ -308,29 +306,29 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *  @param y coordinate of the "Exon" regions of the consensus glyph
 	 *  @param height height of the "Exon" regions of the consensus glyph
 	 */
-	private void drawConsensusAnnotations(BioSeq consensus_seq, SeqSymmetry consensus_sym,
+	private void drawConsensusAnnotations(SeqMapViewExtendedI gviewer, BioSeq consensus_seq, SeqSymmetry consensus_sym,
 			GlyphI parent_glyph, StyleGlyphI tier, double y, double height) {
 		int annot_count = consensus_seq.getAnnotationCount();
 		for (int i = 0; i < annot_count; i++) {
 			SeqSymmetry sym = consensus_seq.getAnnotation(i);
 			// probe sets and poly-A sites (and everything else) all get sent
 			// to handleConsensusAnnotations, because the first few steps are the same
-			handleConsensusAnnotations(sym, consensus_sym, parent_glyph,
+			handleConsensusAnnotations(gviewer, sym, consensus_sym, parent_glyph,
 					y, height);
 		}
 	}
 
-	private void handleConsensusAnnotations(SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym,
+	private void handleConsensusAnnotations(SeqMapViewExtendedI gviewer, SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym,
 			GlyphI parent_glyph, double y, double height) {
 		// Iterate until reaching depth=2 which represents a probeset (depth=2) containing probes (depth=1)
 		int depth = SeqUtils.getDepth(sym_with_probesets);
 		if (depth == 2) {
-			drawConsensusAnnotation(sym_with_probesets, consensus_sym, parent_glyph, y, height);
+			drawConsensusAnnotation(gviewer, sym_with_probesets, consensus_sym, parent_glyph, y, height);
 		} else {
 			int child_count = sym_with_probesets.getChildCount();
 			for (int i = 0; i < child_count; i++) {
 				SeqSymmetry child = sym_with_probesets.getChild(i);
-				handleConsensusAnnotations(child, consensus_sym, parent_glyph, y, height);
+				handleConsensusAnnotations(gviewer, child, consensus_sym, parent_glyph, y, height);
 			}
 		}
 	}
@@ -345,7 +343,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *    it is not likely that things would go well, so the method prints an error
 	 *    and returns.
 	 */
-	private void drawConsensusAnnotation(SeqSymmetry probeset, SeqSymmetry consensus_sym,
+	private void drawConsensusAnnotation(SeqMapViewExtendedI gviewer, SeqSymmetry probeset, SeqSymmetry consensus_sym,
 			GlyphI parent_glyph, double y, double height) {
 		if (DEBUG) {
 			int consensus_depth = SeqUtils.getDepth(consensus_sym);
@@ -360,15 +358,15 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 		// Note that the transformation generates a probeset_sym of depth 3
 
 		if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
-			drawPolyA(probeset_sym, parent_glyph, y, height, poly_a_site_color);
+			drawPolyA(gviewer, probeset_sym, parent_glyph, y, height, poly_a_site_color);
 		} else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
-			drawPolyA(probeset_sym, parent_glyph, y, height, poly_a_stack_color);
+			drawPolyA(gviewer, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
 		} else {
-			drawProbeSetGlyph(probeset_sym, parent_glyph, y, height);
+			drawProbeSetGlyph(gviewer, probeset_sym, parent_glyph, y, height);
 		}
 	}
 
-	private void drawPolyA(DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
+	private void drawPolyA(SeqMapViewExtendedI gviewer, DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
 			double consensus_exon_y, double consensus_exon_height, Color color) {
 		// The depth coming in should be 3
 		SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym, gviewer.getAnnotatedSeq());
@@ -407,7 +405,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *                   this third level will be ignored.
 	 *                   This should NOT already have been mapped onto SeqMapView.getAnnotatedSeq().
 	 */
-	private void drawProbeSetGlyph(DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
+	private void drawProbeSetGlyph(SeqMapViewExtendedI gviewer, DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
 			double consensus_exon_y, double consensus_exon_height) {
 		// The depth coming in should be 3
 		SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym, gviewer.getAnnotatedSeq());
@@ -437,20 +435,20 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 
 			parent_glyph.addChild(probeset_glyph);
 			gviewer.setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
-			addProbesToProbeset(probeset_glyph, transformed_probeset_sym,
+			addProbesToProbeset(gviewer, probeset_glyph, transformed_probeset_sym,
 					probe_y, probe_height, probeset_color);
 		} else {
-			addProbesToProbeset(parent_glyph, transformed_probeset_sym,
+			addProbesToProbeset(gviewer, parent_glyph, transformed_probeset_sym,
 					probe_y, probe_height, probeset_color);
 		}
 	}
 
-	private void addProbesToProbeset(GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym,
+	private void addProbesToProbeset(SeqMapViewExtendedI gviewer, GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym,
 			double probe_y, double probe_height, Color probeset_color) {
 		int num_probes = transformed_probeset_sym.getChildCount();
 		for (int i = 0; i < num_probes; i++) {
 			SeqSymmetry probe_sym = transformed_probeset_sym.getChild(i);
-			GlyphI probe_glyph = drawProbeGlyph(probe_sym, probe_y, probe_height, probeset_color);
+			GlyphI probe_glyph = drawProbeGlyph(gviewer, probe_sym, probe_y, probe_height, probeset_color);
 			if (probe_glyph == null) {
 				continue;
 			}
@@ -459,7 +457,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
-	private GlyphI drawProbeGlyph(SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
+	private GlyphI drawProbeGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
 		BioSeq viewSeq = gviewer.getViewSeq();
 		SeqSpan probe_span = probe_sym.getSpan(viewSeq);
 		if (probe_span == null) {
@@ -515,7 +513,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI gviewer) {
 		String meth = BioSeq.determineMethod(sym);
 		String human_name = meth;
 		if (meth == null) {
@@ -548,10 +546,10 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 				tiers[1] = (tier_direction == TierGlyph.Direction.BOTH) ? tiers[0] : createViewModeGlyph(style, TierGlyph.Direction.REVERSE);
 				tiers[1].setInfo(sym);
 				if (style.getSeparate()) {
-					addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+					addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);
 				} else {
 					// use only one tier
-					addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
+					addLeafsToTier(gviewer, sym, tiers[0], tiers[0], glyph_depth);
 				}
 				
 				return (tier_direction == TierGlyph.Direction.REVERSE) ? tiers[1] : tiers[0];
@@ -561,15 +559,6 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 		return null;
-	}
-	
-	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
-		this.gviewer = gviewer;
-	}
-		
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return gviewer;
 	}
 
 	@Override

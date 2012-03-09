@@ -57,7 +57,6 @@ import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
@@ -267,75 +266,55 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
 		
 		// Add annot factories
 		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Annotation);
-		annotationGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationGlyphFactory, null);
 		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
-		alignmentGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentGlyphFactory, null);
 
 		// add sequence factory
 		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
-		sequenceGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
 
 		// Add graph factories
 		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
-		barGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, barGraphGlyphFactory, null);
 		GraphGlyphFactory dotGraphGlyphFactory = new GraphGlyphFactory(DotGraphGlyph.class);
-		dotGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, dotGraphGlyphFactory, null);
 		GraphGlyphFactory fillBarGraphGlyphFactory = new GraphGlyphFactory(FillBarGraphGlyph.class);
-		fillBarGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, fillBarGraphGlyphFactory, null);
 		GraphGlyphFactory heatMapGraphGlyphFactory = new GraphGlyphFactory(HeatMapGraphGlyph.class);
-		heatMapGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, heatMapGraphGlyphFactory, null);
 		GraphGlyphFactory lineGraphGlyphFactory = new GraphGlyphFactory(LineGraphGlyph.class);
-		lineGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, lineGraphGlyphFactory, null);
 		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, minMaxAvgGraphGlyphFactory, null);
-		minMaxAvgGraphGlyphFactory.setSeqMapView(seqMapView);
 		GraphGlyphFactory stairStepGraphGlyphFactory = new GraphGlyphFactory(StairStepGraphGlyph.class);
-		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, stairStepGraphGlyphFactory, null);
 		
 		// ProbeSet factory
 		ProbeSetGlyphFactory probeSet = new ProbeSetGlyphFactory();
-		probeSet.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSet, null);
 		
 		// Add ScoredContainer factories
 		ScoredContainerGlyphFactory scoredBar = new ScoredContainerGlyphFactory(barGraphGlyphFactory);
-		scoredBar.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredBar, null);
 		ScoredContainerGlyphFactory scoredDot = new ScoredContainerGlyphFactory(dotGraphGlyphFactory);
-		scoredDot.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredDot, null);
 		ScoredContainerGlyphFactory scoredFillBar = new ScoredContainerGlyphFactory(fillBarGraphGlyphFactory);
-		scoredFillBar.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredFillBar, null);
 		ScoredContainerGlyphFactory scoredHeatMap = new ScoredContainerGlyphFactory(heatMapGraphGlyphFactory);
-		scoredHeatMap.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredHeatMap, null);
 		ScoredContainerGlyphFactory scoredLine = new ScoredContainerGlyphFactory(lineGraphGlyphFactory);
-		scoredLine.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredLine, null);
 		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(minMaxAvgGraphGlyphFactory);
-		scoredMinMaxAvg.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
 		ScoredContainerGlyphFactory scoredStairStep = new ScoredContainerGlyphFactory(stairStepGraphGlyphFactory);
-		scoredStairStep.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredStairStep, null);
 		
 		// Add mismatch factories
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
-		mismatchGlyphFactory.setSeqMapView(seqMapView);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
 
 		MapViewGlyphFactoryI mismatchFactory = new OperatorGlyphFactory(new MismatchOperator(), mismatchGlyphFactory);

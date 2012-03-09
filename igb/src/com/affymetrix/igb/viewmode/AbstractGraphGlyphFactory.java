@@ -29,7 +29,6 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 	 */
 	private static final String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
 
-	private SeqMapViewExtendedI smv;
 	/** Name of a parameter for the init() method.  Set to an instance of Double.
 	 *  Controls a parameter of the GraphGlyph.
 	 *  @see GraphGlyph#setTransitionScale(double)
@@ -42,15 +41,6 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		}
 	}
 	
-	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
-		this.smv = gviewer;
-	}
-
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return smv;
-	}
-		
 	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
 		if (sym instanceof GraphSym) {
 			displayGraph((GraphSym) sym, smv, check_same_seq);

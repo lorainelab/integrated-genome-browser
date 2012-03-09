@@ -36,7 +36,6 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 
 	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
-	private SeqMapViewExtendedI smv;
 	
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {
@@ -300,14 +299,5 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return null;
-	}
-	
-	public void setSeqMapView(SeqMapViewExtendedI gviewer) {
-		this.smv = gviewer;
-	}
-		
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return smv;
 	}
 }

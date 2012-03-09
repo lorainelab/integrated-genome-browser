@@ -13,7 +13,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
@@ -40,7 +39,6 @@ public class Activator implements BundleActivator {
 	}
 
 	private void registerServices(final IGBService igbService) {
-		final SeqMapViewExtendedI seqMapView = (SeqMapViewExtendedI)igbService.getSeqMapView();
 		bigwigHandlerRegistration = bundleContext.registerService(FileTypeHandler.class, new BigWigHandler(), null);
 		try {
 			for (ServiceReference<MapViewGlyphFactoryI> reference : bundleContext.getServiceReferences(MapViewGlyphFactoryI.class, null)) {
@@ -59,11 +57,9 @@ public class Activator implements BundleActivator {
 							serviceTrackerMapViewGlyphFactoryI.close();
 							factoryCreated = true;
 							BigWigSemanticZoomGlyphFactory annotationBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory, graphGlyphFactory);
-							annotationBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
 							annotationBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							annotationBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, annotationBigWigSemanticZoomGlyphFactory, null);
 							BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory, graphGlyphFactory);
-							alignmentBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
 							alignmentBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							alignmentBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
 						}

@@ -27,5 +27,4 @@ public interface MapViewGlyphFactoryI  {
 	public boolean isCategorySupported(FileTypeCategory category);
 	public boolean isURISupported(String uri);
 	public boolean canAutoLoad(String uri);
-	public SeqMapViewExtendedI getSeqMapView();
 }

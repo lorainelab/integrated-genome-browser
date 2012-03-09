@@ -120,12 +120,6 @@ public abstract class AbstractMismatchGraphGlyphFactory implements MapViewGlyphF
 		return null;
 	}
 	
-	@Override
-	public final SeqMapViewExtendedI getSeqMapView(){
-		return null;
-	}
-
-	@Override
 	public boolean isURISupported(String uri) {
 		return true;
 	}

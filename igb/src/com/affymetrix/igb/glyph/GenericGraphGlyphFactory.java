@@ -189,10 +189,6 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		return viewModeGlyph;
 	}
 
-	public SeqMapViewExtendedI getSeqMapView() {
-		return null;
-	}
-
 	@Override
 	public boolean isURISupported(String uri) {
 		return true;

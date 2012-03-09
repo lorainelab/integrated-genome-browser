@@ -4,13 +4,8 @@ package com.affymetrix.igb.viewmode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.view.MismatchOperator;
-import com.affymetrix.igb.view.MismatchPileupOperator;
 
 /**
  * All implementation of map view mode are stored here.

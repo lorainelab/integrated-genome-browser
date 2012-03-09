@@ -18,9 +18,11 @@ import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.GenericActionListener;
+import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -32,11 +34,31 @@ import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.view.MismatchOperator;
+import com.affymetrix.igb.view.MismatchPileupOperator;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
+import com.affymetrix.igb.viewmode.BarGraphGlyph;
+import com.affymetrix.igb.viewmode.BigWigSemanticZoomGlyphFactory;
+import com.affymetrix.igb.viewmode.DefaultSemanticZoomGlyphFactory;
+import com.affymetrix.igb.viewmode.DotGraphGlyph;
+import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
+import com.affymetrix.igb.viewmode.GraphGlyphFactory;
+import com.affymetrix.igb.viewmode.HeatMapGraphGlyph;
+import com.affymetrix.igb.viewmode.LineGraphGlyph;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.MinMaxAvgGraphGlyph;
+import com.affymetrix.igb.viewmode.MismatchGlyphFactory;
+import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
+import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
+import com.affymetrix.igb.viewmode.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.viewmode.SequenceGlyphFactory;
+import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
 import com.affymetrix.igb.shared.ISearchModeSym;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
@@ -190,7 +212,6 @@ public class Activator implements BundleActivator {
 		}
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AnnotationOperator.class);
-		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapViewGlyphFactoryI.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GraphOperator.class);
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
 		ExtensionPointHandler<IStopRoutine> stopRoutineExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IStopRoutine.class);
@@ -224,11 +245,126 @@ public class Activator implements BundleActivator {
 			},
 			null
 		);
+		initMapViewGlyphFactorys();
 	}
 
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
+	}
+
+	private void initMapViewGlyphFactorys() {
+		ExtensionPointHandler<MapViewGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapViewGlyphFactoryI.class);
+		mapViewGlyphFactoryExtensionPoint.addListener(
+			new ExtensionPointListener<MapViewGlyphFactoryI>() {
+				@Override
+				public void removeService(MapViewGlyphFactoryI factory) {
+					MapViewModeHolder.getInstance().removeViewFactory(factory);
+				}
+				@Override
+				public void addService(MapViewGlyphFactoryI factory) {
+					MapViewModeHolder.getInstance().addViewFactory(factory);
+				}
+			}
+		);
+		SeqMapViewExtendedI seqMapView = IGB.getSingleton().getMapView();
+		
+		// Add annot factories
+		AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Annotation);
+		annotationGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationGlyphFactory, null);
+		AnnotationGlyphFactory alignmentGlyphFactory = new AnnotationGlyphFactory(FileTypeCategory.Alignment);
+		alignmentGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentGlyphFactory, null);
+
+		// add sequence factory
+		SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
+		sequenceGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, sequenceGlyphFactory, null);
+
+		// Add graph factories
+		GraphGlyphFactory barGraphGlyphFactory = new GraphGlyphFactory(BarGraphGlyph.class);
+		barGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, barGraphGlyphFactory, null);
+		GraphGlyphFactory dotGraphGlyphFactory = new GraphGlyphFactory(DotGraphGlyph.class);
+		dotGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, dotGraphGlyphFactory, null);
+		GraphGlyphFactory fillBarGraphGlyphFactory = new GraphGlyphFactory(FillBarGraphGlyph.class);
+		fillBarGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, fillBarGraphGlyphFactory, null);
+		GraphGlyphFactory heatMapGraphGlyphFactory = new GraphGlyphFactory(HeatMapGraphGlyph.class);
+		heatMapGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, heatMapGraphGlyphFactory, null);
+		GraphGlyphFactory lineGraphGlyphFactory = new GraphGlyphFactory(LineGraphGlyph.class);
+		lineGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, lineGraphGlyphFactory, null);
+		GraphGlyphFactory minMaxAvgGraphGlyphFactory = new GraphGlyphFactory(MinMaxAvgGraphGlyph.class);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, minMaxAvgGraphGlyphFactory, null);
+		minMaxAvgGraphGlyphFactory.setSeqMapView(seqMapView);
+		GraphGlyphFactory stairStepGraphGlyphFactory = new GraphGlyphFactory(StairStepGraphGlyph.class);
+		stairStepGraphGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, stairStepGraphGlyphFactory, null);
+		
+		// ProbeSet factory
+		ProbeSetGlyphFactory probeSet = new ProbeSetGlyphFactory();
+		probeSet.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, probeSet, null);
+		
+		// Add ScoredContainer factories
+		ScoredContainerGlyphFactory scoredBar = new ScoredContainerGlyphFactory(barGraphGlyphFactory);
+		scoredBar.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredBar, null);
+		ScoredContainerGlyphFactory scoredDot = new ScoredContainerGlyphFactory(dotGraphGlyphFactory);
+		scoredDot.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredDot, null);
+		ScoredContainerGlyphFactory scoredFillBar = new ScoredContainerGlyphFactory(fillBarGraphGlyphFactory);
+		scoredFillBar.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredFillBar, null);
+		ScoredContainerGlyphFactory scoredHeatMap = new ScoredContainerGlyphFactory(heatMapGraphGlyphFactory);
+		scoredHeatMap.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredHeatMap, null);
+		ScoredContainerGlyphFactory scoredLine = new ScoredContainerGlyphFactory(lineGraphGlyphFactory);
+		scoredLine.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredLine, null);
+		ScoredContainerGlyphFactory scoredMinMaxAvg = new ScoredContainerGlyphFactory(minMaxAvgGraphGlyphFactory);
+		scoredMinMaxAvg.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredMinMaxAvg, null);
+		ScoredContainerGlyphFactory scoredStairStep = new ScoredContainerGlyphFactory(stairStepGraphGlyphFactory);
+		scoredStairStep.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, scoredStairStep, null);
+		
+		// Add mismatch factories
+		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
+		mismatchGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
+
+		MapViewGlyphFactoryI mismatchFactory = new OperatorGlyphFactory(new MismatchOperator(), mismatchGlyphFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchFactory, null);
+		MapViewGlyphFactoryI mismatchPileupFactory = new OperatorGlyphFactory(new MismatchPileupOperator(), mismatchGlyphFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchPileupFactory, null);
+		
+		// Add Default factories
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
+//		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
+//		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, expandedAnnotGlyphFactory);
+		MapViewGlyphFactoryI alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), stairStepGraphGlyphFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory), null);
+		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory), null);
+		BigWigSemanticZoomGlyphFactory annotationBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory);
+		annotationBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationBigWigSemanticZoomGlyphFactory, null);
+		BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory);
+		alignmentBigWigSemanticZoomGlyphFactory.setSeqMapView(seqMapView);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
 	}
 }

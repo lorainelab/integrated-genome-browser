@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class HeatMapGraphGlyph extends AbstractGraphGlyph {
+public class HeatMapGraphGlyph extends AbstractGraphGlyph {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();

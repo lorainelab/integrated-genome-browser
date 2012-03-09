@@ -10,7 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-class LineGraphGlyph extends AbstractGraphGlyph {
+public class LineGraphGlyph extends AbstractGraphGlyph {
 
 	public LineGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);

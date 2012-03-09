@@ -12,7 +12,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Arrays;
 
-class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
+public class MinMaxAvgGraphGlyph extends AbstractGraphGlyph {
 	private final AbstractGraphGlyph tempViewModeBarGraphGlyph;
 
 	public MinMaxAvgGraphGlyph(GraphSym graf, GraphState gstate) {

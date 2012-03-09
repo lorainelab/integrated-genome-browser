@@ -9,7 +9,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import java.awt.Graphics;
 import java.awt.Point;
 
-class DotGraphGlyph extends AbstractGraphGlyph {
+public class DotGraphGlyph extends AbstractGraphGlyph {
 
 	public DotGraphGlyph(GraphSym graf, GraphState gstate) {
 		super(graf, gstate);

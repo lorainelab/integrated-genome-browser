@@ -26,4 +26,6 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
 	
 	boolean autoChangeView();
+	
+	int getAverageSlots();
 }

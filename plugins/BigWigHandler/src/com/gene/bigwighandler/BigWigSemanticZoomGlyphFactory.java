@@ -31,6 +31,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.SemanticZoomRule;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -89,12 +90,14 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 //		private final List<ViewModeGlyph> levelGlyphs;
 		private final ViewModeGlyph annotationGlyph; 
 		private final Map<String, ViewModeGlyph> allViewModeGlyphs;
-		private BigWigSemanticZoomRule(SeqSymmetry sym,
-				ITrackStyleExtended style, Direction direction) {
+		private final SeqMapViewExtendedI smv;
+		private BigWigSemanticZoomRule(SeqSymmetry sym, ITrackStyleExtended style,
+			Direction direction, SeqMapViewExtendedI smv) {
 			super();
 //			this.sym = sym;
 			this.style = style;
 //			this.direction = direction;
+			this.smv = smv;
 			String method = (sym == null) ? style.getMethodName() : BioSeq.determineMethod(sym);
 			if (direction == null) {
 				direction = Direction.BOTH;
@@ -116,7 +119,7 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			levelHeaders = bbReader.getZoomLevels().getZoomLevelHeaders();
 //			levelGlyphs = new ArrayList<ViewModeGlyph>(levelHeaders.size());
 			allViewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-			annotationGlyph = defaultGlyphFactory.getViewModeGlyph(sym, style, direction);
+			annotationGlyph = defaultGlyphFactory.getViewModeGlyph(sym, style, direction, smv);
 			allViewModeGlyphs.put("annotation", annotationGlyph);
 		}
 
@@ -198,7 +201,7 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 			}
 			String id = "???";//tier.getLabel();
 	        GraphIntervalSym gsym = new GraphIntervalSym(x, w, y, id, seq);
-			AbstractGraphGlyph graph_glyph = (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH);
+			AbstractGraphGlyph graph_glyph = (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH, smv);
 			graph_glyph.setLabel(graph_glyph.getLabel() + " at zoom " + level);
 			graph_glyph.drawHandle(false);
 			graph_glyph.setSelectable(false);
@@ -248,9 +251,9 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	protected SemanticZoomRule getRule(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction) {
-		return new BigWigSemanticZoomRule(sym, style, direction);
+	protected SemanticZoomRule getRule(SeqSymmetry sym, ITrackStyleExtended style,
+		Direction direction, SeqMapViewExtendedI smv) {
+		return new BigWigSemanticZoomRule(sym, style, direction, smv);
 	}
 
 	@Override
@@ -264,9 +267,9 @@ public class BigWigSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction) {
-		SemanticZoomRule rule = getRule(sym, style, direction);
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+		Direction direction, SeqMapViewExtendedI smv) {
+		SemanticZoomRule rule = getRule(sym, style, direction, smv);
 		return new BigWigSemanticZoomGlyph(sym, style, direction, rule);
 	}
 

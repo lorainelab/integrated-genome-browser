@@ -134,8 +134,8 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction tier_direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+		Direction tier_direction, SeqMapViewExtendedI smv) {
 		BioSeq seq = smv.getAnnotatedSeq();
 		SeqSymmetry useSym = new SimpleMutableSeqSymmetry();
 		int slots = smv.getAverageSlots();

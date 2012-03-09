@@ -103,7 +103,7 @@ public class DepthGraphGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -31,10 +32,12 @@ import java.util.List;
  *  This is an implementation of the Delegation Design Pattern.
  */
 public class TierGlyphViewMode extends TierGlyph {
+	private final SeqMapViewExtendedI smv;
 	private SeqSymmetry modelSym;
 
-	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction) {
+	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 		this.modelSym = sym;
+		this.smv = smv;
 		setViewModeGlyph(style, direction);
 		super.setDirection(direction);
 		setHitable(false);
@@ -76,7 +79,7 @@ public class TierGlyphViewMode extends TierGlyph {
 					}
 				}
 			}
-			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction);
+			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction, smv);
 			viewModeGlyph.setTierGlyph(this);
 			viewModeGlyph.processParentCoordBox(super.getCoordBox());
 		}
@@ -113,7 +116,7 @@ public class TierGlyphViewMode extends TierGlyph {
 		this.style = style;
 		if(!isSymLoaded()){
 			if (viewModeGlyph == null || force) {
-				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction);
+				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction, smv);
 			}
 		}
 		else if (force || saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {

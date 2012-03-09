@@ -180,7 +180,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph viewModeGlyph = AnnotationGlyphFactory.getViewModeGlyph(style);
 		viewModeGlyph.setDirection(direction);
 		if (direction != TierGlyph.Direction.REVERSE) {

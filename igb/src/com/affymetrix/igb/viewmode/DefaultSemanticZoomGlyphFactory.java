@@ -10,6 +10,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.SemanticZoomRule;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -22,13 +23,13 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		private final ViewModeGlyph depthGlyph; 
 		private final ViewModeGlyph detailGlyph; 
 		private final Map<String, ViewModeGlyph> allViewModeGlyphs;
-		private DefaultSemanticZoomRule(SeqSymmetry sym,
-				ITrackStyleExtended style, Direction direction) {
+		private DefaultSemanticZoomRule(SeqSymmetry sym, ITrackStyleExtended style,
+			Direction direction, SeqMapViewExtendedI smv) {
 			super();
 			allViewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-			depthGlyph = depthFactory.getViewModeGlyph(sym, style, direction);
+			depthGlyph = depthFactory.getViewModeGlyph(sym, style, direction, smv);
 			allViewModeGlyphs.put(depthFactory.getName(), depthGlyph);
-			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, style, direction);
+			detailGlyph = detailGlyphFactory.getViewModeGlyph(sym, style, direction, smv);
 			allViewModeGlyphs.put(detailGlyphFactory.getName(), detailGlyph);
 		}
 
@@ -64,8 +65,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	protected SemanticZoomRule getRule(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction) {
-		return new DefaultSemanticZoomRule(sym, style, direction);
+	protected SemanticZoomRule getRule(SeqSymmetry sym, ITrackStyleExtended style,
+		Direction direction, SeqMapViewExtendedI smv) {
+		return new DefaultSemanticZoomRule(sym, style, direction, smv);
 	}
 }

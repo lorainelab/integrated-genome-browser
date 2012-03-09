@@ -30,8 +30,8 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+		Direction direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
 		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
 		SeqSpan pspan = gviewer.getViewSeqSpan(childSym);

@@ -82,6 +82,19 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		return glyphs;
 	}
 
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		TrackStyle style_copy = new TrackStyle() {
+		};
+		style_copy.copyPropertiesFrom(style);
+		TierGlyph glyph = super.getTrack(sym, style_copy, tier_direction);
+		// super.getTrack() may have created a brand new tier, in which case
+		// the style is already set to "style_copy", or it may have re-used
+		// a tier, in which case it may still have an old copy of the style
+		// associated with it.  Reset the style to be certain.
+		glyph.setStyle(style_copy);
+		return glyph;
+	}
+
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		popup.add(CenterAtHairlineAction.getAction());

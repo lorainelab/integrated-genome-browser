@@ -52,22 +52,22 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI smv) {
 		final String meth = BioSeq.determineMethod(sym);
 
 		if (meth == null) {
-			return factory.getViewModeGlyph(sym, style, tier_direction);
+			return factory.getViewModeGlyph(sym, style, tier_direction, smv);
 		} else {
 			if (!style.getSeparate()) {
 				List<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
 				list.add(sym);
-				return getViewModeGlyph(list, meth, style, Direction.BOTH);
+				return getViewModeGlyph(list, meth, style, Direction.BOTH, smv);
 			} else {
 				List<List<SeqSymmetry>> lists = getChilds(factory.getSeqMapView(), sym);
 				if(Direction.FORWARD == tier_direction){
-					return getViewModeGlyph(lists.get(0), meth, style, tier_direction);
+					return getViewModeGlyph(lists.get(0), meth, style, tier_direction, smv);
 				}else{
-					return getViewModeGlyph(lists.get(1), meth, style, tier_direction);
+					return getViewModeGlyph(lists.get(1), meth, style, tier_direction, smv);
 				}
 					
 			}
@@ -78,7 +78,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		//not implemented
 	}
 
-	private ViewModeGlyph getViewModeGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction) {
+	private ViewModeGlyph getViewModeGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 	
 		SymWithProps result_sym = (SymWithProps) operator.operate(factory.getSeqMapView().getAnnotatedSeq(), list);
 		SymWithProps output = result_sym;
@@ -98,7 +98,7 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 			output.setProperty("id", meth);
 		}
 
-		return factory.getViewModeGlyph(output, style, direction);
+		return factory.getViewModeGlyph(output, style, direction, smv);
 	}
 
 	@Override

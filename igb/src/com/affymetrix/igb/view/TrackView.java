@@ -111,7 +111,7 @@ public class TrackView {
 			tierGlyph = null;
 		}
 		if (tierGlyph == null) {
-			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction);
+			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction, smv);
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
@@ -250,8 +250,19 @@ public class TrackView {
 				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
 					//Create dummy tier
 					String meth = BioSeq.determineMethod(annotSym);
-					ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-					smv.getTiers(style, true);
+					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+					if (TrackUtils.getInstance().useViewMode(meth)) {
+						if (style.getSeparate()) {
+							smv.getTrack(null, style, TierGlyph.Direction.FORWARD);
+							smv.getTrack(null, style, TierGlyph.Direction.REVERSE);
+						}
+						else {
+							smv.getTrack(null, style, TierGlyph.Direction.BOTH);
+						}
+					}
+					else {
+						smv.getTiers(style, true);
+					}
 					continue;
 				}
 			}

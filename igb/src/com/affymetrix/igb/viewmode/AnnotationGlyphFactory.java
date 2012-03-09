@@ -595,7 +595,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction) {
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI smv) {
 		String meth = BioSeq.determineMethod(sym);
 
 		if (meth == null) {

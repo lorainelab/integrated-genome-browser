@@ -9,10 +9,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.event.MouseInputAdapter;
 
 /**
@@ -80,7 +77,8 @@ public class TierResizer extends MouseInputAdapter {
 	 *         such that the tiers in this list can be resized
 	 *         and none of the others can.
 	 */
-	private List<TierLabelGlyph> pertinentTiers(int theFirst, int theLast,
+	private static List<TierLabelGlyph> pertinentTiers(
+			int theFirst, int theLast,
 			List<TierLabelGlyph> theList) {
 		assert 0 <= theFirst;
 		assert theFirst < theLast;
@@ -300,6 +298,10 @@ public class TierResizer extends MouseInputAdapter {
 		this.lowerGl = null; // helps with garbage collection
 	}
 
+	/**
+	 * Indicates that the mouse is over the resizing border
+	 * at the top of a label glyph.
+	 */
 	private boolean atResizeTop(NeoMouseEvent nevt) {
 		if (nevt == null || nevt.getItems().isEmpty()) {
 			return false;
@@ -317,6 +319,10 @@ public class TierResizer extends MouseInputAdapter {
 				|| orderedGlyphs.get(index - 1).isManuallyResizable()));
 	}
 
+	/**
+	 * Indicates that the mouse is over the resizing border
+	 * at the bottom of a label glyph.
+	 */
 	private boolean atResizeBottom(NeoMouseEvent nevt) {
 		if (nevt == null || nevt.getItems().isEmpty()) {
 			return false;

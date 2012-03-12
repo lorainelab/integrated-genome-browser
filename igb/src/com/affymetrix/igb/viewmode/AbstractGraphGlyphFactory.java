@@ -130,7 +130,7 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		AbstractGraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate);
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
-		tier_style.setCollapsed(isGenome);
+//		tier_style.setCollapsed(isGenome);
 		if (gstate.getComboStyle() != null) {
 			tier_style = gstate.getComboStyle();
 		}

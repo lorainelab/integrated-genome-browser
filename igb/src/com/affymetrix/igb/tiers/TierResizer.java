@@ -197,7 +197,7 @@ public class TierResizer extends MouseInputAdapter {
 			}
 		}
 		else {
-			System.err.println("TierResizer: No upper glyph or no lower glyph.");
+//			System.err.println("TierResizer: No upper glyph or no lower glyph.");
 		}
 
 		start = nevt.getCoordY();

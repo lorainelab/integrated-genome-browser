@@ -7,19 +7,20 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphDragger;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
-import java.awt.ComponentOrientation;
 import java.awt.Cursor;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -40,7 +41,6 @@ public final class TierLabelManager implements PropertyHolder {
 	private final AffyLabelledTierMap tiermap;
 	private final AffyTieredMap labelmap;
 	private final JPopupMenu popup;
-	private static final double RESIZE_THRESHHOLD = 4.0;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
@@ -57,8 +57,6 @@ public final class TierLabelManager implements PropertyHolder {
 		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
 	}
 
-	public boolean manualResizingAllowed = true; // temporary switch until resizing works well.
-
 	/**
 	 * For moving tiers around and adjusting their sizes.
 	 * Use Swing for the future. Otherwise could have used AWT's MouseAdapter.
@@ -68,38 +66,6 @@ public final class TierLabelManager implements PropertyHolder {
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
-		public boolean manualResizingAllowed = TierLabelManager.this.manualResizingAllowed; // temporary switch until resizing works well.
-		
-		
-		/**
-		 * Determines the scope of an expansion of tiers by border drag.
-		 * @param theFirst points to tier just above the border being dragged.
-		 * @param theLast points to the tier just below the border being dragged.
-		 * @return a maximal (possibly empty) expansion of theList.sublist(theFirst, theLast+1)
-		 *         such that the first and last tiers can be resized
-		 *         and none of the others can.
-		 */
-		private List<TierLabelGlyph> pertinentTiers(int theFirst, int theLast, List<TierLabelGlyph> theList) {
-			assert 0 <= theFirst;
-			assert theFirst < theLast;
-			assert theLast < theList.size();
-			int top = theLast, limit = theLast;
-			for (int i = theFirst; 0 <= i; i--) {
-				TierLabelGlyph g = theList.get(i);
-				if (g.isManuallyResizable()) {
-					top = i;
-					break;
-				}
-			}
-			for (int i = theLast; i < theList.size(); i++) {
-				TierLabelGlyph g = theList.get(i);
-				if (g.isManuallyResizable()) {
-					limit = i + 1;
-					break;
-				}
-			}
-			return theList.subList(top, limit);
-		}
 
 		@Override
 		public void mouseMoved(MouseEvent evt) {
@@ -129,28 +95,18 @@ public final class TierLabelManager implements PropertyHolder {
 
 		@Override
 		public void mousePressed(MouseEvent evt) {
+			int cursorType = labelmap.getCursor().getType();
+			if (Cursor.N_RESIZE_CURSOR == cursorType
+					|| Cursor.S_RESIZE_CURSOR == cursorType) {
+				// The resizer will handle this one.
+				return;
+			}
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
 				List<GlyphI> selected_glyphs = nevt.getItems();
 				GlyphI topgl = null;
 				if (!selected_glyphs.isEmpty()) {
 					topgl = selected_glyphs.get(selected_glyphs.size() - 1);
-				}
-				if (this.manualResizingAllowed) {
-					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-					int index = orderedGlyphs.indexOf(topgl);
-					List<TierLabelGlyph> resizeRegion = null;
-					if (atResizeTop(nevt)) {
-						resizeRegion = pertinentTiers(index-1, index, orderedGlyphs);
-					}
-					else if (atResizeBottom(nevt)) {
-						resizeRegion = pertinentTiers(index, index+1, orderedGlyphs);
-					}
-					if (null != resizeRegion && 1 < resizeRegion.size()) { // then resizer can handle it.
-						// Screen the event from the dragger.
-						// Resizer should have handled it.
-						return;
-					}
 				}
 				// Dispatch track selection event
 				//doTrackSelection(topgl);
@@ -211,33 +167,6 @@ public final class TierLabelManager implements PropertyHolder {
 	}; // End of tier dragging MouseInputListener
 	
 
-	private boolean atResizeTop(NeoMouseEvent nevt) {
-		if (nevt == null || nevt.getItems().isEmpty()) {
-			return false;
-		}
-		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
-		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-		int index = orderedGlyphs.indexOf(topgl);
-		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
-		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
-		return (index > 0 &&
-			(nevt.getCoordY() - topgl.getCoordBox().getY() < threshhold) &&
-			(((TierLabelGlyph)topgl).isManuallyResizable() || orderedGlyphs.get(index - 1).isManuallyResizable()));
-	}
-
-	private boolean atResizeBottom(NeoMouseEvent nevt) {
-		if (nevt == null || nevt.getItems().isEmpty()) {
-			return false;
-		}
-		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
-		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-		int index = orderedGlyphs.indexOf(topgl);
-		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
-		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
-		return (index < orderedGlyphs.size() - 1 &&
-			(topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight() - nevt.getCoordY() < threshhold) &&
-			(((TierLabelGlyph)topgl).isManuallyResizable() || orderedGlyphs.get(index + 1).isManuallyResizable()));
-	}
 
 	/**
 	 *  Determines whether selecting a tier label of a tier that contains only
@@ -258,8 +187,9 @@ public final class TierLabelManager implements PropertyHolder {
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
 		
 		// Trying something new, a less dependent resizer:
+		boolean manualResizingAllowed = true; // temporary switch until resizing works well.
 		MouseInputListener resizer = new TierResizer(this.tiermap);
-		if (!this.manualResizingAllowed) {
+		if (!manualResizingAllowed) {
 			resizer = new MouseInputAdapter() {
 				// Stub out resizing to disable it.
 			};

@@ -95,6 +95,24 @@ public class MisMatchGraphSym extends GraphSym {
 		System.arraycopy(n, 0, residuesTot[4], 0, n.length);
 	}
 
+	public float[][] getAllResidues() {
+		return copyAllResidues();
+	}
+	
+	/** Returns a copy of the residues as a int[][]
+	 */
+	public synchronized float[][] copyAllResidues() {
+		float[][] tempCoords = new float[residuesTot.length][this.getPointCount()];
+		float[] temp;
+		for (int i=0;i<this.getPointCount();i++) {
+			temp = getAllResiduesY(i);
+			for(int j=0; j<temp.length; j++){
+				tempCoords[j][i] = temp[j];
+			}
+		}
+		return tempCoords;
+	}
+	
 	public final float[] getAllResiduesY(int i) {
 
 		float[] ret = new float[residuesTot.length];

@@ -8,7 +8,11 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.event.MouseInputAdapter;
 
 /**
@@ -16,6 +20,9 @@ import javax.swing.event.MouseInputAdapter;
  * Tiers are resized by adjusting the border between their labels.
  * So far this is only for vertical resizing
  * and is only used by the TierLabelManager.
+ * TODO BUG: grabbing top of axis glyph doesn't start drag.
+ * TODO BUG: mouse cursor should not indicate resizable when can't resize
+ * e.g. when axis tier is on bottom and mouse over the top border
  * @author blossome
  */
 public class TierResizer extends MouseInputAdapter {
@@ -25,7 +32,6 @@ public class TierResizer extends MouseInputAdapter {
 	private TierLabelGlyph lowerGl;
 	private TierLabelGlyph upperGl;
 	private SeqMapView gviewer = null;
-	private double start;
 	private double ourFloor, ourCeiling;
 	private List<TierLabelGlyph> fixedInterior;
 	
@@ -38,10 +44,31 @@ public class TierResizer extends MouseInputAdapter {
 	}		
 
 	/**
+	 * Manage the mouse cursor indicating when a resizing drag is possible.
+	 */
+	@Override
+	public void mouseMoved(MouseEvent theEvent) {
+		NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
+		Object src = theEvent.getSource();
+		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+		assert m != (AffyTieredMap) src; // This seems odd.
+		// Seems both cursors are the same, but you never know...
+		if (atResizeTop(nevt)) {
+			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+		}
+		else if (atResizeBottom(nevt)) {
+			m.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+		}
+		// Otherwise, leave it alone. Other listeners can (and will) handle it.
+	}
+
+	/**
 	 * Determines the scope of resizing.
 	 * Given a border between two tiers determine a list of tiers
 	 * that will be affected by the resize.
 	 * Note that the returned list is of contiguous tiers.
+	 * The top and bottom tiers will be resized.
+	 * Interior tiers are cannot be resized and will just go along for the ride.
 	 *
 	 * @param theFirst points to tier just above the border being dragged.
 	 * @param theLast points to the tier just below the border being dragged.
@@ -73,16 +100,19 @@ public class TierResizer extends MouseInputAdapter {
 		return theList.subList(top, limit);
 	}
 
+	private boolean dragStarted = false; // it's our drag, we started it.
+	private boolean dragActive = false; // mouse is over our widget.
 	/**
 	 * Establish some context and boundaries for the drag.
 	 * @param theRegion is a list of contiguous tiers affected by the resize.
 	 * @param nevt is the event starting the drag.
 	 */
 	public void startDrag(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
+		this.dragActive = this.dragStarted = true;
 		this.upperGl = theRegion.get(0);
 		this.lowerGl = theRegion.get(theRegion.size()-1);
 		
-		start = nevt.getCoordY();
+		double start = nevt.getCoordY();
 	
 		// These minimum heights are in coord space.
 		// Shouldn't we be dealing in pixels?
@@ -93,72 +123,62 @@ public class TierResizer extends MouseInputAdapter {
 		
 		this.fixedInterior = theRegion.subList(1, theRegion.size()-1);
 		for (TierLabelGlyph g: this.fixedInterior) {
-			java.awt.geom.Rectangle2D.Double b = g.getCoordBox();
+			Rectangle2D.Double b = g.getCoordBox();
 			if (b.getY() <= start) {
 				ourCeiling += b.getHeight();
 			}
 			if (start <= b.getY()) {
 				ourFloor -= b.getHeight();
 			}
-		}	
+		}
 	}
 
+	/**
+	 * Resume resizing drag where we left off.
+	 * Of course, if no drag was active when we left, no resume is needed.
+	 * @param theEvent 
+	 */
 	@Override
-	public void mouseMoved(MouseEvent theEvent) {
-		if (theEvent instanceof NeoMouseEvent) {
-			NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
-			Object src = theEvent.getSource();
-			if (src instanceof AffyTieredMap) {
-				AffyTieredMap m
-						= Application.getSingleton().getMapView().getSeqMap();
-				assert m != (AffyTieredMap) src; // This seems odd.
-				if (atResizeTop(nevt)) {
-					m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-				} 
-				else if (atResizeBottom(nevt)) {
-					m.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
-				}
-			}
-			else {
-				assert false : "not from a tiered map?";
-			}
+	public void mouseEntered(MouseEvent theEvent) {
+		this.dragActive = this.dragStarted;
+		if (this.dragActive) {
+			AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 		}
-		else {
-			assert false: "not a neo mouse event?";
-		}
+	}
+
+	/**
+	 * Suspend resizing drag.
+	 * Snap back indicating what will happen
+	 * if the drag is canceled by releasing the mouse button.
+	 */
+	@Override
+	public void mouseExited(MouseEvent theEvent) {
+		this.dragActive = false;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent evt) {
-		if (evt instanceof NeoMouseEvent) {
-			if (null == this.gviewer) {
-				this.gviewer = Application.getSingleton().getMapView();
-				assert null != this.gviewer;
-			}
-			NeoMouseEvent nevt = (NeoMouseEvent) evt;
-			List<GlyphI> selected_glyphs = nevt.getItems();
-			GlyphI topgl = null;
-			if (!selected_glyphs.isEmpty()) {
-				topgl = selected_glyphs.get(selected_glyphs.size() - 1);
-			}
-			List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
-			int index = orderedGlyphs.indexOf(topgl);
-			List<TierLabelGlyph> resizeRegion = null;
-			if (atResizeTop(nevt)) {
-				resizeRegion = pertinentTiers(index - 1, index, orderedGlyphs);
-			} else if (atResizeBottom(nevt)) {
-				resizeRegion = pertinentTiers(index, index + 1, orderedGlyphs);
-			}
-			if (null != resizeRegion && 1 < resizeRegion.size()) {
-				startDrag(resizeRegion, nevt);
-			}
+		if (null == this.gviewer) {
+			this.gviewer = Application.getSingleton().getMapView();
+			assert null != this.gviewer;
 		}
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent evt) {
-		if (evt instanceof NeoMouseEvent) {
-			neoMouseDragged((NeoMouseEvent) evt);
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		List<GlyphI> selected_glyphs = nevt.getItems();
+		GlyphI topgl = null;
+		if (!selected_glyphs.isEmpty()) {
+			topgl = selected_glyphs.get(selected_glyphs.size() - 1);
+		}
+		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+		int index = orderedGlyphs.indexOf(topgl);
+		List<TierLabelGlyph> resizeRegion = null;
+		if (atResizeTop(nevt)) {
+			resizeRegion = pertinentTiers(index - 1, index, orderedGlyphs);
+		} else if (atResizeBottom(nevt)) {
+			resizeRegion = pertinentTiers(index, index + 1, orderedGlyphs);
+		}
+		if (null != resizeRegion && 1 < resizeRegion.size()) {
+			startDrag(resizeRegion, nevt);
 		}
 	}
 	
@@ -168,12 +188,18 @@ public class TierResizer extends MouseInputAdapter {
 	 * That doesn't seem quite right. - elb
 	 * @param evt is the drag event.
 	 */
-	private void neoMouseDragged(NeoMouseEvent nevt) {
-		double delta = nevt.getCoordY() - start;
+	@Override
+	public void mouseDragged(MouseEvent evt) {
+		if (!this.dragActive) {
+			return;
+		}
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
 
 		if (this.upperGl != null && null != this.lowerGl) {
 			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
 				double y = this.upperGl.getCoordBox().getY();
+				double start = y + this.upperGl.getCoordBox().getHeight();
+				double delta = nevt.getCoordY() - start;
 				double height = this.upperGl.getCoordBox().getHeight() + delta;
 				this.upperGl.resizeHeight(y, height);
 				
@@ -196,11 +222,7 @@ public class TierResizer extends MouseInputAdapter {
 				//System.err.println("TierResizer: Out of bounds.");
 			}
 		}
-		else {
-//			System.err.println("TierResizer: No upper glyph or no lower glyph.");
-		}
 
-		start = nevt.getCoordY();
 	}
 
 	/**
@@ -209,7 +231,8 @@ public class TierResizer extends MouseInputAdapter {
 	 */
 	@Override
 	public void mouseReleased(MouseEvent evt) {
-		
+
+		this.dragStarted = this.dragActive = false;
 		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 		
 		if (this.upperGl != null) {
@@ -241,9 +264,10 @@ public class TierResizer extends MouseInputAdapter {
 			boolean full_repack = true, stretch_vertically = true, manual = false;
 			lm.repackTheTiers(full_repack, stretch_vertically, manual);
 			//lm.repackTiersToLabels();
-			// The above repack (either one I think) changes (enlarges) the tier map's bounds.
+			// The above repack (either one I think)
+			// changes (enlarges) the tier map's bounds.
 			// This probably affects the tiers' spacing. - elb 2012-02-21
-			
+
 			// Vanilla repack seems to have worse symptoms.
 			//m.repack();
 			//m.packTiers(true, false, false, true);
@@ -261,7 +285,8 @@ public class TierResizer extends MouseInputAdapter {
 			// The above may not have worked,
 			// but it would seem we need something to repack the tiers
 			// based on the label glyphs' height and position.
-			// Would have thought that's what the last paramater in repackTheTiers was for.
+			// Would have thought
+			// that's what the last paramater in repackTheTiers was for.
 
 		}
 
@@ -297,7 +322,8 @@ public class TierResizer extends MouseInputAdapter {
 		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
 		return (index < orderedGlyphs.size() - 1
 				&&
-			(topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight() - nevt.getCoordY() < threshhold)
+			(topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight()
+				- nevt.getCoordY() < threshhold)
 				&&
 			(((TierLabelGlyph)topgl).isManuallyResizable()
 				|| orderedGlyphs.get(index + 1).isManuallyResizable()));

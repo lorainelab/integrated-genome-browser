@@ -22,6 +22,8 @@ import javax.swing.event.MouseInputAdapter;
  * and is only used by the TierLabelManager.
  * TODO BUG: grabbing top of axis glyph doesn't start drag.
  * TODO BUG: mouse cursor should not indicate resizable when can't resize
+ * TODO Check on red highlighting of selection when dragging.
+ *      Doesn't selection change upon mouse click? Maybe it should not.
  * e.g. when axis tier is on bottom and mouse over the top border
  * @author blossome
  */
@@ -32,6 +34,7 @@ public class TierResizer extends MouseInputAdapter {
 	private TierLabelGlyph lowerGl;
 	private TierLabelGlyph upperGl;
 	private SeqMapView gviewer = null;
+	private double start;
 	private double ourFloor, ourCeiling;
 	private List<TierLabelGlyph> fixedInterior;
 	
@@ -112,7 +115,7 @@ public class TierResizer extends MouseInputAdapter {
 		this.upperGl = theRegion.get(0);
 		this.lowerGl = theRegion.get(theRegion.size()-1);
 		
-		double start = nevt.getCoordY();
+		this.start = nevt.getCoordY();
 	
 		// These minimum heights are in coord space.
 		// Shouldn't we be dealing in pixels?
@@ -164,10 +167,13 @@ public class TierResizer extends MouseInputAdapter {
 			assert null != this.gviewer;
 		}
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
-		List<GlyphI> selected_glyphs = nevt.getItems();
+		List<GlyphI> glyphsClicked = nevt.getItems();
 		GlyphI topgl = null;
-		if (!selected_glyphs.isEmpty()) {
-			topgl = selected_glyphs.get(selected_glyphs.size() - 1);
+		if (!glyphsClicked.isEmpty()) {
+			// DANGER: Herin lies secret knowlege of another object.
+			// The list of label glyphs will be in order from bottom to top.
+			topgl = glyphsClicked.get(glyphsClicked.size() - 1);
+			// Slower, but more prudent would be to check the coord boxes.
 		}
 		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
 		int index = orderedGlyphs.indexOf(topgl);
@@ -194,12 +200,12 @@ public class TierResizer extends MouseInputAdapter {
 			return;
 		}
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		double delta = nevt.getCoordY() - this.start;
+		this.start = nevt.getCoordY();
 
 		if (this.upperGl != null && null != this.lowerGl) {
 			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
 				double y = this.upperGl.getCoordBox().getY();
-				double start = y + this.upperGl.getCoordBox().getHeight();
-				double delta = nevt.getCoordY() - start;
 				double height = this.upperGl.getCoordBox().getHeight() + delta;
 				this.upperGl.resizeHeight(y, height);
 				

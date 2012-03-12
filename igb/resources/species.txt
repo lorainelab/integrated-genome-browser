@@ -4,6 +4,7 @@ Anopheles gambiae	Mosquito	A_gambiae	anoGam
 Apis mellifera	European honey bee	A. mellifera	A_mellifera	apiMel
 Aplysia californica	California sea hare	A_californica	aplCal
 Arabidopsis lyrata	Lyrate rockcress	A. lyrata	A_lyrata
+Aquilegia coerulea	Colorado blue columbine	A_coerulea
 Arabidopsis thaliana	Thale cress	A_thaliana
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
 Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
@@ -19,10 +20,13 @@ Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
 Candida albicans SC	Yeast (Human Flora)	C_albicans_SC
 Candida albicans WO	Yeast (Human Flora)	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
+Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
 Chlamydomonas reinhardtii	motile single-celled green alga	C_reinhardtii
 Choloepus hoffmanni	Two-toed sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
+Citrus clementina	Clementine mandarin	C_clementina
+Citrus sinensis	Sweet orange	C_sinensis
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
@@ -46,21 +50,24 @@ Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus		Erinaceus_europaeus
 Escherichia coli	E. coli	E_coli
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
-Eucalyptus grandis	E. grandis	E_grandis
+Eucalyptus grandis	Eucalyptus	E_grandis
 Felis catus	House Cat	F_catus	felCat	Felis_catus
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
 Glycine max	Soybean	G_max	
 Gorilla gorilla	Western gorilla	G_gorilla	gorGor	Gorilla_gorilla
 Gossypium hirsutum	Upland cotton	G_hirsutum
+Gossypium raimondii	Cotton D	G_raimondii
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
 Hordeum vulgare	Barley	H_vulgare
 Lemna gibba	Gibbous duckweed	L_gibba
+Linum usitatissimum	flax	L_usitatissimum
 Loligo pealeii	Longfin inshore squid	L_pealeii
 Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii
+Malus domestica	Apple	M_domestica
 Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel medic	M_truncatula	
 Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo
@@ -77,13 +84,16 @@ Nicotiana tabacum	Tobacco	N_tabacum
 Ochotona princeps	American pika	O_princeps		Ochotona_princeps
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
-Oryza sativa japonica	Rice	O_sativa	
+Oryza sativa indica	Rice	O_sativa_indica	
+Oryza sativa japonica	Rice	O_sativa_japonica	
 Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
 Otolemur garnettii	Nothern greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
 Ovis aries	sheep	O_aries	OAR	oviAri
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
+Panicum virgatum	Switchgrass	P_virgatum
 Petromyzon marinus	Lamprey	P_marinus	petMar
+Phaseolus vulgaris	Common bean	P_vulgaris
 Physcomitrella patens	Moss	P_patens
 Pinus taeda	Loblolly Pine	P. taeda	P_taeda
 Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
@@ -112,6 +122,7 @@ Taeniopygia guttata	Zebra finch	T_guttata	taeGut	Taeniopygia_guttata
 Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
 Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta
 Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
+Thellungiella halophila	Salt cress	T_halophila
 Thermococcus kodakarensis KOD1	Hyperthermophilic Archaeon	T_kodakarensis_KOD1	T. kodakarensis_KOD1	
 Tribolium castaneum	Red flour beetle	T_castaneum
 Triticum aestivum	Common wheat	T_aestivum
@@ -125,4 +136,4 @@ Xenopus laevis	African clawed frog	X_laevis
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
 Yersinia pestis	Bubonic plague pathogen	Y_pestis
 Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
-Zea mays B73	Maize	Z_mays
+Zea mays B73	Maize B73	Z_mays

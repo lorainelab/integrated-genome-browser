@@ -36,7 +36,7 @@ public class ExportDialog implements ExportConstants {
 	private JFileChooser fileChooser;
 	private File exportFile;
 	private String selectedExt;
-	private static final String defaultPath = FileTracker.EXPORT_DIR_TRACKER.getFile().getPath();
+	private static File defaultDir = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
@@ -77,10 +77,12 @@ public class ExportDialog implements ExportConstants {
 	public void init() {
 		String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
 		if (file.equals(DEFAULT_FILE)) {
-			exportFile = new File(defaultPath, file);
+			exportFile = new File(defaultDir, file);
 		} else {
 			exportFile = new File(file);
 		}
+
+		defaultDir = new File(exportNode.get(PREF_DIR, defaultDir.getAbsolutePath()));
 
 		imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
 
@@ -188,21 +190,22 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void browseButtonActionPerformed(JPanel panel) {
-		String path = filePathTextField.getText();
-		exportFile = new File(path);
+		FileFilter filter = getFilter(selectedExt);
 
-		if (path.isEmpty()) {
-			exportFile = new File(defaultPath, "export" + selectedExt);
-			filePathTextField.setText(exportFile.getAbsolutePath());
+		exportFile = new File(filePathTextField.getText());
+
+		if (exportFile.getName().isEmpty()) {
+			exportFile = new File("export" + selectedExt);
 		}
 
-		FileFilter filter = getFilter(selectedExt);
-		fileChooser = new ExportFileChooser(exportFile.getParentFile(), exportFile, filter);
+		fileChooser = new ExportFileChooser(defaultDir,
+				new File(exportFile.getName()), filter);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");
 
 		if (fileChooser.getSelectedFile() != null) {
 			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
+			defaultDir = fileChooser.getSelectedFile().getParentFile();
 			String ext = ParserController.getExtension(newPath);
 			String des = fileChooser.getFileFilter().getDescription();
 
@@ -294,6 +297,7 @@ public class ExportDialog implements ExportConstants {
 
 		exportNode.put(PREF_FILE, path);
 		exportNode.put(PREF_EXT, des);
+		exportNode.put(PREF_DIR, defaultDir.getAbsolutePath());
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
 

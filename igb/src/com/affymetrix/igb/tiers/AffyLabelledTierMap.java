@@ -13,19 +13,17 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.*;
-
-import javax.swing.*;
-
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which 
@@ -128,6 +126,9 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     return orderedGlyphs;
   }
 
+  /**
+   * @return a list of tier labels in order from top to bottom.
+   */
   public List<TierLabelGlyph> getOrderedTierLabels() {
 	  if (ordered_glyphs == null) {
 		  ordered_glyphs = getOrderedGlyphs();

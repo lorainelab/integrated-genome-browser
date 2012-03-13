@@ -260,12 +260,12 @@ public class TierGlyphViewMode extends TierGlyph {
 	}
 //	@Override
 //	public final boolean isSelected() {
-//		
+//
 //		return viewModeGlyph.isSelected();
 //	}
 	@Override
 	public int getChildCount() {
-/////		
+/////
 		return viewModeGlyph == null ? 0 : viewModeGlyph.getChildCount();
 	}
 	@Override
@@ -448,5 +448,10 @@ public class TierGlyphViewMode extends TierGlyph {
 	public void drawChildren(ViewI view) {
 		System.out.println("!!!!!!!!! drawChildren(ViewI view)");
 /////		viewModeGlyph.drawChildren(view);
+	}
+
+	@Override
+	public String toString() {
+		return (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? "###>" : " ---> ") + (style == null ? "null" : style.toString());
 	}
 }

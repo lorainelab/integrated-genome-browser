@@ -33,7 +33,9 @@ public class MisMatchGraphSym extends GraphSym {
 			int[] a, int[] t, int[] g, int[] c, int[] n, 
 			String id, BioSeq seq){
 		super(x,w,y,id,seq);
-		setAllResidues(a,t,g,c,n);
+		if (a != null && t != null && g != null && c != null && n != null) {
+			setAllResidues(a,t,g,c,n);
+		}
 	}
 	
 	protected File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {

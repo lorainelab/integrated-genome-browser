@@ -63,12 +63,12 @@ public class CopyMismatchOperator implements Operator{
 
 	@Override
 	public int getOperandCountMin(FileTypeCategory category) {
-		return category == FileTypeCategory.Graph ? 1 : 0;
+		return category == FileTypeCategory.Mismatch ? 1 : 0;
 	}
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return category == FileTypeCategory.Graph ? 1 : 0;
+		return category == FileTypeCategory.Mismatch ? 1 : 0;
 	}
 
 	@Override

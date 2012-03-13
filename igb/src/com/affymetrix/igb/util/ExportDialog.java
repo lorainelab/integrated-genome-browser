@@ -283,9 +283,7 @@ public class ExportDialog implements ExportConstants {
 				exportFile = new File(path);
 			}
 		}
-
-		exportScreenshot(exportFile, selectedExt);
-
+		
 		String des = getDescription(ext);
 		extComboBox.setSelectedItem(getType(des));
 
@@ -293,6 +291,12 @@ public class ExportDialog implements ExportConstants {
 		exportNode.put(PREF_EXT, des);
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
+
+		if (!isOverwriteExistFile(exportFile)) {
+			return false;
+		}
+
+		exportScreenshot(exportFile, selectedExt);
 
 		return true;
 	}
@@ -315,20 +319,24 @@ public class ExportDialog implements ExportConstants {
 			return false;
 		}
 
-		if (exportFile.exists()) {
+		return true;
+	}
+
+	private boolean isOverwriteExistFile(File file) {
+		if (file.exists()) {
 			// give the user the choice to overwrite the existing file or not
 			// The option pane used differs from the confirmDialog only in
 			// that "No" is the default choice.
 			String[] options = {"Yes", "No"};
-			if (JOptionPane.NO_OPTION == JOptionPane.showOptionDialog(
+			if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
 					null, "Overwrite Existing File?", "File Exists",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					options, options[1])) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	public static void exportScreenshot(File f, String ext) throws IOException {

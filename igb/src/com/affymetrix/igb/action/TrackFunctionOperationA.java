@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symloader.Delegate;
+import com.affymetrix.genometryImpl.symloader.Delegate.DelegateParent;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.UcscBedSym;
@@ -38,34 +39,36 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 	}
 
 	protected void addTier(List<? extends GlyphI> tiers) {
-		java.util.List<String> symsStr = new java.util.ArrayList<String>();
-		java.util.List<GenericFeature> features = new java.util.ArrayList<GenericFeature>();
+		java.util.List<DelegateParent> dps = new java.util.ArrayList<DelegateParent>();
 		StringBuilder meth = new StringBuilder();
 		meth.append(operator.getName()).append(": ");
 
 
 		for (GlyphI tier : tiers) {
-			symsStr.add(((TierGlyph)tier).getAnnotStyle().getMethodName());
-			meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
 			if(((TierGlyph)tier).getAnnotStyle().getFeature() == null){
 				addNonUpdateableTier(tiers);
 				return;
 			}
-				
-			features.add(((TierGlyph)tier).getAnnotStyle().getFeature());
+			
+			meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
+			dps.add(new DelegateParent(((TierGlyph)tier).getAnnotStyle().getMethodName(), 
+					isForward((TierGlyph)tier), ((TierGlyph)tier).getAnnotStyle().getFeature()));
+			
 		}
 
-		String method = TrackStyle.getUniqueName(GeneralUtils.URLEncode(meth.toString()));
+		String method = GeneralUtils.URLEncode(meth.toString());
 		//TODO : Remove below conditions afte view mode refactoring is complete.
-		if(!method.contains("$.")){
-			method += "$.";
+		if(!method.contains("$")){
+			method += "$";
 		}
+		
+		method = TrackStyle.getUniqueName(method);
 		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).setViewMode("default");
 
 		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		java.net.URI uri = java.net.URI.create("file:/"+method);
 
-		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, symsStr, features), null, false);
+		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, dps), null, false);
 		version.addFeature(feature);
 		feature.setVisible(); // this should be automatically checked in the feature tree
 
@@ -114,5 +117,17 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 	@Override
 	public String getText() {
 		return "";
+	}
+	
+	private static Boolean isForward(TierGlyph tier){
+		if(tier.getAnnotStyle().isGraphTier()){
+			return null;
+		}
+		
+		if(tier.getDirection() == TierGlyph.Direction.BOTH || tier.getDirection() == TierGlyph.Direction.NONE){
+			return null;
+		}
+		
+		return tier.getDirection() == TierGlyph.Direction.FORWARD;
 	}
 }

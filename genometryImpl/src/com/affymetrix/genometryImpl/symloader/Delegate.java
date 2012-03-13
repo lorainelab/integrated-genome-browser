@@ -7,10 +7,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import java.io.IOException;
@@ -34,16 +31,14 @@ public class Delegate extends QuickLoadSymLoader {
 	
 	
 	private final Operator operator;
-	private final List<String> symsStr;
-	private final List<GenericFeature> features;
+	private final List<DelegateParent> dps;
 	private final List<LoadUtils.LoadStrategy> strategyList;
 	
 	public Delegate(URI uri, String featureName, GenericVersion version,
-			Operator operator, List<String> symsStr, List<GenericFeature> features) {
+			Operator operator, List<DelegateParent> dps) {
 		super(uri, featureName, version, null);
 		this.operator = operator;
-		this.symsStr = symsStr;
-		this.features = features;
+		this.dps = dps;
 		this.extension = EXT;
 		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
 		strategyList.addAll(defaultStrategyList);
@@ -80,14 +75,14 @@ public class Delegate extends QuickLoadSymLoader {
 		List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		
-		if(symsStr.isEmpty())
+		if(dps.isEmpty())
 			return result;
 		
-		for(String symStr : symsStr){
-			if(overlapSpan.getBioSeq().getAnnotation(symStr) == null)
+		for(DelegateParent dp : dps){
+			if(overlapSpan.getBioSeq().getAnnotation(dp.name) == null)
 				return result;
 			
-			syms.add(overlapSpan.getBioSeq().getAnnotation(symStr));
+			syms.add(dp.getSeqSymmetry(overlapSpan.getBioSeq()));
 		}
 		
 		SymWithProps sym = (SymWithProps) operator.operate(overlapSpan.getBioSeq(), syms);
@@ -103,18 +98,18 @@ public class Delegate extends QuickLoadSymLoader {
 			throws OutOfMemoryError, IOException {
 		boolean notUpdatable = false;
 
-		if (features.isEmpty()) {
+		if (dps.isEmpty()) {
 			return false;
 		}
 
-		for (GenericFeature f : features) {
-			if (!f.isVisible()) {
+		for (DelegateParent dp : dps) {
+			if (!dp.feature.isVisible()) {
 				notUpdatable = true;
 				Thread.currentThread().interrupt();
 				break;
 			}
 
-			while (f.optimizeRequest(overlapSpan) != null) {
+			while (dp.feature.optimizeRequest(overlapSpan) != null) {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException ex) {
@@ -125,8 +120,10 @@ public class Delegate extends QuickLoadSymLoader {
 		}
 
 		if (notUpdatable) {
-			symsStr.clear();
-			features.clear();
+			for(DelegateParent dp : dps){
+				dp.clear();
+			}
+			dps.clear();
 			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
 			return false;
@@ -176,5 +173,52 @@ public class Delegate extends QuickLoadSymLoader {
 		
 		feature.addMethod(uri.toString());
 		return true;
+	}
+	
+	public static class DelegateParent{
+		String name;
+		Boolean direction;
+		GenericFeature feature;
+		
+		public DelegateParent(String name, Boolean direction, GenericFeature feature){
+			this.name = name;
+			this.direction = direction;
+			this.feature = feature;
+		}
+		
+		SeqSymmetry getSeqSymmetry(BioSeq seq){
+			if(direction == null){
+				return seq.getAnnotation(name);
+			}else{
+				return getChilds(seq, name, direction.booleanValue());
+			}
+		}
+		
+		private SeqSymmetry getChilds(BioSeq seq, String name, boolean isForward) {
+			SeqSymmetry parentSym = seq.getAnnotation(name);
+			TypeContainerAnnot tca = new TypeContainerAnnot(name);
+			
+			SeqSymmetry sym;
+			SeqSpan span;
+			for (int i = 0; i < parentSym.getChildCount(); i++) {
+				sym = parentSym.getChild(i);
+				span = sym.getSpan(seq);
+
+				if (span == null || span.getLength() == 0) {
+					continue;
+				}
+
+				if (span.isForward() == isForward) {
+					tca.addChild(sym);
+				}
+			}
+			
+			return tca;
+		}
+		
+		void clear(){
+			name = null;
+			feature = null;
+		}
 	}
 }

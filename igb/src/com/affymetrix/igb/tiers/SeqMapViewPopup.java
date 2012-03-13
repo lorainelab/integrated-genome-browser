@@ -653,7 +653,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		showMenu.removeAll();
 		handler.sortTiers();
-		gviewer.getSeqMap().updateWidget();
+		repack(false);
 		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 
@@ -1036,7 +1036,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	public void repack(boolean full_repack){
-		gviewer.select(new ArrayList<SeqSymmetry>(1), true);
+		gviewer.getSeqMap().clearSelected();
 		handler.repackTheTiers(full_repack, true);
 	}
 	

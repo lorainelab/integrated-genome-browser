@@ -508,7 +508,6 @@
         <Component class="javax.swing.JComboBox" name="trackNameSizeComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackNameSizeComboBoxActionPerformed"/>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="trackNameSizeComboBoxKeyReleased"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tpv.trackNameSizeComboBox"/>

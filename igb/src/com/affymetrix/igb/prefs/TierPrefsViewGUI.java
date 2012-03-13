@@ -280,11 +280,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
                 trackNameSizeComboBoxActionPerformed(evt);
             }
         });
-        trackNameSizeComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                trackNameSizeComboBoxKeyReleased(evt);
-            }
-        });
 
         labelFieldLabel.setText("Label Field:");
 
@@ -509,10 +504,6 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 	private void displayNameTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_displayNameTextFieldKeyReleased
 		tpv.displayNameTextField();
 	}//GEN-LAST:event_displayNameTextFieldKeyReleased
-
-	private void trackNameSizeComboBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxKeyReleased
-		tpv.trackNameSizeComboBox();
-	}//GEN-LAST:event_trackNameSizeComboBoxKeyReleased
 
 	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
 		tpv.trackNameSizeComboBox();

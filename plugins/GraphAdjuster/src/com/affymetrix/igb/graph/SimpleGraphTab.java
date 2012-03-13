@@ -31,6 +31,8 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
+import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -782,38 +784,6 @@ public final class SimpleGraphTab
 			});
 		}
 
-		private boolean isGraphOperator(Operator operator) {
-			for (FileTypeCategory category : FileTypeCategory.values()) {
-				if (category == FileTypeCategory.Graph) {
-					if (operator.getOperandCountMin(category) < 2) {
-						return false;
-					}
-				}
-				else {
-					if (operator.getOperandCountMax(category) > 0) {
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-
-		private boolean isGraphTransform(Operator operator) {
-			for (FileTypeCategory category : FileTypeCategory.values()) {
-				if (category == FileTypeCategory.Graph) {
-					if (operator.getOperandCountMin(category) != 1) {
-						return false;
-					}
-				}
-				else {
-					if (operator.getOperandCountMax(category) > 0) {
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-
 		private void loadOperators() {
 			transformationCB.removeAllItems();
 			name2transform.clear();
@@ -829,11 +799,11 @@ public final class SimpleGraphTab
 			);
 			operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 			for (Operator operator : operators) {
-				if (isGraphOperator(operator)) {
+				if (AbstractGraphOperator.isGraphOperator(operator)) {
 					name2operator.put(operator.getName(), operator);
 					operationCB.addItem(operator.getName());
 				}
-				if (isGraphTransform(operator)) {
+				if (AbstractFloatTransformer.isGraphTransform(operator)) {
 					name2transform.put(operator.getName(), operator);
 					transformationCB.addItem(operator.getName());
 				}

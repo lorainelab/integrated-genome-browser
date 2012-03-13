@@ -11,11 +11,14 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 public abstract class AbstractGraphOperator implements Operator {
+
 	/**
-	 * performs a given graph operation on a given set of graphs and returns the resulting graph
-	 * note - there can be a mix of widthless (no wCoords) and width graphs, if all input graphs
-	 * are widthless, the result is also widthless, otherwise all widthless graphs will be treated
-	 * as if they have width of 1.
+	 * performs a given graph operation on a given set of graphs and returns the
+	 * resulting graph note - there can be a mix of widthless (no wCoords) and
+	 * width graphs, if all input graphs are widthless, the result is also
+	 * widthless, otherwise all widthless graphs will be treated as if they have
+	 * width of 1.
+	 *
 	 * @param aseq the BioSeq to use
 	 * @param graphs the selected graphs to use as the operands of the operation
 	 * @return the graph result of the operation
@@ -29,7 +32,7 @@ public abstract class AbstractGraphOperator implements Operator {
 		int[] index = new int[symList.size()];
 		ArrayList<String> labels = new ArrayList<String>();
 		for (int i = 0; i < symList.size(); i++) {
-			GraphSym graph = (GraphSym)symList.get(i);
+			GraphSym graph = (GraphSym) symList.get(i);
 			index[i] = 0;
 			int[] xArray = graph.getGraphXCoords();
 			ArrayList<Integer> xCoordList = new ArrayList<Integer>();
@@ -77,11 +80,9 @@ public abstract class AbstractGraphOperator implements Operator {
 					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
 					if (startX == endX && startX < spanEndX) { // widthless (width == 0) coordinate
 						spanEndX = startX;
-					}
-					else if (startX > spanBeginX && startX < spanEndX) {
+					} else if (startX > spanBeginX && startX < spanEndX) {
 						spanEndX = startX;
-					}
-					else if (endX > spanBeginX && endX < spanEndX) {
+					} else if (endX > spanBeginX && endX < spanEndX) {
 						spanEndX = endX;
 					}
 				}
@@ -128,9 +129,9 @@ public abstract class AbstractGraphOperator implements Operator {
 		// get the display name for the result graph
 		String symbol = getSymbol();
 		String separator = (symbol == null) ? ", " : " " + symbol + " ";
-		String newname = 
-			getName().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")" :
-			"(..." + symList.size() + ")");
+		String newname =
+				getName().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")"
+				: "(..." + symList.size() + ")");
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
 		// create the new graph from the results
 		int[] x = intListToArray(xList);
@@ -149,8 +150,8 @@ public abstract class AbstractGraphOperator implements Operator {
 		GraphSym newsym = new GraphSym(x, w, y, newname, aseq);
 
 		newsym.setGraphName(newname);
-		newsym.getGraphState().setGraphStyle(((GraphSym)symList.get(0)).getGraphState().getGraphStyle());
-		newsym.getGraphState().setHeatMap(((GraphSym)symList.get(0)).getGraphState().getHeatMap());
+		newsym.getGraphState().setGraphStyle(((GraphSym) symList.get(0)).getGraphState().getGraphStyle());
+		newsym.getGraphState().setHeatMap(((GraphSym) symList.get(0)).getGraphState().getHeatMap());
 		return newsym;
 	}
 
@@ -164,8 +165,7 @@ public abstract class AbstractGraphOperator implements Operator {
 			if (hasWidthGraphs) {
 				width = 1;
 			}
-		}
-		else {
+		} else {
 			width = widths.get(index);
 		}
 		return width;
@@ -215,5 +215,20 @@ public abstract class AbstractGraphOperator implements Operator {
 	@Override
 	public boolean setParameters(Map<String, Object> parms) {
 		return false;
+	}
+
+	public static boolean isGraphOperator(Operator operator) {
+		for (FileTypeCategory category : FileTypeCategory.values()) {
+			if (category == FileTypeCategory.Graph) {
+				if (operator.getOperandCountMin(category) < 2) {
+					return false;
+				}
+			} else {
+				if (operator.getOperandCountMax(category) > 0) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

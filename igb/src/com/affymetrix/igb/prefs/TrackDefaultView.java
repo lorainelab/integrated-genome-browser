@@ -71,7 +71,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		b1Text = "Add";
 		b2Text = "Delete";
 		track = "Track Type";
-		((TrackDefaultPrefTableModel)model).setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+		((TrackDefaultPrefTableModel) model).setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		initializeFileTypes();
 		initCommonComponents();
 		initComponents();
@@ -99,12 +99,17 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	private void initComponents() {
 		trackDefaultTextField = new JTextField();
+		trackDefaultTextField.setEnabled(false);
+		table = new StyledJTable();
+		table.list.add(TierPrefsView.COL_BACKGROUND);
+		table.list.add(TierPrefsView.COL_FOREGROUND);
 		addTrackDefaultButton = new JRPButton("TrackDefaultView_addTrackDefaultButton");
 		removeTrackDefaultButton = new JRPButton("TrackDefaultView_removeTrackDefaultButton");
 		initTable();
 		addTrackDefaultButton.setText("Add");
 		removeTrackDefaultButton.setText("Remove");
 	}
+
 	@Override
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable && !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
@@ -112,6 +117,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
 		}
 	}
+
 	public void addTrackDefaultButton() {
 		initializeFileTypes();
 		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
@@ -135,26 +141,39 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 		Map<String, AssociationElement> elements = XmlStylesheetParser.getUserFileTypeAssociation();
 		elements.put(selectedTrackDefaultType, element);
-		((TrackDefaultPrefTableModel)model).file2types = elements.entrySet().toArray(new Entry[elements.size()]);
-		((TrackDefaultPrefTableModel)model).addElement(selectedTrackDefaultType, element);
+		((TrackDefaultPrefTableModel) model).file2types = elements.entrySet().toArray(new Entry[elements.size()]);
+		((TrackDefaultPrefTableModel) model).addElement(selectedTrackDefaultType, element);
 		model.fireTableDataChanged();
 	}
+
 	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
 			List<TrackStyle> styles = new ArrayList<TrackStyle>();
 			for (int i : selectedRows) {
-				styles.add(((TrackDefaultPrefTableModel)model).tier_styles.get(i));
+				styles.add(((TrackDefaultPrefTableModel) model).tier_styles.get(i));
 			}
 
 			for (TrackStyle style : styles) {
 				if (!style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 					XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
-					((TrackDefaultPrefTableModel)model).removeElement(style.getTrackName());
+					((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
 				}
 			}
 
 			model.fireTableDataChanged();
 		}
+	}
+
+	private void setEnabled(boolean b) {
+		labelFieldComboBox.setEnabled(b);
+		maxDepthTextField.setEnabled(b);
+		show2TracksCheckBox.setEnabled(b);
+		connectedCheckBox.setEnabled(b);
+		collapsedCheckBox.setEnabled(b);
+		possitiveColorComboBox.setEnabled(b);
+		negativeColorComboBox.setEnabled(b);
+		arrowCheckBox.setEnabled(b);
+		colorCheckBox.setEnabled(b);
 	}
 
 	/**
@@ -163,58 +182,39 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	 * @param evt
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
-		labelFieldComboBox.setEnabled(true);
-		maxDepthTextField.setEnabled(true);
-		show2TracksCheckBox.setEnabled(true);
-		connectedCheckBox.setEnabled(true);
-		collapsedCheckBox.setEnabled(true);
 		selectedRows = table.getSelectedRows();
-		removeTrackDefaultButton.setEnabled(true);
-		initializationDetector = true;
-		trackDefaultTextField.setEnabled(false);
-		possitiveColorComboBox.setEnabled(true);
-		negativeColorComboBox.setEnabled(true);
-		arrowCheckBox.setEnabled(true);
-		colorCheckBox.setEnabled(true);
+		if (selectedRows.length > 0) {
+			initializationDetector = true;
 
-		if (selectedRows.length > 1) {
-			bgColorComboBox.setSelectedColor(null);
-			fgColorComboBox.setSelectedColor(null);
-			trackNameSizeComboBox.setSelectedItem("");
-			labelFieldComboBox.setEnabled(false);
-			maxDepthTextField.setEnabled(false);
-			show2TracksCheckBox.setEnabled(false);
-			connectedCheckBox.setEnabled(false);
-			collapsedCheckBox.setEnabled(false);
-			colorCheckBox.setEnabled(false);
-			arrowCheckBox.setEnabled(false);
-			possitiveColorComboBox.setEnabled(false);
-			negativeColorComboBox.setEnabled(false);
-		} else if (selectedRows.length == 1) {
-			selectedStyle = ((TrackDefaultPrefTableModel)model).getStyles().get(selectedRows[0]);
+			setEnabled(true);
+
+			selectedStyle = ((TrackDefaultPrefTableModel) model).getStyles().get(selectedRows[0]);
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 				removeTrackDefaultButton.setEnabled(false);
+			} else {
+				removeTrackDefaultButton.setEnabled(true);
 			}
 
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
+			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 
 			if (Arrays.asList(graphFormats).contains(selectedStyle.getTrackName())) {
-				labelFieldComboBox.setEnabled(false);
-				maxDepthTextField.setEnabled(false);
-				show2TracksCheckBox.setEnabled(false);
-				connectedCheckBox.setEnabled(false);
-				collapsedCheckBox.setEnabled(false);
-				colorCheckBox.setEnabled(false);
-				arrowCheckBox.setEnabled(false);
-				possitiveColorComboBox.setEnabled(false);
-				negativeColorComboBox.setEnabled(false);
+				setEnabled(false);
+				labelFieldComboBox.setSelectedItem(null);
+				maxDepthTextField.setText("");
+				show2TracksCheckBox.setSelected(false);
+				connectedCheckBox.setSelected(false);
+				collapsedCheckBox.setSelected(false);
+				colorCheckBox.setSelected(false);
+				arrowCheckBox.setSelected(false);
+				possitiveColorComboBox.setSelectedColor(null);
+				negativeColorComboBox.setSelectedColor(null);
 			} else {
 				possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
 				negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
-				trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
 				labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
 				maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
 				show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
@@ -243,11 +243,8 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 						break;
 				}
 			}
-		}
 
-		initializationDetector = false;
-
-		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
+			initializationDetector = false;
 		}
 	}
 	public JRPButton getAddTrackDefaultButton() {

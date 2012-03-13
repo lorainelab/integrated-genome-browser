@@ -13,8 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.*;
@@ -23,8 +21,9 @@ import java.util.*;
 
 import javax.swing.*;
 
+import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -46,7 +45,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
@@ -55,6 +53,9 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
+import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.geom.Rectangle2D;
@@ -545,23 +546,22 @@ public final class GraphSelectionManager
       combine.add(graph_info_A);
       combine.add(graph_info_B);
       combine.add(new JSeparator());
-      List<GraphOperator> operators = ExtensionPointHandler.getExtensionPoint(GraphOperator.class).getExtensionPointImpls();
-      for (final GraphOperator graphOperator : operators) {
-    	  JMenuItem menuItem = new JMenuItem(graphOperator.getName());
-    	  menuItem.addActionListener(
-    	      new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					@SuppressWarnings({ "unchecked", "rawtypes" })
-					GraphSym sym = GraphGlyphUtils.doOperateGraphs(graphOperator, (List<AbstractGraphGlyph>)(List)selected_graph_glyphs);
-					if (sym != null) {
-						gviewer.setAnnotatedSeq(sym.getGraphSeq(), true, true);
-					}
-				}
-    	      }
-    	  );
-          combine.add(menuItem);
-      }
+	  TreeSet<Operator> operators = new TreeSet<Operator>(
+			new Comparator<Operator>() {
+
+			@Override
+			public int compare(Operator o1, Operator o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+	 });
+	 operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+	 for (final Operator operator : operators) {
+	 	if (AbstractGraphOperator.isGraphOperator(operator)){
+			JMenuItem menuItem = new JMenuItem(operator.getName());
+			menuItem.addActionListener(new TrackOperationAction(gviewer, operator));
+	 		combine.add(menuItem);	
+		}
+	 }
 	  the_popup.add(combine);
     } 
 

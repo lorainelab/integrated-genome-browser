@@ -3,7 +3,6 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -37,6 +36,7 @@ public class ExportDialog implements ExportConstants {
 	private JFileChooser fileChooser;
 	private File exportFile;
 	private String selectedExt;
+	private static final String defaultPath = FileTracker.EXPORT_DIR_TRACKER.getFile().getPath();
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
 	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
@@ -77,7 +77,7 @@ public class ExportDialog implements ExportConstants {
 	public void init() {
 		String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
 		if (file.equals(DEFAULT_FILE)) {
-			exportFile = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath(), file);
+			exportFile = new File(defaultPath, file);
 		} else {
 			exportFile = new File(file);
 		}
@@ -194,13 +194,8 @@ public class ExportDialog implements ExportConstants {
 
 		exportFile = new File(path);
 
-		if (!exportFile.isDirectory() && !exportFile.isFile()) {
-			exportFile = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
-		} else {
-			if (!exportFile.getParentFile().isDirectory()) {
-				exportFile = new File(previousFile);
-				filePathTextField.setText(previousFile);
-			}
+		if (!exportFile.getParentFile().isDirectory()) {
+			resetPath(previousFile);
 		}
 
 		filter = getFilter(selectedExt);
@@ -220,9 +215,13 @@ public class ExportDialog implements ExportConstants {
 
 			ExportFileType type = getType(des);
 			extComboBox.setSelectedItem(type);
-			filePathTextField.setText(newPath);
-			exportFile = new File(newPath);
+			resetPath(newPath);
 		}
+	}
+
+	private void resetPath(String path) {
+		exportFile = new File(path);
+		filePathTextField.setText(path);
 	}
 
 	private ExportFileType getType(String description) {
@@ -283,7 +282,15 @@ public class ExportDialog implements ExportConstants {
 				exportFile = new File(path);
 			}
 		}
-		
+
+		if (exportFile.exists()) {
+			if (!isOverwrite()) {
+				return false;
+			}
+		}
+
+		exportScreenshot(exportFile, selectedExt);
+
 		String des = getDescription(ext);
 		extComboBox.setSelectedItem(getType(des));
 
@@ -292,12 +299,6 @@ public class ExportDialog implements ExportConstants {
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
 
-		if (!isOverwriteExistFile(exportFile)) {
-			return false;
-		}
-
-		exportScreenshot(exportFile, selectedExt);
-
 		return true;
 	}
 
@@ -305,9 +306,8 @@ public class ExportDialog implements ExportConstants {
 		if (!exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
 			ErrorHandler.errorPanel("The output path is invalid.");
-			filePathTextField.setText(previousPath);
+			resetPath(previousPath);
 			filePathTextField.grabFocus();
-			exportFile = new File(previousPath);
 			return false;
 		}
 
@@ -322,18 +322,16 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
-	private boolean isOverwriteExistFile(File file) {
-		if (file.exists()) {
-			// give the user the choice to overwrite the existing file or not
-			// The option pane used differs from the confirmDialog only in
-			// that "No" is the default choice.
-			String[] options = {"Yes", "No"};
-			if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-					null, "Overwrite Existing File?", "File Exists",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-					options, options[1])) {
-				return true;
-			}
+	private boolean isOverwrite() {
+		// give the user the choice to overwrite the existing file or not
+		// The option pane used differs from the confirmDialog only in
+		// that "No" is the default choice.
+		String[] options = {"Yes", "No"};
+		if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+				null, "Overwrite Existing File?", "File Exists",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+				options, options[1])) {
+			return true;
 		}
 
 		return false;
@@ -341,7 +339,7 @@ public class ExportDialog implements ExportConstants {
 
 	public static void exportScreenshot(File f, String ext) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
-			GeneralUtils.exportToSvg(component, f);
+			//	GeneralUtils.exportToSvg(component, f);
 		} else {
 			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 					component.getWidth(), component.getHeight());
@@ -461,8 +459,7 @@ public class ExportDialog implements ExportConstants {
 					path = path.substring(0, index);
 				}
 				path += selectedExt;
-				exportFile = new File(path);
-				filePathTextField.setText(path);
+				resetPath(path);
 				filePathTextField.grabFocus();
 			}
 		}

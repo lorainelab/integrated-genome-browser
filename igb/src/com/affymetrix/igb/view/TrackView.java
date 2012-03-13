@@ -299,9 +299,9 @@ public class TrackView {
 			return;
 		}
 		style.setViewMode(viewMode);
-		TierGlyphViewMode mainTier = (TierGlyphViewMode)gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+		gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 		if (style.getSeparate()) {
-			TierGlyphViewMode secondTier = (TierGlyphViewMode)gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+			gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 		}
 		gviewer.addAnnotationTrackFor(style);
 		// kludge to get GraphAdjuster tab to update Style box (graph type)

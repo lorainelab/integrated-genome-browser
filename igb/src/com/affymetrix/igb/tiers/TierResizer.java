@@ -17,7 +17,6 @@ import javax.swing.event.MouseInputAdapter;
  * Tiers are resized by adjusting the border between their labels.
  * So far this is only for vertical resizing
  * and is only used by the TierLabelManager.
- * TODO BUG: grabbing top of axis glyph doesn't start drag.
  * TODO BUG: mouse cursor should not indicate resizable when can't resize
  * TODO Check on red highlighting of selection when dragging.
  *      Doesn't selection change upon mouse click? Maybe it should not.
@@ -125,10 +124,11 @@ public class TierResizer extends MouseInputAdapter {
 		this.fixedInterior = theRegion.subList(1, theRegion.size()-1);
 		for (TierLabelGlyph g: this.fixedInterior) {
 			Rectangle2D.Double b = g.getCoordBox();
-			if (b.getY() <= start) {
+			double middle = b.y + b.height / 2;
+			if (middle <= start) {
 				ourCeiling += b.getHeight();
 			}
-			if (start <= b.getY()) {
+			if (start < middle) {
 				ourFloor -= b.getHeight();
 			}
 		}

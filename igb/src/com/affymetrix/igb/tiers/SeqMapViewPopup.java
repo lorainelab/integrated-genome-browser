@@ -399,6 +399,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	/**
 	 * Handles tier (track) repacking actions.
+	 *
 	 * @param theTiers generally either all or selected tiers.
 	 */
 	private void repackTiers(List<TierLabelGlyph> theTiers) {
@@ -418,10 +419,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					break;
 			}
 		}
-	    // Now repack again with the newly appointed maxima.
+		// Now repack again with the newly appointed maxima.
 		repack(true);
 	}
-	
 	private final Action repack_selected_tracks_action = new GenericAction() {
 
 		private static final long serialVersionUID = 1L;
@@ -437,8 +437,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			return BUNDLE.getString("repackSelectedTracksAction");
 		}
 	};
-
 	private final Action repack_all_tracks_action = new GenericAction() {
+
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -451,7 +451,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		public String getText() {
 			return BUNDLE.getString("repackAllTracksAction");
 		}
-
 	};
 
 	/*
@@ -560,7 +559,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void showCustomizer() {
 		PreferencesPanel pv = PreferencesPanel.getSingleton();
 		pv.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-		((TierPrefsView)pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
+		((TierPrefsView) pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
 
 		// If and only if the selected track is coordinate track, will open 'Other Options' panel 
 		if (handler.getSelectedTierLabels().size() == 1) {
@@ -726,6 +725,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		handler.sortTiers();
 		repack(false);
 		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
+	}
+
+	public boolean containHiddenTiers() {
+		for (TierLabelGlyph label : handler.getAllTierLabels()) {
+			TierGlyph tier = (TierGlyph) label.getInfo();
+			ITrackStyleExtended style = tier.getAnnotStyle();
+			if (!style.getShow()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1078,7 +1089,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selections = labels.size();
 		boolean not_empty = !handler.getAllTierLabels().isEmpty();
-
 		boolean any_are_collapsed = false;
 		boolean any_are_expanded = false;
 		boolean any_are_color_on = false; // whether any allow setColorByScore()
@@ -1109,7 +1119,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		hide_action.setEnabled(num_selections > 0);
 		delete_action.setEnabled(num_selections > 0);
-		show_all_action.setEnabled(not_empty);
+		show_all_action.setEnabled(containHiddenTiers());
 
 		change_color_action.setEnabled(num_selections > 0);
 		change_bg_color_action.setEnabled(num_selections > 0);
@@ -1131,7 +1141,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
 		this.repack_selected_tracks_action.setEnabled(0 < this.handler.getSelectedTierLabels().size());
-		
+
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
 
@@ -1154,8 +1164,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 
 
-			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry && 
-					TrackUtils.getInstance().useViewMode(meth)) {
+			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry
+					&& TrackUtils.getInstance().useViewMode(meth)) {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();

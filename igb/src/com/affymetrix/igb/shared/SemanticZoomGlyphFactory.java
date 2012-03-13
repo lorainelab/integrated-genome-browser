@@ -77,6 +77,14 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 
+		@Override
+		public void setTierGlyph(TierGlyph tierGlyph) {
+			super.setTierGlyph(tierGlyph);
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setTierGlyph(tierGlyph);
+			}
+		}
+
 		// Glyph methods
 	
 		@Override
@@ -344,7 +352,9 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		@Override
 		public void setPacker(PackerI packer)  {
-			throw new IllegalStateException();
+			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
+				viewModeGlyph.setPacker(packer);
+			}
 		}
 		@Override
 		public void setParent(GlyphI glyph)  {

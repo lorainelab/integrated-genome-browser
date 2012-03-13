@@ -312,12 +312,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void setTrackStyle(String meth, Color col, String description) {
-		TrackStyle annot_style = TrackStyle.getInstance(meth, false);
-		annot_style.setForeground(col);
-		annot_style.setGlyphDepth(1);
-		annot_style.setTrackName(description);
-		annot_style.setCollapsed(true);
+	public ITrackStyleExtended getTrackStyle(String meth) {
+		return TrackStyle.getInstance(meth, false);
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})

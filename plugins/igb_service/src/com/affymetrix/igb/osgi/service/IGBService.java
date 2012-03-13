@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -149,7 +150,7 @@ public interface IGBService {
 	public void deleteGraph(GraphSym gsym);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
-	public void setTrackStyle(String meth, Color col, String description);
+	public ITrackStyleExtended getTrackStyle(String meth);
 	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();

@@ -13,6 +13,7 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
@@ -527,7 +528,9 @@ public final class GraphScoreThreshSetter extends JPanel
 			}
 		} else if (src == tier_threshB) {
 			for (AbstractGraphGlyph sggl : graphs) {
-				pickleThreshold(sggl);
+				if (sggl.isVisible()) {
+					pickleThreshold(sggl);
+				}
 			}
 			widg.updateWidget();
 		} else if (src == threshCB) {
@@ -748,7 +751,12 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		Color col = sgg.getColor();
 		//    Color col = Color.red;
-		igbService.setTrackStyle(meth, col, description);
+		ITrackStyleExtended annot_style = igbService.getTrackStyle(meth);
+		annot_style.setForeground(col);
+		annot_style.setGlyphDepth(1);
+		annot_style.setTrackName(description);
+		annot_style.setCollapsed(true);
+		annot_style.setSeparate(false);
 
 		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + ": " + description);
 

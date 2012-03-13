@@ -81,8 +81,7 @@ public class StyledJTable extends JTable {
 	@Override
 	public TableCellRenderer getCellRenderer(int r, int c) {
 		TableCellRenderer renderer = super.getCellRenderer(r, c);
-		if (renderer instanceof DefaultTableCellRenderer &&
-				!isCellEditable(r, c)) {
+		if (renderer instanceof DefaultTableCellRenderer) {
 			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return renderer;

@@ -6,9 +6,6 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -20,8 +17,6 @@ import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
-import com.jidesoft.combobox.ColorComboBox;
-import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +50,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public static final boolean default_auto_refresh = true;
 	public static final String AUTO_REFRESH = "Auto Refresh";
 	public ListSelectionModel lsm;
-
 	public SeqMapView smv;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
@@ -143,8 +137,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 	}
 
-	
-
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
 
@@ -171,9 +163,11 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			}
 		}
 	}
+
 	public JTextField getTrackDefaultTextField() {
 		return displayNameTextField;
 	}
+
 	/**
 	 * Whether or not changes to the trackOptionsTable should automatically be
 	 * applied to the view.
@@ -244,6 +238,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	private void setEnabled(boolean b) {
 		displayNameTextField.setEnabled(b);
+		displayNameTextField.setEditable(b);
 		applyDisplayNameButton.setEnabled(b);
 		viewModeCB.setEnabled(b);
 		labelFieldComboBox.setEnabled(b);
@@ -270,15 +265,14 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	 */
 	@Override
 	public void valueChanged(ListSelectionEvent evt) {
-		setEnabled(true);
 		selectedRows = table.getSelectedRows();
+
 		initializationDetector = true;
-		
-		if (table.getRowCount() == 0) {
-			setEnabled(false);
-		}
+
+		setEnabled(true);
 
 		if (selectedRows.length > 1) {
+			displayNameTextField.setText("");
 			displayNameTextField.setEnabled(false);
 			applyDisplayNameButton.setEnabled(false);
 			viewModeCB.setEnabled(false);
@@ -294,9 +288,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			arrowCheckBox.setSelected(false);
 			possitiveColorComboBox.setSelectedColor(null);
 			negativeColorComboBox.setSelectedColor(null);
-		}
-
-		if (selectedRows.length == 1) {
+		} else if (selectedRows.length == 1) {
 			selectedStyle = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
 
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
@@ -364,6 +356,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				default:
 					System.out.println("Wrong Direction Type");
 			}
+		} else {
+			setEnabled(false);
 		}
 
 		initializationDetector = false;
@@ -505,6 +499,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		@Override
 		public boolean isCellEditable(int row, int column) {
+			if (column == COL_TRACK_NAME) {
+				return false;
+			}
+
 			return true;
 		}
 
@@ -533,8 +531,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		public Object getValueAt(int row, int column) {
 			// set all components unable to edit, if no track has been selected.
-			if (table.getSelectedRow() == -1 &&
-					row == 0 && column == 0) {
+			if (table.getSelectedRow() == -1
+					&& row == 0 && column == 0) {
 				setEnabled(false);
 			}
 

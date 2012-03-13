@@ -33,7 +33,7 @@ public class CopyMismatchOperator implements Operator{
 		float[] y = new float[sourceSym.getGraphYCoords().length];
 		System.arraycopy(sourceSym.getGraphYCoords(), 0, y, 0, sourceSym.getGraphYCoords().length);
 		
-		float[][] residues = sourceSym.getAllResidues();
+		int[][] residues = sourceSym.getAllResidues();
 		int[] a = new int[residues[0].length];
 		System.arraycopy(residues[0], 0, a, 0, residues[0].length);
 		

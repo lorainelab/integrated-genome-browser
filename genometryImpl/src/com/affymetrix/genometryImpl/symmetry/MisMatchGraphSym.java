@@ -27,16 +27,13 @@ import java.util.Map;
 public class MisMatchGraphSym extends GraphSym {
 
 	int[][] residuesTot = null;
-	private final File helperIndex;
+	private File helperIndex;
 
 	public MisMatchGraphSym(int[] x, int[] w, float[] y, 
 			int[] a, int[] t, int[] g, int[] c, int[] n, 
 			String id, BioSeq seq){
 		super(x,w,y,id,seq);
-		if(a.length != t.length || t.length != g.length || g.length != c.length || c.length != n.length){
-			throw new IllegalArgumentException("All arrays should have same length.");
-		}
-		helperIndex = index(id+"helper",a,t,g,c,n);
+		setAllResidues(a,t,g,c,n);
 	}
 	
 	protected File index(String graphName, int[] a, int[] t, int[] g, int[] c, int[] n) {
@@ -85,29 +82,22 @@ public class MisMatchGraphSym extends GraphSym {
 		if(a.length != t.length || t.length != g.length || g.length != c.length || c.length != n.length){
 			throw new IllegalArgumentException("All arrays should have same length.");
 		}
-
-		residuesTot = new int[5][a.length];
-
-		System.arraycopy(a, 0, residuesTot[0], 0, a.length);
-		System.arraycopy(t, 0, residuesTot[1], 0, t.length);
-		System.arraycopy(g, 0, residuesTot[2], 0, g.length);
-		System.arraycopy(c, 0, residuesTot[3], 0, c.length);
-		System.arraycopy(n, 0, residuesTot[4], 0, n.length);
+		helperIndex = index(this.getID()+"helper",a,t,g,c,n);
 	}
 
-	public float[][] getAllResidues() {
+	public int[][] getAllResidues() {
 		return copyAllResidues();
 	}
 	
 	/** Returns a copy of the residues as a int[][]
 	 */
-	public synchronized float[][] copyAllResidues() {
-		float[][] tempCoords = new float[residuesTot.length][this.getPointCount()];
+	public synchronized int[][] copyAllResidues() {
+		int[][] tempCoords = new int[residuesTot.length][this.getPointCount()];
 		float[] temp;
 		for (int i=0;i<this.getPointCount();i++) {
 			temp = getAllResiduesY(i);
 			for(int j=0; j<temp.length; j++){
-				tempCoords[j][i] = temp[j];
+				tempCoords[j][i] = (int) temp[j];
 			}
 		}
 		return tempCoords;

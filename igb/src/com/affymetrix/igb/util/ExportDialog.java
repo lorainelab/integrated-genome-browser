@@ -188,17 +188,15 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void browseButtonActionPerformed(JPanel panel) {
-		String previousFile = exportFile.getAbsolutePath();
 		String path = filePathTextField.getText();
-		FileFilter filter = null;
-
 		exportFile = new File(path);
 
-		if (!exportFile.getParentFile().isDirectory()) {
-			resetPath(previousFile);
+		if (path.isEmpty()) {
+			exportFile = new File(defaultPath, "export" + selectedExt);
+			filePathTextField.setText(exportFile.getAbsolutePath());
 		}
 
-		filter = getFilter(selectedExt);
+		FileFilter filter = getFilter(selectedExt);
 		fileChooser = new ExportFileChooser(exportFile.getParentFile(), exportFile, filter);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");

@@ -528,7 +528,7 @@ public final class SimpleGraphTab
 							igbService.getSeqMapView().addAnnotationTrackFor(style);
 						}
 					}
-					updateViewer();
+					igbService.getSeqMap().updateWidget();
 				}
 			};
 

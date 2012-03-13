@@ -13,19 +13,15 @@ import java.util.List;
 import javax.swing.event.MouseInputAdapter;
 
 /**
- * A class to handle generic resizing the tiers on a labeled tiered map.
+ * A class to handle resizing the tiers on a labeled tiered map.
  * Tiers are resized by adjusting the border between their labels.
  * So far this is only for vertical resizing
  * and is only used by the TierLabelManager.
- * TODO BUG: mouse cursor should not indicate resizable when can't resize
- * TODO Check on red highlighting of selection when dragging.
- *      Doesn't selection change upon mouse click? Maybe it should not.
- * e.g. when axis tier is on bottom and mouse over the top border
  * @author blossome
  */
 public class TierResizer extends MouseInputAdapter {
 
-	private static final double RESIZE_THRESHHOLD = 4.0;
+	private static final double RESIZE_THRESHOLD = 4.0;
 	private AffyLabelledTierMap tiermap;
 	private TierLabelGlyph lowerGl;
 	private TierLabelGlyph upperGl;
@@ -307,16 +303,34 @@ public class TierResizer extends MouseInputAdapter {
 			return false;
 		}
 		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+		NeoWidget w = (NeoWidget) nevt.getSource();
+		LinearTransform trans = w.getView().getTransform();
+		double threshold = RESIZE_THRESHOLD / trans.getScaleY();
+		if 	(threshold < nevt.getCoordY() - topgl.getCoordBox().getY()) {
+			// then not at the top of this glyph.
+			// So, not at the top of any tier.
+			return false;
+		}
 		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
 		int index = orderedGlyphs.indexOf(topgl);
-		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
-		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
-		return (0 < index
-				&&
-			(nevt.getCoordY() - topgl.getCoordBox().getY() < threshhold)
-				&&
-			(((TierLabelGlyph)topgl).isManuallyResizable()
-				|| orderedGlyphs.get(index - 1).isManuallyResizable()));
+		int i;
+		for (i = index; i < orderedGlyphs.size(); i++) {
+			// Keep going down looking for one that is resizable.
+			if (orderedGlyphs.get(i).isManuallyResizable()) {
+				break;
+			}
+		}
+		if (orderedGlyphs.size() <= i) {
+			// No resizable tiers below this point.
+			return false;
+		}
+		for (i = index-1; 0 <= i; i--) {
+			// Keep going up looking for one that is resizable.
+			if (orderedGlyphs.get(i).isManuallyResizable()) {
+				break;
+			}
+		}
+		return (0 <= i);
 	}
 
 	/**
@@ -328,17 +342,35 @@ public class TierResizer extends MouseInputAdapter {
 			return false;
 		}
 		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+		NeoWidget w = (NeoWidget) nevt.getSource();
+		LinearTransform trans = w.getView().getTransform();
+		double threshhold = RESIZE_THRESHOLD / trans.getScaleY();
+		if 	(threshhold
+				< topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight()
+				- nevt.getCoordY()) { // then not at the bottom of this glyph.
+			// So, not at the bottom of any tier.
+			return false;
+		}
 		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
 		int index = orderedGlyphs.indexOf(topgl);
-		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
-		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
-		return (index < orderedGlyphs.size() - 1
-				&&
-			(topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight()
-				- nevt.getCoordY() < threshhold)
-				&&
-			(((TierLabelGlyph)topgl).isManuallyResizable()
-				|| orderedGlyphs.get(index + 1).isManuallyResizable()));
+		int i;
+		for (i = index+1; i < orderedGlyphs.size(); i++) {
+			// Keep going down looking for one that is resizable.
+			if (orderedGlyphs.get(i).isManuallyResizable()) {
+				break;
+			}
+		}
+		if (orderedGlyphs.size() <= i) {
+			// No resizable tiers below this point.
+			return false;
+		}
+		for (i = index; 0 <= i; i--) {
+			// Keep going up looking for one that is resizable.
+			if (orderedGlyphs.get(i).isManuallyResizable()) {
+				break;
+			}
+		}
+		return (0 <= i);
 	}
 
 }

@@ -1142,7 +1142,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			String meth = style.getMethodName();
-			boolean is_annotation_type = !style.isGraphTier();
+//			boolean is_annotation_type = !style.isGraphTier();
 //			summaryMenu.setEnabled(is_annotation_type);
 //			sym_summarize_single_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
 //			sym_summarize_both_action.putValue(Action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
@@ -1166,12 +1166,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 						@Override
 						public void actionPerformed(ActionEvent ae) {
-							(style).setViewMode(mode.toString());
-							gviewer.addAnnotationTrackFor(style);
-							List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-							syms.add(rootSym);
-							gmodel.setSelectedSymmetries(syms, gviewer); // kludge to get GraphAdjuster tab to update Style box (graph type)
-							//refreshMap(false, false);
+							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, mode.toString());
+							refreshMap(false, false);
 						}
 
 						@Override

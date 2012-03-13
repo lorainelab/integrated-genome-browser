@@ -292,7 +292,24 @@ public class TrackView {
 			EmptyTierGlyphFactory.addEmtpyTierfor(feature, smv, false);
 		}
 	}
-	
+
+	public void changeViewMode(SeqMapView gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, String viewMode) {
+		String oldViewMode = style.getViewMode();
+		if (oldViewMode.equals(viewMode)) {
+			return;
+		}
+		style.setViewMode(viewMode);
+		TierGlyphViewMode mainTier = (TierGlyphViewMode)gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+		if (style.getSeparate()) {
+			TierGlyphViewMode secondTier = (TierGlyphViewMode)gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+		}
+		gviewer.addAnnotationTrackFor(style);
+		// kludge to get GraphAdjuster tab to update Style box (graph type)
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		syms.add(rootSym);
+		GenometryModel.getGenometryModel().setSelectedSymmetries(syms, gviewer);
+	}
+
 	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 
 		String meth = style.getMethodName();
 		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
@@ -327,7 +344,6 @@ public class TrackView {
 				}
 				TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 				mainTier.setInfo(annotSym);
-				
 				if (style.getSeparate()) {
 					TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 					secondTier.setInfo(annotSym);

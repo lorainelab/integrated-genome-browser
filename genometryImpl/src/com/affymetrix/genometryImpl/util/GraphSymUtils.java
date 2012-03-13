@@ -15,10 +15,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.symmetry.CompositeGraphSym;
-import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.*;
 
 public final class GraphSymUtils {
 
@@ -417,7 +414,12 @@ public final class GraphSymUtils {
 		GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
 		if (pgraf == null) {
 			// don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
-			pgraf = new CompositeGraphSym(id, aseq);
+			if(cgraf.getCategory() == FileTypeCategory.Mismatch){
+				pgraf = new CompositeMismatchGraphSym(id, aseq);
+			}else{
+				pgraf = new CompositeGraphSym(id, aseq);
+			}
+			
 			pgraf.setGraphName(name);
 			aseq.addAnnotation(pgraf);
 

@@ -8,5 +8,6 @@ public enum FileTypeCategory {
 	Variant,
 	Mismatch,
 	ProbeSet,
-	ScoredContainer
+	ScoredContainer,
+	Cytobands
 }

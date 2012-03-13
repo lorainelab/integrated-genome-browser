@@ -1,11 +1,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyConstants;
@@ -14,8 +11,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.jidesoft.combobox.ColorComboBox;
-import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.util.Map.Entry;
 import java.util.*;

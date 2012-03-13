@@ -36,12 +36,13 @@ public class TierGlyphViewMode extends TierGlyph {
 	private SeqSymmetry modelSym;
 
 	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
-		this.modelSym = sym;
-		this.smv = smv;
-		setViewModeGlyph(style, direction);
-		super.setDirection(direction);
-		setHitable(false);
-		viewModeGlyph.setInfo(sym);
+ 		this.modelSym = sym;
+ 		this.smv = smv;
+		viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction, smv);
+		this.style = style;
+ 		super.setDirection(direction);
+		setInfo(modelSym);
+ 		setHitable(false);
 	}
 
 	private ViewModeGlyph viewModeGlyph;
@@ -61,7 +62,7 @@ public class TierGlyphViewMode extends TierGlyph {
 		return TransformHolder.getInstance().getOperator(operator);
 	}
 
-	private void setViewModeGlyph(ITrackStyleExtended style, Direction direction) {
+	private void setViewModeGlyph(ITrackStyleExtended style) {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
 			if (factory != null) {
@@ -79,11 +80,11 @@ public class TierGlyphViewMode extends TierGlyph {
 					}
 				}
 			}
-			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, direction, smv);
+			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, super.getDirection(), smv);
 			viewModeGlyph.setTierGlyph(this);
 			viewModeGlyph.processParentCoordBox(super.getCoordBox());
 		}
-		setStyleAndDirection(style, direction);
+		this.style = style;
 	}
 
 	private boolean isSymLoaded() {
@@ -103,33 +104,29 @@ public class TierGlyphViewMode extends TierGlyph {
 		return loaded;
 	}
 
-	public void reset(ITrackStyleExtended style, Direction direction){
-		setStyleAndDirection(style, direction, viewModeGlyph.getChildCount() == 0);
+	public void reset(){
+		setStyle(this.style, viewModeGlyph.getChildCount() == 0);
 	}
 
-	private void setStyleAndDirection(ITrackStyleExtended style, Direction direction){
-		setStyleAndDirection(style, direction, false);
-	}
-
-	private void setStyleAndDirection(ITrackStyleExtended style, Direction direction, boolean force){
+	private void setStyle(ITrackStyleExtended style, boolean force){
 		ITrackStyleExtended saveStyle = this.style;
 		this.style = style;
 		if(!isSymLoaded()){
-			if (viewModeGlyph == null || force) {
-				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction, smv);
+			if (force) {
+				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, super.getDirection(), smv);
 			}
 		}
 		else if (force || saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
-			setViewModeGlyph(style, direction);
+			setViewModeGlyph(style);
 		}
-		else if (viewModeGlyph instanceof StyleGlyphI) {
+		else {
 			((StyleGlyphI)viewModeGlyph).setStyle(style);
 		}
 	}
 
 	@Override
 	public void setStyle(ITrackStyleExtended style) {
-		setStyleAndDirection(style, getDirection());
+		setStyle(style, false);
 	}
 
 	@Override
@@ -367,8 +364,7 @@ public class TierGlyphViewMode extends TierGlyph {
 	@Override
 	public void setInfo(Object info)  {
 		this.modelSym = (SeqSymmetry)info;
-		viewModeGlyph = null; // reset viewModeGlyph
-		setViewModeGlyph(this.style, super.getDirection());
+		setViewModeGlyph(this.style);
 		//viewModeGlyph.setInfo(info); // Let factory setInfo for viewModeGlyph : HV 02/17/12
 	}
 	@Override

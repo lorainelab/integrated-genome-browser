@@ -95,14 +95,14 @@ public class EmptyTierGlyphFactory {
 			if(!style.isGraphTier()){
 				Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
 				TierGlyphViewMode tgfor = (TierGlyphViewMode)gviewer.getTrack(null, style, direction);
-				tgfor.reset(style, direction);
+				tgfor.reset();
 				if (style.getSeparate()) {
 					TierGlyphViewMode tgrev = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.REVERSE);
-					tgrev.reset(style, Direction.REVERSE);
+					tgrev.reset();
 				}
 			}else {
 				TierGlyphViewMode tg = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.NONE);
-				tg.reset(style, Direction.NONE);
+				tg.reset();
 			}
 			return;
 		}

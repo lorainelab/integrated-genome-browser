@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
@@ -24,6 +25,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
 public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
+	private double spacer = 2;
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -83,6 +85,12 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 
 		@Override
 		public void setPreferredHeight(double height, ViewI view) {
+			GlyphI child = getChild(0);
+			Rectangle2D.Double  coord = child.getCoordBox();
+			child.setCoords(coord.x, coord.y, coord.width, height);
+			//Note : Fix to handle height in a view mode.
+			// But this also causes minor change in height while switching back to default view mode.
+			setCoords(coord.x, coord.y, coord.width, height + 2 * spacer);
 		}
 
 		@Override

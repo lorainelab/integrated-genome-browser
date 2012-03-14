@@ -98,7 +98,7 @@ public class Delegate extends QuickLoadSymLoader {
 			throws OutOfMemoryError, IOException {
 		boolean notUpdatable = false;
 
-		if (dps.isEmpty()) {
+		if (dps == null || dps.isEmpty()) {
 			return false;
 		}
 

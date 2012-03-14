@@ -145,8 +145,8 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	public static GenericServer addServer(ServerList serverList, 
-			ServerTypeI serverType, String serverName, String serverURL, int order) {
+	public static GenericServer addServer(ServerList serverList, ServerTypeI serverType, 
+			String serverName, String serverURL, int order, boolean isDefault) {
 		/*
 		 * should never happen
 		 */
@@ -155,7 +155,7 @@ public final class GeneralLoadUtils {
 		}
 
 		GenericServer gServer = serverList.addServer(serverType, 
-				serverName, serverURL, true, order);
+				serverName, serverURL, true, order, isDefault);
 		if (gServer == null) {
 			return null;
 		}

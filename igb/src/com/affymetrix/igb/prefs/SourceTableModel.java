@@ -1,9 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericServerPref;
 import com.affymetrix.genometryImpl.util.LoadUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.general.ServerList;
@@ -14,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
@@ -135,12 +132,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Refresh:
-				Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(server.URL));
-				int order = node.getInt(GenericServerPref.ORDER, -1);
-				ServerList.getServerInstance().removeServer(server.URL);
-				ServerList.getServerInstance().removeServerFromPrefs(server.URL);
-				DataLoadPrefsView.getSingleton().addDataSource(
-						server.serverType, server.serverName, server.URL, order);
+				DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
+						server.serverType, server.serverName, server.URL);
 				break;
 			case Enabled:
 				server.setEnabled((Boolean) value);

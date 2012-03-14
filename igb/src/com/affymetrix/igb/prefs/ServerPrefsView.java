@@ -11,6 +11,8 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericServerPref;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
 import javax.swing.GroupLayout.Group;
@@ -205,13 +208,13 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	public void addDataSource(ServerTypeI type, String name, String url, int order) {
+	public void addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
 		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
 			return;
 		}
 
 		GenericServer server = GeneralLoadUtils.addServer(serverList,
-				type, name, url, order);
+				type, name, url, order, isDefault);
 
 		if (server == null) {
 			ErrorHandler.errorPanel(
@@ -220,10 +223,19 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 			return;
 		}
 
-		sourceTableModel.init();
 		ServerList.getServerInstance().addServerToPrefs(server, order);
+		sourceTableModel.init();
 	}
 
+	public void updateDataSource(String url, ServerTypeI type, String name, String newUrl) {
+		Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
+		int order = node.getInt(GenericServerPref.ORDER, -1);
+		boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
+		ServerList.getServerInstance().removeServer(url);
+		ServerList.getServerInstance().removeServerFromPrefs(url);
+		addDataSource(type, name, newUrl, order, isDefault);
+	}
+				
 	protected void removeDataSource(String url) {
 		if (serverList.getServer(url) == null) {
 			Logger.getLogger(ServerPrefsView.class.getName()).log(

@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -69,7 +68,7 @@ public final class ServerList {
 	public boolean hasTypes() {
 		return this == serverInstance;
 	}
-	
+
 	public Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
 		for (GenericServer gServer : getAllServers()) {
@@ -97,7 +96,7 @@ public final class ServerList {
 	public GenericServer getIGBFilesServer() {
 		return igbFilesServer;
 	}
-	
+
 	public boolean areAllServersInited() {
 		for (GenericServer gServer : getAllServers()) {
 			if (!gServer.isEnabled()) {
@@ -132,9 +131,9 @@ public final class ServerList {
 	}
 
 	/**
-	 *  Given an URLorName string which should be the resolvable root URL
-	 *  (but may optionally be the server name)
-	 *  Return the GenericServer object.  (This could be non-unique if passed a name.)
+	 * Given an URLorName string which should be the resolvable root URL (but
+	 * may optionally be the server name) Return the GenericServer object. (This
+	 * could be non-unique if passed a name.)
 	 *
 	 * @param URLorName
 	 * @return gserver or server
@@ -160,7 +159,7 @@ public final class ServerList {
 	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerTypeI serverType, String name, String url, 
+	public GenericServer addServer(ServerTypeI serverType, String name, String url,
 			boolean enabled, boolean primary, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
@@ -206,8 +205,9 @@ public final class ServerList {
 	 * @param enabled
 	 * @return GenericServer
 	 */
-	public GenericServer addServer(ServerTypeI serverType, String name, String url, boolean enabled, int order) {
-		return addServer(serverType, name, url, enabled, false, order, false);
+	public GenericServer addServer(ServerTypeI serverType, String name,
+			String url, boolean enabled, int order, boolean isDefault) {
+		return addServer(serverType, name, url, enabled, false, order, isDefault);
 	}
 
 	public GenericServer addServer(Preferences node) {
@@ -249,11 +249,11 @@ public final class ServerList {
 		url2server.remove(url);
 		if (server != null) {
 			server.setEnabled(false);
-			if(server.serverType == ServerTypeI.QuickLoad){
+			if (server.serverType == ServerTypeI.QuickLoad) {
 				QuickLoadServerModel.removeQLModelForURL(url);
 			}
 			fireServerInitEvent(server, ServerStatus.NotResponding); // remove it from our lists.
-		}	
+		}
 	}
 
 	/**
@@ -316,7 +316,7 @@ public final class ServerList {
 	}
 
 	/**
-	 * Update the old-style preference nodes to the newer format.  This is now
+	 * Update the old-style preference nodes to the newer format. This is now
 	 * called by the PrefsLoader when checking/updating the preferences version.
 	 */
 	public void updateServerPrefs() {
@@ -336,7 +336,7 @@ public final class ServerList {
 						enabled = prefServers.node(GenericServerPref.ENABLED).getBoolean(url, true);
 						real_url = prefServers.node(GenericServerPref.URL).get(url, "");
 						isDefault = prefServers.node(GenericServerPref.DEFAULT).getBoolean(url, true);
-						
+
 						server = addServerToPrefs(GeneralUtils.URLDecode(real_url), name, type, -1, isDefault);
 						server.setLogin(login);
 						server.setEncryptedPassword(password);
@@ -394,15 +394,17 @@ public final class ServerList {
 	}
 
 	/**
-	 * Add or update a server in the preferences subsystem.  This only modifies
-	 * the preferences nodes, it does not affect any other part of the application.
+	 * Add or update a server in the preferences subsystem. This only modifies
+	 * the preferences nodes, it does not affect any other part of the
+	 * application.
 	 *
 	 * @param url URL of this server.
 	 * @param name name of this server.
 	 * @param type type of this server.
-	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
+	 * @return an anemic GenericServer object whose sole purpose is to aid in
+	 * setting of additional preferences
 	 */
-	private GenericServer addServerToPrefs(String url, String name, 
+	private GenericServer addServerToPrefs(String url, String name,
 			ServerTypeI type, int order, boolean isDefault) {
 		url = ServerUtils.formatURL(url, type);
 		Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
@@ -414,20 +416,22 @@ public final class ServerList {
 			//long url was bugging the node name since it only accepts 80 char names
 			node.put(GenericServerPref.URL, GeneralUtils.URLEncode(url));
 			node.putBoolean(GenericServerPref.DEFAULT, isDefault);
-			
+
 		}
-		return new GenericServer(node, null, 
+		return new GenericServer(node, null,
 				getServerType(node.get(GenericServerPref.TYPE, ServerTypeI.DEFAULT.getName())),
 				node.getBoolean(GenericServerPref.DEFAULT, true));
 	}
 
 	/**
-	 * Add or update a repository in the preferences subsystem.  This only modifies
-	 * the preferences nodes, it does not affect any other part of the application.
+	 * Add or update a repository in the preferences subsystem. This only
+	 * modifies the preferences nodes, it does not affect any other part of the
+	 * application.
 	 *
 	 * @param url URL of this server.
 	 * @param name name of this server.
-	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
+	 * @return an anemic GenericServer object whose sole purpose is to aid in
+	 * setting of additional preferences
 	 */
 	private GenericServer addRepositoryToPrefs(String url, String name) {
 		Preferences node = PreferenceUtils.getRepositoriesNode().node(GenericServer.getHash(url));
@@ -439,8 +443,9 @@ public final class ServerList {
 	}
 
 	/**
-	 * Add or update a server in the preferences subsystem.  This only modifies
-	 * the preferences nodes, it does not affect any other part of the application.
+	 * Add or update a server in the preferences subsystem. This only modifies
+	 * the preferences nodes, it does not affect any other part of the
+	 * application.
 	 *
 	 * @param server GenericServer object of the server to add or update.
 	 */
@@ -448,16 +453,16 @@ public final class ServerList {
 		if (server.serverType == null) {
 			addRepositoryToPrefs(server.URL, server.serverName);
 		} else {
-			addServerToPrefs(server.URL, server.serverName, 
+			addServerToPrefs(server.URL, server.serverName,
 					server.serverType, order, server.isDefault());
 		}
 	}
 
 	/**
-	 * Remove a server from the preferences subsystem.  This only modifies the
+	 * Remove a server from the preferences subsystem. This only modifies the
 	 * preference nodes, it does not affect any other part of the application.
 	 *
-	 * @param url  URL of the server to remove
+	 * @param url URL of the server to remove
 	 */
 	public void removeServerFromPrefs(String url) {
 		try {
@@ -478,6 +483,7 @@ public final class ServerList {
 
 	/**
 	 * Get server from ServerList that matches the URL.
+	 *
 	 * @param u
 	 * @return server
 	 * @throws URISyntaxException
@@ -550,6 +556,7 @@ public final class ServerList {
 
 	/**
 	 * Gets the primary server if present else returns null.
+	 *
 	 * @return
 	 */
 	public GenericServer getPrimaryServer() {

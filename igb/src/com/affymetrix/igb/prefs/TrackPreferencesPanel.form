@@ -445,6 +445,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Collapsed"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapsedCheckBoxActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.collapsedCheckBox"/>
           </AuxValues>

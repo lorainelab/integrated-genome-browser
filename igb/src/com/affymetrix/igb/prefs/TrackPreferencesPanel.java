@@ -225,6 +225,11 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         });
 
         collapsedCheckBox.setText("Collapsed");
+        collapsedCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                collapsedCheckBoxActionPerformed(evt);
+            }
+        });
 
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -504,7 +509,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	}//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
 	protected void viewModeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewModeComboBoxActionPerformed
-
+		((TierPrefsView)tdv).viewModeCB();
 	}//GEN-LAST:event_viewModeComboBoxActionPerformed
 
 	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
@@ -528,15 +533,15 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void nameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameKeyReleased
-		// TODO add your handling code here:
+		((TierPrefsView)tdv).displayNameTextField();
 	}//GEN-LAST:event_nameKeyReleased
 
 	private void maxDepthTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxDepthTextKeyReleased
-		// TODO add your handling code here:
+		tdv.maxDepthTextField();
 	}//GEN-LAST:event_maxDepthTextKeyReleased
 
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		// TODO add your handling code here:
+		tdv.show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
 
 	private void autoRefreshCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoRefreshCheckBoxActionPerformed
@@ -544,8 +549,12 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	}//GEN-LAST:event_autoRefreshCheckBoxActionPerformed
 
 	private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		// TODO add your handling code here:
+		tdv.connectedCheckBox();
 	}//GEN-LAST:event_connectedCheckBoxActionPerformed
+
+	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
+		tdv.collapsedCheckBox();
+	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel FieldLabel;

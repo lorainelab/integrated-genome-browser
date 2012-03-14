@@ -123,10 +123,10 @@ public class TrackView {
 			else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
 				style2forwardTierGlyph.put(style, tierGlyph);
 			}
-		}
-		if (seqmap.getTierIndex(tierGlyph) == -1) {
-			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
-			seqmap.addTier(tierGlyph, above_axis);
+			if (seqmap.getTierIndex(tierGlyph) == -1) {
+				boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
+				seqmap.addTier(tierGlyph, above_axis);
+			}
 		}
 		
 		if (!style.isGraphTier() && (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD)) {

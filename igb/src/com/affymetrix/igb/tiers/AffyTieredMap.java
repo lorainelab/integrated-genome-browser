@@ -27,6 +27,7 @@ import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -213,8 +214,8 @@ public class AffyTieredMap extends NeoMap {
 			if (!mtg.isVisible()) {
 				continue;
 			}
-			if (mtg instanceof TransformTierGlyph) {
-				TransformTierGlyph transtier = (TransformTierGlyph) mtg;
+			if (((TierGlyphViewMode)mtg).getViewModeGlyph() instanceof TransformTierGlyph) {
+				TransformTierGlyph transtier = (TransformTierGlyph) ((TierGlyphViewMode)mtg).getViewModeGlyph();
 				transtier.fitToPixelHeight(this.getView());
 				fixed_pixel_height += transtier.getFixedPixHeight();
 			} else {

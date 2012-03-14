@@ -425,7 +425,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 	// did the most recent drag start in the axis tier?
 	private boolean startedInAxisTier() {
-		TierGlyph axis_tier = smv.getAxisTier();
+		TierGlyph axis_tier = smv.getAxisTier().getTierGlyph();
 		boolean started_in_axis_tier = (rubber_band_start != null)
 				&& (axis_tier != null)
 				&& axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
@@ -494,11 +494,11 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	private boolean isInAxisTier(GlyphI g) {
-		TierGlyph axis_tier = smv.getAxisTier();
-		if (axis_tier == null) {
+		if (smv.getAxisTier() == null) {
 			return false;
 		}
 
+		TierGlyph axis_tier = smv.getAxisTier().getTierGlyph();
 		GlyphI p = g;
 		while (p != null) {
 			if (p == axis_tier) {

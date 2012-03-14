@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -414,7 +415,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				TierGlyph tier = titer.next();
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
-					if (tier.getChildCount() > 0) {
+					if (tier.getChildCount() > 0 || tier.getDirection() == Direction.AXIS) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)){
 						stylemap.put((TrackStyle) style, (TrackStyle) style);

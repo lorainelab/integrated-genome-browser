@@ -36,9 +36,15 @@ public class TierGlyphViewMode extends TierGlyph {
 	private SeqSymmetry modelSym;
 
 	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
+		this(sym, style, direction, smv, UnloadedGlyphFactory.getInstance().getViewModeGlyph(sym, style, direction, smv));
+	}
+
+	public TierGlyphViewMode(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, ViewModeGlyph viewModeGlyph) {
  		this.modelSym = sym;
  		this.smv = smv;
-		viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, direction, smv);
+		this.viewModeGlyph = viewModeGlyph;
+		viewModeGlyph.setTierGlyph(this);
+		viewModeGlyph.processParentCoordBox(super.getCoordBox());
 		this.style = style;
  		super.setDirection(direction);
 		setInfo(modelSym);
@@ -452,6 +458,6 @@ public class TierGlyphViewMode extends TierGlyph {
 
 	@Override
 	public String toString() {
-		return (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? "###>" : " ---> ") + (style == null ? "null" : style.toString());
+		return "viewModeGlyph=" + (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? "###>" : " ---> ") + ";direction=" + super.getDirection() + ";style=" + (style == null ? "null" : style.toString());
 	}
 }

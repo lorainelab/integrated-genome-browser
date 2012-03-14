@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -58,6 +59,7 @@ import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -695,7 +697,8 @@ public class SeqMapView extends JPanel
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
-		int axis_index = Math.max(0, cur_tiers.indexOf(axis_tier));	// if not found, set to 0
+		TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier.getTierGlyph();
+		int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
 		List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
 
 		seqmap.clearWidget();
@@ -758,7 +761,7 @@ public class SeqMapView extends JPanel
 			shrinkWrap();
 		}
 
-		seqmap.toFront(axis_tier);
+		seqmap.toFront(axis_tier.getTierGlyph());
 
 		// restore floating layers to front of map
 		for (GlyphI layer_glyph : getFloatingLayers(seqmap.getScene().getGlyph())) {
@@ -890,12 +893,13 @@ public class SeqMapView extends JPanel
 
 		resultAxisTier.addChild(axis);
 
+		TierGlyphViewMode resultAxisTierGlyph = new TierGlyphViewMode(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
 		if (seqmap.getTiers().size() >= tier_index) {
-			seqmap.addTier(resultAxisTier, tier_index);
+			seqmap.addTier(resultAxisTierGlyph, tier_index);
 		} else {
-			seqmap.addTier(resultAxisTier, false);
+			seqmap.addTier(resultAxisTierGlyph, false);
 		}
 
 		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
@@ -1807,7 +1811,7 @@ public class SeqMapView extends JPanel
 			GenericFeature feature = tglyph.getAnnotStyle().getFeature();
 			if (feature == null) {
 				//Check if clicked on axis.
-				if (tglyph instanceof TransformTierGlyph) {
+				if (((TierGlyphViewMode)tglyph).getViewModeGlyph() instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
 						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));

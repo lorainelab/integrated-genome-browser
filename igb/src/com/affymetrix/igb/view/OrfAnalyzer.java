@@ -26,15 +26,17 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 /**
  * OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.
@@ -167,14 +169,17 @@ public final class OrfAnalyzer extends JComponent
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
-		map.addTier(fortier, true);  // put forward tier above axis
+		TierGlyphViewMode forTierGlyph = new TierGlyphViewMode(null, CoordinateStyle.coordinate_annot_style, Direction.FORWARD, smv, fortier);
+
+		map.addTier(forTierGlyph, true);  // put forward tier above axis
 
 		revtier = new TransformTierGlyph(new SimpleTrackStyle("Stop Codon", false));
 		revtier.setLabel("Stop Codons");
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
-		map.addTier(revtier, false);  // put reverse tier below axis
+		TierGlyphViewMode reTierGlyph = new TierGlyphViewMode(null, CoordinateStyle.coordinate_annot_style, Direction.REVERSE, smv, revtier);
+		map.addTier(reTierGlyph, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
@@ -203,7 +208,7 @@ public final class OrfAnalyzer extends JComponent
 			point_template.setColor(pointcol);
 			point_template.setCoords(residue_offset, 0, vseq.getLength(), 10);
 
-			TierGlyph tier = forward ? fortier : revtier;
+			TierGlyph tier = forward ? fortier.getTierGlyph() : revtier.getTierGlyph();
 			GlyphI orf_glyph = null;
 			if (xpos.length > 0) {
 				GlyphI link_template = new FillRectGlyph();
@@ -279,11 +284,11 @@ public final class OrfAnalyzer extends JComponent
 	private void removeTiersAndCleanup() {
 		AffyTieredMap map = smv.getSeqMap();
 		if (fortier != null) {
-			map.removeTier(fortier);
+			map.removeTier(fortier.getTierGlyph());
 			fortier = null;
 		}
 		if (revtier != null) {
-			map.removeTier(revtier);
+			map.removeTier(revtier.getTierGlyph());
 			revtier = null;
 		}
 		orf_holders.clear();

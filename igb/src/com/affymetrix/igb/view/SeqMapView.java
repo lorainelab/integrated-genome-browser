@@ -1893,7 +1893,11 @@ public class SeqMapView extends JPanel
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
+		return getTrack(sym, style, tier_direction, false);
+	}
+
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy) {
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, dummy);
 	}
 
 	/**

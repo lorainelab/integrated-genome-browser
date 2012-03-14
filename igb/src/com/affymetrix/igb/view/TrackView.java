@@ -30,9 +30,11 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.TrackUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.viewmode.TransformHolder;
+import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +94,7 @@ public class TrackView {
 	 * @param tier_direction the direction
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph = null;
 		Map<ITrackStyleExtended, TierGlyph> style2track = null;
@@ -111,7 +113,8 @@ public class TrackView {
 			tierGlyph = null;
 		}
 		if (tierGlyph == null) {
-			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction, smv);
+			MapViewGlyphFactoryI factory = dummy ? DummyGlyphFactory.getInstance() : UnloadedGlyphFactory.getInstance();
+			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
@@ -253,11 +256,11 @@ public class TrackView {
 					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 					if (TrackUtils.getInstance().useViewMode(meth)) {
 						if (style.getSeparate()) {
-							smv.getTrack(null, style, TierGlyph.Direction.FORWARD);
-							smv.getTrack(null, style, TierGlyph.Direction.REVERSE);
+							smv.getTrack(null, style, TierGlyph.Direction.FORWARD, true);
+							smv.getTrack(null, style, TierGlyph.Direction.REVERSE, true);
 						}
 						else {
-							smv.getTrack(null, style, TierGlyph.Direction.BOTH);
+							smv.getTrack(null, style, TierGlyph.Direction.BOTH, true);
 						}
 					}
 					else {

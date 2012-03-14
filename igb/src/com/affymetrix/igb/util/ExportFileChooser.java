@@ -82,8 +82,6 @@ public class ExportFileChooser extends JFileChooser {
 		addPropertyChangeListener(new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent e) {
-
-
 				File oldFile = null;
 				String property = e.getPropertyName();
 				if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(property)) {

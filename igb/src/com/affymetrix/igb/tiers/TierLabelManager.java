@@ -186,14 +186,13 @@ public final class TierLabelManager implements PropertyHolder {
 		labelmap.getScene().setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
 		
-		// Trying something new, a less dependent resizer:
-		boolean manualResizingAllowed = true; // temporary switch until resizing works well.
-		MouseInputListener resizer = new TierResizer(this.tiermap);
-		if (!manualResizingAllowed) {
-			resizer = new MouseInputAdapter() {
-				// Stub out resizing to disable it.
-			};
-		}
+		MouseInputListener resizer;
+//		resizer = new MouseInputAdapter() {
+			// Stub out resizing to disable it.
+//		};
+//		resizer = new TierResizer(this.tiermap);
+		resizer = new AccordionTierResizer(this.tiermap);
+
 		labelmap.addMouseListener(resizer);
 		labelmap.addMouseMotionListener(resizer);
 	}

@@ -54,7 +54,7 @@ import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -517,7 +517,7 @@ public class SeqMapView extends JPanel
 				public void run() {
 					List<GlyphI> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+						GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) graphs.get(i), getSeqMap());
 					}
 					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
@@ -1151,11 +1151,11 @@ public class SeqMapView extends JPanel
 	public final void selectAllGraphs() {
 			List<GlyphI> glyphlist = collectGraphs();
 		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
-		GraphGlyph gg;
+		AbstractGraphGlyph gg;
 
 		//Remove hidden Graphs
 		for(GlyphI g : glyphlist){
-			gg = (GraphGlyph)g;
+			gg = (AbstractGraphGlyph)g;
 			if(gg.getGraphState().getTierStyle().getShow()){
 				visibleList.add(g);
 			}
@@ -1166,7 +1166,7 @@ public class SeqMapView extends JPanel
 
 		// Bring them all into the visual area
 		for (GlyphI gl : visibleList) {
-			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
+			GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) gl, getSeqMap());
 		}
 
 		select(glyphsToSyms(visibleList), false, true, true);
@@ -1737,8 +1737,8 @@ public class SeqMapView extends JPanel
 					id = SeqUtils.spanToString(seq_region);
 					sym_used_for_title = seq_selected_sym;
 				}
-				if (id == null && topgl instanceof GraphGlyph) {
-					GraphGlyph gg = (GraphGlyph) topgl;
+				if (id == null && topgl instanceof AbstractGraphGlyph) {
+					AbstractGraphGlyph gg = (AbstractGraphGlyph) topgl;
 					if (gg.getLabel() != null) {
 						id = "Graph: " + gg.getLabel();
 					} else {
@@ -1869,8 +1869,8 @@ public class SeqMapView extends JPanel
 	// sets the text on the JLabel based on the current selection
 	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
 		String title = "";
-		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
-			GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
+		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof AbstractGraphGlyph) {
+			AbstractGraphGlyph gg = (AbstractGraphGlyph) selected_glyphs.get(0);
 			title = gg.getLabel();
 		} else {
 			title = getSelectionTitle(selected_glyphs);
@@ -1899,8 +1899,8 @@ public class SeqMapView extends JPanel
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
-			if (child instanceof GraphGlyph) {
-				graphs.add((GraphGlyph) child);
+			if (child instanceof AbstractGraphGlyph) {
+				graphs.add((AbstractGraphGlyph) child);
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);
@@ -2034,7 +2034,7 @@ public class SeqMapView extends JPanel
 	 * Sets tool tip from graph glyph.
 	 * @param glyph
 	 */
-	public final void setToolTip(int x, GraphGlyph glyph) {
+	public final void setToolTip(int x, AbstractGraphGlyph glyph) {
 		if (!show_prop_tooltip) {
 			return;
 		}
@@ -2054,7 +2054,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void showProperties(int x, GraphGlyph glyph)
+	public void showProperties(int x, AbstractGraphGlyph glyph)
 	{
 		List<GlyphI> glyphs = new ArrayList<GlyphI>();
 		glyphs.add(glyph);

@@ -13,7 +13,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;

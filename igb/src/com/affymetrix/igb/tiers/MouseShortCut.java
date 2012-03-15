@@ -2,7 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
@@ -83,7 +83,7 @@ final public class MouseShortCut implements MouseListener{
 				
 			}
 
-			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof GraphGlyph)
+			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof AbstractGraphGlyph)
 				return;
 			
 			//Zoom to glyphs.

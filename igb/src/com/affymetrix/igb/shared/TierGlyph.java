@@ -514,8 +514,8 @@ public class TierGlyph extends SolidGlyph implements StyleGlyphI {
 	 * @param view onto the scene with these coordinates (units).
 	 */
 	public void setPreferredHeight(double height, ViewI view){
-		if(getChildCount() == 1 && getChild(0) instanceof GraphGlyph){
-			GraphGlyph child = (GraphGlyph)getChild(0);
+		if(getChildCount() == 1 && getChild(0) instanceof AbstractGraphGlyph){
+			AbstractGraphGlyph child = (AbstractGraphGlyph)getChild(0);
 			Rectangle2D.Double  coord = child.getCoordBox();
 			child.setCoords(coord.x, coord.y, coord.width, height);
 			//Note : Fix to handle height in a view mode.

@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-public final class MismatchPileupGlyph extends GraphGlyph {
+public final class MismatchPileupGlyph extends AbstractGraphGlyph {
 	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<Character, int[]>();
 	static {
 		BAR_ORDERS.put('A', new int[]{1,2,3,4});
@@ -70,7 +70,7 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 		g.setColor(MATCH_COLOR);
 		super.bigDrawLoop(
 				draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width,
-				graph_style, g, max_x_plus_width, mmgs);
+				g, max_x_plus_width, mmgs);
 
 		// now draw the mismatches, piled up
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
@@ -133,6 +133,19 @@ public final class MismatchPileupGlyph extends GraphGlyph {
 			stairStepEnd = end_point.x;
 		}
 		return stairStepEnd;
+	}
+
+	@Override
+	public String getName() {
+		return "mismatchpileup";
+	}
+
+	@Override
+	protected void doBigDraw(Graphics g, GraphSym graphSym,
+			Point curr_x_plus_width, Point max_x_plus_width, float ytemp,
+			int draw_end_index, int i) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

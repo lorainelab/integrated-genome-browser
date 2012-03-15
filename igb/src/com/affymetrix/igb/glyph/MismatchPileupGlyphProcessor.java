@@ -5,14 +5,10 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MismatchPileupGlyph;
 
-/**
- *
- * @author lfrohman
- */
 public class MismatchPileupGlyphProcessor implements GlyphProcessor {
 	public static final String PILEUP_IDENTIFIER = "mismatch pileup";
 
@@ -20,7 +16,7 @@ public class MismatchPileupGlyphProcessor implements GlyphProcessor {
 	public void processGlyph(GlyphI glyph) {}
 
 	@Override
-	public GraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
+	public AbstractGraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
 		if (sym instanceof MisMatchPileupGraphSym) {
 			gstate.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 			return new MismatchPileupGlyph(sym, gstate);

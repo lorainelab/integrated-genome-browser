@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ * Copyright (c) 2001-2006 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks;
 
@@ -34,7 +31,7 @@ import javax.swing.tree.*;
 import javax.swing.undo.UndoManager;
 
 /**
- *  A panel for viewing and re-arranging bookmarks in a hierarchy.
+ * A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView implements TreeSelectionListener {
 
@@ -68,7 +65,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		return singleton;
 	}
 
-	/** Creates a new instance of Class */
+	/**
+	 * Creates a new instance of Class
+	 */
 	public BookmarkManagerView(IGBService igbService) {
 
 		tree = new BookmarkTree(this);
@@ -203,8 +202,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	/**
-	 *  Tries to import bookmarks into Unibrow.
-	 *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
+	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
 	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
 		JFileChooser chooser = getJFileChooser();
@@ -219,6 +217,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
 			}
 		}
+
+		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public Action makeImportAction() {
@@ -231,7 +231,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarkList bl = (BookmarkList) tree_model.getRoot();
 				importBookmarks(bl, null);
 				tree_model.reload();
-				BookmarkActionManager.getInstance().rebuildMenus();
 			}
 
 			@Override
@@ -322,7 +321,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				super.actionPerformed(ae);
 				deleteAction();
 				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
-				BookmarkActionManager.getInstance().rebuildMenus();
 			}
 
 			@Override
@@ -376,6 +374,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				}
 			}
 		}
+
+		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public TreePath getPath(TreeNode treeNode) {
@@ -438,7 +438,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		FileTracker.DATA_DIR_TRACKER.setFile(file);
 	}
 
-	/** Gets a static re-usable file chooser that prefers "html" files. */
+	/**
+	 * Gets a static re-usable file chooser that prefers "html" files.
+	 */
 	private JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser();
@@ -451,11 +453,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		return static_chooser;
 	}
 
-	/** Returns true or false to indicate that if an item is inserted at
-	 *  the given row it will be inserted "into" (true) or "after" (false)
-	 *  the item currently at that row.  Will return true only if the given
-	 *  row contains a folder and that folder is currently expanded or empty
-	 *  or is the root node.
+	/**
+	 * Returns true or false to indicate that if an item is inserted at the
+	 * given row it will be inserted "into" (true) or "after" (false) the item
+	 * currently at that row. Will return true only if the given row contains a
+	 * folder and that folder is currently expanded or empty or is the root
+	 * node.
 	 */
 	private boolean dropInto(int row) {
 		boolean into = false;
@@ -484,8 +487,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		tree = null;
 	}
 
-	/** A JPanel that listens for TreeSelectionEvents, displays
-	 *  the name(s) of the selected item(s), and may allow you to edit them.
+	/**
+	 * A JPanel that listens for TreeSelectionEvents, displays the name(s) of
+	 * the selected item(s), and may allow you to edit them.
 	 */
 	public class BottomThing extends JPanel implements TreeSelectionListener {
 
@@ -546,10 +550,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			bl_editor = new BookmarkProperties(def_tree_model);
 		}
 
-		/** Sets the instance of IGBService.  This is the instance
-		 *  in which the bookmarks will be opened when the "GoTo" button
-		 *  is pressed.
-		 *  @param igbService an instance of IGBService; null is ok.
+		/**
+		 * Sets the instance of IGBService. This is the instance in which the
+		 * bookmarks will be opened when the "GoTo" button is pressed.
+		 *
+		 * @param igbService an instance of IGBService; null is ok.
 		 */
 		void setIGBService(IGBService igbService) {
 			this.igbService = igbService;

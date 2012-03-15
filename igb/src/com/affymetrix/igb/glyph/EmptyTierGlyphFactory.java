@@ -1,7 +1,5 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -13,13 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
@@ -81,86 +73,25 @@ public class EmptyTierGlyphFactory {
 	}
 	
 	private static void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
-		int slots = gviewer.getAverageSlots();
-		TierGlyph[] tiers = new TierGlyph[2];
-				
-		double height = style.getHeight();
-		if (TrackUtils.getInstance().useViewMode(style.getMethodName())) {
-			if(setViewMode){
-				FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
-				FileTypeCategory category = (fth == null) ? FileTypeCategory.Annotation : fth.getFileTypeCategory();
-				String viewmode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category).getName();
-				style.setViewMode(viewmode);
-			}
-			if(!style.isGraphTier()){
-				Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
-				TierGlyphViewMode tgfor = (TierGlyphViewMode)gviewer.getTrack(null, style, direction);
-				tgfor.reset();
-				if (style.getSeparate()) {
-					TierGlyphViewMode tgrev = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.REVERSE);
-					tgrev.reset();
-				}
-			}else {
-				TierGlyphViewMode tg = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.NONE);
-				tg.reset();
-			}
-			return;
+		if(setViewMode){
+			FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
+			FileTypeCategory category = (fth == null) ? FileTypeCategory.Annotation : fth.getFileTypeCategory();
+			String viewmode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category).getName();
+			style.setViewMode(viewmode);
 		}
-		else {
-			if(!style.isGraphTier()){
-				tiers = gviewer.getTiers(style, true);
-				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-			}else {
-				tiers[0] = gviewer.getGraphTrack(style, TierGlyph.Direction.NONE);
+		if(!style.isGraphTier()){
+			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
+			TierGlyphViewMode tgfor = (TierGlyphViewMode)gviewer.getTrack(null, style, direction);
+			tgfor.reset();
+			if (style.getSeparate()) {
+				TierGlyphViewMode tgrev = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.REVERSE);
+				tgrev.reset();
 			}
+		}else {
+			TierGlyphViewMode tg = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.NONE);
+			tg.reset();
 		}
-
-		if (style.getSeparate() && !style.isGraphTier()) {
-			addEmptyChild(tiers[0], height, slots, requestSym, gviewer.getAnnotatedSeq());
-			addEmptyChild(tiers[1], height, slots, requestSym, gviewer.getAnnotatedSeq());
-		} else {
-			addEmptyChild(tiers[0], height, slots, requestSym, gviewer.getAnnotatedSeq());
-		}
-
+		return;
 	}
 			
-	private static void addEmptyChild(TierGlyph tier, double height, int slots,
-			SeqSymmetry requestSym, BioSeq seq) {
-		if (tier.getChildCount() <= 0) {
-			Glyph glyph;
-
-			for (int i = 0; i < slots; i++) {
-				// Add empty child.
-				glyph = new Glyph() {
-				};
-				glyph.setCoords(0, 0, 0, height);
-				tier.addChild(glyph);
-			}
-
-			// Add middle glyphs.
-			SeqSymmetry inverse = SeqUtils.inverse(requestSym, seq);
-			int child_count = inverse.getChildCount();
-			//If any request was made.
-			if (child_count > 0) {
-				for (int i = 0; i < child_count; i++) {
-					SeqSymmetry child = inverse.getChild(i);
-					for (int j = 0; j < child.getSpanCount(); j++) {
-						SeqSpan ospan = child.getSpan(j);
-						if (ospan.getLength() > 1) {
-							if (tier != null) {
-								glyph = new FillRectGlyph();
-								glyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
-								tier.addMiddleGlyph(glyph);
-							}
-						}
-					}
-				}
-			} else {
-				glyph = new FillRectGlyph();
-				glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
-				tier.addMiddleGlyph(glyph);
-			}
-		}
-	}
-
 }

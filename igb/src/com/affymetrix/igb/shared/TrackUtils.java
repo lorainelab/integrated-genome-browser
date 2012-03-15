@@ -18,8 +18,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 public class TrackUtils {
@@ -103,15 +101,4 @@ public class TrackUtils {
 		}
 		return true;
 	}
-
-	public boolean useViewMode(String method) {
-		return true; /* Uncomment this line (the inital //) to enable "viewmode".
-		if (method != null && method.contains("$")) {
-			return true;
-		}
-		else {
-			return false;
-		}/* */
-	}
-
 }

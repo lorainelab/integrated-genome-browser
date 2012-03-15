@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.ScoredContainerSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -27,7 +26,6 @@ import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
@@ -54,14 +52,6 @@ public class TrackView {
 		return instance;
 	}
 	private static final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
-
-	// We only need a single ScoredContainerGlyphFactory because all graph properties
-	// are in the GraphState object.
-	private static final ScoredContainerGlyphFactory container_factory = new ScoredContainerGlyphFactory();
-
-	// We only need a single GraphGlyphFactory because all graph properties
-	// are in the GraphState object.
-	private static final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
 	/** Hash of ITrackStyle to forward TierGlyph */
 	private static final Map<ITrackStyleExtended, TierGlyph> style2forwardTierGlyph = new HashMap<ITrackStyleExtended, TierGlyph>();
@@ -254,17 +244,12 @@ public class TrackView {
 					//Create dummy tier
 					String meth = BioSeq.determineMethod(annotSym);
 					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-					if (TrackUtils.getInstance().useViewMode(meth)) {
-						if (style.getSeparate()) {
-							smv.getTrack(null, style, TierGlyph.Direction.FORWARD, true);
-							smv.getTrack(null, style, TierGlyph.Direction.REVERSE, true);
-						}
-						else {
-							smv.getTrack(null, style, TierGlyph.Direction.BOTH, true);
-						}
+					if (style.getSeparate()) {
+						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, true);
+						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, true);
 					}
 					else {
-						smv.getTiers(style, true);
+						smv.getTrack(null, style, TierGlyph.Direction.BOTH, true);
 					}
 					continue;
 				}
@@ -361,19 +346,9 @@ public class TrackView {
 	private MapViewGlyphFactoryI determineFactory(SymWithProps sym){
 		String meth = BioSeq.determineMethod(sym);
 		
-		if (!TrackUtils.getInstance().useViewMode(meth)) {
-			if (sym instanceof ScoredContainerSym) {
-				return container_factory;
-			} else if (sym instanceof GraphSym) {
-				return graph_factory;
-			} else {
-				return default_glyph_factory;
-			}
-		}
-		
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			if ("default".equals(style.getViewMode()) && TrackUtils.getInstance().useViewMode(meth)) {
+			if ("default".equals(style.getViewMode())) {
 				style.setViewMode(MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)sym).getCategory()).getName());
 			}
 			

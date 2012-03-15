@@ -231,6 +231,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				BookmarkList bl = (BookmarkList) tree_model.getRoot();
 				importBookmarks(bl, null);
 				tree_model.reload();
+				BookmarkActionManager.getInstance().rebuildMenus();
 			}
 
 			@Override
@@ -300,11 +301,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			}
 
 			@Override
-			public String getIconPath() {
-				return "images/export.png";
-			}
-
-			@Override
 			public int getMnemonic() {
 				return KeyEvent.VK_E;
 			}
@@ -326,17 +322,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				super.actionPerformed(ae);
 				deleteAction();
 				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
+				BookmarkActionManager.getInstance().rebuildMenus();
 			}
 
 			@Override
 			public String getText() {
 				return "Delete ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				//return "images/removeBookmark.png";
-				return null;
 			}
 
 			@Override

@@ -47,9 +47,8 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	@Override
 	public void mouseMoved(MouseEvent theEvent) {
 		NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
-		Object src = theEvent.getSource();
 		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-		assert m != (AffyTieredMap) src; // This seems odd.
+		assert m != nevt.getSource(); // This seems odd.
 		// Seems both cursors are the same, but you never know...
 		if (atResizeTop(nevt)) {
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
@@ -192,14 +191,11 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		
 		// We only want to react when we're supposed to.
 		// i.e. when we have set the mouse cursor.
-		Object o = evt.getSource();
-		if (! (o instanceof java.awt.Component)) {
-			return;
-		}
-		java.awt.Component c = (java.awt.Component) o;
-		Cursor m = c.getCursor();
-		if (m != Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR)
-				&& m != Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR)) {
+		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+		assert m != evt.getSource(); // This seems odd.
+		Cursor c = m.getCursor();
+		if (c != Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR)
+				&& c != Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR)) {
 			return;
 		}
 
@@ -218,15 +214,17 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		}
 		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
 		int index = orderedGlyphs.indexOf(topgl);
+		this.atBorder = -1;
 		if (atResizeTop(nevt)) {
 			this.atBorder = index;
 		} else if (atResizeBottom(nevt)) {
 			this.atBorder = index + 1;
 		}
-		this.resizeRegion = pertinentTiers(this.atBorder, orderedGlyphs);
-		if (null != this.resizeRegion && 1 < this.resizeRegion.size()) {
-			// Maybe should just pass atBorder to startDrag?
-			startDrag(this.resizeRegion, nevt);
+		if (-1 < this.atBorder) {
+			this.resizeRegion = pertinentTiers(this.atBorder, orderedGlyphs);
+			if (null != this.resizeRegion && 1 < this.resizeRegion.size()) {
+				startDrag(this.resizeRegion, nevt);
+			}
 		}
 	}
 

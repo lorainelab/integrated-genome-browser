@@ -214,6 +214,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
 			}
 		}
+
+		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public Action makeImportAction() {
@@ -232,21 +234,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public String getText() {
 				return "Import ...";
 			}
-
-			@Override
-			public String getIconPath() {
-				return "images/import.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_I;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Import Bookmarks";
-			}
 		};
 		return a;
 	}
@@ -262,7 +249,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		if (option == JFileChooser.APPROVE_OPTION) {
 			try {
 				setLoadDirectory(chooser.getCurrentDirectory());
-				((ExportFileFilter)chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());		
+				((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
 			}
@@ -284,21 +271,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public String getText() {
 				return "Export ...";
 			}
-
-			@Override
-			public String getIconPath() {
-				return "images/export.png";
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_E;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Export Bookmarks";
-			}
 		};
 		return a;
 	}
@@ -317,22 +289,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			@Override
 			public String getText() {
 				return "Delete ...";
-			}
-
-			@Override
-			public String getIconPath() {
-				//return "images/removeBookmark.png";
-				return null;
-			}
-
-			@Override
-			public int getMnemonic() {
-				return KeyEvent.VK_D;
-			}
-
-			@Override
-			public String getTooltip() {
-				return "Delete Selected Bookmark(s)";
 			}
 		};
 		return a;
@@ -371,6 +327,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				}
 			}
 		}
+
+		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public TreePath getPath(TreeNode treeNode) {
@@ -442,7 +400,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			static_chooser.setAcceptAllFileFilterUsed(false);
 			static_chooser.setCurrentDirectory(getLoadDirectory());
 			static_chooser.addChoosableFileFilter(new HTMLExportFileFilter(new UniFileFilter(
-					new String[]{"html", "htm", "xhtml" }, "HTML Files")));
+					new String[]{"html", "htm", "xhtml"}, "HTML Files")));
 			static_chooser.addChoosableFileFilter(new TextExportFileFilter(new UniFileFilter(
 					new String[]{"txt"}, "TEXT Files")));
 		}
@@ -679,21 +637,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				public String getText() {
 					return "Properties ...";
 				}
-
-				@Override
-				public String getIconPath() {
-					return null;
-				}
-
-				@Override
-				public int getMnemonic() {
-					return KeyEvent.VK_P;
-				}
-
-				@Override
-				public String getTooltip() {
-					return "Properties";
-				}
 			};
 			return a;
 		}
@@ -716,16 +659,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				public String getText() {
 					return "Go To";
 				}
-
-				@Override
-				public int getMnemonic() {
-					return KeyEvent.VK_G;
-				}
-
-				@Override
-				public String getTooltip() {
-					return "Go To Bookmark";
-				}
 			};
 			return a;
 		}
@@ -741,14 +674,15 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			}
 		}
 	}
-	
-	private abstract class ExportFileFilter extends javax.swing.filechooser.FileFilter{
+
+	private abstract class ExportFileFilter extends javax.swing.filechooser.FileFilter {
+
 		final UniFileFilter filter;
 
-		public ExportFileFilter(UniFileFilter filter){
+		public ExportFileFilter(UniFileFilter filter) {
 			this.filter = filter;
 		}
-		
+
 		@Override
 		public boolean accept(File f) {
 			return filter.accept(f);
@@ -758,49 +692,47 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		public String getDescription() {
 			return filter.getDescription();
 		}
-		
+
 		public void export(BookmarkList main_bookmark_list, File fil) throws Exception {
 			String full_path = fil.getCanonicalPath();
 			boolean extSet = false;
 			for (String ext : filter.getExtensions()) {
-				if (full_path.endsWith("."+ext)) {
+				if (full_path.endsWith("." + ext)) {
 					extSet = true;
 					break;
 				}
 			}
 			if (!extSet) {
 				fil = new File(full_path + "." + filter.getExtensions().iterator().next());
-			} 
-			
+			}
+
 			write(main_bookmark_list, fil);
 		}
-	
+
 		protected abstract void write(BookmarkList main_bookmark_list, File fil) throws Exception;
 	}
-	
-	private class HTMLExportFileFilter extends ExportFileFilter{
 
-		public HTMLExportFileFilter(UniFileFilter filter){
+	private class HTMLExportFileFilter extends ExportFileFilter {
+
+		public HTMLExportFileFilter(UniFileFilter filter) {
 			super(filter);
 		}
-		
+
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
 			BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
 		}
-		
 	}
-	
-	private class TextExportFileFilter extends ExportFileFilter{
 
-		public TextExportFileFilter(UniFileFilter filter){
+	private class TextExportFileFilter extends ExportFileFilter {
+
+		public TextExportFileFilter(UniFileFilter filter) {
 			super(filter);
 		}
-		
+
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
 			BookmarkList.exportAsTEXT(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
 		}
-		
 	}
 }

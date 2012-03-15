@@ -211,6 +211,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				BookmarksParser.parse(bookmark_list, fil);
+				AddBookmarkAction.addNode((DefaultMutableTreeNode) bookmark_list);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
 			}
@@ -230,8 +231,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				String createdTime = dateFormat.format(Calendar.getInstance().getTime());
 				bl.setComment("Created Time: " + createdTime);
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
-				AddBookmarkAction.addNode(node);
 				importBookmarks(bl, null);
 				tree_model.reload();
 			}

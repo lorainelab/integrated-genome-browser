@@ -2,8 +2,10 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
@@ -132,6 +134,19 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Refresh:
+				String message = "Warning:\n"
+						+ "Refreshing the server will force IGB to re-read configuration files from the server.\n"
+						+ "This means all data sets currently loaded from the server will be deleted.\n"
+						+ "This is useful mainly for setting up or configuring a QuickLoad site.";
+
+				if (server.isEnabled()
+						&& !Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+						message, PreferenceUtils.getTopNode(),
+						PreferenceUtils.CONFIRM_BEFORE_REFRESH,
+						PreferenceUtils.default_confirm_before_refresh)) {
+					break;
+				}
+
 				DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
 						server.serverType, server.serverName, server.URL);
 				break;

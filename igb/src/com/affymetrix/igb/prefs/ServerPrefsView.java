@@ -235,7 +235,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		ServerList.getServerInstance().removeServerFromPrefs(url);
 		addDataSource(type, name, newUrl, order, isDefault);
 	}
-				
+
 	protected void removeDataSource(String url) {
 		if (serverList.getServer(url) == null) {
 			Logger.getLogger(ServerPrefsView.class.getName()).log(

@@ -48,12 +48,17 @@ public class Activator implements BundleActivator {
 					}
 				}
 				help_menu.add(tutorialMenu);
-			} catch (FileNotFoundException e) {
-				//do nothing
+			} catch (FileNotFoundException fnfe) {
+				System.out.println("Activator.handleWindowService: " + fnfe);
+				System.out.println("          continuing...");
+			} catch (java.net.ConnectException ce) {
+				System.out.println("Activator.handleWindowService: " + ce);
+				System.out.println("          continuing...");
 			}
 		} catch (Exception ex) {
 			System.out.println(this.getClass().getName() + " - Exception in handleWindowService() -> " + ex.getMessage());
 			ex.printStackTrace(System.out);
+			System.out.println("          continuing...");
 		}
 	}
 
@@ -68,6 +73,7 @@ public class Activator implements BundleActivator {
 			} else {
 				ServiceTracker<IWindowService, Object> serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class.getName(), null) {
 
+					@Override
 					public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
 						handleWindowService(help_menu, windowServiceReference);
 						return super.addingService(windowServiceReference);
@@ -91,8 +97,9 @@ public class Activator implements BundleActivator {
 		} else {
 			ServiceTracker<IGBService, Object> serviceTracker = new ServiceTracker<IGBService, Object>(bundleContext, IGBService.class.getName(), null) {
 
+				@Override
 				public Object addingService(ServiceReference<IGBService> igbServiceReference) {
-					handleIGBService(igbServiceReference);
+						handleIGBService(igbServiceReference);
 					return super.addingService(igbServiceReference);
 				}
 			};
@@ -105,7 +112,8 @@ public class Activator implements BundleActivator {
 	}
 
 	private void loadDefaultTutorialPrefs() {
-//		// Return if there are already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
+//		// Return if there are already Preferences defined.
+//		// Since we define keystroke shortcuts, this is a reasonable test.
 //		try {
 //			if ((getTopNode()).nodeExists("tutorials")) {
 //				return;
@@ -120,12 +128,16 @@ public class Activator implements BundleActivator {
 		 */
 		try {
 			default_prefs_stream = Activator.class.getResourceAsStream(DEFAULT_PREFS_TUTORIAL_RESOURCE);
-			System.out.println("loading default tutorial preferences from: " + DEFAULT_PREFS_TUTORIAL_RESOURCE);
+			System.out.println("loading default tutorial preferences from: "
+					+ DEFAULT_PREFS_TUTORIAL_RESOURCE);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
-			System.out.println("Problem parsing prefs from: " + DEFAULT_PREFS_TUTORIAL_RESOURCE);
+			System.out.println("Problem parsing prefs from: "
+					+ DEFAULT_PREFS_TUTORIAL_RESOURCE
+					+ ": " + ex);
 			ex.printStackTrace();
+			System.out.println("          continuing...");
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}

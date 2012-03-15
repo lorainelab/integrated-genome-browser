@@ -368,6 +368,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	 * @param height new height in scene (coord) space.
 	 * @param view onto the scene with these coordinates (units).
 	 */
+	@Override
 	public void setPreferredHeight(double height, ViewI view){
         height = height - 2 * getSpacing(); // remove the padding at top and bottom.
 		int numberOfSlotsInUse = getActualSlots();

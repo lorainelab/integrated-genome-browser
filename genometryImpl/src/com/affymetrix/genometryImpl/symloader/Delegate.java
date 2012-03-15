@@ -7,7 +7,11 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import java.io.IOException;
@@ -39,9 +43,15 @@ public class Delegate extends QuickLoadSymLoader {
 		super(uri, featureName, version, null);
 		this.operator = operator;
 		this.dps = dps;
-		this.extension = EXT;
 		strategyList = new ArrayList<LoadUtils.LoadStrategy>();
-		strategyList.addAll(defaultStrategyList);
+		if(dps != null){
+			this.extension = EXT;
+			strategyList.addAll(defaultStrategyList);
+		}else{
+			this.extension = "";
+			strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
+		}
+		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), featureName, extension).setViewMode("default");
 	}
 	
 	/**

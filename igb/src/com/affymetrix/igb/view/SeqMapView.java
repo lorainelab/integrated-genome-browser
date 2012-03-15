@@ -1001,11 +1001,6 @@ public class SeqMapView extends JPanel
 			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
 			}
-			else if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph().isFloating()) {
-//				tg.setVisibility(false);
-				tg.getAnnotStyle().setShow(false);
-				addToPixelFloaterGlyph(((TierGlyphViewMode)tg).getViewModeGlyph());
-			}
 		}
 	}
 
@@ -1029,7 +1024,7 @@ public class SeqMapView extends JPanel
 			}
 		});
 	}
-	
+
 	protected void addDependentAndEmptyTrack(){
 		TrackView.getInstance().addDependentAndEmptyTrack(this, aseq);
 	}
@@ -1292,7 +1287,7 @@ public class SeqMapView extends JPanel
 	public List<? extends GlyphI> getSelectedTiers() {
 		return tier_manager.getSelectedTiers();
 	}
-		
+
 	/**
 	 *  Determines which SeqSymmetry's are selected by looking at which Glyph's
 	 *  are currently selected.  The list will not include the selected sequence
@@ -2024,7 +2019,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
-	
+
 	public void showProperties(int x, GraphGlyph glyph)
 	{
 		List<GlyphI> glyphs = new ArrayList<GlyphI>();

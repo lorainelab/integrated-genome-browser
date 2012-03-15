@@ -232,6 +232,9 @@ public class TierResizer extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent evt) {
 
+		if (!this.dragStarted) {
+			return;
+		}
 		this.dragStarted = this.dragActive = false;
 		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 		

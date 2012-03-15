@@ -996,10 +996,15 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
-	private static void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
+	private void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
 			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
+			}
+			else if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph().isFloating()) {
+//				tg.setVisibility(false);
+				tg.getAnnotStyle().setShow(false);
+				addToPixelFloaterGlyph(((TierGlyphViewMode)tg).getViewModeGlyph());
 			}
 		}
 	}

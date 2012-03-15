@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.TierPrefsView;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -272,7 +273,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
 			List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
 			for (GlyphI i : floatingGraphs) {
-				GraphGlyph j = (GraphGlyph) i;
+				AbstractGraphGlyph j = (AbstractGraphGlyph) i;
 				if (j.getGraphState().getTierStyle() == style) {
 					return false;
 				}

@@ -1,14 +1,11 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ * Copyright (c) 2001-2006 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks.action;
 
@@ -63,6 +60,8 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		igbService = _igbService;
 		bookmark_menu = bm_menu;
 		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_add_pos", AddPositionBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_import", ImportBookmarkAction.getAction()));
+		MenuUtil.addToMenu(bm_menu, new JRPMenuItem("Bookmark_export", ExportBookmarkAction.getAction()));
 		bm_menu.addSeparator();
 
 		main_bm_menu = bm_menu;
@@ -84,9 +83,9 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 	}
 
 	/**
-	 *  Loads bookmarks from the file specified by {@link #getBookmarksFile()}.
-	 *  If loading succeeds, also creates a backup copy of that bookmark list
-	 *  in a new file with the same name, but "~" added at the end.
+	 * Loads bookmarks from the file specified by {@link #getBookmarksFile()}.
+	 * If loading succeeds, also creates a backup copy of that bookmark list in
+	 * a new file with the same name, but "~" added at the end.
 	 */
 	private void addDefaultBookmarks() {
 		File f = getBookmarksFile();
@@ -117,9 +116,10 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 
 	}
 
-	/** Will save the current bookmarks into the file that was specified
-	 *  by {@link #getBookmarksFile()}.
-	 *  @return true for sucessfully saving the file
+	/**
+	 * Will save the current bookmarks into the file that was specified by {@link #getBookmarksFile()}.
+	 *
+	 * @return true for sucessfully saving the file
 	 */
 	public boolean autoSaveBookmarks() {
 		boolean saved = false;
@@ -250,20 +250,24 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		return jsep;
 	}
 
-	/** Does nothing. */
+	/**
+	 * Does nothing.
+	 */
 	@Override
 	public void menuCanceled(javax.swing.event.MenuEvent e) {
 	}
 
-	/** Does nothing. */
+	/**
+	 * Does nothing.
+	 */
 	@Override
 	public void menuDeselected(javax.swing.event.MenuEvent e) {
 	}
 
-	/** Every time the menu is selected (thus opened) re-build the bookmark menu items.
-	 *  Thus if the bookmarks have been changed by the bookmark manager, we will
-	 *  adapt to that now.
-	 *  Slow? Yes.  Too slow?  Not really.
+	/**
+	 * Every time the menu is selected (thus opened) re-build the bookmark menu
+	 * items. Thus if the bookmarks have been changed by the bookmark manager,
+	 * we will adapt to that now. Slow? Yes. Too slow? Not really.
 	 */
 	@Override
 	public void menuSelected(javax.swing.event.MenuEvent e) {

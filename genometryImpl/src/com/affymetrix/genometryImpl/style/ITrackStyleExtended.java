@@ -67,4 +67,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	int getForwardMaxDepth();
 	void setReverseMaxDepth(int theNewDepth);
 	int getReverseMaxDepth();
+	boolean getFloatGraph();
+	void setFloatGraph(boolean b);
 }

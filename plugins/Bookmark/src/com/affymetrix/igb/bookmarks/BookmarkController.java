@@ -259,7 +259,7 @@ public abstract class BookmarkController {
 			}
 		}
 
-		gstate.setFloatGraph(use_floating_graphs);
+		gstate.getTierStyle().setFloatGraph(use_floating_graphs);
 		gstate.setShowLabel(show_label);
 		gstate.setShowAxis(show_axis);
 		gstate.setVisibleMinY((float) minvis);
@@ -348,7 +348,6 @@ public abstract class BookmarkController {
 
 			addStyleProps(style, mark_sym, feature.getURI().toString(), graph.getGraphName(), graph.getID(), i);
 
-			mark_sym.setProperty(GRAPH.FLOAT.toString() + i, Boolean.toString(gstate.getFloatGraph()));
 			mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (Boolean.toString(gstate.getShowLabel())));
 			mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (Boolean.toString(gstate.getShowAxis())));
 			mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gstate.getVisibleMinY()));

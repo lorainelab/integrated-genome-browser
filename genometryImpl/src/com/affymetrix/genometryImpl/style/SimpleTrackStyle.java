@@ -147,5 +147,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public String getOperator() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
-
+	public final boolean getFloatGraph() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	public final void setFloatGraph(boolean b) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

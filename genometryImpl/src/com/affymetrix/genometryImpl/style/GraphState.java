@@ -71,9 +71,6 @@ public final class GraphState {
 	private float graph_visible_min = Float.NEGATIVE_INFINITY;  // NEGATIVE_INFINITY means hasn't been set yet
 	private float graph_visible_max = Float.POSITIVE_INFINITY;  // POSITIVE_INFINITY means hasn't been set yet
 
-	// if float_graph, then graph should float above annotations in tiers
-	// if !float_graph, then graph should be in its own tier
-	private boolean float_graph = false;
 	private boolean show_threshold = false;
 	private boolean show_axis = false;
 	private boolean show_graph = true;
@@ -110,7 +107,6 @@ public final class GraphState {
 	public GraphState(ITrackStyleExtended tierStyle) {
 		super();
 		tier_style = tierStyle;
-		setFloatGraph(false);
 	}
 	
 	/** Copy all the properties, except ID and label, of the given state into this state. */
@@ -118,7 +114,6 @@ public final class GraphState {
 		setGraphStyle(ostate.getGraphStyle());
 		setVisibleMinY(ostate.getVisibleMinY());
 		setVisibleMaxY(ostate.getVisibleMaxY());
-		setFloatGraph(ostate.getFloatGraph());
 		setShowThreshold(ostate.getShowThreshold());
 		setShowAxis(ostate.getShowAxis());
 		setShowGraph(ostate.getShowGraph());
@@ -147,7 +142,6 @@ public final class GraphState {
 	public final float getVisibleMinY() { return graph_visible_min; }
 	public final float getVisibleMaxY() { return graph_visible_max; }
 
-	public final boolean getFloatGraph() { return  float_graph; }
 	public final boolean getShowThreshold() { return show_threshold; }
 	public final boolean getShowAxis() { return show_axis; }
 
@@ -169,7 +163,6 @@ public final class GraphState {
 	 */
 	public int getThresholdDirection() { return threshold_direction; }
 
-	public final void setFloatGraph(boolean b) { float_graph = b; }
 	public final void setGraphStyle(GraphType style) { graph_style = style;}
 	public final void setHeatMap(HeatMap hmap) { heat_map = hmap;}
 	public final void setVisibleMinY(float vminy) { graph_visible_min = vminy;}  // check

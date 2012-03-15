@@ -70,7 +70,7 @@ public class EmptyTierGlyphFactory {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
 					method, feature.featureName, feature.getExtension());
 			
-			if(state.getFloatGraph())
+			if(state.getTierStyle().getFloatGraph())
 				return null;
 			
 			return state.getComboStyle() != null? state.getComboStyle(): state.getTierStyle();

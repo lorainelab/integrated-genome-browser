@@ -277,7 +277,7 @@ public final class SimpleGraphTab
 				hm = first_glyph.getHeatMap();
 			}
 			the_height = first_glyph.getGraphState().getTierStyle().getHeight();
-			all_are_floating = first_glyph.getGraphState().getFloatGraph();
+			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatGraph();
 			all_show_axis = first_glyph.getGraphState().getShowAxis();
 			all_show_label = first_glyph.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
@@ -288,7 +288,7 @@ public final class SimpleGraphTab
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (AbstractGraphGlyph gl : glyphs) {
-			all_are_floating = all_are_floating && gl.getGraphState().getFloatGraph();
+			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatGraph();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
@@ -857,7 +857,7 @@ public final class SimpleGraphTab
 			for (GraphSym gsym : grafs) {
 				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(combo_style, i++);
-				gstate.setFloatGraph(false); // ignored since combo_style is set
+				gstate.getTierStyle().setFloatGraph(false); // ignored since combo_style is set
 				height += gsym.getGraphState().getTierStyle().getHeight();
 			}
 			combo_style.setHeight(height/i);
@@ -880,7 +880,7 @@ public final class SimpleGraphTab
 
 				// For simplicity, set the floating state of all new tiers to false.
 				// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
-				gstate.setFloatGraph(false); // for simplicity
+				gstate.getTierStyle().setFloatGraph(false); // for simplicity
 			}
 			updateViewer();
 		}
@@ -907,7 +907,7 @@ public final class SimpleGraphTab
 //					gstate.setComboStyle(null);
 //					something_changed = true;
 //				}
-				boolean is_floating = gstate.getFloatGraph();
+				boolean is_floating = gstate.getTierStyle().getFloatGraph();
 				if (do_float && (!is_floating)) {
 					//GraphGlyphUtils.floatGraph(gl, gviewer);
 
@@ -918,7 +918,7 @@ public final class SimpleGraphTab
 					gstate.getTierStyle().setY(pixbox.y);
 					gstate.getTierStyle().setHeight(pixbox.height);
 
-					gstate.setFloatGraph(true);
+					gstate.getTierStyle().setFloatGraph(true);
 					something_changed = true;
 				} else if ((!do_float) && is_floating) {
 					//GraphGlyphUtils.attachGraph(gl, gviewer);
@@ -931,7 +931,7 @@ public final class SimpleGraphTab
 					gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
 					gstate.getTierStyle().setHeight(coordbox.height);
 
-					gstate.setFloatGraph(false);
+					gstate.getTierStyle().setFloatGraph(false);
 					something_changed = true;
 				}
 			}
@@ -997,7 +997,7 @@ public final class SimpleGraphTab
 
 		// if this is not a floating graph, then it's in a tier,
 		//    so check tier -- if this graph is only child, then get rid of the tier also
-		if (!gl.getGraphState().getFloatGraph()) {
+		if (!gl.getGraphState().getTierStyle().getFloatGraph()) {
 
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);

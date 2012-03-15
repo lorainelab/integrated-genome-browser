@@ -80,7 +80,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
-	
+	// if float_graph, then graph should float above annotations in tiers
+	// if !float_graph, then graph should be in its own tier
+	private boolean float_graph = false;
+
 	public static TrackStyle getInstance(String unique_name, String track_name, String file_type, Map<String, String> props) {
 		return getInstance(unique_name, track_name, file_type, true, true, props);
 	}
@@ -193,6 +196,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.file_type = file_type;
 		this.unique_name = unique_ame.toLowerCase();
 		this.is_persistent = is_persistent;
+		this.float_graph = false;
 		
 		if (is_persistent) {
 			if (this.unique_name.endsWith("/")) {
@@ -1130,4 +1134,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	public int getForwardMaxDepth() {
 		return this.getMaxDepth();
 	}
+	public final boolean getFloatGraph() { return  float_graph; }
+	public final void setFloatGraph(boolean b) { float_graph = b; }
 }

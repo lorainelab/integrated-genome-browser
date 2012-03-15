@@ -141,7 +141,7 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
-		if (/*gstate.getComboStyle() == null && */ gstate.getFloatGraph()) {
+		if (/*gstate.getComboStyle() == null && */ gstate.getTierStyle().getFloatGraph()) {
 			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
 			smv.addToPixelFloaterGlyph(graph_glyph);
 		} else {

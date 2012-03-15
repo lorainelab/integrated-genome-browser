@@ -154,7 +154,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		this.dragActive = this.dragStarted = true;
 		
 		this.start = nevt.getCoordY();
-	
+
 		// These minimum heights are in coord space.
 		// Shouldn't we be dealing in pixels?
 		ourCeiling = ceiling(theRegion, this.atBorder);
@@ -189,6 +189,20 @@ public class AccordionTierResizer extends MouseInputAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent evt) {
+		
+		// We only want to react when we're supposed to.
+		// i.e. when we have set the mouse cursor.
+		Object o = evt.getSource();
+		if (! (o instanceof java.awt.Component)) {
+			return;
+		}
+		java.awt.Component c = (java.awt.Component) o;
+		Cursor m = c.getCursor();
+		if (m != Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR)
+				&& m != Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR)) {
+			return;
+		}
+
 		if (null == this.gviewer) {
 			this.gviewer = Application.getSingleton().getMapView();
 			assert null != this.gviewer;

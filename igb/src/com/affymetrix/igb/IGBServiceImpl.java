@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -34,7 +33,6 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
@@ -314,16 +312,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public ITrackStyleExtended getTrackStyle(String meth) {
 		return TrackStyle.getInstance(meth, false);
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
-		GraphSym graphSym = GraphGlyphUtils.doOperateGraphs(operator, (List) graph_glyphs);
-		if (graphSym != null) {
-			getSeqMapView().setAnnotatedSeq(graphSym.getGraphSeq(), true, true);
-		}
-		return graphSym != null;
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})

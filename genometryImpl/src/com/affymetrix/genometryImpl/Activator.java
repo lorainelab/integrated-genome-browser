@@ -7,9 +7,6 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterProps;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.operator.annotation.*;
-import com.affymetrix.genometryImpl.operator.graph.*;
-import com.affymetrix.genometryImpl.operator.transform.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -26,9 +23,6 @@ public class Activator implements BundleActivator {
 		bundleContext = _bundleContext;
 		initFileTypeHandlers();
 		initServerTypes();
-		initTransforms();
-		initGraphOperators();
-		initAnnotationOperators();
 		initOperators();
 	}
 
@@ -57,39 +51,6 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.QuickLoad, null);
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.DAS, null);
 		bundleContext.registerService(ServerTypeI.class, ServerTypeI.DAS2, null);
-	}
-
-	private void initTransforms() {
-		bundleContext.registerService(FloatTransformer.class, new IdentityTransform(), null);
-		bundleContext.registerService(FloatTransformer.class, new LogTransform(2.0), null);
-		bundleContext.registerService(FloatTransformer.class, new LogTransform(10.0), null);
-		bundleContext.registerService(FloatTransformer.class, new LogTransform(Math.E), null);
-		bundleContext.registerService(FloatTransformer.class, new LogTransform(), null);
-		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(2.0), null);
-		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(10.0), null);
-		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(Math.E), null);
-		bundleContext.registerService(FloatTransformer.class, new InverseLogTransform(), null);
-	}
-
-	private void initGraphOperators() {
-		bundleContext.registerService(GraphOperator.class, new DiffOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new ProductOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new RatioOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new SumOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new MinOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new MaxOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new MeanOperator(), null);
-		bundleContext.registerService(GraphOperator.class, new MedianOperator(), null);
-	}
-
-	private void initAnnotationOperators() {
-		bundleContext.registerService(AnnotationOperator.class, new ExclusiveAAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new ExclusiveBAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new IntersectionAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new NotAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new UnionAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new XorAnnotationOperator(), null);
-		bundleContext.registerService(AnnotationOperator.class, new CopyAnnotationOperator(), null);
 	}
 
 	private void initOperators() {

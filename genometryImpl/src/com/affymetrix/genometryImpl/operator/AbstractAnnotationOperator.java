@@ -8,10 +8,6 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
-/**
- *
- * @author lfrohman
- */
 public abstract class AbstractAnnotationOperator implements Operator {
 	
 	@Override

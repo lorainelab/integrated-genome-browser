@@ -113,8 +113,9 @@ public class SequenceGlyph extends AbstractViewModeGlyph implements StyleGlyphI 
 	public void setPreferredHeight(double height, ViewI view){
 		height = height - 2 * getSpacing();
 
-		if(useLabel())
+		if(useLabel()) {
 			height = height / 2;
+		}
 
 		double percent = ((height * 100)/style.getHeight() - 100)/100;
 		style.setHeight(height);

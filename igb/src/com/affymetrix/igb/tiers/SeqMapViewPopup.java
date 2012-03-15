@@ -28,7 +28,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -878,7 +878,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							style.setBackground(chooser.getColor());
 						}
 					}
-					for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
 						if (fg) {
 							gg.setColor(chooser.getColor());
 							gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
@@ -1237,7 +1237,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (method != null) {
 				TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);
 			} else {
-				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
+				for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
 					style = gg.getGraphState().getTierStyle();
 					method = style.getMethodName();
 					TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);

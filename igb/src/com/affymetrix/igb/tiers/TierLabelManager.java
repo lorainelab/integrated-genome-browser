@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
@@ -47,9 +46,6 @@ public final class TierLabelManager implements PropertyHolder {
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
 	
-	private Cursor getCurrentCursor() {
-		return Application.getSingleton().getMapView().getSeqMap().getCursor();
-	}
 	private void setCurrentCursor(Cursor cursor) {
 		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
 	}
@@ -238,7 +234,7 @@ public final class TierLabelManager implements PropertyHolder {
 	public static Map<String, Object> getTierProperties(TierGlyph glyph) {
 		
 		if(glyph.getAnnotStyle().isGraphTier() && glyph.getChildCount() > 0 &&
-				glyph.getChild(0) instanceof GraphGlyph){
+				glyph.getChild(0) instanceof AbstractGraphGlyph){
 			return null;
 		}
 		
@@ -336,7 +332,7 @@ public final class TierLabelManager implements PropertyHolder {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
 			if (child_count > 0) {
-				if (tg.getChild(0) instanceof GraphGlyph) {
+				if (tg.getChild(0) instanceof AbstractGraphGlyph) {
 					// It would be nice if we could assume that a tier contains only
 					// GraphGlyph's or only non-GraphGlyph's, but that is not true.
 					//
@@ -349,7 +345,7 @@ public final class TierLabelManager implements PropertyHolder {
 					// Assume that if first child is a GraphGlyph, then so are all others
 					for (int i = 0; i < child_count; i++) {
 						GlyphI ob = tg.getChild(i);
-						if (!(ob instanceof GraphGlyph)) {
+						if (!(ob instanceof AbstractGraphGlyph)) {
 							// ignore the glyphs that are not GraphGlyph's
 							continue;
 						}
@@ -378,8 +374,8 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-	public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+	public static List<AbstractGraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+		List<AbstractGraphGlyph> result = new ArrayList<AbstractGraphGlyph>();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			result.addAll(getContainedGraphs(tlg.getReferenceTier()));
 		}
@@ -387,13 +383,13 @@ public final class TierLabelManager implements PropertyHolder {
 	}
 
 	/** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-	private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
-		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+	private static List<AbstractGraphGlyph> getContainedGraphs(TierGlyph tier) {
+		List<AbstractGraphGlyph> result = new ArrayList<AbstractGraphGlyph>();
 		int child_count = tier.getChildCount();
 		if (child_count > 0 && tier.getAnnotStyle().isGraphTier() && 
-				tier.getChild(0) instanceof GraphGlyph) {
+				tier.getChild(0) instanceof AbstractGraphGlyph) {
 			for (int j = 0; j < child_count; j++) {
-				result.add((GraphGlyph) tier.getChild(j));
+				result.add((AbstractGraphGlyph) tier.getChild(j));
 			}
 		}
 		return result;
@@ -458,9 +454,9 @@ public final class TierLabelManager implements PropertyHolder {
 			// When collapsing, make them all be the same height as the tier.
 			// (this is for simplicity in figuring out how to draw things.)
 			if (collapsed) {
-				List<GraphGlyph> graphs = getContainedGraphs(tg);
+				List<AbstractGraphGlyph> graphs = getContainedGraphs(tg);
 				double tier_height = style.getHeight();
-				for (GraphGlyph graph : graphs) {
+				for (AbstractGraphGlyph graph : graphs) {
 					Rectangle2D.Double cbox = graph.getCoordBox();
 					graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
 				}

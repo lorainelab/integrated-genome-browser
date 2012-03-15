@@ -54,7 +54,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
@@ -298,7 +297,7 @@ public final class SimpleGraphTab
 			if (graph_style == null) {
 				graph_style = GraphType.LINE_GRAPH;
 			}
-			else if (first_glyph instanceof GraphGlyph && gl instanceof GraphGlyph && ((GraphGlyph)first_glyph).getGraphStyle() != ((GraphGlyph)gl).getGraphStyle()) {
+			else if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
 				graph_style = GraphType.LINE_GRAPH;
 			}
 			if (graph_style == GraphType.HEAT_MAP) {
@@ -492,21 +491,11 @@ public final class SimpleGraphTab
 			Runnable r = new Runnable() {
 
 				public void run() {
-					AbstractGraphGlyph first_glyph = glyphs.get(0);
-					if (style == GraphType.HEAT_MAP && first_glyph instanceof GraphGlyph) {
-						// set to heat map FIRST so that getHeatMap() below will return default map instead of null
-						((GraphGlyph)first_glyph).setGraphStyle(GraphType.HEAT_MAP);
-					}
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
 					for (AbstractGraphGlyph sggl : glyphs) {
 						sggl.setShowGraph(true);
-						if (sggl instanceof GraphGlyph) {
-							((GraphGlyph)sggl).setGraphStyle(style); // leave the heat map whatever it was
-						}
-						else {
-							TierGlyph parent = sggl.getTierGlyph();
-							parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
-						}
+						TierGlyph parent = sggl.getTierGlyph();
+						parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
 						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}
@@ -523,10 +512,8 @@ public final class SimpleGraphTab
 						// don't bother to change the displayed heat map name
 					}
 					for (AbstractGraphGlyph sggl : glyphs) {
-						if (!(sggl instanceof GraphGlyph)) {
-							ITrackStyleExtended style = sggl.getAnnotStyle();
-							igbService.getSeqMapView().addAnnotationTrackFor(style);
-						}
+						ITrackStyleExtended style = sggl.getAnnotStyle();
+						igbService.getSeqMapView().addAnnotationTrackFor(style);
 					}
 					igbService.getSeqMap().updateWidget();
 				}
@@ -567,12 +554,7 @@ public final class SimpleGraphTab
 
 				if (hm != null) {
 					for (AbstractGraphGlyph gl : glyphs) {
-						if (gl instanceof GraphGlyph) {
-							gl.setShowGraph(true);
-							((GraphGlyph)gl).setGraphStyle(GraphType.HEAT_MAP);
-							gl.setHeatMap(hm);
-						}
-						else if ("heatmapgraph".equals(gl.getName())) {
+						if ("heatmapgraph".equals(gl.getName())) {
 							gl.setShowGraph(true);
 							gl.setHeatMap(hm);
 						}

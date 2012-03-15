@@ -32,7 +32,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
@@ -281,7 +281,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			if (method != null) {
 				TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);
 			} else {
-				for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
+				for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
 					style = gg.getGraphState().getTierStyle();
 					method = style.getMethodName();
 					TrackView.getInstance().delete((AffyTieredMap) getSeqMap(), method, style);

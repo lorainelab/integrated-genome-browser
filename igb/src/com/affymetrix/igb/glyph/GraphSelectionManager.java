@@ -25,7 +25,6 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -45,17 +44,18 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.geom.Rectangle2D;
@@ -78,13 +78,13 @@ public final class GraphSelectionManager
 
   private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
-  private GraphGlyph current_graph = null;
+  private AbstractGraphGlyph current_graph = null;
   private ViewModeGlyph graph_to_scale = null;
   //   second_curent_graph is
   //   the graph selected just _before_ the current_graph in a multi-select
   //   (this is usually the previous current_graph if multi-selection is happening,
   //    but null if no multi-select)
-  private GraphGlyph second_current_graph = null;
+  private AbstractGraphGlyph second_current_graph = null;
 
   // The current_source will be the AffyTieredMap of the SeqMapView
   //  final NeoAbstractWidget current_source;
@@ -98,15 +98,9 @@ public final class GraphSelectionManager
   private JLabel graph_info;
   private JLabel graph_info2;
 
-  private final JMenu graph_style = new JMenu("Graph Style");
   private final JMenu decor = new JMenu("Decorations");
   private final JMenu combine = new JMenu("Combine 2 Graphs");
 
-  private JMenuItem bar_graph;
-  private JMenuItem line_graph;
-  private JMenuItem dot_graph;
-  private JMenuItem stairstep_graph;
-  private JMenuItem min_max_graph;
   private JMenuItem adjust_false_positive;
   private JMenuItem change_color;
   private JMenuItem show_label;
@@ -139,11 +133,6 @@ public final class GraphSelectionManager
     graph_info = new JLabel("");
     graph_info2 = new JLabel("");
 
-    min_max_graph = new JMenuItem("MinMaxAvg Graph");
-    line_graph = new JMenuItem("Line Graph");
-    bar_graph = new JMenuItem("Bar Graph");
-    dot_graph = new JMenuItem("Dot Graph");
-    stairstep_graph = new JMenuItem("Stairstep Graph");
     thresh_graph = new JMenuItem("Toggle Threshold");
     change_color = new JMenuItem("Change Color");
     show_label = new JMenuItem("Toggle Label");
@@ -164,12 +153,6 @@ public final class GraphSelectionManager
 
     popup.add(combine);
 
-    graph_style.add(min_max_graph);
-    graph_style.add(line_graph);
-    graph_style.add(bar_graph);
-    graph_style.add(dot_graph);
-    graph_style.add(stairstep_graph);
-
     decor.add(show_label);
     decor.add(show_axis);
     decor.add(show_bounds);
@@ -181,12 +164,7 @@ public final class GraphSelectionManager
     //thresh.add(pickle_thresh);
 
     adjust_false_positive.addActionListener(this);
-    min_max_graph.addActionListener(this);
     faster_draw_toggle.addActionListener(this);
-    line_graph.addActionListener(this);
-    bar_graph.addActionListener(this);
-    dot_graph.addActionListener(this);
-    stairstep_graph.addActionListener(this);
     thresh_graph.addActionListener(this);
     pickle_thresh.addActionListener(this);
     change_color.addActionListener(this);
@@ -206,36 +184,7 @@ public final class GraphSelectionManager
 			return;
 		}
 		Object src = evt.getSource();
-		if (src == bar_graph) {
-			if (DEBUG) {
-				System.out.println("picked bar graph");
-			}
-			current_graph.setGraphStyle(GraphType.BAR_GRAPH);
-		} else if (src == line_graph) {
-			if (DEBUG) {
-				System.out.println("picked line graph");
-			}
-			current_graph.setGraphStyle(GraphType.LINE_GRAPH);
-		} else if (src == dot_graph) {
-			if (DEBUG) {
-				System.out.println("picked dot graph");
-			}
-			current_graph.setGraphStyle(GraphType.DOT_GRAPH);
-		} else if (src == stairstep_graph) {
-			if (DEBUG) {
-				System.out.println("picked stairstep graph");
-			}
-			current_graph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-		} else if (src == min_max_graph) {
-			current_graph.setGraphStyle(GraphType.MINMAXAVG);
-		} else if (src == thresh_graph) {
-			if (second_current_graph != null) {
-				ErrorHandler.errorPanel("ERROR", "Must select exactly one graph");
-			} else {
-				boolean show = !current_graph.getShowThreshold();
-				current_graph.setShowThreshold(show);
-			}
-		} else if (src == change_color) {
+		if (src == change_color) {
 			Color col = JColorChooser.showDialog(frm,
 					"Graph Color Chooser", current_graph.getColor());
 			if (col != null) {
@@ -288,7 +237,7 @@ public final class GraphSelectionManager
    *  tier in the source which is a tier map, then delete the tier as well.
    *  If the graph's symmetry is in a mutalbe bio seq, remove it from there.
    */
-  void deleteGraph(NeoAbstractWidget source, GraphGlyph gl) {
+  void deleteGraph(NeoAbstractWidget source, AbstractGraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
     gmodel.clearSelectedSymmetries(this);
@@ -329,7 +278,7 @@ public final class GraphSelectionManager
     return graph_file_chooser;
   }
 
-  public void saveGraph(GraphGlyph graph) {
+  public void saveGraph(AbstractGraphGlyph graph) {
     Object info = graph.getInfo();
     if (info instanceof GraphSym) {
       FileOutputStream ostr = null;
@@ -386,7 +335,7 @@ public final class GraphSelectionManager
             break;
           }
         }
-        else if (gl.getParent() instanceof GraphGlyph) {
+        else if (gl.getParent() instanceof AbstractGraphGlyph) {
           if (DEBUG) System.out.println("hit child of graph...");
         }
       }
@@ -473,11 +422,11 @@ public final class GraphSelectionManager
     Object src = evt.getSource();
     if (id == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
       GlyphI gl = evt.getGlyph();
-      if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
+      if (gl.getParent() instanceof AbstractGraphGlyph && src instanceof NeoWidget) {
         NeoWidget widg = (NeoWidget)src;
         ViewI view = widg.getView();
         GlyphI threshgl = gl;
-        GraphGlyph graphgl = (GraphGlyph)threshgl.getParent();
+        AbstractGraphGlyph graphgl = (AbstractGraphGlyph)threshgl.getParent();
         Rectangle2D.Double tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
         if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
@@ -491,8 +440,8 @@ public final class GraphSelectionManager
       dragger.removeGlyphDragListener(this);
 
       GlyphI gl = evt.getGlyph();
-      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+      if (gl instanceof AbstractGraphGlyph && src instanceof AffyTieredMap) {
+        GraphGlyphUtils.checkPixelBounds((AbstractGraphGlyph) gl, (AffyTieredMap) src);
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
@@ -501,7 +450,7 @@ public final class GraphSelectionManager
 
 
   /** Make a simple lable for a graph glyph, no longer than max_label_length. */
-  private String getGraphLabel(GraphGlyph gg) {
+  private String getGraphLabel(AbstractGraphGlyph gg) {
     if (gg==null) {return "";}
     String result = gg.getLabel();
     if (result == null) {result = "No label";}
@@ -520,7 +469,7 @@ public final class GraphSelectionManager
       return;
     }
     
-    final List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
+    final List<AbstractGraphGlyph> selected_graph_glyphs = new ArrayList<AbstractGraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 
@@ -529,8 +478,8 @@ public final class GraphSelectionManager
     while (iter.hasNext()) {
       SeqSymmetry sym = iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
-      if (g instanceof GraphGlyph) {
-        selected_graph_glyphs.add((GraphGlyph)g);
+      if (g instanceof AbstractGraphGlyph) {
+        selected_graph_glyphs.add((AbstractGraphGlyph)g);
       }
     }
 
@@ -578,10 +527,10 @@ public final class GraphSelectionManager
       if (labels.size() == 0 || !areAllGraphs(labels)) {
         return;
       }
-      List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
+      List<AbstractGraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
 		List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>(graph_glyphs.size());
-		for (GraphGlyph glyph : graph_glyphs) {
+		for (AbstractGraphGlyph glyph : graph_glyphs) {
 			graph_syms.add((GraphSym) glyph.getInfo()); // It will be a GraphSym object
 		}
 		GraphSym primary_sym = null;

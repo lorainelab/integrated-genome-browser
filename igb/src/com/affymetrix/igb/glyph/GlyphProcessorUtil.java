@@ -6,8 +6,8 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.GraphGlyph;
 
 public class GlyphProcessorUtil {
 	private static GlyphProcessorUtil instance = new GlyphProcessorUtil();
@@ -27,9 +27,9 @@ public class GlyphProcessorUtil {
 		}
 	}
 
-	public GraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
+	public AbstractGraphGlyph createGraphGlyph(GraphSym sym, GraphState gstate) {
 		List<GlyphProcessor> glyphProcessors = ExtensionPointHandler.getExtensionPoint(GlyphProcessor.class).getExtensionPointImpls();
-		GraphGlyph graphGlyph = null;
+		AbstractGraphGlyph graphGlyph = null;
 		for (GlyphProcessor glyphProcessor : glyphProcessors) {
 			graphGlyph = glyphProcessor.createGraphGlyph(sym, gstate);
 			if (graphGlyph != null) {

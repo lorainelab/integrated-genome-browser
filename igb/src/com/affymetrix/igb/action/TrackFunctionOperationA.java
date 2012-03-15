@@ -21,7 +21,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.TrackUtils;
+import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;

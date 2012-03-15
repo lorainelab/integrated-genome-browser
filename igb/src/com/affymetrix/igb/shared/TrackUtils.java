@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -17,6 +18,8 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 public class TrackUtils {
@@ -31,14 +34,14 @@ public class TrackUtils {
 		super();
 	}
 
-	public void addTrack(SeqSymmetry sym, String method, TrackStyle preferredStyle) {
+	public void addTrack(SeqSymmetry sym, String method, ITrackStyleExtended preferredStyle) {
 		makeNonPersistentStyle((SymWithProps) sym, method, preferredStyle);
 		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		aseq.addAnnotation(sym);
 		Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
 	}
 
-	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, TrackStyle preferredStyle) {
+	private TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name, ITrackStyleExtended preferredStyle) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);

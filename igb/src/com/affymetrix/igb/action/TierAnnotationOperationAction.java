@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.TrackUtils;
+import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class TierAnnotationOperationAction extends GenericAction {

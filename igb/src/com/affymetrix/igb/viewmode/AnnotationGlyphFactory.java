@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.BAMSym;
@@ -58,7 +57,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
 
 /**
  *
- * @version $Id: GenericAnnotGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
+ * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
 public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -113,31 +112,6 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 		
 	}
 
-	public void createGlyph(final SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
-		String meth = BioSeq.determineMethod(sym);
-
-		if (meth != null) {
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);			
-			int glyph_depth = style.getGlyphDepth();
-
-			StyleGlyphI[] tiers = gviewer.getTiers(style, true);
-			tiers[0].setInfo(sym);
-			tiers[1].setInfo(sym);
-			if (style.getSeparate()) {
-				addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);
-			} else {
-				// use only one tier
-				addLeafsToTier(gviewer, sym, tiers[0], tiers[0], glyph_depth);
-			}
-		} else {  // keep recursing down into child syms if parent sym has no "method" property
-			int childCount = sym.getChildCount();
-			for (int i = 0; i < childCount; i++) {
-				SeqSymmetry childSym = sym.getChild(i);
-				createGlyph(childSym, gviewer);
-			}
-		}
-	}
-		
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
 		SeqSymmetry current = sym;

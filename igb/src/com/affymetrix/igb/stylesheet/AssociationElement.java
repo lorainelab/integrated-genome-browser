@@ -51,7 +51,7 @@ public final class AssociationElement implements DrawableElement {
     this.styleName = styleName;
 
     if (styleName.startsWith("com.")) {
-      this.factory = getFactoryByClassname(styleName);
+//      this.factory = getFactoryByClassname(styleName);
     } else {
       this.factory = null;
     }
@@ -93,30 +93,6 @@ public final class AssociationElement implements DrawableElement {
     return clone;
   }
 
-  MapViewGlyphFactoryI getFactoryByClassname(String name) {
-    Class<?> factory_class = null;
-
-    try {
-      factory_class = Class.forName(styleName);
-    }
-    catch (ClassNotFoundException ex) {
-      System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be found");
-      factory_class = null;
-    }
-
-    if (factory_class != null) {
-      try {
-        factory = (MapViewGlyphFactoryI)factory_class.newInstance();
-      } catch (InstantiationException ie) {
-        System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be created: "+ ie.toString());
-      } catch (IllegalAccessException iae) {
-        System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be created: " + iae.toString());
-      }
-    }
-
-    return factory;
-  }
-
   public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
@@ -131,9 +107,6 @@ public final class AssociationElement implements DrawableElement {
       }
       glyph = se.symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
     } else {
-      factory.init(propertyMap);
-	  
-	  factory.createGlyph(sym, gviewer);
       glyph = null; // TODO: maybe change the MapViewGlyphFactoryI interface to return a GlyphI ?
     }
 

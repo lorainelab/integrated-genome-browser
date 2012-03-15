@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 /**
@@ -38,7 +39,7 @@ public class EmptyTierGlyphFactory {
 		// for other sequence.
 		if (!feature.getMethods().isEmpty()) {
 			for (String method : feature.getMethods()) {
-				if(method.endsWith(ProbeSetDisplayGlyphFactory.NETAFFX_PROBESETS) ||
+				if(method.endsWith(ProbeSetGlyphFactory.NETAFFX_PROBESETS) ||
 						method.equals(CytobandParser.CYTOBAND_TIER_NAME)){
 					continue;
 				}

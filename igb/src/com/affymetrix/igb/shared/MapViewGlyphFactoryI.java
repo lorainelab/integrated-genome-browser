@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
 public interface MapViewGlyphFactoryI  {
 	public void init(Map<String, Object> options);
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv);
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
 	public String getName();
 	public boolean isCategorySupported(FileTypeCategory category);

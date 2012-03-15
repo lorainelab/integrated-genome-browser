@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -38,15 +37,6 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 		Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
 		if (ccs != null) {
 			check_same_seq = ccs.booleanValue();
-		}
-	}
-
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		if (sym instanceof GraphSym) {
-			displayGraph((GraphSym) sym, smv, check_same_seq);
-		} else {
-			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "
-					+ "passed in is NOT a GraphSym: " + sym);
 		}
 	}
 

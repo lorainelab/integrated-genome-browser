@@ -24,11 +24,6 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		// not implemented
-	}
-
-	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph viewModeGlyph = new SequenceGlyph(style);

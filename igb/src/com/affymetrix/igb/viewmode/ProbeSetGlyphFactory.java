@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -19,7 +18,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.igb.glyph.ArrowHeadGlyph;
-import com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants;
 
@@ -71,42 +69,6 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	private static final int GLYPH_HEIGHT = 20;
 
 	public void init(Map<String, Object> options) {
-	}
-
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
-		String meth = BioSeq.determineMethod(sym);
-		String human_name = meth;
-		if (meth == null) {
-			meth = "unknown";
-			human_name = meth;
-		} else {
-			// Why to strip off the ending ??
-			// Not stripping off the ending to resolve bug ID: 3213610
-			// http://sourceforge.net/tracker/?func=detail&aid=3213610&group_id=129420&atid=714744
-//			strip off the " netaffx consensus" ending
-//			int n = meth.lastIndexOf(NETAFFX_CONSENSUS);
-//			if (n > 0) {
-//				meth = meth.substring(0, n);
-//			}
-			int n = human_name.lastIndexOf(NETAFFX_CONSENSUS);
-			if (n > 0) {
-				human_name = human_name.substring(0, n);
-			}
-		}
-		if (meth != null) {
-			try {
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-				if(style.getTrackName() != null || style.getTrackName().length() == 0 || style.getTrackName().contains(NETAFFX_CONSENSUS)){
-					style.setTrackName(human_name);
-				}
-				label_field = style.getLabelField();
-
-				TierGlyph[] tiers = gviewer.getTiers(style, true);
-				addLeafsToTier(gviewer, sym, tiers[0], tiers[1], glyph_depth);
-			} catch (Exception ex) {
-				Logger.getLogger(ProbeSetDisplayGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
 	}
 
 	/**
@@ -555,7 +517,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 				return (tier_direction == TierGlyph.Direction.REVERSE) ? tiers[1] : tiers[0];
 
 			} catch (Exception ex) {
-				Logger.getLogger(ProbeSetDisplayGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(ProbeSetGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		return null;

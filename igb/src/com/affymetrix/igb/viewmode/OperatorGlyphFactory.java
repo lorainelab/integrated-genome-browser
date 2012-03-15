@@ -74,10 +74,6 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
-	public void createGlyph(final SeqSymmetry sym, final SeqMapViewExtendedI smv) {
-		//not implemented
-	}
-
 	private ViewModeGlyph getViewModeGlyph(List<SeqSymmetry> list, String meth, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 	
 		SymWithProps result_sym = (SymWithProps) operator.operate(smv.getAnnotatedSeq(), list);

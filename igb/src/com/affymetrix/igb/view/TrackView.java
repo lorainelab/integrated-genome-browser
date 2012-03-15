@@ -24,7 +24,6 @@ import com.affymetrix.igb.shared.ExpandPacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -51,7 +50,6 @@ public class TrackView {
 	public static TrackView getInstance() {
 		return instance;
 	}
-	private static final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 
 	/** Hash of ITrackStyle to forward TierGlyph */
 	private static final Map<ITrackStyleExtended, TierGlyph> style2forwardTierGlyph = new HashMap<ITrackStyleExtended, TierGlyph>();
@@ -69,12 +67,6 @@ public class TrackView {
 		style2reverseTierGlyph.clear();
 		gstyle2track.clear();
 		dependent_list.clear();
-	}
-
-	// XmlStylesheetGlyphFactory takes the method and type
-	// into account when determining how to draw a sym.
-	public XmlStylesheetGlyphFactory getAnnotationGlyphFactory() {
-		return default_glyph_factory;
 	}
 
 	/**
@@ -317,30 +309,24 @@ public class TrackView {
 	private void addAnnotationGlyphs(SeqMapView smv, SymWithProps annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = determineFactory(annotSym);
-		if (!factory.getClass().getName().startsWith("com.affymetrix.igb.glyph") &&
-			!factory.getClass().getName().startsWith("com.affymetrix.igb.stylesheet")
-			) {
-			String meth = BioSeq.determineMethod(annotSym);
+		String meth = BioSeq.determineMethod(annotSym);
 
-			if (meth != null) {
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-				Operator operator = determineOperator(annotSym);
-				if(operator != null){
-					if(!operator.supportsTwoTrack()){
-						style.setSeparate(false);
-					}
+		if (meth != null) {
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			Operator operator = determineOperator(annotSym);
+			if(operator != null){
+				if(!operator.supportsTwoTrack()){
+					style.setSeparate(false);
 				}
-				TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
-				mainTier.setInfo(annotSym);
-				if (style.getSeparate()) {
-					TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
-					secondTier.setInfo(annotSym);
-				}
-				return;
 			}
+			TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+			mainTier.setInfo(annotSym);
+			if (style.getSeparate()) {
+				TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+				secondTier.setInfo(annotSym);
+			}
+			return;
 		}
-
-		factory.createGlyph(annotSym, smv);
 	}
 
 	private MapViewGlyphFactoryI determineFactory(SymWithProps sym){

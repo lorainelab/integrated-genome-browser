@@ -429,11 +429,6 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	public void init(Map<String, Object> options) {
 	}
 
-	@Override
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		// not implemented
-	}
-
 	protected abstract SemanticZoomRule getRule(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv);
 

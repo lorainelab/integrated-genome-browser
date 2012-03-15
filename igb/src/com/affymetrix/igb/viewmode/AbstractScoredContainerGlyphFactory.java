@@ -13,17 +13,14 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.view.TrackView;
 
 
 
@@ -34,36 +31,11 @@ import com.affymetrix.igb.view.TrackView;
 public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 	private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
 
-	private static final boolean DEBUG = false;
+//	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
 
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {
-	}
-
-	public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI smv) {
-		boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-				ScoredIntervalParser.default_attach_graphs);
-		if (sym instanceof ScoredContainerSym) {
-			ScoredContainerSym container = (ScoredContainerSym) sym;
-			if (DEBUG) {
-				System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs);
-			}
-			// first draw the little rectangle that will go in an annotation tier
-			// and be used to select regions for the pivot view
-			TrackView.getInstance().getAnnotationGlyphFactory().createGlyph(sym, smv);
-
-			// then draw the graphs
-			if (attach_graphs) {
-				displayGraphs(container, smv);
-			}
-		} else {
-			System.err.println("ScoredContainerGlyphFactory.createGlyph() called, but symmetry "
-					+ "passed in is NOT a ScoredContainerSym: " + sym);
-		}
-		if (DEBUG) {
-			System.out.println("&&&&& exiting ScoredContainerGlyphFactory");
-		}
 	}
 
 	private List<ViewModeGlyph> displayGraphs(ScoredContainerSym original_container, SeqMapViewExtendedI smv) {

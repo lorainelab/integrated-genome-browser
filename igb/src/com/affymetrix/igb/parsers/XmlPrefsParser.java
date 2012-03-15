@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.general.ServerList;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -85,8 +86,7 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
  */
 public final class XmlPrefsParser {
 
-	private static final Class<?> default_factory_class =
-			com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
+	private static final Class<?> default_factory_class = AnnotationGlyphFactory.class;
 
 	private XmlPrefsParser() {
 	}

@@ -16,7 +16,6 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
-import com.affymetrix.igb.stylesheet.Stylesheet.WrappedStyleElement;
 
 import java.io.*;
 import java.util.HashMap;

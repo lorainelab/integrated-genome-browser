@@ -46,24 +46,6 @@ public final class GraphGlyphUtils {
 	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static void checkPixelBounds(GraphGlyph gl, NeoMap map) {
-		if (gl.getGraphState().getFloatGraph()) {
-			Rectangle mapbox = map.getView().getPixelBox();
-			Rectangle2D.Double gbox = gl.getCoordBox();
-			if (gbox.y < mapbox.y) {
-				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
-			} else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
-				gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
-			}
-		}
-	}
-
-	/**
-	 * Identical to above, except for new version of AbstractGraphGlyph. Remove the above
-	 * when completely converted to new version of AbstractGraphGlyph.
-	 * @param gl the graph glyph to check
-	 * @param map the map (AffyTieredMap)
-	 */
 	public static void checkPixelBounds(AbstractGraphGlyph gl, NeoMap map) {
 		if (gl.getGraphState().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
@@ -287,7 +269,7 @@ public final class GraphGlyphUtils {
 		// get the display name for the result graph
 		String symbol = operator.getSymbol();
 		String separator = (symbol == null) ? ", " : " " + symbol + " ";
-		String newname = 
+		String newname =
 			operator.getName().toLowerCase() + ": " + (graphs.size() == 2 ? "(" + graphs.get(0).getLabel() + ")" + separator + "(" + graphs.get(1).getLabel() + ")" :
 			"(..." + graphs.size() + ")");
 		BioSeq aseq = ((GraphSym) graphs.get(0).getInfo()).getGraphSeq();

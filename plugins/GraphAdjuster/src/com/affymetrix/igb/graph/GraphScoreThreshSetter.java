@@ -31,6 +31,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
+import com.affymetrix.igb.shared.TrackUtils;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -745,22 +746,23 @@ public final class GraphScoreThreshSetter extends JPanel
 		SeqUtils.intersection(psym, psym, result_sym, aseq);
 		psym = result_sym;
 
-
-		psym.setProperty("method", meth);
-		aseq.addAnnotation(psym);
-
-		Color col = sgg.getColor();
-		//    Color col = Color.red;
-		ITrackStyleExtended annot_style = igbService.getTrackStyle(meth);
-		annot_style.setForeground(col);
-		annot_style.setGlyphDepth(1);
-		annot_style.setTrackName(description);
-		annot_style.setCollapsed(true);
-		annot_style.setSeparate(false);
+		TrackUtils.getInstance().addTrack(psym, description, sgg.getAnnotStyle());
+		
+//		psym.setProperty("method", meth);
+//		aseq.addAnnotation(psym);
+//
+//		Color col = sgg.getColor();
+//		//    Color col = Color.red;
+//		ITrackStyleExtended annot_style = igbService.getTrackStyle(meth);
+//		annot_style.setForeground(col);
+//		annot_style.setGlyphDepth(1);
+//		annot_style.setTrackName(description);
+//		annot_style.setCollapsed(true);
+//		annot_style.setSeparate(false);
 
 		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + ": " + description);
 
-		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+//		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 	}
 
 	/** When a JTextField gains focus, do nothing special. */

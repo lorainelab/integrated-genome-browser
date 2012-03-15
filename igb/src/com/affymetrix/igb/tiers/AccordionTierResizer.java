@@ -312,6 +312,10 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent evt) {
 
+		if (!this.dragStarted) {
+			return;
+		}
+
 		this.dragStarted = this.dragActive = false;
 		boolean needRepacking = (this.resizeRegion != null && 1 < this.resizeRegion.size());
 		

@@ -237,6 +237,9 @@ public class TierGlyphViewMode extends TierGlyph {
 	public Rectangle2D.Double getSelectedRegion() {
 		return viewModeGlyph.getSelectedRegion();
 	}
+	public int getSlotsNeeded(ViewI theView) {
+		return viewModeGlyph.getSlotsNeeded(theView);
+	}
 	@Override
 	public Scene getScene() {
 		return viewModeGlyph.getScene();

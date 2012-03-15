@@ -342,6 +342,14 @@ public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyph
 	}
 
 	@Override
+	public int getSlotsNeeded(ViewI theView) {
+		if(getPacker() == expand_packer) {
+			return expand_packer.getSlotsNeeded(this, theView);
+		}
+		return 1;
+	}
+
+	@Override
 	public int getActualSlots() {
 		if(getPacker() == expand_packer)
 			return expand_packer.getActualSlots();

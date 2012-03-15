@@ -32,6 +32,9 @@ public abstract class ViewModeGlyph extends SolidGlyph implements StyleGlyphI {
 	public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 		setCoordBox(parentCoordBox); // so all use the same coordbox
 	}
+	public int getSlotsNeeded(ViewI theView) {
+		return 1;
+	}
 	// TODO remove this method
 	public abstract void addMiddleGlyph(GlyphI gl);
 }

@@ -65,7 +65,7 @@ public class AddBookmarkAction extends GenericAction {
 		addNode(node);
 	}
 
-	private static void addNode(DefaultMutableTreeNode node) {
+	public static void addNode(DefaultMutableTreeNode node) {
 		JTree tree = BookmarkManagerView.getSingleton().tree;
 		TreePath path;
 		if (tree.getSelectionCount() > 0) {

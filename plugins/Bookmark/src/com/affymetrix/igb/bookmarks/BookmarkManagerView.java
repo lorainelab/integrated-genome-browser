@@ -15,15 +15,16 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -225,7 +226,12 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
-				BookmarkList bl = (BookmarkList) tree_model.getRoot();
+				BookmarkList bl = new BookmarkList("Import");
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				String createdTime = dateFormat.format(Calendar.getInstance().getTime());
+				bl.setComment("Created Time: " + createdTime);
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+				AddBookmarkAction.addNode(node);
 				importBookmarks(bl, null);
 				tree_model.reload();
 			}

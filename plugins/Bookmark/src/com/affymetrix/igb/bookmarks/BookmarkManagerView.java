@@ -216,7 +216,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	Action makeImportAction() {
+	public Action makeImportAction() {
 		Action a = new GenericAction() {
 
 			private static final long serialVersionUID = 1L;
@@ -269,7 +269,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 	}
 
-	Action makeExportAction() {
+	public Action makeExportAction() {
 		Action a = new GenericAction() {
 
 			private static final long serialVersionUID = 1L;

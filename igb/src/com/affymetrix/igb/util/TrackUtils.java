@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -42,7 +43,7 @@ public class TrackUtils {
 		// human name, it will not automatically get the same color, etc.
 		String unique_name = TrackStyle.getUniqueName(human_name);
 		sym.setProperty("method", unique_name);
-		if (sym.getProperty("id") == null) {
+		if (sym.getProperty("id") == null || sym instanceof GraphSym) {
 			sym.setProperty("id", unique_name);
 		}
 		TrackStyle style = TrackStyle.getInstance(unique_name, false);

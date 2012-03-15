@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import com.affymetrix.common.CommonUtils;
@@ -39,7 +38,6 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -48,11 +46,9 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
-import com.affymetrix.igb.glyph.EmptyTierGlyphFactory;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -94,7 +90,7 @@ public final class GeneralLoadView {
 		gviewer = Application.getSingleton().getMapView();
 		initComponents();
 		GeneralLoadUtils.loadServerMapping();
-		final PreferencesPanel pp = PreferencesPanel.getSingleton();
+		PreferencesPanel.getSingleton();
 	}
 
 	private void initComponents() {
@@ -584,7 +580,7 @@ public final class GeneralLoadView {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				EmptyTierGlyphFactory.addEmtpyTierfor(feature, gviewer, true);
+				TrackView.getInstance().addEmptyTierFor(feature, gviewer, true);
 				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
 				if (!syms.isEmpty()) {
 					gviewer.getSeqMap().clearSelected();

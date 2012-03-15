@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symloader.Delegate.DelegateParent;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -43,9 +42,9 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		StringBuilder meth = new StringBuilder();
 		meth.append(operator.getName()).append(": ");
 
-
 		for (GlyphI tier : tiers) {
-			if(((TierGlyph)tier).getAnnotStyle().getFeature() == null){
+			if(((TierGlyph)tier).getAnnotStyle().getFeature() == null
+					|| ((TierGlyph)tier).getAnnotStyle().getOperator() != null){
 				addNonUpdateableTier(tiers);
 				return;
 			}
@@ -56,28 +55,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 			
 		}
 
-		String method = GeneralUtils.URLEncode(meth.toString());
-		//TODO : Remove below conditions afte view mode refactoring is complete.
-		if(!method.contains("$")){
-			method += "$";
-		}
-		
-		method = TrackStyle.getUniqueName(method);
-		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).setViewMode("default");
-
-		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-		java.net.URI uri = java.net.URI.create("file:/"+method);
-
-		GenericFeature feature = new GenericFeature(meth.toString(), null, version, new Delegate(uri, meth.toString(), version, operator, dps), null, false);
-		version.addFeature(feature);
-		feature.setVisible(); // this should be automatically checked in the feature tree
-
-		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
-
-//		SeqGroupView.getInstance().setSelectedGroup(feature.gVersion.group.getID());
-
-		GeneralLoadView.getLoadView().createFeaturesTable();
-
+		GenericFeature feature = createFeature(meth.toString(), operator, dps);
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
 	}
 
@@ -113,7 +91,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 			TrackUtils.getInstance().addTrack(result_sym, meth.toString(), preferredStyle);
 		}
 	}
-	
+			
 	@Override
 	public String getText() {
 		return "";
@@ -129,5 +107,28 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		}
 		
 		return tier.getDirection() == TierGlyph.Direction.FORWARD;
+	}
+	
+	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps) {
+		String method = GeneralUtils.URLEncode(featureName);
+		//TODO : Remove below conditions afte view mode refactoring is complete.
+		if(!method.contains("$")){
+			method += "$";
+		}
+		
+		method = "file:/"+TrackStyle.getUniqueName(method);
+		
+		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
+		java.net.URI uri = java.net.URI.create(method);
+		
+		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version, operator, dps), null, false);
+		version.addFeature(feature);
+		feature.setVisible(); // this should be automatically checked in the feature tree
+		
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
+		
+		GeneralLoadView.getLoadView().createFeaturesTable();
+		
+		return feature;
 	}
 }

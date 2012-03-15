@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
@@ -1315,7 +1316,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implement
 
 	@Override
 	public void setPreferredHeight(double height, ViewI view) {
-		GraphGlyph child = (GraphGlyph)getChild(0);
+		GlyphI child = getChild(0);
 		Rectangle2D.Double  coord = child.getCoordBox();
 		child.setCoords(coord.x, coord.y, coord.width, height);
 		//Note : Fix to handle height in a view mode.

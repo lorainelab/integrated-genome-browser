@@ -13,23 +13,19 @@ import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.GraphGlyph;
@@ -38,8 +34,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.view.DependentData;
-import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -931,121 +925,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		refreshMap(false, false);
 	}
 
-	public static void addMisMatchTier(final TierGlyph atier, final String prefix) {
-		final BioSeq aseq = gmodel.getSelectedSeq();
-
-		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-
-			@Override
-			protected Boolean doInBackground() throws Exception {
-				boolean pileup = MismatchPileupGlyphProcessor.PILEUP_IDENTIFIER.equals(prefix);
-				String human_name = prefix + ": " + atier.getLabel();
-				String unique_name = TrackStyle.getUniqueName(human_name);
-				String method = atier.getAnnotStyle().getMethodName();
-				SeqSymmetry tsym = aseq.getAnnotation(method);
-				if (tsym == null || tsym.getChildCount() == 0) {
-					ErrorHandler.errorPanel("Empty Track",
-							"The selected track is empty.  Can not make a coverage track for an empty track.");
-					return false;
-				}
-
-				int[] startEnd = DependentData.getStartEnd(tsym, aseq);
-				SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
-
-				LoadResidueAction loadResidue = new LoadResidueAction(loadSpan, true);
-				loadResidue.actionPerformed(null);
-
-				if (!aseq.isAvailable(loadSpan)) {
-					ErrorHandler.errorPanel("Sequence Not Loaded",
-							"Unable to load sequence. Cannot create mismatch graph.");
-					return false;
-				}
-
-				DependentData dd = new DependentData(unique_name, pileup ? DependentType.MISMATCH_PILEUP : DependentType.MISMATCH, method);
-				SymWithProps wrapperSym = TrackView.getInstance().addToDependentList(dd);
-
-				if (wrapperSym == null) {
-					ErrorHandler.errorPanel("Empty Track",
-							"The selected track is empty.  Can not make a coverage track for an empty track.");
-					return false;
-				}
-
-				// Generate a non-persistent style.
-				// Factory will be CoverageSummarizerFactory because name starts with "coverage:"
-				TrackStyle style = TrackStyle.getInstance(unique_name, false);
-				style.setTrackName(human_name);
-				style.setGlyphDepth(1);
-				style.setSeparate(false); // there are not separate (+) and (-) strands
-				style.setExpandable(false); // cannot expand and collapse
-				style.setCustomizable(false); // the user can change the color, but not much else is meaningful
-				style.setFeature(atier.getAnnotStyle().getFeature());
-
-				return true;
-			}
-
-			@Override
-			public void done() {
-				try {
-					if (get()) {
-						IGB.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
-					}
-				} catch (Exception ex) {
-					Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		};
-		worker.execute();
-	}
-/*
-	private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {
-		// not sure best way to collect syms from tier, but for now,
-		//   just recursively descend through child glyphs of the tier, and if
-		//   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
-		//   (don't descend into childA's children)
-
-
-//    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-//    collectSyms(atier, syms);
-
-//	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
-		//if (syms.size() == 0) {
-		//ErrorHandler.errorPanel("Nothing to Summarize",
-		//    "The selected track is empty. It contains nothing to summarize");
-		//return;
-		//}
-
-		BioSeq aseq = gmodel.getSelectedSeq();
-		String human_name = BUNDLE.getString("depth") + ": " + atier.getLabel();
-		String id = TrackStyle.getUniqueName(human_name);
-		DependentData dd;
-		String method = atier.getAnnotStyle().getMethodName();
-		if (bothDirection) {
-			human_name += getSymbol(Direction.BOTH);
-			dd = new DependentData(id, DependentType.SUMMARY, method, Direction.BOTH);
-		} else {
-			human_name += getSymbol(atier.getDirection());
-			dd = new DependentData(id, DependentType.SUMMARY, method, atier.getDirection());
-		}
-
-		GraphSym gsym = (GraphSym) TrackView.getInstance().addToDependentList(dd);
-
-		if (gsym == null) {
-			ErrorHandler.errorPanel("Nothing to Summarize",
-					"The selected track is empty. It contains nothing to summarize");
-			return;
-		}
-
-		gsym.setGraphName(human_name);
-		gsym.getGraphState().setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-		gsym.getGraphState().getTierStyle().setForeground(atier.getForegroundColor());
-		gsym.getGraphState().getTierStyle().setBackground(atier.getBackgroundColor());
-		gsym.getGraphState().getTierStyle().setFeature(atier.getAnnotStyle().getFeature());
-		gviewer.setAnnotatedSeq(aseq, true, true);
-//    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
-//    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-//    gl.setColor(atier.getForegroundColor());
-	}
-*/
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.
@@ -1382,10 +1261,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			System.out.println("Style: " + style);
 		}
 	}
-
-//	static private String getSymbol(Direction direction) {
-//		return TierLabelGlyph.getDirectionSymbol(direction);
-//	}
 
 	SeqMapView getSeqMapView() {
 		return gviewer;

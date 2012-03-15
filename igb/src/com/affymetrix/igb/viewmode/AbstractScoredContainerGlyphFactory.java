@@ -36,7 +36,7 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 
 	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
-	
+
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {
 	}
@@ -68,18 +68,18 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 
 	private List<ViewModeGlyph> displayGraphs(ScoredContainerSym original_container, SeqMapViewExtendedI smv) {
 		BioSeq aseq = smv.getAnnotatedSeq();
-		
-		
+
+
 		if (original_container.getSpan(aseq) == null) {
 			return null;
 		}
 		GraphIntervalSym[] the_graph_syms = determineGraphSyms(smv, aseq, original_container);
 		List<ViewModeGlyph> vmgs = new ArrayList<ViewModeGlyph>();
-		
+
 		for (GraphIntervalSym gis : the_graph_syms) {
 			vmgs.add(displayGraphSym(gis, smv));
 		}
-		
+
 		return vmgs;
 	}
 
@@ -231,11 +231,11 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
-		if (gstate.getComboStyle() == null && gstate.getTierStyle().getFloatGraph()) {
-			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
-			smv.addToPixelFloaterGlyph(graph_glyph);
-		} else {
+//		if (gstate.getComboStyle() == null && gstate.getTierStyle().getFloatGraph()) {
+//			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
+//			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
+//			smv.addToPixelFloaterGlyph(graph_glyph);
+//		} else {
 //			if (gstate.getComboStyle() != null) {
 //				tier_style = gstate.getComboStyle();
 //			}
@@ -248,7 +248,7 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 			if(graph_glyph.getScene() != null){
 				graph_glyph.pack(map.getView(), false);
 			}
-		}
+//		}
 		return graph_glyph;
 	}
 
@@ -261,7 +261,7 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.ScoredContainer;
 	}
-		
+
 	public boolean isFileSupported(String fileFormat) {
 		if(fileFormat == null)
 			return false;
@@ -275,7 +275,7 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 	}
 
 	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState);
-		
+
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
 		if (sym == null) {
@@ -284,15 +284,15 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 		else if (sym instanceof ScoredContainerSym) {
 			List<ViewModeGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
 			ScoredContainerViewModeGlyph scored = new ScoredContainerViewModeGlyph(style);
-			
+
 			if(vmgs == null){
 				return scored;
 			}
-			
+
 			for(ViewModeGlyph vmg : vmgs){
 				scored.addChild(vmg);
 			}
-			
+
 			return scored;
 		} else {
 			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "

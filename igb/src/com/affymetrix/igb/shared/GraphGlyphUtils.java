@@ -43,11 +43,11 @@ public final class GraphGlyphUtils {
 	 *  Checks to make sure the the boundaries of a floating glyph are
 	 *  inside the map view.
 	 *  If the glyph is not a floating glyph, this will have no effect on it.
-	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
+	 *  Assumes that glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static void checkPixelBounds(AbstractGraphGlyph gl, NeoMap map) {
-		if (gl.getGraphState().getTierStyle().getFloatGraph()) {
+	public static void checkPixelBounds(ViewModeGlyph gl, NeoMap map) {
+		if (gl.getAnnotStyle().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();
 			if (gbox.y < mapbox.y) {

@@ -79,7 +79,7 @@ public final class GraphSelectionManager
   private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
   private GraphGlyph current_graph = null;
-  private GraphGlyph graph_to_scale = null;
+  private ViewModeGlyph graph_to_scale = null;
   //   second_curent_graph is
   //   the graph selected just _before_ the current_graph in a multi-select
   //   (this is usually the previous current_graph if multi-selection is happening,
@@ -375,8 +375,8 @@ public final class GraphSelectionManager
       for (int i=selected.size()-1; i >=0; i--) {
         GlyphI gl = selected.get(i);
         // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
-        if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
-          GraphGlyph gr = (GraphGlyph)gl;
+        if (gl instanceof ViewModeGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
+        	ViewModeGlyph gr = (ViewModeGlyph)gl;
           if (nevt.isShiftDown() || nevt.isAltDown()) {
             scaleGraph(gr, nevt);
             break;
@@ -457,7 +457,7 @@ public final class GraphSelectionManager
 
   }
 
-  public void scaleGraph(GraphGlyph gl, NeoMouseEvent nevt) {
+  public void scaleGraph(ViewModeGlyph gl, NeoMouseEvent nevt) {
 
 // The mouse motion listener is added here, and removed in heardGlpyhDrag()
     ((Component)nevt.getSource()).addMouseMotionListener(this);

@@ -60,6 +60,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -846,7 +847,9 @@ public class SeqMapView extends JPanel
 		addPreviousTierGlyphs(seqmap, temp_tiers);
 		axis_tier = addAxisTier(axis_index);
 		addAnnotationTracks();
+		moveNonfloatingTierGlyphs(seqmap.getTiers());
 		hideEmptyTierGlyphs(seqmap.getTiers());
+		moveFloatingTierGlyphs(seqmap.getTiers());
 	}
 
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -996,12 +999,43 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
+	/**
+ 	 * move non floating glyphs from pixel floater to tierGlyph
+ 	 * @param tiers the list of TierGlyphs
+	 */
+	private void moveNonfloatingTierGlyphs(List<TierGlyph> tiers) {
+ 		if (pixel_floater_glyph.getChildren() != null) {
+			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
+				ViewModeGlyph vg = (ViewModeGlyph)glyph;
+				if (!vg.getAnnotStyle().getFloatGraph()) {
+					((TierGlyphViewMode)vg.getTierGlyph()).defloat(pixel_floater_glyph, vg);
+				}
+			}
+ 		}
+	}
+
+	/**
+ 	 * hide TierGlyphs with no children (that is how IGB indicates that a glyph is garbage)
+ 	 * @param tiers the list of TierGlyphs
+	 */
 	private void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
 			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
 			}
 		}
+	}
+
+	/**
+ 	 * move floating glyphs from TierGlyph to pixel floater
+ 	 * @param tiers the list of TierGlyphs
+	 */
+	private void moveFloatingTierGlyphs(List<TierGlyph> tiers) {
+		for (TierGlyph tg : tiers) {
+			if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
+				((TierGlyphViewMode)tg).enfloat(pixel_floater_glyph, getSeqMap());
+			}
+ 		}
 	}
 
 	private void addAnnotationTracks() {

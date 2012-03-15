@@ -6,13 +6,16 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.StyleGlyphI;
@@ -128,6 +131,36 @@ public class TierGlyphViewMode extends TierGlyph {
 		else {
 			((StyleGlyphI)viewModeGlyph).setStyle(style);
 		}
+	}
+
+	/**
+	 * make the glyph a floating glyph
+	 * @param floater the PixelFloaterGlyph
+	 * @param cbox the coordbox of the AffyTieredMap
+	 */
+	public void enfloat(Glyph floater, NeoMap map) {
+		Rectangle2D.Double cbox = map.getCoordBounds();
+		viewModeGlyph.setCoordBox(new Rectangle2D.Double(cbox.x, style.getY(), cbox.width, style.getHeight())); // viewModeGlyph does not have same CoordBox as TierGlyph
+		viewModeGlyph.setVisibility(true);
+		GraphGlyphUtils.checkPixelBounds(viewModeGlyph, map);
+		floater.setCoords(cbox.x, 0, cbox.width, 0);
+		floater.addChild(viewModeGlyph);
+		// replace viewModeGlyph with dummy, so that it won't show as a regular glyph in the track
+		viewModeGlyph = DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, super.getDirection(), smv);
+		viewModeGlyph.setTierGlyph(this);
+		viewModeGlyph.setCoordBox(super.getCoordBox());
+		setVisibility(false);
+	}
+
+	/**
+	 * make the glyph a regular (nonfloating) glyph
+	 * @param floater the PixelFloaterGlyph
+	 * @param floatingGlyph the glyph
+	 */
+	public void defloat(Glyph floater, ViewModeGlyph floatingGlyph) {
+		floater.removeChild(floatingGlyph);
+		viewModeGlyph = floatingGlyph;
+		viewModeGlyph.setCoordBox(super.getCoordBox());
 	}
 
 	@Override

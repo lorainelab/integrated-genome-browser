@@ -76,6 +76,10 @@ public class MapViewModeHolder {
 
 	}
 
+	public MapViewGlyphFactoryI getDefaultFactory() {
+		return getDefaultFactoryFor(FileTypeCategory.Annotation);
+	}
+
 	public MapViewGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
 		if(defaultView.get(category) != null)
 			return defaultView.get(category);

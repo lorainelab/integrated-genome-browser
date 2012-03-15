@@ -359,7 +359,7 @@ public class TrackView {
 			}
 		}
 		
-		return getAnnotationGlyphFactory();
+		return MapViewModeHolder.getInstance().getDefaultFactory();
 	}
 	
 	private Operator determineOperator(SymWithProps sym){

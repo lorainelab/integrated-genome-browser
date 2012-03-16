@@ -826,7 +826,6 @@ public class NeoSeq extends NeoContainerWidget
 					"\n                           ViewBox = " +
 					residue_map.getView().getCoordBox());
 		}
-		setResidueMultipleConstraint(1);
 		setResiduesPerLine(residue_map_pixel_width / getResiduePixelWidth());
 		ypixels_per_line = getResiduePixelHeight();
 

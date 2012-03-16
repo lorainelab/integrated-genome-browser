@@ -95,6 +95,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
 		seqview.setFont(new Font("Arial", Font.BOLD, 13));
 		seqview.setNumberFontColor(Color.black);
+		seqview.setResidueMultipleConstraint(1);
 		seqview.setSpacing(20);
 		this.getTitle();
 		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());

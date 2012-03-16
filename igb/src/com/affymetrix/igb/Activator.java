@@ -325,7 +325,7 @@ public class Activator implements BundleActivator {
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredStairStep);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredHeatMap);
 //		bundleContext.registerService(MapViewGlyphFactoryI.class, new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());

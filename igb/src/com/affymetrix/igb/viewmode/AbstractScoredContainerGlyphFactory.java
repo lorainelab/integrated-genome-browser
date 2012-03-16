@@ -260,7 +260,8 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 		else if (sym instanceof ScoredContainerSym) {
 			ViewModeGlyph annot = annotFactory.getViewModeGlyph(sym, style, tier_direction, smv);
 			ScoredContainerViewModeGlyph scored = new ScoredContainerViewModeGlyph(style);
-
+			scored.setInfo(sym);
+			
 			if(annot == null){
 				return scored;
 			}

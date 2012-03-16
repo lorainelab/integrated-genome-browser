@@ -15,7 +15,6 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract Color getFillColor();
 	public abstract void setFillColor(Color col);
 	public abstract int getActualSlots();
-	@Override
 	public abstract ITrackStyleExtended getAnnotStyle();
 	public abstract void setStyle(ITrackStyleExtended style);
 	public abstract String getLabel();

@@ -82,7 +82,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *      be found. Normally should be set to 2.
 	 */
 	private void addLeafsToTier(SeqMapViewExtendedI gviewer, SeqSymmetry sym,
-			StyleGlyphI ftier, StyleGlyphI rtier,
+			ViewModeGlyph ftier, ViewModeGlyph rtier,
 			int depth_of_consensuses) throws InstantiationException, IllegalAccessException {
 		int depth = SeqUtils.getDepth(sym);
 		if (depth > depth_of_consensuses) {
@@ -102,7 +102,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *      probe set alignments
 	 *      includes transformations used by slice view and other alternative coordinate systems
 	 */
-	private GlyphI addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry consensus_sym, StyleGlyphI forward_tier, StyleGlyphI reverse_tier) throws InstantiationException, IllegalAccessException {
+	private GlyphI addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry consensus_sym, ViewModeGlyph forward_tier, ViewModeGlyph reverse_tier) throws InstantiationException, IllegalAccessException {
 
 		if (SeqUtils.getDepth(consensus_sym) != glyph_depth) {
 			System.out.println("ProbeSetDisplayGlyphFactory: at wrong depth!");
@@ -123,7 +123,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 
 		boolean forward = pspan.isForward();
 
-		StyleGlyphI the_tier = forward ? forward_tier : reverse_tier;
+		ViewModeGlyph the_tier = forward ? forward_tier : reverse_tier;
 
 		int parent_height = GLYPH_HEIGHT; // height of the consensus glyph
 		// if there is a label, this height value will be adjusted below
@@ -269,7 +269,7 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	 *  @param height height of the "Exon" regions of the consensus glyph
 	 */
 	private void drawConsensusAnnotations(SeqMapViewExtendedI gviewer, BioSeq consensus_seq, SeqSymmetry consensus_sym,
-			GlyphI parent_glyph, StyleGlyphI tier, double y, double height) {
+			GlyphI parent_glyph, ViewModeGlyph tier, double y, double height) {
 		int annot_count = consensus_seq.getAnnotationCount();
 		for (int i = 0; i < annot_count; i++) {
 			SeqSymmetry sym = consensus_seq.getAnnotation(i);

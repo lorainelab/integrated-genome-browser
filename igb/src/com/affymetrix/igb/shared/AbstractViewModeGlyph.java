@@ -16,7 +16,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AbstractViewModeGlyph extends ViewModeGlyph implements StyleGlyphI {
+public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	protected ITrackStyleExtended style;
 	protected Direction direction = Direction.NONE;
 	/*

@@ -52,7 +52,7 @@ import java.text.AttributedString;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
+public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 	private static final Map<String,Class<?>> PREFERENCES;

@@ -10,10 +10,10 @@ import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -423,7 +423,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					} else if (smv.getPixelFloater().getChildren() != null) {
 						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
 						for (GlyphI g : floatingGraphs) {
-							StyleGlyphI j = (StyleGlyphI) g;
+							ViewModeGlyph j = (ViewModeGlyph) g;
 							if (j.getAnnotStyle() == style) {
 								stylemap.put((TrackStyle) style, (TrackStyle) style);
 							}

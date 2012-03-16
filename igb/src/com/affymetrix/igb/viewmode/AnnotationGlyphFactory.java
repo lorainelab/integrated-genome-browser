@@ -50,7 +50,6 @@ import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -123,7 +122,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	
 	protected void addLeafsToTier(SeqMapViewExtendedI gviewer, SeqSymmetry sym,
-			StyleGlyphI ftier, StyleGlyphI rtier,
+			ViewModeGlyph ftier, ViewModeGlyph rtier,
 			int desired_leaf_depth) {
 		int depth = getDepth(sym);
 		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -143,8 +142,8 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	 *    the symmetry must have a depth of at least 2.
 	 */
 	private void addToTier(SeqMapViewExtendedI gviewer, SeqSymmetry insym,
-			StyleGlyphI forward_tier,
-			StyleGlyphI reverse_tier,
+			ViewModeGlyph forward_tier,
+			ViewModeGlyph reverse_tier,
 			boolean parent_and_child) {
 		try {
 			BioSeq annotseq = gviewer.getAnnotatedSeq();
@@ -160,7 +159,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}  // if no span corresponding to seq, then return;
 
-			StyleGlyphI the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
+			ViewModeGlyph the_tier = !pspan.isForward() ? reverse_tier : forward_tier;
 			boolean labelInSouth = !pspan.isForward() && (reverse_tier != forward_tier);
 			
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();

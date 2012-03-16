@@ -10,13 +10,14 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
-public abstract class ViewModeGlyph extends SolidGlyph implements StyleGlyphI {
+public abstract class ViewModeGlyph extends SolidGlyph {
 	private TierGlyph tierGlyph;
 	public abstract void setPreferredHeight(double height, ViewI view);
 	public abstract Color getFillColor();
 	public abstract void setFillColor(Color col);
 	public abstract int getActualSlots();
 	public abstract ITrackStyleExtended getAnnotStyle();
+	public abstract void setStyle(ITrackStyleExtended style);
 	public abstract String getLabel();
 	public abstract void setLabel(String str);
 	public abstract Direction getDirection();

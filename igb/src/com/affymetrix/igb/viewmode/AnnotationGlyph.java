@@ -11,7 +11,6 @@ import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
-import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 import java.awt.AlphaComposite;
@@ -28,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends AbstractViewModeGlyph implements StyleGlyphI {
+public class AnnotationGlyph extends AbstractViewModeGlyph {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {

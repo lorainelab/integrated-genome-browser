@@ -18,7 +18,6 @@ import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyleGlyphI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -129,7 +128,7 @@ public class TierGlyphViewMode extends TierGlyph {
 			setViewModeGlyph(style);
 		}
 		else {
-			((StyleGlyphI)viewModeGlyph).setStyle(style);
+			viewModeGlyph.setStyle(style);
 		}
 	}
 

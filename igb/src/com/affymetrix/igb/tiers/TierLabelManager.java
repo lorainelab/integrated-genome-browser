@@ -19,7 +19,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import java.awt.Cursor;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -358,8 +357,8 @@ public final class TierLabelManager implements PropertyHolder {
 						}
 					}
 				}
-				else if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph() instanceof AbstractGraphGlyph) {
-					SeqSymmetry sym = (SeqSymmetry) ((TierGlyphViewMode)tg).getViewModeGlyph().getInfo();
+				else if (tg.getViewModeGlyph() instanceof AbstractGraphGlyph) {
+					SeqSymmetry sym = (SeqSymmetry) tg.getViewModeGlyph().getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
 						symmetries.add(sym);

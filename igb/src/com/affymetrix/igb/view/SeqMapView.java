@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -893,7 +892,7 @@ public class SeqMapView extends JPanel
 
 		resultAxisTier.addChild(axis);
 
-		TierGlyphViewMode resultAxisTierGlyph = new TierGlyphViewMode(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
+		TierGlyph resultAxisTierGlyph = new TierGlyph(null, CoordinateStyle.coordinate_annot_style, Direction.AXIS, this, resultAxisTier);
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
 		if (seqmap.getTiers().size() >= tier_index) {
@@ -1005,7 +1004,7 @@ public class SeqMapView extends JPanel
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
 				ViewModeGlyph vg = (ViewModeGlyph)glyph;
 				if (!vg.getAnnotStyle().getFloatGraph()) {
-					((TierGlyphViewMode)vg.getTierGlyph()).defloat(pixel_floater_glyph, vg);
+					vg.getTierGlyph().defloat(pixel_floater_glyph, vg);
 				}
 			}
  		}
@@ -1029,8 +1028,8 @@ public class SeqMapView extends JPanel
 	 */
 	private void moveFloatingTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
-			if (tg instanceof TierGlyphViewMode && ((TierGlyphViewMode)tg).getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
-				((TierGlyphViewMode)tg).enfloat(pixel_floater_glyph, getSeqMap());
+			if (tg.getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
+				tg.enfloat(pixel_floater_glyph, getSeqMap());
 			}
  		}
 	}
@@ -1842,7 +1841,7 @@ public class SeqMapView extends JPanel
 			GenericFeature feature = tglyph.getAnnotStyle().getFeature();
 			if (feature == null) {
 				//Check if clicked on axis.
-				if (((TierGlyphViewMode)tglyph).getViewModeGlyph() instanceof TransformTierGlyph) {
+				if (tglyph.getViewModeGlyph() instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
 					if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
 						popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));

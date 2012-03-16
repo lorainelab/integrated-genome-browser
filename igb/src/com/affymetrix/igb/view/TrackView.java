@@ -33,7 +33,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
-import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
@@ -94,13 +93,9 @@ public class TrackView {
 			style2track = style2forwardTierGlyph;
 		}
 		tierGlyph = style2track.get(style);
-		if (tierGlyph != null && !(tierGlyph instanceof TierGlyphViewMode)) {
-			seqmap.removeTier(tierGlyph);
-			tierGlyph = null;
-		}
 		if (tierGlyph == null) {
 			MapViewGlyphFactoryI factory = dummy ? DummyGlyphFactory.getInstance() : UnloadedGlyphFactory.getInstance();
-			tierGlyph = new TierGlyphViewMode(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
+			tierGlyph = new TierGlyph(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
 			if (style.isGraphTier()) {
@@ -202,11 +197,11 @@ public class TrackView {
 		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
 		
 		//Remove previous view mode glyph
-		TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+		TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 		smv.getSeqMap().removeItem(mainTier.getViewModeGlyph());
 		
 		if (style.getSeparate()) {
-			TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+			TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 			smv.getSeqMap().removeItem(secondTier.getViewModeGlyph());
 		}
 		
@@ -225,10 +220,10 @@ public class TrackView {
 					style.setSeparate(false);
 				}
 			}
-			TierGlyphViewMode mainTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+			TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 			mainTier.setInfo(annotSym);
 			if (style.getSeparate()) {
-				TierGlyphViewMode secondTier = (TierGlyphViewMode)smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+				TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 				secondTier.setInfo(annotSym);
 			}
 			return;
@@ -452,14 +447,14 @@ public class TrackView {
 		}
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
-			TierGlyphViewMode tgfor = (TierGlyphViewMode)gviewer.getTrack(null, style, direction);
+			TierGlyph tgfor = gviewer.getTrack(null, style, direction);
 			tgfor.reset();
 			if (style.getSeparate()) {
-				TierGlyphViewMode tgrev = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.REVERSE);
+				TierGlyph tgrev = gviewer.getTrack(null, style, Direction.REVERSE);
 				tgrev.reset();
 			}
 		}else {
-			TierGlyphViewMode tg = (TierGlyphViewMode)gviewer.getTrack(null, style, Direction.NONE);
+			TierGlyph tg = gviewer.getTrack(null, style, Direction.NONE);
 			tg.reset();
 		}
 		return;

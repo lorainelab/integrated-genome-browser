@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.GraphFileExporter;
-import com.affymetrix.genometryImpl.parsers.MismatchFileExporter;
 import com.affymetrix.genometryImpl.parsers.SequenceFileExporter;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -32,7 +31,6 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.viewmode.TierGlyphViewMode;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -69,10 +67,7 @@ public class ExportFileAction extends GenericAction {
 	}
 
 	private void saveAsFile(TierGlyph atier) {
-		if (!(atier instanceof TierGlyphViewMode)) {
-			return;
-		}
-		RootSeqSymmetry rootSym = (RootSeqSymmetry)((TierGlyphViewMode)atier).getViewModeGlyph().getInfo();
+		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
 		FileExporterI fileExporter = fileExporters.get(rootSym.getCategory());
 		String extension = fileExporter.getFileExtension();
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);

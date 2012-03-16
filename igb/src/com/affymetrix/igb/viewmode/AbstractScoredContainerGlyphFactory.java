@@ -13,9 +13,11 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -33,7 +35,9 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 
 //	private static final boolean DEBUG = false;
 	private static final boolean separate_by_strand = true;
-
+	
+	private static final MapViewGlyphFactoryI annotFactory = new AnnotationGlyphFactory(FileTypeCategory.ScoredContainer);
+	
 	/** Does nothing. */
 	public void init(Map<String, Object> options) {
 	}
@@ -254,13 +258,27 @@ public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyp
 			return new ScoredContainerViewModeGlyph(style);
 		}
 		else if (sym instanceof ScoredContainerSym) {
-			List<ViewModeGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
+			ViewModeGlyph annot = annotFactory.getViewModeGlyph(sym, style, tier_direction, smv);
 			ScoredContainerViewModeGlyph scored = new ScoredContainerViewModeGlyph(style);
 
-			if(vmgs == null){
+			if(annot == null){
 				return scored;
 			}
 
+			scored.addChild(annot);
+			
+			boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+				ScoredIntervalParser.default_attach_graphs);
+			
+			if(!attach_graphs){
+				return scored;
+			}
+			
+			List<ViewModeGlyph> vmgs = displayGraphs((ScoredContainerSym) sym, smv);
+			if(vmgs == null){
+				return scored;
+			}
+			
 			for(ViewModeGlyph vmg : vmgs){
 				scored.addChild(vmg);
 			}

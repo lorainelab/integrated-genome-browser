@@ -1145,7 +1145,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void selectAllGraphs() {
-			List<GlyphI> glyphlist = collectGraphs();
+		List<GlyphI> glyphlist = collectGraphs();
 		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
 		AbstractGraphGlyph gg;
 
@@ -1895,8 +1895,8 @@ public class SeqMapView extends JPanel
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
-			if (child instanceof AbstractGraphGlyph) {
-				graphs.add((AbstractGraphGlyph) child);
+			if (child instanceof TierGlyph && ((TierGlyph)child).getViewModeGlyph() instanceof AbstractGraphGlyph) {
+				graphs.add((AbstractGraphGlyph) ((TierGlyph)child).getViewModeGlyph());
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);

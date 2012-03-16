@@ -7,18 +7,26 @@ import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class TrackUtils {
 
@@ -100,5 +108,28 @@ public class TrackUtils {
 			}
 		}
 		return true;
+	}
+	
+	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps) {
+		String method = GeneralUtils.URLEncode(featureName);
+		//TODO : Remove below conditions afte view mode refactoring is complete.
+		if(!method.contains("$")){
+			method += "$";
+		}
+		
+		method = "file:/"+TrackStyle.getUniqueName(method);
+		
+		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
+		java.net.URI uri = java.net.URI.create(method);
+		
+		GenericFeature feature = new GenericFeature(featureName, null, version, new Delegate(uri, featureName, version, operator, dps), null, false);
+		version.addFeature(feature);
+		feature.setVisible(); // this should be automatically checked in the feature tree
+		
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
+		
+		GeneralLoadView.getLoadView().createFeaturesTable();
+		
+		return feature;
 	}
 }

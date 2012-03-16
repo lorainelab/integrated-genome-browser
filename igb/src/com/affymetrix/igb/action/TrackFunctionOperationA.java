@@ -22,6 +22,7 @@ import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.shared.TrackUtils;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
@@ -41,7 +42,8 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		java.util.List<DelegateParent> dps = new java.util.ArrayList<DelegateParent>();
 		
 		for (GlyphI tier : tiers) {
-			if(((TierGlyph)tier).getAnnotStyle().getFeature() == null){
+			if(((TierGlyph)tier).getAnnotStyle().getFeature() == null
+					|| !TrackConstants.default_operator.equals(((TierGlyph)tier).getAnnotStyle().getOperator())){
 				addNonUpdateableTier(tiers);
 				return;
 			}

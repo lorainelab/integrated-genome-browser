@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.igb.glyph.MismatchPileupGlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -171,8 +170,7 @@ public class Activator implements BundleActivator {
 	 * @param windowServiceReference - the OSGi ServiceReference for the window service
 	 */
 	private void run(ServiceReference<IWindowService> windowServiceReference) {
-		ExtensionPointHandler<GlyphProcessor> glyphProcessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
-		glyphProcessorExtensionPoint.addExtensionPointImpl(new MismatchPileupGlyphProcessor());
+		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphProcessor.class);
     	GenericActionHolder.getInstance().addGenericActionListener(
     		new GenericActionListener() {
 				@Override

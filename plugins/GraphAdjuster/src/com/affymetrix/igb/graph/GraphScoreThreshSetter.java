@@ -13,7 +13,6 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
@@ -33,7 +32,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.igb.shared.TrackUtils;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -730,7 +728,6 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		SimpleSymWithProps psym = new SimpleSymWithProps();
 		psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-		String meth = "threshhold " + pickle_count;
 		String description =
 			MessageFormat.format(SimpleGraphTab.BUNDLE.getString("description"),
 				nformat.format(sgg.getMinScoreThreshold()), nformat.format(sgg.getMaxScoreThreshold()),

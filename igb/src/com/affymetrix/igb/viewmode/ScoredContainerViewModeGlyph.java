@@ -8,6 +8,7 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
+import com.affymetrix.igb.shared.FasterExpandPacker;
 
 /**
  *
@@ -15,6 +16,7 @@ import com.affymetrix.igb.shared.AbstractViewModeGlyph;
  */
 public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 	private static final Map<String,Class<?>> PREFERENCES;
+	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
 		PREFERENCES = Collections.unmodifiableMap(temp);
@@ -22,6 +24,13 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 
 	ScoredContainerViewModeGlyph(ITrackStyleExtended style){
 		setStyle(style);
+	}
+	
+	
+	@Override
+	public void setStyle(ITrackStyleExtended style) {
+		super.setStyle(style);
+		setPacker(expand_packer);
 	}
 	
 	@Override

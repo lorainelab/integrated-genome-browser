@@ -495,4 +495,9 @@ public class TierGlyphViewMode extends TierGlyph {
 	public String toString() {
 		return "viewModeGlyph=" + (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? "###>" : " ---> ") + ";direction=" + super.getDirection() + ";style=" + (style == null ? "null" : style.toString());
 	}
+
+	public boolean isManuallyResizable() {
+		return this.viewModeGlyph.isManuallyResizable();
+	}
+
 }

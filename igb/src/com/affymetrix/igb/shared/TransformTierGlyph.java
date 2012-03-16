@@ -234,5 +234,11 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
   @Override
   public void setPreferences(Map<String, Object> preferences) {
   }
+
+  @Override
+  public boolean isManuallyResizable() {
+    return false;
+  }
+
 }
 

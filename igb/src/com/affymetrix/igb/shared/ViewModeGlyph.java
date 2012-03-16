@@ -1,14 +1,13 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 public abstract class ViewModeGlyph extends SolidGlyph {
 	private TierGlyph tierGlyph;
@@ -16,6 +15,7 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract Color getFillColor();
 	public abstract void setFillColor(Color col);
 	public abstract int getActualSlots();
+	@Override
 	public abstract ITrackStyleExtended getAnnotStyle();
 	public abstract void setStyle(ITrackStyleExtended style);
 	public abstract String getLabel();
@@ -35,6 +35,12 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	}
 	public int getSlotsNeeded(ViewI theView) {
 		return 1;
+	}
+	public boolean isManuallyResizable() {
+		if (this.getPacker() instanceof CollapsePacker) {
+			return false;
+		}
+		return true;
 	}
 	// TODO remove this method
 	public abstract void addMiddleGlyph(GlyphI gl);

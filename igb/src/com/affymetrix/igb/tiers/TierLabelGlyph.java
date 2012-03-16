@@ -1,15 +1,16 @@
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
-import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genometryImpl.symloader.Delegate;
+import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.viewmode.TierGlyphViewMode;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A glyph used to display a label for a TierGlyph.
@@ -220,15 +221,13 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	public boolean isManuallyResizable()  {
 		Object o = getInfo();
-		if (o instanceof TierGlyph) {
-			TierGlyph t = (TierGlyph) o;
-			if ("Coordinates".equals(t.getLabel())) {
-				return false;
-			}
-			if (t.getPacker() instanceof com.affymetrix.igb.shared.CollapsePacker) {
-				return false;
-			}
-			return true;
+		if (o instanceof ViewModeGlyph) {
+			ViewModeGlyph t = (ViewModeGlyph) o;
+			return t.isManuallyResizable();
+		}
+		if (o instanceof TierGlyphViewMode) {
+			TierGlyphViewMode t = (TierGlyphViewMode) o;
+			return t.isManuallyResizable();
 		}
 		return false;
 	}

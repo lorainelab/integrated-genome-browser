@@ -26,7 +26,7 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 		setStyle(style);
 	}
 	
-	
+
 	@Override
 	public void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
@@ -49,6 +49,16 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 		return new HashMap<String, Class<?>>(PREFERENCES);
 	}
 
+	@Override
+	public void pack(ViewI view, boolean manual) {
+		if(getChildCount() > 0){
+			for(int i=0; i<getChildCount(); i++){
+				getChild(i).pack(view, manual);
+			}
+		}
+		super.pack(view, manual);
+	}
+	
 	@Override
 	public void setPreferences(Map<String, Object> preferences) {
 	}

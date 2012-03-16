@@ -29,7 +29,7 @@ import com.affymetrix.igb.viewmode.MapViewModeHolder;
 public abstract class TrackFunctionOperationA extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	protected final SeqMapViewI gviewer;
-	private final Operator operator;
+	protected final Operator operator;
 	
 	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator) {
 		super();

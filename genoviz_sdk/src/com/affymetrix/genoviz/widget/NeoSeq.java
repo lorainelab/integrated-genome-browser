@@ -710,7 +710,7 @@ public class NeoSeq extends NeoContainerWidget
 			// next set dimensions of residue_map
 			residue_x = num_width;
 			residue_y = 0;
-			residue_width = dim.width - scroll_size - num_width;
+			residue_width = dim.width - scroll_size - residue_x-20;
 			residue_height = dim.height;
 			residue_map_pixel_width = residue_width;
 			
@@ -725,7 +725,7 @@ public class NeoSeq extends NeoContainerWidget
 			// next set dimensions of residue_map
 			residue_x = 0;
 			residue_y = 0;
-			residue_width = dim.width - scroll_size - num_width;
+			residue_width = dim.width - scroll_size - num_width -20;
 			residue_height = dim.height;
 			residue_map_pixel_width = residue_width;
 
@@ -826,12 +826,12 @@ public class NeoSeq extends NeoContainerWidget
 					"\n                           ViewBox = " +
 					residue_map.getView().getCoordBox());
 		}
-
+		setResidueMultipleConstraint(1);
 		setResiduesPerLine(residue_map_pixel_width / getResiduePixelWidth());
 		ypixels_per_line = getResiduePixelHeight();
 
 		seq_map_size = this.seq.getLength() + residues_per_line;
-
+		
 		residue_map.setMapOffset(0, seq_map_size + residues_per_line);
 
 		residue_map.setMapRange(0, line_width);
@@ -841,7 +841,8 @@ public class NeoSeq extends NeoContainerWidget
 
 		if(residue_glyph != null) {
 			residue_map.zoomRange(getResiduePixelWidth());
-			residue_map.scrollRange(0);
+			//residue_map.scrollRange(0);
+			residue_map.setBackground(Color.BLACK);
 			residue_glyph.setCoords(0, 0, residues_per_line, seq_map_size);
 		}
 
@@ -1694,7 +1695,7 @@ public class NeoSeq extends NeoContainerWidget
 		int x = desired_residues_per_line * getResiduePixelWidth();
 		x += num_map_pixel_width;
 		x += ((Component)offset_scroll).getPreferredSize().width;
-
+		
 		// For y: just calculate how many pixels needed for visible_lines to
 		//        exactly fit in sequence map
 		int y = desired_visible_lines * getResiduePixelHeight();

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
 /**
@@ -21,10 +22,8 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	 * The array may instead contain two copies of one mixed-direction tier;
 	 * in this case place glyphs for both forward and revers items into it.
 	 */
-	TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_heights);
+	TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy);
 
-	TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction);
-	
 	boolean autoChangeView();
 	
 	int getAverageSlots();

@@ -61,27 +61,6 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		}
 	}
 
-	// override so that the tier glyph in the splice view has a different
-	// AnnotStyle from the TierGlyph in the main view.  (So that if we hide it,
-	// it won't become hidden in the main view.)
-	@Override
-	public TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_height) {
-		// Create a temporary style with all the properties of the given style.
-		// Thus any changes to this copy in the slice view
-		// will not affect the original in the main view
-		TrackStyle style_copy = new TrackStyle() {
-		};
-		style_copy.copyPropertiesFrom(style);
-		TierGlyph[] glyphs = super.getTiers(style_copy, constant_height);
-		// super.getTiers() may have created a brand new tier, in which case
-		// the style is already set to "style_copy", or it may have re-used
-		// a tier, in which case it may still have an old copy of the style
-		// associated with it.  Reset the style to be certain.
-		glyphs[0].setStyle(style_copy);
-		glyphs[1].setStyle(style_copy);
-		return glyphs;
-	}
-
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
 		TrackStyle style_copy = new TrackStyle() {
 		};

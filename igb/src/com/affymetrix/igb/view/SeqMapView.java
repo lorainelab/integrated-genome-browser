@@ -61,7 +61,6 @@ import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
@@ -1930,29 +1929,6 @@ public class SeqMapView extends JPanel
 
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy) {
 		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, dummy);
-	}
-
-	/**
-	 *  Returns a forward and reverse tier for the given method, creating them if they don't
-	 *  already exist.
-	 *  Generally called by the Glyph Factory.
-	 *  Note that this can create empty tiers.  But if the tiers are not filled with
-	 *  something, they will later be removed automatically.
-	 *  @param meth  The tier annot; it will be treated as case-insensitive.
-	 *  @param style  a non-null instance of IAnnotStyle; tier label and other properties
-	 *   are determined by the IAnnotStyle.
-	 *  @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
-	 *    The array may instead contain two copies of one mixed-direction tier;
-	 *    in this case place glyphs for both forward and revers items into it.
-	 */
-	@Override
-	public TierGlyph[] getTiers(ITrackStyleExtended style, boolean constant_heights) {
-		return TrackView.getInstance().getTiers(this, style, constant_heights);
-	}
-
-	@Override
-	public TierGlyph getGraphTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getInstance().getGraphTrack(seqmap, style, tier_direction);
 	}
 
 	@Override

@@ -34,8 +34,8 @@ public class Delegate extends QuickLoadSymLoader {
 	}
 	
 	
-	private final Operator operator;
-	private final List<DelegateParent> dps;
+	private Operator operator;
+	private List<DelegateParent> dps;
 	private final List<LoadUtils.LoadStrategy> strategyList;
 	
 	public Delegate(URI uri, String featureName, GenericVersion version,
@@ -133,7 +133,8 @@ public class Delegate extends QuickLoadSymLoader {
 			for(DelegateParent dp : dps){
 				dp.clear();
 			}
-			dps.clear();
+			dps = null;
+			operator = null;
 			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
 			return false;

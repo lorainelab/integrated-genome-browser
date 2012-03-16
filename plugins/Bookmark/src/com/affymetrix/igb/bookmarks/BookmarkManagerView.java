@@ -28,6 +28,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.*;
 import javax.swing.undo.UndoManager;
 
@@ -52,6 +53,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	public JButton addFolderButton = new JButton();
 	public JButton deleteBookmarkButton = new JButton();
 	public List<TreePath> bookmark_history;
+	public FileFilter ff = new TextExportFileFilter(new UniFileFilter(new String[]{"txt"}, "TEXT Files"));
+	public FileFilter ff1 = new HTMLExportFileFilter(new UniFileFilter(new String[]{"html", "htm", "xhtml"}, "HTML Files"));
 	public int history_pointer = -1;
 	private final BookmarkTreeCellRenderer renderer;
 	private static BookmarkManagerView singleton;
@@ -203,7 +206,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	 * Tries to import bookmarks into Unibrow. Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
 	 */
 	private void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
-		JFileChooser chooser = getJFileChooser();
+		JFileChooser chooser = getJFileChooser(false);
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showOpenDialog(frame);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -248,7 +251,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception) null);
 			return;
 		}
-		JFileChooser chooser = getJFileChooser();
+		JFileChooser chooser = getJFileChooser(true);
 		chooser.setCurrentDirectory(getLoadDirectory());
 		int option = chooser.showSaveDialog(frame);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -399,13 +402,22 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	/**
 	 * Gets a static re-usable file chooser that prefers "html" files.
 	 */
-	private JFileChooser getJFileChooser() {
+	private JFileChooser getJFileChooser(boolean export) {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser() {
 
 				@Override
 				public void approveSelection() {
 					File f = getSelectedFile();
+					String path;
+					if((f.getAbsolutePath().indexOf("."))<0)
+					{
+						if(static_chooser.getFileFilter().equals(ff))
+							path = f.getAbsolutePath()+".txt";
+						else
+							path = f.getAbsolutePath()+".html";
+						f = new File(path);
+					}
 					if (f.exists() && getDialogType() == SAVE_DIALOG) {
 						int result = JOptionPane.showConfirmDialog(this,
 								"The file exists, overwrite?", "Existing file",
@@ -421,18 +433,22 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					super.approveSelection();
 				}
 			};
-
+			ff1 = new HTMLExportFileFilter(new UniFileFilter(
+					new String[]{"html", "htm", "xhtml"}, "HTML Files"));
 			static_chooser.setAcceptAllFileFilterUsed(false);
 			static_chooser.setCurrentDirectory(getLoadDirectory());
-			static_chooser.addChoosableFileFilter(new HTMLExportFileFilter(new UniFileFilter(
-					new String[]{"html", "htm", "xhtml"}, "HTML Files")));
-			static_chooser.addChoosableFileFilter(new TextExportFileFilter(new UniFileFilter(
-					new String[]{"txt"}, "TEXT Files")));
+			static_chooser.addChoosableFileFilter(ff1);
+			
 		}
+		if(export)
+			static_chooser.addChoosableFileFilter(ff);
+		else
+			static_chooser.removeChoosableFileFilter(ff);
+		static_chooser.setFileFilter(ff1);
 		static_chooser.rescanCurrentDirectory();
 		return static_chooser;
 	}
-
+	
 	/**
 	 * Returns true or false to indicate that if an item is inserted at the
 	 * given row it will be inserted "into" (true) or "after" (false) the item
@@ -730,7 +746,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			if (!extSet) {
 				fil = new File(full_path + "." + filter.getExtensions().iterator().next());
 			}
-
 			write(main_bookmark_list, fil);
 		}
 

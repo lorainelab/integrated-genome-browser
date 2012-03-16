@@ -26,11 +26,14 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
-import com.affymetrix.igb.shared.TrackUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.affymetrix.igb.shared.*;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -48,6 +51,29 @@ import java.util.*;
 
 public final class GraphScoreThreshSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
+	private static class ThresholdOperationAction extends TrackOperationAction {
+
+		ThresholdOperationAction(SeqMapViewI gviewer, Operator operator) {
+			super(gviewer, operator);
+		}
+
+		@Override
+		protected String getMethod(List<? extends GlyphI> tiers) {
+			StringBuilder meth = new StringBuilder();
+			meth.append(operator.getName()).append(": ");
+			
+			String description =
+			MessageFormat.format(SimpleGraphTab.BUNDLE.getString("description"),
+				nformat.format(((ThresholdOperator)operator).sgg.getMinScoreThreshold()), nformat.format(((ThresholdOperator)operator).sgg.getMaxScoreThreshold()),
+				nformat2.format(((ThresholdOperator)operator).sgg.getThreshStartShift()), nformat2.format(((ThresholdOperator)operator).sgg.getThreshEndShift()),
+				(int) ((ThresholdOperator)operator).sgg.getMaxGapThreshold(), (int) ((ThresholdOperator)operator).sgg.getMinRunThreshold(), ((ThresholdOperator)operator).sgg.getLabel());
+			
+			meth.append(description);
+			
+			return meth.toString();
+		}
+	}
+	
 	private static final long serialVersionUID = 1L;
 
 	private final static DecimalFormat val_format;
@@ -528,7 +554,8 @@ public final class GraphScoreThreshSetter extends JPanel
 		} else if (src == tier_threshB) {
 			for (AbstractGraphGlyph sggl : graphs) {
 				if (sggl.isVisible()) {
-					pickleThreshold(sggl);
+					new ThresholdOperationAction(igbService.getSeqMapView(), new ThresholdOperator(sggl, ((NeoWidget)widg).getView())).actionPerformed(null);
+					//pickleThreshold(sggl);
 				}
 			}
 			widg.updateWidget();

@@ -3,7 +3,6 @@ package com.affymetrix.igb.shared;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;

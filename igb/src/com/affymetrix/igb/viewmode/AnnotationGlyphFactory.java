@@ -12,47 +12,28 @@
  */
 package com.affymetrix.igb.viewmode;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.DirectedGlyph;
-import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
-import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
-import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
-import com.affymetrix.genoviz.glyph.PointedGlyph;
-
-import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GlyphProcessorUtil;
-import com.affymetrix.igb.shared.AlignedResidueGlyph;
-import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -81,6 +62,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 		parent_labelled_glyph_class = default_elabelled_parent_class;
 	}
 	
+	@Override
 	public void init(Map<String, Object> options) {
 		if (DEBUG) {
 			System.out.println("     @@@@@@@@@@@@@     in " + getClass().getSimpleName() + ".init(), props: " + options);
@@ -165,9 +147,13 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended the_style = the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(gviewer,
-					parent_and_child, insym, the_style, labelInSouth, pspan, sym, annotseq, coordseq));
-		} catch (Exception e) {
-			e.printStackTrace();
+					parent_and_child, insym, the_style,
+					labelInSouth, pspan, sym, annotseq, coordseq));
+		} catch (InstantiationException ie) {
+			System.err.println("AnnotationGlyphFactory.addToTier: " + ie);
+		}
+		catch (IllegalAccessException iae) {
+			System.err.println("AnnotationGlyphFactory.addToTier: " + iae);
 		}
 	}
 
@@ -176,7 +162,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended the_style, boolean labelInSouth, SeqSpan pspan,
 			SeqSymmetry sym, BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
-		GlyphI pglyph = null;
+		GlyphI pglyph;
 		if (parent_and_child && insym.getChildCount() > 0) {
 			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, labelInSouth, pspan, sym, gviewer);
 			// call out to handle rendering to indicate if any of the children of the
@@ -200,7 +186,7 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended the_style, SeqSymmetry insym, boolean labelInSouth,
 			SeqSpan pspan, SeqSymmetry sym, SeqMapViewExtendedI gviewer)
 			throws IllegalAccessException, InstantiationException {
-		GlyphI pglyph = null;
+		GlyphI pglyph;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
 		// allows the user to select both the parent and the child as separate entities
 		// in order to look at the properties associated with them.  Otherwise, the method
@@ -550,13 +536,22 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 		return (checkCategory == category);
 	}
 
-	// TODO get this from the font height somehow.
-	//      Also packer needs four more pixels for borders and such.
-	//      24 is tall enough on my screen anyway.
-	private final java.awt.Dimension MINIMUM_TIER_SIZE_IN_PIXELS = new java.awt.Dimension(32, 24);
 	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction) {
 		ViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
-		viewModeGlyph.setMinimumPixelBounds(MINIMUM_TIER_SIZE_IN_PIXELS);
+
+		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());
+		// Don't use style height. That seems to be in scene coordinates.
+		java.awt.Graphics g = Application.getSingleton().getMapView().getGraphics();
+		java.awt.FontMetrics fm = g.getFontMetrics();
+		int h = fm.getHeight();
+		h += 2 * 2; // border height
+		h += 4; // padding top
+		int w = fm.stringWidth("A Moderate Label");
+		w += 2; // border left
+		w += 4; // padding left
+		java.awt.Dimension minTierSizeInPixels = new java.awt.Dimension(w, h);
+		viewModeGlyph.setMinimumPixelBounds(minTierSizeInPixels);
+
 		viewModeGlyph.setDirection(direction);
 		return viewModeGlyph;
 	}

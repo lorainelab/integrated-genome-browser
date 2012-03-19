@@ -938,9 +938,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	public void repack(boolean full_repack) {
-		gviewer.getSeqMap().clearSelected();
-		handler.repackTheTiers(full_repack, true);
+	public void repack(final boolean full_repack) {
+		AbstractAction action = new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+				handler.repackTheTiers(full_repack, true);
+			}
+		};
+		
+		gviewer.preserveSelectionAndPerformAction(action);
 	}
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {
@@ -1084,8 +1090,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							@Override
 							public void actionPerformed(ActionEvent ae) {
 								style.setOperator(transform.toString());
-								//For now now do not preserve selection
-								gviewer.getSeqMap().clearSelected();
 								//gviewer.addAnnotationTrackFor(style);
 								refreshMap(false, false);
 							}

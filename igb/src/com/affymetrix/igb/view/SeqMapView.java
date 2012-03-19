@@ -812,6 +812,49 @@ public class SeqMapView extends JPanel
 		GeneralLoadView.getLoadView().getLoadModeDataTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 
+	public void preserveSelectionAndPerformAction(AbstractAction action) {
+		// If action is null then there is no point of this method.
+		if(action == null)
+			return;
+		
+		
+		List<SeqSymmetry> old_sym_selections = getSelectedSyms();
+		
+		List<ITrackStyleExtended> old_style_selection = new ArrayList<ITrackStyleExtended>();
+		for(TierGlyph tier : tier_manager.getSelectedTiers()){
+			old_style_selection.add(tier.getAnnotStyle());
+		}
+		seqmap.clearSelected();
+
+		action.actionPerformed(null);
+
+		// reselect glyph(s) based on selected sym(s);
+		// Unfortunately, some previously selected syms will not be directly
+		// associatable with new glyphs, so not all selections can be preserved
+		Iterator<SeqSymmetry> sym_iter = old_sym_selections.iterator();
+		while (sym_iter.hasNext()) {
+			SeqSymmetry old_selected_sym = sym_iter.next();
+
+			GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
+			if (gl != null) {
+				seqmap.select(gl);
+			}
+		}
+		
+		Iterator<TierLabelGlyph> tier_iter = tier_manager.getAllTierLabels().iterator();
+		while (tier_iter.hasNext()) {
+			TierLabelGlyph tier = tier_iter.next();
+
+			if (old_style_selection.contains(tier.getReferenceTier().getAnnotStyle())) {
+				seqmap.select(tier);
+			}
+		}
+		
+		if(!old_style_selection.isEmpty()){
+			seqmap.updateWidget();
+		}
+	}
+	
 	// copying map tiers to separate list to avoid problems when removing tiers
 	//   (and thus modifying map.getTiers() list -- could probably deal with this
 	//    via iterators, but feels safer this way...)
@@ -1043,14 +1086,21 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void addAnnotationTrackFor(final ITrackStyleExtended style){
-		ThreadUtils.runOnEventQueue(new Runnable(){
+	public void addAnnotationTrackFor(final ITrackStyleExtended style) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
 			public void run() {
-				SeqMapView.this.getSeqMap().clearSelected();
-				TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
-				//SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
-				SeqMapView.this.getSeqMap().packTiers(true, false, false, false);
-				SeqMapView.this.getSeqMap().updateWidget();
+				AbstractAction action = new AbstractAction() {
+
+					public void actionPerformed(ActionEvent e) {
+						TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
+						//SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
+						SeqMapView.this.getSeqMap().packTiers(true, false, false, false);
+						SeqMapView.this.getSeqMap().updateWidget();
+					}
+				};
+
+				SeqMapView.this.preserveSelectionAndPerformAction(action);
 			}
 		});
 	}

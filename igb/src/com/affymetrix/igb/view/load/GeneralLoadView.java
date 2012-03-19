@@ -49,6 +49,8 @@ import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
 
 /**
  *
@@ -581,20 +583,16 @@ public final class GeneralLoadView {
 
 			public void run() {
 				TrackView.getInstance().addEmptyTierFor(feature, gviewer, true);
-				List<SeqSymmetry> syms = gviewer.getSelectedSyms();
-				if (!syms.isEmpty()) {
-					gviewer.getSeqMap().clearSelected();
-				}
+				AbstractAction action = new AbstractAction() {
 
-				gviewer.getSeqMap().packTiers(true, true, false, false);
-				gviewer.getSeqMap().stretchToFit(false, true);
-				gviewer.getSeqMap().updateWidget();
-
-				if (!syms.isEmpty()) {
-					gviewer.select(syms, false);
-				}
-
-				TierPrefsView.getSingleton().refreshList();
+					public void actionPerformed(ActionEvent e) {
+						gviewer.getSeqMap().packTiers(true, true, false, false);
+						gviewer.getSeqMap().stretchToFit(false, true);
+						gviewer.getSeqMap().updateWidget();
+						TierPrefsView.getSingleton().refreshList();
+					}
+				};
+				gviewer.preserveSelectionAndPerformAction(action);
 			}
 		});
 	}

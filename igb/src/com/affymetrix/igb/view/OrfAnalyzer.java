@@ -297,19 +297,17 @@ public final class OrfAnalyzer extends JComponent
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				AffyTieredMap tiermap = smv.getSeqMap();
-				List<SeqSymmetry> syms = smv.getSelectedSyms();
-				if (!syms.isEmpty()) {
-					smv.getSeqMap().clearSelected();
-				}
 
-				tiermap.repack();
-				tiermap.stretchToFit(false, true);
-				tiermap.updateWidget();
+				AbstractAction action = new AbstractAction() {
 
-				if (!syms.isEmpty()) {
-					smv.select(syms, true);
-				}
+					public void actionPerformed(ActionEvent e) {
+						AffyTieredMap tiermap = smv.getSeqMap();
+						tiermap.repack();
+						tiermap.stretchToFit(false, true);
+						tiermap.updateWidget();
+					}
+				};
+				smv.preserveSelectionAndPerformAction(action);
 			}
 		});
 

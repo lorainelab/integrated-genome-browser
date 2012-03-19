@@ -45,6 +45,16 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		return position;
 	}
 
+	@Override
+	public void drawTraversal(ViewI view)  {
+		super.drawTraversal(view);
+	}
+	
+	@Override
+	public void setSelected(boolean selected) {
+		super.setSelected(selected);
+	}
+	
 	/** Overridden such that the info must be of type TierGlyph.  It is used
 	 *  to store the reference tier that will be returned by getReferenceTier().
 	 */

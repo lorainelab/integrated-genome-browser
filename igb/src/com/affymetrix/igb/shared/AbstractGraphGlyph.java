@@ -13,13 +13,13 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
@@ -27,30 +27,26 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.text.NumberFormat;
+import java.text.AttributedString;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.awt.geom.Point2D;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
 
 
 /**
- *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
- *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
- *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
+ * An implementation of graphs for NeoMaps,
+ * capable of rendering graphs in a variety of styles.
+ * Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph}
+ * and improved from there.
+ * <p><em><strong>This is only meant for graphs on horizontal maps.</strong></em>
+ * </p>
  */
 public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	private static final boolean TIME_DRAWING = false;
@@ -73,8 +69,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	private static final Timer tim = new Timer();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
-	 *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
-	 *     be modified (except for resetting the points by calling setPointCoords() again)
 	 */
 	private float point_max_ycoord = Float.POSITIVE_INFINITY;
 	private float point_min_ycoord = Float.NEGATIVE_INFINITY;
@@ -145,7 +139,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 
 	/**
 	 * Temporary helper method.
-	 * 
 	 */
 	public float[] copyYCoords() {
 		return graf.normalizeGraphYCoords();
@@ -543,14 +536,15 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return y_pixels;
 	}
 
-	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
-	 *  the outline is usually drawn a pixel or two larger than the glyph.
-	 *  With TierGlyphs, it is better to draw the outline inside of or contiguous
-	 *  with the glyph borders.
-	 *  This method assumes the tiers are horizontal.
-	 *  The left and right border are taken from the view's pixel box,
-	 *  the top and bottom border are from the coord box.
-	 **/
+	/**
+	 * Draws the outline in a way that looks good for tiers.
+	 * With other glyphs, the outline is usually drawn a pixel or two larger than the glyph.
+	 * With TierGlyphs, it is better to draw the outline inside
+	 * of or contiguous with the glyph borders.
+	 * This method assumes the tiers are horizontal.
+	 * The left and right border are taken from the view's pixel box.
+	 * The top and bottom border are from the coord box.
+	 */
 	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
@@ -642,9 +636,10 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	}
 
 	/**
-	 *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.
-	 *  This number is calculated in setPointCoords() directly from ycoords, and cannot
-	 *     be modified (except for resetting the points by calling setPointCoords() again)
+	 * This number is calculated in {@link #checkVisibleBoundsY}
+	 * directly from y coordinates, and cannot be modified
+	 * (except by calling checkVisibleBoundsY() again).
+	 * @return maximum y coordinate (in graph coordinates) of all points in graph.
 	 */
 	public float getGraphMinY() {
 		return point_min_ycoord;
@@ -1216,12 +1211,12 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	private void resetThreshLabel() {
 		float min_thresh = getMinScoreThreshold();
 		float max_thresh = getMaxScoreThreshold();
-		int direction = state.getThresholdDirection();
-		if (direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
+		int directn = state.getThresholdDirection();
+		if (directn == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
 			thresh_glyph.setLabel(AbstractGraphGlyph.nformat.format(min_thresh) + " -- " + AbstractGraphGlyph.nformat.format(max_thresh));
-		} else if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
+		} else if (directn == GraphState.THRESHOLD_DIRECTION_GREATER) {
 			thresh_glyph.setLabel("> " + AbstractGraphGlyph.nformat.format(min_thresh));
-		} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
+		} else if (directn == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
 			thresh_glyph.setLabel("<= " + AbstractGraphGlyph.nformat.format(max_thresh));
 		}
 	}
@@ -1317,11 +1312,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	@Override
 	public void setPreferredHeight(double height, ViewI view) {
 		GlyphI child = getChild(0);
-		Rectangle2D.Double  coord = child.getCoordBox();
-		child.setCoords(coord.x, coord.y, coord.width, height);
+		Rectangle2D.Double  c = child.getCoordBox();
+		child.setCoords(c.x, c.y, c.width, height);
 		//Note : Fix to handle height in a view mode.
 		// But this also causes minor change in height while switching back to default view mode.
-		setCoords(coord.x, coord.y, coord.width, height + 2 * getSpacing());
+		setCoords(c.x, c.y, c.width, height + 2 * getSpacing());
 	}
 
 	@Override
@@ -1344,5 +1339,3 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	// this should not be here, only for backwards compatibility
 	public abstract GraphType getGraphStyle();
 }
-
-

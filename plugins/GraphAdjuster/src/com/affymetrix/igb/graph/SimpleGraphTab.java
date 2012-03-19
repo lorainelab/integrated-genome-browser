@@ -803,6 +803,7 @@ public final class SimpleGraphTab
 			// Note that the combo_style does not implement IFloatableTierStyle
 			// because the glyph factory doesn't support floating combo graphs anyway.
 			ITrackStyleExtended combo_style = null;
+			String viewMode = "combo";
 
 			Map<Color, Integer> colorMap = new HashMap<Color, Integer>();
 			// If any of them already has a combo style, use that one
@@ -832,6 +833,7 @@ public final class SimpleGraphTab
 					}
 				}
 				combo_style.setBackground(background);
+				combo_style.setViewMode(viewMode);
 			}
 
 			// Now apply that combo style to all the selected graphs

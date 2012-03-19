@@ -1,6 +1,9 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory;
+import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -55,6 +58,7 @@ import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TransformTierGlyph;
@@ -886,9 +890,11 @@ public class SeqMapView extends JPanel
 		addPreviousTierGlyphs(seqmap, temp_tiers);
 		axis_tier = addAxisTier(axis_index);
 		addAnnotationTracks();
-		moveNonfloatingTierGlyphs(seqmap.getTiers());
-		hideEmptyTierGlyphs(seqmap.getTiers());
-		moveFloatingTierGlyphs(seqmap.getTiers());
+		moveNonFloatingTierGlyphs();
+		moveNonJoinedTierGlyphs();
+		hideEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+		moveJoinedTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+		moveFloatingTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
 	}
 
 	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -1042,13 +1048,56 @@ public class SeqMapView extends JPanel
  	 * move non floating glyphs from pixel floater to tierGlyph
  	 * @param tiers the list of TierGlyphs
 	 */
-	private void moveNonfloatingTierGlyphs(List<TierGlyph> tiers) {
+	private void moveNonFloatingTierGlyphs() {
  		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
 				ViewModeGlyph vg = (ViewModeGlyph)glyph;
 				if (!vg.getAnnotStyle().getFloatGraph()) {
 					vg.getTierGlyph().defloat(pixel_floater_glyph, vg);
 				}
+			}
+ 		}
+	}
+
+	/**
+ 	 * move floating glyphs from TierGlyph to pixel floater
+ 	 * @param tiers the list of TierGlyphs
+	 */
+	private void moveFloatingTierGlyphs(List<TierGlyph> tiers) {
+		for (TierGlyph tg : tiers) {
+			if (tg.getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
+				tg.enfloat(pixel_floater_glyph, getSeqMap());
+			}
+ 		}
+	}
+
+	/**
+ 	 * move non joined glyphs from their comboGlyph to tierGlyph
+ 	 * @param tiers the list of TierGlyphs
+	 */
+	private void moveNonJoinedTierGlyphs() {
+		for (TierGlyph tierGlyph : seqmap.getTiers()) {
+			if (tierGlyph.getViewModeGlyph() instanceof ComboGlyph && tierGlyph.getViewModeGlyph().getChildren() != null) {
+				for (GlyphI glyph : new ArrayList<GlyphI>(tierGlyph.getViewModeGlyph().getChildren())) {
+					ViewModeGlyph vg = (ViewModeGlyph)glyph;
+					if (!(vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)vg).getGraphState().getComboStyle() != null)) {
+						vg.getTierGlyph().dejoin(tierGlyph.getViewModeGlyph(), vg);
+					}
+				}
+			}
+		}
+ 	}
+
+	/**
+ 	 * move joined glyphs from TierGlyph to their comboGlyph
+ 	 * @param tiers the list of TierGlyphs
+	 */
+	private void moveJoinedTierGlyphs(List<TierGlyph> tiers) {
+		for (TierGlyph tg : tiers) {
+			ViewModeGlyph vg = tg.getViewModeGlyph();
+			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)vg).getGraphState().getComboStyle() != null) {
+				TierGlyph comboTierGlyph = TrackView.getInstance().getTrack(this, null, ((AbstractGraphGlyph)vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
+				tg.enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
 			}
  		}
 	}
@@ -1065,18 +1114,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	/**
- 	 * move floating glyphs from TierGlyph to pixel floater
- 	 * @param tiers the list of TierGlyphs
-	 */
-	private void moveFloatingTierGlyphs(List<TierGlyph> tiers) {
-		for (TierGlyph tg : tiers) {
-			if (tg.getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
-				tg.enfloat(pixel_floater_glyph, getSeqMap());
-			}
- 		}
-	}
-
 	private void addAnnotationTracks() {
 		TrackView.getInstance().addTracks(this, aseq);
 		addDependentAndEmptyTrack();
@@ -1091,6 +1128,7 @@ public class SeqMapView extends JPanel
 
 			public void run() {
 				AbstractAction action = new AbstractAction() {
+					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
 						TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
@@ -1973,11 +2011,11 @@ public class SeqMapView extends JPanel
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return getTrack(sym, style, tier_direction, false);
+		return getTrack(sym, style, tier_direction, UnloadedGlyphFactory.getInstance());
 	}
 
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, dummy);
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
 	}
 
 	@Override

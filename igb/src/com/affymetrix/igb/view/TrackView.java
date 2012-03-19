@@ -34,7 +34,6 @@ import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +78,7 @@ public class TrackView {
 	 * @param tier_direction the direction
 	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
 	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy) {
+	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
 		AffyTieredMap seqmap = smv.getSeqMap();
 		TierGlyph tierGlyph = null;
 		Map<ITrackStyleExtended, TierGlyph> style2track = null;
@@ -94,7 +93,6 @@ public class TrackView {
 		}
 		tierGlyph = style2track.get(style);
 		if (tierGlyph == null) {
-			MapViewGlyphFactoryI factory = dummy ? DummyGlyphFactory.getInstance() : UnloadedGlyphFactory.getInstance();
 			tierGlyph = new TierGlyph(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
 			// do not set packer here, will be set in ViewModeGlyph
@@ -139,11 +137,11 @@ public class TrackView {
 					String meth = BioSeq.determineMethod(annotSym);
 					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 					if (style.getSeparate()) {
-						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, true);
-						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, true);
+						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
+						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
 					}
 					else {
-						smv.getTrack(null, style, TierGlyph.Direction.BOTH, true);
+						smv.getTrack(null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
 					}
 					continue;
 				}
@@ -214,6 +212,7 @@ public class TrackView {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+
 			Operator operator = determineOperator(annotSym);
 			if(operator != null){
 				if(!operator.supportsTwoTrack()){
@@ -431,7 +430,7 @@ public class TrackView {
 			if(state.getTierStyle().getFloatGraph())
 				return null;
 			
-			return state.getComboStyle() != null? state.getComboStyle(): state.getTierStyle();
+			return state.getTierStyle();
 		}else{
 			return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(
 				method, feature.featureName, feature.getExtension(), feature.featureProps);

@@ -18,11 +18,12 @@ public interface SeqMapViewExtendedI extends SeqMapViewI {
 	 * @param meth  The tier annot; it will be treated as case-insensitive.
 	 * @param style  a non-null instance of IAnnotStyle; tier label and other properties
 	 * are determined by the IAnnotStyle.
+	 * @param factory the factory to use initially
 	 * @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
 	 * The array may instead contain two copies of one mixed-direction tier;
 	 * in this case place glyphs for both forward and revers items into it.
 	 */
-	TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, boolean dummy);
+	TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory);
 
 	boolean autoChangeView();
 	

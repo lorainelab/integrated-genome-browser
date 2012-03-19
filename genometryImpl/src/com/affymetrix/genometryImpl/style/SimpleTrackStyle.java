@@ -103,7 +103,21 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public GenericFeature getFeature() {
 		return null;
 	}
-	
+
+	private String view_mode = null;
+	public String getViewMode() {
+		return view_mode;
+	}
+	public void setViewMode(String view_mode) {
+		this.view_mode = view_mode;
+	}
+	public String getOperator() {
+		return null;
+	}
+	public void setOperator(String o) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 	public void setFeature(GenericFeature f) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -132,23 +146,8 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public void setViewMode(String s) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public String getViewMode() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void setOperator(String o) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public String getOperator() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 	public final boolean getFloatGraph() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return false;
 	}
 	public final void setFloatGraph(boolean b) {
 		throw new UnsupportedOperationException("Not supported yet.");

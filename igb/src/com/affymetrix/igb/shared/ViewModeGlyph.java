@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
@@ -23,6 +24,10 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract void setDirection(Direction d);
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
+	public boolean isCombo() {
+		return false;
+	}
+	public void addSym(SeqSymmetry sym) {}
 	public TierGlyph getTierGlyph() {
 		return tierGlyph;
 	}
@@ -41,6 +46,5 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 		}
 		return true;
 	}
-	// TODO remove this method
 	public abstract void addMiddleGlyph(GlyphI gl);
 }

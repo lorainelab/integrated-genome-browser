@@ -85,7 +85,6 @@ public class TierGlyph extends SolidGlyph {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
 			if (factory != null) {
-
 				Operator operator = getOperator(style.getOperator());
 				if (operator != null) {
 					factory = new OperatorGlyphFactory(operator, factory);
@@ -143,8 +142,13 @@ public class TierGlyph extends SolidGlyph {
 		}
 	}
 
+	public Rectangle2D.Double getTierCoordBox()   {
+		return super.getCoordBox();
+	}
+
 	/**
-	 * make the glyph a floating glyph
+	 * make the glyph a floating glyph, note - the viewModeGlyph
+	 * will leave its tierGlyph pointing to this glyph
 	 * @param floater the PixelFloaterGlyph
 	 * @param cbox the coordbox of the AffyTieredMap
 	 */
@@ -170,6 +174,33 @@ public class TierGlyph extends SolidGlyph {
 	public void defloat(Glyph floater, ViewModeGlyph floatingGlyph) {
 		floater.removeChild(floatingGlyph);
 		viewModeGlyph = floatingGlyph;
+		viewModeGlyph.setCoordBox(super.getCoordBox());
+	}
+
+	/**
+	 * make the viewModeGlyph a joined glyph, note - the viewModeGlyph
+	 * will leave its tierGlyph pointing to this glyph
+	 * @param comboGlyph the ComboGlyph
+	 * @param cbox the coordbox of the AffyTieredMap
+	 */
+	public void enjoin(ViewModeGlyph comboGlyph, NeoMap map) {
+		viewModeGlyph.setVisibility(true);
+		comboGlyph.addChild(viewModeGlyph);
+		// replace viewModeGlyph with dummy, so that it won't show as a regular glyph in the track
+		viewModeGlyph = DummyGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
+		viewModeGlyph.setTierGlyph(this);
+		viewModeGlyph.setCoordBox(super.getCoordBox());
+		setVisibility(false);
+	}
+
+	/**
+	 * make the glyph a regular (nonjoined) glyph
+	 * @param comboGlyph the comboGlyph
+	 * @param joinedGlyph the glyph
+	 */
+	public void dejoin(ViewModeGlyph comboGlyph, ViewModeGlyph joinedGlyph) {
+		comboGlyph.removeChild(joinedGlyph);
+		viewModeGlyph = joinedGlyph;
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 	}
 

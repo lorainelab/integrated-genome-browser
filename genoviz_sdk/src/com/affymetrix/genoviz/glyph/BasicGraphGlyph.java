@@ -15,22 +15,21 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 
 /**
- *  A glyph that, given a xcoord array and a ycoord array, draws an xy line graph.
- *  BasicGraphGlyph is still somewhat experimental.  In particular hit detection
- *  needs improvement.
+ * A glyph that draws a line graph.
+ * BasicGraphGlyph is still somewhat experimental.
+ * In particular hit detection needs improvement.
  */
 public class BasicGraphGlyph extends Glyph {
-	// y scaling factor -- not used yet
-	double yscale = 1.0f;
 
-	// assumes sorted points, each x corresponding to y
-	double xcoords[];
-	double ycoords[];
+	private double xcoords[];
+	private double ycoords[];
 
+	@Override
 	public void draw(ViewI view) {
 		view.transformToPixels(getCoordBox(), getPixelBox());
 		Graphics g = view.getGraphics();
@@ -59,6 +58,14 @@ public class BasicGraphGlyph extends Glyph {
 		}
 	}
 
+	/**
+	 * Defines a set of points to graph.
+	 * The parameters are two parallel arrays of x and y coordinates.
+	 * So there are <var>n</var> points,
+	 * each of which has coordinates (xcoords[<var>n</var>], ycoords[<var>n</var>]).
+	 * @param xcoords the x coordinates in scene space.
+	 * @param ycoords the y coordinates in scene space.
+	 */
 	public void setPointCoords(double xcoords[], double ycoords[]) {
 		this.xcoords = xcoords;
 		this.ycoords = ycoords;

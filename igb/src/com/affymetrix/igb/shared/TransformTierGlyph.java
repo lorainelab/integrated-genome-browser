@@ -5,12 +5,14 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -56,10 +58,12 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
     return tier_transform;
   }
 
-  /**
-	 *  Overridden to allow background shading by a collection of non-child
-	 *    "middleground" glyphs.  These are rendered after the solid background but before
-	 *    all of the children (which could be considered the "foreground").
+	/**
+	 * Overridden to allow background shading by a collection of non-child
+	 * "middle ground" glyphs.
+	 * These are rendered after the solid background
+	 * but before all of the children
+	 * (which could be considered the "foreground").
 	 */
 	@Override
 	public void draw(ViewI view) {
@@ -171,10 +175,8 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
 	setPacker(expand_packer);
   }
 
-	//
-  // need to redo pickTraversal, etc. to take account of transform also...
-  //
-	@Override
+  // Need to redo pickTraversal, etc. to take account of transform also...
+  @Override
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
@@ -200,12 +202,14 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
 	}
 
 
-  // don't move children! just change tier's transform offset
-	@Override
+  // Don't move children! Just change tier's transform offset.
+  @Override
   public void moveRelative(double diffx, double diffy) {
    getCoordBox().x += diffx;
    getCoordBox().y += diffy;
-   tier_transform.setTransform(tier_transform.getScaleX(), 0, 0, tier_transform.getScaleY(), tier_transform.getTranslateX(), tier_transform.getTranslateY() + diffy);
+   tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
+		   tier_transform.getScaleY(), tier_transform.getTranslateX(),
+		   tier_transform.getTranslateY() + diffy);
   }
 
   public void setFixedPixHeight(int pix_height) {
@@ -216,9 +220,12 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
     return fixedPixHeight;
   }
 
+  /**
+   * Should not be called.
+   */
   @Override
   public void setPreferredHeight(double height, ViewI view) {
-	  // should not be called
+    throw new UnsupportedOperationException("Transform tiers cannot change height.");
   }
 
   @Override
@@ -241,4 +248,3 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
   }
 
 }
-

@@ -31,12 +31,9 @@ import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.view.MismatchOperator;
-import com.affymetrix.igb.view.MismatchPileupOperator;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.viewmode.BarGraphGlyph;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.DefaultSemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.DotGraphGlyph;
 import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
@@ -311,11 +308,6 @@ public class Activator implements BundleActivator {
 		// Add mismatch factories
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
-
-		MapViewGlyphFactoryI mismatchFactory = new OperatorGlyphFactory(new MismatchOperator(), mismatchGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchFactory, null);
-		MapViewGlyphFactoryI mismatchPileupFactory = new OperatorGlyphFactory(new MismatchPileupOperator(), mismatchGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchPileupFactory, null);
 
 		// Add Default factories
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);

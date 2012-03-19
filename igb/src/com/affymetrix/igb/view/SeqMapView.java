@@ -1097,6 +1097,7 @@ public class SeqMapView extends JPanel
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)vg).getGraphState().getComboStyle() != null) {
 				TierGlyph comboTierGlyph = TrackView.getInstance().getTrack(this, null, ((AbstractGraphGlyph)vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
+				comboTierGlyph.setIgnoreUnloaded(true);
 				tg.enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
 			}
  		}

@@ -47,6 +47,7 @@ public class TierGlyph extends SolidGlyph {
 
 	private final SeqMapViewExtendedI smv;
 	private SeqSymmetry modelSym;
+	private boolean ignoreUnloaded = false;
 
 	public TierGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 		this(sym, style, direction, smv, UnloadedGlyphFactory.getInstance().getViewModeGlyph(sym, style, direction, smv));
@@ -106,6 +107,9 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private boolean isSymLoaded() {
+		if (ignoreUnloaded) {
+			return true;
+		}
 		if (modelSym == null) {
 			return false;
 		}
@@ -522,6 +526,10 @@ public class TierGlyph extends SolidGlyph {
 
 	public boolean isManuallyResizable() {
 		return this.viewModeGlyph.isManuallyResizable();
+	}
+
+	public void setIgnoreUnloaded(boolean ignoreUnloaded) {
+		this.ignoreUnloaded = ignoreUnloaded;
 	}
 
 	@Override

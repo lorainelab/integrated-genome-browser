@@ -550,8 +550,13 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 		return (checkCategory == category);
 	}
 
+	// TODO get this from the font height somehow.
+	//      Also packer needs four more pixels for borders and such.
+	//      24 is tall enough on my screen anyway.
+	private final java.awt.Dimension MINIMUM_TIER_SIZE_IN_PIXELS = new java.awt.Dimension(32, 24);
 	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction) {
 		ViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
+		viewModeGlyph.setMinimumPixelBounds(MINIMUM_TIER_SIZE_IN_PIXELS);
 		viewModeGlyph.setDirection(direction);
 		return viewModeGlyph;
 	}

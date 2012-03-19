@@ -1,7 +1,9 @@
 package com.affymetrix.igb.shared;
 
 import cern.colt.list.DoubleArrayList;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;
@@ -225,6 +227,26 @@ public class FasterExpandPacker extends ExpandPacker {
 		}
 
 		packParent(parent, view, manual);
+
+		// Make sure the parent is not too short.
+		// This was needed for tiers in tiered maps.
+		int minPixelHeight = ((Glyph)parent).getMinPixelsHeight();
+		// P.S. Why isn't getMinPixelsHeight in GlyphI?
+		int currentPixelHeight = parent.getPixelBox(view).height;
+		if (currentPixelHeight < minPixelHeight) {
+			if (parent instanceof ViewModeGlyph) {
+				ViewModeGlyph g = (ViewModeGlyph) parent;
+				// Only do this for resizable tiers for now.
+				// It would screw up the axis tier, for one.
+				if (g.isManuallyResizable()) {
+					Rectangle2D.Double oldBox = parent.getCoordBox();
+					Rectangle r = parent.getPixelBox(view);
+					r.height = minPixelHeight; // Make it tall enough.
+					view.transformToCoords(r, oldBox);
+					parent.setCoords(oldBox.x, oldBox.y, oldBox.width, oldBox.height);
+				}
+			}
+		}
 
 		slot_maxes.trimToSize();
 		

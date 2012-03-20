@@ -204,15 +204,14 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
-		"Status update for track loading",
-		"Show or hide tracks.",
-		"Load data for track.",
-		"Set annotation color when Color by Strand Preference is not checked.",
-		"Set track background color.",
-		"Show 2 Tracks (+/-)",
+		"Load data for tracks",
+		"Show or hide tracks",
+		"Set foreground color for tracks",
+		"Set background color for tracks",
+		"Show 2 Tracks (+) and (-) or one track (+/-)",
+		"Set track name",
 		"Load Strategy",
-		"Name of active file or data set",
-		"Set label text (display name) for Track Label.",
+		"Name of active data set or file",
 		"Remove data set or file."
 	};
 	private final Map<Integer, RowEditorModel> rmMap;
@@ -345,7 +344,7 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 				tip = "Switches track visibility On or OFF";
 				break;
 			case DataManagementTableModel.TRACK_NAME_COLUMN:
-				tip = "Double click to edit track name";
+				tip = "Click to edit track name";
 				break;
 			case DataManagementTableModel.BACKGROUND_COLUMN:
 				tip = "Background";
@@ -354,7 +353,7 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 				tip = "Foreground";
 				break;
 			case DataManagementTableModel.SEPARATE_COLUMN:
-				tip = "Show 2 Tracks (+/-)";
+				tip = "Show 2 Tracks (+) and (-) or one track (+/-)";
 				break;
 			default:
 				tip = "";

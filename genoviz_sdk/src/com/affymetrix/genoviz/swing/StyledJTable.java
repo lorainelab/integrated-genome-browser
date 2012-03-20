@@ -61,6 +61,7 @@ public class StyledJTable extends JTable {
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));
+		setRowHeight(20);
 
 		JTableHeader header = getTableHeader();
 		header.setReorderingAllowed(false);

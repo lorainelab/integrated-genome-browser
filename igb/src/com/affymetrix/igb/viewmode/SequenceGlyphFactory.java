@@ -1,7 +1,5 @@
 package com.affymetrix.igb.viewmode;
 
-import java.util.Map;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -12,17 +10,12 @@ import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
-
-	@Override
-	public void init(Map<String, Object> options) {
-	}
-
+public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
@@ -95,15 +88,5 @@ public class SequenceGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public boolean isCategorySupported(FileTypeCategory category) {
 		return category == FileTypeCategory.Sequence;
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

@@ -18,12 +18,12 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
+public class UnloadedGlyphFactory extends MapViewGlyphFactoryA {
 	private double spacer = 2;
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -128,10 +128,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public void init(Map<String, Object> options) {
-	}
-
-	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction tier_direction, SeqMapViewExtendedI smv) {
 		BioSeq seq = smv.getAnnotatedSeq();
@@ -155,11 +151,6 @@ public class UnloadedGlyphFactory implements MapViewGlyphFactoryI {
 		if (category == FileTypeCategory.Sequence){
 			return false;
 		}
-		return true;
-	}
-	
-	@Override
-	public boolean isURISupported(String uri) {
 		return true;
 	}
 

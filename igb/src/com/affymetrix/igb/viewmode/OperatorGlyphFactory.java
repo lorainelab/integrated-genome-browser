@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
 
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -27,7 +28,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
  *
  * @author hiralv
  */
-public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
+public class OperatorGlyphFactory extends MapViewGlyphFactoryA {
 	private final Operator operator;
 	private final MapViewGlyphFactoryI factory;
 	
@@ -39,8 +40,6 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 			this.factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(operator.getOutputCategory());
 		}
 	}
-	
-	public void init(Map<String, Object> options) { }
 	
 	@Override
 	public String getName() {
@@ -134,15 +133,5 @@ public class OperatorGlyphFactory implements MapViewGlyphFactoryI {
 		lists.add(reverse);
 		
 		return lists;
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

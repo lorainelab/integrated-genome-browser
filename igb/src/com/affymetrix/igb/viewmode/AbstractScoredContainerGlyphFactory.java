@@ -30,7 +30,7 @@ import com.affymetrix.igb.shared.*;
  *
  * @author hiralv
  */
-public abstract class AbstractScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
+public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFactoryA {
 	private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
 
 //	private static final boolean DEBUG = false;

@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
-public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
+public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	private final FileTypeCategory category;
 	private static final boolean DEBUG = false;
@@ -596,15 +596,5 @@ public class AnnotationGlyphFactory implements MapViewGlyphFactoryI {
 	// for GenericGraphGlyphFactory, can be removed when that is removed
 	public static ViewModeGlyph getViewModeGlyph(ITrackStyleExtended style) {
 		return new AnnotationGlyph(style);
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

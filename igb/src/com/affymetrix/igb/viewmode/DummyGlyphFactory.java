@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.FasterExpandPacker;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -18,7 +18,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 /**
  * creates a glyph with no children, so that it is never displayed
  */
-public class DummyGlyphFactory implements MapViewGlyphFactoryI {
+public class DummyGlyphFactory extends MapViewGlyphFactoryA {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
@@ -64,10 +64,6 @@ public class DummyGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	@Override
-	public void init(Map<String, Object> options) {
-	}
-
-	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction tier_direction, SeqMapViewExtendedI smv) {
 		return new DummyGlyph(style, tier_direction);
@@ -85,11 +81,6 @@ public class DummyGlyphFactory implements MapViewGlyphFactoryI {
 	
 	@Override
 	public boolean isURISupported(String uri) {
-		return false;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
 		return false;
 	}
 }

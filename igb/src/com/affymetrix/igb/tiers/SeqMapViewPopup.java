@@ -1065,7 +1065,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 						@Override
 						public String getText() {
-							return mode.toString();
+							return MapViewModeHolder.getInstance().getViewFactory(mode.toString()).getDisplayName();
 						}
 					};
 					actions.put(mode.toString(), action);

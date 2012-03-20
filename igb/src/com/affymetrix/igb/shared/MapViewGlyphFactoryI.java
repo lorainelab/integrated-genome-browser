@@ -23,6 +23,7 @@ public interface MapViewGlyphFactoryI  {
 	public void init(Map<String, Object> options);
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
 	public String getName();
+	public String getDisplayName();
 	public boolean isCategorySupported(FileTypeCategory category);
 	public boolean isURISupported(String uri);
 	public boolean canAutoLoad(String uri);

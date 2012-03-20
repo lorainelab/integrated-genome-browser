@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
-public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
+public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
 	// glyph class
 	protected class SemanticZoomGlyph extends AbstractViewModeGlyph {
@@ -425,10 +425,6 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 	}
 	// end glyph class
 
-	@Override
-	public void init(Map<String, Object> options) {
-	}
-
 	protected abstract SemanticZoomRule getRule(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv);
 
@@ -437,15 +433,5 @@ public abstract class SemanticZoomGlyphFactory implements MapViewGlyphFactoryI {
 		Direction direction, SeqMapViewExtendedI smv) {
 		SemanticZoomRule rule = getRule(sym, style, direction, smv);
 		return new SemanticZoomGlyph(sym, style, direction, rule);
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

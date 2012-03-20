@@ -14,11 +14,10 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.GraphFasterExpandPacker;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
@@ -26,7 +25,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 /**
  * creates a glyph that contains other glyphs, a result of the Join action
  */
-public class ComboGlyphFactory implements MapViewGlyphFactoryI {
+public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();

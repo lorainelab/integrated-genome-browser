@@ -23,16 +23,6 @@ public class ScoredContainerGlyphFactory extends AbstractScoredContainerGlyphFac
 	
 	@Override
 	public String getName(){
-		return (super.getName() + " " + graphGlyphFactory.getName());
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
+		return (super.getName() + "_" + graphGlyphFactory.getName());
 	}
 }

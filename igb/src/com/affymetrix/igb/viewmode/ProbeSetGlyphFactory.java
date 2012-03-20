@@ -26,7 +26,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
  *
  * @author hiralv
  */
-public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
+public class ProbeSetGlyphFactory extends MapViewGlyphFactoryA {
 
 	/*
 	Algorithm for drawing probe-set-display data.
@@ -67,9 +67,6 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	private static final int glyph_depth = 2;
 	private String label_field = null;
 	private static final int GLYPH_HEIGHT = 20;
-
-	public void init(Map<String, Object> options) {
-	}
 
 	/**
 	 * Recurses children of sym until SeqUtils.getDepth(sym) equals depth_of_consensuses,
@@ -526,15 +523,5 @@ public class ProbeSetGlyphFactory implements MapViewGlyphFactoryI {
 	@Override
 	public String getName() {
 		return "probeset";
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

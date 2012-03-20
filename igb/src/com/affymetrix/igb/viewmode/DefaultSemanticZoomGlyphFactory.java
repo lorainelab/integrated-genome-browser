@@ -56,7 +56,7 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 
 	@Override
 	public String getName() {
-		return "semantic zoom " + detailGlyphFactory.getName();
+		return "semantic_zoom_" + detailGlyphFactory.getName();
 	}
 
 	@Override

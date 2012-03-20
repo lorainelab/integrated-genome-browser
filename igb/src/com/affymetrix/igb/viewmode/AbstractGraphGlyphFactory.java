@@ -12,12 +12,12 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI {
+public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
@@ -182,15 +182,5 @@ public abstract class AbstractGraphGlyphFactory implements MapViewGlyphFactoryI 
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return null;
-	}
-
-	@Override
-	public boolean isURISupported(String uri) {
-		return true;
-	}
-
-	@Override
-	public boolean canAutoLoad(String uri) {
-		return false;
 	}
 }

@@ -103,7 +103,8 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		}
 	}
 
-	protected void drawMiddle(ViewI view) {
+	@Override
+	public void drawMiddle(ViewI view) {
 		view.transformToPixels(getCoordBox(), getPixelBox());
 
 		getPixelBox().width = Math.max(getPixelBox().width, getMinPixelsWidth());

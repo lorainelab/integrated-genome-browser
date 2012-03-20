@@ -940,6 +940,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	public void repack(final boolean full_repack) {
 		AbstractAction action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				handler.repackTheTiers(full_repack, true);

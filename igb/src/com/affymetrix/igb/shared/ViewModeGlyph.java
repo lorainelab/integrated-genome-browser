@@ -22,6 +22,7 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract void setLabel(String str);
 	public abstract Direction getDirection();
 	public abstract void setDirection(Direction d);
+	public abstract void drawMiddle(ViewI view);
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
 	public boolean isCombo() {

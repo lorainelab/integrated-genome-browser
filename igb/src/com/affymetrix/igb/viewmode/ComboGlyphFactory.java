@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.GraphFasterExpandPacker;
@@ -59,8 +60,15 @@ public class ComboGlyphFactory implements MapViewGlyphFactoryI {
 		public void draw(ViewI view)  {}
 
 		@Override
-		public void drawTraversal(ViewI view)  {
-			super.drawTraversal(view);
+		public void drawMiddle(ViewI view) {
+			if (getChildren() != null)  {
+				ViewModeGlyph child;
+				int numChildren = getChildren().size();
+				for ( int i = 0; i < numChildren; i++ ) {
+					child = (ViewModeGlyph)getChildren().get( i );
+					child.drawMiddle(view);
+				}
+			}
 		}
 
 		@Override

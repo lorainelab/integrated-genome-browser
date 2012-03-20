@@ -1162,14 +1162,24 @@ public final class GeneralLoadUtils {
 					return true;
 				} catch (Exception ex) {
 					((QuickLoadSymLoader) gFeature.symL).logException(ex);
-					if (Application.confirmPanel("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName)) {
-						if (gFeature.gVersion.removeFeature(gFeature)) {
-							SeqGroupView.getInstance().refreshTable();
-						}
-					}
-					return false;
+					return removeFeature("Unable to retrieve chromosome. \n Would you like to remove feature " + gFeature.featureName);
 				}
 
+			}
+
+			@Override
+			protected boolean showCancelConfirmation(){
+				return removeFeature("Cancel chromosome retrival and remove " + gFeature.featureName + "?");
+			}
+			
+			private boolean removeFeature(String msg){
+				if (Application.confirmPanel(msg)) {
+					if (gFeature.gVersion.removeFeature(gFeature)) {
+						SeqGroupView.getInstance().refreshTable();
+					}
+					return true;
+				}
+				return false;
 			}
 			
 			@Override
@@ -1192,9 +1202,7 @@ public final class GeneralLoadUtils {
 						gmodel.setSelectedSeq(loadGroup.getSeq(0));
 					}
 				} else {
-					//Feature was remove
-					GeneralLoadView.getLoadView().refreshTreeView();
-					GeneralLoadView.getLoadView().createFeaturesTable();
+					gmodel.setSelectedSeq(gmodel.getSelectedSeq());
 				}
 			}
 		};

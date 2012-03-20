@@ -24,12 +24,14 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
@@ -173,17 +175,31 @@ public class TrackView {
 		}
 	}
 
-	public void changeViewMode(SeqMapView gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, String viewMode) {
+	public void changeViewMode(SeqMapView gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode) {
 		String oldViewMode = style.getViewMode();
 		if (oldViewMode.equals(viewMode)) {
 			return;
 		}
-		style.setViewMode(viewMode);
-		gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
-		if (style.getSeparate()) {
-			gviewer.getTrack(rootSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+		if (comboStyle == null) {
+			style.setViewMode(viewMode);
+			gviewer.addAnnotationTrackFor(style);
 		}
-		gviewer.addAnnotationTrackFor(style);
+		else {
+			// must be a GraphGlyph in a ComboGlyph
+			TierGlyph comboTier = getTrack(gviewer, rootSym, comboStyle, TierGlyph.Direction.NONE, null);
+			ComboGlyph comboGlyph = (ComboGlyph)comboTier.getViewModeGlyph();
+			AbstractGraphGlyph oldGlyph = (AbstractGraphGlyph)comboGlyph.getChildWithStyle(style);
+			AbstractGraphGlyph newGlyph = (AbstractGraphGlyph)MapViewModeHolder.getInstance().getViewFactory(viewMode).getViewModeGlyph((SeqSymmetry)oldGlyph.getInfo(), style, TierGlyph.Direction.NONE, gviewer);
+			style.setViewMode(viewMode);
+			comboGlyph.removeChild(oldGlyph);
+			newGlyph.setScene(oldGlyph.getScene());
+			newGlyph.setCoordBox(oldGlyph.getCoordBox());
+			newGlyph.setTierGlyph(oldGlyph.getTierGlyph());
+			newGlyph.setVisibility(oldGlyph.isVisible());
+			comboGlyph.addChild(newGlyph);
+			//gviewer.getSeqMap().packTiers(true, false, false);
+			gviewer.getSeqMap().updateWidget();
+		}
 		// kludge to get GraphAdjuster tab to update Style box (graph type)
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(rootSym);

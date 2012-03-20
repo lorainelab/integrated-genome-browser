@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -26,7 +25,6 @@ public interface SeqMapViewI {
 	public NeoMap getSeqMap();
 
 	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym);
-	public void addAnnotationTrackFor(final ITrackStyleExtended style);
 
 	/**
 	 * Gets the view seq.

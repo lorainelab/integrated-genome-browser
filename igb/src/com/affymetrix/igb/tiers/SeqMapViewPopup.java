@@ -1059,7 +1059,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 						@Override
 						public void actionPerformed(ActionEvent ae) {
-							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, mode.toString());
+							ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph)glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
+							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, comboStyle, mode.toString());
 							refreshMap(false, false);
 						}
 

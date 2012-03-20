@@ -13,6 +13,7 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -42,6 +43,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -56,6 +58,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -398,11 +401,20 @@ public final class SimpleGraphTab
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				List<GlyphI> multigl = igbService.getSeqMap().getItems(graf);
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-				for (GlyphI g : multigl) {
-					glyphs.add((AbstractGraphGlyph) g);
+				for (Glyph g : igbService.getVisibleTierGlyphs()) {
+					ViewModeGlyph vg = ((TierGlyph)g).getViewModeGlyph();
+					if (vg.isCombo()) {
+						for (GlyphI child : vg.getChildren()) {
+							if (grafs.contains(child.getInfo())) {
+								glyphs.add((AbstractGraphGlyph) child);
+							}
+						}
+					}
+					else if (grafs.contains(vg.getInfo())) {
+						glyphs.add((AbstractGraphGlyph) vg);
+					}
 				}
 			}
 		}
@@ -473,10 +485,10 @@ public final class SimpleGraphTab
 
 	private final class GraphStyleSetter extends GenericAction implements ActionListener {
 		private static final long serialVersionUID = 1L;
-		GraphType style = GraphType.LINE_GRAPH;
+		GraphType graphType = GraphType.LINE_GRAPH;
 
-		public GraphStyleSetter(GraphType style) {
-			this.style = style;
+		public GraphStyleSetter(GraphType graphType) {
+			this.graphType = graphType;
 		}
 
 		public void actionPerformed(ActionEvent event) {
@@ -491,16 +503,17 @@ public final class SimpleGraphTab
 			Runnable r = new Runnable() {
 
 				public void run() {
+					String viewMode = graphType2ViewMode.get(graphType);
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
-					for (AbstractGraphGlyph sggl : glyphs) {
+					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(glyphs)) {
 						sggl.setShowGraph(true);
 						TierGlyph parent = sggl.getTierGlyph();
-						parent.getAnnotStyle().setViewMode(graphType2ViewMode.get(style));
-						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
+						igbService.changeViewMode(igbService.getSeqMapView(), (RootSeqSymmetry)sggl.getInfo(), parent.getAnnotStyle(), sggl.getGraphState().getComboStyle(), viewMode);
+						if ((graphType == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}
 					}
-					if (style == GraphType.HEAT_MAP) {
+					if (graphType == GraphType.HEAT_MAP) {
 						heat_mapCB.setEnabled(true);
 						if (hm == null) {
 							heat_mapCB.setSelectedIndex(-1);
@@ -511,11 +524,6 @@ public final class SimpleGraphTab
 						heat_mapCB.setEnabled(false);
 						// don't bother to change the displayed heat map name
 					}
-					for (AbstractGraphGlyph sggl : glyphs) {
-						ITrackStyleExtended style = sggl.getAnnotStyle();
-						igbService.getSeqMapView().addAnnotationTrackFor(style);
-					}
-					igbService.getSeqMap().updateWidget();
 				}
 			};
 

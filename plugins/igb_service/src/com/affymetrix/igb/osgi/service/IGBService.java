@@ -8,12 +8,14 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -181,4 +183,7 @@ public interface IGBService {
 	public Set<GenericServer> getEnabledServerList();
 	public Collection<GenericServer> getAllServersList();
 	public void discoverServer(final GenericServer server);
+
+	public void changeViewMode(SeqMapViewI gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode);
+
 }

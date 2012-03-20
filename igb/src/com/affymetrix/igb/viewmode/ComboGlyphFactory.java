@@ -78,6 +78,13 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		@Override
+		public void removeChild(GlyphI glyph) {
+			double height = getCoordBox().getHeight() - glyph.getCoordBox().getHeight();
+			getCoordBox().setRect(getCoordBox().getX(), getCoordBox().getY(), getCoordBox().getWidth(), height);
+			super.removeChild(glyph);
+		}
+
+		@Override
 		public void setPreferredHeight(double height, ViewI view) {
 		}
 
@@ -117,6 +124,17 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 
 		@Override
 		public GraphType getGraphStyle() {
+			return null;
+		}
+
+		public GlyphI getChildWithStyle(ITrackStyleExtended style) {
+			int numChildren = getChildCount();
+			for (int i = 0; i < numChildren; i++) {
+				ViewModeGlyph glyph = (ViewModeGlyph)getChild(i);
+				if (glyph.getAnnotStyle() == style) { // can use == instead of equals()
+					return glyph;
+				}
+			}
 			return null;
 		}
 	}

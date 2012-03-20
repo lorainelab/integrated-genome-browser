@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -418,5 +419,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			}
 		};
 		ThreadUtils.getPrimaryExecutor(server).execute(worker);
+	}
+
+	@Override
+	public void changeViewMode(SeqMapViewI gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode) {
+		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, rootSym, style, comboStyle, viewMode);
 	}
 }

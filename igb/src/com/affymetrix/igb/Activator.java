@@ -309,21 +309,24 @@ public class Activator implements BundleActivator {
 		MismatchGlyphFactory mismatchGlyphFactory = new MismatchGlyphFactory();
 		bundleContext.registerService(MapViewGlyphFactoryI.class, mismatchGlyphFactory, null);
 
-		// Add Default factories
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredHeatMap);
 //		bundleContext.registerService(MapViewGlyphFactoryI.class, new OperatorGlyphFactory(new LogTransform(Math.E), new GenericGraphGlyphFactory()));
 //		ExpandedAnnotGlyphFactory expandedAnnotGlyphFactory = new ExpandedAnnotGlyphFactory();
 //		expandedAnnotGlyphFactory.init(new HashMap<String, Object>());
 //		bundleContext.registerService(MapViewGlyphFactoryI.class, expandedAnnotGlyphFactory);
 		MapViewGlyphFactoryI alignmentDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Alignment), stairStepGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory), null);
+		MapViewGlyphFactoryI alignmentSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(alignmentGlyphFactory, alignmentDepthFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentSemanticZoomGlyphFactory, null);
 		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory), null);
-	}
+		MapViewGlyphFactoryI annotationSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationSemanticZoomGlyphFactory, null);
+
+		// Add Default factories
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationSemanticZoomGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentSemanticZoomGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredHeatMap);
+}
 }

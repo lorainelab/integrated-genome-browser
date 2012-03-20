@@ -1171,12 +1171,16 @@ public final class GeneralLoadUtils {
 				}
 
 			}
-
+			
 			@Override
 			protected void finished() {
 				boolean result = true;
 				try {
-					result = get();
+					if (!isCancelled()) {
+						result = get();
+					}else{
+						result = false;
+					}
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -1194,7 +1198,7 @@ public final class GeneralLoadUtils {
 				}
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
+		ThreadHandler.getThreadHandler().execute(gFeature, worker);
 	}
 
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {

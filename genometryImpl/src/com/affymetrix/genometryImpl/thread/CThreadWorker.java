@@ -42,6 +42,17 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	
 	protected abstract void finished();
 
+	protected boolean showCancelConfirmation(){
+		return false;
+	}
+	
+	public void cancelThread(boolean b){
+		if(!showCancelConfirmation()){
+			return;
+		}
+		this.cancel(b);
+	}
+	
 	public void addThreadListener(CThreadListener listener){
 		listeners.add(listener);
 	}

@@ -95,7 +95,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 				public void actionPerformed(ActionEvent ae) {
 					box.setVisible(false);
 					if(worker != null && !worker.isCancelled() && !worker.isDone()){
-						worker.cancel(true);
+						worker.cancelThread(true);
 					}
 				}
 			});

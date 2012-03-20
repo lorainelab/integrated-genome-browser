@@ -13,11 +13,6 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
@@ -25,7 +20,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
@@ -51,7 +45,10 @@ import java.util.*;
 
 public final class GraphScoreThreshSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
+	private static final long serialVersionUID = 1L;
+
 	private static class ThresholdOperationAction extends TrackOperationAction {
+		private static final long serialVersionUID = 1L;
 
 		ThresholdOperationAction(SeqMapViewI gviewer, Operator operator) {
 			super(gviewer, operator);
@@ -74,8 +71,6 @@ public final class GraphScoreThreshSetter extends JPanel
 		}
 	}
 	
-	private static final long serialVersionUID = 1L;
-
 	private final static DecimalFormat val_format;
 	private final static DecimalFormat per_format;
 	private final static DecimalFormat shift_format;
@@ -746,48 +741,6 @@ public final class GraphScoreThreshSetter extends JPanel
 	static DecimalFormat nformat = new DecimalFormat();
 	static DecimalFormat nformat2 = new DecimalFormat();
 	int pickle_count = 0;
-
-	private void pickleThreshold(AbstractGraphGlyph sgg) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		BioSeq aseq = gmodel.getSelectedSeq();
-
-		nformat2.setPositivePrefix("+");
-
-		SimpleSymWithProps psym = new SimpleSymWithProps();
-		psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-		String description =
-			MessageFormat.format(SimpleGraphTab.BUNDLE.getString("description"),
-				nformat.format(sgg.getMinScoreThreshold()), nformat.format(sgg.getMaxScoreThreshold()),
-				nformat2.format(sgg.getThreshStartShift()), nformat2.format(sgg.getThreshEndShift()),
-				(int) sgg.getMaxGapThreshold(), (int) sgg.getMinRunThreshold(), sgg.getLabel());
-		pickle_count++;
-		ViewI view = ((NeoWidget)widg).getView();
-		sgg.drawThresholdedRegions(view, psym, aseq);
-
-		// If there were any overlapping child symmetries, collapse them
-		// (by intersecting psym with itself)
-		SimpleSymWithProps result_sym = new SimpleSymWithProps();
-		SeqUtils.intersection(psym, psym, result_sym, aseq);
-		psym = result_sym;
-
-		TrackUtils.getInstance().addTrack(psym, description, sgg.getAnnotStyle());
-		
-//		psym.setProperty("method", meth);
-//		aseq.addAnnotation(psym);
-//
-//		Color col = sgg.getColor();
-//		//    Color col = Color.red;
-//		ITrackStyleExtended annot_style = igbService.getTrackStyle(meth);
-//		annot_style.setForeground(col);
-//		annot_style.setGlyphDepth(1);
-//		annot_style.setTrackName(description);
-//		annot_style.setCollapsed(true);
-//		annot_style.setSeparate(false);
-
-		System.out.println(SimpleGraphTab.BUNDLE.getString("createdThresholdTier") + ": " + description);
-
-//		igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-	}
 
 	/** When a JTextField gains focus, do nothing special. */
 	public void focusGained(FocusEvent e) {

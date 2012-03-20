@@ -25,7 +25,7 @@ public abstract class ExportComponentAction extends GenericAction {
 		}
 
 		try {
-			ExportDialog.getSingleton().setComponent(component);
+			ExportDialog.setComponent(component);
 			ExportDialogGUI.getSingleton().display(true);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);

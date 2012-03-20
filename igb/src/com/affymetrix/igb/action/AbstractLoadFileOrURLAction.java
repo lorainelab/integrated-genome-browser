@@ -1,7 +1,6 @@
 
 package com.affymetrix.igb.action;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +15,7 @@ import com.affymetrix.igb.shared.OpenURIAction;
  * @author hiralv
  */
 public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
+	private static final long serialVersionUID = 1L;
 
 	public AbstractLoadFileOrURLAction(){
 		super(IGBServiceImpl.getInstance());

@@ -1102,7 +1102,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 	
 	/** for height on the reverse strand. To help with track resizing. */
-	private double reverseHeight = this.default_height;
+	private double reverseHeight = TrackConstants.default_height;
 	public void setReverseHeight(double theNewHeight) {
 		this.reverseHeight = theNewHeight;
 	}

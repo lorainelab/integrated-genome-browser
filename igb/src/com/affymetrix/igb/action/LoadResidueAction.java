@@ -2,7 +2,6 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.JDialog;

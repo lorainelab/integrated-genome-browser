@@ -694,7 +694,7 @@ public class SeqMapView extends JPanel
 				old_selections = Collections.<SeqSymmetry>emptyList();
 			}
 		}
-
+		
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
@@ -753,7 +753,7 @@ public class SeqMapView extends JPanel
 
 			setStatus(getSelectionTitle(seqmap.getSelected()));
 		}
-
+		
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), false);
 		}
@@ -821,13 +821,7 @@ public class SeqMapView extends JPanel
 		if(action == null)
 			return;
 		
-		
 		List<SeqSymmetry> old_sym_selections = getSelectedSyms();
-		
-		List<ITrackStyleExtended> old_style_selection = new ArrayList<ITrackStyleExtended>();
-		for(TierGlyph tier : tier_manager.getSelectedTiers()){
-			old_style_selection.add(tier.getAnnotStyle());
-		}
 		seqmap.clearSelected();
 
 		action.actionPerformed(null);
@@ -845,18 +839,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 		
-		Iterator<TierLabelGlyph> tier_iter = tier_manager.getAllTierLabels().iterator();
-		while (tier_iter.hasNext()) {
-			TierLabelGlyph tier = tier_iter.next();
-
-			if (old_style_selection.contains(tier.getReferenceTier().getAnnotStyle())) {
-				seqmap.select(tier);
-			}
-		}
-		
-		if(!old_style_selection.isEmpty()){
-			seqmap.updateWidget();
-		}
 	}
 	
 	// copying map tiers to separate list to avoid problems when removing tiers

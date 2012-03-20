@@ -98,7 +98,7 @@ public class TierMapRubberBand extends RubberBand {
 
 			if (glyph != null) {
 				tiermap.repaint();
-				glyph.pack(tiermap.getView(), false);
+				glyph.pack(tiermap.getView());
 			}
 		}
 

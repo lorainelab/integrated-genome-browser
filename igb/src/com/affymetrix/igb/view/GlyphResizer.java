@@ -178,8 +178,8 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
 			assert ((com.affymetrix.igb.tiers.AffyLabelledTierMap) m).getLabelMap() == this.widget : "this.widget is not this.gviewer.getSeqMap().getLabelMap().";
 			com.affymetrix.igb.tiers.AffyLabelledTierMap lm = (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-			boolean full_repack = true, stretch_vertically = true, manual = false;
-			lm.repackTheTiers(full_repack, stretch_vertically, manual);
+			boolean full_repack = true, stretch_vertically = true;
+			lm.repackTheTiers(full_repack, stretch_vertically);
 			//lm.repackTiersToLabels();
 			// The above repack (either one I think) changes (enlarges) the tier map's bounds. This probably affects the tiers' spacing. - elb 2012-02-21
 			

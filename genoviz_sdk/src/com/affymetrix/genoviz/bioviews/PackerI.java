@@ -39,6 +39,6 @@ public interface PackerI {
 	 * @param parent_glyph the glyph to pack
 	 * @param view
 	 */
-	public Rectangle pack(GlyphI parent_glyph, ViewI view, boolean manual);
+	public Rectangle pack(GlyphI parent_glyph, ViewI view);
 
 }

@@ -586,7 +586,7 @@ public final class SimpleGraphTab
 				GlyphI parentgl = gl.getParent();
 				if (isTierGlyph(parentgl)) {
 					//	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());
-					parentgl.pack(igbService.getView(), false);
+					parentgl.pack(igbService.getView());
 				}
 			}
 			igbService.packMap(false, true);

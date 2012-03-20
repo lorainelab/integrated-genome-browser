@@ -23,7 +23,7 @@ public class ShowMixedStrandAction extends GenericAction {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMixed(!AffyTieredMap.isShowMixed());
 		AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
-		map.repackTheTiers(false, true, false);
+		map.repackTheTiers(false, true);
 	}
 
 	@Override

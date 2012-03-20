@@ -80,7 +80,7 @@ public class AssemblyPacker implements PackerI {
 	// Also assumes that alignments have already been sorted in
 	//     whatever order you prefer, with first --> last in assembly
 	//     child vector mapping to top --> bottom in display
-	public Rectangle pack(GlyphI assembly, ViewI view, boolean manual) {
+	public Rectangle pack(GlyphI assembly, ViewI view) {
 		if (assembly == null || view == null) { return null; }
 		List alignments = assembly.getChildren();
 		Rectangle2D.Double prevbox = assembly.getCoordBox();

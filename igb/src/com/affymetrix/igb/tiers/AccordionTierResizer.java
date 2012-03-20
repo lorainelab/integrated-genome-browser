@@ -69,11 +69,11 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		double answer = theRegion.get(0).getCoordBox().getY();
 		// Go through once just to find the shortest tier.
 		double minHeight = Double.POSITIVE_INFINITY;
-		TierLabelGlyph shortestGlyph;
+//		TierLabelGlyph shortestGlyph;
 		for (int i = 0; i < theDragPoint; i++) {
 			TierLabelGlyph g = theRegion.get(i);
 			if (g.getCoordBox().height < minHeight) {
-				shortestGlyph = g;
+//				shortestGlyph = g;
 				minHeight = g.getCoordBox().getHeight();
 			}
 			minHeight = Math.min(minHeight, g.getCoordBox().height);
@@ -353,8 +353,8 @@ public class AccordionTierResizer extends MouseInputAdapter {
 			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
 			com.affymetrix.igb.tiers.AffyLabelledTierMap lm
 					= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-			boolean full_repack = true, stretch_vertically = true, manual = false;
-			lm.repackTheTiers(full_repack, stretch_vertically, manual);
+			boolean full_repack = true, stretch_vertically = true;
+			lm.repackTheTiers(full_repack, stretch_vertically);
 			//lm.repackTiersToLabels();
 			// The above repack (either one I think)
 			// changes (enlarges) the tier map's bounds.

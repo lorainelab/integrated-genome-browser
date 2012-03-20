@@ -159,10 +159,10 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
-	public void pack(ViewI view, boolean manual) {
+	public void pack(ViewI view) {
 		initForSearching();
 		setMaxExpandDepth(style.getMaxDepth());
-		super.pack(view, manual);
+		super.pack(view);
 		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
 
@@ -412,7 +412,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 				// because child.getChildren() returns null instead of an empty list.
 				scaleChildHeights(theScale, child.getChildren(), theView);
 			}
-			child.pack(theView, false);
+			child.pack(theView);
 		}
 	}
 

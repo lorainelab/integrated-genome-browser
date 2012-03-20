@@ -42,8 +42,8 @@ public class SequenceGlyph extends AbstractViewModeGlyph {
 
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
-	public void pack(ViewI view, boolean manual) {
-		super.pack(view, manual);
+	public void pack(ViewI view) {
+		super.pack(view);
 		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
 
@@ -134,7 +134,7 @@ public class SequenceGlyph extends AbstractViewModeGlyph {
 			if(child.getChildCount() > 0){
 				setChildHeight(percent, child.getChildren(), view);
 			}
-			child.pack(view, false);
+			child.pack(view);
 		}
 
 	}

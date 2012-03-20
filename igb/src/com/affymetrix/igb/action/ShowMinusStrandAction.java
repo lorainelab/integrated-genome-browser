@@ -23,7 +23,7 @@ public class ShowMinusStrandAction extends GenericAction {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMinus(!AffyTieredMap.isShowMinus());
 		AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
-		map.repackTheTiers(false, true, false);
+		map.repackTheTiers(false, true);
 	}
 
 	@Override

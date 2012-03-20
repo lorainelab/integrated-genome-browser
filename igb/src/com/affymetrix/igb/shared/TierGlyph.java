@@ -393,11 +393,11 @@ public class TierGlyph extends SolidGlyph {
 		viewModeGlyph.moveRelative(diffx, diffy);
 	}
 	@Override
-	public void pack(ViewI view, boolean manual) {
+	public void pack(ViewI view) {
 		if (viewModeGlyph.getParent() == null) {
 			viewModeGlyph.setParent(super.getParent());
 		}
-		viewModeGlyph.pack(view, manual);
+		viewModeGlyph.pack(view);
 	}
 	@Override
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {

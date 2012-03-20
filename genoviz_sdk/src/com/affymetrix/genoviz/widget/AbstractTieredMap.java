@@ -31,6 +31,7 @@ import java.awt.geom.Rectangle2D;
 public abstract class AbstractTieredMap
 	extends NeoMap
 	implements TierEventListener, TierStateChangeListener {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 *  GAH 10-6-99 trying to allow both types of notification for the moment.
@@ -186,7 +187,7 @@ public abstract class AbstractTieredMap
 		if (full_repack) {
 			for (int i=0; i<tiers.size(); i++) {
 				MapTierGlyph mtg = tiers.get(i);
-				mtg.pack(getView(), false);
+				mtg.pack(getView());
 			}
 		}
 

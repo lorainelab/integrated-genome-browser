@@ -99,8 +99,8 @@ public class UnloadedGlyphFactory extends MapViewGlyphFactoryA {
 
 		// overriding pack to ensure that tier is always the full width of the scene
 		@Override
-		public void pack(ViewI view, boolean manual) {
-			super.pack(view, manual);
+		public void pack(ViewI view) {
+			super.pack(view);
 			Rectangle2D.Double mbox = getScene().getCoordBox();
 			Rectangle2D.Double cbox = this.getCoordBox();
 			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);

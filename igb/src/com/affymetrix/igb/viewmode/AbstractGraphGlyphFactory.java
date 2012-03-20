@@ -156,7 +156,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tglyph.pack(map.getView(), false);
 */
 			if (graph_glyph.getScene() != null) {
-				graph_glyph.pack(map.getView(), false);
+				graph_glyph.pack(map.getView());
 			}
 		//}
 		return graph_glyph;

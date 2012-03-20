@@ -145,6 +145,7 @@ public class NeoAssembler extends NeoContainerWidget
 	implements NeoViewBoxListener,
 			   ItemSelectable
 {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Old code assumed that its arguments implemented Comparable, which was only true for AlignmentGlyph.
@@ -1771,7 +1772,7 @@ public class NeoAssembler extends NeoContainerWidget
 		if (pack_view == null || align_glyphs == null) {
 			return;
 		}
-		cglyph.pack(pack_view, false);
+		cglyph.pack(pack_view);
 
 		Rectangle2D.Double cbox = cglyph.getCoordBox();
 		alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));

@@ -362,7 +362,7 @@ public interface GlyphI extends NeoConstants  {
 	 *
 	 * @param view the view in which to pack the glyph.
 	 */
-	public void pack(ViewI view, boolean manual);
+	public void pack(ViewI view);
 
 
 	public void setForegroundColor(Color color);

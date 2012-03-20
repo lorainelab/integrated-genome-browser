@@ -243,10 +243,10 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 		}
 		@Override
-		public void pack(ViewI view, boolean manual) {
+		public void pack(ViewI view) {
 			lastUsedGlyph = getGlyph(view);
 			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
-				vmg.pack(view, manual);
+				vmg.pack(view);
 			}
 		}
 		@Override

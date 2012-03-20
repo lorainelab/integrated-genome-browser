@@ -21,7 +21,7 @@ public class ExpandPacker extends ExpandedTierPacker {
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {		
+	public Rectangle pack(GlyphI parent, ViewI view) {		
 		Rectangle2D.Double pbox = parent.getCoordBox();
 
 		// resetting height of parent to just spacers
@@ -80,18 +80,14 @@ public class ExpandPacker extends ExpandedTierPacker {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 
-		packParent(parent, view, manual);
+		packParent(parent);
 
 		return null;
 	}
 
-	void packParent(GlyphI parent, ViewI view, boolean manual) {
+	void packParent(GlyphI parent) {
 		long min = Long.MIN_VALUE;
 		long max = Long.MAX_VALUE;
-		if (manual) {
-			min = Math.round(view.getCoordBox().x);
-			max = Math.round(view.getCoordBox().x + view.getCoordBox().width);
-		}
 		List<GlyphI> sibs = parent.getChildren();
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		Rectangle2D.Double newbox = new Rectangle2D.Double();

@@ -118,7 +118,7 @@ public class FasterExpandPacker extends ExpandPacker {
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
+	public Rectangle pack(GlyphI parent, ViewI view) {
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		// resetting height of parent to just spacers
 		parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
@@ -225,7 +225,7 @@ public class FasterExpandPacker extends ExpandPacker {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 
-		packParent(parent, view, manual);
+		packParent(parent);
 
 		// Make sure the parent is not too short.
 		// This was needed for tiers in tiered maps.

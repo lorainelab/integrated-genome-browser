@@ -198,13 +198,13 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   }
 
   @Override
-  public void pack(ViewI view, boolean manual) {
+  public void pack(ViewI view) {
     if ( isMoveChildren()) {
       this.adjustChildren();
       // Maybe now need to adjust size of total glyph to take into account
       // any expansion of the children ?
     } else {
-      super.pack(view, manual);
+      super.pack(view);
     }
   }
 }

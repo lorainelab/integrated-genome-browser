@@ -141,8 +141,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   }
 
 	@Override
-  public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now, boolean manual) { 
-    super.packTiers(full_repack, stretch_map, extra_for_now, manual);
+  public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
+    super.packTiers(full_repack, stretch_map, extra_for_now);
     Rectangle2D.Double lbox = labelmap.getCoordBounds();
 	for (TierLabelGlyph label_glyph : label_glyphs) {
       TierGlyph tier_glyph = label_glyph.getReferenceTier();
@@ -239,9 +239,9 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   }
 
 	@Override
-  public void repackTheTiers(boolean full_repack, boolean stretch_vertically, boolean manual) {
-    super.repackTheTiers(full_repack, stretch_vertically, manual);  
-    labelmap.repackTheTiers(full_repack, stretch_vertically, manual);  
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    super.repackTheTiers(full_repack, stretch_vertically);  
+    labelmap.repackTheTiers(full_repack, stretch_vertically);  
   }
 
   /** Prints this component, including the label map. */

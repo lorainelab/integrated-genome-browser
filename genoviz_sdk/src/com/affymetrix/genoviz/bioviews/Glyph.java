@@ -623,9 +623,9 @@ public abstract class Glyph implements GlyphI  {
 		return packer;
 	}
 
-	public void pack(ViewI view, boolean manual) {
+	public void pack(ViewI view) {
 		if (packer == null) { return; }
-		packer.pack(this, view, manual);
+		packer.pack(this, view);
 	}
 
 	public void moveRelative(double diffx, double diffy) {

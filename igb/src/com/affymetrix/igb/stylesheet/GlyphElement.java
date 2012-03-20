@@ -289,7 +289,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
       if (! (container instanceof TierGlyph)) {
         // packing with labeled glyphs doesn't work right, so skip it.
         container.setPacker(expand_packer);
-        container.pack(gviewer.getSeqMap().getView(), false);
+        container.pack(gviewer.getSeqMap().getView());
       }
     }
   }

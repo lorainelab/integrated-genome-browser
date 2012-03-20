@@ -58,7 +58,7 @@ public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPac
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view, boolean manual) {
+	public Rectangle pack(GlyphI parent, ViewI view) {
 		List<GlyphI> sibs;
 		GlyphI child;
 

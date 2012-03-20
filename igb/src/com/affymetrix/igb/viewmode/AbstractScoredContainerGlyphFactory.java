@@ -222,7 +222,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 //			TierGlyph tglyph = smv.getGraphTrack(tier_style, tier_direction);
 //			tglyph.addChild(graph_glyph);
 			if(graph_glyph.getScene() != null){
-				graph_glyph.pack(map.getView(), false);
+				graph_glyph.pack(map.getView());
 			}
 //		}
 		return graph_glyph;

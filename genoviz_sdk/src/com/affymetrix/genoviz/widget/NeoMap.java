@@ -92,7 +92,7 @@ import javax.swing.JScrollBar;
  */
 public class NeoMap extends NeoWidget implements
 		NeoDragListener, NeoCanvasDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * For methods inherited from NeoAbstractWidget that require a sub-component id.
 	 * For NeoMapI the component <em>is</em> the only sub-component,
@@ -1320,7 +1320,7 @@ public class NeoMap extends NeoWidget implements
 	public void repack() {
 		scene.maxDamage();
 		RootGlyph rglyph = (RootGlyph) scene.getGlyph();
-		rglyph.pack(getView(), false);
+		rglyph.pack(getView());
 	}
 
 	public void setPacker(PackerI packer) {

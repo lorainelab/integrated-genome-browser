@@ -584,9 +584,10 @@ public final class GeneralLoadView {
 			public void run() {
 				TrackView.getInstance().addEmptyTierFor(feature, gviewer, true);
 				AbstractAction action = new AbstractAction() {
+					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-						gviewer.getSeqMap().packTiers(true, true, false, false);
+						gviewer.getSeqMap().packTiers(true, true, false);
 						gviewer.getSeqMap().stretchToFit(false, true);
 						gviewer.getSeqMap().updateWidget();
 						TierPrefsView.getSingleton().refreshList();

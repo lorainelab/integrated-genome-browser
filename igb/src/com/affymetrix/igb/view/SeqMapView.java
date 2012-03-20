@@ -1115,8 +1115,8 @@ public class SeqMapView extends JPanel
 
 					public void actionPerformed(ActionEvent e) {
 						TrackView.getInstance().addAnnotationGlyphs(SeqMapView.this, style);
-						//SeqMapView.this.getSeqMap().repackTheTiers(true, false, false);
-						SeqMapView.this.getSeqMap().packTiers(true, false, false, false);
+						//SeqMapView.this.getSeqMap().repackTheTiers(true, false);
+						SeqMapView.this.getSeqMap().packTiers(true, false, false);
 						SeqMapView.this.getSeqMap().updateWidget();
 					}
 				};

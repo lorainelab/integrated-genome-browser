@@ -261,7 +261,7 @@ public final class GraphSelectionManager
       parentgl.removeChild(gl);
       if (parentgl instanceof TierGlyph) {
         map.removeTier((TierGlyph)parentgl);
-        map.packTiers(false, true, false, false);
+        map.packTiers(false, true, false);
         map.stretchToFit(false, false);
       }
     }

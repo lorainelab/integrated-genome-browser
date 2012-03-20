@@ -1263,8 +1263,8 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
-	public void pack(ViewI view, boolean manual) {
-		super.pack(view, manual);
+	public void pack(ViewI view) {
+		super.pack(view);
 		if (getScene() == null) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Scene is null in " + this.getClass().getSimpleName() + ".pack()");
 		}

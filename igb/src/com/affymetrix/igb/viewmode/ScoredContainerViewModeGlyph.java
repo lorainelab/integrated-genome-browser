@@ -50,13 +50,13 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 	}
 
 	@Override
-	public void pack(ViewI view, boolean manual) {
+	public void pack(ViewI view) {
 		if(getChildCount() > 0){
 			for(int i=0; i<getChildCount(); i++){
-				getChild(i).pack(view, manual);
+				getChild(i).pack(view);
 			}
 		}
-		super.pack(view, manual);
+		super.pack(view);
 	}
 	
 	@Override

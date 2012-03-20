@@ -219,8 +219,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
 			}
 		}
-
-		BookmarkActionManager.getInstance().rebuildMenus();
 	}
 
 	public Action makeImportAction() {
@@ -235,7 +233,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				String createdTime = dateFormat.format(Calendar.getInstance().getTime());
 				bl.setComment("Created Time: " + createdTime);
 				importBookmarks(bl, null);
-				tree_model.reload();
+				//tree_model.reload();
 			}
 
 			@Override
@@ -291,7 +289,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				deleteAction();
-				setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
+		//		setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
 			}
 
 			@Override

@@ -44,10 +44,6 @@ public class TierGlyph extends SolidGlyph {
 	private SeqSymmetry modelSym;
 	private boolean ignoreUnloaded = false;
 
-	public TierGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
-		this(sym, style, direction, smv, UnloadedGlyphFactory.getInstance().getViewModeGlyph(sym, style, direction, smv));
-	}
-
 	public TierGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, ViewModeGlyph viewModeGlyph) {
  		this.modelSym = sym;
  		this.smv = smv;
@@ -66,15 +62,10 @@ public class TierGlyph extends SolidGlyph {
 		return viewModeGlyph;
 	}
 
-	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
-		if ("default".equals(viewMode) && modelSym != null) {
-			return MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
-		}
-		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
-	}
-
-	private Operator getOperator(String operator){
-		return TransformHolder.getInstance().getOperator(operator);
+	private void setViewModeGlyph(ViewModeGlyph viewModeGlyph) {
+		this.viewModeGlyph = viewModeGlyph;
+		viewModeGlyph.setTierGlyph(this);
+		viewModeGlyph.processParentCoordBox(super.getCoordBox());
 	}
 
 	private void setViewModeGlyph(ITrackStyleExtended style) {
@@ -94,11 +85,20 @@ public class TierGlyph extends SolidGlyph {
 					}
 				}
 			}
-			viewModeGlyph = factory.getViewModeGlyph(modelSym, style, getDirection(), smv);
-			viewModeGlyph.setTierGlyph(this);
-			viewModeGlyph.processParentCoordBox(super.getCoordBox());
+			setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
 		}
 		this.style = style;
+	}
+
+	private MapViewGlyphFactoryI getViewGlyphFactory(String viewMode) {
+		if ("default".equals(viewMode) && modelSym != null) {
+			return MapViewModeHolder.getInstance().getDefaultFactoryFor(((RootSeqSymmetry)modelSym).getCategory());
+		}
+		return MapViewModeHolder.getInstance().getViewFactory(viewMode);
+	}
+
+	private Operator getOperator(String operator){
+		return TransformHolder.getInstance().getOperator(operator);
 	}
 
 	private boolean isSymLoaded() {
@@ -130,7 +130,7 @@ public class TierGlyph extends SolidGlyph {
 		this.style = style;
 		if(!isSymLoaded()){
 			if (force) {
-				viewModeGlyph = UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv);
+				setViewModeGlyph(UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv));
 			}
 		}
 		else if (force || saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {

@@ -1,10 +1,15 @@
 
 package com.affymetrix.igb.viewmode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 /**
@@ -62,9 +67,9 @@ public class MapViewModeHolder {
 	}
 
 	public Object[] getAllViewModesFor(FileTypeCategory category, String uri) {
-		java.util.List<Object> mode = new java.util.ArrayList<Object>(view2Factory.size());
+		List<Object> mode = new ArrayList<Object>(view2Factory.size());
 
-		for (java.util.Map.Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
+		for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 			MapViewGlyphFactoryI emv = entry.getValue();
 			if (emv.isCategorySupported(category) && emv.isURISupported(uri)) {
 				mode.add(entry.getKey());
@@ -85,5 +90,22 @@ public class MapViewModeHolder {
 			return defaultView.get(category);
 
 		return defaultView.get(FileTypeCategory.Annotation);
+	}
+
+	public MapViewGlyphFactoryI getAutoloadFactory(String uri) {
+		FileTypeCategory category = null;
+		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(uri);
+		if (handler != null) {
+			category = handler.getFileTypeCategory();
+		}
+		if (category != null) {
+			for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
+				MapViewGlyphFactoryI emv = entry.getValue();
+				if (emv.isCategorySupported(category) && emv.canAutoLoad(uri)) {
+					return emv;
+				}
+			}
+		}
+		return UnloadedGlyphFactory.getInstance();
 	}
 }

@@ -144,12 +144,12 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return graf.normalizeGraphYCoords();
 	}
 	
-	public AbstractGraphGlyph(GraphState state) {
+	protected AbstractGraphGlyph(GraphState state) {
 		super();
 		this.state = state;
 	}
 	
-	public AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
+	protected AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		this.graf = graf;
 		if(gstate != null){
@@ -586,7 +586,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	}
 
 	@Override
-	public void setCoords(double newx, double newy, double newwidth, double newheight) {
+	public final void setCoords(double newx, double newy, double newwidth, double newheight) {
 		super.setCoords(newx, newy, newwidth, newheight);
 		//Note : for view modes bug
 		if(state.getTierStyle().isGraphTier()){
@@ -654,11 +654,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	 *  This number can be modified via calls to setVisibleMaxY, and the visual effect is
 	 *     to threshold the graph drawing so that any points above max_ycoord render as max_ycoord
 	 */
-	public float getVisibleMaxY() {
+	public final float getVisibleMaxY() {
 		return state.getVisibleMaxY();
 	}
 
-	public float getVisibleMinY() {
+	public final float getVisibleMinY() {
 		return state.getVisibleMinY();
 	}
 
@@ -1180,7 +1180,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return state.getMaxGapThreshold();
 	}
 
-	public float getMaxScoreThreshold() {
+	public final float getMaxScoreThreshold() {
 		return state.getMaxScoreThreshold();
 	}
 
@@ -1188,11 +1188,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return state.getMinRunThreshold();
 	}
 
-	public float getMinScoreThreshold() {
+	public final float getMinScoreThreshold() {
 		return state.getMinScoreThreshold();
 	}
 
-	public boolean getShowThreshold() {
+	public final boolean getShowThreshold() {
 		return state.getShowThreshold();
 	}
 
@@ -1234,7 +1234,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		state.setMinRunThreshold(thresh);
 	}
 
-	public void setMinScoreThreshold(float thresh) {
+	public final void setMinScoreThreshold(float thresh) {
 		state.setMinScoreThreshold(thresh);
 		resetThreshLabel();
 	}
@@ -1264,9 +1264,11 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view) {
+		System.out.println("AbstractGraphGlyph.pack: " + this.getPacker());
 		super.pack(view);
 		if (getScene() == null) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Scene is null in " + this.getClass().getSimpleName() + ".pack()");
+			String warning = "Scene is null in " + this.getClass().getSimpleName() + ".pack()";
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, warning);
 		}
 		else {
 			Rectangle2D.Double mbox = getScene().getCoordBox();

@@ -1987,19 +1987,7 @@ public class SeqMapView extends JPanel
 		return pixel_floater_glyph;
 	}
 
-	/**
-	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
-	 * @param style the style
-	 * @param tier_direction the direction
-	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
-	 */
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return getTrack(sym, style, tier_direction, UnloadedGlyphFactory.getInstance());
-	}
-
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
-	}
+	public void processTrack(TierGlyph tierGlyph) {	}
 
 	@Override
 	public boolean autoChangeView() {

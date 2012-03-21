@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
@@ -61,17 +60,16 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		}
 	}
 
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+	@Override
+	public void processTrack(TierGlyph tierGlyph) {
 		TrackStyle style_copy = new TrackStyle() {
 		};
-		style_copy.copyPropertiesFrom(style);
-		TierGlyph glyph = super.getTrack(sym, style_copy, tier_direction);
+		style_copy.copyPropertiesFrom(tierGlyph.getAnnotStyle());
 		// super.getTrack() may have created a brand new tier, in which case
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style
 		// associated with it.  Reset the style to be certain.
-		glyph.setStyle(style_copy);
-		return glyph;
+		tierGlyph.setStyle(style_copy);
 	}
 
 	@Override

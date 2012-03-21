@@ -1264,6 +1264,12 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view) {
+		// Could this be had from style.getReverseMaxDepth() instead?
+		// That's the way the annotation packer does it.
+		// Maybe these things should have a packer?
+		// Currently packer seems to be null.
+		int slotsNeeded = this.getSlotsNeeded(view);
+		this.setVisibleMaxY(slotsNeeded);
 		super.pack(view);
 		if (getScene() == null) {
 			String warning = "Scene is null in " + this.getClass().getSimpleName() + ".pack()";

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -14,11 +13,7 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.viewmode.DummyGlyphFactory;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
-import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
-import com.affymetrix.igb.viewmode.TransformHolder;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
+import com.affymetrix.igb.viewmode.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -114,7 +109,7 @@ public class TierGlyph extends SolidGlyph {
 			return false;
 		}
 		boolean loaded = false;
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = smv.getAnnotatedSeq();
 		if (seq != null) {
 			for (int i = 0; i < seq.getAnnotationCount(); i++) {
 				if (modelSym.equals(seq.getAnnotation(i))) {

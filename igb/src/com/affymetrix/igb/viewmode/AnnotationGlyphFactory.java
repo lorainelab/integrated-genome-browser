@@ -392,9 +392,6 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	/**
 	 * Determine and set the appropriate residues for this element.
-	 * @param sym
-	 * @param annotseq
-	 * @return GlyphI
 	 */
 	private GlyphI handleAlignedResidues(SeqSymmetry insym, BioSeq annotseq) {
 		SeqSymmetry sym = insym;

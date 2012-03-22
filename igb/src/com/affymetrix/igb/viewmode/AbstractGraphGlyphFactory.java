@@ -106,13 +106,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
 	/**
 	 * Almost exactly the same as ScoredContainerGlyphFactory.displayGraphSym.
-	 * @param newgraf
-	 * @param graf
-	 * @param cbox
-	 * @param map
-	 * @param smv
-	 * @param update_map
-	 * @return graph glyph
 	 */
 	private AbstractGraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();

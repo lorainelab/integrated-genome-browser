@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -28,12 +27,9 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -769,6 +765,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			};
 			show_tier.addActionListener(new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					style.setShow(true);
 					showMenu.remove(show_tier);
@@ -815,6 +812,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					style.setShow(true);
 					showMenu.remove(show_tier);
@@ -873,6 +871,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 		ActionListener al = new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (TierLabelGlyph tlg : tier_label_glyphs) {
 					TierGlyph tier = (TierGlyph) tlg.getInfo();
@@ -977,6 +976,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		return operationsMenu;
 	}
 
+	@Override
 	public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
 		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selections = labels.size();
@@ -1237,6 +1237,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					doDebugAction();
 				}

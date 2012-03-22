@@ -416,7 +416,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return curr_point.x;
 	}
 
-	private void drawLabel(ViewI view) {
+	protected void drawLabel(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		Graphics g = view.getGraphics();
 		g.setColor(this.getColor());

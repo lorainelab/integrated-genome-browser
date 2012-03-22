@@ -189,6 +189,9 @@ public final class IGB extends Application
 		// be captured there.
 		ConsoleView.init(APP_NAME);
 
+		// Set ErrorHandler
+		// ErrorHandler.setDisplayHandler(status_bar);
+		
 		printDetails(args);
 
 		String offline = CommonUtils.getInstance().getArg("-offline", args);

@@ -44,7 +44,8 @@ public class BigWigZoomSymLoader extends SymLoader {
 	private final List<BBZoomLevelHeader> levelHeaders;
 	private final List<GraphIntervalSym> graphSyms;
 	private List<BioSeq> chromosomeList;
-	private Map<String, String> realSeq2Seq;
+	private Map<String, String> igbSeq2bwSeq;
+	private Map<String, String> bwSeq2igbSeq;
 	private BigWigSymLoader defaultSymLoader;
 
 	public BigWigZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group){
@@ -72,6 +73,9 @@ public class BigWigZoomSymLoader extends SymLoader {
         }
 		levelHeaders = bbReader.getZoomLevels().getZoomLevelHeaders();
 		graphSyms = new ArrayList<GraphIntervalSym>(levelHeaders.size());
+		for (int i = 0; i < levelHeaders.size(); i++) {
+			graphSyms.add(null);
+		}
 		defaultSymLoader = new BigWigSymLoader(uri, featureName, group);
 	}
 
@@ -90,21 +94,23 @@ public class BigWigZoomSymLoader extends SymLoader {
 			seqMap.put(seq.getID(), seq);
 		}
 		chromosomeList = new ArrayList<BioSeq>();
-		realSeq2Seq = new HashMap<String, String>();
+		igbSeq2bwSeq = new HashMap<String, String>();
+		bwSeq2igbSeq = new HashMap<String, String>();
 		Map<String, Integer> chromosomeNameMap = new HashMap<String, Integer>();
 		findAllChromosomeNamesAndSizes(bbReader.getChromosomeIDTree().getRootNode(), chromosomeNameMap);
 
-		for (String seqID : chromosomeNameMap.keySet()) {
-			String cleanSeqID = seqID;
-			int pos = seqID.indexOf((char)0); // sometimes file has chromosome with hex 00 at the end
+		for (String bwSeqID : chromosomeNameMap.keySet()) {
+			String cleanSeqID = bwSeqID;
+			int pos = bwSeqID.indexOf((char)0); // sometimes file has chromosome with hex 00 at the end
 			if (pos > -1) {
-				cleanSeqID = seqID.substring(0, pos);
+				cleanSeqID = bwSeqID.substring(0, pos);
 			}
-			String realSeqId = SynonymLookup.getChromosomeLookup().getPreferredName(cleanSeqID);
-			realSeq2Seq.put(realSeqId, seqID);
-			BioSeq seq = seqMap.get(realSeqId);
+			String igbSeqID = SynonymLookup.getChromosomeLookup().getPreferredName(cleanSeqID);
+			igbSeq2bwSeq.put(igbSeqID, bwSeqID);
+			bwSeq2igbSeq.put(bwSeqID, igbSeqID);
+			BioSeq seq = seqMap.get(igbSeqID);
 			if (seq == null) {
-				chromosomeList.add(group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString()));
+				chromosomeList.add(group.addSeq(igbSeqID, chromosomeNameMap.get(bwSeqID), uri.toString()));
 			}
 			else {
 				chromosomeList.add(seq);
@@ -167,16 +173,17 @@ public class BigWigZoomSymLoader extends SymLoader {
 	}
 
 	private GraphIntervalSym getSym(int level, SeqSpan span) {
-       int nextStart = -1;
+        int nextStart = -1;
         ZoomDataRecord nextRecord = null;
         ArrayList<Integer> xList = new ArrayList<Integer>();
         ArrayList<Float> yList = new ArrayList<Float>();
         ArrayList<Integer> wList = new ArrayList<Integer>();
         int startBase = span.getMin();
         int endBase = span.getMax();
-        BioSeq seq = span.getBioSeq();
-        ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(level, seq.getID(),
-        		startBase, seq.getID(), endBase, true);
+        BioSeq igbSeq = span.getBioSeq();
+        String bwSeq = igbSeq2bwSeq.get(igbSeq.getID());
+        ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(level,
+        		bwSeq, startBase, bwSeq, endBase, true);
         while (zoomIterator.hasNext()) {
             nextRecord = zoomIterator.next();
             if (nextRecord == null) {
@@ -204,8 +211,8 @@ public class BigWigZoomSymLoader extends SymLoader {
 		for (int i = 0; i < yList.size(); i++) {
 			y[i] = yList.get(i);
 		}
-		String id = "???";//tier.getLabel();
- 		return new GraphIntervalSym(x, w, y, id, seq);
+		String id = uri.toString() + " level " + level;
+ 		return new GraphIntervalSym(x, w, y, id, igbSeq);
 	}
 
 	@Override
@@ -220,7 +227,7 @@ public class BigWigZoomSymLoader extends SymLoader {
         	return defaultSymLoader.getRegion(span);
         }
         final int level = bestZoom.getZoomLevel();
-        GraphIntervalSym gsym = graphSyms.get(level);
+        GraphIntervalSym gsym = (level >= graphSyms.size()) ? null : graphSyms.get(level);
         if (gsym == null || gsym.getMinXCoord() > startBase || gsym.getMaxXCoord() < endBase) {
         	gsym = getSym(level, span);
     		graphSyms.set(level, gsym);

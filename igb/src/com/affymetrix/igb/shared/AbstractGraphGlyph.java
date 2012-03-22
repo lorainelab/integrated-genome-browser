@@ -157,8 +157,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 		state = gstate;
 
-		setPacker(this.graphPacker); // Should this be done in the factory?
-
 		if (graf == null || graf.getPointCount() == 0) {
 			return;
 		}
@@ -1264,85 +1262,26 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	}
 
 	/**
-	 * Specialized for graph tracks.
-	 * TODO Move to its own file when it grows up.
+	 * Overriding pack to ensure that tier is always the full width of the scene.
 	 */
-	protected com.affymetrix.genoviz.bioviews.PackerI graphPacker
-			= new com.affymetrix.genoviz.bioviews.PackerI() {
-
-		/**
-		 * @throws UnsupportedOperationException Never called.
-		 */
-		@Override
-		public Rectangle pack(GlyphI parent_glyph, GlyphI child_glyph, ViewI view) {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-
-		/**
-		 * Make the glyph the right size.
-		 * Stretch the contents vertically to avoid blank space above the graph.
-		 * Make sure it is the full width of the view.
-		 */
-		@Override
-		public Rectangle pack(GlyphI theGlyph, ViewI theView) {
-			if (!(theGlyph instanceof AbstractGraphGlyph)) {
-				throw new IllegalArgumentException("Can only handle graph glyphs.");
-			}
-			AbstractGraphGlyph graph = (AbstractGraphGlyph) theGlyph;
-
-			// Could this be had from style.getForwardMaxDepth() instead?
-	    	// That's the way the annotation packer does it.
-			//int slotsNeeded = graph.getSlotsNeeded(theView);
-			//graph.setVisibleMaxY(slotsNeeded);
-
-			com.affymetrix.genoviz.bioviews.SceneI scene = graph.getScene();
-			if (null == scene) {
-				scene = theView.getScene();
-			}
-			if (null == scene) {
-				String warning = "Scene is null in " + this.getClass().getSimpleName() + ".pack()";
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, warning);
-				return null;
-			}
-			Rectangle2D.Double mbox = scene.getCoordBox();
-			Rectangle2D.Double cbox = graph.getCoordBox();
-			if (mbox.x != cbox.x || mbox.width != cbox.width) {
-				graph.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
-			}
-
-			// All other packers just return null.
-			// I could find no documentation
-			// on what the returned rectangle was to represent. - elb
-			return null; // Callers ignore this. No javadoc explains it.
-		}
-
-	};
-
-	/**
-	 * overriding pack to ensure that tier is always the full width of the scene
-	 * /
 	@Override
 	public void pack(ViewI view) {
-		// Could this be had from style.getReverseMaxDepth() instead?
-		// That's the way the annotation packer does it.
-		// Maybe these things should have a packer?
 		// Currently packer seems to be null.
-		// Hey! What about full width of the view instead?
-		// Could this have something to do with the blank, lighter gray, space?
 		// Should we put this stuff in a packer?
-		int slotsNeeded = this.getSlotsNeeded(view);
-		this.setVisibleMaxY(slotsNeeded);
 		super.pack(view);
-		if (getScene() == null) {
+		com.affymetrix.genoviz.bioviews.SceneI scene = this.getScene();
+		if (null == scene) {
+			scene = view.getScene();
+		}
+		if (null == scene) {
 			String warning = "Scene is null in " + this.getClass().getSimpleName() + ".pack()";
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, warning);
+			return;
 		}
-		else {
-			Rectangle2D.Double mbox = view.getCoordBox(); //getScene().getCoordBox();
-			Rectangle2D.Double cbox = this.getCoordBox();
-			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
-		}
-	}/* */
+		Rectangle2D.Double mbox = view.getCoordBox();
+		Rectangle2D.Double cbox = this.getCoordBox();
+		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
+	}
 
 	@Override
 	public void draw(ViewI view) {

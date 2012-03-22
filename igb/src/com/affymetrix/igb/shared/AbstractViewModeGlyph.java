@@ -165,4 +165,33 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "!!!!! {0} is not instance of RootSeqSymmetry !!!!!", info);
 		}
 	}
+	
+		
+	@Override
+	@SuppressWarnings("unchecked")
+	public void copyChildren(ViewModeGlyph temp) {
+		List<GlyphI> childrens = new ArrayList<GlyphI>();
+		childrens.addAll(temp.getChildren());
+
+		for (int i = 0; i < childrens.size(); i++) {
+			addChild(childrens.get(i));
+		}
+		
+		//TODO: Set list of all getInfo
+//		if(!(getInfo() instanceof List)){
+//			List<Object> info = new ArrayList<Object>();
+//			info.add(getInfo());
+//			setInfo(info);
+//		}else{
+//			((List)(getInfo())).add(temp.getInfo());
+//		}
+		
+		//FIXME: Middle glyphs.
+//		childrens.clear();
+//		childrens.addAll(((AbstractViewModeGlyph)temp).middle_glyphs);
+//		
+//		for (int i = 0; i < childrens.size(); i++) {
+//			addMiddleGlyph(childrens.get(i));
+//		}
+	}
 }

@@ -1,26 +1,17 @@
 package com.affymetrix.igb.viewmode;
 
-import java.awt.Graphics;
-import java.awt.Point;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.CollapsePacker;
-import com.affymetrix.igb.shared.GraphFasterExpandPacker;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
  * creates a glyph that contains other glyphs, a result of the Join action
@@ -37,14 +28,13 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	// glyph class
-	public class ComboGlyph extends AbstractGraphGlyph {
+	public class ComboGlyph extends MultiGraphGlyph {
 		private GraphFasterExpandPacker expand_packer = new GraphFasterExpandPacker();
 		private CollapsePacker collapse_packer = new CollapsePacker();
 		public ComboGlyph(SeqMapViewExtendedI smv, ITrackStyleExtended style) {
-			super(new GraphState(style));
-			setStyle(style);
+			super(smv, style);
 		}
-
+	
 		@Override
 		public void setStyle(ITrackStyleExtended style) {
 			super.setStyle(style);
@@ -54,22 +44,10 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 				setPacker(expand_packer);
 			}
 		}
-
+		
 		@Override
 		public void draw(ViewI view)  {}
-
-		@Override
-		public void drawMiddle(ViewI view) {
-			if (getChildren() != null)  {
-				ViewModeGlyph child;
-				int numChildren = getChildren().size();
-				for ( int i = 0; i < numChildren; i++ ) {
-					child = (ViewModeGlyph)getChildren().get( i );
-					child.drawMiddle(view);
-				}
-			}
-		}
-
+		
 		@Override
 		public void addChild(GlyphI glyph) {
 			double height = getCoordBox().getHeight() + glyph.getCoordBox().getHeight();
@@ -85,21 +63,8 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		@Override
-		public void setPreferredHeight(double height, ViewI view) {
-		}
-
-		@Override
-		public int getActualSlots() {
-			return 0;
-		}
-
-		@Override
 		public Map<String, Class<?>> getPreferences() {
 			return PREFERENCES;
-		}
-
-		@Override
-		public void setPreferences(Map<String, Object> preferences) {
 		}
 
 		@Override
@@ -108,18 +73,8 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		@Override
-		public void addSym(SeqSymmetry sym) {
-		}
-
-		@Override
 		public String getName() {
 			return "combo";
-		}
-
-		@Override
-		protected void doBigDraw(Graphics g, GraphSym graphSym,
-				Point curr_x_plus_width, Point max_x_plus_width, float ytemp,
-				int draw_end_index, int i) {
 		}
 
 		@Override

@@ -36,7 +36,6 @@ import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,10 +86,11 @@ public class TrackView {
 	 * @param tier_direction the direction of the track (FORWARD, REVERSE, or BOTH)
 	 * @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
 	 * The array may instead contain two copies of one mixed-direction tier;
-	 * in this case place glyphs for both forward and revers items into it.
+	 * in this case place glyphs for both forward and reverse items into it.
 	 */
 	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return getTrack(smv, sym, style, tier_direction, UnloadedGlyphFactory.getInstance());
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
+		return getTrack(smv, sym, style, tier_direction, factory);
 	}
 	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction

@@ -130,7 +130,8 @@ public class TierGlyph extends SolidGlyph {
 		this.style = style;
 		if(!isSymLoaded()){
 			if (force) {
-				setViewModeGlyph(UnloadedGlyphFactory.getInstance().getViewModeGlyph(modelSym, style, getDirection(), smv));
+				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
+				setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
 			}
 		}
 		else if (force || saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {

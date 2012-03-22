@@ -9,10 +9,13 @@ import javax.swing.GroupLayout.Alignment;
 
 import com.jidesoft.status.MemoryStatusBarItem;
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.util.ThreadHandler;
+import java.util.List;
 
-public final class StatusBar extends JPanel{
+public final class StatusBar extends JPanel implements DisplaysError {
 	private static final long serialVersionUID = 1l;
 	
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
@@ -95,5 +98,9 @@ public final class StatusBar extends JPanel{
 
 	public String getStatus() {
 		return status_ta.getText();
+	}
+
+	public void showError(JFrame frame, String title, String message, List<GenericAction> actions) {
+		setStatus(message);
 	}
 }

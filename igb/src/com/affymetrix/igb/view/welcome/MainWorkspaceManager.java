@@ -57,8 +57,8 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	}
 	
 	public void setSeqMapViewObj( SeqMapView obj){
-		add(obj, SEQ_MAP_PANE);
 		add(new WelcomePage(getWelcomePane()), WELCOME_PANE);
+		add(obj, SEQ_MAP_PANE);
 	}
 	
 	/**

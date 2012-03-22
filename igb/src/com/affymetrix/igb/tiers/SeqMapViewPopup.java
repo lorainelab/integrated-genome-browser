@@ -410,8 +410,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					style.setForwardMaxDepth(a);
 					break;
 			}
+			com.affymetrix.igb.shared.ViewModeGlyph vmg = t.getViewModeGlyph();
+			if (vmg instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
+				// So far this has only been tested with annotation depth graphs.
+				com.affymetrix.igb.shared.AbstractGraphGlyph gg
+						= (com.affymetrix.igb.shared.AbstractGraphGlyph) vmg;
+				gg.setVisibleMaxY(a);
+			}
 		}
-		// Now repack again with the newly appointed maxima.
+		// Now repack with the newly appointed maxima.
 		repack(true);
 	}
 	private final Action repack_selected_tracks_action = new GenericAction() {
@@ -942,6 +949,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		AbstractAction action = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				handler.repackTheTiers(full_repack, true);
 			}

@@ -154,10 +154,9 @@ public class GraphSym extends RootSeqSymmetry {
 	}
 
 	/**
-	 *  Sets the x and y coordinates and indexes.
-	 *  @param x an array of int, or null.
-	 *  @param y must be an array of float of same length as x.
-	 *  @param w must be an array of float of same length as x and y, or null
+	 *  Sets the coordinates and indexes.
+	 *  @param y Must be of same length as <var>x</var>.
+	 *  @param w If not null, <var>w</var> must be of same length as <var>x</var> and <var>y</var>.
 	 */
 	protected final synchronized void setCoords(int[] x, float[] y, int[] w) {
 		if (x.length != y.length) {

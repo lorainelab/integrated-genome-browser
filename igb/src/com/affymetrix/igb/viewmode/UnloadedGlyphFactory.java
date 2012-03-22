@@ -36,7 +36,7 @@ public class UnloadedGlyphFactory extends MapViewGlyphFactoryA {
 	}
 
 	// glyph class
-	private class UnloadedGlyph extends AbstractViewModeGlyph {
+	public class UnloadedGlyph extends AbstractViewModeGlyph {
 
 		public UnloadedGlyph(BioSeq seq, SeqSymmetry sym, int slots, double height, ITrackStyleExtended style, Direction tier_direction) {
 			super();

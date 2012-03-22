@@ -159,7 +159,7 @@ public final class GraphState {
 
 	/**
 	 *  Returns either {@link #THRESHOLD_DIRECTION_GREATER} or
-	 *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
+	 *  {@link #THRESHOLD_DIRECTION_LESS_EQUAL} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
 	 */
 	public int getThresholdDirection() { return threshold_direction; }
 
@@ -182,7 +182,7 @@ public final class GraphState {
 
 	/**
 	 *  Set to either {@link #THRESHOLD_DIRECTION_GREATER} or
-	 *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
+	 *  {@link #THRESHOLD_DIRECTION_LESS_EQUAL} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
 	 */
 	public void setThresholdDirection(int d) {
 		if (d != THRESHOLD_DIRECTION_GREATER && d != THRESHOLD_DIRECTION_LESS_EQUAL

@@ -99,7 +99,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 	 * Adjust the tiers on either side of the mouse pointer.
 	 * This adjustment is going on in coord space rather than pixel space.
 	 * That doesn't seem quite right. - elb
-	 * @param evt is the drag event.
+	 * @param nevt is the drag event.
 	 */
 	private void neoMouseDragged(NeoMouseEvent nevt) {
 		double diff = nevt.getCoordY() - start;

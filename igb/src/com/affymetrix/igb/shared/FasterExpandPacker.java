@@ -256,12 +256,14 @@ public class FasterExpandPacker extends ExpandPacker {
 	
 	/**
 	 * Get an optimal number of slots.
-	 * i.e. what is the minimum number of slots needed to show all the glyphs in view?
+	 * i.e. what is the minimum number of slots needed
+	 * to show all the glyphs in view?
 	 * This is copied and pasted from pack(),
 	 * but without actually moving anything
 	 * and ignoring glyphs outside the view.
 	 * @param parent the glyph (tier) containing glyphs displayed
-	 * @theView in which the glyphs appear. Glyphs outside this view are not considered.
+	 * @param theView in which the glyphs appear.
+	 *        Glyphs outside this view are not considered.
 	 * @return number of slots that would be used if packed.
 	 */
 	public int getSlotsNeeded(GlyphI parent, ViewI theView) {

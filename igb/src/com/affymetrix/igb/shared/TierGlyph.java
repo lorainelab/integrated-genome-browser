@@ -147,10 +147,9 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	/**
-	 * make the glyph a floating glyph, note - the viewModeGlyph
-	 * will leave its tierGlyph pointing to this glyph
+	 * Make the glyph a floating glyph.
+	 * Note - the viewModeGlyph will leave its tierGlyph pointing to this glyph.
 	 * @param floater the PixelFloaterGlyph
-	 * @param cbox the coordbox of the AffyTieredMap
 	 */
 	public void enfloat(Glyph floater, NeoMap map) {
 		Rectangle2D.Double cbox = map.getCoordBounds();
@@ -178,10 +177,9 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	/**
-	 * make the viewModeGlyph a joined glyph, note - the viewModeGlyph
-	 * will leave its tierGlyph pointing to this glyph
+	 * Make the viewModeGlyph a joined glyph.
+	 * Note - the viewModeGlyph will leave its tierGlyph pointing to this glyph.
 	 * @param comboGlyph the ComboGlyph
-	 * @param cbox the coordbox of the AffyTieredMap
 	 */
 	public void enjoin(ViewModeGlyph comboGlyph, NeoMap map) {
 		viewModeGlyph.setVisibility(true);
@@ -194,7 +192,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	/**
-	 * make the glyph a regular (nonjoined) glyph
+	 * Make the glyph a regular (nonjoined) glyph.
 	 * @param comboGlyph the comboGlyph
 	 * @param joinedGlyph the glyph
 	 */

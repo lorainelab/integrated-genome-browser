@@ -6,16 +6,15 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.*;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
@@ -176,11 +175,58 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			return createViewModeGlyph(null, new GraphState(style));
 		}
 		else if (sym instanceof GraphSym) {
-			return (ViewModeGlyph)displayGraph((GraphSym) sym, smv, check_same_seq);
+			ViewModeGlyph result = displayGraph((GraphSym) sym, smv, check_same_seq);
+			if(smv.getViewSeq() != smv.getAnnotatedSeq()){
+				GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
+				genomeGraphGlyph.setCoordBox(result.getCoordBox());
+				smv.setDataModelFromOriginalSym(genomeGraphGlyph, sym);
+				if (genomeGraphGlyph.getScene() != null) {
+					genomeGraphGlyph.pack(smv.getSeqMap().getView());
+				}
+				genomeGraphGlyph.addChild(result);
+				return genomeGraphGlyph;
+			}
+			return result;
 		} else {
 			System.err.println("GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
 		return null;
+	}
+	
+	public static class GenomeGraphGlyph extends MultiGraphGlyph{
+
+		public GenomeGraphGlyph(SeqMapViewExtendedI smv, ITrackStyleExtended style) {
+			super(smv, style);
+			setStyle(style);
+		}
+		
+		@Override
+		public void addChild(GlyphI glyph) {
+			((AbstractGraphGlyph)glyph).getGraphState().setShowLabel(false);
+			super.addChild(glyph);
+		}
+
+		@Override
+		public void removeChild(GlyphI glyph) {
+			((AbstractGraphGlyph)glyph).getGraphState().setShowLabel(true);
+			super.removeChild(glyph);
+		}
+		
+		@Override
+		public void draw(ViewI view) {
+			drawLabel(view);
+		}
+		
+		@Override
+		public String getName() {
+			return "genome";
+		}
+
+		@Override
+		public GraphType getGraphStyle() {
+			return null;
+		}
+		
 	}
 }

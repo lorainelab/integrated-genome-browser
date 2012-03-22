@@ -1,16 +1,12 @@
 /**
- *   Copyright (c) 2001-2005 Affymetrix, Inc.
- *    
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.  
+ * Copyright (c) 2001-2005 Affymetrix, Inc.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genometryImpl.util;
 
 import java.awt.Component;
@@ -26,17 +22,35 @@ import com.affymetrix.genometryImpl.event.OKAction;
 import com.affymetrix.genometryImpl.event.ReportBugAction;
 
 /**
- * Simple routines for bringing-up an error message panel and also logging
- * the error to standard output.
- * @author  ed
+ * Simple routines for bringing-up an error message panel and also logging the
+ * error to standard output.
+ *
+ * @author ed
  */
-public abstract class ErrorHandler {
-
-	/** Error panel with default title. */
+public abstract class ErrorHandler implements DisplaysError{
+	private static DisplaysError displayHandler;
+	static{
+		setDisplayHandler(null);
+	}
+	
+	
+	public static void setDisplayHandler(DisplaysError dH){
+		if(dH == null){
+			displayHandler = new ErrorHandler(){};
+		}else{
+			displayHandler = dH;
+		}
+	}
+	
+	/**
+	 * Error panel with default title.
+	 */
 	public static void errorPanel(String message) {
 		errorPanel("ERROR", message);
 	}
-	/**Error panel with default title and given Throwable.
+
+	/**
+	 * Error panel with default title and given Throwable.
 	 *
 	 * @param message
 	 * @param e
@@ -68,22 +82,10 @@ public abstract class ErrorHandler {
 
 	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
 		List<Throwable> errs = new ArrayList<Throwable>();
-		if(e != null){
+		if (e != null) {
 			errs.add(e);
 		}
 		errorPanel((JFrame) null, title, message, errs, null);
-	}
-
-	private static void processDialog(JOptionPane pane, JDialog dialog, List<GenericAction> actions) {
-		dialog.setVisible(true);
-		Object selectedValue = pane.getValue();
-		if (selectedValue != null && actions != null) {
-			for (GenericAction action : actions) {
-				if (action != null && selectedValue.equals(action.getText())) {
-					action.actionPerformed(null);
-				}
-			}
-		}
 	}
 
 	public static void errorPanelWithReportBug(String title, String message) {
@@ -93,16 +95,17 @@ public abstract class ErrorHandler {
 		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions);
 	}
 
-	/** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
-	 *  as its parent.
-	 *  This is designed to probably be safe from the EventDispatchThread or from 
-	 *  any other thread.
-	 *  @param frame the parent frame, null is ok.
-	 *  @param title
-	 *  @param message
-	 *  @param e an exception (or error), if any.  null is ok. If not null,
-	 *  the exception text will be appended to the message and
-	 *  a stack trace might be printed on standard error.
+	/**
+	 * Opens a JOptionPane.ERROR_MESSAGE panel with the given frame as its
+	 * parent. This is designed to probably be safe from the EventDispatchThread
+	 * or from any other thread.
+	 *
+	 * @param frame the parent frame, null is ok.
+	 * @param title
+	 * @param message
+	 * @param e an exception (or error), if any. null is ok. If not null, the
+	 * exception text will be appended to the message and a stack trace might be
+	 * printed on standard error.
 	 */
 	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions) {
 		// logging the error to standard out is redundant, but preserves
@@ -112,7 +115,7 @@ public abstract class ErrorHandler {
 		System.err.flush();
 		System.err.println();
 		System.err.println("-------------------------------------------------------");
-		
+
 		if (!errs.isEmpty()) {
 			for (Throwable e : errs) {
 				String error_message = e.toString();
@@ -142,29 +145,7 @@ public abstract class ErrorHandler {
 		System.err.println();
 		System.err.flush();
 		Toolkit.getDefaultToolkit().beep();
-		final Component scroll_pane = makeScrollPane(message);
-
-		String[] options = null;
-		if (actions != null) {
-			options= new String[actions.size()];
-			for (int i = 0; i < actions.size(); i++) {
-				options[i] = actions.get(i).getText();
-			}
-		}
-		final JOptionPane pane = new JOptionPane(scroll_pane, JOptionPane.ERROR_MESSAGE, 
-				JOptionPane.DEFAULT_OPTION, null, options);
-		final JDialog dialog = pane.createDialog(frame, title);
-		dialog.setResizable(true);
-
-		if (SwingUtilities.isEventDispatchThread()) {
-			processDialog(pane, dialog, actions);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					processDialog(pane, dialog, actions);
-				}
-			});
-		}
+		displayHandler.showError(frame, title, message, actions);
 	}
 
 	private static JScrollPane makeScrollPane(String message) {
@@ -177,4 +158,44 @@ public abstract class ErrorHandler {
 		scroller.setPreferredSize(new java.awt.Dimension(400, 100));
 		return scroller;
 	}
+
+	private static void processDialog(JOptionPane pane, JDialog dialog, List<GenericAction> actions) {
+		dialog.setVisible(true);
+		Object selectedValue = pane.getValue();
+		if (selectedValue != null && actions != null) {
+			for (GenericAction action : actions) {
+				if (action != null && selectedValue.equals(action.getText())) {
+					action.actionPerformed(null);
+				}
+			}
+		}
+	}
+		
+	public void showError(final JFrame frame, final String title, final String message, final List<GenericAction> actions) {
+		final Component scroll_pane = makeScrollPane(message);
+
+		String[] options = null;
+		if (actions != null) {
+			options = new String[actions.size()];
+			for (int i = 0; i < actions.size(); i++) {
+				options[i] = actions.get(i).getText();
+			}
+		}
+		final JOptionPane pane = new JOptionPane(scroll_pane, JOptionPane.ERROR_MESSAGE,
+				JOptionPane.DEFAULT_OPTION, null, options);
+		final JDialog dialog = pane.createDialog(frame, title);
+		dialog.setResizable(true);
+
+		if (SwingUtilities.isEventDispatchThread()) {
+			processDialog(pane, dialog, actions);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				public void run() {
+					processDialog(pane, dialog, actions);
+				}
+			});
+		}
+	}
+
 }

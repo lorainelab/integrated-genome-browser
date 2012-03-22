@@ -46,7 +46,8 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		setForegroundColor(style.getForeground());
 		setFillColor(style.getBackground());
 
-		setVisibility(!style.getShow());
+		//If any visibilty bug occurs, fix here. -HV 22/03/2012
+		setVisibility(style.getShow());
 		setLabel(style.getTrackName());
 	}
 

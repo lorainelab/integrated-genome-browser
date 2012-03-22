@@ -442,7 +442,6 @@ public final class TierLabelManager implements PropertyHolder {
 
 	/**
 	 * Collapse or expand tier.
-	 * @param tlg
 	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
 	 */
 	 static void setTierCollapsed(TierGlyph tg, boolean collapsed) {

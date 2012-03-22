@@ -21,7 +21,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -156,7 +159,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   /**
    * Adds a tier to the map and generates a label for it.
    */
-	@Override
+ @Override
   public void addTier(TierGlyph mtg, int tier_index) {
     super.addTier(mtg, tier_index);
     createTierLabel(mtg, tier_index);

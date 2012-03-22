@@ -112,7 +112,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	 * The top and bottom tiers will be resized.
 	 * Interior tiers are cannot be resized and will just go along for the ride.
 	 *
-	 * @param theFirst points to tier just below the border being dragged.
+	 * @param theTierMouseIsAbove points to tier just below the border being dragged.
 	 * @param theList of tiers that might be resized.
 	 * @return a maximal (possibly empty) section of theList
 	 *         such that some tiers in this list can be resized
@@ -160,7 +160,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		ourCeiling = 0;
 		ourFloor = floor(theRegion, this.atBorder);
 		ourFloor = Double.POSITIVE_INFINITY;
-	}
+		}
 
 	/**
 	 * Resume resizing drag where we left off.

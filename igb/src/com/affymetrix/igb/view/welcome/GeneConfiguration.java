@@ -7,9 +7,7 @@ package com.affymetrix.igb.view.welcome;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -47,18 +45,18 @@ import javax.imageio.ImageIO;
  */
 public class GeneConfiguration extends Configuration {
 
-	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final Color COLOR_1 = Color.WHITE;
+//	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+//	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+//	private static final Color COLOR_1 = Color.WHITE;
 	private static final Color COLOR_2 = new Color(0xfffb86);//Color.YELLOW;
-	private static final float FONT_SIZE_1 = 36.0f;
-	private static final float FONT_SIZE_2 = 22.0f;
-	private static final float FONT_SIZE_3 = 12.0f;
+//	private static final float FONT_SIZE_1 = 36.0f;
+//	private static final float FONT_SIZE_2 = 22.0f;
+//	private static final float FONT_SIZE_3 = 12.0f;
 	public final static int THUMB_WIDTH = 250;
 	public final static int THUMB_HEIGHT = 250;
 
 	public GeneConfiguration() {
-		String os = System.getProperty("os.name");
+//		String os = System.getProperty("os.name");
 		this.zoomFactor = 0.1;
 		this.zoomScale = 1.0;
 		this.shapeRotation = 0.0;

@@ -61,7 +61,6 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -1391,7 +1390,7 @@ public final class GeneralLoadUtils {
 		final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+		CThreadWorker<Object,Void> worker = new CThreadWorker<Object,Void>("Loading feature " + feature.featureName) {
 
 			@Override
 			protected Object runInBackground() {

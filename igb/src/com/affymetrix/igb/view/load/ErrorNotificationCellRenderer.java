@@ -12,7 +12,7 @@ import javax.swing.JButton;
  * @author dcnorris
  */
 public class ErrorNotificationCellRenderer extends JTextButtonCellRenderer {
-
+	private static final long serialVersionUID = 1L;
 	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/stop.png");
 	private VirtualFeature vFeature;
 

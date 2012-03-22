@@ -6,17 +6,14 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.prefs.TierPrefsView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -223,11 +220,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 
 		tree.expandPath(path);
-	}
-
-	private static boolean canHandleFeature(GenericFeature feature) {
-		ServerTypeI serverType = feature.gVersion.gServer.serverType;
-		return serverType.canHandleFeature() || FileTypeHolder.getInstance().getFileTypeHandler(feature.getExtension()) != null;
 	}
 
 	/**

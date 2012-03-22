@@ -19,6 +19,7 @@ import javax.swing.JPanel;
  * @author jfvillal
  */
 public class WelcomeTitle extends JPanel {
+	private static final long serialVersionUID = 1L;
 
 	public WelcomeTitle() {
 		this.setBackground(Color.black);

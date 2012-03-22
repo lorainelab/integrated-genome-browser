@@ -3,7 +3,6 @@ package com.affymetrix.igb.viewmode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;

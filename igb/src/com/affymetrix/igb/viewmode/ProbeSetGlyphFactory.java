@@ -3,7 +3,6 @@ package com.affymetrix.igb.viewmode;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

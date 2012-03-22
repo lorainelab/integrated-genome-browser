@@ -86,12 +86,18 @@ public class MapViewModeHolder {
 	}
 
 	public MapViewGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
-		if(defaultView.get(category) != null)
+		if(defaultView.get(category) != null) {
 			return defaultView.get(category);
-
+		}
 		return defaultView.get(FileTypeCategory.Annotation);
 	}
 
+	/**
+	 * get the MapViewGlyphFactoryI to be used for a track when it is first
+	 * selected (before Load Data), normally the UnloadedFactory (gray background).
+	 * @param uri - the uri of the data source of the track
+	 * @return the factory to use
+	 */
 	public MapViewGlyphFactoryI getAutoloadFactory(String uri) {
 		FileTypeCategory category = null;
 		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(uri);

@@ -19,6 +19,7 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration<FileTypeHandler> bigwigHandlerRegistration;
 	private ServiceRegistration<MapViewGlyphFactoryI> annotationBigwigSemanticZoomGlyphFactoryRegistration;
 	private ServiceRegistration<MapViewGlyphFactoryI> alignmentBigwigSemanticZoomGlyphFactoryRegistration;
+	private ServiceRegistration<MapViewGlyphFactoryI> graphBigwigSemanticZoomGlyphFactoryRegistration;
 	private MapViewGlyphFactoryI annotationGlyphFactory = null;
 	private MapViewGlyphFactoryI alignmentGlyphFactory = null;
 	private MapViewGlyphFactoryI graphGlyphFactory = null;
@@ -62,6 +63,9 @@ public class Activator implements BundleActivator {
 							BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory, graphGlyphFactory);
 							alignmentBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							alignmentBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
+							BigWigSemanticZoomGlyphFactory graphBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(graphGlyphFactory, graphGlyphFactory);
+							graphBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
+							graphBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, graphBigWigSemanticZoomGlyphFactory, null);
 						}
 					}
     	    	}
@@ -102,6 +106,9 @@ public class Activator implements BundleActivator {
 		}
 		if (alignmentBigwigSemanticZoomGlyphFactoryRegistration != null) {
 			alignmentBigwigSemanticZoomGlyphFactoryRegistration.unregister();
+		}
+		if (graphBigwigSemanticZoomGlyphFactoryRegistration != null) {
+			graphBigwigSemanticZoomGlyphFactoryRegistration.unregister();
 		}
 	}
 }

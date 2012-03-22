@@ -493,4 +493,4 @@ public class TrackView {
 		}
 		return;
 	}
-			}
+}

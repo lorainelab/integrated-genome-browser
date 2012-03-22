@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 
 public class BigWigHandler implements FileTypeHandler {
-	private static final String[] EXTENSIONS = new String[]{"bw", "bigWig", "bigwig"};
+	static final String[] EXTENSIONS = new String[]{"bw", "bigWig", "bigwig"};
 
 	public BigWigHandler() {
 		super();

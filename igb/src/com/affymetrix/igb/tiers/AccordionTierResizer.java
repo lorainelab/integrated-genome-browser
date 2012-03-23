@@ -21,6 +21,11 @@ import javax.swing.event.MouseInputAdapter;
  * What happens when one of them reaches a minimum?
  *  Keep resizing others?
  *   If so, how do we expand again? Backtrack?
+ * TODO There is a (not very harmful) bug.
+ *      When there is a fixed height tier at the top or bottom of the selection
+ *      then the mouse indicates resizability at the penultimate border.
+ *      However such resizing is not possible,
+ *      so the mouse cursor should not indicate such.
  * @author blossome
  */
 public class AccordionTierResizer extends MouseInputAdapter {
@@ -316,42 +321,11 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		}
 		
 		if (needRepacking) {
-			
-			// This is pretty good now. Tiers jump just a bit after resizing.
-			// Mostly in one direction. Maybe can get to the bottom of this.
-			// The border width of 2 pixels looks suspicious both here
-			// and when moving the lower split pane.
-			// - elb
 			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
 			com.affymetrix.igb.tiers.AffyLabelledTierMap lm
 					= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
 			boolean full_repack = true, stretch_vertically = true;
 			lm.repackTheTiers(full_repack, stretch_vertically);
-			//lm.repackTiersToLabels();
-			// The above repack (either one I think)
-			// changes (enlarges) the tier map's bounds.
-			// This probably affects the tiers' spacing. - elb 2012-02-21
-
-			// Vanilla repack seems to have worse symptoms.
-			//m.repack();
-			//m.packTiers(true, false, false, true);
-			
-			// This was also commented out.
-			// From the name "kludgeRepackingTheTiers" 
-			// it looks like someone tried a specialized repack.
-			// Don't know who or how far they got.
-			//com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
-			//if (m instanceof com.affymetrix.igb.tiers.AffyLabelledTierMap) {
-			//	com.affymetrix.igb.tiers.AffyLabelledTierMap lm
-			//			= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-			//	lm.kludgeRepackingTheTiers(needRepacking, needRepacking, needRepacking);
-			//}
-			// The above may not have worked,
-			// but it would seem we need something to repack the tiers
-			// based on the label glyphs' height and position.
-			// Would have thought
-			// that's what the last paramater in repackTheTiers was for.
-
 		}
 
 	}

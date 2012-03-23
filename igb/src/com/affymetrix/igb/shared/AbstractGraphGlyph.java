@@ -425,7 +425,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
 	}
 
-	private void drawHandle(ViewI view) {
+	protected void drawHandle(ViewI view) {
 		if(!draw_handle)
 			return;
 		
@@ -1261,28 +1261,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		this.oldDraw(view);
 	}
 
-	/**
-	 * Overriding pack to ensure that tier is always the full width of the scene.
-	 */
-	@Override
-	public void pack(ViewI view) {
-		// Currently packer seems to be null.
-		// Should we put this stuff in a packer?
-		super.pack(view);
-		com.affymetrix.genoviz.bioviews.SceneI scene = this.getScene();
-		if (null == scene) {
-			scene = view.getScene();
-		}
-		if (null == scene) {
-			String warning = "Scene is null in " + this.getClass().getSimpleName() + ".pack()";
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, warning);
-			return;
-		}
-		Rectangle2D.Double mbox = view.getCoordBox();
-		Rectangle2D.Double cbox = this.getCoordBox();
-		this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
-	}
-
 	@Override
 	public void draw(ViewI view) {
 		// GAH 9-13-2002
@@ -1322,7 +1300,9 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		child.setCoords(c.x, c.y, c.width, height);
 		//Note : Fix to handle height in a view mode.
 		// But this also causes minor change in height while switching back to default view mode.
-		setCoords(c.x, c.y, c.width, height + 2 * getSpacing());
+		setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
+		this.style.setHeight(height + 2 * getSpacing());
+		child.pack(view);
 	}
 
 	@Override

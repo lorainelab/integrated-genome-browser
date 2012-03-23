@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -33,6 +34,7 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 		private CollapsePacker collapse_packer = new CollapsePacker();
 		public ComboGlyph(SeqMapViewExtendedI smv, ITrackStyleExtended style) {
 			super(smv, style);
+			setStyle(style);
 		}
 	
 		@Override
@@ -107,6 +109,7 @@ public class ComboGlyphFactory extends MapViewGlyphFactoryA {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction tier_direction, SeqMapViewExtendedI smv) {
 		ComboGlyph comboGlyph = new ComboGlyph(smv, style);
+		comboGlyph.setCoords(0, style.getY(), smv.getAnnotatedSeq().getLength(), 0);
 		return comboGlyph;
 	}
 

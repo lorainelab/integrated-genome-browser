@@ -13,19 +13,27 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.util.ThreadHandler;
+import java.awt.Color;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class StatusBar extends JPanel implements DisplaysError {
 	private static final long serialVersionUID = 1l;
 	
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
-	
+	private static final ImageIcon stopIcon = CommonUtils.getInstance().getIcon("images/Stop16.gif");
+	private static final ImageIcon warningIcon = new ImageIcon("common/resources/images/warning.png");
+	private static final ImageIcon infoIcon = new ImageIcon("common/resources/images/info.gif");
 	private final JLabel status_ta;
 	private final MemoryStatusBarItem memory_item;
-	private final JRPButton mainCancel;
+	private final JRPButton mainCancel,stopAction;
 	private final JButton updateAvailable;
 	public final JProgressBar progressBar;
+	public static Timer timer;
 		
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
@@ -40,9 +48,13 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());
 		mainCancel = new JRPButton("StatusBar_mainCancel", closeIcon);
+		stopAction = new JRPButton("StatusBar_stopAction", stopIcon);
+		stopAction.setVisible(false);
+		stopAction.setEnabled(false);
+		stopAction.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
-
+		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 	
@@ -67,6 +79,7 @@ public final class StatusBar extends JPanel implements DisplaysError {
 				
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
+				.addComponent(stopAction)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
@@ -75,6 +88,7 @@ public final class StatusBar extends JPanel implements DisplaysError {
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
+				.addComponent(stopAction)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
@@ -100,7 +114,31 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		return status_ta.getText();
 	}
 
-	public void showError(JFrame frame, String title, String message, List<GenericAction> actions) {
-		setStatus(message);
+	public void showError(JFrame frame, String title, String message, List<GenericAction> actions, Level level) {
+		final String tempMessage = message;
+		timer= new Timer();
+		if(level.equals(Level.SEVERE)){
+			status_ta.setForeground(Color.red);
+			stopAction.setIcon(stopIcon);
+		}
+		else if(level.equals(Level.WARNING))	{
+			status_ta.setForeground(Color.orange);
+			stopAction.setIcon(warningIcon);
+		}
+		else if(level.equals(Level.INFO)){
+			status_ta.setForeground(new Color(30,255,30));
+			stopAction.setIcon(infoIcon);
+		}
+		stopAction.setVisible(true);
+		stopAction.setEnabled(true);
+		setStatus(tempMessage);
+		timer.schedule(new TimerTask() {
+            public void run() {
+				stopAction.setVisible(false);
+				status_ta.setForeground(Color.black);
+				setStatus(null);
+				timer.cancel();
+            }
+        }, 5000, 5000);
 	}
 }

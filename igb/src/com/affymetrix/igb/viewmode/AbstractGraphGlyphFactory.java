@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -117,9 +118,11 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tier_style = gstate.getComboStyle();
 		}
 
-		NeoMap map = smv.getSeqMap();
-		Rectangle2D.Double cbox = map.getCoordBounds();
-		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
+		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
+		if (pspan == null || pspan.getLength() == 0) {
+			return null;
+		}
+		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), tier_style.getHeight());
 		smv.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
@@ -148,7 +151,7 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			tglyph.pack(map.getView(), false);
 */
 			if (graph_glyph.getScene() != null) {
-				graph_glyph.pack(map.getView());
+				graph_glyph.pack(smv.getSeqMap().getView());
 			}
 		//}
 		return graph_glyph;
@@ -171,11 +174,12 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			ViewModeGlyph result = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if(smv.getViewSeq() != smv.getAnnotatedSeq()){
 				GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
-				genomeGraphGlyph.setCoordBox(result.getCoordBox());
+				genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
 				smv.setDataModelFromOriginalSym(genomeGraphGlyph, sym);
 				if (genomeGraphGlyph.getScene() != null) {
 					genomeGraphGlyph.pack(smv.getSeqMap().getView());
 				}
+				((AbstractGraphGlyph)result).drawHandle(false);
 				genomeGraphGlyph.addChild(result);
 				return genomeGraphGlyph;
 			}
@@ -193,21 +197,10 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			super(smv, style);
 			setStyle(style);
 		}
-		
-		@Override
-		public void addChild(GlyphI glyph) {
-			((AbstractGraphGlyph)glyph).getGraphState().setShowLabel(false);
-			super.addChild(glyph);
-		}
-
-		@Override
-		public void removeChild(GlyphI glyph) {
-			((AbstractGraphGlyph)glyph).getGraphState().setShowLabel(true);
-			super.removeChild(glyph);
-		}
-		
+				
 		@Override
 		public void draw(ViewI view) {
+			drawHandle(view);
 			drawLabel(view);
 		}
 		

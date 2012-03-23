@@ -60,63 +60,17 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	}
 
 	/**
-	 * 
-	 * @param theRegion Must be sorted from top to bottom.
-	 * @param theDragPoint where the mouse is.
-	 * @return the maximum delta to which the mouse moving has effect.
-	 */
-	private double ceiling(List<TierLabelGlyph> theRegion, int theDragPoint) {
-		double answer = theRegion.get(0).getCoordBox().getY();
-		// Go through once just to find the shortest tier.
-		double minHeight = Double.POSITIVE_INFINITY;
-//		TierLabelGlyph shortestGlyph;
-		for (int i = 0; i < theDragPoint; i++) {
-			TierLabelGlyph g = theRegion.get(i);
-			if (g.getCoordBox().height < minHeight) {
-//				shortestGlyph = g;
-				minHeight = g.getCoordBox().getHeight();
-			}
-			minHeight = Math.min(minHeight, g.getCoordBox().height);
-		}
-		// Go through again to figure ceiling.
-		for (int i = 0; i < theDragPoint; i++) {
-			TierLabelGlyph g = theRegion.get(i);
-			if (g.isManuallyResizable()) {
-				answer += g.getMinimumHeight();
-			}
-			else {
-				answer += g.getCoordBox().height;
-			}
-		}
-		return answer;
-	}
-	private double floor(List<TierLabelGlyph> theRegion, int theDragPoint) {
-		double answer = theRegion.get(theDragPoint).getCoordBox().getY();
-		for (int i = theDragPoint; i < theRegion.size(); i++) {
-			TierLabelGlyph g = theRegion.get(i);
-			if (g.isManuallyResizable()) {
-				answer += g.getMinimumHeight();
-			}
-			else {
-				answer += g.getCoordBox().height;
-			}
-		}
-		return answer;
-	}
-
-	/**
 	 * Determines the scope of resizing.
 	 * Given a border between two tiers determine a list of tiers
 	 * that will be affected by the resize.
 	 * Note that the returned list is of contiguous tiers.
-	 * The top and bottom tiers will be resized.
-	 * Interior tiers are cannot be resized and will just go along for the ride.
+	 * All tiers in the region than can be resized will be.
+	 * Interior tiers that cannot be resized and will just go along for the ride.
 	 *
-	 * @param theTierMouseIsAbove points to tier just below the border being dragged.
+	 * @param theTierMouseIsAbove tier just below the border being dragged.
 	 * @param theList of tiers that might be resized.
 	 * @return a maximal (possibly empty) section of theList
-	 *         such that some tiers in this list can be resized
-	 *         and none of the others can.
+	 *         such that some tiers in this list can be resized.
 	 */
 	private static List<TierLabelGlyph> pertinentTiers(
 			int theTierMouseIsAbove,
@@ -142,48 +96,43 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		return theList.subList(top, limit+1);
 	}
 
+	private static List<TierLabelGlyph> consideringSelection(
+			int theTierMouseIsAbove,
+			List<TierLabelGlyph> theList) {
+		int top = 0, limit = theList.size() - 1;
+		if (0 < theTierMouseIsAbove 
+				&& (theList.get(theTierMouseIsAbove).isSelected() || theList.get(theTierMouseIsAbove - 1).isSelected())) {
+		theList.get(theTierMouseIsAbove).isSelected();
+		}
+		return theList.subList(top, limit+1);
+	}
 	private boolean dragStarted = false; // it's our drag, we started it.
-	private boolean dragActive = false; // mouse is over our widget.
 	/**
 	 * Establish some context and boundaries for the drag.
 	 * @param theRegion is a list of contiguous tiers affected by the resize.
 	 * @param nevt is the event starting the drag.
 	 */
 	public void startDrag(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
-		this.dragActive = this.dragStarted = true;
+		this.dragStarted = true;
 		
 		this.start = nevt.getCoordY();
 
 		// These minimum heights are in coord space.
 		// Shouldn't we be dealing in pixels?
-		ourCeiling = ceiling(theRegion, this.atBorder);
 		ourCeiling = 0;
-		ourFloor = floor(theRegion, this.atBorder);
 		ourFloor = Double.POSITIVE_INFINITY;
-		}
+	}
 
 	/**
 	 * Resume resizing drag where we left off.
 	 * Of course, if no drag was active when we left, no resume is needed.
-	 * @param theEvent 
 	 */
 	@Override
 	public void mouseEntered(MouseEvent theEvent) {
-		this.dragActive = this.dragStarted;
-		if (this.dragActive) {
+		if (this.dragStarted) {
 			AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 		}
-	}
-
-	/**
-	 * Suspend resizing drag.
-	 * Snap back indicating what will happen
-	 * if the drag is canceled by releasing the mouse button.
-	 */
-	@Override
-	public void mouseExited(MouseEvent theEvent) {
-		this.dragActive = false;
 	}
 
 	@Override
@@ -236,7 +185,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	 */
 	@Override
 	public void mouseDragged(MouseEvent evt) {
-		if (!this.dragActive) {
+		if (!this.dragStarted) {
 			return;
 		}
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -328,7 +277,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 			return;
 		}
 
-		this.dragStarted = this.dragActive = false;
+		this.dragStarted = false;
 		boolean needRepacking = (this.resizeRegion != null && 1 < this.resizeRegion.size());
 		
 		for (int i = 0; i < this.resizeRegion.size(); i++) {

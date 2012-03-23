@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import com.affymetrix.igb.IGBConstants;
 
@@ -11,7 +12,14 @@ public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 	
 	@Override
 	public String getDisplayName() {
-		return IGBConstants.BUNDLE.getString("viewmode_" + getName());
+		String displayName = null;
+		try {
+			displayName = IGBConstants.BUNDLE.getString("viewmode_" + getName());
+		}
+		catch(MissingResourceException x) {
+			displayName = getName();
+		}
+		return displayName;
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.view.StatusBar;
+import java.awt.Color;
 
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -29,11 +30,10 @@ public abstract class Application {
 	Timer timer = new Timer(delay*1000, update_status_bar);
 	
 	static Application singleton = null;
-	protected final StatusBar status_bar;
+	public final static StatusBar status_bar = new StatusBar();
 	
 	public Application() {
 		singleton = this;
-		status_bar = new StatusBar();
 	}
 
 	public static Application getSingleton() {

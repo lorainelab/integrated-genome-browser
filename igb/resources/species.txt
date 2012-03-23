@@ -84,8 +84,8 @@ Nicotiana tabacum	Tobacco	N_tabacum
 Ochotona princeps	American pika	O_princeps		Ochotona_princeps
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
-Oryza sativa indica	Rice	O_sativa_indica	
-Oryza sativa japonica	Rice	O_sativa_japonica	
+Oryza sativa indica	Rice (indica)	O_sativa_indica	
+Oryza sativa japonica	Rice (japonica)	O_sativa	O_sativa_japonica
 Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
 Otolemur garnettii	Nothern greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	

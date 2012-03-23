@@ -65,7 +65,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	 * that will be affected by the resize.
 	 * Note that the returned list is of contiguous tiers.
 	 * All tiers in the region than can be resized will be.
-	 * Interior tiers that cannot be resized and will just go along for the ride.
+	 * Interior tiers that cannot be resized will just go along for the ride.
 	 *
 	 * @param theTierMouseIsAbove tier just below the border being dragged.
 	 * @param theList of tiers that might be resized.
@@ -101,12 +101,30 @@ public class AccordionTierResizer extends MouseInputAdapter {
 			List<TierLabelGlyph> theList) {
 		int top = 0, limit = theList.size() - 1;
 		if (0 < theTierMouseIsAbove 
-				&& (theList.get(theTierMouseIsAbove).isSelected() || theList.get(theTierMouseIsAbove - 1).isSelected())) {
-		theList.get(theTierMouseIsAbove).isSelected();
+				&& (theList.get(theTierMouseIsAbove).isSelected()
+				||  theList.get(theTierMouseIsAbove - 1).isSelected())
+				) {
+			if (theList.get(theTierMouseIsAbove).isSelected()) {
+				for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
+					if (!theList.get(i).isSelected()) {
+						limit = i - 1;
+						break;
+					}
+				}
+			}
+			if (theList.get(theTierMouseIsAbove - 1).isSelected()) {
+				for (int i = theTierMouseIsAbove - 1; 0 <= i; i--) {
+					if (!theList.get(i).isSelected()) {
+						top = i + 1;
+						break;
+					}
+				}
+			}
 		}
 		return theList.subList(top, limit+1);
 	}
-	private boolean dragStarted = false; // it's our drag, we started it.
+
+	private boolean dragStarted = false; // It's our drag; we started it.
 	/**
 	 * Establish some context and boundaries for the drag.
 	 * @param theRegion is a list of contiguous tiers affected by the resize.
@@ -166,11 +184,16 @@ public class AccordionTierResizer extends MouseInputAdapter {
 		this.atBorder = -1;
 		if (atResizeTop(nevt)) {
 			this.atBorder = index;
-		} else if (atResizeBottom(nevt)) {
+		}
+		else if (atResizeBottom(nevt)) {
 			this.atBorder = index + 1;
 		}
 		if (-1 < this.atBorder) {
-			this.resizeRegion = pertinentTiers(this.atBorder, orderedGlyphs);
+			TierLabelGlyph tierMouseIsAbove = orderedGlyphs.get(this.atBorder);
+			this.resizeRegion = consideringSelection(this.atBorder, orderedGlyphs);
+			this.atBorder = this.resizeRegion.indexOf(tierMouseIsAbove);
+			this.resizeRegion = pertinentTiers(this.atBorder, resizeRegion);
+			this.atBorder = this.resizeRegion.indexOf(tierMouseIsAbove);
 			if (null != this.resizeRegion && 1 < this.resizeRegion.size()) {
 				startDrag(this.resizeRegion, nevt);
 			}

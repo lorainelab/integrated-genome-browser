@@ -20,6 +20,7 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.OKAction;
 import com.affymetrix.genometryImpl.event.ReportBugAction;
+import java.util.logging.Level;
 
 /**
  * Simple routines for bringing-up an error message panel and also logging the
@@ -69,7 +70,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 
 	public static void errorPanel(final String title, String message, final List<Throwable> errs) {
-		errorPanel((JFrame) null, title, message, errs, null);
+		errorPanel((JFrame) null, title, message, errs, null, Level.INFO);
 	}
 
 	public static void errorPanel(String title, String message, Component c) {
@@ -77,22 +78,40 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 
 	public static void errorPanel(String title, String message, Throwable e) {
-		errorPanel((JFrame) null, title, message, e);
+		errorPanel((JFrame) null, title, message, e, Level.SEVERE);
+	}
+	
+	public static void errorPanel(String title, String message, Throwable e, Level level) {
+		errorPanel((JFrame) null, title, message, e, level);
 	}
 
+	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e, Level level) {
+		List<Throwable> errs = new ArrayList<Throwable>();
+		if (e != null) {
+			errs.add(e);
+		}
+		errorPanel((JFrame) null, title, message, errs, null,level);
+	}
 	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
 		List<Throwable> errs = new ArrayList<Throwable>();
 		if (e != null) {
 			errs.add(e);
 		}
-		errorPanel((JFrame) null, title, message, errs, null);
+		errorPanel((JFrame) null, title, message, errs, null,Level.SEVERE);
 	}
 
+	public static void errorPanelWithReportBug(String title, String message, Level level) {
+		List<GenericAction> actions = new ArrayList<GenericAction>();
+		actions.add(OKAction.getAction());
+		actions.add(ReportBugAction.getAction());
+		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
+	}
+	
 	public static void errorPanelWithReportBug(String title, String message) {
 		List<GenericAction> actions = new ArrayList<GenericAction>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
-		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions);
+		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, Level.SEVERE);
 	}
 
 	/**
@@ -107,7 +126,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * exception text will be appended to the message and a stack trace might be
 	 * printed on standard error.
 	 */
-	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions) {
+	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs, final List<GenericAction> actions, Level level) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch
@@ -120,7 +139,7 @@ public abstract class ErrorHandler implements DisplaysError{
 			for (Throwable e : errs) {
 				String error_message = e.toString();
 				message = message + "\n" + error_message;
-				Throwable cause = e.getCause();
+				Throwable cause = e.getCause(); 
 				while (cause != null) {
 					message += "\n\nCaused by:\n" + cause.toString();
 					cause = cause.getCause();
@@ -145,7 +164,7 @@ public abstract class ErrorHandler implements DisplaysError{
 		System.err.println();
 		System.err.flush();
 		Toolkit.getDefaultToolkit().beep();
-		displayHandler.showError(frame, title, message, actions);
+		displayHandler.showError(frame, title, message, actions, level);
 	}
 
 	private static JScrollPane makeScrollPane(String message) {
@@ -171,7 +190,7 @@ public abstract class ErrorHandler implements DisplaysError{
 		}
 	}
 		
-	public void showError(final JFrame frame, final String title, final String message, final List<GenericAction> actions) {
+	public void showError(final JFrame frame, final String title, final String message, final List<GenericAction> actions, Level level) {
 		final Component scroll_pane = makeScrollPane(message);
 
 		String[] options = null;

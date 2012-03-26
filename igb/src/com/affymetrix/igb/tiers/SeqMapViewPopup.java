@@ -60,6 +60,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
 	private final Action save_track_action = ExportFileAction.getAction();
+	private final Action save_selected_annotations_action = ExportSelectedAnnotationFileAction.getAction();
 	private final Action rename_action = new GenericAction() {
 
 		private static final long serialVersionUID = 1L;
@@ -1157,6 +1158,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 		popup.add(save_track_action);
+		popup.add(save_selected_annotations_action);
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);

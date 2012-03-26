@@ -528,6 +528,9 @@ public class TierGlyph extends SolidGlyph {
 	public void setLabel(String str) {
 		viewModeGlyph.setLabel(str);
 	}
+	public List<SeqSymmetry> getSelected(){
+		return viewModeGlyph.getSelected();
+	}
 	@Override
 	public void drawChildren(ViewI view) {
 		System.out.println("!!!!!!!!! drawChildren(ViewI view)");

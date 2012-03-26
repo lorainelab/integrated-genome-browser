@@ -120,6 +120,10 @@ public class UnloadedGlyphFactory extends MapViewGlyphFactoryA {
 		@Override
 		public void setPreferences(Map<String, Object> preferences) {
 		}
+		
+		@Override
+		public void copyChildren(ViewModeGlyph temp) {
+		}
 	}
 	// end glyph class
 

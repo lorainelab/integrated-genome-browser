@@ -116,9 +116,9 @@ public final class TierLabelManager implements PropertyHolder {
 				if (nevt.isAltDown() || nevt.isShiftDown()) {
 					preserve_selections = true;
 				} else if (topgl != null && isOurPopupTrigger(nevt)) {
-					if (labelmap.getSelected().contains(topgl)) {
+				//	if (labelmap.getSelected().contains(topgl)) {
 						preserve_selections = true;
-					}
+				//	}
 				}
 				if (!preserve_selections) {
 					labelmap.clearSelected();

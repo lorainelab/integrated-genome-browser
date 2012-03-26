@@ -27,7 +27,8 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 	public void actionPerformed(ActionEvent e) {
 		final JTextArea tfa = new JTextArea();
 		final JButton copy = new JButton("Copy");
-		final JButton ok = new JButton("Cancel");
+		final JButton copyClose = new JButton("Copy And Close");
+		final JButton ok = new JButton("Close");
 		tfa.setEditable(false);
 		final JDialog dialog = new JDialog(frame, "Value") {
 
@@ -58,6 +59,17 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 				dialog.dispose();
 			}
 		});
+		copyClose.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringBuffer hackbuf = new StringBuffer(temp);
+				String hackstr = new String(hackbuf);
+				StringSelection data = new StringSelection(hackstr);
+				clipboard.setContents(data, null);
+				dialog.dispose();
+			}
+		});
 
 		tfa.setColumns(12);
 		tfa.setRows(6);
@@ -66,6 +78,7 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 		Box box = Box.createHorizontalBox();
 		box.add(Box.createGlue());
 		box.add(copy);
+		box.add(copyClose);
 		box.add(ok);
 		dialog.getContentPane().add(tfa, "Center");
 		dialog.getContentPane().add(box, "South");

@@ -16,9 +16,14 @@ public class GraphFileExporter implements FileExporterI {
 			BioSeq aseq) throws IOException {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(sym);
-		Wiggle.writeAnnotations(syms,aseq,dos);
+		exportFile(dos, syms, aseq);
 	}
 
+	@Override
+	public void exportFile(DataOutputStream dos, List<SeqSymmetry> syms, BioSeq aseq) throws IOException {
+		Wiggle.writeAnnotations(syms,aseq,dos);
+	}
+	
 	@Override
 	public String getFileExtension() {
 		return "wig";

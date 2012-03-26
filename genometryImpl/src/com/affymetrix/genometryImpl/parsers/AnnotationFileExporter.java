@@ -22,9 +22,14 @@ public class AnnotationFileExporter implements FileExporterI {
 			}
 		}
 
-		BedParser.writeBedFormat(dos, syms, aseq);
+		exportFile(dos, syms, aseq);
 	}
 
+	@Override
+	public void exportFile(DataOutputStream dos, List<SeqSymmetry> syms, BioSeq aseq) throws IOException {
+		BedParser.writeBedFormat(dos, syms, aseq);
+	}
+	
 	@Override
 	public String getFileExtension() {
 		return "bed";

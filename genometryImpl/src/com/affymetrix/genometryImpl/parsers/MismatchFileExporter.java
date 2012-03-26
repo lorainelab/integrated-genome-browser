@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
@@ -64,6 +65,11 @@ public class MismatchFileExporter implements FileExporterI {
 		}
 	}
 
+	@Override
+	public void exportFile(DataOutputStream dos, List<SeqSymmetry> syms, BioSeq aseq) throws IOException {
+		// TODO Auto-generated method stub
+	}
+	
 	@Override
 	public String getFileExtension() {
 		return "tally";

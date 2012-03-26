@@ -1,6 +1,5 @@
 package com.affymetrix.igb.viewmode;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -12,9 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.*;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
@@ -175,7 +172,6 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			if(smv.getViewSeq() != smv.getAnnotatedSeq()){
 				GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
 				genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
-				smv.setDataModelFromOriginalSym(genomeGraphGlyph, sym);
 				if (genomeGraphGlyph.getScene() != null) {
 					genomeGraphGlyph.pack(smv.getSeqMap().getView());
 				}

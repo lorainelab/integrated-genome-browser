@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -196,5 +197,11 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 //		for (int i = 0; i < childrens.size(); i++) {
 //			addMiddleGlyph(childrens.get(i));
 //		}
+	}
+	
+	@Override
+	public List<SeqSymmetry> getSelected(){
+		//Implement method here.
+		return null;
 	}
 }

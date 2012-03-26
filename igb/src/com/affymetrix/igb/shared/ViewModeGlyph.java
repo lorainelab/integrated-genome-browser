@@ -2,13 +2,13 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.Map;
 
 public abstract class ViewModeGlyph extends SolidGlyph {
@@ -27,6 +27,8 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract Map<String,Class<?>> getPreferences();
 	public abstract void setPreferences(Map<String,Object> preferences);
 	public abstract void copyChildren(ViewModeGlyph temp);
+	public abstract void addMiddleGlyph(GlyphI gl);	
+	public abstract List<SeqSymmetry> getSelected();
 	public boolean isCombo() {
 		return false;
 	}
@@ -49,5 +51,4 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 		}
 		return true;
 	}
-	public abstract void addMiddleGlyph(GlyphI gl);	
 }

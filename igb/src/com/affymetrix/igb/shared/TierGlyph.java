@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.viewmode.*;
+import com.affymetrix.igb.viewmode.UnloadedGlyphFactory.UnloadedGlyph;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -59,17 +60,29 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private ViewModeGlyph viewModeGlyph;
-
+	
 	public ViewModeGlyph getViewModeGlyph() {
 		return viewModeGlyph;
 	}
 
-	private void setViewModeGlyph(ViewModeGlyph viewModeGlyph) {
-		this.viewModeGlyph = viewModeGlyph;
+	private void setViewModeGlyph(ViewModeGlyph vmg) {
+		if (smv.getViewSeq() != smv.getAnnotatedSeq() && !(vmg instanceof UnloadedGlyph)) {
+			if (viewModeGlyph == null || viewModeGlyph instanceof UnloadedGlyph) {
+				initViewModeGlyph(vmg);
+			} else {
+				viewModeGlyph.copyChildren(vmg);
+			}
+		} else {
+			initViewModeGlyph(vmg);
+		}
+	}
+
+	private void initViewModeGlyph(ViewModeGlyph vmg){
+		viewModeGlyph = vmg;
 		viewModeGlyph.setTierGlyph(this);
 		viewModeGlyph.processParentCoordBox(super.getCoordBox());
 	}
-
+	
 	private void setViewModeGlyph(ITrackStyleExtended style) {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());

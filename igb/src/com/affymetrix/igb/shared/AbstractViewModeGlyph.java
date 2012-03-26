@@ -169,7 +169,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	
 		
 	@Override
-	@SuppressWarnings("unchecked")
 	public void copyChildren(ViewModeGlyph temp) {
 		if(temp == null)
 			return;

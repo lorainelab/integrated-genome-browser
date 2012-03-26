@@ -23,6 +23,8 @@ import java.util.*;
 import java.awt.geom.Rectangle2D;
 
 /**
+ *  !!! the TierGlyph and ViewModeGlyph and all its subordinate ViewModeGlyphs should
+ *  all contain the same instance of CoordBox. !!!
  *  TierGlyph is intended for use with AffyTieredMap.
  *  Each tier in the TieredNeoMap is implemented as a TierGlyph, which can have different
  *  states as indicated below.

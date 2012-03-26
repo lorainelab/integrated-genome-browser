@@ -11,6 +11,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  !!! the TierGlyph and ViewModeGlyph and all its subordinate ViewModeGlyphs should
+ *  all contain the same instance of CoordBox. !!!
+ *  This is the glyph that displays the contents of a Tier/Track. Each TierGlyph
+ *  contains a ViewModeGlyph and delegates all calls to the ViewModeGlyph.
+ */
 public abstract class ViewModeGlyph extends SolidGlyph {
 	private TierGlyph tierGlyph;
 	public abstract void setPreferredHeight(double height, ViewI view);

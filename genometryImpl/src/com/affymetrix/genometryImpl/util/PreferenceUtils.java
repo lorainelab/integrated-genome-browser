@@ -66,6 +66,8 @@ public abstract class PreferenceUtils {
 	public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
 	public static final String CONFIRM_BEFORE_REFRESH = "Confirm before refresh";
 	public static final String AUTO_LOAD = "Auto Load Data";
+	public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
+	public static final boolean default_display_errors = false;
 	public static final boolean default_ask_before_exiting = true;
 	public static final boolean default_confirm_before_delete = true;
 	public static final boolean default_confirm_before_clear = true;

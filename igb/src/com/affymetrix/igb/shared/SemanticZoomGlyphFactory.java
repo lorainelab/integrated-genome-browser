@@ -270,6 +270,10 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			lastUsedGlyph.resetChildren();
 		}
 		@Override
+		public List<SeqSymmetry> getSelected(){
+			return lastUsedGlyph.getSelected();	
+		}
+		@Override
 		public void select(double x, double y, double width, double height) {
 			super.select(x, y, width, height);
 			lastUsedGlyph.select(x, y, width, height);

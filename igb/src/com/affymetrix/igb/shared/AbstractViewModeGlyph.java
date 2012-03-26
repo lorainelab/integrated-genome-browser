@@ -200,7 +200,16 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	
 	@Override
 	public List<SeqSymmetry> getSelected(){
-		//Implement method here.
-		return null;
+	
+		int childCount = getChildCount();
+		List<SeqSymmetry> selectedSyms = new ArrayList<SeqSymmetry>(childCount);
+		for(int i=0;i<childCount;i++){
+			if(getChild(i).isSelected()){
+				if(getChild(i).getInfo() instanceof SeqSymmetry){
+					selectedSyms.add((SeqSymmetry)(getChild(i).getInfo()));
+				}
+			}
+		}
+		return selectedSyms;
 	}
 }

@@ -589,7 +589,7 @@ public final class TierLabelManager implements PropertyHolder {
 		for(TierLabelGlyph tlg : tiermap.getTierLabels()){
 			if(tlg.getInfo() instanceof TierGlyph){
 				temp = (TierGlyph)tlg.getInfo();
-				if(temp.intersects(coordrect, null)){
+				if(temp.intersects(coordrect, tiermap.getView())){
 					tglyph = temp;
 					break;
 				}

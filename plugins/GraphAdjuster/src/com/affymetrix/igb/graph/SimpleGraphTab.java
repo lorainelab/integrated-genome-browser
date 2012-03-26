@@ -54,11 +54,7 @@ import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackTransformAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.*;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -405,7 +401,7 @@ public final class SimpleGraphTab
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				for (Glyph g : igbService.getVisibleTierGlyphs()) {
 					ViewModeGlyph vg = ((TierGlyph)g).getViewModeGlyph();
-					if (vg.isCombo()) {
+					if (vg instanceof MultiGraphGlyph) {
 						for (GlyphI child : vg.getChildren()) {
 							if (grafs.contains(child.getInfo())) {
 								glyphs.add((AbstractGraphGlyph) child);
@@ -507,8 +503,7 @@ public final class SimpleGraphTab
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
 					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(glyphs)) {
 						sggl.setShowGraph(true);
-						TierGlyph parent = sggl.getTierGlyph();
-						igbService.changeViewMode(igbService.getSeqMapView(), (RootSeqSymmetry)sggl.getInfo(), parent.getAnnotStyle(), sggl.getGraphState().getComboStyle(), viewMode);
+						igbService.changeViewMode(igbService.getSeqMapView(), (RootSeqSymmetry)sggl.getInfo(), sggl.getAnnotStyle(), sggl.getGraphState().getComboStyle(), viewMode);
 						if ((graphType == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}

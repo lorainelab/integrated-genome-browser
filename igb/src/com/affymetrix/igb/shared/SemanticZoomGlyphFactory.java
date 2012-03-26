@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -420,6 +421,18 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			super.setLabel(str);
 			for (ViewModeGlyph viewModeGlyph : viewModeGlyphs.values()) {
 				viewModeGlyph.setLabel(str);
+			}
+		}
+		
+		//FIXME: Fix graph view mode.
+		@Override
+		public void copyChildren(ViewModeGlyph temp) {
+			if(temp instanceof SemanticZoomGlyph){
+				for(Entry<String, ViewModeGlyph> vg : ((SemanticZoomGlyph)temp).viewModeGlyphs.entrySet()){
+					if(viewModeGlyphs.get(vg.getKey()) != null){
+						viewModeGlyphs.get(vg.getKey()).copyChildren(vg.getValue());
+					}
+				}
 			}
 		}
 	}

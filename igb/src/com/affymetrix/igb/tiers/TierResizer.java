@@ -97,14 +97,13 @@ public class TierResizer extends MouseInputAdapter {
 	}
 
 	private boolean dragStarted = false; // it's our drag, we started it.
-	private boolean dragActive = false; // mouse is over our widget.
 	/**
 	 * Establish some context and boundaries for the drag.
 	 * @param theRegion is a list of contiguous tiers affected by the resize.
 	 * @param nevt is the event starting the drag.
 	 */
 	public void startDrag(List<TierLabelGlyph> theRegion, NeoMouseEvent nevt) {
-		this.dragActive = this.dragStarted = true;
+		this.dragStarted = true;
 		this.upperGl = theRegion.get(0);
 		this.lowerGl = theRegion.get(theRegion.size()-1);
 		
@@ -131,27 +130,15 @@ public class TierResizer extends MouseInputAdapter {
 	}
 
 	/**
-	 * Resume resizing drag where we left off.
-	 * Of course, if no drag was active when we left, no resume is needed.
+	 * Get the mouse cursor right.
 	 * @param theEvent 
 	 */
 	@Override
 	public void mouseEntered(MouseEvent theEvent) {
-		this.dragActive = this.dragStarted;
-		if (this.dragActive) {
+		if (this.dragStarted) {
 			AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 		}
-	}
-
-	/**
-	 * Suspend resizing drag.
-	 * Snap back indicating what will happen
-	 * if the drag is canceled by releasing the mouse button.
-	 */
-	@Override
-	public void mouseExited(MouseEvent theEvent) {
-		this.dragActive = false;
 	}
 
 	@Override
@@ -190,7 +177,7 @@ public class TierResizer extends MouseInputAdapter {
 	 */
 	@Override
 	public void mouseDragged(MouseEvent evt) {
-		if (!this.dragActive) {
+		if (!this.dragStarted) {
 			return;
 		}
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -235,7 +222,7 @@ public class TierResizer extends MouseInputAdapter {
 		if (!this.dragStarted) {
 			return;
 		}
-		this.dragStarted = this.dragActive = false;
+		this.dragStarted = false;
 		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 		
 		if (this.upperGl != null) {

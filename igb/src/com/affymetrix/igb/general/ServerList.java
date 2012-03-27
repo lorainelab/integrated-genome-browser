@@ -91,7 +91,7 @@ public final class ServerList {
 
 	public boolean areAllServersInited() {
 		for (GenericServer gServer : getAllServers()) {
-			if (!gServer.isEnabled()) {
+			if (!gServer.isEnabled() || gServer.isPrimary()) {
 				continue;
 			}
 			if (gServer.getServerStatus() == ServerStatus.NotInitialized) {

@@ -211,8 +211,7 @@ public class BigWigZoomSymLoader extends SymLoader {
 		for (int i = 0; i < yList.size(); i++) {
 			y[i] = yList.get(i);
 		}
-		String id = uri.toString() + " level " + level;
- 		return new GraphIntervalSym(x, w, y, id, igbSeq);
+ 		return new GraphIntervalSym(x, w, y, featureName, igbSeq);
 	}
 
 	@Override

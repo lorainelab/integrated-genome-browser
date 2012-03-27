@@ -23,23 +23,39 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
 	// glyph class
-	protected class SemanticZoomGlyph extends AbstractViewModeGlyph {
-		protected SemanticZoomRule rule;
-		private Map<String, ViewModeGlyph> viewModeGlyphs;
-		private ViewModeGlyph lastUsedGlyph;
+	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph {
+		protected Map<String, ViewModeGlyph> viewModeGlyphs;
+		protected ViewModeGlyph lastUsedGlyph;
 		
-		protected SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SemanticZoomRule rule) {
+		protected SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
 			super();
 			super.setInfo(sym);
-			this.rule = rule;
-			viewModeGlyphs = rule.getAllViewModeGlyphs();
-			setDirection(tier_direction);
-			lastUsedGlyph = rule.getDefaultGlyph();
+			init(sym, style, direction, smv);
+			setDirection(direction);
+			lastUsedGlyph = getDefaultGlyph();
 			setStyle(style);
 		}
 
-		private ViewModeGlyph getGlyph(ViewI view) {
-			return rule.getGlyph(view);
+		protected abstract ViewModeGlyph getGlyph(ViewI view);
+
+		protected abstract void init(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv);
+		protected abstract ViewModeGlyph getDefaultGlyph();
+
+		@Override
+		public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
+			super.processParentCoordBox(parentCoordBox);
+//			if (parentCoordBox.getHeight() == 0) {
+				Rectangle2D.Double useCoordBox = null;
+				for (ViewModeGlyph vmg : viewModeGlyphs.values()) {
+					if (vmg.getCoordBox().getHeight() > 0) {
+						useCoordBox = vmg.getCoordBox();
+					}
+					vmg.setCoordBox(parentCoordBox);
+				}
+				if (useCoordBox != null) {
+					parentCoordBox.setRect(useCoordBox);
+				}
+//			}
 		}
 
 		@Override
@@ -231,16 +247,19 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public void moveAbsolute(double x, double y) {
-//			super.moveAbsolute(x, y);
-			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
-				vmg.moveAbsolute(x, y);
-			}
+			super.moveAbsolute(x, y);
 		}
 		@Override
 		public void moveRelative(double diffx, double diffy) {
-//			super.moveRelative(diffx, diffy);
+			super.moveRelative(diffx, diffy);
 			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
-				vmg.moveRelative(diffx, diffy);
+				List<GlyphI> vmgChildren = vmg.getChildren();
+				if (vmgChildren != null) {
+					int numchildren = vmgChildren.size();
+					for (int i=0; i<numchildren; i++) {
+						vmgChildren.get(i).moveRelative(diffx, diffy);
+					}
+				}
 			}
 		}
 		@Override
@@ -441,14 +460,4 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 	}
 	// end glyph class
-
-	protected abstract SemanticZoomRule getRule(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv);
-
-	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-		Direction direction, SeqMapViewExtendedI smv) {
-		SemanticZoomRule rule = getRule(sym, style, direction, smv);
-		return new SemanticZoomGlyph(sym, style, direction, rule);
-	}
 }

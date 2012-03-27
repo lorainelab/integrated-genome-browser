@@ -50,9 +50,7 @@ public class TierGlyph extends SolidGlyph {
 	public TierGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, ViewModeGlyph viewModeGlyph) {
  		this.modelSym = sym;
  		this.smv = smv;
-		this.viewModeGlyph = viewModeGlyph;
-		viewModeGlyph.setTierGlyph(this);
-		viewModeGlyph.processParentCoordBox(super.getCoordBox());
+		initViewModeGlyph(viewModeGlyph);
 		this.style = style;
  		setDirection(direction);
 		setInfo(modelSym);

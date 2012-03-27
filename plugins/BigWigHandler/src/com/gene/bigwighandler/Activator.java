@@ -58,13 +58,13 @@ public class Activator implements BundleActivator {
 							serviceTrackerMapViewGlyphFactoryI.close();
 							factoryCreated = true;
 							BigWigSemanticZoomGlyphFactory annotationBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(annotationGlyphFactory, graphGlyphFactory);
-							annotationBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
+//							annotationBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							annotationBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, annotationBigWigSemanticZoomGlyphFactory, null);
 							BigWigSemanticZoomGlyphFactory alignmentBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(alignmentGlyphFactory, graphGlyphFactory);
-							alignmentBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
+//							alignmentBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							alignmentBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, alignmentBigWigSemanticZoomGlyphFactory, null);
 							BigWigSemanticZoomGlyphFactory graphBigWigSemanticZoomGlyphFactory = new BigWigSemanticZoomGlyphFactory(graphGlyphFactory, graphGlyphFactory);
-							graphBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
+//							graphBigWigSemanticZoomGlyphFactory.setIgbService(igbService);
 							graphBigwigSemanticZoomGlyphFactoryRegistration = bundleContext.registerService(MapViewGlyphFactoryI.class, graphBigWigSemanticZoomGlyphFactory, null);
 						}
 					}

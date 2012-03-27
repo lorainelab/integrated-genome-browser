@@ -63,9 +63,9 @@ public class TrackUtils {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		for (TierLabelGlyph label : labels) {
 			TierGlyph glyph = label.getReferenceTier();
-			SeqSymmetry rootSym = (SeqSymmetry) glyph.getInfo();
-			if (rootSym == null && glyph.getChildCount() > 0) {
-				rootSym = (SeqSymmetry) glyph.getChild(0).getInfo();
+			RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
+			if (rootSym == null && glyph.getChildCount() > 0 && glyph.getChild(0) instanceof RootSeqSymmetry) {
+				rootSym = (RootSeqSymmetry) glyph.getChild(0).getInfo();
 			}
 			syms.add(rootSym);
 		}

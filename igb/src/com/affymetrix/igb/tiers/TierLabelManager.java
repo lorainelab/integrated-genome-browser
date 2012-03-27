@@ -140,14 +140,25 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
-		// if a tier has been dragged, then try to sort out rearrangement of tiers
-		//    in tiermap based on new positions of labels in labelmap
+		/**
+		 * Finish a drag and drop of a tier label.
+		 * Also change the map's vertical zoom focus to zoom in on this track.
+		 */
 		@Override
 		public void mouseReleased(MouseEvent evt) {
 			if (evt.getSource() == labelmap && dragging_label != null) {
-				//sortTiers();
+				// A tier has been dragged.
+				// So, try to sort out rearrangement of tiers in the tiermap 
+				// based on the new positions of labels in the labelmap.
 				rearrangeTiers();
 				dragging_label = null;
+			}
+			// Start trying to set the vertical zoom point appropriately.
+			// First try, just set it at this place.
+			if (evt instanceof NeoMouseEvent) {
+				NeoMouseEvent nevt = (NeoMouseEvent) evt;
+				double y = nevt.getCoordY();
+				Application.getSingleton().getMapView().setZoomSpotY(y);
 			}
 		}
 

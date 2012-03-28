@@ -108,7 +108,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 		resetShadow(destination, theOrientation, theColor);
 	}
 
-	public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
+	public final void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
 		if (Shadow.topMargin + Shadow.bottomMargin >= 1.0) {
 			System.out.println("Margins too large." );
 		}

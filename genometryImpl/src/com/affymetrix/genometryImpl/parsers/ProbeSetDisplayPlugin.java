@@ -111,13 +111,13 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 		Set<SeqSymmetry> probesetsFound = null;
 		SymWithProps cons_sym = (SymWithProps) cons_annot;
 		String type = (String) cons_sym.getProperty("method");
-		if (type.equalsIgnoreCase(probeset_type)) {
+		if (type.endsWith(PROBESET_TYPE)) {
 			probesetsFound = probesets;
-		} else if (type.equalsIgnoreCase(CROSSHYB_TYPE)) {
+		} else if (type.endsWith(CROSSHYB_TYPE)) {
 			probesetsFound = crossHybProbes;
-		} else if (type.equalsIgnoreCase(poly_a_sites_type)) {
+		} else if (type.endsWith(POLY_A_SITES_TYPE)) {
 			probesetsFound = polyASites;
-		} else if (type.equalsIgnoreCase(poly_a_stacks_type)) {
+		} else if (type.endsWith(POLY_A_STACKS_TYPE)) {
 			probesetsFound = polyAStacks;
 		} else {
 			System.out.println("findProbeSet: ERROR: couldn't find type:---" + type +"---");

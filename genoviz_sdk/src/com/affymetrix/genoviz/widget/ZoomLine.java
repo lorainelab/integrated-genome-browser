@@ -13,14 +13,11 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.event.NeoRangeEvent;
-import com.affymetrix.genoviz.event.NeoRangeListener;
-import com.affymetrix.genoviz.event.NeoWidgetEvent;
-import com.affymetrix.genoviz.event.NeoWidgetListener;
-import java.awt.*;
+import com.affymetrix.genoviz.event.*;
+import java.awt.Color;
 import java.awt.event.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The hairline is positioned with a mouse click.
@@ -32,9 +29,10 @@ import java.util.*;
 public class ZoomLine implements NeoWidgetListener {
 
 	private final VisibleRange zoomPoint = new VisibleRange();
-	private final Hashtable<NeoMap,Shadow> maps = new Hashtable<NeoMap,Shadow>();
+	private final Map<NeoMap, Shadow> maps = new HashMap<NeoMap, Shadow>();
 
 	private final MouseListener zoomPointAdjuster = new MouseAdapter() {
+		@Override
 		public void mouseReleased( MouseEvent e ) {
 			double focus = ((NeoMouseEvent)e).getCoordX();
 			ZoomLine.this.zoomPoint.setSpot(focus);
@@ -42,6 +40,7 @@ public class ZoomLine implements NeoWidgetListener {
 	};
 
 	private final KeyListener zoomPointNudger = new KeyAdapter() {
+		@Override
 		public void keyPressed( KeyEvent ke ) {
 			double at = ZoomLine.this.zoomPoint.getBeginning();
 			int c = ke.getKeyCode();
@@ -59,12 +58,13 @@ public class ZoomLine implements NeoWidgetListener {
 		super();
 
 		NeoRangeListener zoomAdjuster = new NeoRangeListener() {
+			@Override
 			public void rangeChanged( NeoRangeEvent e ) {
 				double midPoint = ( e.getVisibleEnd() + e.getVisibleStart() ) / 2.0f;
-				Enumeration clients = ZoomLine.this.maps.keys();
-				while ( clients.hasMoreElements() ) {
-					Object o = clients.nextElement();
-					NeoAbstractWidget w = ( NeoAbstractWidget ) o;
+				// Not worrying about syncronization
+				// because maps are generally added at start up,
+				// not when range change events are happening. - elb
+				for (NeoMap w: ZoomLine.this.maps.keySet()) {
 					w.setZoomBehavior( NeoMap.X, NeoMap.CONSTRAIN_COORD, midPoint );
 					w.updateWidget();
 				}
@@ -90,6 +90,7 @@ public class ZoomLine implements NeoWidgetListener {
 		this.maps.remove( m );
 	}
 
+	@Override
 	public void widgetCleared( NeoWidgetEvent e ) {
 		Object o = e.getSource();
 		NeoMap m = ( NeoMap ) o;

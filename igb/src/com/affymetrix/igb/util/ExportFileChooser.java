@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileFilter;
  * @author nick
  */
 public class ExportFileChooser extends JFileChooser {
-
+	private static final long serialVersionUID = 1L;
 	boolean accepted = false;
 	File previousFile;
 	FileFilter selectedFilter;
@@ -82,10 +82,10 @@ public class ExportFileChooser extends JFileChooser {
 		addPropertyChangeListener(new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent e) {
-				File oldFile = null;
+//				File oldFile = null;
 				String property = e.getPropertyName();
 				if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(property)) {
-					oldFile = (File) e.getOldValue();
+//					oldFile = (File) e.getOldValue();
 				} else if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
 
 					if (e.getOldValue() instanceof ExportFileFilter

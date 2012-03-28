@@ -1,7 +1,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.view.StatusBar;
-import java.awt.Color;
 
 import java.awt.event.ActionListener;
 import java.util.LinkedList;

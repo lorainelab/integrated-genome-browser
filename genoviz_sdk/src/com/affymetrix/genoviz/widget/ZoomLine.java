@@ -122,7 +122,7 @@ public class ZoomLine implements NeoWidgetListener {
 			//      this.maps.remove( m );
 			//      hairline = new Shadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
 			//      this.maps.put( m, hairline );
-			hairline.resetShadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
+			hairline.reset( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
 			hairline.setSelectable( false );
 			//      this.zoomPoint.addListener( hairline );
 		}

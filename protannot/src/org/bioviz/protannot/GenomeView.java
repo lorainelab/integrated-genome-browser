@@ -348,8 +348,8 @@ final public class GenomeView extends JPanel implements MouseListener, Component
         exonGlyphs = new ArrayList<GlyphI>();
         exonList = new ArrayList<SeqSymmetry>();
 
-		hairline.resetShadow(this.seqmap, NeoConstants.HORIZONTAL, Color.lightGray);
-		axishairline.resetShadow(this.axismap, NeoConstants.HORIZONTAL, Color.lightGray);
+		hairline.reset(this.seqmap, NeoConstants.HORIZONTAL, Color.lightGray);
+		axishairline.reset(this.axismap, NeoConstants.HORIZONTAL, Color.lightGray);
 		hairline.setLabeled(showhairlineLabel);
 
         int acount = gseq.getAnnotationCount();

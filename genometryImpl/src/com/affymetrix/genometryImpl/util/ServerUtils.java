@@ -282,6 +282,11 @@ public abstract class ServerUtils {
 			Map<String, String> graph_name2file,
 			String dataRoot) throws IOException {
 		String file_name = current_file.getName();
+		String extension = ParserController.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
+		if(extension != null && extension.length() > 0){
+			file_name = file_name.substring(0, file_name.lastIndexOf(extension));
+			extension = extension.substring(extension.indexOf('.') + 1);
+		}
 		String type_name = type_prefix + file_name;
 		
 		// if current originalFile is directory, then descend down into child files
@@ -298,9 +303,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		if(isSymLoader(current_file)){
-			String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
-			String extension = SymLoader.getExtension(stream_name);
+		if(isSymLoader(extension)){
 			List<AnnotMapElt> annotList = annots_map.get(genome);
 			String annotTypeName = ParserController.getAnnotType(annotList, current_file.getName(), extension, type_name);
 			genome.addType(annotTypeName, null);
@@ -321,7 +324,7 @@ public abstract class ServerUtils {
 		}
 
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataRoot, current_file, type_name, annots_map, genome, null);
+		indexOrLoadFile(dataRoot, current_file, type_name, extension, annots_map, genome, null);
 	}
 
 	private static boolean isSequenceFile(File current_file) {
@@ -354,10 +357,7 @@ public abstract class ServerUtils {
 		return false;
 	}
 
-	private static boolean isSymLoader(File current_file){
-		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
-		String extension = ParserController.getExtension(stream_name);
-		extension = extension.substring(extension.indexOf('.') + 1);
+	private static boolean isSymLoader(String extension){
 		
 		return (extension.endsWith("bam") || isResidueFile(extension));
 	}
@@ -397,8 +397,10 @@ public abstract class ServerUtils {
 			return;
 		}
 
+		String extension = ParserController.getExtension(GeneralUtils.getUnzippedName(current_file.getName()));	// .psl, .bed, et cetera
+		
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataroot, current_file, type_prefix, annots_map, genome, annot_id);
+		indexOrLoadFile(dataroot, current_file, type_prefix, extension, annots_map, genome, annot_id);
 	}
 
 
@@ -490,6 +492,7 @@ public abstract class ServerUtils {
 			String dataRoot,
 			File file,
 			String annot_name,
+			String extension,
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			AnnotatedSeqGroup genome,
 			Integer annot_id)
@@ -500,15 +503,11 @@ public abstract class ServerUtils {
 
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
-		String extension = ParserController.getExtension(stream_name);	// .psl, .bed, et cetera
-		
 		// If the annotation id was passed in, the server is running in genopub 
 		// mode, so use the annotation name; otherwise, the server is running in 
 		// classic mode,so use the file directory path and the file name to 
 		// formulate the name.
 		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension, annot_name);
-
-		genome.addType(annotTypeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 
@@ -530,10 +529,12 @@ public abstract class ServerUtils {
 			returnTypeName = annotTypeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
 		}
 
+		genome.addType(returnTypeName, annot_id);
+		
 		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
 
 		IndexingUtils.determineIndexes(genome,
-				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName);
+				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName, extension);
 	}	
 
 	public static boolean createDirIfNecessary(String dirName) {
@@ -800,7 +801,7 @@ public abstract class ServerUtils {
 			byte[] bytes = IndexingUtils.readBytesFromFile(
 					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
 
-			if ((iSyms.iWriter instanceof PSLParser || iSyms.iWriter instanceof PSL) && iSyms.file.getName().endsWith(".link.psl")) {
+			if ((iSyms.iWriter instanceof PSLParser || iSyms.iWriter instanceof PSL) && iSyms.ext.equalsIgnoreCase("link.psl")) {
 				String indexesFileName = iSyms.file.getAbsolutePath();
 				newIstr = IndexingUtils.readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
 			} else {

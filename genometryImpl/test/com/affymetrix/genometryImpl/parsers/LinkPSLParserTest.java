@@ -223,8 +223,8 @@ public class LinkPSLParserTest {
 		assertEquals(267887419, ((UcscPslSym) sortedSyms.get(sortedSyms.size() - 1)).getTargetMin());
 		String testFileName = "test/data/psl/RT_U34TEST.link.psl";
 		File testFile = new File(testFileName);
-		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", writer);
-		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms, testFileName);
+		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", "link.psl", writer);
+		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
 		String overlap = "3000000:160000000";
 		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
 		List<SeqSymmetry> newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);

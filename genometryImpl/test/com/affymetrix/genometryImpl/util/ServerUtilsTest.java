@@ -142,9 +142,9 @@ public class ServerUtilsTest {
 					syms, seq, iWriter.getComparator(seq));
 
 			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, "bps", iWriter);
 
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
 			
 			testIndexing1(seqid, group, seq, iSyms);
 
@@ -323,9 +323,9 @@ public class ServerUtilsTest {
 
 		String testFileName = baseDir + "/" + versionString + "/mRNA_INDEX_TEST.psl";
 		File testFile = new File(testFileName);
-		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
+		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, "psl", iWriter);
 		try {
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms);
 		} catch (IOException ex) {
 			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();

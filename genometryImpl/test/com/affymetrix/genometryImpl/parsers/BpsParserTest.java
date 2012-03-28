@@ -161,8 +161,8 @@ public class BpsParserTest {
 			assertEquals(15,sortedSyms.size());
 
 			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", iWriter);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms, testFileName);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", "bps", iWriter);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms);
 
 			assertEquals(iSyms.min.length, iSyms.max.length);
 			assertEquals(iSyms.min.length + 1, iSyms.filePos.length);

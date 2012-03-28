@@ -51,6 +51,7 @@ public final class IndexingUtils {
 		final File file;
 		public final int[] min;
 		public final int[] max;
+		public final String ext;
 		private final BitSet forward;
 		public final long[] filePos;
 		private final String typeName;
@@ -60,7 +61,7 @@ public final class IndexingUtils {
 		// Each of these ids is in a byte array instead of a String to save memory
 		private final byte[][][] id;
 
-		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
+		public IndexedSyms(int resultSize, File file, String typeName, String ext, IndexWriter iWriter) {
 			min = new int[resultSize];
 			max = new int[resultSize];
 			forward = new BitSet(resultSize);
@@ -69,6 +70,7 @@ public final class IndexingUtils {
 			this.file = file;
 			this.typeName = typeName;
 			this.iWriter = iWriter;
+			this.ext = ext;
 		}
 
 		private void setIDs(AnnotatedSeqGroup group, String symID, int i) {
@@ -154,7 +156,7 @@ public final class IndexingUtils {
 	 */
 	public static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) throws IOException {
+			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName, String ext) throws IOException {
 
 		for (BioSeq originalSeq : originalGenome.getSeqList()) {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
@@ -181,13 +183,13 @@ public final class IndexingUtils {
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 			indexedAnnotationsFile.deleteOnExit();
 
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, ext, iWriter);
 
 			// add indexed symmetries to the chromosome (used by types request)
 			originalSeq.addIndexedSyms(returnTypeName, iSyms);
 
 			// Write the annotations out to a file.
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, tempGenome, iSyms, indexedAnnotationsFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, tempGenome, iSyms);
 		}
 	}
 
@@ -267,14 +269,13 @@ public final class IndexingUtils {
 			List<SeqSymmetry> syms,
 			BioSeq seq,
 			AnnotatedSeqGroup group,
-			IndexedSyms iSyms,
-			String indexesFileName) throws IOException {
+			IndexedSyms iSyms) throws IOException {
 		if (DEBUG) {
 			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
 
 		createIndexArray(iSyms, syms, seq, group);
-		writeIndex(iSyms, indexesFileName, syms, seq);
+		writeIndex(iSyms, syms, seq);
 	}
 
 	/**
@@ -326,22 +327,21 @@ public final class IndexingUtils {
 	 */
 	private static void writeIndex(
 			IndexedSyms iSyms,
-			String indexesFileName,
 			List<SeqSymmetry> syms,
 			BioSeq seq) throws IOException {
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try {
-			fos = new FileOutputStream(indexesFileName);
+			fos = new FileOutputStream(iSyms.file.getAbsoluteFile());
 			bos = new BufferedOutputStream(fos);
 			dos = new DataOutputStream(bos);
 			IndexWriter iSymWriter = iSyms.iWriter;
 			for (SeqSymmetry sym : syms) {
 				iSymWriter.writeSymmetry(sym, seq, dos);	// write out interval<->symmetries
 			}
-			if ((iSymWriter instanceof PSLParser || iSymWriter instanceof PSL) && indexesFileName.toLowerCase().endsWith(".link.psl")) {
-				writeAdditionalLinkPSLIndex(indexesFileName, syms, seq, iSyms.typeName);
+			if ((iSymWriter instanceof PSLParser || iSymWriter instanceof PSL) && iSyms.ext.equalsIgnoreCase("link.psl")) {
+				writeAdditionalLinkPSLIndex(iSyms.file.getAbsolutePath(), syms, seq, iSyms.typeName);
 			}
 		} finally {
 			GeneralUtils.safeClose(dos);
@@ -370,8 +370,7 @@ public final class IndexingUtils {
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
-		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
-		secondIndexesFileName += ".link2.psl";
+		String secondIndexesFileName = indexesFileName + ".link2.psl";
 		try {
 			fos = new FileOutputStream(secondIndexesFileName);
 			bos = new BufferedOutputStream(fos);
@@ -458,8 +457,7 @@ public final class IndexingUtils {
 	 */
 	static ByteArrayInputStream readAdditionalLinkPSLIndex(
 			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
-		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
-		secondIndexesFileName += ".link2.psl";
+		String secondIndexesFileName = indexesFileName + ".link2.psl";
 
 		File secondIndexesFile = new File(secondIndexesFileName);
 		int bytes2Len = (int) secondIndexesFile.length();

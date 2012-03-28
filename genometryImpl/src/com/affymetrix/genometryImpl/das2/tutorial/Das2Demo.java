@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
-
 import com.affymetrix.genometryImpl.das2.*;
 
 /**
@@ -21,7 +20,7 @@ public class Das2Demo {
 
 	//server info
 	private String genoPubDas2UrlString = "http://bioserver.hci.utah.edu:8080/DAS2DB/genome";
-//	private String classicDas2UrlString = "http://netaffxdas.affymetrix.com/das2/genome";
+	//private String classicDas2UrlString = "http://netaffxdas.affymetrix.com/das2/genome";
 	private String name = "UofUBioInfoCore";
 	private String userName = "guest";
 	private String password = "guest";	
@@ -31,10 +30,9 @@ public class Das2Demo {
 	public Das2Demo(){
 
 		try {
-			
 			String das2UrlString = genoPubDas2UrlString;
 
-			//set Authenticator for possible digest or basic authentication response from Das2 server, some require this some don't, best to play it safe
+			//set Authenticator for possible digest or basic authentication response from the Das2 server, some require this some don't, best to play it safe
 			Authenticator.setDefault(new MyAuthenticator(userName, password));
 
 			//create a Das2ServerInfo object and load the data
@@ -54,7 +52,7 @@ public class Das2Demo {
 				for (String genomeBuild : das2VersionedSources.keySet()) System.out.println("\t\t"+genomeBuild);
 			}
 			
-			//work with versionedSourceHSapiensMar2006
+			//work with versionedSource H_sapiens_Mar_2006
 			Das2Source sourceHSapiens = das2Sources.get(das2UrlString+ "/H_sapiens");
 			Das2VersionedSource versionedSourceHSapiensMar2006 = sourceHSapiens.getVersions().get(das2UrlString +"/H_sapiens_Mar_2006");
 			
@@ -85,8 +83,8 @@ public class Das2Demo {
 			
 			//   1st build a feature request
 			
-			//String query_part = DetermineQueryPart(region, overlap_filter, typesHSapiensMar2006.getURI(), format);
-            //String feature_query = request_root + "?" + query_part;
+			//String query_part = DetermineQueryPart(region, overlap_filter, dataset.getURI(), null);
+           // String feature_query = request_root + "?" + query_part;
 			
 			
 

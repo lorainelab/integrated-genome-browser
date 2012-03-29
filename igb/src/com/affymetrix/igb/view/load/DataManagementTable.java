@@ -51,15 +51,6 @@ public final class DataManagementTable {
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
-	static final int REFRESH_FEATURE_COLUMN = 0;
-	static final int HIDE_FEATURE_COLUMN = 1;
-	static final int FOREGROUND_COLUMN = 2;
-	static final int BACKGROUND_COLUMN = 3;
-	static final int SEPARATE_COLUMN = 4;
-	static final int TRACK_NAME_COLUMN = 5;
-	static final int LOAD_STRATEGY_COLUMN = 6;
-	static final int FEATURE_NAME_COLUMN = 7;
-	static final int DELETE_FEATURE_COLUMN = 8;
 	//public static boolean iconTest;
 
 	/**
@@ -221,8 +212,8 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 	public JTableX(TableModel tm) {
 		super(tm);
 
-		this.list.add(DataManagementTable.BACKGROUND_COLUMN);
-		this.list.add(DataManagementTable.FOREGROUND_COLUMN);
+		this.list.add(DataManagementTableModel.BACKGROUND_COLUMN);
+		this.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
 
 		rmMap = new HashMap<Integer, RowEditorModel>();
 
@@ -240,7 +231,7 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
 		//Special Case
-		if (col == DataManagementTable.FEATURE_NAME_COLUMN) {
+		if (col == DataManagementTableModel.FEATURE_NAME_COLUMN) {
 			if (isCellEditable(row, col)) {
 				DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 				VirtualFeature vFeature = ftm.getFeature(row);

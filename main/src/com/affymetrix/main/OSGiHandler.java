@@ -202,8 +202,8 @@ public class OSGiHandler {
  			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
 			if (locationURL != null){
 				try {
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
 					bundleContext.installBundle(locationURL.toString());
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
 				}
     	        catch (Exception ex)
     	        {

@@ -1,11 +1,11 @@
 package com.affymetrix.genoviz.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.UIResource;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
@@ -14,13 +14,13 @@ import javax.swing.table.TableCellRenderer;
  * @author hiralv
  */
 public abstract class JTextButtonCellRenderer extends AbstractCellEditor implements
-		TableCellEditor, ActionListener, TableCellRenderer, MouseListener {
+		TableCellEditor, ActionListener, TableCellRenderer, UIResource, MouseListener {
 
 	public static final long serialVersionUID = 1l;
+	private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 	protected final JLabel field;
 	protected final JButton button;
-	protected final JPanel panel;
-	
+	public final JPanel panel;
 	protected String temp;
 
 	public JTextButtonCellRenderer() {
@@ -36,7 +36,6 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
-
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -51,8 +50,6 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 		c.anchor = GridBagConstraints.LINE_END;
 		//c.gridwidth = GridBagConstraints.REMAINDER;
 		panel.add(button, c);
-
-		panel.setBackground(Color.WHITE);
 	}
 
 	protected abstract JButton getButton();
@@ -64,6 +61,10 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 			return null;
 		}
 		field.setText(value.toString());
+
+		if (!isSelected) {
+			panel.setBorder(noFocusBorder);
+		}
 
 		return panel;
 	}
@@ -87,6 +88,7 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 
 	public void mouseReleased(MouseEvent e) {
 		fireEditingCanceled();
+		panel.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
 	}
 
 	public void mouseClicked(MouseEvent e) {

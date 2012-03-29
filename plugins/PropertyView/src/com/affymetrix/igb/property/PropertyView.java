@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
+import com.affymetrix.genoviz.swing.recordplayback.JRPStyledTable;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -28,7 +28,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static final int TAB_POSITION = 1;
 	
 	// the table showing name-value pairs
-	private static final JRPTable table = new JRPTable("PropertyView_table");
+	private static final JRPStyledTable table = new JRPStyledTable("PropertyView_table");
 	private final JScrollPane scroll_pane = new JScrollPane();
 	private TableRowSorter<TableModel> sorter;
 	private static final String PROPERTY = "property";
@@ -223,13 +223,11 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		propertyChanged(col_headings.length);
 
-		TableModel model = new DefaultTableModel(rows, col_headings);
+		TableModel model = new PropertyTableModel(rows, col_headings);
 		table.setModel(model);
 
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);
-
-		table.setEnabled(true);  // to allow selection, etc.
 		table.setFillsViewportHeight(true);
 		table.setMinimumSize(new Dimension(80000, 500));	//added by Max
 		//table.setPreferredScrollableViewportSize(new Dimension(80000, 500));  //added by Max
@@ -239,14 +237,13 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		scroll_pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		//scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(scroll_pane, BorderLayout.CENTER);
-		table.setCellSelectionEnabled(true);
 
-		JTextButtonCellRendererImpl ren = new JTextButtonCellRendererImpl(igbService.getFrame());
+		final JTextButtonCellRendererImpl ren = new JTextButtonCellRendererImpl(igbService.getFrame());
 		for(int i=1; i<table.getColumnCount(); i++){
 			table.getColumnModel().getColumn(i).setCellRenderer(ren);
 			table.getColumnModel().getColumn(i).setCellEditor(ren);
 		}
-
+		
 		validate();
 		table.getColumnModel().getColumn(0).setMinWidth(100);
 		table.getColumnModel().getColumn(0).setPreferredWidth(150);

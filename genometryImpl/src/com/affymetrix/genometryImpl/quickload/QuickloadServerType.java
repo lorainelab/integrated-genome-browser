@@ -180,8 +180,8 @@ public class QuickloadServerType implements ServerTypeI {
 		quickLoadSymLoaderHooks.add(quickLoadSymLoaderHook);
 	}
 
-	private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName, String organism_dir) {
-		URI uri = QuickLoadSymLoader.determineURI(version, featureName, organism_dir);
+	private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName) {
+		URI uri = QuickLoadSymLoader.determineURI(version, featureName);
 		String extension = SymLoader.getExtension(uri);
 		SymLoader symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 		QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version, symL);
@@ -208,7 +208,6 @@ public class QuickloadServerType implements ServerTypeI {
 				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
 				return;
 			}
-			String organism_dir = quickloadServer.getOrganismDir(gVersion.versionName);
 			for (String type_name : typeNames) {
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
@@ -220,7 +219,7 @@ public class QuickloadServerType implements ServerTypeI {
 				Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
 				gVersion.addFeature(
 						new GenericFeature(
-						type_name, type_props, gVersion, getQuickLoad(gVersion, type_name, organism_dir), null, autoload));
+						type_name, type_props, gVersion, getQuickLoad(gVersion, type_name), null, autoload));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

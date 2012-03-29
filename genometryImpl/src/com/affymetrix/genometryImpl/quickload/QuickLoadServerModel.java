@@ -52,7 +52,6 @@ public final class QuickLoadServerModel {
 	 * populated by loadGenomeNames()
 	 */
 	private final List<String> genome_names = new ArrayList<String>();
-	private final Map<String, String> genome_dir = new HashMap<String, String>();
 	/** A set containing initialized genomes */
 	private final Set<String> initialized = new HashSet<String>();
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
@@ -436,10 +435,6 @@ public final class QuickLoadServerModel {
 					group.setDescription(fields[1]);
 				}
 
-				if (fields.length >= 3) {
-					genome_dir.put(genome_name, fields[2]);
-				}else
-					genome_dir.put(genome_name, "");
 			}
 
 		} catch (Exception ex) {
@@ -449,10 +444,6 @@ public final class QuickLoadServerModel {
 			GeneralUtils.safeClose(ireader);
 			GeneralUtils.safeClose(br);
 		}
-	}
-
-	public String getOrganismDir(String version){
-		return genome_dir.get(version);
 	}
 
 	/**
@@ -466,12 +457,6 @@ public final class QuickLoadServerModel {
 	 */
 	public String getPath(String genome_name, String file) {
 		StringBuilder builder = new StringBuilder();
-		String organism = genome_dir.get(genome_name);
-
-		if (organism != null && !organism.isEmpty()) {
-			builder.append(organism);
-			builder.append("/");
-		}
 
 		builder.append(LOOKUP.findMatchingSynonym(genome_names, genome_name));
 		builder.append("/");

@@ -87,7 +87,7 @@ public class QuickLoadSymLoader extends SymLoader {
 		return friendlyName;
 	}
 
-	public static URI determineURI(GenericVersion version, String featureName, String organism_dir) {
+	public static URI determineURI(GenericVersion version, String featureName) {
 		URI uri = null;
 
 		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
@@ -103,7 +103,6 @@ public class QuickLoadSymLoader extends SymLoader {
 		} else {
 			uri = URI.create(
 					version.gServer.URL
-					+ ((organism_dir != null && !organism_dir.isEmpty()) ? organism_dir + "/" : "")
 					+ version.versionID + "/"
 					+ determineFileName(version, featureName));
 		}

@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
@@ -181,7 +182,7 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName) {
-		URI uri = QuickLoadSymLoader.determineURI(version, featureName);
+		URI uri = determineURI(version, featureName);
 		String extension = SymLoader.getExtension(uri);
 		SymLoader symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 		QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version, symL);
@@ -191,6 +192,49 @@ public class QuickloadServerType implements ServerTypeI {
 		return quickLoadSymLoader;
 	}
 
+	private	static URI determineURI(GenericVersion version, String featureName) {
+		URI uri = null;
+
+		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
+			int httpIndex = featureName.toLowerCase().indexOf("http:");
+			if (httpIndex > -1) {
+				// Strip off initial characters up to and including http:
+				// Sometimes this is necessary, as URLs can start with invalid "http:/"
+				featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
+				uri = URI.create(featureName);
+			} else {
+				uri = (new File(featureName)).toURI();
+			}
+		} else {
+			uri = URI.create(
+					version.gServer.URL
+					+ version.versionID + "/"
+					+ determineFileName(version, featureName));
+		}
+		return uri;
+	}
+	
+	private static String determineFileName(GenericVersion version, String featureName) {
+		URL quickloadURL;
+		try {
+			quickloadURL = new URL((String) version.gServer.serverObj);
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();
+			return "";
+		}
+
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+		List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(version.versionID);
+
+		// Linear search, but over a very small list.
+		for (AnnotMapElt annotMapElt : annotsList) {
+			if (annotMapElt.title.equals(featureName)) {
+				return annotMapElt.fileName;
+			}
+		}
+		return "";
+	}
+	
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		// Discover feature names from QuickLoad

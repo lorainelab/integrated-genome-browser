@@ -34,7 +34,6 @@ public abstract class OpenURIAction extends GenericAction {
 	public static int unknown_group_count = 1;
 	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("unknownSpecies");
 	public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("unknownGenome");
-	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;
@@ -51,29 +50,6 @@ public abstract class OpenURIAction extends GenericAction {
 			unknown_group_count++;
 		}
 
-	}
-
-	protected boolean openURI(URI uri) {
-		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
-		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-
-		if (!checkFriendlyName(friendlyName)) {
-			return false;
-		}
-
-		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
-		boolean mergeSelected = loadGroup == null ? false : true;
-		if (loadGroup == null) {
-			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
-		}
-
-		String speciesName = igbService.getSelectedSpecies();
-		if (SELECT_SPECIES.equals(speciesName)) {
-			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
-		}
-		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);
-
-		return true;
 	}
 
 	protected MergeOptionChooser getFileChooser(String id) {
@@ -101,7 +77,7 @@ public abstract class OpenURIAction extends GenericAction {
 	}
 	
 	protected boolean checkFriendlyName(String friendlyName) {
-		if (!getFileChooser(getFriendlyNameID()).accept(new File(friendlyName))) {
+		if (!chooser.accept(new File(friendlyName))) {
 			return false;
 		}
 		return true;

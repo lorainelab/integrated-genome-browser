@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
@@ -22,6 +23,7 @@ import javax.swing.TransferHandler;
 
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -35,7 +37,8 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();
-
+	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+	
 	public static LoadFileAction getAction() {
 		return ACTION;
 	}
@@ -76,6 +79,30 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		}
 	};
 	
+	protected boolean openURI(URI uri) {
+		getFileChooser(getId());
+		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
+		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+
+		if (!checkFriendlyName(friendlyName)) {
+			return false;
+		}
+
+		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
+		boolean mergeSelected = loadGroup == null ? false : true;
+		if (loadGroup == null) {
+			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
+		}
+
+		String speciesName = igbService.getSelectedSpecies();
+		if (SELECT_SPECIES.equals(speciesName)) {
+			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
+		}
+		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
+
+		return true;
+	}
+		
 	/**
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from

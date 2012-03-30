@@ -129,10 +129,7 @@ public abstract class AbstractGraphOperator implements Operator {
 		// get the display name for the result graph
 		String symbol = getSymbol();
 		String separator = (symbol == null) ? ", " : " " + symbol + " ";
-		String newname =
-				getName().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")"
-				: "(..." + symList.size() + ")");
-		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+		String newname = createName(aseq, symList, separator);
 		// create the new graph from the results
 		int[] x = intListToArray(xList);
 		int[] w = intListToArray(wList);
@@ -153,6 +150,14 @@ public abstract class AbstractGraphOperator implements Operator {
 		newsym.getGraphState().setGraphStyle(((GraphSym) symList.get(0)).getGraphState().getGraphStyle());
 		newsym.getGraphState().setHeatMap(((GraphSym) symList.get(0)).getGraphState().getHeatMap());
 		return newsym;
+	}
+
+	protected String createName(BioSeq aseq, List<SeqSymmetry> symList, String separator) {
+		String newname =
+				getName().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")"
+				: "(..." + symList.size() + ")");
+		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+		return newname;
 	}
 
 	protected abstract String getSymbol();

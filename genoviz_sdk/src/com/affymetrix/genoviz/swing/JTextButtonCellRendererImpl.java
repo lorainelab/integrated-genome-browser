@@ -22,7 +22,15 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 	protected JButton getButton() {
 		return new JButton("...");
 	}
-
+	
+	protected final void copyAction()
+	{
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringBuffer hackbuf = new StringBuffer(temp);
+		String hackstr = new String(hackbuf);
+		StringSelection data = new StringSelection(hackstr);
+		clipboard.setContents(data, null);
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final JTextArea tfa = new JTextArea();
@@ -51,21 +59,13 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 		copy.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				StringBuffer hackbuf = new StringBuffer(temp);
-				String hackstr = new String(hackbuf);
-				StringSelection data = new StringSelection(hackstr);
-				clipboard.setContents(data, null);
+				copyAction();
 			}
 		});
 		copyClose.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				StringBuffer hackbuf = new StringBuffer(temp);
-				String hackstr = new String(hackbuf);
-				StringSelection data = new StringSelection(hackstr);
-				clipboard.setContents(data, null);
+				copyAction();
 				dialog.dispose();
 			}
 		});

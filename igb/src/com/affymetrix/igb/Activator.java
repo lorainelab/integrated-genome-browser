@@ -33,6 +33,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
+import com.affymetrix.igb.viewmode.BaiSemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.BarGraphGlyph;
 import com.affymetrix.igb.viewmode.DefaultSemanticZoomGlyphFactory;
 import com.affymetrix.igb.viewmode.DotGraphGlyph;
@@ -319,6 +320,7 @@ public class Activator implements BundleActivator {
 		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
 		MapViewGlyphFactoryI annotationSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationSemanticZoomGlyphFactory, null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, stairStepGraphGlyphFactory), null);
 
 		// Add Default factories
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationSemanticZoomGlyphFactory);
@@ -328,5 +330,5 @@ public class Activator implements BundleActivator {
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Mismatch, mismatchGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ProbeSet, probeSet);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.ScoredContainer, scoredHeatMap);
-}
+	}
 }

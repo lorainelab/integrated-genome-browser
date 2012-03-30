@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/BigWig.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/be.pwnt.jflow_1.0.0.jar"/>
 	<classpathentry kind="lib" path="resources"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

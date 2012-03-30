@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.view.AbstractSequenceViewer;
 
 /**
  *
@@ -15,8 +16,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ExportFastaSequenceAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
-	SequenceViewer sv;
-	public ExportFastaSequenceAction(SequenceViewer sv) {
+	AbstractSequenceViewer sv;
+	public ExportFastaSequenceAction(AbstractSequenceViewer sv) {
 		super();
 		this.sv=sv;
 	}

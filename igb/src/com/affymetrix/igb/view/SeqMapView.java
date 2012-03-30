@@ -40,6 +40,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -106,6 +107,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.action.*;
 
 /**
  *
@@ -242,7 +244,7 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	public GenericAction seqviewer;
+	public GenericAction seqviewer, alignseqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -342,6 +344,7 @@ public class SeqMapView extends JPanel
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
 			seqviewer = ViewGenomicSequenceInSeqViewerAction.getAction();
+			alignseqviewer = ViewAlignmentSequenceInSeqViewerAction.getAction();
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'
@@ -1330,6 +1333,15 @@ public class SeqMapView extends JPanel
 		if (seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
 			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
 		}
+		if (alignseqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
+			alignseqviewer.setEnabled(!seqmap.getSelected().isEmpty());
+		}
+		if(!(getSelectedSyms().isEmpty())){
+				for(int i=0;i<getSelectedSyms().size();i++){
+					if(!(getSelectedSyms().get(i) instanceof SymWithResidues))
+						alignseqviewer.setEnabled(false);
+				}
+		}
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
@@ -1352,6 +1364,12 @@ public class SeqMapView extends JPanel
 		if (seqviewer != null) {
 			seqviewer.setEnabled(true);
 		}
+		if(getSelectedSyms().isEmpty() && alignseqviewer!=null)
+			alignseqviewer.setEnabled(false);
+		/*if (alignseqviewer != null) {
+			alignseqviewer.setEnabled(true);
+		
+		}*/
 	}
 
 	/**
@@ -1941,6 +1959,7 @@ public class SeqMapView extends JPanel
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(selectParentMI);
 			popup.add(new JMenuItem(seqviewer));
+			popup.add(new JMenuItem(alignseqviewer));
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {
@@ -1962,6 +1981,7 @@ public class SeqMapView extends JPanel
 					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
 						popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
 						popup.add(new JMenuItem(seqviewer));
+						popup.add(new JMenuItem(alignseqviewer));
 					}
 				}
 

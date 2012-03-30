@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
@@ -54,7 +55,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-public class SequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
+public abstract class AbstractSequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
 
 	private SeqMapView seqmapview;
 	private NeoSeq seqview;
@@ -63,7 +64,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	private int pixel_height = 400;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
-	private SeqSymmetry residues_sym;
+	public SeqSymmetry residues_sym;
 	BioSeq aseq;
 	boolean isGenomicRequest;
 	SequenceViewer sv;
@@ -76,7 +77,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	private boolean toggle_Reverse_Complement = false;;
-	List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
+	List<SequenceViewer.CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
@@ -85,7 +86,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 /* default constructor to get the singleton object of SeqMapView
  * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
  */
-	public SequenceViewer() {
+	public AbstractSequenceViewer() {
 		seqmapview = IGB.getSingleton().getMapView();
 	}
 
@@ -125,8 +126,8 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
  * syms.size()=0 it is a genomic request
  * residues_syms1 instanceof SupportsCdsSpan) this is true when the selection in IGB has cds start and end.
  */
-	public void startSequenceViewer() {
-		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
+	public void startSequenceViewer(){
+				List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
 		if (syms.size() >= 1) {
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
@@ -174,19 +175,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 				};
 
 				if (!isGenomicRequest) {
-
-					SwingWorker worker = new SwingWorker() {
-
-						@Override
-						protected Object doInBackground() throws Exception {
-							LoadResidueAction loadResidue = new LoadResidueAction(residues_sym.getSpan(aseq), true);
-							loadResidue.addDoneCallback(doneback);
-							loadResidue.actionPerformed(null);
-							loadResidue.removeDoneCallback(doneback);
-							return null;
-						}
-					};
-					worker.execute();
+					doBackground(doneback);
 					
 				} else {
 					if (residues_sym == null) {
@@ -284,7 +273,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		}
 	}
 */
-	public static class CreateValueSet implements Comparable<CreateValueSet>{
+	public static class CreateValueSet implements Comparable<SequenceViewer.CreateValueSet>{
 		static final SeqSpanComparator spanCompare = new SeqSpanComparator();
 		public SeqSpan span;
 		public SequenceViewerItems si;
@@ -302,18 +291,18 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			return this.si;
 		}
 		
-		public int compareTo(CreateValueSet t) {
+		public int compareTo(SequenceViewer.CreateValueSet t) {
 			return spanCompare.compare(span, t.getSpan());
 		}
 	}
 
 	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
-		bundle = new ArrayList<CreateValueSet>();		
+		bundle = new ArrayList<SequenceViewer.CreateValueSet>();		
 		if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
 			addSequenceViewerItem(residues_sym, 0, aseq);
 		} else {
 			addSequenceViewerItems(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
-			addSequenceViewerItems(SeqUtils.getIntronSym(residues_sym, aseq), SequenceViewerItems.TYPE.INTRON.ordinal(), aseq);
+			addIntron(residues_sym, aseq);
 		}
 		Collections.sort(bundle);
 		
@@ -321,16 +310,18 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			SeqSpan span = residues_sym.getSpan(aseq);
 			if (!span.isForward()) {
 				Collections.reverse(bundle);
-				working_list = new ArrayList<CreateValueSet>(bundle);
+				working_list = new ArrayList<SequenceViewer.CreateValueSet>(bundle);
 			} else {
-				working_list = new ArrayList<CreateValueSet>(bundle);
+				working_list = new ArrayList<SequenceViewer.CreateValueSet>(bundle);
 			}
-			reverse_complement = new ArrayList<CreateValueSet>(working_list);
+			reverse_complement = new ArrayList<SequenceViewer.CreateValueSet>(working_list);
 			Collections.reverse(reverse_complement);
 		}
 	}
 
-	private void addSequenceViewerItems(SeqSymmetry sym, int type, BioSeq aseq) {
+	protected abstract void addIntron(SeqSymmetry residues_sym, BioSeq aseq);
+	
+	protected void addSequenceViewerItems(SeqSymmetry sym, int type, BioSeq aseq) {
 		for (int i = 0; i < sym.getChildCount(); i++) {
 			addSequenceViewerItem(sym.getChild(i), type, aseq);
 		}
@@ -339,7 +330,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	private void addSequenceViewerItem(SeqSymmetry sym, int type, BioSeq aseq) {
 		SeqSpan span;
 		SequenceViewerItems sequenceViewerItems = new SequenceViewerItems();
-		sequenceViewerItems.setResidues(SeqUtils.getResidues(sym, aseq));
+		sequenceViewerItems.setResidues(getResidues(sym, aseq));
 		span = sym.getSpan(aseq);
 		sequenceViewerItems.setType(type);
 
@@ -357,13 +348,15 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 
 		}
 		sequenceViewerItems.setReverseResidues((DNAUtils.reverseComplement(sequenceViewerItems.getResidues())));
-		bundle.add(new CreateValueSet(span, sequenceViewerItems));
+		bundle.add(new SequenceViewer.CreateValueSet(span, sequenceViewerItems));
 	}
+	
+	public abstract String getResidues(SeqSymmetry sym, BioSeq aseq);
 	
 	private void addFormattedResidues() {
 		Color[] cols = getColorScheme();
 		int start = 0, end = 0;
-		Iterator<CreateValueSet> it_working = null;
+		Iterator<SequenceViewer.CreateValueSet> it_working = null;
 		seqview.setResidues("");
 		if (toggle_Reverse_Complement) {
 			it_working = reverse_complement.listIterator();
@@ -371,7 +364,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			it_working = working_list.listIterator();
 		}
 		while (it_working.hasNext()) {
-			CreateValueSet cv = it_working.next();
+			SequenceViewer.CreateValueSet cv = it_working.next();
 			if(showcDNASwitch){
 				if(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
 					continue;
@@ -416,7 +409,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	private void enableShowCDNA(){
 		showcDNAButton.setEnabled(false);
 		if(!bundle.isEmpty()){
-			for(CreateValueSet b : bundle){
+			for(SequenceViewer.CreateValueSet b : bundle){
 				if(b.getSi().getType() == SequenceViewerItems.TYPE.INTRON.ordinal()){
 					showcDNAButton.setEnabled(true);
 					break;
@@ -451,7 +444,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			}
 		});
 	}
-
+	public abstract void doBackground(final GenericActionDoneCallback doneback);
 	@SuppressWarnings("serial")
 	private void getNeoSeqInstance() {
 		seqview = new NeoSeq() {
@@ -459,7 +452,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			@Override
 			protected void setResiduesSelected(boolean bool) {
 				super.setResiduesSelected(bool);
-//				copyAction.setEnabled(bool);
+				copyAction.setEnabled(bool);
 			}
 
 			@Override
@@ -553,18 +546,18 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
 	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
 	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
-//	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
+	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
-//		copyAction.setEnabled(false);
-//		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
+		copyAction.setEnabled(false);
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(seqview)));
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
-//		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
+		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
@@ -691,7 +684,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			}
 		}
 	}
-
 	private void colorSwitching() {
 		seqview.clearWidget();
 			addFormattedResidues();
@@ -763,9 +755,9 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		Object evtSource = me.getSource();
 		if (evtSource == editMenu) {
 			if (!seqview.getSelectedResidues().trim().isEmpty()) {
-//				copyAction.setEnabled(true);
+				copyAction.setEnabled(true);
 			} else {
-//				copyAction.setEnabled(false);
+				copyAction.setEnabled(false);
 			}
 		}
 	}

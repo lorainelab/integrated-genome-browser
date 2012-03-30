@@ -56,7 +56,6 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 				String hackstr = new String(hackbuf);
 				StringSelection data = new StringSelection(hackstr);
 				clipboard.setContents(data, null);
-				dialog.dispose();
 			}
 		});
 		copyClose.addActionListener(new ActionListener() {

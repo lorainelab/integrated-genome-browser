@@ -3,9 +3,10 @@ package net.sf.samtools;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import net.sf.samtools.util.BlockCompressedFilePointerUtil;
 
@@ -50,23 +51,28 @@ public class BaiZoomSymLoader extends SymLoader {
 				StubBAMFileIndex dbfi = new StubBAMFileIndex(bamIndexFile, ssd);
 				BAMIndexContent bic = dbfi.query(refno);
 				Iterator<Bin> blIter = bic.getBins().iterator();
-				List<SeqSymmetry> graphs = new ArrayList<SeqSymmetry>();
-				System.out.println(">>>>>>>>>> before collect");
-				Date start = new Date();
+				final String symId = UUID.randomUUID().toString();
+				SumOperator sumOperator = new SumOperator() {
+					protected String createName(BioSeq aseq, List<SeqSymmetry> symList, String separator) {
+						return symId;
+					}
+				};
+				GraphSym gsym = new GraphSym(new int[]{overlapSpan.getMin()}, new int[]{overlapSpan.getLength()}, new float[]{0.0f}, symId, seq);
 				while (blIter.hasNext()) {
 					Bin bin = blIter.next();
-					int[] region = getRegion(bin.getBinNumber());
-					int yValue = 0;
-					for (Chunk chunk : bin.getChunkList()) {
-						yValue += getUncompressedLength(chunk);
+					if (bin.containsChunks()) {
+						int[] region = getRegion(bin.getBinNumber());
+						int yValue = 0;
+						for (Chunk chunk : bin.getChunkList()) {
+							if (chunk != null) {
+								yValue += getUncompressedLength(chunk);
+							}
+						}
+						GraphSym dataSym = new GraphSym(new int[]{region[0]}, new int[]{region[1] - region[0]}, new float[]{yValue}, symId, seq);
+						gsym = (GraphSym)sumOperator.operate(seq, Arrays.asList(new SeqSymmetry[]{gsym, dataSym}));
 					}
-					graphs.add(new GraphSym(new int[]{region[0]}, new int[]{region[1] - region[0]}, new float[]{yValue}, featureName, seq));
 				}
-				Date mid = new Date();
-				System.out.println(">>>>>>>>>> collect took " + ((double)(mid.getTime() - start.getTime()) / 1000.0) + " seconds");
-				saveSym = (GraphSym)new SumOperator().operate(seq, graphs);
-				Date end = new Date();
-				System.out.println(">>>>>>>>>> operator took " + ((double)(end.getTime() - mid.getTime()) / 1000.0) + " seconds");
+				saveSym = gsym;
 			}
 			saveSeq = seq;
 		}
@@ -99,7 +105,8 @@ public class BaiZoomSymLoader extends SymLoader {
 			int base = (int)Math.pow(2, idx);
 			if (counter + base > binno) {
 				int mod = binno - counter;
-				span = new int[]{base * mod, base * (mod + 1) - 1};
+				int lvl = (int)Math.pow(2, 29 - idx);
+				span = new int[]{lvl * mod, lvl * (mod + 1) - 1};
 			}
 			else {
 				counter += base;

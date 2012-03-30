@@ -52,7 +52,6 @@ class BookmarkHttpRequestHandler implements Runnable {
 				// we need to process only the GET header line of the input, which will
 				// look something like this:
 				// 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
-
 				String command = null;
 				if (line.length() >= 4 && line.substring(0, 4).toUpperCase().equals("GET ")) {
 					String[] getCommand = line.substring(4).split(" ");
@@ -61,9 +60,13 @@ class BookmarkHttpRequestHandler implements Runnable {
 					}
 				}
 
-
 				if (command != null) {
-					parseAndGoToBookmark(command);
+					//bring IGB to front?
+					if (command.contains("bringIGBToFront=true")){
+						igbService.getFrame().toFront();
+						igbService.getFrame().repaint();
+					}
+					else parseAndGoToBookmark(command);
 				} else {
 					igbService.doSingleAction(line);
 				}

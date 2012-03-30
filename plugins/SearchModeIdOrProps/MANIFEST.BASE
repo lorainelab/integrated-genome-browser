@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SearchModeIdOrProps
-Bundle-SymbolicName: SearchModeIdOrProps
+Bundle-SymbolicName: com.affymetrix.searchmodeidorprops.SearchModeIdOrProps
 Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.searchmodeidorprops.Activator
 Bundle-ActivationPolicy: lazy

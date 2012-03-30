@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  *  ignores all other input, returns no output, and closes the connection.
  */
 public final class SimpleBookmarkServer {
-  private static final int default_server_port = 7085;
+  public static final int default_server_port = 7085;
 
   /** The OLD name of the IGB servlet, "UnibrowControl". */
   final static String SERVLET_NAME_OLD = "UnibrowControl";

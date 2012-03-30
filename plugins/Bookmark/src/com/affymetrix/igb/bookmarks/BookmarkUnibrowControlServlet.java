@@ -32,6 +32,8 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.SeqMapViewI;
+
 import javax.swing.SwingWorker;
 
 /**
@@ -126,10 +128,55 @@ public final class BookmarkUnibrowControlServlet {
 				boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
 				boolean loaddata = true;
 				boolean loaddas2data = true;
-
-				int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
-				int start = values[0],
-						end = values[1];
+				int start = 0;
+				int end = 0;
+				
+				//missing seqid or start or end? Attempt to set to current view
+				if (missingString(new String[]{seqid, start_param, end_param})){				
+					boolean pickOne = false;
+					//get AnnotatedSeqGroup for bookmark
+					AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(version);
+					if (bookMarkGroup != null){
+						//same genome version as that in view?
+						SeqMapViewI currentSeqMap = igbService.getSeqMapView();
+						if (currentSeqMap != null){
+							//get visible span
+							SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
+							if (currentSpan != null){
+								//check genome version, if same then set coordinates
+								AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
+								if (currentGroup.equals(bookMarkGroup)){
+									start = currentSpan.getStart();
+									end = currentSpan.getEnd();
+									seqid = currentSpan.getBioSeq().getID();
+								}
+								else pickOne = true;
+							}
+							else pickOne = true;
+						}
+						//pick first chromosome and 1M span
+						else pickOne = true;
+					}
+					//pick something, only works if version was loaded.
+					if (pickOne){
+						BioSeq bs = bookMarkGroup.getSeq(0);
+						if (bs != null){
+							int len = bs.getLength();
+							seqid = bs.getID();
+							start = len/3 - 500000;
+							if (start < 0) start = 0;
+							end = start + 500000;
+							if (end > len) end = len-1;
+						}
+					}
+				}
+				
+				//attempt to parse from bookmark?
+				if (start == 0 && end == 0){
+					int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
+					start = values[0];
+					end = values[1];
+				}
 
 				String[] server_urls = parameters.get(Bookmark.SERVER_URL);
 				String[] query_urls = parameters.get(Bookmark.QUERY_URL);
@@ -147,12 +194,9 @@ public final class BookmarkUnibrowControlServlet {
 
 				GenericServer[] gServers2 = null;
 
-				if (das2_server_urls == null || das2_query_urls == null
-						|| das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
-					loaddas2data = false;
-				} else {
-					gServers2 = loadServers(igbService, das2_server_urls);
-				}
+				if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) loaddas2data = false; 
+				else gServers2 = loadServers(igbService, das2_server_urls);
+				
 				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
 				if (null == seq) {
@@ -201,6 +245,17 @@ public final class BookmarkUnibrowControlServlet {
 				return null;
 			}
 		}.execute();
+	}
+	
+
+	
+	/**Checks for nulls or Strings with zero length.*/
+	public static boolean missingString(String[] params){
+		for (String s : params){
+			if (s == null) return true;
+			if (s.trim().length() == 0) return true;
+		}
+		return false;
 	}
 
 	public List<String> getGraphUrls(Map<String, String[]> map) {
@@ -364,7 +419,7 @@ public final class BookmarkUnibrowControlServlet {
 			start = Integer.parseInt(start_param);
 		}
 		if (end_param == null || end_param.equals("")) {
-			end = start + 10000;
+			end = start + 100000;
 			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
 					"No end value found in the bookmark URL. Setting end={0}", end);
 		} else {
@@ -378,6 +433,7 @@ public final class BookmarkUnibrowControlServlet {
 		}
 		return new int[]{start, end, selstart, selend};
 	}
+	
 
 	/** Loads the sequence and goes to the specified location.
 	 *  If version doesn't match the currently-loaded version,
@@ -390,6 +446,7 @@ public final class BookmarkUnibrowControlServlet {
 	 *  @return true indicates that the action succeeded
 	 */
 	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
+		
 		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n"

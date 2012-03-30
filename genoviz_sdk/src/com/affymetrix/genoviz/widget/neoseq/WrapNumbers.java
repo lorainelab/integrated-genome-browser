@@ -18,18 +18,22 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 
 public class WrapNumbers extends WrapGlyph {
 
 	protected int seqLength;
 	protected int firstOrd = 0;
 	protected boolean revNums = false;
-
+	protected static int COMMA = 0;
+	protected static int DEF = 1;
+	protected int labelFormat = DEF;
+	DecimalFormat comma_format = new DecimalFormat("#,###.###");
 	protected Rectangle2D.Double visible_box;
 
 	/** specifies the gap between the numbers and the residues to the right. */
 	private static final int RIGHT_MARGIN = 6;
-
+	
 	@Override
 	public void setSequence (SequenceI seq) {
 		seqLength = seq.getLength();
@@ -54,7 +58,15 @@ public class WrapNumbers extends WrapGlyph {
 	public int getFirstOrdinal () {
 		return firstOrd;
 	}
-
+	
+	public void setLabelFormat(int format){
+		labelFormat = format;
+	}
+	
+	public int getLabelFormat(){
+		return labelFormat;
+	}
+	
 	public void draw (ViewI view) {
 		Graphics g = view.getGraphics();
 		drawNumbers(view, g);
@@ -110,10 +122,9 @@ public class WrapNumbers extends WrapGlyph {
 			String ordinal;
 
 			if (revNums)
-				ordinal = Integer.toString(seqEnd - residue_index -1);
+				ordinal = stringRepresentation(seqEnd - residue_index -1);
 			else
-				ordinal = Integer.toString(residue_index);
-
+				ordinal = stringRepresentation(residue_index);
 			int x = pixelBox.width - RIGHT_MARGIN - fm.stringWidth(ordinal);
 			g.drawString(ordinal, x, ycounter);
 			ycounter += residue_height;
@@ -123,6 +134,11 @@ public class WrapNumbers extends WrapGlyph {
 
 	private static int useConstrain(int residues_per_line, double y, double height) {
 		return (int) (y + height - (height % residues_per_line) - 1);
+	}
+	public String stringRepresentation(int num){
+		if(labelFormat == COMMA)
+			return comma_format.format(num);
+		return Integer.toString(num);
 	}
 
 }

@@ -1816,7 +1816,10 @@ public class NeoSeq extends NeoContainerWidget
 	public void setNumberFontColor(Color col) {
 		num_glyph.setColor(col);
 	}
-
+	
+	public void setNumberLabelFormat(int format){
+		num_glyph.setLabelFormat(format);
+	}
 	/**
 	 * Turns display options on or off.
 	 *

@@ -45,6 +45,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.text.DecimalFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -58,8 +59,11 @@ import javax.swing.event.MenuListener;
 public abstract class AbstractSequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
 
 	private SeqMapView seqmapview;
+	DecimalFormat comma_format = new DecimalFormat("#,###.###");
 	private NeoSeq seqview;
 	private JFrame mapframe;
+	private int COMMA = 0;
+	private int DEF = 1;
 	private int pixel_width = 500;
 	private int pixel_height = 400;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
@@ -96,6 +100,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
 		seqview.setFont(new Font("Arial", Font.BOLD, 13));
 		seqview.setNumberFontColor(Color.black);
+		seqview.setNumberLabelFormat(DEF);
 		seqview.setResidueMultipleConstraint(1);
 		seqview.setSpacing(20);
 		this.getTitle();
@@ -421,6 +426,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 /* This method calls all the important methods to start sequence viewer
  *
  */
+	protected String stringRepresentation(int num)
+	{
+		return comma_format.format(num);
+	}
 	protected void getGoing(SeqSymmetry residues_sym) {
 		this.getNeoSeqInstance();
 		createItemListForSequenceviewer(residues_sym, aseq);

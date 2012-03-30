@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.osgi.service.IGBService;
 
@@ -27,7 +28,6 @@ import java.util.logging.Logger;
  *  ignores all other input, returns no output, and closes the connection.
  */
 public final class SimpleBookmarkServer {
-  public static final int default_server_port = 7085;
 
   /** The OLD name of the IGB servlet, "UnibrowControl". */
   final static String SERVLET_NAME_OLD = "UnibrowControl";
@@ -48,7 +48,7 @@ public final class SimpleBookmarkServer {
    *  is used.
    */
   static final String DEFAULT_SERVLET_URL = "http://localhost:"
-      + default_server_port + "/" + SERVLET_NAME_OLD;
+      + CommonUtils.default_server_port + "/" + SERVLET_NAME_OLD;
 
   public SimpleBookmarkServer(IGBService igbService) {
     try {
@@ -85,7 +85,7 @@ public final class SimpleBookmarkServer {
     // find an available port, starting with the default_server_point and
       //   incrementing up from there...
     int ports_tried = 0;
-    server_port = default_server_port - 1;
+    server_port = CommonUtils.default_server_port - 1;
     boolean available_port_found = false;
     while ((!available_port_found) && (ports_tried < ports_to_try)) {
       server_port++;

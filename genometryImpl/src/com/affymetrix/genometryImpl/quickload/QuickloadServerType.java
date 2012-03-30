@@ -37,7 +37,9 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
 
 public class QuickloadServerType implements ServerTypeI {
-	enum QFORMAT{
+
+	enum QFORMAT {
+
 		BNIB,
 		VTWOBIT,
 		TWOBIT,
@@ -51,20 +53,26 @@ public class QuickloadServerType implements ServerTypeI {
 	private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<QuickLoadSymLoaderHook>();
 	/**
 	 * Private copy of the default Synonym lookup
+	 *
 	 * @see SynonymLookup#getDefaultLookup()
 	 */
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-	/** For files too be looked up on server. **/
+	/**
+	 * For files too be looked up on server. *
+	 */
 	private static final Set<String> quickloadFiles = new HashSet<String>();
 
-	/** Add files to be looked up. **/
-	static{
+	/**
+	 * Add files to be looked up. *
+	 */
+	static {
 		quickloadFiles.add(Constants.annotsTxt);
 		quickloadFiles.add(Constants.annotsXml);
 		quickloadFiles.add(Constants.modChromInfoTxt);
 		quickloadFiles.add(Constants.liftAllLft);
 	}
 	private static final QuickloadServerType instance = new QuickloadServerType();
+
 	public static QuickloadServerType getInstance() {
 		return instance;
 	}
@@ -95,23 +103,26 @@ public class QuickloadServerType implements ServerTypeI {
 
 	/**
 	 * Returns true if file may not exist else false.
+	 *
 	 * @param fileName
 	 * @return
 	 */
-	private boolean getFileAvailability(String fileName){
-		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
+	private boolean getFileAvailability(String fileName) {
+		if (fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
 			return true;
+		}
 
 		return false;
 	}
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
+	 *
 	 * @param servertype	Server type to determine which set of files to be used.
 	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
-	private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path){
+	private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path) {
 		File file;
 		Set<String> files = quickloadFiles;
 
@@ -119,36 +130,39 @@ public class QuickloadServerType implements ServerTypeI {
 		local_path += "/" + genome_name;
 		GeneralUtils.makeDir(local_path);
 		boolean fileMayNotExist;
-		for(String fileName : files){
+		for (String fileName : files) {
 			fileMayNotExist = getFileAvailability(fileName);
 
-			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
+			file = GeneralUtils.getFile(server_path + "/" + fileName, fileMayNotExist);
 
-			if((file == null && !fileMayNotExist))
+			if ((file == null && !fileMayNotExist)) {
 				return false;
+			}
 
-			if(!GeneralUtils.moveFileTo(file,fileName,local_path))
+			if (!GeneralUtils.moveFileTo(file, fileName, local_path)) {
 				return false;
+			}
 		}
 
 		return true;
 	}
-	
+
 	@Override
 	public boolean processServer(GenericServer gServer, String path) {
-		File file = GeneralUtils.getFile(gServer.URL+Constants.contentsTxt, false);
+		File file = GeneralUtils.getFile(gServer.URL + Constants.contentsTxt, false);
 
 		String quickloadStr = null;
 		quickloadStr = (String) gServer.serverObj;
-		
+
 		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
 		List<String> genome_names = quickloadServer.getGenomeNames();
-		if(!GeneralUtils.moveFileTo(file,Constants.contentsTxt,path))
+		if (!GeneralUtils.moveFileTo(file, Constants.contentsTxt, path)) {
 			return false;
-		
-		for(String genome_name : genome_names){
-			if(!getAllFiles(gServer,genome_name,path)){
+		}
+
+		for (String genome_name : genome_names) {
+			if (!getAllFiles(gServer, genome_name, path)) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
 				return false;
 			}
@@ -192,7 +206,7 @@ public class QuickloadServerType implements ServerTypeI {
 		return quickLoadSymLoader;
 	}
 
-	private	static URI determineURI(GenericVersion version, String featureName) {
+	private static URI determineURI(GenericVersion version, String featureName) {
 		URI uri = null;
 
 		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
@@ -206,14 +220,23 @@ public class QuickloadServerType implements ServerTypeI {
 				uri = (new File(featureName)).toURI();
 			}
 		} else {
-			uri = URI.create(
-					version.gServer.URL
-					+ version.versionID + "/"
-					+ determineFileName(version, featureName));
+			String fileName = determineFileName(version, featureName);
+			int httpIndex = fileName.toLowerCase().indexOf("http:");
+			int httpsIndex = fileName.toLowerCase().indexOf("https:");
+			int ftpIndex = fileName.toLowerCase().indexOf("ftp:");
+			if (httpIndex > -1 || httpsIndex > -1 || ftpIndex > -1) {
+				uri = URI.create(fileName);
+			} else {
+				uri = URI.create(
+						version.gServer.URL
+						+ version.versionID + "/"
+						+ determineFileName(version, featureName));
+			}
 		}
+		
 		return uri;
 	}
-	
+
 	private static String determineFileName(GenericVersion version, String featureName) {
 		URL quickloadURL;
 		try {
@@ -234,7 +257,7 @@ public class QuickloadServerType implements ServerTypeI {
 		}
 		return "";
 	}
-	
+
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		// Discover feature names from QuickLoad
@@ -283,8 +306,10 @@ public class QuickloadServerType implements ServerTypeI {
 	public boolean canHandleFeature() {
 		return false;
 	}
+
 	/**
 	 * Discover genomes from Quickload
+	 *
 	 * @param gServer
 	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
@@ -311,7 +336,7 @@ public class QuickloadServerType implements ServerTypeI {
 		}
 
 		//update species.txt with information from the server.
-		if( quickloadServer.hasSpeciesTxt()){
+		if (quickloadServer.hasSpeciesTxt()) {
 			try {
 				SpeciesLookup.load(quickloadServer.getSpeciesTxt());
 			} catch (IOException ex) {
@@ -350,8 +375,7 @@ public class QuickloadServerType implements ServerTypeI {
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
 	private String generateQuickLoadURI(String common_url, String vPath, QFORMAT Format) {
 		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "trying to load residues via Quickload");
-		switch(Format)
-		{
+		switch (Format) {
 			case BNIB:
 				common_url += "bnib";
 				break;
@@ -373,13 +397,13 @@ public class QuickloadServerType implements ServerTypeI {
 		return common_url;
 	}
 
-	private QFORMAT determineFormat(String common_url, String vPath){
+	private QFORMAT determineFormat(String common_url, String vPath) {
 
-		for(QFORMAT format : QFORMAT.values()){
-			String url_path = generateQuickLoadURI(common_url,vPath,format);
-			if(LocalUrlCacher.isValidURL(url_path)){
+		for (QFORMAT format : QFORMAT.values()) {
+			String url_path = generateQuickLoadURI(common_url, vPath, format);
+			if (LocalUrlCacher.isValidURL(url_path)) {
 				Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-							"  Quickload location of bnib file: {0}", url_path);
+						"  Quickload location of bnib file: {0}", url_path);
 
 				return format;
 			}
@@ -388,11 +412,12 @@ public class QuickloadServerType implements ServerTypeI {
 		return null;
 	}
 
-	private SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group, String seq_name){
+	private SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group, String seq_name) {
 		QFORMAT format = determineFormat(common_url, vPath);
 
-		if(format == null)
+		if (format == null) {
 			return null;
+		}
 
 		URI uri = null;
 		try {
@@ -401,7 +426,7 @@ public class QuickloadServerType implements ServerTypeI {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 		}
 
-		switch(format){
+		switch (format) {
 			case BNIB:
 				return new BNIB(uri, "", seq_group);
 
@@ -420,13 +445,13 @@ public class QuickloadServerType implements ServerTypeI {
 
 	/**
 	 * Get the partial residues from the specified QuickLoad server.
+	 *
 	 * @param seq_group
 	 * @param path
 	 * @param root_url
 	 * @param span
 	 * @return residue String.
 	 */
-
 	private String GetQuickLoadResidues(
 			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
 		String common_url = "";

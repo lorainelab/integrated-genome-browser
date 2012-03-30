@@ -355,7 +355,7 @@ public class Activator implements BundleActivator {
 		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
 		MapViewGlyphFactoryI annotationSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationSemanticZoomGlyphFactory, null);
-		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, stairStepGraphGlyphFactory), null);
+//		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, stairStepGraphGlyphFactory), null);
 
 		// Add Default factories
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationSemanticZoomGlyphFactory);

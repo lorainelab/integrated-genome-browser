@@ -36,9 +36,7 @@ public abstract class FileDropHandler extends TransferHandler {
 		try {
 			if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 				List<File> files = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-				for (File f : files) {
-					openFileAction(f);
-				}
+				openFileAction(files);
 				return true;
 			}
 
@@ -96,7 +94,7 @@ public abstract class FileDropHandler extends TransferHandler {
         return list;
     }
 
-	abstract public void openFileAction(File f);
+	abstract public void openFileAction(List<File> files);
 
 	abstract public void openURLAction(String url);
 }

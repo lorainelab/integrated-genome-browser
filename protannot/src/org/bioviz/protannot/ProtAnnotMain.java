@@ -128,8 +128,9 @@ final public class ProtAnnotMain implements WindowListener {
 	private final TransferHandler fdh = new FileDropHandler(){
 
 		@Override
-		public void openFileAction(File f) {
-			load(f);
+		public void openFileAction(List<File> files) {
+			for(File f: files)
+				load(f);
 		}
 
 		@Override

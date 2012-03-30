@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.List;
 
 /**
  *
@@ -48,10 +49,14 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void openFileAction(File f) {
-			URI uri = f.toURI();
-			if (!openURI(uri)) {
-				ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName());
+		public void openFileAction(List<File> files) {
+			AnnotatedSeqGroup loadGroup = getloadGroup();
+			String speciesName = getSpeciesName();
+			for (File f : files) {
+				URI uri = f.toURI();
+				if (!openURI(uri, loadGroup, speciesName)) {
+					ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName());
+				}
 			}
 		}
 
@@ -68,7 +73,9 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 			} else {
 				try {
 					URI uri = new URI(url.trim());
-					if (!openURI(uri)) {
+					AnnotatedSeqGroup loadGroup = getloadGroup();
+					String speciesName = getSpeciesName();
+					if (!openURI(uri, loadGroup, speciesName)) {
 						ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
 					}
 				} catch (URISyntaxException ex) {
@@ -79,28 +86,32 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		}
 	};
 	
-	protected boolean openURI(URI uri) {
+	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName) {
 		getFileChooser(getId());
 		String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
 		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-
+		boolean mergeSelected = loadGroup == null ? false : true;
 		if (!checkFriendlyName(friendlyName)) {
 			return false;
-		}
-
-		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
-		boolean mergeSelected = loadGroup == null ? false : true;
-		if (loadGroup == null) {
-			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
-		}
-
-		String speciesName = igbService.getSelectedSpecies();
-		if (SELECT_SPECIES.equals(speciesName)) {
-			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
 
 		return true;
+	}
+	
+	private AnnotatedSeqGroup getloadGroup(){
+		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
+		if (loadGroup == null) {
+			loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
+		}
+		return loadGroup;
+	}
+	private String getSpeciesName(){
+		String speciesName = igbService.getSelectedSpecies();
+		if (SELECT_SPECIES.equals(speciesName)) {
+			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
+		}
+		return speciesName;
 	}
 		
 	/**

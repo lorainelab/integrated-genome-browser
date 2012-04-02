@@ -225,7 +225,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			fw = new FileWriter(fil);
 			bw = new BufferedWriter(fw);
 			bw.write("Bookmarks\n");
-			exportAsTEXT_recursive(list, bw, "\t");
+			exportAsTEXT_recursive(list, bw, "\n");
 			bw.write("\n");
 			bw.close();
 		} finally {
@@ -253,9 +253,10 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 			} else if (o instanceof Bookmark) {
 				Bookmark bm = (Bookmark) o;
 				bw.write(bm.getName());
+				bw.write(indent);
 				bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
 				bw.write(indent +""+ bm.getURL().toExternalForm() + "\"");
-				bw.write("\n");
+				bw.write("\n\n");
 			} else if (o instanceof Separator) {
 				bw.write(indent + "\n");
 			}

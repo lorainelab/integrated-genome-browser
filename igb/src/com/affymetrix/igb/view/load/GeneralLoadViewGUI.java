@@ -154,7 +154,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-		Rectangle bounds = new Rectangle(190, 5, 70, 12);
+		Rectangle bounds = new Rectangle(100, 5, 70, 12);
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			PreferencesPanel pp = PreferencesPanel.getSingleton();
 			pp.setTab(PreferencesPanel.TAB_DATALOAD_PREFS);
@@ -164,7 +164,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
 	}//GEN-LAST:event_jPanel1MouseClicked
 
 	private void jPanel1MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseMoved
-		Rectangle bounds = new Rectangle(190, 5, 70, 12);
+		Rectangle bounds = new Rectangle(100, 5, 70, 12);
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			this.setCursor(openHandCursor);
 		} else {

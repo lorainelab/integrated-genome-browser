@@ -13,18 +13,30 @@ import net.sf.samtools.util.BlockCompressedFilePointerUtil;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.operator.SumOperator;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public class BaiZoomSymLoader extends SymLoader {
+	private static final int BIN_COUNT = 32768; // smallest bin
+	private static final int BIN_LENGTH = 16384; // smallest bin
 	private BioSeq saveSeq;
 	private GraphSym saveSym;
 
 	public BaiZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, featureName, group);
+	}
+
+	private int getRefNo(String igbSeq, SAMSequenceDictionary ssd) {
+		List<SAMSequenceRecord> sList = ssd.getSequences();
+		for (int i = 0; i < sList.size(); i++) {
+			String bamSeq = SynonymLookup.getChromosomeLookup().getPreferredName(sList.get(i).getSequenceName());
+			if (igbSeq.equals(bamSeq)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override
@@ -35,15 +47,7 @@ public class BaiZoomSymLoader extends SymLoader {
 			File bamIndexFile = new File(uri.toString());
 			SAMFileReader sfr = new SAMFileReader(bamFile);
 			SAMSequenceDictionary ssd = sfr.getFileHeader().getSequenceDictionary();
-			List<SAMSequenceRecord> sList = ssd.getSequences();
-			int refno = -1;
-			String igbSeq = seq.toString();
-			for (int i = 0; i < sList.size() && refno == -1; i++) {
-				String bamSeq = SynonymLookup.getChromosomeLookup().getPreferredName(sList.get(i).getSequenceName());
-				if (igbSeq.equals(bamSeq)) {
-					refno = i;
-				}
-			}
+			int refno = getRefNo(seq.toString(), ssd);
 			if (refno == -1) {
 				saveSym = new GraphSym(new int[]{}, new int[]{}, new float[]{}, featureName, seq);
 			}
@@ -52,12 +56,14 @@ public class BaiZoomSymLoader extends SymLoader {
 				BAMIndexContent bic = dbfi.query(refno);
 				Iterator<Bin> blIter = bic.getBins().iterator();
 				final String symId = UUID.randomUUID().toString();
-				SumOperator sumOperator = new SumOperator() {
-					protected String createName(BioSeq aseq, List<SeqSymmetry> symList, String separator) {
-						return symId;
-					}
-				};
-				GraphSym gsym = new GraphSym(new int[]{overlapSpan.getMin()}, new int[]{overlapSpan.getLength()}, new float[]{0.0f}, symId, seq);
+				int[] xList = new int[BIN_COUNT];
+				for (int i = 0; i < BIN_COUNT; i++) {
+					xList[i] = i * BIN_LENGTH;
+				}
+				int[] wList = new int[BIN_COUNT];
+				Arrays.fill(wList, BIN_LENGTH);
+				float[] yList = new float[BIN_COUNT];
+				Arrays.fill(yList,  0.0f);
 				while (blIter.hasNext()) {
 					Bin bin = blIter.next();
 					if (bin.containsChunks()) {
@@ -68,11 +74,12 @@ public class BaiZoomSymLoader extends SymLoader {
 								yValue += getUncompressedLength(chunk);
 							}
 						}
-						GraphSym dataSym = new GraphSym(new int[]{region[0]}, new int[]{region[1] - region[0]}, new float[]{yValue}, symId, seq);
-						gsym = (GraphSym)sumOperator.operate(seq, Arrays.asList(new SeqSymmetry[]{gsym, dataSym}));
+						for (int i = region[0] / BIN_LENGTH; i < region[1] / BIN_LENGTH; i++) {
+							yList[i] += yValue;
+						}
 					}
 				}
-				saveSym = gsym;
+				saveSym = new GraphSym(xList, wList, yList, symId, seq);
 			}
 			saveSeq = seq;
 		}

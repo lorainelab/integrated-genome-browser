@@ -101,7 +101,7 @@ public final class GraphState {
 		tier_style.setGraphTier(true);
 
 		// Graph Tiers with a single graph in them are not collapsible/expandible
-		tier_style.setExpandable(false);
+		// tier_style.setExpandable(false);
 	}
 
 	public GraphState(ITrackStyleExtended tierStyle) {

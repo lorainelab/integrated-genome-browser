@@ -64,7 +64,8 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private void setViewModeGlyph(ViewModeGlyph vmg) {
-		if (smv.getViewSeq() != smv.getAnnotatedSeq() && !(vmg instanceof UnloadedGlyph)) {
+		if (smv.getAnnotatedSeq().getComposition() != null && 
+				smv.getViewSeq() != smv.getAnnotatedSeq() && !(vmg instanceof UnloadedGlyph)) {
 			if (viewModeGlyph == null || viewModeGlyph instanceof UnloadedGlyph) {
 				initViewModeGlyph(vmg);
 			} else {

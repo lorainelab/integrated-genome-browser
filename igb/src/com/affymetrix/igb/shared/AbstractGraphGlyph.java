@@ -583,15 +583,15 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 	}
 
-	@Override
-	public final void setCoords(double newx, double newy, double newwidth, double newheight) {
-		super.setCoords(newx, newy, newwidth, newheight);
-		//Note : for view modes bug
-		if(state.getTierStyle().isGraphTier()){
-			state.getTierStyle().setHeight(newheight);
-			state.getTierStyle().setY(newy);
-		}
-	}
+//	@Override
+//	public final void setCoords(double newx, double newy, double newwidth, double newheight) {
+//		super.setCoords(newx, newy, newwidth, newheight);
+//		//Note : for view modes bug
+//		if(state.getTierStyle().isGraphTier()){
+//			state.getTierStyle().setHeight(newheight);
+//			state.getTierStyle().setY(newy);
+//		}
+//	}
 
 	/**
 	 *  Designed to work in combination with pickTraversal().

@@ -255,7 +255,6 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 				bw.write(bm.getName());
 				bw.write(indent);
 				bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
-				bw.write(indent +""+ bm.getURL().toExternalForm() + "\"");
 				bw.write("\n\n");
 			} else if (o instanceof Separator) {
 				bw.write(indent + "\n");

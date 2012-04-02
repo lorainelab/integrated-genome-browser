@@ -5,18 +5,23 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.view.SequenceViewer;
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.awt.event.ActionEvent;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.view.DefaultSequenceViewer;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
  * @author auser
  */
-public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
+public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
 	private static final long serialVersionUID = 1l;
 	private static final ViewGenomicSequenceInSeqViewerAction ACTION = new ViewGenomicSequenceInSeqViewerAction();
 
@@ -26,7 +31,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 
 	private ViewGenomicSequenceInSeqViewerAction() {
 		super();
-		this.setEnabled(false);
+		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {
 //			this.putValue(MNEMONIC_KEY, ks.getKeyCode());
@@ -52,5 +57,13 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 	@Override
 	public boolean isPopup() {
 		return true;
+	}
+	
+	public void symSelectionChanged(SymSelectionEvent evt) {
+		if (!evt.getSelectedSyms().isEmpty() && evt.getSelectedSyms().get(0) instanceof GraphSym) {
+			setEnabled(false);
+		} else {
+			setEnabled(true);
+		}
 	}
 }

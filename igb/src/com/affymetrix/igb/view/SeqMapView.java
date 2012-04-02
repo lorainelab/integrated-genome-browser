@@ -1,113 +1,61 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
-import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
-import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.event.PropertyHolder;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPToggleButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
-import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.glyph.CytobandGlyph;
-import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
-import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.glyph.SmartRubberBand;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.AbstractGraphGlyph;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TransformTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
-import com.affymetrix.igb.shared.ViewModeGlyph;
-import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.SeqMapViewPopup;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.action.AutoLoadThresholdAction;
-import com.affymetrix.igb.action.ClampViewAction;
-import com.affymetrix.igb.action.CopyResiduesAction;
-import com.affymetrix.igb.action.LoadPartialSequenceAction;
-import com.affymetrix.igb.action.MapModeScrollAction;
-import com.affymetrix.igb.action.MapModeSelectAction;
-import com.affymetrix.igb.action.RefreshAFeatureAction;
-import com.affymetrix.igb.action.RefreshDataAction;
-import com.affymetrix.igb.action.ShrinkWrapAction;
-import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
-import com.affymetrix.igb.tiers.CoordinateStyle;
-import com.affymetrix.igb.tiers.MouseShortCut;
-import java.awt.Adjustable;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.prefs.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Pattern;
 import javax.swing.*;
 
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
+
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
+import com.affymetrix.genoviz.glyph.RootGlyph;
+import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.*;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.NeoMap;
+
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory;
+import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -244,7 +192,6 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	public GenericAction seqviewer, alignseqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -343,8 +290,6 @@ public class SeqMapView extends JPanel
 			tier_manager.addPopupListener(gsm);
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
-			seqviewer = ViewGenomicSequenceInSeqViewerAction.getAction();
-			alignseqviewer = ViewAlignmentSequenceInSeqViewerAction.getAction();
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'
@@ -1338,18 +1283,6 @@ public class SeqMapView extends JPanel
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
-//		if (seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
-//			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
-//		}
-//		if (alignseqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
-//			alignseqviewer.setEnabled(!seqmap.getSelected().isEmpty());
-//		}
-//		if(!(getSelectedSyms().isEmpty())){
-//				for(int i=0;i<getSelectedSyms().size();i++){
-//					if(!(getSelectedSyms().get(i) instanceof SymWithResidues))
-//						alignseqviewer.setEnabled(false);
-//				}
-//		}
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
@@ -1369,15 +1302,6 @@ public class SeqMapView extends JPanel
 				seqmap.updateWidget();
 			}
 		}
-		if (seqviewer != null) {
-			seqviewer.setEnabled(true);
-		}
-		if(getSelectedSyms().isEmpty() && alignseqviewer!=null)
-			alignseqviewer.setEnabled(false);
-		/*if (alignseqviewer != null) {
-			alignseqviewer.setEnabled(true);
-		
-		}*/
 	}
 
 	/**
@@ -1966,8 +1890,8 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
 			popup.add(selectParentMI);
-			popup.add(new JMenuItem(seqviewer));
-			popup.add(new JMenuItem(alignseqviewer));
+			popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+			popup.add(new JMenuItem(ViewAlignmentSequenceInSeqViewerAction.getAction()));
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {
@@ -1988,8 +1912,8 @@ public class SeqMapView extends JPanel
 
 					if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
 						popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
-						popup.add(new JMenuItem(seqviewer));
-						popup.add(new JMenuItem(alignseqviewer));
+						popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+						popup.add(new JMenuItem(ViewAlignmentSequenceInSeqViewerAction.getAction()));
 					}
 				}
 

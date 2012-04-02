@@ -67,6 +67,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected SymLoader detailSymL;
 		protected SymLoader aggregateSymL;
 //		private Map<BioSeq, AbstractGraphGlyph> glyphCache;
+		protected SimpleSeqSpan saveSpan;
 
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 			Direction direction, SeqMapViewExtendedI smv) {
@@ -75,6 +76,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 //			this.direction = direction;
 			this.smv = smv;
 //			glyphCache = new HashMap<BioSeq, AbstractGraphGlyph>();
+			saveSpan = null;
 		}
 
 		public abstract boolean isDetail(ViewI view);
@@ -83,8 +85,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,
 			Direction direction, SeqMapViewExtendedI gviewer) {
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-			ViewModeGlyph _annotationGlyph = defaultGlyphFactory.getViewModeGlyph(sym, trackStyle, direction, gviewer);
-			viewModeGlyphs.put("annotation", _annotationGlyph);
 			BioSeq seq = gviewer.getAnnotatedSeq();
 			defaultGlyph = getEmptyGraphGlyph(seq, seq.getMin(), seq.getMax(), trackStyle, gviewer);
 		}
@@ -95,6 +95,10 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	        int startBase = (int)Math.round(view.getCoordBox().getX());
 			int length = (int)Math.round(view.getCoordBox().getWidth());
 	        int endBase = startBase + length;
+	        SimpleSeqSpan span = new SimpleSeqSpan(startBase, endBase, seq);
+	        if (span.equals(saveSpan) && lastUsedGlyph != null) {
+	        	return lastUsedGlyph;
+	        }
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {
@@ -126,7 +130,6 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 					resultGlyph = getEmptyGraphGlyph(seq, startBase, endBase, style, smv);
 				}
 				resultGlyph.setSelectable(false);
-				resultGlyph.setPacker(new GraphFasterExpandPacker());
 				double y = resultGlyph.getCoordBox().y;
 				if (y == 0) {
 					y = getCoordBox().y;
@@ -138,6 +141,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				getCoordBox().setRect(startBase, y, length, height);
 				resultGlyph.setCoordBox(getCoordBox());
 				resultGlyph.setVisibility(true);
+				saveSpan = span;
+				lastUsedGlyph = resultGlyph;
+				viewModeGlyphs.put("annotation", lastUsedGlyph);
 				return resultGlyph;
 			}
 			catch (Exception x) {

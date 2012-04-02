@@ -68,7 +68,7 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 				aggregateSymL = new BaiZoomSymLoader(baiUri, method, GenometryModel.getGenometryModel().getSelectedSeqGroup());
 			}
 			catch (Exception x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "BigWigSemanticZoom failed reading bigwig file", x);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "BaiSemanticZoom failed reading bai file", x);
 			}
 		}
 	}

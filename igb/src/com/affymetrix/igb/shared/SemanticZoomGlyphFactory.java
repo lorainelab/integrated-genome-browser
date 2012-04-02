@@ -42,6 +42,14 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected abstract ViewModeGlyph getDefaultGlyph();
 
 		@Override
+		public void setStyle(ITrackStyleExtended style){
+			super.setStyle(style);
+			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
+				vmg.setStyle(style);
+			}
+		}
+		
+		@Override
 		public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 			super.processParentCoordBox(parentCoordBox);
 //			if (parentCoordBox.getHeight() == 0) {

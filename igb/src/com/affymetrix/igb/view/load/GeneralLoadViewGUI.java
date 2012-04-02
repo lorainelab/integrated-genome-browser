@@ -139,7 +139,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
-        jPanel1.setBorder(new CustomTitleBorder("Data Sources and Data Sets - ", "Configure"));
+        jPanel1.setBorder(new CustomTitleBorder("Available Data - ", "Configure"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

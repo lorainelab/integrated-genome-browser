@@ -71,9 +71,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-		if (isIGBRunning()) {
-			System.exit(0);
-		}
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
         	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
@@ -86,6 +83,7 @@ public class Activator implements BundleActivator {
 				System.out.println("-convert - convert the fasta file to bnib");
 				System.out.println("-clrprf - clear the preferences");
 				System.out.println("-exit - exit the program after completing above functions");
+				System.out.println("-single_instance - exits if a running instance of IGB is found");
 				System.out.println("Advanced options:");
 				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
 				System.out.println("-clrallprf - clear all the preferences for all preferences modes");
@@ -96,6 +94,14 @@ public class Activator implements BundleActivator {
 				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
 				System.exit(0);
     		}
+    		//single instance?
+    		if (CommonUtils.getInstance().getArg("-single_instance", args) != null) {
+    			if (isIGBRunning()) {
+    				System.out.println("\nPort "+CommonUtils.default_server_port+" is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
+    				System.exit(0);
+    			}
+    		}
+    		
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
     		if (prefsMode != null) {
     			PreferenceUtils.setPrefsMode(prefsMode);
@@ -177,7 +183,6 @@ public class Activator implements BundleActivator {
 		try {
 		    sock = new Socket("localhost", port);
 		    if (sock.isBound()) {
-		    	System.err.println("\nPort "+port+" is in use! Thus an IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
 		    	//try to bring to front
 		    	URL toSend = new URL ("http://localhost:"+port+"/IGBControl?bringIGBToFront=true");
 		    	HttpURLConnection conn = (HttpURLConnection)toSend.openConnection();

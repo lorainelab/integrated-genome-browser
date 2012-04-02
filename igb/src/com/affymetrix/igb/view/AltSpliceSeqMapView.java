@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
@@ -22,6 +23,7 @@ import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 
@@ -61,17 +63,33 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 
 	@Override
-	public void processTrack(TierGlyph tierGlyph) {
-		TrackStyle style_copy = new TrackStyle() {
-		};
-		style_copy.copyPropertiesFrom(tierGlyph.getAnnotStyle());
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		TrackStyle style_copy = new TrackStyle(){};
+		style_copy.copyPropertiesFrom(style);
 		// super.getTrack() may have created a brand new tier, in which case
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style
 		// associated with it.  Reset the style to be certain.
+		TierGlyph tierGlyph = super.getTrack(sym, style, tier_direction);
 		tierGlyph.setStyle(style_copy);
+		
+		return tierGlyph;
 	}
-
+	
+	@Override
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+		TrackStyle style_copy = new TrackStyle(){};
+		style_copy.copyPropertiesFrom(style);
+		// super.getTrack() may have created a brand new tier, in which case
+		// the style is already set to "style_copy", or it may have re-used
+		// a tier, in which case it may still have an old copy of the style
+		// associated with it.  Reset the style to be certain.
+		TierGlyph tierGlyph = super.getTrack(sym, style, tier_direction, factory);
+		tierGlyph.setStyle(style_copy);
+		
+		return tierGlyph;
+	}
+	
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		popup.add(CenterAtHairlineAction.getAction());

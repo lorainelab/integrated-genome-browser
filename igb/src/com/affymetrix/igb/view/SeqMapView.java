@@ -819,6 +819,14 @@ public class SeqMapView extends JPanel
 		GeneralLoadView.getLoadView().getLoadModeDataTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
+	}
+	
+	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
+	}
+	
 	public void preserveSelectionAndPerformAction(AbstractAction action) {
 		// If action is null then there is no point of this method.
 		if(action == null)
@@ -1081,7 +1089,7 @@ public class SeqMapView extends JPanel
 		for (TierGlyph tg : tiers) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)vg).getGraphState().getComboStyle() != null) {
-				TierGlyph comboTierGlyph = TrackView.getInstance().getTrack(this, null, ((AbstractGraphGlyph)vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
+				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph)vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
 				comboTierGlyph.setIgnoreUnloaded(true);
 				tg.enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
 			}
@@ -1330,18 +1338,18 @@ public class SeqMapView extends JPanel
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
-		if (seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
-			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
-		}
-		if (alignseqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
-			alignseqviewer.setEnabled(!seqmap.getSelected().isEmpty());
-		}
-		if(!(getSelectedSyms().isEmpty())){
-				for(int i=0;i<getSelectedSyms().size();i++){
-					if(!(getSelectedSyms().get(i) instanceof SymWithResidues))
-						alignseqviewer.setEnabled(false);
-				}
-		}
+//		if (seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
+//			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
+//		}
+//		if (alignseqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)) {
+//			alignseqviewer.setEnabled(!seqmap.getSelected().isEmpty());
+//		}
+//		if(!(getSelectedSyms().isEmpty())){
+//				for(int i=0;i<getSelectedSyms().size();i++){
+//					if(!(getSelectedSyms().get(i) instanceof SymWithResidues))
+//						alignseqviewer.setEnabled(false);
+//				}
+//		}
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
@@ -2047,8 +2055,6 @@ public class SeqMapView extends JPanel
 	public PixelFloaterGlyph getPixelFloater(){
 		return pixel_floater_glyph;
 	}
-
-	public void processTrack(TierGlyph tierGlyph) {	}
 
 	@Override
 	public boolean autoChangeView() {

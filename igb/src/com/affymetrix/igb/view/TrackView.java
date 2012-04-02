@@ -139,7 +139,8 @@ public class TrackView {
 				tierGlyph.setDirection(TierGlyph.Direction.BOTH);
 			}
 		}
-		smv.processTrack(tierGlyph);
+
+//		smv.processTrack(tierGlyph);
 		return tierGlyph;
 	}
 
@@ -158,11 +159,11 @@ public class TrackView {
 					String meth = BioSeq.determineMethod(annotSym);
 					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 					if (style.getSeparate()) {
-						getTrack(smv, null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
-						getTrack(smv, null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
+						smv.getTrack(null, style, TierGlyph.Direction.FORWARD, DummyGlyphFactory.getInstance());
+						smv.getTrack(null, style, TierGlyph.Direction.REVERSE, DummyGlyphFactory.getInstance());
 					}
 					else {
-						getTrack(smv, null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
+						smv.getTrack(null, style, TierGlyph.Direction.BOTH, DummyGlyphFactory.getInstance());
 					}
 					continue;
 				}
@@ -205,7 +206,7 @@ public class TrackView {
 		}
 		else {
 			// must be a GraphGlyph in a ComboGlyph
-			TierGlyph comboTier = getTrack(gviewer, rootSym, comboStyle, TierGlyph.Direction.NONE, null);
+			TierGlyph comboTier = gviewer.getTrack(rootSym, comboStyle, TierGlyph.Direction.NONE, null);
 			ComboGlyph comboGlyph = (ComboGlyph)comboTier.getViewModeGlyph();
 			AbstractGraphGlyph oldGlyph = (AbstractGraphGlyph)comboGlyph.getChildWithStyle(style);
 			AbstractGraphGlyph newGlyph = (AbstractGraphGlyph)MapViewModeHolder.getInstance().getViewFactory(viewMode).getViewModeGlyph((SeqSymmetry)oldGlyph.getInfo(), style, TierGlyph.Direction.NONE, gviewer);
@@ -230,11 +231,11 @@ public class TrackView {
 		SymWithProps annotSym = smv.getAnnotatedSeq().getAnnotation(meth);
 		
 		//Remove previous view mode glyph
-		TierGlyph mainTier = getTrack(smv, annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+		TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 		smv.getSeqMap().removeItem(mainTier.getViewModeGlyph());
 		
 		if (style.getSeparate()) {
-			TierGlyph secondTier = getTrack(smv, annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+			TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 			smv.getSeqMap().removeItem(secondTier.getViewModeGlyph());
 		}
 		
@@ -254,10 +255,10 @@ public class TrackView {
 					style.setSeparate(false);
 				}
 			}
-			TierGlyph mainTier = getTrack(smv, annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
+			TierGlyph mainTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.FORWARD : TierGlyph.Direction.BOTH);
 			mainTier.setInfo(annotSym);
 			if (style.getSeparate()) {
-				TierGlyph secondTier = getTrack(smv, annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
+				TierGlyph secondTier = smv.getTrack(annotSym, style, style.getSeparate() ? TierGlyph.Direction.REVERSE : TierGlyph.Direction.BOTH);
 				secondTier.setInfo(annotSym);
 			}
 			return;
@@ -481,14 +482,14 @@ public class TrackView {
 		}
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
-			TierGlyph tgfor = getTrack(gviewer, null, style, direction);
+			TierGlyph tgfor = gviewer.getTrack(null, style, direction);
 			tgfor.reset();
 			if (style.getSeparate()) {
-				TierGlyph tgrev = getTrack(gviewer, null, style, Direction.REVERSE);
+				TierGlyph tgrev = gviewer.getTrack(null, style, Direction.REVERSE);
 				tgrev.reset();
 			}
 		}else {
-			TierGlyph tg = getTrack(gviewer, null, style, Direction.NONE);
+			TierGlyph tg = gviewer.getTrack(null, style, Direction.NONE);
 			tg.reset();
 		}
 		return;

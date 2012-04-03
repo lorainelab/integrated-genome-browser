@@ -74,25 +74,6 @@ public class TrackView {
 	}
 
 	/**
-	 * Returns a forward and reverse tier for the given method, creating them if they don't
-	 * already exist.
-	 * Generally called by the Glyph Factory.
-	 * Note that this can create empty tiers.  But if the tiers are not filled with
-	 * something, they will later be removed automatically.
-	 * @param smv  The SeqMapView (could be AltSplice) 
-	 * @param sym  The SeqSymmetry (data model) for the track
-	 * @param style  a non-null instance of IAnnotStyle; tier label and other properties
-	 * are determined by the IAnnotStyle.
-	 * @param tier_direction the direction of the track (FORWARD, REVERSE, or BOTH)
-	 * @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
-	 * The array may instead contain two copies of one mixed-direction tier;
-	 * in this case place glyphs for both forward and reverse items into it.
-	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
-		return getTrack(smv, sym, style, tier_direction, factory);
-	}
-	/**
 	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
 	 * @param smv the SeqMapView
 	 * @param style the style

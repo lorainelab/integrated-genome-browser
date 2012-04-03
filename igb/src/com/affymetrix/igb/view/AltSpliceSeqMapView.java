@@ -23,9 +23,9 @@ import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
@@ -59,6 +59,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			this.clear();
 			this.aseq = seq;
 			this.viewseq = seq;
+			slice_symmetry = null;
 		}
 	}
 
@@ -70,26 +71,12 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style
 		// associated with it.  Reset the style to be certain.
-		TierGlyph tierGlyph = super.getTrack(sym, style, tier_direction);
+		TierGlyph tierGlyph = super.getTrack(sym, style_copy, tier_direction, UnloadedGlyphFactory.getInstance());
 		tierGlyph.setStyle(style_copy);
 		
 		return tierGlyph;
 	}
-	
-	@Override
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
-		TrackStyle style_copy = new TrackStyle(){};
-		style_copy.copyPropertiesFrom(style);
-		// super.getTrack() may have created a brand new tier, in which case
-		// the style is already set to "style_copy", or it may have re-used
-		// a tier, in which case it may still have an old copy of the style
-		// associated with it.  Reset the style to be certain.
-		TierGlyph tierGlyph = super.getTrack(sym, style, tier_direction, factory);
-		tierGlyph.setStyle(style_copy);
 		
-		return tierGlyph;
-	}
-	
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		popup.add(CenterAtHairlineAction.getAction());

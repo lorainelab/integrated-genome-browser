@@ -56,6 +56,7 @@ import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 /**
  *
@@ -764,11 +765,25 @@ public class SeqMapView extends JPanel
 		GeneralLoadView.getLoadView().getLoadModeDataTableModel().fireTableDataChanged(); //for updating cell renderers/editors
 	}
 
+	/**
+	 * Returns a tier for the given style and direction, creating them if they don't
+	 * already exist.
+	 * Generally called by the Glyph Factory.
+	 * Note that this can create empty tiers.  But if the tiers are not filled with
+	 * something, they will later be removed automatically.
+	 * @param smv  The SeqMapView (could be AltSplice) 
+	 * @param sym  The SeqSymmetry (data model) for the track
+	 * @param style  a non-null instance of IAnnotStyle; tier label and other properties
+	 * are determined by the IAnnotStyle.
+	 * @param tier_direction the direction of the track (FORWARD, REVERSE, or BOTH)
+	 * @return a tier
+	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		return TrackView.getInstance().getTrack(this, sym, style, tier_direction);
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
+		return getTrack(sym, style, tier_direction, factory);
 	}
 	
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+	final TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
 		return TrackView.getInstance().getTrack(this, sym, style, tier_direction, factory);
 	}
 	

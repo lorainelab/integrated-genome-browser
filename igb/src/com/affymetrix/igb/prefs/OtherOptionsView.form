@@ -392,9 +392,6 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JCheckBox" name="askBeforeExitCheckBox">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="askBeforeExitCheckBoxActionPerformed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Ask before exit&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)"/>
       </AuxValues>
@@ -495,7 +492,6 @@
     <Component class="javax.swing.JCheckBox" name="displayOption">
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="displayOptionStateChanged"/>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="displayOptionActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;, PreferenceUtils.getTopNode(),&#xa;            PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);"/>

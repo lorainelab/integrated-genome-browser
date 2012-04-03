@@ -299,12 +299,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(5, 5, 5))
         );
 
-        askBeforeExitCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                askBeforeExitCheckBoxActionPerformed(evt);
-            }
-        });
-
         clear_prefsB.setText("Reset preference to defaults");
 
         edgeMatchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edge Match"));
@@ -346,11 +340,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         displayOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 displayOptionStateChanged(evt);
-            }
-        });
-        displayOption.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                displayOptionActionPerformed(evt);
             }
         });
 
@@ -462,14 +451,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 		else
 			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
 	}//GEN-LAST:event_displayOptionStateChanged
-
-	private void askBeforeExitCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_askBeforeExitCheckBoxActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_askBeforeExitCheckBoxActionPerformed
-
-	private void displayOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayOptionActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_displayOptionActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.jidesoft.combobox.ColorComboBox AColorComboBox;

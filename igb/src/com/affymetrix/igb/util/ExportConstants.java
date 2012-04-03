@@ -82,6 +82,7 @@ class ImageInfo {
 	}
 }
 
+
 class ExportFileType {
 
 	private String fileExtension;

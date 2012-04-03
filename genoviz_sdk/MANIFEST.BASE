@@ -8,11 +8,7 @@ Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.genoviz.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .,
- lib/batik-awt-util.jar,
- lib/batik-dom.jar,
- lib/batik-svggen.jar,
- lib/batik-util.jar
+Bundle-ClassPath: .
 Import-Package: com.affymetrix.common,
  javax.script,
  javax.swing.border,

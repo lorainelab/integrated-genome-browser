@@ -5,15 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
-import java.awt.Component;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.Writer;
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-
 /**
  * General utilities for use by other classes as static methods.
  */
@@ -187,30 +178,6 @@ public final class GeneralUtils {
 			s.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-	}
-
-	public static void exportToSvg(Component component, File selectedFile) {
-		try {
-			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-
-			// Create an instance of org.w3c.dom.Document.
-			String svgNS = "http://www.w3.org/2000/svg";
-			Document document = domImpl.createDocument(svgNS, "svg", null);
-
-			// Create an instance of the SVG Generator.
-			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-			component.paintAll(svgGenerator);
-
-			// Finally, stream out SVG to the standard output using
-			// UTF-8 encoding.
-			boolean useCSS = true; // we want to use CSS style attributes
-			Writer out = new BufferedWriter(new FileWriter(selectedFile));
-			//logger.info("Writing output");
-			svgGenerator.stream(out, useCSS);
-			//logger.info("Done");
-		} catch (Exception e) {
-			ErrorHandler.errorPanel("Error encountered creating SVG file.");
 		}
 	}
 }

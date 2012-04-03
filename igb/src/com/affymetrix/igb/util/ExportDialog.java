@@ -3,6 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -12,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -24,6 +26,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import org.freehep.graphicsio.svg.SVGExportFileType;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 /**
  *
@@ -34,18 +38,20 @@ public class ExportDialog implements ExportConstants {
 	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
 	private static File exportFile;
-	private static String selectedExt;
 	private static FileFilter extFilter;
 	private static File fileFilter;
 	private static File defaultDir = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
 	private static ExportFileChooser fileChooser;
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+	public static String selectedExt;
 	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
 	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+	public static final SVGExportFileType svgExport = new SVGExportFileType();
+	public static final Properties svgProperties = new Properties();
 
 	static {
-//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 	}
@@ -346,7 +352,9 @@ public class ExportDialog implements ExportConstants {
 
 	public static void exportScreenshot(File f, String ext) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
-			//	GeneralUtils.exportToSvg(component, f);
+			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
+					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
+			svgExport.exportToFile(f, component, null, svgProperties, "");
 		} else {
 			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 					component.getWidth(), component.getHeight());

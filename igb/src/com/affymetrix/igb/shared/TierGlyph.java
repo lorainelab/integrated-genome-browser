@@ -64,7 +64,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private void setViewModeGlyph(ViewModeGlyph vmg) {
-		if (smv.getAnnotatedSeq().getComposition() != null && 
+		if (smv.isGenomeSequenceSupported() && smv.getAnnotatedSeq().getComposition() != null && 
 				smv.getViewSeq() != smv.getAnnotatedSeq() && !(vmg instanceof UnloadedGlyph)) {
 			if (viewModeGlyph == null || viewModeGlyph instanceof UnloadedGlyph) {
 				initViewModeGlyph(vmg);

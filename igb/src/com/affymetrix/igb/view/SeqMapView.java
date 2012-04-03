@@ -1177,6 +1177,11 @@ public class SeqMapView extends JPanel
 	}
 
 	@Override
+	public boolean isGenomeSequenceSupported(){
+		return true;
+	}
+	
+	@Override
 	public final BioSeq getAnnotatedSeq() {
 		return aseq;
 	}

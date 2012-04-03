@@ -278,6 +278,11 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 
 	@Override
+	public boolean isGenomeSequenceSupported(){
+		return false;
+	}
+	
+	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		stopSlicingThread();
 		super.setAnnotatedSeq(seq, preserve_selection, preserve_view_x, preserve_view_y);

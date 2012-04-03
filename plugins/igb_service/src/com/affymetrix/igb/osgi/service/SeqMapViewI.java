@@ -38,6 +38,12 @@ public interface SeqMapViewI {
 	public BioSeq getViewSeq();
 
 	/**
+	 * Check if map should display genome sequence
+	 * @return 
+	 */
+	public boolean isGenomeSequenceSupported();
+	
+	/**
 	 * Get the span of the symmetry that is on the seq being viewed.
 	 */
 	public SeqSpan getViewSeqSpan(SeqSymmetry sym);

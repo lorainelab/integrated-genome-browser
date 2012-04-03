@@ -40,9 +40,15 @@ public interface ITrackStyle {
 	public boolean getCollapsed();
 	public void setCollapsed(boolean b);
 
-	/** Gets maximum rows of annotations to stack in the tier. */
+	/**
+	 * @return maximum rows of annotations to stack in the tier.
+	 */
 	public int getMaxDepth();
-	/** Sets maximum rows of annotations to stack in the tier. */
+	/**
+	 * How high annotations can be stacked in the tier.
+	 * The same number applies to both the forward and reverse strands.
+	 * The rest should overlay each other.
+	 */
 	public void setMaxDepth(int m);
 
 	public void setHeight(double h);
@@ -51,11 +57,17 @@ public interface ITrackStyle {
 	public void setY(double y);
 	public double getY();
 
-	/** Whether setCollapsed() is allowed. In some styles collapse/expand has
-	 *  no meaning.  So getCollapsed() and getMaxDepth() has no meaning for those
-	 *  styles.
+	/**
+	 * Indicates whether or not {@link #setCollapsed(boolean)} is allowed.
+	 * In some styles collapse and expand have no meaning.
+	 * So <code>getCollapsed()</code> and {@link #getMaxDepth()}
+	 * have no meaning for those styles.
+	 * @return true iff the tier can be collapsed and expanded.
 	 */
 	public boolean getExpandable();
+	/**
+	 * Sets whether or not the tier can be collapsed and expanded.
+	 */
 	public void setExpandable(boolean b);
 
 	/** Indicates whether this track will be used for a graph. */
@@ -63,10 +75,10 @@ public interface ITrackStyle {
 	public void setGraphTier(boolean b);
 
 	/**
-	 *  Gets a reference to a Map that can be used to store any arbitrary 
-	 *  extra properties.  This can be used to
-	 *  store all the properties of a UCSC track-line, for example.
-	 *  (These properties are not persisted in the java prefs system.)
+	 * Gets a reference to a Map that can be used to store any arbitrary 
+	 * extra properties.  This can be used to
+	 * store all the properties of a UCSC track-line, for example.
+	 * (These properties are not persisted in the java prefs system.)
 	 */
 	public Map<String,Object> getTransientPropertyMap();
 

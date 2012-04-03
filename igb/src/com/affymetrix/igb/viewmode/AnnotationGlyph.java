@@ -1,10 +1,10 @@
 package com.affymetrix.igb.viewmode;
 
-import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
@@ -12,17 +12,10 @@ import com.affymetrix.igb.shared.AbstractViewModeGlyph;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
-
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.util.*;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
+import java.util.*;
 
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
@@ -46,13 +39,15 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	private boolean sorted = true;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
 
-	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
-	 *  Boolean.TRUE, the tier will draw a label next to where the handle
-	 *  would be.
+	/**
+	 * A property for the IAnnotStyle.getTransientPropertyMap().
+	 * If set to Boolean.TRUE, the tier will draw a label
+	 * next to where the handle would be.
 	 */
 	private static final String SHOW_TIER_LABELS_PROPERTY = "Show Track Labels";
-	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
-	 *  Boolean.TRUE, the tier will draw a handle on the left side.
+	/**
+	 * A property for the IAnnotStyle.getTransientPropertyMap().
+	 * If set to Boolean.TRUE, the tier will draw a handle on the left side.
 	 */
 	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
@@ -71,7 +66,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	}
 
 	@Override
-	public void setStyle(ITrackStyleExtended style) {
+	public final void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
 		if (style.getCollapsed()) {
 			setPacker(collapse_packer);
@@ -117,8 +112,9 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 				+ "use AnnotationGlyph.addChild(glyph) instead");
 	}
 
-	// overriding addChild() to keep track of whether children are sorted
-	//    by ascending min
+	/**
+	 * Overriding addChild() to keep track of whether children are sorted by ascending min
+	 */
 	@Override
 	public void addChild(GlyphI glyph) {
 		int count = this.getChildCount();
@@ -157,11 +153,22 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		sorted = true;
 	}
 
-	// overriding pack to ensure that tier is always the full width of the scene
+	/**
+	 * Overriding to ensure that tier is always the full width of the scene.
+	 */
 	@Override
 	public void pack(ViewI view) {
 		initForSearching();
-		setMaxExpandDepth(style.getMaxDepth());
+		switch (this.direction) {
+			case FORWARD:
+				setMaxExpandDepth(style.getForwardMaxDepth());
+				break;
+			case REVERSE:
+				setMaxExpandDepth(style.getReverseMaxDepth());
+				break;
+			default:
+				setMaxExpandDepth(style.getMaxDepth());
+		}
 		super.pack(view);
 		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
@@ -178,9 +185,11 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	}
 
 	/**
-	 *  Overridden to allow background shading by a collection of non-child
-	 *    "middleground" glyphs.  These are rendered after the solid background but before
-	 *    all of the children (which could be considered the "foreground").
+	 * Overridden to allow background shading
+	 * by a collection of non-child "middle ground" glyphs.
+	 * These are rendered after the solid background
+	 * but before all of the children
+	 * (which could be considered the "foreground").
 	 */
 	@Override
 	public void draw(ViewI view) {
@@ -278,8 +287,8 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	}
 
 	/**
-	 *  Remove all children of the glyph, including those added with
-	 *  addMiddleGlyph(GlyphI).
+	 * Remove all children of the glyph,
+	 * including those added with addMiddleGlyph(GlyphI).
 	 */
 	@Override
 	public void removeAllChildren() {
@@ -333,8 +342,9 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		return getFillColor();
 	}
 
-	/** Changes the maximum depth of the expanded packer.
-	 *  This does not call pack() afterwards.
+	/**
+	 * Changes the maximum depth of the expanded packer.
+	 * This does not call pack() afterwards.
 	 */
 	private void setMaxExpandDepth(int max) {
 		expand_packer.setMaxSlots(max);
@@ -361,6 +371,15 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		}
 		return 2;
 	}
+	
+	private double getMaxChildHeight() {
+		double max = 0;
+		int children = this.getChildCount();
+		for (int i = 0; i < children; i++) {
+			max = Math.max(max, this.getChild(i).getCoordBox().height);
+		}
+		return max;
+	}
 
 	/**
 	 * Set the preferred height for a tier.
@@ -368,35 +387,65 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	 * @param view onto the scene with these coordinates (units).
 	 */
 	@Override
-	public void setPreferredHeight(double height, ViewI view){
-        height = height - 2 * getSpacing(); // remove the padding at top and bottom.
-		int numberOfSlotsInUse = getActualSlots();
-		double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
-		double newSlotHeight = (height - totalInteriorSpacing)/numberOfSlotsInUse;
+	public void setPreferredHeight(double height, ViewI view) {
 		
-		if(useLabel()) {
-			newSlotHeight = newSlotHeight / 2; // Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
+		// Remove the padding at top and bottom.
+		// Shouldn't we get this info from the packer?
+        height = height - 2 * getSpacing();
+		double scale = 1.0;
+		
+		if (getPacker() == expand_packer) {
+			Rectangle2D.Double currentSize = this.getCoordBox();
+			// Now figure out how deep to set max depth.
+			// Get current slot height. Should actually get this from the packer.
+			double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
+			long depth = (long) Math.floor(height / h);
+			assert -1 < depth && depth < Integer.MAX_VALUE;
+			expand_packer.setMaxSlots((int)depth);
+			switch (this.direction) {
+				case FORWARD:
+					this.style.setForwardMaxDepth((int) depth);
+					break;
+				case REVERSE:
+					this.style.setReverseMaxDepth((int) depth);
+					break;
+				default:
+				case BOTH:
+				case NONE:
+				case AXIS:
+					this.style.setMaxDepth((int) depth);
+			}
 		}
+		else { // Not expanded (using an expand packer).
+			int numberOfSlotsInUse = getActualSlots();
+			double totalInteriorSpacing = (numberOfSlotsInUse - 1) * getSpacing();
+			double newSlotHeight = (height - totalInteriorSpacing)/numberOfSlotsInUse;
 
-		double scale;
-		switch (this.direction) {
-			case FORWARD:
-				scale = newSlotHeight/style.getForwardHeight();
-				style.setForwardHeight(newSlotHeight);
-				break;
-			case REVERSE:
-				scale = newSlotHeight/style.getReverseHeight();
-				style.setReverseHeight(newSlotHeight);
-				break;
-			default:
-			case BOTH:
-			case NONE:
-			case AXIS:
-				scale = newSlotHeight/style.getHeight();
-				style.setHeight(newSlotHeight);
+			if (useLabel()) {
+				// Hiral says: because annotGlyphFactory multiplies by 2 when labeled.
+				newSlotHeight = newSlotHeight / 2;
+			}
+
+			switch (this.direction) {
+				case FORWARD:
+					scale = newSlotHeight/style.getForwardHeight();
+					style.setForwardHeight(newSlotHeight);
+					break;
+				case REVERSE:
+					scale = newSlotHeight/style.getReverseHeight();
+					style.setReverseHeight(newSlotHeight);
+					break;
+				default:
+				case BOTH:
+				case NONE:
+				case AXIS:
+					scale = newSlotHeight/style.getHeight();
+					style.setHeight(newSlotHeight);
+			}
 		}
-
+		
 		scaleChildHeights(scale, getChildren(), view);
+		
 	}
 
 	private static void scaleChildHeights(double theScale, List<GlyphI> theSiblings, ViewI theView) {

@@ -643,23 +643,25 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
-	/** Maximum number of rows of annotations for this tier. */
+	/** Maximum number of rows of annotations for this tier (both directions). */
+	@Override
 	public int getMaxDepth() {
 		return max_depth;
 	}
 
-	/** Set the maximum number of rows of annotations for this tier.
-	 *  Any attempt to set this less than zero will
-	 *  fail, the value will be truncated to fit the range.
-	 *  @param max a non-negative number.
+	/**
+	 * Set the maximum number of rows of annotations for this tier (both directions).
+	 * Any attempt to set this less than zero will fail,
+	 * the value will be truncated to fit the range.
+	 * @param max a non-negative number.
 	 */
 	@Override
 	public void setMaxDepth(int max) {
 		if (max < 0) {
 			max = 0;
 		}
-		this.max_depth = max;
-		this.reverseMaxDepth = max;
+		this.setForwardMaxDepth(max);
+		this.setReverseMaxDepth(max);
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + track_name + ", " + max);
@@ -1128,6 +1130,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private int reverseMaxDepth = 0;
 	@Override
 	public void setReverseMaxDepth(int theNewDepth) {
+		if (theNewDepth < 0) {
+			theNewDepth = 0;
+		}
 		this.reverseMaxDepth = theNewDepth;
 	}
 	@Override
@@ -1136,11 +1141,14 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 	@Override
 	public void setForwardMaxDepth(int theNewDepth) {
-		this.setMaxDepth(theNewDepth);
+		if (theNewDepth < 0) {
+			theNewDepth = 0;
+		}
+		this.max_depth = theNewDepth;
 	}
 	@Override
 	public int getForwardMaxDepth() {
-		return this.getMaxDepth();
+		return this.max_depth;
 	}
 	public final boolean getFloatGraph() { return  float_graph; }
 	public final void setFloatGraph(boolean b) { float_graph = b; }

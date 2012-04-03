@@ -148,7 +148,7 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 				else {
 					detailSymL = FileTypeHolder.getInstance().getFileTypeHandlerForURI(method).createSymLoader(new URI(method), trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());
 				}
-				aggregateSymL = new BigWigZoomSymLoader(bwUri, trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());
+				summarySymL = new BigWigZoomSymLoader(bwUri, trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());
 		        if (!bbReader.isBigWigFile()) {
 					_levelHeaders = null;
 					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "BigWigSemanticZoom failed because " + bwUrl + " is not a bigwig file");

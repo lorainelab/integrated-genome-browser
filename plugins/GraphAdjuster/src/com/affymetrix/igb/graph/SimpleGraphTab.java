@@ -778,19 +778,19 @@ public final class SimpleGraphTab
 				new Comparator<Operator>() {
 					@Override
 					public int compare(Operator o1, Operator o2) {
-						return o1.getName().compareTo(o2.getName());
+						return o1.getDisplay().compareTo(o2.getDisplay());
 					}
 				}
 			);
 			operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 			for (Operator operator : operators) {
 				if (AbstractGraphOperator.isGraphOperator(operator)) {
-					name2operator.put(operator.getName(), operator);
-					operationCB.addItem(operator.getName());
+					name2operator.put(operator.getDisplay(), operator);
+					operationCB.addItem(operator.getDisplay());
 				}
 				if (AbstractFloatTransformer.isGraphTransform(operator)) {
-					name2transform.put(operator.getName(), operator);
-					transformationCB.addItem(operator.getName());
+					name2transform.put(operator.getDisplay(), operator);
+					transformationCB.addItem(operator.getDisplay());
 				}
 			}
 		}

@@ -2,32 +2,23 @@ package com.affymetrix.genometryImpl.operator;
 
 
 public final class LogTransform extends AbstractLogTransform implements Operator{
+	private static final String BASE_NAME = "log";
 	double LN_BASE;
 	float LOG_1;
 
 	public LogTransform() {
-		super("Log");
+		super();
 	}
 	
 	public LogTransform(Double base) {
-		super(base);
+		super();
 		LN_BASE = Math.log(base);
 		LOG_1 = (float)(Math.log(1)/LN_BASE);
 	}
-	
+
 	@Override
 	protected String getBaseName() {
-		if (base == Math.E) {
-			return "Natural Log";
-		}
-		else {
-			return "Log" + (base == 0 ? "" : DF.format(base));
-		}
-	}
-	
-	@Override
-	public String getName() {
-		return parameterized ? getBaseName() : name;
+		return BASE_NAME;
 	}
 	
 	public float transform(float x) {

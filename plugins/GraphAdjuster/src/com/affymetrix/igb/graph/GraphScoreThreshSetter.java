@@ -57,7 +57,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		@Override
 		protected String getMethod(List<? extends GlyphI> tiers) {
 			StringBuilder meth = new StringBuilder();
-			meth.append(operator.getName()).append(": ");
+			meth.append(operator.getDisplay()).append(": ");
 			
 			String description =
 			MessageFormat.format(SimpleGraphTab.BUNDLE.getString("description"),

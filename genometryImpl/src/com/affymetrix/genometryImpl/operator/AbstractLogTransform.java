@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
+
 /**
  *
  * @author lfrohman
@@ -13,14 +15,14 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 
 	protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
 	double base;
-	final String paramPrompt;
-	final String name;
-	final boolean parameterized;
+	protected String paramPrompt;
+	protected String name;
+	protected boolean parameterized;
 	
-	public AbstractLogTransform(String nm) {
+	public AbstractLogTransform() {
 		super();
 		paramPrompt = "Base";
-		name = nm;
+		name = getBaseName();
 		parameterized = true;
 	}
 	public AbstractLogTransform(Double base) {
@@ -33,6 +35,21 @@ public abstract class AbstractLogTransform extends AbstractFloatTransformer impl
 	
 	protected abstract String getBaseName();
 	
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getDisplay() {
+		if (base == Math.E) {
+			return GenometryConstants.BUNDLE.getString("operator_" + getBaseName() + "_ln");
+		}
+		else {
+			return GenometryConstants.BUNDLE.getString("operator_" + getBaseName()) + (base == 0 ? "" : " " + DF.format(base));
+		}
+	}
+
 	@Override
 	public Map<String, Class<?>> getParameters() {
 		if (paramPrompt == null) {

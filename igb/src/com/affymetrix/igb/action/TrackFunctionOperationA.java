@@ -59,7 +59,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 
 	protected String getMethod(List<? extends GlyphI> tiers) {
 		StringBuilder meth = new StringBuilder();
-		meth.append(operator.getName()).append(": ");
+		meth.append(operator.getDisplay()).append(": ");
 		for (GlyphI tier : tiers) {			
 			meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
 		}
@@ -89,7 +89,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 				meth.append(((UcscBedSym)result_sym).getType());
 			}
 			else {
-				meth.append(operator.getName()).append(": ");
+				meth.append(operator.getDisplay()).append(": ");
 				for (GlyphI tier : tiers) {
 					meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
 				}

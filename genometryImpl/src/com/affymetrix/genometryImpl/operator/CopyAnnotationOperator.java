@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
@@ -14,6 +15,11 @@ public class CopyAnnotationOperator implements Operator {
 	@Override
 	public String getName() {
 		return "copyannotation";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

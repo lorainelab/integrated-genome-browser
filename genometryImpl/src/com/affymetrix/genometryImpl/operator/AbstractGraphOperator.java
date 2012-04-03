@@ -154,7 +154,7 @@ public abstract class AbstractGraphOperator implements Operator {
 
 	protected String createName(BioSeq aseq, List<SeqSymmetry> symList, String separator) {
 		String newname =
-				getName().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")"
+				getDisplay().toLowerCase() + ": " + (symList.size() == 2 ? "(" + symList.get(0).getID() + ")" + separator + "(" + symList.get(1).getID() + ")"
 				: "(..." + symList.size() + ")");
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
 		return newname;

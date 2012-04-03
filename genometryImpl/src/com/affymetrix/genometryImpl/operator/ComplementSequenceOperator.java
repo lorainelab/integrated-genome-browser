@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
+import com.affymetrix.genometryImpl.GenometryConstants;
 
 /**
  * operation for sequenc tracks that returns the complement base at each location
@@ -31,6 +32,11 @@ public class ComplementSequenceOperator implements Operator {
 	@Override
 	public String getName() {
 		return "complement";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

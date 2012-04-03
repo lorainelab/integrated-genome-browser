@@ -47,7 +47,7 @@ public class TransformHolder {
 		}
 		String transform = operator.getName();
 		if(transform2Operator.get(transform) != null){
-			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate operator for {0}", transform);
+			Logger.getLogger(MapViewModeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate operator for {0}", operator.getDisplay());
 			return;
 		}
 		transform2Operator.put(transform, operator);

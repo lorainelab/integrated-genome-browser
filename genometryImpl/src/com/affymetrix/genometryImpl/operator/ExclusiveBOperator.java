@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.operator;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
@@ -11,7 +12,12 @@ public class ExclusiveBOperator extends ExclusiveOperator implements Operator {
 	
 	@Override
 	public String getName() {
-		return "B not A:";
+		return "b_not_a";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

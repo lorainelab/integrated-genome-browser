@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.IGBConstants;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,11 @@ public class ThresholdOperator implements Operator{
 	
 	public String getName() {
 		return "threshold";
+	}
+
+	@Override
+	public String getDisplay() {
+		return IGBConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {

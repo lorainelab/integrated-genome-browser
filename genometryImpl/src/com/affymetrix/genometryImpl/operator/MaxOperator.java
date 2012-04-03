@@ -6,6 +6,8 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.List;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
+
 /**
  *
  * @author auser
@@ -28,8 +30,11 @@ public class MaxOperator extends AbstractGraphOperator implements Operator{
 	
 	@Override
 	public String getName() {
-		return "Max";
+		return "max";
 	}
-	
-	
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
+	}
 }

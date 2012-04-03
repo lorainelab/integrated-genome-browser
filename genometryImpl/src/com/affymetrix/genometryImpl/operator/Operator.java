@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public interface Operator  {
 	public String getName();
+	public String getDisplay();
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList);
 	public int getOperandCountMin(FileTypeCategory category);
 	public int getOperandCountMax(FileTypeCategory category);

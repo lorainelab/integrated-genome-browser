@@ -21,7 +21,12 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public String getName() {
-		return "filter operator " + filter.getName();
+		return "filter_operator_" + filter.getName();
+	}
+
+	@Override
+	public String getDisplay() {
+		return getName();
 	}
 
 	@Override

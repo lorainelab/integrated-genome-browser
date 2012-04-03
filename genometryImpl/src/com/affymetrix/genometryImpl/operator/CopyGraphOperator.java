@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -12,6 +13,11 @@ public final class CopyGraphOperator implements Operator {
 	public CopyGraphOperator() {}
 	@Override
 	public String getName() { return "copygraph"; }
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
+	}
 	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		if (symList.size() != 1 || !(symList.get(0) instanceof GraphSym)) {

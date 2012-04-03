@@ -978,9 +978,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenu operationsMenu = null;
 		for (Operator operator : ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls()) {
 			if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
-				String name = operator.getName();
-				String title = name.substring(0, 1).toUpperCase()
-						+ name.substring(1);
+				String title = operator.getDisplay();
 				JMenuItem operatorMI = new JMenuItem(title);
 				operatorMI.addActionListener(new TrackOperationAction(
 						gviewer, operator));
@@ -1123,7 +1121,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 							@Override
 							public String getText() {
-								return transform.toString();
+								Operator operator = TransformHolder.getInstance().getOperator(transform.toString());
+								return operator == null ? transform.toString() : operator.getDisplay();
 							}
 						};
 						transform_actions.put(transform.toString(), action);

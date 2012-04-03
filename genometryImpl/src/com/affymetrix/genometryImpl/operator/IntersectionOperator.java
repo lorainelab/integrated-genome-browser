@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -18,6 +19,11 @@ public class IntersectionOperator extends AbstractAnnotationOperator implements 
 	@Override
 	public String getName() {
 		return "intersection";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.igb.IGBConstants;
+
 import java.util.List;
 
 /**
@@ -15,7 +17,12 @@ public class MismatchOperator extends AbstractMismatchOperator implements Operat
 
 	@Override
 	public String getName() {
-		return "mismatch graph";
+		return "mismatch";
+	}
+
+	@Override
+	public String getDisplay() {
+		return IGBConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
@@ -36,7 +37,7 @@ public class ComboChainOperator implements Operator {
 			int categoryCount = (checkCategory == category) ? 1 : 0;
 			boolean ok = after.getOperandCountMin(checkCategory) <= categoryCount;
 			if (!ok) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, " + before.getName() + " cannot pass output to " + after.getName());
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "incompatible operands, " + before.getDisplay() + " cannot pass output to " + after.getDisplay());
 			}
 			isCompatible &= ok;
 		}
@@ -47,13 +48,23 @@ public class ComboChainOperator implements Operator {
 	public String getName() {
 		StringBuffer name = new StringBuffer(BASE_NAME);
 		for (Operator operator : operators) {
+			name.append("_");
+			name.append(operator.getName());
+		}
+		return name.toString();
+	}
+
+	@Override
+	public String getDisplay() {
+		StringBuffer name = new StringBuffer(GenometryConstants.BUNDLE.getString("operator_" + BASE_NAME));
+		for (Operator operator : operators) {
 			if (BASE_NAME.equals(name.toString())) {
 				name.append(" ");
 			}
 			else {
 				name.append(",");
 			}
-			name.append(operator.getName());
+			name.append(GenometryConstants.BUNDLE.getString("operator_" + operator.getName()));
 		}
 		return name.toString();
 	}

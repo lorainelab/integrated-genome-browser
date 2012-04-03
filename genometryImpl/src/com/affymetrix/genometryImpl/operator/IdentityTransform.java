@@ -4,6 +4,8 @@
  */
 package com.affymetrix.genometryImpl.operator;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
+
 /**
  *
  * @author auser
@@ -12,12 +14,16 @@ public class IdentityTransform extends AbstractFloatTransformer implements Opera
 
 	@Override
 	public String getName() {
-		return "Copy";
+		return "copy";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 	
 	@Override
 	public float transform(float x) { 
 		return x; 
 	}
-			
 }

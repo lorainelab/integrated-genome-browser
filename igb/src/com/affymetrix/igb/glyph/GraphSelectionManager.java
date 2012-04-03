@@ -500,13 +500,13 @@ public final class GraphSelectionManager
 
 			@Override
 			public int compare(Operator o1, Operator o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getDisplay().compareTo(o2.getDisplay());
 			}
 	 });
 	 operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 	 for (final Operator operator : operators) {
 	 	if (AbstractGraphOperator.isGraphOperator(operator)){
-			JMenuItem menuItem = new JMenuItem(operator.getName());
+			JMenuItem menuItem = new JMenuItem(operator.getDisplay());
 			menuItem.addActionListener(new TrackOperationAction(gviewer, operator));
 	 		combine.add(menuItem);	
 		}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -18,7 +19,12 @@ public class DepthOperator implements Operator {
 
 	@Override
 	public String getName() {
-		return fileTypeCategory.toString() + " depth";
+		return fileTypeCategory.toString().toLowerCase() + "_depth";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

@@ -2,11 +2,18 @@ package com.affymetrix.genometryImpl.operator;
 
 import java.util.List;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
+
 public class SumOperator extends AbstractGraphOperator implements Operator {
 
 	@Override
 	public String getName() {
-		return "Sum";
+		return "sum";
+	}
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.affymetrix.genometryImpl.GenometryConstants;
+
 /**
  *
  * @author auser
@@ -31,8 +33,11 @@ public class MedianOperator extends AbstractGraphOperator implements Operator{
 	
 	@Override
 	public String getName() {
-		return "Median";
+		return "median";
 	}
-	
-	
+
+	@Override
+	public String getDisplay() {
+		return GenometryConstants.BUNDLE.getString("operator_" + getName());
+	}
 }

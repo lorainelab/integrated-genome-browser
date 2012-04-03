@@ -69,10 +69,10 @@ public class BaiZoomSymLoader extends SymLoader {
 						int yValue = 0;
 						for (Chunk chunk : bin.getChunkList()) {
 							if (chunk != null) {
-								yValue += getUncompressedLength(chunk);
+								yValue += (double)(getUncompressedLength(chunk) * BIN_LENGTH) / (double)(region[1] - region[0]);
 							}
 						}
-						for (int i = region[0] / BIN_LENGTH; i < region[1] / BIN_LENGTH; i++) {
+						for (int i = region[0] / BIN_LENGTH; i < (region[1] + 1) / BIN_LENGTH; i++) {
 							yList[i] += yValue;
 						}
 					}
@@ -87,7 +87,7 @@ public class BaiZoomSymLoader extends SymLoader {
 	}
 
 	private static final int CHUNK_SIZE = 2 >> 16;
-	private static final int COMPRESS_RATIO = 64 / 20; // 64K to about 19.5K
+	private static final int COMPRESS_RATIO = 64 / 22; // 64K to about 19.5K
 	private static long getUncompressedLength(Chunk chunk) {
 		long blockAddressStart = BlockCompressedFilePointerUtil.getBlockAddress(chunk.getChunkStart());
 		long blockAddressEnd = BlockCompressedFilePointerUtil.getBlockAddress(chunk.getChunkEnd());
@@ -118,5 +118,24 @@ public class BaiZoomSymLoader extends SymLoader {
 			}
 		}
 		return span;
+	}
+
+	public static void main(String[] args) {
+		for (int i = 0; i < 37449; i++) {
+			int[] r = getRegion(i);
+			System.out.println("" + i + ":" + r[0] + "-" + r[1]);
+		}
+/*
+		int i = 0;
+		boolean found = false;
+		while (!found) {
+			i++;
+			int[] r = getRegion(i);
+			if (r[0] == 22511616) {
+				System.out.println("region = " + i);
+				found = true;
+			}
+		}
+*/	
 	}
 }

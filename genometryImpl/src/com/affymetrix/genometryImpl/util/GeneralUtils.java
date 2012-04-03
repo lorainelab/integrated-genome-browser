@@ -502,7 +502,12 @@ public final class GeneralUtils {
 	public static String fixFileName(String fileName) {
 		String fixedFileName = fileName;
 		if (fileName.startsWith("file:/")) {
-			fixedFileName = fileName.substring("file:/".length());
+			String os = System.getProperty("os.name");
+			if (os != null && os.toLowerCase().contains("windows")){
+				fixedFileName = fileName.substring("file:/".length());
+			}else{
+				fixedFileName = fileName.substring("file:".length());
+			}
 		}
 		else if (fileName.startsWith("file:")) {
 			fixedFileName = fileName.substring("file:".length());

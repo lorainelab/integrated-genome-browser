@@ -653,11 +653,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 *  fail, the value will be truncated to fit the range.
 	 *  @param max a non-negative number.
 	 */
+	@Override
 	public void setMaxDepth(int max) {
 		if (max < 0) {
 			max = 0;
 		}
 		this.max_depth = max;
+		this.reverseMaxDepth = max;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + track_name + ", " + max);
@@ -1103,34 +1105,40 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	
 	/** for height on the reverse strand. To help with track resizing. */
 	private double reverseHeight = TrackConstants.default_height;
+	@Override
 	public void setReverseHeight(double theNewHeight) {
 		this.reverseHeight = theNewHeight;
 	}
+	@Override
 	public double getReverseHeight() {
 		return this.reverseHeight;
 	}
+	@Override
 	public void setForwardHeight(double theNewHeight) {
 		double rh = this.reverseHeight;
 		this.setHeight(theNewHeight); // Because it also does something else. Should that same thing be done for setReverseHeight? - elb
 		this.reverseHeight = rh; // Because setHeight sets both forward and reverse.
 	}
+	@Override
 	public double getForwardHeight() {
 		return this.getHeight();
 	}
 	
 	/** for maximum depth of stacked glyphs on the reverse strand. To help with resizing. */
 	private int reverseMaxDepth = 0;
+	@Override
 	public void setReverseMaxDepth(int theNewDepth) {
 		this.reverseMaxDepth = theNewDepth;
 	}
+	@Override
 	public int getReverseMaxDepth() {
 		return this.reverseMaxDepth;
 	}
+	@Override
 	public void setForwardMaxDepth(int theNewDepth) {
-		int rd = this.getMaxDepth();
 		this.setMaxDepth(theNewDepth);
-		this.reverseMaxDepth = rd;
 	}
+	@Override
 	public int getForwardMaxDepth() {
 		return this.getMaxDepth();
 	}

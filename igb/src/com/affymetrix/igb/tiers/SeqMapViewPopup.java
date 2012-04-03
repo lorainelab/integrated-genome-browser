@@ -645,19 +645,23 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tg.getAnnotStyle();
 			if (style != null) {
-				ourLimit = style.getMaxDepth();
+				switch (tg.getDirection()) {
+					case FORWARD:
+						ourLimit = style.getForwardMaxDepth();
+						break;
+					case REVERSE:
+						ourLimit = style.getReverseMaxDepth();
+						break;
+					default:
+						ourLimit = style.getMaxDepth();
+				}
 			}
 		}
 
-		// TODO figure out optimum. Not just 5.
 		int ourOptimum = 1;
 		for (TierLabelGlyph tlg : theTiers) {
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(this.gviewer.getSeqMap().getView()));
-			// Hmmm. What is this getActualSlots() number?
-			// Seems to be the maximum of either the limit for slots or the highest (deepest) stack in the data loaded.
-			// repackTheTiers seems to figure out what we want.
-			// Maybe we can add a slotsShown() method to TierGlyph or it's packer?
 		}
 
 		MaxSlotsChooser chooser = new MaxSlotsChooser(BUNDLE.getString("maxHeight"), ourLimit, ourOptimum);
@@ -687,9 +691,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			TierGlyph tier = tlg.getReferenceTier();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			style.setMaxDepth(max);
+			switch (tier.getDirection()) {
+				case FORWARD:
+					style.setForwardMaxDepth(max);
+					break;
+				case REVERSE:
+					style.setReverseMaxDepth(max);
+					break;
+				default:
+				case BOTH:
+				case NONE:
+				case AXIS:
+					style.setMaxDepth(max);
+			}
 		}
 		repack(true);
 	}

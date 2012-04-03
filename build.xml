@@ -147,6 +147,9 @@
     			<param name="jar_name" value="be.pwnt.jflow_1.0.0"/>
 		</antcall>
 		<antcall target="copy-bundle">
+    			<param name="jar_name" value="freehep-2.1.1"/>
+		</antcall>
+		<antcall target="copy-bundle">
     			<param name="jar_name" value="jlfgr-1_0"/>
 		</antcall>
 		<echo message='***** please ignore error message "Your bnd file contains a header called &apos;Name&apos;..." for jlfgr-1_0 *****' />

@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -24,6 +25,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import org.freehep.graphicsio.svg.SVGExportFileType;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 /**
  *
@@ -33,17 +36,21 @@ public class ExportDialog implements ExportConstants {
 
 	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
-	private JFileChooser fileChooser;
-	private File exportFile;
-	private String selectedExt;
+	private static File exportFile;
+	private static FileFilter extFilter;
+	private static File fileFilter;
 	private static File defaultDir = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
+	private static ExportFileChooser fileChooser;
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+	public static String selectedExt;
 	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
 	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
 	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+	public static final SVGExportFileType svgExport = new SVGExportFileType();
+	public static final Properties svgProperties = new Properties();
 
 	static {
-//		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
 		FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
 		FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
 	}
@@ -165,7 +172,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public static File changeFileExtension(File file, String extension) {
-		if ((file == null) || (extension == null) || extension.trim().equals("")) {
+		if ((file == null) || (extension == null) || extension.trim().isEmpty()) {
 			return null;
 		}
 
@@ -175,37 +182,40 @@ public class ExportDialog implements ExportConstants {
 			return file;
 		}
 
-		String newPath = "";
 		String filename = file.getName().trim();
 
-		if ((filename != null) && !filename.equals("")) {
+		if (filename != null && !filename.isEmpty()) {
 
 			int periodIndex = path.lastIndexOf(".");
 
-			newPath = path.substring(0, periodIndex);
-			newPath += extension;
+			if (periodIndex > 0) {
+				path = path.substring(0, periodIndex) + extension;
+			} else {
+				path += extension;
+			}
 		}
 
-		return new File(newPath);
+		return new File(path);
 	}
 
 	public void browseButtonActionPerformed(JPanel panel) {
-		FileFilter filter = getFilter(selectedExt);
-
-		exportFile = new File(filePathTextField.getText());
-
-		if (exportFile.getName().isEmpty()) {
-			exportFile = new File("export" + selectedExt);
+		if (fileFilter == null) {
+			fileFilter = new File(defaultDir, "export");
 		}
 
-		fileChooser = new ExportFileChooser(defaultDir,
-				new File(exportFile.getName()), filter);
+		if (extFilter == null) {
+			extFilter = getFilter(selectedExt);
+		}
+
+		fileChooser = new ExportFileChooser(defaultDir, fileFilter, extFilter);
 		fileChooser.setDialogTitle("Save view as...");
 		fileChooser.showDialog(panel, "Select");
 
 		if (fileChooser.getSelectedFile() != null) {
 			String newPath = fileChooser.getSelectedFile().getAbsolutePath();
-			defaultDir = fileChooser.getSelectedFile().getParentFile();
+			fileFilter = fileChooser.getSelectedFile();
+			defaultDir = fileChooser.getCurrentDirectory();
+			extFilter = fileChooser.getFileFilter();
 			String ext = ParserController.getExtension(newPath);
 			String des = fileChooser.getFileFilter().getDescription();
 
@@ -341,7 +351,9 @@ public class ExportDialog implements ExportConstants {
 
 	public static void exportScreenshot(File f, String ext) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
-			//	GeneralUtils.exportToSvg(component, f);
+			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
+					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
+			svgExport.exportToFile(f, component, null, svgProperties, "");
 		} else {
 			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 					component.getWidth(), component.getHeight());

@@ -57,7 +57,7 @@
 		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1"/>
 		
 		<property name="osgi.impl"   value="${osgi.impl.dir}${osgi.impl.file}"/>
-		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
+		<property name="javadoc.src.path"   value="${common}/src:${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${common}/resources/common.properties"/>
 	</target>
 
@@ -403,6 +403,7 @@
 			<os family="mac" />
 		</condition>
 		<java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main">
+			<jvmarg value="-enableassertions" />
 			<jvmarg line="${igb.jvmargs}" />
 			<jvmarg value="-Xms32m" />
 			<!--<jvmarg value="-Dsun.java2d.opengl=true"/> -->

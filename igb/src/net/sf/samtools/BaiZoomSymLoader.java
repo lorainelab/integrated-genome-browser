@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import net.sf.samtools.util.BlockCompressedFilePointerUtil;
 
@@ -55,7 +54,6 @@ public class BaiZoomSymLoader extends SymLoader {
 				StubBAMFileIndex dbfi = new StubBAMFileIndex(bamIndexFile, ssd);
 				BAMIndexContent bic = dbfi.query(refno);
 				Iterator<Bin> blIter = bic.getBins().iterator();
-				final String symId = UUID.randomUUID().toString();
 				int[] xList = new int[BIN_COUNT];
 				for (int i = 0; i < BIN_COUNT; i++) {
 					xList[i] = i * BIN_LENGTH;
@@ -79,7 +77,7 @@ public class BaiZoomSymLoader extends SymLoader {
 						}
 					}
 				}
-				saveSym = new GraphSym(xList, wList, yList, symId, seq);
+				saveSym = new GraphSym(xList, wList, yList, featureName, seq);
 			}
 			saveSeq = seq;
 		}

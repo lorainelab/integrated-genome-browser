@@ -98,6 +98,7 @@ public class AltSpliceView extends IGBTabPanel
 		buffer_sizeTF.addActionListener(this);
 		slice_by_selectionCB.addItemListener(this);
 
+		spliced_view.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq());
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);

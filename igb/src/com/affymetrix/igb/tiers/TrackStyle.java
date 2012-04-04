@@ -29,15 +29,12 @@ import java.util.logging.Logger;
  * When setting up a TrackStyle, want to prioritize:
  * <ol type="A">
  * <li> Start with default instance (from system style sheet?)
- *
- * <li> Modify with user-set default parameters from default Preferences node
- *
- * <li> Modify with method-matching parameters from system stylesheet
- *
- * <li> Modify with user-set method parameters from Preferences nodes
+ * <li> Modify with user-set default parameters from default Preferences node.
+ * <li> Modify with method-matching parameters from system style sheet.
+ * <li> Modify with user-set method parameters from Preferences nodes.
  * </ol>
  * Not sure yet where style sheets from DAS/2 servers fits in yet
- * -- between B and C or between C and D ?
+ * -- between B and C or between C and D?
  */
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 	

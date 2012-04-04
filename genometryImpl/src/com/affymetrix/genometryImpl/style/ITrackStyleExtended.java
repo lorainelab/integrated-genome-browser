@@ -63,10 +63,19 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setReverseHeight(double theNewHeight);
 	double getReverseHeight();
 	
+	/**
+	 * How high annotations can be stacked on the forward strand.
+	 * The rest should overlay each other.
+	 */
 	void setForwardMaxDepth(int theNewDepth);
 	int getForwardMaxDepth();
+	/**
+	 * How high annotations can be stacked on the reverse strand.
+	 * The rest should overlay each other.
+	 */
 	void setReverseMaxDepth(int theNewDepth);
 	int getReverseMaxDepth();
+
 	boolean getFloatGraph();
 	void setFloatGraph(boolean b);
 }

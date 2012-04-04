@@ -180,6 +180,13 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			addChild(childrens.get(i));
 		}
 		
+		childrens.clear();
+		childrens.addAll(((AbstractViewModeGlyph)temp).middle_glyphs);
+		
+		for (int i = 0; i < childrens.size(); i++) {
+			addMiddleGlyph(childrens.get(i));
+		}
+		
 		//TODO: Set list of all getInfo
 //		if(!(getInfo() instanceof List)){
 //			List<Object> info = new ArrayList<Object>();
@@ -189,13 +196,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 //			((List)(getInfo())).add(temp.getInfo());
 //		}
 		
-		//FIXME: Middle glyphs.
-//		childrens.clear();
-//		childrens.addAll(((AbstractViewModeGlyph)temp).middle_glyphs);
-//		
-//		for (int i = 0; i < childrens.size(); i++) {
-//			addMiddleGlyph(childrens.get(i));
-//		}
 	}
 	
 	@Override

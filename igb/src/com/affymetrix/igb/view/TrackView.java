@@ -152,7 +152,7 @@ public class TrackView {
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(smv, (SymWithProps)annotSym);
 				// TODO: reimplement middleground shading in a generic fashion
-				doMiddlegroundShading((SymWithProps)annotSym, seq);
+				doMiddlegroundShading(smv, (SymWithProps)annotSym, seq);
 			}
 		}
 		
@@ -166,7 +166,7 @@ public class TrackView {
 				if (sym != null) {
 					addAnnotationGlyphs(smv, sym);
 					// TODO: reimplement middleground shading in a generic fashion
-					doMiddlegroundShading(sym, seq);
+					doMiddlegroundShading(smv, sym, seq);
 				}
 			}
 		}
@@ -257,7 +257,7 @@ public class TrackView {
 		return null;
 	}
 		
-	private void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
+	private void doMiddlegroundShading(SeqMapView gviewer, SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		GenericFeature feature = style.getFeature();
@@ -268,11 +268,17 @@ public class TrackView {
 			TierGlyph forwardTrack = style2forwardTierGlyph.get(style);
 			TierGlyph reverseTrack = style2reverseTierGlyph.get(style);
 			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
+			if (seq != gviewer.getViewSeq()) {
+				inverse = gviewer.transformForViewSeq(inverse, seq);
+			}
 			int child_count = inverse.getChildCount();
 			for (int i = 0; i < child_count; i++) {
 				SeqSymmetry child = inverse.getChild(i);
 				for (int j = 0; j < child.getSpanCount(); j++) {
 					SeqSpan ospan = child.getSpan(j);
+					if(ospan.getBioSeq() != gviewer.getViewSeq())
+						continue;
+					
 					if (ospan.getLength() > 1) {
 						if (forwardTrack != null) {
 							GlyphI mglyph = new FillRectGlyph();

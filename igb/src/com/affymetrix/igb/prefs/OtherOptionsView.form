@@ -419,7 +419,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="autoChangeView">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Auto Change view for BAM/SAM&quot;, PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_AUTO_CHANGE_VIEW, SeqMapView.default_auto_change_view)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Auto Change to depth Graph or zoom out&quot;, PreferenceUtils.getTopNode(),&#xa;    SeqMapView.PREF_AUTO_CHANGE_VIEW, SeqMapView.default_auto_change_view)"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="edgeMatchPanel">

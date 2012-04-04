@@ -105,7 +105,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
         clear_prefsB = new javax.swing.JButton();
         showZoomStripLabelCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe Label", PreferenceUtils.getTopNode(),
             UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label);
-        autoChangeView = PreferenceUtils.createCheckBox("Auto Change view for BAM/SAM", PreferenceUtils.getTopNode(),
+        autoChangeView = PreferenceUtils.createCheckBox("Auto Change to depth Graph or zoom out", PreferenceUtils.getTopNode(),
             SeqMapView.PREF_AUTO_CHANGE_VIEW, SeqMapView.default_auto_change_view);
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);

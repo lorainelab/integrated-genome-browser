@@ -114,6 +114,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);
 			}
+			resultGlyph.setCoords(resultGlyph.getCoordBox().x, resultGlyph.getCoordBox().y, resultGlyph.getCoordBox().width, style.getMaxDepth() * style.getHeight());
 			return resultGlyph;
 		}
 

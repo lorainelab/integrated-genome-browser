@@ -499,15 +499,19 @@ public final class GeneralUtils {
 	    }
 	}
 
+	public static String getFileScheme() {
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().contains("windows")){
+			return "file:/";
+		}else{
+			return "file:";
+		}
+	}
+
 	public static String fixFileName(String fileName) {
 		String fixedFileName = fileName;
 		if (fileName.startsWith("file:/")) {
-			String os = System.getProperty("os.name");
-			if (os != null && os.toLowerCase().contains("windows")){
-				fixedFileName = fileName.substring("file:/".length());
-			}else{
-				fixedFileName = fileName.substring("file:".length());
-			}
+			fixedFileName = fileName.substring(getFileScheme().length());
 		}
 		else if (fileName.startsWith("file:")) {
 			fixedFileName = fileName.substring("file:".length());

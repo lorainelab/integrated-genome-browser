@@ -395,7 +395,6 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		double scale = 1.0;
 		
 		if (getPacker() == expand_packer) {
-			Rectangle2D.Double currentSize = this.getCoordBox();
 			// Now figure out how deep to set max depth.
 			// Get current slot height. Should actually get this from the packer.
 			double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();

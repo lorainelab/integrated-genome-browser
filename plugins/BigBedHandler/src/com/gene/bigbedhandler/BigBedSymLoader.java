@@ -43,25 +43,26 @@ public class BigBedSymLoader extends SymLoader {
 
 	public BigBedSymLoader(URI uri, String featureName, AnnotatedSeqGroup group){
 		super(uri, featureName, group);
+	}
+
+	private void initbbReader(){
 		String uriString = uri.toString();
 		if (uriString.startsWith(FILE_PREFIX)) {
 			uriString = uriString.substring(FILE_PREFIX.length());
 		}
 		try {
 			bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
-		}
-		catch (IOException x) {
+		} catch (IOException x) {
 			Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
-			return;
 		}
 		if (!bbReader.isBigBedFile()) {
-        	throw new IllegalStateException("Big Bed processor cannot open " + uri.toString());
-        }
-        bbFileHdr = bbReader.getBBFileHeader();
-        if (bbFileHdr.getVersion() < 3) {
+			throw new IllegalStateException("Big Bed processor cannot open " + uri.toString());
+		}
+		bbFileHdr = bbReader.getBBFileHeader();
+		if (bbFileHdr.getVersion() < 3) {
 			ErrorHandler.errorPanel("file version not supported " + bbFileHdr.getVersion());
 			throw new UnsupportedOperationException("file version not supported " + bbFileHdr.getVersion());
-        }
+		}
 	}
 
 	@Override
@@ -74,6 +75,9 @@ public class BigBedSymLoader extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
+		
+		initbbReader();
+				
 		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
 		for (BioSeq seq : group.getSeqList()) {
 			seqMap.put(seq.getID(), seq);

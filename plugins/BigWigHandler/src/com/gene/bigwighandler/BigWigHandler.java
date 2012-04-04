@@ -35,9 +35,7 @@ public class BigWigHandler implements FileTypeHandler {
 	@Override
 	public SymLoader createSymLoader(URI uri, String featureName,
 			AnnotatedSeqGroup group) {
-		SymLoader symLoader = new BigWigSymLoader(uri, featureName, group);
-		((BigWigSymLoader)symLoader).init();
-		return symLoader;
+		return new BigWigSymLoader(uri, featureName, group);
 	}
 
 	@Override

@@ -35,9 +35,7 @@ public class BigBedHandler implements FileTypeHandler {
 	@Override
 	public SymLoader createSymLoader(URI uri, String featureName,
 			AnnotatedSeqGroup group) {
-		SymLoader symLoader = new BigBedSymLoader(uri, featureName, group);
-		((BigBedSymLoader)symLoader).init();
-		return symLoader;
+		return new BigBedSymLoader(uri, featureName, group);
 	}
 
 	@Override

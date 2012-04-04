@@ -47,25 +47,6 @@ public class BigWigSymLoader extends SymLoader {
 
 	public BigWigSymLoader(URI uri, String featureName, AnnotatedSeqGroup group){
 		super(uri, featureName, group);
-		String uriString = uri.toString();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uriString.substring(FILE_PREFIX.length());
-		}
-		try {
-			bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
-		}
-		catch (IOException x) {
-			Logger.getLogger(BigWigSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
-			return;
-		}
-        if (!bbReader.isBigWigFile()) {
-        	throw new IllegalStateException("Big Wig processor cannot handle type " + uri.toString());
-        }
-        bbFileHdr = bbReader.getBBFileHeader();
-        if (bbFileHdr.getVersion() < 3) {
-			ErrorHandler.errorPanel("file version not supported " + bbFileHdr.getVersion());
-			throw new UnsupportedOperationException("file version not supported " + bbFileHdr.getVersion());
-        }
 	}
 
 	@Override
@@ -78,6 +59,9 @@ public class BigWigSymLoader extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
+		
+		initbbReader();
+		
 		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
 		for (BioSeq seq : group.getSeqList()) {
 			seqMap.put(seq.getID(), seq);
@@ -106,6 +90,29 @@ public class BigWigSymLoader extends SymLoader {
 		this.isInitialized = true;
 	}
 
+	
+	private void initbbReader() {
+		String uriString = uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uriString.substring(FILE_PREFIX.length());
+		}
+		try {
+			bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
+		}
+		catch (IOException x) {
+			Logger.getLogger(BigWigSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
+			return;
+		}
+        if (!bbReader.isBigWigFile()) {
+        	throw new IllegalStateException("Big Wig processor cannot handle type " + uri.toString());
+        }
+        bbFileHdr = bbReader.getBBFileHeader();
+        if (bbFileHdr.getVersion() < 3) {
+			ErrorHandler.errorPanel("file version not supported " + bbFileHdr.getVersion());
+			throw new UnsupportedOperationException("file version not supported " + bbFileHdr.getVersion());
+        }
+	}
+	
 	@Override
 	public List<BioSeq> getChromosomeList(){
 		init();

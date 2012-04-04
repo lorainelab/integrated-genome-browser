@@ -47,6 +47,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -579,11 +580,19 @@ public final class GeneralLoadView {
 	}
 
 	public static void addFeatureTier(final GenericFeature feature) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
 
-			public void run() {
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+
+			@Override
+			protected Object runInBackground() {
 				TrackView.getInstance().addEmptyTierFor(feature, gviewer, true);
+				return null;
+			}
+
+			@Override
+			protected void finished() {
 				AbstractAction action = new AbstractAction() {
+
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
@@ -595,7 +604,9 @@ public final class GeneralLoadView {
 				};
 				gviewer.preserveSelectionAndPerformAction(action);
 			}
-		});
+		};
+
+		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 
 	void removeAllFeautres(Set<GenericFeature> features) {

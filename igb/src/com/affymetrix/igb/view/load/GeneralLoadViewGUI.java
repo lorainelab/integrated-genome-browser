@@ -66,8 +66,8 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        dataManagementTableModel =GeneralLoadView.getLoadView().getLoadModeTableModel();
-        dataManagementTable = GeneralLoadView.getLoadView().getDataManagementTable();
+        dataManagementTableModel =GeneralLoadView.getLoadView().getTableModel();
+        dataManagementTable = GeneralLoadView.getLoadView().getTable();
         partial_residuesB = GeneralLoadView.getLoadView().getPartial_residuesButton();
         refresh_dataB = GeneralLoadView.getLoadView().getRefreshDataButton();
         all_residuesB = GeneralLoadView.getLoadView().getAll_ResiduesButton();

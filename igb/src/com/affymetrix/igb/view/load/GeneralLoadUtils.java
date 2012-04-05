@@ -144,7 +144,7 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	public static GenericServer addServer(ServerList serverList, ServerTypeI serverType, 
+	public static GenericServer addServer(ServerList serverList, ServerTypeI serverType,
 			String serverName, String serverURL, int order, boolean isDefault) {
 		/*
 		 * should never happen
@@ -153,12 +153,12 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 
-		GenericServer gServer = serverList.addServer(serverType, 
+		GenericServer gServer = serverList.addServer(serverType,
 				serverName, serverURL, true, order, isDefault);
 		if (gServer == null) {
 			return null;
 		}
-		
+
 		discoverServer(gServer);
 
 		return gServer;
@@ -257,7 +257,7 @@ public final class GeneralLoadUtils {
 	public static GenericVersion getIGBFilesVersion(AnnotatedSeqGroup group, String speciesName) {
 		return getXFilesVersion(ServerList.getServerInstance().getIGBFilesServer(), group, speciesName);
 	}
-	
+
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
@@ -269,12 +269,12 @@ public final class GeneralLoadUtils {
 		return getXFilesVersion(ServerList.getServerInstance().getLocalFilesServer(), group, speciesName);
 	}
 
-	private static GenericVersion getXFilesVersion(GenericServer server, AnnotatedSeqGroup group, String speciesName){
+	private static GenericVersion getXFilesVersion(GenericServer server, AnnotatedSeqGroup group, String speciesName) {
 		String versionName = group.getID();
 		if (speciesName == null) {
 			speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
 		}
-		
+
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer == server) {
 				return gVersion;
@@ -283,7 +283,7 @@ public final class GeneralLoadUtils {
 
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
-		
+
 	private static synchronized GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
 		// Make sure we use the preferred synonym for the genome version.
 		String preferredVersionName = LOOKUP.getPreferredName(versionName);
@@ -788,9 +788,6 @@ public final class GeneralLoadUtils {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 							Level.SEVERE, "Unable to get refresh action result.", ex);
 				}
-
-				//Update LoadModeTableModel
-				//LoadModeTable.updateVirtualFeatureList();
 			}
 		};
 
@@ -831,8 +828,8 @@ public final class GeneralLoadUtils {
 		//start max
 		boolean check = GeneralLoadView.getLoadView().isLoadingConfirm();
 		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
-		if (check && optimized_sym != null && feature.getExtension() != null && 
-				(feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
+		if (check && optimized_sym != null && feature.getExtension() != null
+				&& (feature.getExtension().endsWith("bam") || feature.getExtension().endsWith("sam"))) {
 			String message = "Region in view is big (> 500k), do you want to continue?";
 			int childrenCount = optimized_sym.getChildCount();
 			int spanWidth = 0;
@@ -842,7 +839,7 @@ public final class GeneralLoadUtils {
 					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
 				}
 			}
-			
+
 			if (spanWidth > 500000) {
 				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 						PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
@@ -940,8 +937,7 @@ public final class GeneralLoadUtils {
 		 * now.
 		 *
 		 * if (aseq.isComplete()) { if (DEBUG) { System.out.println("already
-		 * have residues for " + seq_name); } return false;
-		}
+		 * have residues for " + seq_name); } return false; }
 		 */
 
 		// Determine list of servers that might have this chromosome sequence.
@@ -1167,11 +1163,11 @@ public final class GeneralLoadUtils {
 			}
 
 			@Override
-			protected boolean showCancelConfirmation(){
+			protected boolean showCancelConfirmation() {
 				return removeFeature("Cancel chromosome retrival and remove " + gFeature.featureName + "?");
 			}
-			
-			private boolean removeFeature(String msg){
+
+			private boolean removeFeature(String msg) {
 				if (Application.confirmPanel(msg)) {
 					if (gFeature.gVersion.removeFeature(gFeature)) {
 						SeqGroupView.getInstance().refreshTable();
@@ -1180,14 +1176,14 @@ public final class GeneralLoadUtils {
 				}
 				return false;
 			}
-			
+
 			@Override
 			protected void finished() {
 				boolean result = true;
 				try {
 					if (!isCancelled()) {
 						result = get();
-					}else{
+					} else {
 						result = false;
 					}
 				} catch (Exception ex) {
@@ -1209,10 +1205,10 @@ public final class GeneralLoadUtils {
 	}
 
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
-		GenericFeature gFeature = GeneralLoadView.getLoadView().getFeatureTree().isLoaded(uri);
+		GenericFeature gFeature = GeneralLoadUtils.getLoadedFeature(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
 		if (gFeature == null) {
-			gFeature = GeneralLoadView.getLoadView().getFeatureTree().isContained(loadGroup, uri);
+			gFeature = GeneralLoadUtils.isContained(loadGroup, uri);
 			// Test to determine if a feature already exist in the feature tree
 			if (gFeature != null) {
 				GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
@@ -1257,6 +1253,9 @@ public final class GeneralLoadUtils {
 			gFeature.setVisible(); // this should be automatically checked in the feature tree
 
 			GeneralLoadView.addFeatureTier(gFeature);
+		} else {
+			ErrorHandler.errorPanel("Cannot add same feature",
+					"The feature " + uri + " has already been added.");
 		}
 
 		return gFeature;
@@ -1321,7 +1320,8 @@ public final class GeneralLoadUtils {
 			//TODO: What if there are more than one seq group ?
 			if (groups.size() > 1) {
 				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()});
+						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()
+						});
 			}
 
 			return groups.get(0);
@@ -1390,7 +1390,7 @@ public final class GeneralLoadUtils {
 		final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
-		CThreadWorker<Object,Void> worker = new CThreadWorker<Object,Void>("Loading feature " + feature.featureName) {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading feature " + feature.featureName) {
 
 			@Override
 			protected Object runInBackground() {
@@ -1423,5 +1423,41 @@ public final class GeneralLoadUtils {
 		};
 
 		ThreadHandler.getThreadHandler().execute(feature, worker);
+	}
+
+	public static boolean isLoaded(GenericFeature gFeature) {
+		GenericFeature f = getLoadedFeature(gFeature.getURI());
+		if (f != null && f != gFeature) {
+			gFeature.clear();
+			GeneralLoadView.getLoadView().refreshTreeView();
+			return true;
+		}
+
+		return false;
+	}
+
+	public static GenericFeature getLoadedFeature(URI uri) {
+		if (GeneralLoadUtils.getVisibleFeatures() == null) {
+			return null;
+		}
+
+		for (GenericFeature gFeature : GeneralLoadUtils.getVisibleFeatures()) {
+			if (gFeature.getURI().equals(uri) && gFeature.isVisible()) {
+				return gFeature;
+			}
+		}
+
+		return null;
+	}
+
+	public static GenericFeature isContained(AnnotatedSeqGroup loadGroup, URI uri) {
+		for (GenericVersion version : loadGroup.getAllVersions()) {
+			for (GenericFeature feature : version.getFeatures()) {
+				if (uri.equals(feature.getURI())) {
+					return feature;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -1,11 +1,10 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -142,6 +141,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	/**
 	 * Handles clicking of server preferences button.
+	 *
 	 * @param evt
 	 */
 	public void actionPerformed(ActionEvent evt) {
@@ -162,8 +162,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	/**
-	 * Initialize (or simply refresh) the tree.
-	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
+	 * Initialize (or simply refresh) the tree. If a node is already selected
+	 * (this could happen if the user used a leaf checkbox), then we don't need
+	 * to do this.
+	 *
 	 * @param features
 	 */
 	void initOrRefreshTree(final List<GenericFeature> features) {
@@ -223,10 +225,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	}
 
 	/**
-	 * Convert list of features into a tree.
-	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.
-	 * Note that if a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
+	 * Convert list of features into a tree. If a feature name has a slash (e.g.
+	 * "a/b/c"), then it is to be represented as a series of nodes. Note that if
+	 * a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
 	 * these features have distinct parents.
+	 *
 	 * @param features
 	 * @return root which is of the type DefaultMutableTreeNode
 	 */
@@ -244,7 +247,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
 			for (GenericFeature feature : features) {
-				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server) /*&& canHandleFeature(feature)*/) {
+				if (/*
+						 * !feature.visible &&
+						 */feature.gVersion.gServer.equals(server) /*
+						 * && canHandleFeature(feature)
+						 */) {
 					addOrFindNode(serverRoot, feature, feature.featureName);
 				}
 			}
@@ -259,6 +266,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	/**
 	 * See if a node already exists for this feature's first "/".
+	 *
 	 * @param root
 	 * @param feature
 	 * @param featureName
@@ -420,6 +428,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	/**
 	 * See if there is a hyperlink at this location.
+	 *
 	 * @param tree
 	 * @param x
 	 * @param y
@@ -462,6 +471,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	/**
 	 * Find hyperlink for the feature name.
+	 *
 	 * @param gFeature
 	 * @param bounds
 	 * @param x
@@ -482,6 +492,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 	/**
 	 * Find hyperlink for the server name.
+	 *
 	 * @param gServer
 	 * @param thetree
 	 * @param bounds
@@ -595,7 +606,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, GenericFeature gFeature, Object nodeUObject) {
 			// You must call super before each return.
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
 			leafCheckBox.setId("FeatureTreeView_" + featureText.replaceAll(" ", "_"));
@@ -604,6 +614,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
 				featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
 			}
+
+			if (!gFeature.isVisible()) {
+				((TreeNodeUserInfo) nodeUObject).checked = false;
+			}
+
+			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			leafCheckBox.setText(featureText);
 			leafCheckBox.setToolTipText(gFeature.description());
 			leafCheckBox.setSelected(isChecked);
@@ -665,10 +681,18 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 					if (tn.genericObject instanceof GenericFeature) {
 						GenericFeature feature = (GenericFeature) tn.genericObject;
+						String message;
 						if (checkbox.isSelected()) {
-							GeneralLoadView.getLoadView().addFeature(feature);
+							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
+								message = "The feature " + feature.getURI() + " has already been added.";
+								ErrorHandler.errorPanel("Cannot add same feature", message);
+								tn.setChecked(false);
+							} else {
+								GeneralLoadView.getLoadView().addFeature(feature);
+							}
 						} else {
-							String message = "Unchecking " + feature.featureName + " will remove all loaded data. \nDo you want to continue? ";
+							message = "Unchecking " + feature.featureName
+									+ " will remove all loaded data. \nDo you want to continue? ";
 							if (feature.getMethods().isEmpty() || Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 									PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 								GeneralLoadView.getLoadView().removeFeature(feature, true, false);
@@ -908,32 +932,5 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				}
 			}
 		}
-	}
-
-	public GenericFeature isLoaded(URI uri) {
-		List<GenericFeature> gFeatureList = GeneralLoadView.getLoadView().getLoadModeDataTableModel().features;
-
-		if (gFeatureList == null) {
-			return null;
-		}
-
-		for (GenericFeature gFeature : gFeatureList) {
-			if (gFeature.getURI().equals(uri)) {
-				return gFeature;
-			}
-		}
-
-		return null;
-	}
-
-	public GenericFeature isContained(AnnotatedSeqGroup loadGroup, URI uri) {
-		for (GenericVersion version : loadGroup.getAllVersions()) {
-			for (GenericFeature feature : version.getFeatures()) {
-				if (uri.equals(feature.getURI())) {
-					return feature;
-				}
-			}
-		}
-		return null;
 	}
 }

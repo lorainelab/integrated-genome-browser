@@ -118,8 +118,8 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="GeneralLoadView.getLoadView().getDataManagementTable()"/>
-                    <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="dataManagementTableModel =GeneralLoadView.getLoadView().getLoadModeTableModel();"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="GeneralLoadView.getLoadView().getTable()"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="dataManagementTableModel =GeneralLoadView.getLoadView().getTableModel();"/>
                   </AuxValues>
                 </Component>
               </SubComponents>

@@ -16,6 +16,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -51,7 +52,8 @@ import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import java.net.URI;
+import javax.swing.*;
 
 /**
  *
@@ -64,13 +66,13 @@ public final class GeneralLoadView {
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private static GenericAction refreshDataAction;
 	private static SeqMapView gviewer;
-	private static DataManagementTableModel dataManagementTableModel;
+	private static DataManagementTableModel tableModel;
 	private FeatureTreeView feature_tree_view;
 	private static GeneralLoadView singleton;
 	private static IGBService igbService;
 	//gui components
 	private static JRPButton all_residuesB;
-	private static JTableX dataManagementTable;
+	private static JTableX table;
 	private static JRPButton partial_residuesB;
 	private static JRPButton refresh_dataB;
 	private static javax.swing.JTree tree;
@@ -99,10 +101,10 @@ public final class GeneralLoadView {
 	private void initComponents() {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
-		dataManagementTableModel = new DataManagementTableModel(this);
-		dataManagementTableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
-		dataManagementTable = new JTableX(dataManagementTableModel);
-		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(dataManagementTable);
+		tableModel = new DataManagementTableModel(this);
+		tableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
+		table = new JTableX(tableModel);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
@@ -130,16 +132,16 @@ public final class GeneralLoadView {
 		refresh_dataB.setText("Load Data");
 	}
 
-	public javax.swing.JTree getTree() {
+	public JTree getTree() {
 		return tree;
 	}
 
-	public DataManagementTableModel getLoadModeDataTableModel() {
-		return dataManagementTableModel;
+	public DataManagementTableModel getTableModel() {
+		return tableModel;
 	}
 
-	public javax.swing.JTable getDataManagementTable() {
-		return dataManagementTable;
+	public JTable getTable() {
+		return table;
 	}
 
 	public JRPButton getPartial_residuesButton() {
@@ -308,6 +310,10 @@ public final class GeneralLoadView {
 
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (GeneralLoadUtils.isLoaded(gFeature)) {
+				continue;
+			}
+
 			loadFeature(loadStrategies, gFeature, serverType);
 		}
 	}
@@ -326,10 +332,14 @@ public final class GeneralLoadView {
 		return true;
 	}
 
-	public static void AutoloadQuickloadFeature() {
+	public synchronized static void AutoloadQuickloadFeature() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
 					|| gFeature.gVersion.gServer.serverType != ServerTypeI.QuickLoad) {
+				continue;
+			}
+
+			if (GeneralLoadUtils.isLoaded(gFeature)) {
 				continue;
 			}
 
@@ -407,7 +417,7 @@ public final class GeneralLoadView {
 	private void refreshTree() {
 		final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 		if (features == null || features.isEmpty()) {
-			dataManagementTableModel.clearFeatures();
+			tableModel.clearFeatures();
 		}
 		feature_tree_view.initOrRefreshTree(features);
 	}
@@ -454,42 +464,42 @@ public final class GeneralLoadView {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
-		dataManagementTable.stopCellEditing();
-		dataManagementTableModel.createVirtualFeatures(visibleFeatures);
+		table.stopCellEditing();
+		tableModel.createVirtualFeatures(visibleFeatures);
 
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(120);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
+		table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
+		table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
+		table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMaxWidth(20);
+		table.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setPreferredWidth(24);
+		table.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMinWidth(24);
+		table.getColumnModel().getColumn(DataManagementTableModel.HIDE_FEATURE_COLUMN).setMaxWidth(24);
+		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setPreferredWidth(120);
+		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMinWidth(110);
+		table.getColumnModel().getColumn(DataManagementTableModel.LOAD_STRATEGY_COLUMN).setMaxWidth(130);
+		table.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setPreferredWidth(finalMaxFeatureNameLength);
+		table.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMinWidth(110);
 		//dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FEATURE_NAME_COLUMN).setMaxWidth(200);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(29);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(29);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(29);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(27);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(27);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(27);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
-		dataManagementTable.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
+		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setPreferredWidth(130);
+		table.getColumnModel().getColumn(DataManagementTableModel.TRACK_NAME_COLUMN).setMinWidth(130);
+		table.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setPreferredWidth(15);
+		table.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMinWidth(15);
+		table.getColumnModel().getColumn(DataManagementTableModel.DELETE_FEATURE_COLUMN).setMaxWidth(15);
+		table.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setPreferredWidth(29);
+		table.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMinWidth(29);
+		table.getColumnModel().getColumn(DataManagementTableModel.BACKGROUND_COLUMN).setMaxWidth(29);
+		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setPreferredWidth(27);
+		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMinWidth(27);
+		table.getColumnModel().getColumn(DataManagementTableModel.FOREGROUND_COLUMN).setMaxWidth(27);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
+		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
 
-		dataManagementTable.setRowSelectionAllowed(false);
-		dataManagementTable.setCellSelectionEnabled(true);
+		table.setRowSelectionAllowed(false);
+		table.setCellSelectionEnabled(true);
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-		DataManagementTable.setComboBoxEditors(dataManagementTable, !GeneralLoadView.IsGenomeSequence());
+		DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
 	}
 
 	/**
@@ -680,8 +690,8 @@ public final class GeneralLoadView {
 	}
 
 	public static DataManagementTableModel getLoadModeTableModel() {
-		if (dataManagementTableModel != null) {
-			return dataManagementTableModel;
+		if (tableModel != null) {
+			return tableModel;
 		}
 		return null;
 	}

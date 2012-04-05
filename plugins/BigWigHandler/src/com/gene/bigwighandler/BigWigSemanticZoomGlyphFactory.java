@@ -78,6 +78,11 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 			super(sym, style, direction, smv);
 		}
 
+		@Override
+		public boolean isPreLoaded() {
+			return true;
+		}
+
 		/* from bbiRead.c */
 		private BBZoomLevelHeader bbiBestZoom(int desiredReduction)
 		/* Return zoom level that is the closest one that is less than or equal to 

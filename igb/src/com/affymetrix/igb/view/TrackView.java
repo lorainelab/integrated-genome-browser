@@ -73,16 +73,10 @@ public class TrackView {
 		dependent_list.clear();
 	}
 
-	/**
-	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
-	 * @param smv the SeqMapView
-	 * @param style the style
-	 * @param tier_direction the direction
-	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
-	 */
-	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
-		AffyTieredMap seqmap = smv.getSeqMap();
-		TierGlyph tierGlyph = null;
+	public TierGlyph getTier(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+		if (style == null || tier_direction == null) {
+			return null;
+		}
 		Map<ITrackStyleExtended, TierGlyph> style2track = null;
 		if (style.isGraphTier()) {
 			style2track = gstyle2track;
@@ -93,7 +87,20 @@ public class TrackView {
 		else if (tier_direction == TierGlyph.Direction.BOTH || tier_direction == TierGlyph.Direction.FORWARD) {
 			style2track = style2forwardTierGlyph;
 		}
-		tierGlyph = style2track.get(style);
+		return style2track.get(style);
+	}
+
+	/**
+	 * get an new TierGlyphViewMode, unless there is already a TierGlyph for the style/direction
+	 * @param smv the SeqMapView
+	 * @param style the style
+	 * @param tier_direction the direction
+	 * @return the existing TierGlyph, or a new TierGlyphViewMode, for the style/direction
+	 */
+	TierGlyph getTrack(SeqMapView smv, SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, MapViewGlyphFactoryI factory) {
+		AffyTieredMap seqmap = smv.getSeqMap();
+		TierGlyph tierGlyph = null;
+		tierGlyph = getTier(style, tier_direction);
 		if (tierGlyph == null) {
 			tierGlyph = new TierGlyph(sym, style, tier_direction, smv, factory.getViewModeGlyph(sym, style, tier_direction, smv));
 			tierGlyph.setLabel(style.getTrackName());
@@ -445,7 +452,7 @@ public class TrackView {
 
 	}
 
-	private static ITrackStyleExtended getStyle(String method, GenericFeature feature) {
+	public ITrackStyleExtended getStyle(String method, GenericFeature feature) {
 		if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
 					method, feature.featureName, feature.getExtension());

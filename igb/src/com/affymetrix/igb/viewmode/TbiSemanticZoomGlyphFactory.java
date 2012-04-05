@@ -58,6 +58,11 @@ public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 		}
 
 		@Override
+		public boolean isPreLoaded() {
+			return true;
+		}
+
+		@Override
 		public boolean isDetail(ViewI view) {
 			return view.getTransform().getScaleX() >= ZOOM_X_SCALE;
 		}

@@ -16,7 +16,6 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
@@ -27,6 +26,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -47,12 +47,13 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.net.URI;
 import javax.swing.*;
 
 /**
@@ -308,9 +309,41 @@ public final class GeneralLoadView {
 		loadFeatures(loadStrategies, serverType);
 	}
 
+	/**
+	 * @param gFeature the feature to check
+	 * @return if this feature is "preloaded", that is, it has a view mode
+	 * that is displayed without "Load Data", like Semantic zooming
+	 */
+	private static boolean isPreLoaded(GenericFeature gFeature) {
+		if (gFeature.getMethods().size() > 1) {
+			return false;
+		}
+		String method = null;
+		if (gFeature.getMethods().size() == 0) {
+			if (gFeature.symL != null &&  gFeature.symL.uri != null) {
+				method = gFeature.symL.uri.toString();
+			}
+		}
+		else {
+			method = gFeature.getMethods().iterator().next();
+		}
+		if (method == null) {
+			return false;
+		}
+		ITrackStyleExtended style = TrackView.getInstance().getStyle(method, gFeature);
+		TierGlyph tierGlyph = TrackView.getInstance().getTier(style, Direction.BOTH);
+		if (tierGlyph != null && tierGlyph.getViewModeGlyph() != null) {
+			return tierGlyph.getViewModeGlyph().isPreLoaded();
+		}
+		return false;
+	}
+
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (GeneralLoadUtils.isLoaded(gFeature)) {
+				continue;
+			}
+			if (isPreLoaded(gFeature)) {
 				continue;
 			}
 

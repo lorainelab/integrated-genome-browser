@@ -125,9 +125,7 @@ public class TbiZoomSymLoader extends SymLoader {
 					TPair64[] chunks = bins.get(binNo);
 					for (TPair64 chunk : chunks) {
 						if (chunk != null) {
-							if (chunk.v - chunk.u < 65536) {
-								yValue += (double)(getUncompressedLength(chunk.u, chunk.v) * BIN_LENGTH) / (double)(region[1] - region[0]);
-							}
+							yValue += (double)(getUncompressedLength(chunk.u, chunk.v) * BIN_LENGTH) / (double)(region[1] - region[0]);
 						}
 					}
 					if (1 + region[1] - region[0] == BIN_LENGTH && yValue > 0.0f) { // smallest bin

@@ -1208,13 +1208,6 @@ public final class GeneralLoadUtils {
 		GenericFeature gFeature = GeneralLoadUtils.getLoadedFeature(uri);
 		// Test to determine if a feature with this uri is contained in the load mode table
 		if (gFeature == null) {
-			gFeature = GeneralLoadUtils.isContained(loadGroup, uri);
-			// Test to determine if a feature already exist in the feature tree
-			if (gFeature != null) {
-				GeneralLoadView.getLoadView().getFeatureTree().updateTree(uri);
-				return gFeature;
-			}
-
 			GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
 			version = setVersion(uri, loadGroup, version);
 
@@ -1447,17 +1440,6 @@ public final class GeneralLoadUtils {
 			}
 		}
 
-		return null;
-	}
-
-	public static GenericFeature isContained(AnnotatedSeqGroup loadGroup, URI uri) {
-		for (GenericVersion version : loadGroup.getAllVersions()) {
-			for (GenericFeature feature : version.getFeatures()) {
-				if (uri.equals(feature.getURI())) {
-					return feature;
-				}
-			}
-		}
 		return null;
 	}
 }

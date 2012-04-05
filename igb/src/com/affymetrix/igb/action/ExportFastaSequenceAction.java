@@ -2,7 +2,6 @@ package com.affymetrix.igb.action;
 
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

@@ -140,6 +140,7 @@ public final class ChpParser {
 	}
 
 	/** same as parseQuantChp, but adding detection/pval */
+	@SuppressWarnings("unused")
 	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) throws Exception {
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -203,6 +204,7 @@ public final class ChpParser {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) throws Exception {
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -277,7 +279,7 @@ public final class ChpParser {
 	 *
 	 */
 	private static List<LazyChpSym> makeLazyChpSyms(
-			String file_name, String chp_array_type, List int_entries, boolean annotate_seq) {
+			String file_name, String chp_array_type, List<?> int_entries, boolean annotate_seq) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -518,9 +520,9 @@ public final class ChpParser {
 		System.out.println("seq_count = " + seq_count + ", alg_name = " + alg_name + ", alg_vers = " + alg_vers);
 
 		Map<String, String> file_prop_hash = new LinkedHashMap<String, String>();
-		List alg_params = tchp.getAlgParams();
+		List<ParameterNameValue> alg_params = tchp.getAlgParams();
 		for (int i = 0; i < alg_params.size(); i++) {
-			ParameterNameValue param = (ParameterNameValue) alg_params.get(i);
+			ParameterNameValue param = alg_params.get(i);
 			String pname = param.getName();
 			String pval = param.getValueText();
 			// unfortunately, param.getValueText() is NOT Ascii text, as it is supposed to be.
@@ -603,9 +605,9 @@ public final class ChpParser {
 				gsym.setProperty(ent.getKey(), ent.getValue());
 			}
 
-			List seq_params = seq.getParameters();
+			List<ParameterNameValue> seq_params = seq.getParameters();
 			for (int k = 0; k < seq_params.size(); k++) {
-				ParameterNameValue param = (ParameterNameValue) seq_params.get(k);
+				ParameterNameValue param = seq_params.get(k);
 				String pname = param.getName();
 				String pval = param.getValueText();
 				//	System.out.println("   param:  name = " + pname + ", val = " + pval);

@@ -104,7 +104,7 @@ public class BaiZoomSymLoader extends SymLoader {
 						int yValue = 0;
 						for (Chunk chunk : bin.getChunkList()) {
 							if (chunk != null) {
-								yValue += (double)(getUncompressedLength(chunk) * BIN_LENGTH) / (double)(region[1] - region[0]);
+								yValue += (double)(getUncompressedLength(chunk.getChunkStart(), chunk.getChunkEnd()) * BIN_LENGTH) / (double)(region[1] - region[0]);
 							}
 						}
 						if (1 + region[1] - region[0] == BIN_LENGTH && yValue > 0.0f) { // smallest bin
@@ -143,11 +143,11 @@ public class BaiZoomSymLoader extends SymLoader {
 
 	private static final int CHUNK_SIZE = 2 >> 16;
 	private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
-	private static long getUncompressedLength(Chunk chunk) {
-		long blockAddressStart = BlockCompressedFilePointerUtil.getBlockAddress(chunk.getChunkStart());
-		long blockAddressEnd = BlockCompressedFilePointerUtil.getBlockAddress(chunk.getChunkEnd());
-		long blockOffsetStart = BlockCompressedFilePointerUtil.getBlockOffset(chunk.getChunkStart());
-		long blockOffsetEnd = BlockCompressedFilePointerUtil.getBlockOffset(chunk.getChunkEnd());
+	private static long getUncompressedLength(long chunkStart, long chunkEnd) {
+		long blockAddressStart = BlockCompressedFilePointerUtil.getBlockAddress(chunkStart);
+		long blockAddressEnd = BlockCompressedFilePointerUtil.getBlockAddress(chunkEnd);
+		long blockOffsetStart = BlockCompressedFilePointerUtil.getBlockOffset(chunkStart);
+		long blockOffsetEnd = BlockCompressedFilePointerUtil.getBlockOffset(chunkEnd);
 		if (blockAddressStart == blockAddressEnd) {
 			return blockOffsetEnd - blockOffsetStart;
 		}

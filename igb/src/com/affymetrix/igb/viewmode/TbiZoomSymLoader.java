@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.samtools.util.BlockCompressedFilePointerUtil;
+
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -124,7 +126,7 @@ public class TbiZoomSymLoader extends SymLoader {
 					for (TPair64 chunk : chunks) {
 						if (chunk != null) {
 							if (chunk.v - chunk.u < 65536) {
-								yValue += (double)((chunk.v - chunk.u) * BIN_LENGTH) / (double)(region[1] - region[0]);
+								yValue += (double)(getUncompressedLength(chunk.u, chunk.v) * BIN_LENGTH) / (double)(region[1] - region[0]);
 							}
 						}
 					}
@@ -153,9 +155,6 @@ public class TbiZoomSymLoader extends SymLoader {
 						Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "fail loading BAM segment " + uri, x);
 					}
 				}
-				for (int i = 0; i < yList.length; i++) {
-					if (yList[i] > 9999) yList[i] = 9999;
-				}
 				saveSym = new GraphSym(xList, wList, yList, featureName, seq);
 			}
 			saveSeq = seq;
@@ -163,6 +162,21 @@ public class TbiZoomSymLoader extends SymLoader {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
 		symList.add(saveSym);
 		return symList;
+	}
+
+	private static final int CHUNK_SIZE = 2 >> 16;
+	private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
+	private static long getUncompressedLength(long chunkStart, long chunkEnd) {
+		long blockAddressStart = BlockCompressedFilePointerUtil.getBlockAddress(chunkStart);
+		long blockAddressEnd = BlockCompressedFilePointerUtil.getBlockAddress(chunkEnd);
+		long blockOffsetStart = BlockCompressedFilePointerUtil.getBlockOffset(chunkStart);
+		long blockOffsetEnd = BlockCompressedFilePointerUtil.getBlockOffset(chunkEnd);
+		if (blockAddressStart == blockAddressEnd) {
+			return blockOffsetEnd - blockOffsetStart;
+		}
+		else {
+			return Math.round((blockAddressEnd - blockAddressStart) * COMPRESS_RATIO + (CHUNK_SIZE - blockOffsetStart) + blockOffsetEnd);
+		}
 	}
 
 	private static int[] getRegion(int binno) {

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -49,6 +50,7 @@ public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 	// glyph class
 	public class TbiSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph {
 		private static final double ZOOM_X_SCALE = 0.002;
+		private ViewModeGlyph saveSummaryGlyph;
 
 		public TbiSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 				Direction direction, SeqMapViewExtendedI smv) {
@@ -74,6 +76,13 @@ public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 			catch (Exception x) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "TbiSemanticZoom failed reading tbi file", x);
 			}
+		}
+
+		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
+			if (saveSummaryGlyph == null || !span.getBioSeq().equals(saveSpan.getBioSeq())) {
+				saveSummaryGlyph = super.getSummaryGlyph(span);
+			}
+			return saveSummaryGlyph;
 		}
 	}
 	// end glyph class

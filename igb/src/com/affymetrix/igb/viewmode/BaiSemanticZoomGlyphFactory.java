@@ -9,6 +9,7 @@ import net.sf.samtools.BaiZoomSymLoader;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -50,6 +51,7 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 	// glyph class
 	public class BaiSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph {
 		private static final double ZOOM_X_SCALE = 0.002;
+		private ViewModeGlyph saveSummaryGlyph;
 
 		public BaiSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 				Direction direction, SeqMapViewExtendedI smv) {
@@ -75,6 +77,13 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 			catch (Exception x) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "BaiSemanticZoom failed reading bai file", x);
 			}
+		}
+
+		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
+			if (saveSummaryGlyph == null || !span.getBioSeq().equals(saveSpan.getBioSeq())) {
+				saveSummaryGlyph = super.getSummaryGlyph(span);
+			}
+			return saveSummaryGlyph;
 		}
 	}
 	// end glyph class

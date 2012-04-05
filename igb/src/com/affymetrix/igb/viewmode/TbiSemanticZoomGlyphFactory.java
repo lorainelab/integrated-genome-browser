@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.samtools.BaiZoomSymLoader;
+import net.sf.samtools.TbiZoomSymLoader;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -18,10 +18,10 @@ import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
-public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
-	public static final String BAI_ZOOM_DISPLAYER_EXTENSION = "bai";
+public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory {
+	public static final String TBI_ZOOM_DISPLAYER_EXTENSION = "tbi";
 
-	public BaiSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
+	public TbiSemanticZoomGlyphFactory(MapViewGlyphFactoryI defaultGlyphFactory, MapViewGlyphFactoryI graphGlyphFactory) {
 		super(defaultGlyphFactory, graphGlyphFactory);
 	}
 
@@ -29,12 +29,12 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
 			ITrackStyleExtended style, Direction direction,
 			SeqMapViewExtendedI smv) {
-		return new BaiSemanticZoomGlyph(sym, style, direction, smv);
+		return new TbiSemanticZoomGlyph(sym, style, direction, smv);
 	}
 
 	@Override
 	public String getName() {
-		return "bai_semantic_zoom";
+		return "tbi_semantic_zoom";
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 
 	@Override
 	public String getIndexedFileName(String method, Direction direction) {
-		return method + "." + BAI_ZOOM_DISPLAYER_EXTENSION;
+		return method + "." + TBI_ZOOM_DISPLAYER_EXTENSION;
 	}
 
 	// glyph class
-	public class BaiSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph {
+	public class TbiSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph {
 		private static final double ZOOM_X_SCALE = 0.002;
 
-		public BaiSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
+		public TbiSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 				Direction direction, SeqMapViewExtendedI smv) {
 			super(sym, style, direction, smv);
 		}
@@ -68,12 +68,12 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 			try {
 				String method = (sym == null) ? trackStyle.getMethodName() : BioSeq.determineMethod(sym);
 				detailSymL = FileTypeHolder.getInstance().getFileTypeHandlerForURI(method).createSymLoader(new URI(method), trackStyle.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeqGroup());
-				String baiUrl = getIndexedFileName(method, direction);
-				URI baiUri = new URI(baiUrl);
-				summarySymL = new BaiZoomSymLoader(baiUri, method, GenometryModel.getGenometryModel().getSelectedSeqGroup());
+				String tbiUrl = getIndexedFileName(method, direction);
+				URI tbiUri = new URI(tbiUrl);
+				summarySymL = new TbiZoomSymLoader(tbiUri, method, GenometryModel.getGenometryModel().getSelectedSeqGroup());
 			}
 			catch (Exception x) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "BaiSemanticZoom failed reading bai file", x);
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "TbiSemanticZoom failed reading tbi file", x);
 			}
 		}
 	}

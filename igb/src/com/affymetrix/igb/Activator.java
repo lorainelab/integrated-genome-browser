@@ -53,6 +53,7 @@ import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.viewmode.SequenceGlyphFactory;
 import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
+import com.affymetrix.igb.viewmode.TbiSemanticZoomGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.GlyphProcessor;
@@ -360,7 +361,8 @@ public class Activator implements BundleActivator {
 		MapViewGlyphFactoryI annotationDepthFactory = new OperatorGlyphFactory(new DepthOperator(FileTypeCategory.Annotation), stairStepGraphGlyphFactory);
 		MapViewGlyphFactoryI annotationSemanticZoomGlyphFactory = new DefaultSemanticZoomGlyphFactory(annotationGlyphFactory, annotationDepthFactory);
 		bundleContext.registerService(MapViewGlyphFactoryI.class, annotationSemanticZoomGlyphFactory, null);
-//		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, stairStepGraphGlyphFactory), null);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, new BaiSemanticZoomGlyphFactory(alignmentGlyphFactory, stairStepGraphGlyphFactory), null);
+		bundleContext.registerService(MapViewGlyphFactoryI.class, new TbiSemanticZoomGlyphFactory(annotationGlyphFactory, stairStepGraphGlyphFactory), null);
 
 		// Add Default factories
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationSemanticZoomGlyphFactory);

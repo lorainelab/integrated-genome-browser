@@ -8,8 +8,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import javax.swing.SwingWorker;
 
 /**
  *

@@ -2,7 +2,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.swing.StyledJTable;
@@ -24,7 +23,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class WebLinksView implements ListSelectionListener {
 
-	private static final long serialVersionUID = 1L;
 	private static WebLinksView singleton;
 	public JTable serverTable;
 	public JTable localTable;
@@ -107,12 +105,6 @@ public final class WebLinksView implements ListSelectionListener {
 		table.getColumnModel().getColumn(COL_REGEX).setMaxWidth(400);
 		table.getColumnModel().getColumn(COL_TYPE).setPreferredWidth(90);
 		table.getColumnModel().getColumn(COL_TYPE).setMaxWidth(90);
-	}
-
-	private static void setAccelerator(Action a) {
-		KeyStroke ks = PreferenceUtils.getAccelerator("Web Links Manager / "
-				+ a.getValue(Action.NAME));
-		a.putValue(Action.ACCELERATOR_KEY, ks);
 	}
 
 	/*

@@ -20,7 +20,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
@@ -299,6 +298,7 @@ public final class OrfAnalyzer extends JComponent
 			public void run() {
 
 				AbstractAction action = new AbstractAction() {
+					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
 						AffyTieredMap tiermap = smv.getSeqMap();

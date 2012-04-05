@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -88,7 +87,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSequenceTable = seqtable;
         speciesPanel = new javax.swing.JPanel();
-        speciesCB = speciesCB = seqGroupModel.getSpeciesCB();
+        speciesCB = seqGroupModel.getSpeciesCB();
         genomeVersionPanel = new javax.swing.JPanel();
         versionCB = seqGroupModel.getVersionCB();
 

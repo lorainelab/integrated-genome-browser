@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class StatusBar extends JPanel implements DisplaysError {
 	private static final long serialVersionUID = 1l;

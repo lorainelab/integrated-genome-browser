@@ -1,4 +1,4 @@
-package net.sf.samtools;
+package com.affymetrix.igb.viewmode;
 // this is a copy of the TabixReader used to access the index
 /* The MIT License
 

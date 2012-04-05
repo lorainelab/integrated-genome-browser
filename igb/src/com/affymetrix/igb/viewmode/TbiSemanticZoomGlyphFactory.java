@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.samtools.TbiZoomSymLoader;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;

@@ -1,4 +1,4 @@
-package net.sf.samtools;
+package com.affymetrix.igb.viewmode;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.samtools.TabixReaderAlt.TPair64;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -25,6 +24,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.viewmode.TabixReaderAlt.TPair64;
 
 public class TbiZoomSymLoader extends SymLoader {
 	private static final int BIN_COUNT = 32768; // smallest bin

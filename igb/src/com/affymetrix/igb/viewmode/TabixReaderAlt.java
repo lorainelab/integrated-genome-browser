@@ -1,5 +1,7 @@
 package com.affymetrix.igb.viewmode;
-// this is a copy of the TabixReader used to access the index
+//this is a copy of the TabixReader, used to access the index
+//this is a copy of the TabixReader, used to access the index
+//this is a copy of the TabixReader, used to access the index
 /* The MIT License
 
    Copyright (c) 2010 Broad Institute.

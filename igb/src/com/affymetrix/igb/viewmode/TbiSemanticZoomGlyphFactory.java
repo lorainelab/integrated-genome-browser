@@ -78,6 +78,7 @@ public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 			}
 		}
 
+		@Override
 		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
 			if (saveSummaryGlyph == null || !span.getBioSeq().equals(saveSpan.getBioSeq())) {
 				saveSummaryGlyph = super.getSummaryGlyph(span);

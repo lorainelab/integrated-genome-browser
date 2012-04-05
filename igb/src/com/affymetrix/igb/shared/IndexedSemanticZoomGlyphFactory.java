@@ -89,7 +89,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			defaultGlyph = getEmptyGraphGlyph(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq), trackStyle, gviewer);
 		}
 
-		private ViewModeGlyph getDetailGlyph(SimpleSeqSpan span) throws Exception {
+		protected ViewModeGlyph getDetailGlyph(SimpleSeqSpan span) throws Exception {
 			List<? extends SeqSymmetry> symList = detailSymL.getRegion(span);
 			RootSeqSymmetry rootSym;
 			if (symList.size() == 1 && symList.get(0) instanceof RootSeqSymmetry) {
@@ -104,7 +104,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
 		}
 
-		private ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
+		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(span);
 			if (symList.size() > 0) {

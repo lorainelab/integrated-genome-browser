@@ -39,7 +39,7 @@
 	<classpathentry kind="lib" path="ext/picard.jar"/>
 	<classpathentry kind="lib" path="ext/sam.jar"/>
 	<classpathentry kind="lib" path="ext/swing-layout.jar"/>
-	<classpathentry kind="lib" path="ext/tribble-0.1.jar"/>
+	<classpathentry kind="lib" path="ext/tribble-0.2.jar"/>
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/furbelow.jar"/>
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/jackson-all-1.7.9.jar"/>
 	<classpathentry kind="lib" path="plugins/ant/lib/ant.jar"/>

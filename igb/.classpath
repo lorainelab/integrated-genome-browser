@@ -12,12 +12,12 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jide.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/swing-layout.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/freehep-2.1.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/BigWig.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/be.pwnt.jflow_1.0.0.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.2.jar" sourcepath="C:/workspace_IGB/tribble/src"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

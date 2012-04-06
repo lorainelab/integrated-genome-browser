@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/colt.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/picard.jar"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.1.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.2.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/image4j.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-net-2.0.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/commons-codec-1.4.jar"/>

@@ -369,11 +369,19 @@ public class SeqMapView extends JPanel
 			this.add(BorderLayout.SOUTH, pan);
 		}
 
+		// NEW!
+		JSlider specialZoomer = new JSlider(JSlider.VERTICAL,
+                                      0, 100, 100);
+		javax.swing.event.ChangeListener zoomie = new LawrencianZoomer(seqmap);
+		specialZoomer.addChangeListener(zoomie);
+		
 		yzoombox = Box.createVerticalBox();
 		yzoombox.add((Component) yzoomer);
+		yzoombox.add((Component) specialZoomer);
 		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
 			this.add(BorderLayout.WEST, yzoombox);
+//			this.add(BorderLayout.WEST, specialZoomer);
 		} else {
 			this.add(BorderLayout.EAST, yzoombox);
 		}

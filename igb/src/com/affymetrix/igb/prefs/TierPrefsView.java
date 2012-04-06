@@ -25,6 +25,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -475,7 +476,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		List<TrackStyle> tier_styles;
 		private Object tempObject;
 		private int tempInt;
-		public boolean applyButton = false; 
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
 		}

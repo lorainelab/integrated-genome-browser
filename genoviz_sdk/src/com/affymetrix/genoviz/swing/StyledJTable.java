@@ -57,7 +57,7 @@ public class StyledJTable extends JTable {
 
 	private void init() {
 		setCellSelectionEnabled(true);
-		setSelectionForeground(Color.BLACK);
+		setSelectionForeground(Color.BLUE);
 		setIntercellSpacing(new Dimension(1, 1));
 		setShowGrid(true);
 		setGridColor(new Color(11184810));

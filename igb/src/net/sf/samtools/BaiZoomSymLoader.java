@@ -1,18 +1,15 @@
-package com.affymetrix.igb.viewmode;
+package net.sf.samtools;
 
+import java.io.File;
 import java.net.URI;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sf.samtools.util.BlockCompressedFilePointerUtil;
-
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -20,28 +17,46 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
-public abstract class IndexZoomSymLoader extends SymLoader {
+public class BaiZoomSymLoader extends SymLoader {
 	private static final int BIN_COUNT = 32768; // smallest bin
 	private static final int BIN_LENGTH = 16384; // smallest bin
 	private BioSeq saveSeq;
 	private GraphSym saveSym;
 
-	public IndexZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+	public BaiZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, featureName, group);
 	}
 
-	protected abstract SymLoader getDataFileSymLoader() throws Exception;
-	protected abstract Iterator<Map<Integer, List<List<Long>>>> getBinIter(String seq);
+	private int getRefNo(String igbSeq, SAMSequenceDictionary ssd) {
+		List<SAMSequenceRecord> sList = ssd.getSequences();
+		for (int i = 0; i < sList.size(); i++) {
+			String bamSeq = SynonymLookup.getChromosomeLookup().getPreferredName(sList.get(i).getSequenceName());
+			if (igbSeq.equals(bamSeq)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
-	protected float getRealAvg(SimpleSeqSpan span) throws Exception {
-		SymLoader symL = getDataFileSymLoader();
+	private URI getBamURI(URI baiUri) throws Exception {
+		String bamUriString = baiUri.toString().substring(0, baiUri.toString().length() - ".bai".length());
+		if (!bamUriString.startsWith("file:") && !bamUriString.startsWith("http:") && !bamUriString.startsWith("https:") && !bamUriString.startsWith("ftp:")) {
+			bamUriString = GeneralUtils.getFileScheme() + bamUriString;
+		}
+		return new URI(bamUriString);
+	}
+
+	private float getRealAvg(SimpleSeqSpan span) throws Exception {
+		SymLoader symL = FileTypeHolder.getInstance().getFileTypeHandler("bam").createSymLoader(getBamURI(uri), featureName, group);
 		@SuppressWarnings("unchecked")
 		List<SeqSymmetry> symList = (List<SeqSymmetry>)symL.getRegion(span);
 		if (symList.size() == 0) {
@@ -58,14 +73,20 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
-		init();
 		BioSeq seq = overlapSpan.getBioSeq();
 		if (!seq.equals(saveSeq) || saveSym == null) {
-			Iterator<Map<Integer, List<List<Long>>>> binIter = getBinIter(seq.toString());
-			if (binIter == null) {
+			File bamFile = new File(GeneralUtils.fixFileName(uri.toString().substring(0, uri.toString().length() - ".bai".length())));
+			File bamIndexFile = new File(GeneralUtils.fixFileName(uri.toString()));
+			SAMFileReader sfr = new SAMFileReader(bamFile);
+			SAMSequenceDictionary ssd = sfr.getFileHeader().getSequenceDictionary();
+			int refno = getRefNo(seq.toString(), ssd);
+			if (refno == -1) {
 				saveSym = new GraphSym(new int[]{}, new int[]{}, new float[]{}, featureName, seq);
 			}
 			else {
+				StubBAMFileIndex dbfi = new StubBAMFileIndex(bamIndexFile, ssd);
+				BAMIndexContent bic = dbfi.query(refno);
+				Iterator<Bin> blIter = bic.getBins().iterator();
 				int[] xList = new int[BIN_COUNT];
 				for (int i = 0; i < BIN_COUNT; i++) {
 					xList[i] = i * BIN_LENGTH;
@@ -76,27 +97,27 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 				Arrays.fill(yList,  0.0f);
 				float largestY = Float.MIN_VALUE;
 				int indexLargest = -1;
-				while (binIter.hasNext()) {
-					Map<Integer, List<List<Long>>> binWrapper = binIter.next();
-					int binNo = binWrapper.keySet().iterator().next();
-					int[] region = getRegion(binNo);
-					int yValue = 0;
-					for (List<Long> chunkWrapper : binWrapper.get(binNo)) {
-						if (chunkWrapper != null) {
-							yValue += (double)(getUncompressedLength(chunkWrapper.get(0), chunkWrapper.get(1)) * BIN_LENGTH) / (double)(region[1] - region[0]);
+				while (blIter.hasNext()) {
+					Bin bin = blIter.next();
+					if (bin.containsChunks()) {
+						int[] region = getRegion(bin.getBinNumber());
+						int yValue = 0;
+						for (Chunk chunk : bin.getChunkList()) {
+							if (chunk != null) {
+								yValue += (double)(getUncompressedLength(chunk.getChunkStart(), chunk.getChunkEnd()) * BIN_LENGTH) / (double)(region[1] - region[0]);
+							}
 						}
-					}
-					if (1 + region[1] - region[0] == BIN_LENGTH && yValue > 0.0f) { // smallest bin
-						if (yValue > largestY || indexLargest == -1) {
-							indexLargest = region[0] / BIN_LENGTH;
-							largestY = yValue;
+						if (1 + region[1] - region[0] == BIN_LENGTH && yValue > 0.0f) { // smallest bin
+							if (yValue > largestY || indexLargest == -1) {
+								indexLargest = region[0] / BIN_LENGTH;
+								largestY = yValue;
+							}
 						}
-					}
-					for (int i = region[0] / BIN_LENGTH; i < (region[1] + 1) / BIN_LENGTH; i++) {
-						yList[i] += yValue;
+						for (int i = region[0] / BIN_LENGTH; i < (region[1] + 1) / BIN_LENGTH; i++) {
+							yList[i] += yValue;
+						}
 					}
 				}
-				indexLargest = -1;//skip for now
 				if (indexLargest != -1) {
 					try {
 						float realAvg = getRealAvg(new SimpleSeqSpan(indexLargest * BIN_LENGTH, (indexLargest + 1) * BIN_LENGTH, seq));
@@ -152,20 +173,6 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 			}
 		}
 		return span;
-	}
-
-	protected Map<String, String> getSynonymMap() {
-		final SynonymLookup chromosomeLookup = SynonymLookup.getChromosomeLookup();
-		return new AbstractMap<String, String>() {
-			@Override
-			public Set<java.util.Map.Entry<String, String>> entrySet() {
-				return null;
-			}
-			@Override
-			public String get(Object key) {
-				return chromosomeLookup.getPreferredName((String)key);
-			}
-		};
 	}
 
 	public static void main(String[] args) {

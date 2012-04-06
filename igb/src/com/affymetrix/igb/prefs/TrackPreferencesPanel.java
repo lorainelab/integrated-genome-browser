@@ -196,9 +196,11 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 
         jLabel6.setText("Max Stack Depth: ");
 
-        maxStackDepthTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                maxDepthTextKeyReleased(evt);
+        maxStackDepthTextField.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                maxDepthTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
 
@@ -513,7 +515,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	}//GEN-LAST:event_viewModeComboBoxActionPerformed
 
 	private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
-		tdv.maxDepthTextField();
+		tdv.applyMaxDepth();
 	}//GEN-LAST:event_applyButtonActionPerformed
 
 	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
@@ -536,10 +538,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 		((TierPrefsView)tdv).displayNameTextField();
 	}//GEN-LAST:event_nameKeyReleased
 
-	private void maxDepthTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxDepthTextKeyReleased
-		tdv.maxDepthTextField();
-	}//GEN-LAST:event_maxDepthTextKeyReleased
-
 	private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
 		tdv.show2TracksCheckBox();
 	}//GEN-LAST:event_show2TracksCheckBoxActionPerformed
@@ -555,6 +553,10 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
 		tdv.collapsedCheckBox();
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
+
+	private void maxDepthTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_maxDepthTextChanged
+		tdv.maxDepthTextField();
+	}//GEN-LAST:event_maxDepthTextChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel FieldLabel;

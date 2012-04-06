@@ -120,7 +120,6 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_collapsedCheckBox");
         colorCheckBox.setText("Color");
 		arrowCheckBox.setText("Arrow");
-		
 		possitiveColorComboBox.setBackground(new Color(255, 255, 255));
 		possitiveColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		possitiveColorComboBox.setButtonVisible(false);
@@ -234,6 +233,13 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		if (!settingValueFromTable) {
 			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
 		}
+	}
+	public void applyMaxDepth(){
+		if(!settingValueFromTable){
+			maxDepthTextField();
+			if(!(((TierPrefsView)this).autoApplyChanges()))
+				((TierPrefsView.TierPrefsTableModel)model).update(COL_MAX_DEPTH);
+		}			
 	}
 	public void connectedCheckBox(){
 		if (!settingValueFromTable) {

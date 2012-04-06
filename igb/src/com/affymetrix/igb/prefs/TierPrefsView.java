@@ -475,7 +475,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		List<TrackStyle> tier_styles;
 		private Object tempObject;
 		private int tempInt;
-
+		public boolean applyButton = false; 
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
 		}
@@ -632,27 +632,31 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
 
-				if (autoApplyChanges() && apply) {
-					if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
-							|| col == COL_TRACK_NAME || col == COL_COLLAPSED
-							|| col == COL_MAX_DEPTH) {
-						if (col == COL_COLLAPSED || col == COL_MAX_DEPTH) {
-							smv.getSeqMap().setTierStyles();
-							smv.getSeqMap().repackTheTiers(true, true);
-						}
-
-						if (col == COL_TRACK_NAME) {
-							smv.getSeqMap().setTierLabels();
-						}
-
-						smv.getSeqMap().updateWidget();
-					} else {
-						refreshSeqMapView();
-					}
+				if ((autoApplyChanges() && apply)) {
+					update(col);
 				}
 			}
 			setRowSelection(style);
 			settingValueFromTable = false;
+		}
+
+		public void update(int col) {
+			if (col == COL_BACKGROUND || col == COL_TRACK_NAME_SIZE
+					|| col == COL_TRACK_NAME || col == COL_COLLAPSED
+					|| col == COL_MAX_DEPTH) {
+				if (col == COL_COLLAPSED || col == COL_MAX_DEPTH) {
+					smv.getSeqMap().setTierStyles();
+					smv.getSeqMap().repackTheTiers(true, true);
+				}
+
+				if (col == COL_TRACK_NAME) {
+					smv.getSeqMap().setTierLabels();
+				}
+
+				smv.getSeqMap().updateWidget();
+			} else {
+				refreshSeqMapView();
+			}
 		}
 
 		/**

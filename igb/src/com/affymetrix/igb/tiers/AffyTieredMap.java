@@ -305,13 +305,13 @@ public class AffyTieredMap extends NeoMap {
 			packTiers(false, true, false);
 		}
 
-		if (!fity) {
-			doZoomFix(NeoMap.Y);
-		}
-
-		if (!fitx) {
-			doZoomFix(NeoMap.X);
-		}
+//		if (!fity) {
+//			doZoomFix(NeoMap.Y);
+//		}
+//
+//		if (!fitx) {
+//			doZoomFix(NeoMap.X);
+//		}
 	}
 
 	/**

@@ -1,12 +1,11 @@
-==Installing the GNomEx DAS2 Server==
+==Installing the GenoPub DAS2 Server==
 
 === Modes ===
-There are three ways to configure the GenoViz Genometry DAS2 server:
-* Classic mode: The data tracks are organized into a directory structure on the file system.  
-* GenoPub mode: The data tracks are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each data track in a database.  A web-based tool (GenoPub) allows data tracks to be easily added, described, and organized.  Through the tool, users and groups are managed and data track security is specified. Access to data tracks is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
-* GNomEx mode:  The data tracks are managed by the GNomEx application, which stores information about each data track in a database.  A web-based tool (GNomEx) allows data tracks to be easily added, described, and organized.  Through the tool, users and groups are managed and data track security is specified. Access to data tracks is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
+There are two ways to configure the GenoViz Genometry DAS2 server:
+* Classic mode: The annotations are organized into a directory structure on the file system.  
+* GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
 
-Here are instructions for installing the DAS2 server in GNomEx mode. Any java servlet container will work.  Here we show how to do this with Tomcat.  Likewise most relational databases can be appropriately configured.  In this demonstration we are using MySQL. Lastly, these web apps were developed and run on Windows but since the majority of bioinformatics web servers use Linux, we use Red Hat Enterprise 5 in this tutorial.
+Here are instructions for installing the DAS2 server in GenoPub mode. Any java servlet container will work.  Here we show how to do this with Tomcat.  Likewise most relational databases can be appropriately configured.  In this demonstration we are using MySQL. Lastly, these web apps were developed and run on Windows but since the majority of bioinformatics web servers use Linux, we use Red Hat Enterprise 5 in this tutorial.
 
 
 === System Requirements ===
@@ -39,7 +38,6 @@ export CATALINA_OPTS=-Xmx4096m
 
 * Load the variables into your current shell (e.g. ' source ~/.bashrc ')
 * Download the MySQL JDBC driver (MySQL Connector/J) from http://dev.mysql.com/downloads/connector/j/ .  Uncompress the zip file (mysql-connector-java-5.xxx.zip) and place the ~/mysql-connector-java-xxx/mysql-connector-java-5.xxx-bin.jar into your ~/apache-tomcat-5.xxx/common/lib directory. This is needed for java apps to connect to a MySQL database.
-* Download 
 * Punch holes for port 8080 through any firewalls surrounding your computer
 * Enable the tomcat shell scripts to be executed (e.g. ' chmod -R 755 ~/apache-tomcat-5.xxx/bin/ ')
 * Launch tomcat using the ~/apache-tomcat-5.xxx/bin/startup.sh script
@@ -53,7 +51,7 @@ export CATALINA_OPTS=-Xmx4096m
 ** To build from the GenoViz project, change the '<property name="das2_genopub_mode" value="false"/>' to true in the genoviz/common.xml file and use ant to run the clean, all, release-das2server targets in the genoviz/build.xml file.  The das2server-genopub.zip will be placed in the genoviz/dist/release directory.
 * Unzip the das2server-genopub.zip archive in the tomcat user's home directory
 * Move the ~/das2server-genopub/das2genopub directory into ~/apache-tomcat-5.xxx/webapps directory
-* Copy commons-codec-1.4.jar and gnomex_realm.jar in ~/das2server-genopub/tomcat/server/lib to ~/apache-tomcat-5.xxx/server/lib
+
 
 == Step 4: Install and Configure MySQL ==
 * MySQL 5+ (http://dev.mysql.com)  comes as a standard install option in RedHat, if needed use yum as root to install MySQL 

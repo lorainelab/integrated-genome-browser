@@ -4,68 +4,32 @@
 
   <context-param>
     <param-name>genometry_mode</param-name>
-    <param-value>genopub</param-value>
+    <param-value>gnomex</param-value>
   </context-param>
   
-	<context-param>
-		<param-name>genometry_server_dir_genopub</param-name>
-		<param-value>/Applications/apache-tomcat-5.5.28/GenoPubData</param-value>
-	</context-param>
-	
-<!--                                                                        -->    
-<!--  FDT (Fast Data Transfer) context parameters.                          -->     
-<!--  NOTE: Uncomment to enable FDT uploads and downloads in GenoPub        --> 
-<!--                                                                        -->
-<!--  fdt_dir - The fdt staging directory.  Files being uploaded            --> 
-<!--    or downloaded are placed here.                                      -->        
-<!--                                                                        -->          
-<!--  fdt_dir_genopub - The fdt staging directory recognized by the         -->
-<!--    genopub (das2) server.   In most cases, this would be the same      -->
-<!--    directory as 'fdt_dir'.  In cases where the fdt server and          -->
-<!--    genopub (das2) server run  on different machines, each may have     -->
-<!--    a different mount point to the same physical filepath.              -->         
-<!--                                                                        -->
-<!--  fdt_task_dir - fdt uploads require a daemon run to move               -->
-<!--     the files from the fdt staging area to the target                  -->
-<!--     directories.  This is the directory that used by the               -->
-<!--     fdtfiledaemon to keep track of upload tasks.                       -->
-<!--                                                                        --> 
-<!--  fdt_client_codebase - the fdt client is a java program                -->
-<!--     launched by webstart.  this is the URL to the                      -->
-<!--     fdtClient.jar that will be downloaded as part of                   -->
-<!--     the webstart launch.                                               -->
-<!--                                                                        -->
-<!--  fdt_server_name - this is the server name (domain name)               -->
-<!--     that runs the fdt server.                                          -->
-<!--                                                                        -->
 
-<!-- COMMENTED OUT 
 	<context-param>
-		<param-name>fdt_dir</param-name>
-		<param-value>/path/to/fdt/for/fdtserver</param-value>
+	   <param-name>gnomex_server_name</param-name>
+	   <param-value>localhost</param-value>
 	</context-param>
 
 	<context-param>
-		<param-name>fdt_dir_genopub</param-name>
-		<param-value>/path/to/fdt/for/genopubserver</param-value>
+	   <param-name>gnomex_server_port</param-name>
+	   <param-value></param-value>
 	</context-param>
-	
-	<context-param>
-		<param-name>fdt_task_dir</param-name>
-		<param-value>/path/to/fdtfiledaemon/taskdir</param-value>
-	</context-param>
-		
-	<context-param>
-		<param-name>fdt_client_codebase</param-name>
-		<param-value>http://www.example.com/fdt</param-value>
-	</context-param>
-	
-	<context-param>
-		<param-name>fdt_server_name</param-name>
-		<param-value>www.example.com</param-value>
-	</context-param>
--->		
- 
+
+
+
+<!--                    -->
+<!-- DAS/2 gnomex mode  -->	    
+<!--                    -->
+<resource-ref>
+      <description>DB Connection</description>
+      <res-ref-name>jdbc/GNOMEX_DATATRACKS</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+</resource-ref>
+
 	<context-param>
 		<param-name>maintainer_email</param-name>
 		<param-value>admin@example.com</param-value>
@@ -76,19 +40,14 @@
 	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://localhost:8080/das2genopub/genome</param-value>
+		<param-value>http://localhost:8080/das2gnomex/genome</param-value>
 	</context-param>
 	
 	<!-- Listener to obtain Hibernate session  --> 
   <listener>
-    <listener-class>com.affymetrix.genometry.genopub.HibernateAppListener</listener-class>
+    <listener-class>com.affymetrix.genometry.gnomex.HibernateAppListener</listener-class>
   </listener>	
   
-	<servlet>
-		<servlet-name>GenoPubServlet</servlet-name>
-		<servlet-class>com.affymetrix.genometry.genopub.GenoPubServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
 
 	<servlet>
 		<servlet-name>GenometryDas2Servlet</servlet-name>
@@ -96,16 +55,7 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>GenoPubServlet</servlet-name>
-		<url-pattern>/genopub</url-pattern>
-	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>GenoPubServlet</servlet-name>
-		<url-pattern>/genopub/*</url-pattern>
-	</servlet-mapping>
-	
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>index.html</url-pattern>
@@ -150,17 +100,10 @@
 		<web-resource-collection>
 			<web-resource-name>Login</web-resource-name>
 			<description>Login</description>
-			<url-pattern>GenoPub.swf</url-pattern>
-			<url-pattern>GenoPub.html</url-pattern>
-			<url-pattern>genopub</url-pattern>
-			<url-pattern>genopub/*</url-pattern>
-			<url-pattern>/genome</url-pattern>   
 			<url-pattern>/genome/*</url-pattern>   
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>admin</role-name>
-			<role-name>user</role-name>
-			<role-name>guest</role-name>
+			<role-name>GNomExUser</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>NONE</transport-guarantee>
@@ -168,22 +111,13 @@
 	</security-constraint>
 
 	<login-config>
-		<auth-method>DIGEST</auth-method>
-		<realm-name>Das2</realm-name>
+		<auth-method>BASIC</auth-method>
+		<realm-name>GNomExRealm</realm-name>
 	</login-config>
 	
-	
 	<security-role>
-		<role-name>admin</role-name>
+		<role-name>GNomExUser</role-name>
 	</security-role>
 
-	<security-role>
-		<role-name>user</role-name>
-	</security-role>
-
-	<security-role>
-		<role-name>guest</role-name>
-	</security-role>
-	
 
 </web-app>

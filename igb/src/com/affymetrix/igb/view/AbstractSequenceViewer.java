@@ -70,6 +70,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	BioSeq aseq;
 	boolean isGenomicRequest;
 	SequenceViewer sv;
+	private final int INITIAL_NUMBER_OF_RESIDUES = 53;
+	private final int INITIAL_NUMBER_OF_LINES = 10;
 	String errorMessage = null;
 	private int cdsMax = -1;
 	private int cdsMin = -1;
@@ -105,10 +107,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
-		mapframe = setupMenus(mapframe);
-		Dimension dim = new Dimension(600,400);
-		seqview.setPreferredSize(dim);
-		mapframe.setPreferredSize(dim);
+		mapframe = setupMenus(mapframe); 
 		mapframe.add("Center",seqview);
 	}
 /* This method is used for returning the desired coloring scheme, at present there are two color schemes
@@ -435,7 +434,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		customFormatting(residues_sym);
 		//this.createAllLists();
 		addFormattedResidues();
-
+		seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES,INITIAL_NUMBER_OF_LINES));
+		mapframe.setPreferredSize(seqview.getPreferredSize());
 		mapframe.pack();
 		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());
 		mapframe.setVisible(true);

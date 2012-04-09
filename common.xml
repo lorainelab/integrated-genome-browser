@@ -5,7 +5,7 @@
 	<!--  genopub  data tracks are managed using a flex tool (genopub)  -->
 	<!--           that keeps the data track info local mysql database. -->
 	<!--  classic  the data track files reside in a file system.        -->
-	<property name="das2_mode"    value="gnomex"/>
+	<property name="das2_mode"    value="classic"/>
 
 	<target name="common-init" depends="init,compiler-def-args,svn-init">
     <tstamp/>

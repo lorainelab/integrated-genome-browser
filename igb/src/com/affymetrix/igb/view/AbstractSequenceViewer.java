@@ -101,7 +101,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
 		seqview.setFont(new Font("Arial", Font.BOLD, 13));
 		seqview.setNumberFontColor(Color.black);
-		seqview.setNumberLabelFormat(DEF);
+		seqview.setNumberLabelFormat(COMMA);
 		seqview.setResidueMultipleConstraint(1);
 		seqview.setSpacing(20);
 		this.getTitle();

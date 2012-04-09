@@ -90,8 +90,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			if (optimized_sym != null) {
 				boolean result = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 				if (!result) {
-					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() result is false");
-					return null;
+				//	Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "getDetailGlyph() result is false");
 				}
 			}
 			SymWithProps rootSym = span.getBioSeq().getAnnotation(style.getMethodName());

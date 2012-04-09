@@ -7,17 +7,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	protected final MapViewGlyphFactoryI defaultGlyphFactory;
@@ -60,22 +61,16 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 	// glyph class
 	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph {
-//		private final SeqSymmetry sym;
-//		private final Direction direction;
 		protected ViewModeGlyph defaultGlyph; 
 		protected final SeqMapViewExtendedI smv;
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
-//		private Map<BioSeq, AbstractGraphGlyph> glyphCache;
 		protected SimpleSeqSpan saveSpan;
 
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 			Direction direction, SeqMapViewExtendedI smv) {
 			super(sym, style, direction, smv);
-//			this.sym = sym;
-//			this.direction = direction;
 			this.smv = smv;
-//			glyphCache = new HashMap<BioSeq, AbstractGraphGlyph>();
 			saveSpan = null;
 		}
 
@@ -90,16 +85,19 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		protected ViewModeGlyph getDetailGlyph(SimpleSeqSpan span) throws Exception {
-			List<? extends SeqSymmetry> symList = detailSymL.getRegion(span);
-			RootSeqSymmetry rootSym;
-			if (symList.size() == 1 && symList.get(0) instanceof RootSeqSymmetry) {
-				rootSym = (RootSeqSymmetry)symList.get(0);
-			}
-			else {
-				rootSym = new TypeContainerAnnot(style.getMethodName());
-				for (SeqSymmetry sym : symList) {
-					rootSym.addChild(sym);
+			GenericFeature feature = style.getFeature();
+			SeqSymmetry optimized_sym = feature.optimizeRequest(span);	
+			if (optimized_sym != null) {
+				boolean result = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+				if (!result) {
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() result is false");
+					return null;
 				}
+			}
+			SymWithProps rootSym = span.getBioSeq().getAnnotation(style.getMethodName());
+			if (rootSym == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
+				return null;
 			}
 			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
 		}
@@ -113,8 +111,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			}
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);
+				resultGlyph.setCoords(resultGlyph.getCoordBox().x, resultGlyph.getCoordBox().y, resultGlyph.getCoordBox().width, style.getMaxDepth() * style.getHeight());
 			}
-			resultGlyph.setCoords(resultGlyph.getCoordBox().x, resultGlyph.getCoordBox().y, resultGlyph.getCoordBox().width, style.getMaxDepth() * style.getHeight());
 			return resultGlyph;
 		}
 

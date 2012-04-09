@@ -274,23 +274,25 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     return mapsplitter;
   }
 
-  @Override
-  public void componentResized(java.awt.event.ComponentEvent evt) {
-	if (evt.getSource() == canvas) {
-		int[] range = this.getVisibleOffset();
-		stretchToFit(false, true);
-		
-		int coord_height = range[1] - range[0];
-		double pixel_height = this.getView().getPixelBox().height;
-		double ppc = pixel_height / coord_height; 
-		ppc = Math.min(ppc, getMaxZoom(Y));
-		ppc = Math.max(ppc, getMinZoom(Y));
-		zoom(Y, ppc);
-		scroll(Y, range[0]);
-		setZoomBehavior(Y, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
-		
-		updateWidget();
-	}
-  }
+  // If some bug arise while resizing, the uncomment below code and also check
+  // for same method in AffyTieredMap.
+//  @Override
+//  public void componentResized(java.awt.event.ComponentEvent evt) {
+//	if (evt.getSource() == canvas) {
+//		int[] range = this.getVisibleOffset();
+//		stretchToFit(false, true);
+//		
+//		int coord_height = range[1] - range[0];
+//		double pixel_height = this.getView().getPixelBox().height;
+//		double ppc = pixel_height / coord_height; 
+//		ppc = Math.min(ppc, getMaxZoom(Y));
+//		ppc = Math.max(ppc, getMinZoom(Y));
+//		zoom(Y, ppc);
+//		scroll(Y, range[0]);
+//		setZoomBehavior(Y, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
+//		
+//		updateWidget();
+//	}
+//  }
 
 }

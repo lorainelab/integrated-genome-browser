@@ -628,4 +628,17 @@ public class AffyTieredMap extends NeoMap {
 
 		return topgl;
 	}
+	
+	@Override
+	public void componentResized(java.awt.event.ComponentEvent evt) {
+		if (evt.getSource() == canvas) {
+			if (trans.getScaleX() == 0 || trans.getScaleY() == 0) {
+				stretchToFit(true, true);
+			} else {
+				stretchToFit(false, false);
+			}
+
+			updateWidget();
+		}
+	}
 }

@@ -32,7 +32,7 @@ public class BookmarkEditor {
 
 		if (singleton == null) {
 			singleton = new BookmarkEditor();
-			nameField = new JTextField(25);
+			nameField = new JTextField(40);
 			commentField = new JTextArea(5, 8);
 			commentField.setLineWrap(true);
 			commentField.setWrapStyleWord(true);

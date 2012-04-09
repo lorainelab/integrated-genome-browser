@@ -116,9 +116,9 @@ public final class TierLabelManager implements PropertyHolder {
 				if (nevt.isAltDown() || nevt.isShiftDown()) {
 					preserve_selections = true;
 				} else if (topgl != null && isOurPopupTrigger(nevt)) {
-				//	if (labelmap.getSelected().contains(topgl)) {
+					if (labelmap.getSelected().contains(topgl)) {
 						preserve_selections = true;
-				//	}
+					}
 				}
 				if (!preserve_selections) {
 					labelmap.clearSelected();
@@ -127,16 +127,18 @@ public final class TierLabelManager implements PropertyHolder {
 				labelmap.select(selected);
 				doGraphSelections(preserve_selections);
 
-				tiermap.updateWidget(); // make sure selections becomes visible
+				// make sure selections becomes visible
 				if (isOurPopupTrigger(evt)) {
 					doPopup(evt);
 				} else if (selected.size() > 0) {
 					// take glyph at end of selected, just in case there is more
-					//    than one -- the last one should be on top...
+					//    than .
+					tiermap.clearSelected();
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);
 				}
+				tiermap.updateWidget();
 			}
 		}
 

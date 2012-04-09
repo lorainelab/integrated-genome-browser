@@ -1649,7 +1649,7 @@ public class SeqMapView extends JPanel
 			//   add_to_previous ==> false
 			//   call_listeners ==> false
 			//   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
-			select(symlist, false, true, false);
+			select(symlist, true, true, false);
 			// Zoom to selections, unless the selection was caused by the TierLabelManager
 			// (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
 			if (src != getSeqMap() && src != getTierManager()) {

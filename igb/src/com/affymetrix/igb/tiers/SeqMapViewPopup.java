@@ -1173,13 +1173,20 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 		popup.add(save_track_action);
+		save_track_action.setEnabled(false);
 		popup.add(save_selected_annotations_action);
+		save_selected_annotations_action.setEnabled(false);
 		if (num_selections == 1) {
 			// Check whether this selection is a graph or an annotation
 			TierLabelGlyph label = labels.get(0);
 			final TierGlyph glyph = (TierGlyph) label.getInfo();
 			ITrackStyleExtended style = glyph.getAnnotStyle();
 			GenericFeature feature = style.getFeature();
+			save_track_action.setEnabled(true);
+			if(!glyph.getSelected().isEmpty()){
+				save_selected_annotations_action.setEnabled(true);
+			}
+			
 			if (feature != null) {
 				String file_type = style.getFileType();
 //				if ("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)) {

@@ -70,8 +70,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	BioSeq aseq;
 	boolean isGenomicRequest;
 	SequenceViewer sv;
-	private final int INITIAL_NUMBER_OF_RESIDUES = 53;
+	private final int INITIAL_NUMBER_OF_RESIDUES = 50;
 	private final int INITIAL_NUMBER_OF_LINES = 10;
+	private final int OFFSET = 3; 
 	String errorMessage = null;
 	private int cdsMax = -1;
 	private int cdsMin = -1;
@@ -434,7 +435,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		customFormatting(residues_sym);
 		//this.createAllLists();
 		addFormattedResidues();
-		seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES,INITIAL_NUMBER_OF_LINES));
+		seqview.setPreferredSize(seqview.getPreferredSize(INITIAL_NUMBER_OF_RESIDUES + OFFSET,INITIAL_NUMBER_OF_LINES));
 		mapframe.setPreferredSize(seqview.getPreferredSize());
 		mapframe.pack();
 		mapframe.setLocationRelativeTo(IGB.getSingleton().getFrame());

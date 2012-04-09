@@ -38,11 +38,6 @@ public class TbiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 	}
 
 	@Override
-	public boolean canAutoLoad(String uri) {
-		return super.canAutoLoad(uri) && uri.indexOf("__") > -1;
-	}
-
-	@Override
 	public String getIndexedFileName(String method, Direction direction) {
 		return method + "." + TBI_ZOOM_DISPLAYER_EXTENSION;
 	}

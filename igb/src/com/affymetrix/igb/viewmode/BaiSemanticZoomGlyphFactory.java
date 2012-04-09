@@ -37,11 +37,6 @@ public class BaiSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFactory
 	}
 
 	@Override
-	public boolean canAutoLoad(String uri) {
-		return super.canAutoLoad(uri) && uri.indexOf("__") > -1;
-	}
-
-	@Override
 	public String getIndexedFileName(String method, Direction direction) {
 		return method + "." + BAI_ZOOM_DISPLAYER_EXTENSION;
 	}

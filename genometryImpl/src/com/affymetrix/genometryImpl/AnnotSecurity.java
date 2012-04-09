@@ -7,6 +7,8 @@ import java.util.Map;
  * annotation.
  */
 public interface AnnotSecurity {
+  
+  public boolean isGuestRole();
 
 	/**
 	 * Indicates if user is allowed to see this annotation.

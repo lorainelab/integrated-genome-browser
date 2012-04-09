@@ -3,6 +3,13 @@ package com.affymetrix.genometry.servlets;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
 
+import hci.gnomex.model.GenomeBuild;
+import hci.gnomex.model.UnloadDataTrack;
+import hci.gnomex.security.SecurityAdvisor;
+import hci.gnomex.utility.DataTrackQuery;
+import hci.gnomex.utility.PropertyDictionaryHelper;
+import hci.gnomex.utility.QualifiedDataTrack;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -23,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 
+import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -39,6 +47,7 @@ import org.hibernate.Transaction;
 
 
 import com.affymetrix.genometry.genopub.*;
+import com.affymetrix.genometry.gnomex.GNomExSecurity;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
@@ -233,11 +242,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String login_query = "login";
 	private static final String refresh_query = "refresh";
 	private static final String default_feature_format = "das2feature";
-	// This flag determines if DAS2 uses file system or DB to obtain annotation information
-	private static boolean is_genometry_genopub_mode = true;
+	// Determines if DAS2 uses file system, genopub db, or gnomex db to load data track information
+	private static String genometry_mode = Constants.GENOMETRY_MODE;
 	// static String that indicates where annotation files are served from
-	// when annotation info comes from db
+	// when data track info comes from db
 	private static String genometry_server_dir;
+	// static String that indicates where analysis files are served 
+	// when data track info comes from gnomex db
+	private static String gnomex_analysis_root_dir;
 	private static String maintainer_email;
 	private static String xml_base;
 	/** The root directory of the data to be served-up.
@@ -306,7 +318,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			ServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
 			ServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
 
-			if (is_genometry_genopub_mode) {
+			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+        Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from gnomex database....");
+        loadGenomesFromGNomEx(null, false);          
+      } else if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				loadGenomesFromGenoPub(null, false);				  
 			} else {
@@ -340,18 +355,31 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private boolean loadAndSetFields() {
 		ServletContext context = getServletContext();
 
-		// Indicates if the annotation info comes from the genopub or the file system
-		if (context.getInitParameter(Constants.GENOMETRY_MODE) != null && 
-				context.getInitParameter(Constants.GENOMETRY_MODE).equalsIgnoreCase(Constants.GENOMETRY_MODE_GENOPUB)) {
-			is_genometry_genopub_mode = true;
-			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
-		} else {
-			is_genometry_genopub_mode = false;
-			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
-		}
 
+		// Indicates if the annotation info comes from the genopub or the file system
+		if (context.getInitParameter(Constants.GENOMETRY_MODE) != null ) {
+			genometry_mode = context.getInitParameter(Constants.GENOMETRY_MODE);
+		}
+		
 		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
 			genometry_server_dir += "/";      
+		}
+		
+		// When we are getting the datatracks from gnomex, use the gnomex db property to
+		// get the genometry_server_dir.
+		if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+	    Session sess = null;
+	    try {
+	      String gnomex_server_name = context.getInitParameter(Constants.GNOMEX_SERVER_NAME);
+	      sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
+	      genometry_server_dir = PropertyDictionaryHelper.getInstance(sess).getDataTrackReadDirectory(gnomex_server_name);
+	      gnomex_analysis_root_dir = PropertyDictionaryHelper.getInstance(sess).getAnalysisReadDirectory(gnomex_server_name);
+	    } catch (Exception e) {
+	        System.out.println("\nERROR: Cannot open hibernate session to obtain gnomex property " + e.toString());
+	    } finally {
+	      com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();
+	    }   
+		  
 		}
 
 
@@ -361,7 +389,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		//attempt to get from System.properties
 		if (genometry_server_dir == null || maintainer_email == null || xml_base == null) {
-			if (is_genometry_genopub_mode) {
+			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
 				genometry_server_dir = System.getProperty("das2_" + Constants.GENOMETRY_SERVER_DIR_GENOPUB);				
 			} else {
 				genometry_server_dir = System.getProperty("das2_" + Constants.GENOMETRY_SERVER_DIR_CLASSIC);
@@ -385,24 +413,23 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					p = new File(dir, "genometryDas2ServletParameters.txt");
 					if (!p.exists()) {
 						System.out.println("\tLooking for but couldn't find " + p);
-						System.out.println("\tERROR: Failed to load fields from " +
-						"System.properties or from the 'genometryDas2ServletParameters.txt' file.");
 						return false;
 					}
 				}
 			}
+			
 			System.out.println("\tFound and loading " + p);
 
 			//load file
 			HashMap<String, String> prop = ServerUtils.loadFileIntoHashMap(p);
 
 			//load fields
-			if (is_genometry_genopub_mode) {
+			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
 				if (genometry_server_dir == null && prop.containsKey(Constants.GENOMETRY_SERVER_DIR_GENOPUB)) {
 					genometry_server_dir = prop.get(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 				}
 
-			} else {
+			} else if (genometry_mode.equals(Constants.GENOMETRY_MODE_CLASSIC)) {
 				if (genometry_server_dir == null && prop.containsKey(Constants.GENOMETRY_SERVER_DIR_CLASSIC)) {
 					genometry_server_dir = prop.get(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 				}				
@@ -562,7 +589,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 									Level.FINE, "Annotation type = {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
 							
 							if (file.isDirectory() ) {
-								if (isMultiFileAnnotationType(file)) {
+								if (isMultiFileDataTrackType(file)) {
 									ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 											file.getPath(), 
 											genomeVersion, 
@@ -633,7 +660,275 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	}
 
-	private static boolean isMultiFileAnnotationType(File dir) {
+
+	 private boolean loadGenomesFromGNomEx(GNomExSecurity gnomexSecurity, boolean isServerRefreshMode)  {
+	    Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading Genomes from GNomEx DB");
+	    Session sess  = null;
+	    Transaction tx = null;
+	    File file = null;
+	    try {
+	      sess  = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
+	      tx = sess.beginTransaction();
+	      
+	      // Let's refresh the gnomex dictionaries since new genome builds and organisms
+	      // could have been added since last refresh
+	      if (isServerRefreshMode) {
+	        hci.gnomex.utility.DictionaryHelper.reloadLimited(sess);
+	      }
+
+	      DataTrackQuery dataTrackQuery = new DataTrackQuery();
+	      dataTrackQuery.runDataTrackQuery(sess, gnomexSecurity != null ? gnomexSecurity.getSecAdvisor() : null, isServerRefreshMode);
+        
+	      // If this is server refresh mode, the qualifiedDataTracks in the above query gets only
+        // those data tracks not yet loaded.  We need the full list of data tracks for the genome
+        // build to know if this genome build is "empty" and should be removed so that it doesn't
+        // show up in the sources query.
+	      DataTrackQuery dataTrackQueryAll = null;
+        if (isServerRefreshMode) {
+          dataTrackQueryAll= new DataTrackQuery();
+          dataTrackQueryAll.runDataTrackQuery(sess, gnomexSecurity != null ? gnomexSecurity.getSecAdvisor() : null, false);
+        } else {
+          dataTrackQueryAll = dataTrackQuery;
+        }
+        
+        // For server refresh mode, we need to check for genome versions that have been removed.  
+        // Loop through the organism genome builds that are hashed and remove those
+        // that don't have a corresponding entry from the data track query
+        if (isServerRefreshMode) {
+          for (Map.Entry<String, List<AnnotatedSeqGroup>> oentry : organisms.entrySet()) {
+            String org = oentry.getKey();
+            List<AnnotatedSeqGroup> versions = oentry.getValue();
+            ArrayList<AnnotatedSeqGroup> staleVersions = new ArrayList<AnnotatedSeqGroup>();
+            for (AnnotatedSeqGroup version : versions) {
+              GenomeBuild gb = dataTrackQueryAll.getGenomeBuild(version.getID());
+              if (gb == null) {
+                staleVersions.add(version);
+              }
+            }
+            for (AnnotatedSeqGroup staleVersion : staleVersions) {
+              Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Removing stale genome version " + staleVersion.getID());
+              versions.remove(staleVersion);
+            }
+          }
+          
+        }
+        
+	      for (hci.gnomex.model.Organism organism : dataTrackQueryAll.getOrganisms()) {
+	        Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.FINE, "Organism = {0}", organism.getDas2Name());
+
+	        // Get genome versions for an organism.  
+	        for (String genomeBuildName : dataTrackQueryAll.getGenomeBuildNames(organism)) {
+
+	          GenomeBuild gb = dataTrackQueryAll.getGenomeBuild(genomeBuildName);
+	          
+	          // If this is a server refresh, unload data tracks from DAS/2 that were deleted from GNomEx.  Otherwise,
+	          // if this is a full reload, just clear out all pending unloads.
+	          for (UnloadDataTrack unloadDataTrack : DataTrackQuery.getUnloadedDataTracks(sess, gnomexSecurity != null ? gnomexSecurity.getSecAdvisor() : null, gb)) {
+
+	            if (isServerRefreshMode) {
+	              AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeBuildName);
+	              if (genomeVersion != null) {
+	                ServerUtils.unloadGenoPubAnnot(unloadDataTrack.getTypeName(), genomeVersion, null);                               
+	              }
+	            }
+
+	            // Get rid of the pending unload entry
+	            sess.delete(unloadDataTrack);
+	          }
+	          
+	          // Obtain the list of data tracks and segments for this genome build
+	          List<QualifiedDataTrack> qualifiedDataTracks = dataTrackQuery.getQualifiedDataTracks(organism, genomeBuildName);	          
+	          List<hci.gnomex.model.Segment> segments = dataTrackQuery.getSegments(organism, genomeBuildName);
+	          
+	          // In server refresh mode, we need the list of all data tracks, to figure out if the the
+	          // genome build is empty and should be dropped from the cache.
+	          List<QualifiedDataTrack> qualifiedDataTracksAll = null;
+	          qualifiedDataTracksAll = dataTrackQueryAll.getQualifiedDataTracks(organism, genomeBuildName);
+	          
+	          System.out.println(genomeBuildName + " qualifiedDataTracksAll.size=" + (qualifiedDataTracksAll != null ? qualifiedDataTracksAll.size() : "") + " segments=" + (segments != null ? segments.size() : ""));
+	            
+	          if (!gb.hasSequence(data_root) && (qualifiedDataTracksAll == null || qualifiedDataTracksAll.isEmpty())) {
+	            Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                Level.FINE, "Bypassing Genome version = {0}. No data tracks nor sequence exists.", genomeBuildName);
+	            
+	            // If this is refresh mode, remove "empty" genome build from organisms
+	            if (isServerRefreshMode) {
+	              List<AnnotatedSeqGroup> versions = organisms.get(organism.getDas2Name());
+	              if (versions != null) {
+	                for (AnnotatedSeqGroup gv : versions) {
+	                  if (gv.getID().equals(genomeBuildName)) {
+	                    Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version " + genomeBuildName);
+	                    versions.remove(gv);
+	                    break;
+	                  }
+	                }
+	              }
+	            }
+	            
+	            continue;
+	          }
+
+	          // Ignore genome build if no segment information is present.
+	          if (segments == null || segments.isEmpty()) {
+	            Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                Level.WARNING, "Bypassing data tracks/sequence for Genome version {0}.  No segments have been defined.", genomeBuildName);
+
+	            // If this is refresh mode, remove invalid (no segments) genome build from organisms
+              if (isServerRefreshMode) {
+                List<AnnotatedSeqGroup> versions = organisms.get(organism.getDas2Name());
+                if (versions != null) {
+                  for (AnnotatedSeqGroup gv : versions) {
+                    if (gv.getID().equals(genomeBuildName)) {
+                      Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.WARNING, "Remove invalid genome version " + genomeBuildName);
+                      versions.remove(gv);
+                      break;
+                    }
+                  }
+                }
+              }
+
+              
+	            continue;
+	          }
+
+	          Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	              Level.FINE, "Genome version = {0}", genomeBuildName);
+
+	          // Instantiate an AnnotatedSeqGroup (the genome version).         
+	          AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeBuildName);
+	          genomeVersion.setOrganism(organism.getDas2Name());
+
+
+	          // Hash the organism and genome version
+	          List<AnnotatedSeqGroup> versions = organisms.get(organism.getDas2Name());
+	          if (versions == null) {
+	            versions = new ArrayList<AnnotatedSeqGroup>();
+	            organisms.put(organism.getDas2Name(), versions);
+	          }
+	          
+	          // If this is server refresh mode, make sure we haven't already loaded this genome
+	          // version.
+	          boolean found = false;
+	          if (isServerRefreshMode) {
+	            for (AnnotatedSeqGroup gv : versions) {
+	              if (gv.getID().equals(genomeBuildName)) {
+	                found = true;
+	                break;
+	              }
+	            }
+            }
+	          if (!found) {
+	            versions.add(genomeVersion);
+	          }
+
+
+	          // Create SmartAnnotBioSeqs (chromosomes) for the genome version
+	          if (segments != null) {
+	            for(hci.gnomex.model.Segment segment : segments) {
+	              BioSeq chrom = genomeVersion.addSeq(segment.getName(), segment.getLength().intValue());
+	              chrom.setVersion(genomeBuildName);
+	            }
+
+	          }
+
+	          // Get the hash maps for graph dirs and graph files for this genome version
+	          Map<String,String> graph_name2dir = genome2graphdirs.get(genomeVersion);
+	          if (graph_name2dir == null) {
+	            graph_name2dir = new LinkedHashMap<String, String>();
+	            genome2graphdirs.put(genomeVersion, graph_name2dir);
+	          }
+	          Map<String,String> graph_name2file = genome2graphfiles.get(genomeVersion);
+	          if (graph_name2file == null) {
+	            graph_name2file = new LinkedHashMap<String, String>();
+	            genome2graphfiles.put(genomeVersion, graph_name2file);
+	          }
+
+	          // Load data track for the genome version
+	          for (QualifiedDataTrack qdt : qualifiedDataTracks) {
+
+	            String fileName = qdt.getDataTrack().getQualifiedFileName(genometry_server_dir, gnomex_analysis_root_dir);    
+	            String typePrefix = qdt.getTypePrefix(); 
+	            
+	            file = new File(fileName);
+	            
+	            
+	            if (file.exists()) {
+	              Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                  Level.FINE, "Data track type = {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
+	              
+	              if (file.isDirectory() ) {
+	                if (isMultiFileDataTrackType(file)) {
+	                  ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
+	                      file.getPath(), 
+	                      genomeVersion, 
+	                      file, 
+	                      qdt.getDataTrack().getIdDataTrack(),
+	                      graph_name2dir);                  
+
+	                } else if (!file.exists() || file.list() == null || file.list().length == 0) {
+	                  Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                      Level.WARNING, "Bypassing data track {0}.  No files associated with this data track.", typePrefix);
+	                } else {
+	                  Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                      Level.WARNING, "Bypassing data track {0} for file {1}. Only the bar format permits multiple data track files.", new Object[]{typePrefix, fileName});
+	                }
+
+
+	              } else {
+	                //watch out for single file bai indexes, just warn and skip
+	                if (file.getName().toLowerCase().endsWith(".bai")){
+	                  Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                      Level.WARNING, "Bypassing data track {0}.  No associated bam alignment file for "+file);
+	                }
+	                
+	                else {
+	                  ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
+	                    file, 
+	                    genomeVersion, 
+	                    annots_map,
+	                    typePrefix, 
+	                    qdt.getDataTrack().getIdDataTrack(),
+	                    graph_name2file); 
+	                }
+	              }
+	              
+	              // Update the flag indicating that the data track has been loaded
+	              if (qdt.getDataTrack().getIsLoaded() != null && qdt.getDataTrack().getIsLoaded().equals("N")) {
+	                qdt.getDataTrack().setIsLoaded("Y");                
+	              }
+	              
+	            } else {
+	              Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	                  Level.WARNING, "Data track not loaded. File does not exist or is not supported: {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
+	            }
+
+	          }
+	          
+	          Optimize.genome(genomeVersion);
+	        }
+
+	        
+	      }
+	      // Commit updates and deletes to the genopub database
+	      sess.flush();
+	      tx.commit();
+
+
+	    } catch (Exception e) {
+	      Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+	          Level.SEVERE, "Problems reading data tracks from file '"+file+"' in gnomex database {0}", e.toString());
+	      e.printStackTrace();
+	      if (tx != null) {
+	        tx.rollback();
+	      }
+	    } finally {
+	      com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();
+	    }
+	    return true;
+
+	  }
+
+	private static boolean isMultiFileDataTrackType(File dir) {
 		if (dir.exists() && dir.isDirectory()) {
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
@@ -776,9 +1071,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 	}
+	
+	private AnnotSecurity getAnnotSecurity(HttpServletRequest request) {
+    AnnotSecurity annotSecurity = null;
+    if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
+      annotSecurity = this.getGenoPubSecurity(request);
+    } else if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)){
+      annotSecurity = this.getGNomExSecurity(request);
+    }
+    return annotSecurity;
+	}
 
 	private GenoPubSecurity getGenoPubSecurity(HttpServletRequest request) {
-		if (!is_genometry_genopub_mode) {
+		if (!genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
 			return null;
 		}
 
@@ -788,14 +1093,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		try {
 			genoPubSecurity = GenoPubSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY));
 			if (genoPubSecurity == null) {
-				Session sess = null;
-				if (is_genometry_genopub_mode) {
-					sess = HibernateUtil.getSessionFactory().openSession();					
-				}
+				Session sess = sess = HibernateUtil.getSessionFactory().openSession();					
 
 				genoPubSecurity = new GenoPubSecurity(sess, 
 						request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : null, 
-						is_genometry_genopub_mode,
+						true,
 						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.ADMIN_ROLE) : false,
 						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.GUEST_ROLE) : true,
 						false);
@@ -806,10 +1108,50 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} catch (Exception e ){     
 			System.out.println(e.toString());
 			e.printStackTrace();
+		} finally {
+		  HibernateUtil.getSessionFactory().close();
 		}
 
 		return genoPubSecurity;
 
+	}
+	
+	private GNomExSecurity getGNomExSecurity(HttpServletRequest request) {
+	  
+	  if (!genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+      return null;
+    }
+
+    GNomExSecurity gnomexSecurity = null;
+
+    // Get the SecurityAdvisor    
+    try {
+      gnomexSecurity = GNomExSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + GNomExSecurity.SESSION_KEY));
+      if (gnomexSecurity == null) {
+        Session sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();         
+        
+        SecurityAdvisor secAdvisor = SecurityAdvisor.create(sess, request.getUserPrincipal().getName());
+        
+        gnomexSecurity = new GNomExSecurity(sess, request.getServerName(), secAdvisor, true);
+        
+        ServletContext context = getServletContext();
+        String gnomex_server_name = context.getInitParameter(Constants.GNOMEX_SERVER_NAME);
+        String gnomex_port = context.getInitParameter(Constants.GNOMEX_SERVER_PORT);
+
+        gnomexSecurity.setDataTrackInfoURL(gnomex_server_name, gnomex_port);
+
+        request.getSession().setAttribute(this.getClass().getName() + GNomExSecurity.SESSION_KEY, gnomexSecurity);
+
+      }
+    } catch (Exception e ){     
+      System.out.println(e.toString());
+      e.printStackTrace();
+    } finally {
+      com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();
+    }
+
+    return gnomexSecurity;
+    
 	}
 
 
@@ -871,11 +1213,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String sequence_directory = data_root + genome.getOrganism() + "/" + genome.getID() + "/dna/";
-		if (is_genometry_genopub_mode) {
+		if (this.genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB) || genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
 			try {
-				// Get the  genopub security which will determine the sequence directory
-				GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
-				sequence_directory = genoPubSecurity.getSequenceDirectory(data_root, genome);
+				// Get the  annotation security which will determine the sequence directory
+				AnnotSecurity annotSecurity = this.getAnnotSecurity(request);
+				sequence_directory = annotSecurity.getSequenceDirectory(data_root, genome);
 			} catch (Exception e) {
 				throw new IOException(e.getMessage());
 			}
@@ -1008,10 +1350,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// are authorized for this user.
 
 		response.setContentType(TYPES_CONTENT_TYPE);
+		
 
-		Map<String, SimpleDas2Type> types_hash = ServerUtils.getAnnotationTypes(data_root,genome,this.getGenoPubSecurity(request));
-		ServerUtils.getSymloaderTypes(genome, this.getGenoPubSecurity(request), types_hash);
-		ServerUtils.getGraphTypes(data_root, genome, this.getGenoPubSecurity(request), types_hash);
+
+		Map<String, SimpleDas2Type> types_hash = ServerUtils.getAnnotationTypes(data_root,genome,getAnnotSecurity(request));
+		ServerUtils.getSymloaderTypes(genome, this.getAnnotSecurity(request), types_hash);
+		ServerUtils.getGraphTypes(data_root, genome, this.getAnnotSecurity(request), types_hash);
 
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;
@@ -1136,7 +1480,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private void handleRefreshRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		// Refresh is not supported in classic mode
-		if (!is_genometry_genopub_mode) {
+		if (genometry_mode.equals(Constants.GENOMETRY_MODE_CLASSIC)) {
 			PrintWriter pw = response.getWriter();
 			pw.println("DAS/2 refresh is not supported in classic mode");
 			return;
@@ -1144,12 +1488,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		
 		// Guest users cannot perform refresh.
 		// Admins can perform refresh and so can normal genopub (non-guest) users.
-		// (A non-admins will only reload those annotations he owns.) 
-		if (this.getGenoPubSecurity(request).isGuestRole()) {
-			PrintWriter pw = response.getWriter();
-			pw.println("DAS/2 refresh cannot by performed by guest users.");
-			return;
-		}
+		// (A non-admins will only reload those annotations he owns.)
+    if (getAnnotSecurity(request).isGuestRole()) {
+      PrintWriter pw = response.getWriter();
+      pw.println("DAS/2 refresh cannot by performed by guest users.");
+      return;
+    }
 		
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
 				Level.INFO, "Refreshing DAS2 server.  User: {0}", request.getUserPrincipal().getName());
@@ -1157,19 +1501,30 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			// Reload the annotation files
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
-			this.loadGenomesFromGenoPub(getGenoPubSecurity(request), true);
 			
 			// Refresh the authorized resources for this user
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing authorized resources....");
-			Session sess  = HibernateUtil.getSessionFactory().openSession();
-			this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
+			Session sess  = null;
+			if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
+			    sess = com.affymetrix.genometry.genopub.HibernateUtil.getSessionFactory().openSession();
+			    this.loadGenomesFromGenoPub(getGenoPubSecurity(request), true);
+	        this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
+			} else if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+			  sess = com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().openSession();
+        this.loadGenomesFromGNomEx(getGNomExSecurity(request), true);
+        this.getGNomExSecurity(request).loadAuthorizedResources(sess);
+			}
 
 		} catch (Exception e) {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
 					Level.SEVERE, "ERROR - problems refreshing annotations {0}", e.toString());
 			e.printStackTrace();
 		} finally {
-			HibernateUtil.getSessionFactory().close();
+		  if (genometry_mode.equals(Constants.GENOMETRY_MODE_GENOPUB)) {
+		    com.affymetrix.genometry.genopub.HibernateUtil.getSessionFactory().close();		    
+		  } else if (genometry_mode.equals(Constants.GENOMETRY_MODE_GNOMEX)) {
+		    com.affymetrix.genometry.gnomex.HibernateUtil.getSessionFactory().close();    
+		  }
 		}
 
 
@@ -1393,7 +1748,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		OutputTheAnnotations(writerclass, output_format, response, result, outseq, query_type, xbase);
+		OutputTheDataTracks(writerclass, output_format, response, result, outseq, query_type, xbase);
 
 	}
 
@@ -1600,7 +1955,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			List<SeqSymmetry> gsyms = new ArrayList<SeqSymmetry>();
 			gsyms.add(graf);
 			System.out.println("#### returning graph slice in bar format");
-			outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, writerclass, "bar");
+			outputDataTracks(gsyms, span.getBioSeq(), type, xbase, response, writerclass, "bar");
 		} else {
 			// couldn't generate a GraphSym, so return an error?
 			System.out.println("####### problem with retrieving graph slice ########");
@@ -1615,7 +1970,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private static void OutputTheAnnotations(
+	private static void OutputTheDataTracks(
 			Class<? extends AnnotationWriter> writerclass,
 			String output_format,
 			HttpServletResponse response,
@@ -1632,7 +1987,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						response.SC_REQUEST_ENTITY_TOO_LARGE,
 						"Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
 			} else {
-				outputAnnotations(result, outseq, query_type, xbase, response, writerclass, output_format);
+				outputDataTracks(result, outseq, query_type, xbase, response, writerclass, output_format);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1654,7 +2009,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return query_type;
 	}
 
-	private static boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
+	private static boolean outputDataTracks(List<SeqSymmetry> syms, BioSeq seq,
 			String annot_type,
 			String xbase, HttpServletResponse response,
 			Class<? extends AnnotationWriter> writerclass,

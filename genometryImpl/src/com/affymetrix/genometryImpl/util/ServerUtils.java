@@ -425,7 +425,7 @@ public abstract class ServerUtils {
 			Map<String,String> graph_name2dir) {
 		
 		
-		if (graph_name2dir.containsKey(type_name)) {
+		if (graph_name2dir != null && graph_name2dir.containsKey(type_name)) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
 					"@@@ removing graph directory to types: {0}", type_name);
 			graph_name2dir.remove(type_name);

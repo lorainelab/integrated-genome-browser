@@ -1,8 +1,11 @@
 <project>
 	
-	<!-- das2 genopub mode, set to true to configure DAS2 with GenoPub -->
-	<property name="das2_genopub_mode"    value="false"/>
-	
+	<!-- Set the das2_mode to either "gnomex", "genopub" or "classic".  -->
+	<!--  gnomex   data tracks are managed in the gnomex application    -->
+	<!--  genopub  data tracks are managed using a flex tool (genopub)  -->
+	<!--           that keeps the data track info local mysql database. -->
+	<!--  classic  the data track files reside in a file system.        -->
+	<property name="das2_mode"    value="gnomex"/>
 
 	<target name="common-init" depends="init,compiler-def-args,svn-init">
     <tstamp/>
@@ -15,15 +18,17 @@
 		<property name="release.dir"  value="${dist.dir}/release" />
 		<property name="root.dir"     value="${basedir}" />
 
-		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.28/webapps" />
+		<property name="server.deploy.dir"   value="/Applications/apache-tomcat-5.5.31/webapps" />
 
 		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
 			<isset property="svn.info.rev" />
 		</condition>
 
 		<!-- file paths -->
-		<property name="genopub.web.xml" value="${das2server}/web.xml" />
-		<property name="genopub.context.xml" value="${das2server}/context.xml" />
+		<property name="gnomex.web.xml" value="${das2server}/web.xml" />
+		<property name="gnomex.context.xml" value="${das2server}/context.xml" />
+		<property name="genopub.web.xml" value="${das2server}/web_genopub.xml" />
+		<property name="genopub.context.xml" value="${das2server}/context_genopub.xml" />
 		<property name="classic.web.xml" value="${das2server}/web_classic.xml" />
 		<property name="classic.context.xml" value="${das2server}/context_classic.xml" />
 		<property name="das2.resources" value="${das2server}/resources" />
@@ -77,24 +82,77 @@
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
      
-    <!-- Set genopub vs. classic mode settings --> 
+		<!-- The following ant section deals with the custom                   -->
+		<!-- compile and release requirements for the different                -->
+		<!-- das2 modes. We need to set a boolean so that build targets can be -->
+		<!-- conditionally invoked. Use the das2_mode to set the flags.        -->
+		<condition property="das2gnomex">
+		  <matches string="${das2_mode}" pattern="gnomex"/>
+		</condition>
 		<condition property="das2genopub">
-			<istrue value="${das2_genopub_mode}" />
+		  <matches string="${das2_mode}" pattern="genopub"/>
 		</condition>
-		<condition property="web.xml" value="${genopub.web.xml}" else="${classic.web.xml}">
-			<istrue value="${das2_genopub_mode}" />
+		<condition property="das2classic">
+		  <matches string="${das2_mode}" pattern="classic"/>
 		</condition>
-		<condition property="context.xml" value="${genopub.context.xml}" else="${classic.context.xml}">
-			<istrue value="${das2_genopub_mode}" />
+
+		<!-- Use web.xml, context.xml for gnomex mode -->
+		<condition property="web.xml" value="${gnomex.web.xml}" >
+			<istrue value="${das2gnomex}" />
 		</condition>
-		<condition property="das2_release" value="das2server-genopub" else="das2server">
-			<istrue value="${das2_genopub_mode}" />
+		<condition property="context.xml" value="${gnomex.context.xml}">
+			<istrue value="${das2gnomex}" />
 		</condition>
-		<condition property="das2_webapp" value="das2genopub" else="das2">
-			<istrue value="${das2_genopub_mode}" />
+		<!-- Use web_genopub.xml, context_genopub.xml for genopub mode -->
+		<condition property="web.xml" value="${genopub.web.xml}" >
+			<istrue value="${das2genopub}" />
 		</condition>
-		<condition property="das2_install_notes" value="INSTALL.txt" else="INSTALL_classic.txt">
-			<istrue value="${das2_genopub_mode}" />
+		<condition property="context.xml" value="${genopub.context.xml}" >
+			<istrue value="${das2genopub}" />
+		</condition>
+		<!-- Use web_classic.xml, context_classic.xml for classic mode -->
+		<condition property="web.xml" value="${classic.web.xml}">
+			<istrue value="${das2classic}" />
+		</condition>
+		<condition property="context.xml" value="${classic.context.xml}">
+			<istrue value="${das2classic}" />
+		</condition>
+
+		<!-- Call the release das2server-gnomex if gnomex mode -->
+		<condition property="das2_release" value="das2server-gnomex">
+			<istrue value="${das2gnomex}" />
+		</condition>
+		<!-- Call the release das2server-genopub if genopub mode -->
+		<condition property="das2_release" value="das2server-genopub">
+			<istrue value="${das2genopub}" />
+		</condition>
+		<!-- Call the release das2server if classic mode -->
+		<condition property="das2_release" value="das2server">
+			<istrue value="${das2classic}" />
+		</condition>
+		
+		<!-- Call the web app das2gnomex if genopub mode -->
+		<condition property="das2_webapp" value="das2gnomex">
+			<istrue value="${das2gnomex}" />
+		</condition>
+		<!-- Call the web app das2genopub if genopub mode -->
+		<condition property="das2_webapp" value="das2genopub" >
+			<istrue value="${das2genopub}" />
+		</condition>
+		<!-- Call the webapp das2 if classic mode -->
+		<condition property="das2_webapp" value="das2">
+			<istrue value="${das2classic}" />
+		</condition>
+
+		<!-- Grab the correct install notes depending on the mode -->
+		<condition property="das2_install_notes" value="INSTALL.txt" >
+			<istrue value="${das2gnomex}" />
+		</condition>
+		<condition property="das2_install_notes" value="INSTALL_genopub.txt" >
+			<istrue value="${das2genopub}" />
+		</condition>
+		<condition property="das2_install_notes" value="INSTALL_classic.txt">
+			<istrue value="${das2classic}" />
 		</condition>
 	</target>
 
@@ -174,7 +232,7 @@
 	<condition property="should_compile_flex">
 		<and>
 			<!-- Is the das2 mode genopub? -->
-  	  <istrue value="${das2_genopub_mode}"/>
+  	  <istrue value="${das2genopub}"/>
 			
 	    <!-- Is the flex app not already up-to-date? -->
 			<not>

@@ -118,6 +118,10 @@ public final class GenometryModel {
 	protected AnnotatedSeqGroup createSeqGroup(String group_id) {
 		return new AnnotatedSeqGroup(group_id);
 	}
+	
+	public void removeSeqGroup(String group_id) {
+	  seq_groups.remove(group_id);
+	}
 
 	public synchronized void addSeqGroup(AnnotatedSeqGroup group) {
 		seq_groups.put(group.getID(), group);

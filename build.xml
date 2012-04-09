@@ -230,7 +230,6 @@
 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
-				<include name="hibernate3.jar"/>
 				<include name="image4.jar" />
 				<include name="org.mortbay.jetty.jar"/>
 				<include name="sam.jar" />
@@ -246,6 +245,7 @@
 		</copy>
 
 		<antcall target="webapp-copy-genopub-files"/>
+		<antcall target="webapp-copy-gnomex-files"/>
 
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
@@ -256,6 +256,37 @@
 			<fileset dir="${das2.resources}">
 				<include name="hibernate.cfg.xml" />
 				<include name="genopub.hbm.xml" />
+				<include name="log4j.properties" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="antlr-2.7.6rc1.jar"/>
+				<include name="asm.jar" />
+				<include name="asm-attrs.jar" />
+				<include name="cglib-2.1.3.jar" />
+				<include name="common.jar" />
+				<include name="commons-collections-2.1.1.jar"/>
+				<include name="commons-codec-1.4.jar"/>
+				<include name="commons-compress-1.0.jar"/>
+				<include name="commons-logging-1.0.4.jar"/>
+				<include name="cos.jar"/>
+				<include name="dom4j-1.6.1.jar"/>
+				<include name="jta.jar" />
+				<include name="log4j-1.2.11.jar"/>
+				<include name="sam.jar" />
+				<include name="picard.jar" />
+				<include name="hibernate3.jar" />
+			</fileset>
+    </copy>
+	</target>
+
+	<target name="webapp-copy-gnomex-files" if="das2gnomex">
+		<copy todir="${webapp.dir}/WEB-INF/classes">
+			<fileset dir="${das2.resources}">
+				<include name="hibernate.gnomex.cfg.xml" />
+				<include name="SchemaGNomEx.hbm.xml" />
 				<include name="log4j.properties" />
 			</fileset>
 		</copy>
@@ -285,6 +316,13 @@
 				<include name="log4j-1.2.11.jar"/>
 				<include name="sam.jar" />
 				<include name="picard.jar" />
+				<include name="HCIDictionary.jar" />
+   		        <include name="Hibernate3Utils.jar" />
+				<include name="hci_utils.jar" />
+				<include name="hci_framework.jar" />
+				<include name="hibernate3.jar" />
+				<include name="gnomex.jar" />
+				<include name="jdom.jar"/>
 			</fileset>
     </copy>
 	</target>
@@ -437,7 +475,7 @@
 		</jar>
 	</target>
 	
-	<target name="run" depends="classpath" description="run IGB">
+	<target name="run" depends="compile,classpath" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>
@@ -566,10 +604,11 @@
 			</fileset>
 			<fileset file="${lib.dir}/APACHE_LICENSE_2.txt" />
 		</copy>
-
+		
 		<copy  file="${das2server}/${das2_install_notes}" tofile="${release.dir}/${das2_release}/INSTALL.txt" overwrite="true"/>
 
-	  <antcall target="release-copy-genopub-sql"/>
+	    <antcall target="release-copy-genopub-sql"/>
+	    <antcall target="release-copy-realm-jars"/>
 
 		<zip destfile="${release.dir}/${das2_release}.zip" basedir="${release.dir}">
 			<include name="${das2_release}/**" />
@@ -581,7 +620,15 @@
 			<fileset file="${das2server}/sql/*.sql" />
 		</copy>
 	</target>
-
+	
+	<target name="release-copy-realm-jars" if="das2gnomex">
+		<copy todir="${release.dir}/${das2_release}/tomcat/server/lib">
+			<fileset dir="${lib.dir}">
+				<include name="commons-codec-1.4.jar" />
+				<include name="gnomex_realm.jar" />
+			</fileset>
+		</copy>
+	</target>
 
 	<target name="deploy-das2server" depends="release-das2server" description="Copy das2 web application to apache tomcat">
 		<copy todir="${server.deploy.dir}/${das2_webapp}" overwrite="true">

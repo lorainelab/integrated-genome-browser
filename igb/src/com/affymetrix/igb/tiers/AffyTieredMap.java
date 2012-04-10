@@ -629,6 +629,23 @@ public class AffyTieredMap extends NeoMap {
 		return topgl;
 	}
 	
+	public TierGlyph getHitGlyph(double x, double y) {
+		Rectangle2D.Double hitrect = new Rectangle2D.Double(x, y, 1, 1);
+		if (0 < pixelblur) {
+			Rectangle pixrect = new Rectangle();
+			pixrect = view.transformToPixels(hitrect, pixrect);
+			pixrect.setBounds(pixrect.x - pixelblur, pixrect.y - pixelblur,
+					pixrect.width + 2 * pixelblur, pixrect.height + 2 * pixelblur);
+			hitrect = view.transformToCoords(pixrect, hitrect);
+		}
+		for (TierGlyph tier : tiers) {
+			if (tier.getViewModeGlyph().toolBarHit(hitrect, view)) {
+				return tier;
+			}
+		}
+		return null;
+	}
+		
 	@Override
 	public void componentResized(java.awt.event.ComponentEvent evt) {
 		if (evt.getSource() == canvas) {

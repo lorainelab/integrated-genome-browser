@@ -45,6 +45,17 @@ final public class MouseShortCut implements MouseListener{
 
 	public void mouseReleased(MouseEvent e) {
 		
+		if (e.getSource() instanceof AffyLabelledTierMap && 
+				e.getID() == MouseEvent.MOUSE_RELEASED) {
+			NeoMouseEvent nme = (NeoMouseEvent)e;
+			TierGlyph tier = smv.getSeqMap().getHitGlyph(nme.getCoordX(),nme.getCoordY());
+			if(tier != null){
+				TierLabelManager.setTierCollapsed(tier, !tier.getAnnotStyle().getCollapsed());
+				smv.getSeqMap().setTierStyles();
+				popup.repack(true);
+				return;
+			}
+		}
 		processDoubleClick(e);
 		
 	}

@@ -1003,8 +1003,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 	
 	public boolean drawCollapseControl() {
-		return (draw_collapse_icon && getExpandable()
-				&& (view_mode == null || view_mode.equals(default_view_mode)));
+		return (draw_collapse_icon && getExpandable());
 	}
 	
 	public void copyPropertiesFrom(ITrackStyle g) {

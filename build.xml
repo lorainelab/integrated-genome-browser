@@ -148,7 +148,6 @@
 		
 		<foreach target="ant-copy-bundle" parallel="true" inheritall="true" param="name_jar" list="${include.lib}"/>
 		<foreach target="bundle-copy" parallel="true" inheritall="true" param="jar_name" list="${copy.lib}"/>
-		<foreach target="ant-extend-bundle" parallel="true" inheritall="true" param="jar_name" list="${extend.lib}"/>
 	</target>
 	
 	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">

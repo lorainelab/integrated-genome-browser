@@ -118,7 +118,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 	
 	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps) {
 		String method = GeneralUtils.URLEncode(featureName);	
-		method = "file:/"+TrackStyle.getUniqueName(method);
+		method = TrackStyle.getUniqueName("file:/"+method);
 		
 		GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
 		java.net.URI uri = java.net.URI.create(method);

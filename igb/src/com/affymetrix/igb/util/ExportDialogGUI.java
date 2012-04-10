@@ -83,13 +83,6 @@ public class ExportDialogGUI extends JPanel {
 		}
 	}
 
-	private void setEnable(boolean b) {
-		this.wfRadioButton.setEnabled(!b);
-		this.mvRadioButton.setEnabled(!b);
-		this.mvlRadioButton.setEnabled(!b);
-		this.svRadioButton.setEnabled(!b);
-	}
-
 	public static synchronized ExportDialogGUI getSingleton() {
 		if (singleton == null) {
 			singleton = new ExportDialogGUI();
@@ -428,14 +421,12 @@ public class ExportDialogGUI extends JPanel {
 		export.setComponent(mainView);
 		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
-		okButton.setEnabled(true);
 	}//GEN-LAST:event_mvRadioButtonActionPerformed
 
 	private void mvlRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvlRadioButtonActionPerformed
 		export.setComponent(mainViewWithLabels);
 		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
-		okButton.setEnabled(true);
 	}//GEN-LAST:event_mvlRadioButtonActionPerformed
 
 	private void wfRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wfRadioButtonActionPerformed
@@ -448,7 +439,6 @@ public class ExportDialogGUI extends JPanel {
 		export.setComponent(slicedView);
 		export.initSpinner((String) unitComboBox.getSelectedItem());
 		export.previewImage();
-		okButton.setEnabled(true);
 	}//GEN-LAST:event_svRadioButtonActionPerformed
 
 	private void resolutionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resolutionComboBoxActionPerformed
@@ -461,9 +451,13 @@ public class ExportDialogGUI extends JPanel {
 
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
 		export.extComboBoxActionPerformed();
-		wfRadioButton.setEnabled(!export.selectedExt.equals(export.EXTENSION[0]));
-		resolutionComboBox.setEnabled(!export.selectedExt.equals(export.EXTENSION[0]));
-		okButton.setEnabled(!wfRadioButton.isSelected() || wfRadioButton.isEnabled());
+
+		if (export.selectedExt.equals(export.EXTENSION[0])) {
+			mvRadioButton.setSelected(true);
+			wfRadioButton.setEnabled(false);
+		} else {
+			wfRadioButton.setEnabled(true);
+		}
 	}//GEN-LAST:event_extComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;

@@ -32,6 +32,8 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
 	 */
 	protected final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+	private static final int handle_width = 10;  // width of handle in pixels
+	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
 	
 	@Override
@@ -145,6 +147,53 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		}
 	}
 
+	@Override
+	public void drawTraversal(ViewI view)  {
+		super.drawTraversal(view);
+		if (shouldDrawToolBar()) {
+			drawExpandCollapse(view);
+		}
+	}
+	
+	private void drawExpandCollapse(ViewI view) {
+		Rectangle hpix = getToolbarPixel(view);
+		if (hpix != null) {
+			Graphics g = view.getGraphics();
+			g.setColor(Color.WHITE);
+			g.fill3DRect(hpix.x, hpix.y, hpix.width, hpix.height, true);
+//			g.drawOval(hpix.x, hpix.y, hpix.width, hpix.height);
+			g.setColor(Color.BLACK);
+			g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+			g.drawLine(hpix.x + hpix.width/5, hpix.y + hpix.height/2, hpix.x + hpix.width - hpix.width/5, hpix.y + hpix.height/2);
+			if(style.getCollapsed()){
+				g.drawLine(hpix.x + hpix.width/2, hpix.y + hpix.height/5, hpix.x + hpix.width/2, hpix.y + hpix.height - hpix.height/5);
+			}
+		}
+	}
+		
+	@Override
+	public boolean toolBarHit(Rectangle2D.Double coord_hitbox, ViewI view){
+		if (shouldDrawToolBar() && isVisible() && coord_hitbox.intersects(getCoordBox())) {
+			// overlapping handle ?  (need to do this one in pixel space?)
+			Rectangle hpix = new Rectangle();
+			view.transformToPixels(coord_hitbox, hpix);
+			if (getToolbarPixel(view).intersects(hpix)) {
+				return true;
+			}
+		}
+		return false;
+	}
+		
+	@Override
+	protected boolean shouldDrawToolBar(){
+		return style.drawCollapseControl();
+	}
+
+	private Rectangle getToolbarPixel(ViewI view){
+		pixel_hitbox.setBounds(getPixelBox().x + 4, getPixelBox().y + 4, handle_width, handle_width);
+		return pixel_hitbox;
+	}
+		
 	/**
 	 *  Adds "middleground" glyphs, which are drawn in front of the background but
 	 *    behind all "real" child glyphs.

@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -321,5 +322,9 @@ public class AltSpliceView extends IGBTabPanel
 
 	public JRPTextField getBufferSizeTF() {
 		return this.buffer_sizeTF;
+	}
+
+	public void refreshView() {
+		orf_analyzer.redoOrfs();
 	}
 }

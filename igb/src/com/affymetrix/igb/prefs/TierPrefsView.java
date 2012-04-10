@@ -15,6 +15,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import java.awt.Color;
@@ -182,6 +183,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
+		
+		AltSpliceView.getSingleton().refreshView();
 	}
 
 	public void refreshList() {

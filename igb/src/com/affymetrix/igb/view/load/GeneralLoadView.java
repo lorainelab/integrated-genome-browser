@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -47,8 +46,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
@@ -314,6 +311,7 @@ public final class GeneralLoadView {
 	 * @return if this feature is "preloaded", that is, it has a view mode
 	 * that is displayed without "Load Data", like Semantic zooming
 	 */
+/*
 	private static boolean isPreLoaded(GenericFeature gFeature) {
 		if (gFeature.getMethods().size() > 1) {
 			return false;
@@ -337,15 +335,15 @@ public final class GeneralLoadView {
 		}
 		return false;
 	}
-
+*/
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (GeneralLoadUtils.isLoaded(gFeature)) {
 				continue;
 			}
-			if (isPreLoaded(gFeature)) {
-				continue;
-			}
+//			if (isPreLoaded(gFeature)) {
+//				continue;
+//			}
 
 			loadFeature(loadStrategies, gFeature, serverType);
 		}

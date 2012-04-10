@@ -1,5 +1,5 @@
 <!-- $Id: context.xml 9086 2011-10-03 15:55:15Z biotelerock $ -->
-<Context path="/das2genopub" docBase="webapps/das2genopub" debug="0" reloadable="true" allowLinking="true">
+<Context path="/das2gnomwz" docBase="webapps/das2gnomex" debug="0" reloadable="true" allowLinking="true">
 
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
 	     log format. -->
@@ -39,7 +39,8 @@
     url="jdbc:mysql://localhost:3306/gnomex?autoReconnect=true"/>
      
 <!-- GNomEx Realm for authenticating user  -->
-<Realm name="GNomExRealm" className="hci.gnomex.security.tomcat.GNomExRealm"     datasource_lookup_name="java:comp/env/jdbc/GNOMEX_DATATRACKS"/> 
+<Realm name="GNomExRealm" className="hci.gnomex.security.tomcat.GNomExRealm"     
+       datasource_lookup_name="java:comp/env/jdbc/GNOMEX_DATATRACKS"/> 
  
 </Context>
 

@@ -72,6 +72,9 @@
                     </node>
                     <node name="toolbar">
                         <map>
+                            <entry key="Open URL" value="true"/>
+                            <entry key="Open file" value="true"/>
+                            <entry key="Export Image" value="true"/>
                         </map>
                     </node>
                 </node>

@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -27,12 +28,11 @@ import javax.swing.table.TableCellRenderer;
 public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	public final KeyStrokeViewTable table = new KeyStrokeViewTable();
-//  private final static String[] col_headings = {"Action", "Key Stroke", "Toolbar ?"};
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
 	;
-	public static final int KeySrokeColumn = 1;
+	public static final int KeyStrokeColumn = 1;
+	public static final int ToolbarColumn = 2;
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
@@ -67,22 +67,20 @@ public final class KeyStrokesView implements ListSelectionListener,
 		refresh();
 	}
 
-//  private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-	private static Object[][] buildRows(Preferences keystroke_node) {
+    private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
 		Collection<String> keys = PreferenceUtils.getKeystrokesNodeNames();
 		Object[][] rows;
 
 		synchronized (keys) {
 			int num_rows = keys.size();
-//		int num_cols = 3;
-			int num_cols = 2;
+			int num_cols = 3;
 			rows = new Object[num_rows][num_cols];
 			Iterator<String> iter = keys.iterator();
 			for (int i = 0; iter.hasNext(); i++) {
 				String key = iter.next();
 				rows[i][0] = key;
 				rows[i][1] = keystroke_node.get(key, "");
-//			rows[i][2] = toolbar_node.getBoolean(key, false) ? "x" : "";
+				rows[i][2] = toolbar_node.getBoolean(GenericAction.getCleanText(key), false);
 			}
 		}
 		return rows;
@@ -93,8 +91,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 	 */
 	private void refresh() {
 		Object[][] rows = null;
-//    rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
-		rows = buildRows(PreferenceUtils.getKeystrokesNode());
+		rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
 		model.setRows(rows);
 	}
 
@@ -122,15 +119,13 @@ public final class KeyStrokesView implements ListSelectionListener,
 				String id = (String) table.getModel().getValueAt(srow, 0);
 				editKeystroke(id);
 			} else {
-//        edit_panel.setPreferenceKey(null, null, null, null);
-				edit_panel.setPreferenceKey(null, null, null);
+				edit_panel.setPreferenceKey(null, null, null, null);
 			}
 		}
 	}
 
 	private void editKeystroke(String id) {
-//    edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
-		edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), id, "");
+		edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
@@ -155,7 +150,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		@Override
 		public TableCellEditor getCellEditor(int row, int col) {
 			DefaultCellEditor textEditor = new DefaultCellEditor(edit_panel.key_field);
-			if (col == KeySrokeColumn) {
+			if (col == KeyStrokeColumn) {
 				selected = row;
 				return textEditor;
 			}
@@ -165,7 +160,12 @@ public final class KeyStrokesView implements ListSelectionListener,
 		@Override
 		public TableCellRenderer getCellRenderer(int row, int col) {
 			TableCellRenderer renderer = super.getCellRenderer(row, col);
-			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);
+			if (col == ToolbarColumn) {
+				((JCheckBox) renderer).setHorizontalAlignment(SwingConstants.RIGHT);
+			}
+			else {
+				((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);
+			}
 			return renderer;
 		}
 	}

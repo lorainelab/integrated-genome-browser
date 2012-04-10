@@ -14,7 +14,8 @@ import com.affymetrix.common.CommonUtils;
 
 public abstract class GenericAction extends AbstractAction implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private char POPUP_DIALOG = '\u2026';
+	private static final char POPUP_DIALOG = '\u2026';
+	private static final String ELLIPSIS = "...";
 
 	private Set<GenericActionDoneCallback> doneCallbacks;
 
@@ -41,6 +42,16 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		return null;
 	}
 	public abstract String getText();
+	public static String getCleanText(String text) {
+		String cleanText = text;
+		if (cleanText.endsWith("" + POPUP_DIALOG)) {
+			cleanText = cleanText.substring(0, cleanText.length() - 1);
+		}
+		if (cleanText.endsWith(ELLIPSIS)) {
+			cleanText = cleanText.substring(0, cleanText.length() - ELLIPSIS.length());
+		}
+		return cleanText;
+	}
 	public void actionPerformed(ActionEvent e) {
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}

@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.osgi.framework.BundleActivator;
@@ -215,7 +216,7 @@ public class Activator implements BundleActivator {
     		new GenericActionListener() {
 				@Override
 				public void onCreateGenericAction(GenericAction genericAction) {
-					if (genericAction.getText() != null) {
+					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getText(), false);
 						if (isToolbar) {
 							String iconPath = genericAction.getIconPath();

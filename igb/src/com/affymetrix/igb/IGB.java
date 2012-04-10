@@ -359,7 +359,7 @@ public final class IGB extends Application
 		if (tool_bar == null) {
 			tool_bar = new JToolBar();
 		}
-//		windowService.setToolBar(tool_bar);
+		windowService.setToolBar(tool_bar);
 		windowService.setViewMenu(getMenu("view"));
 		windowService.setMenuCreator(
 				new IMenuCreator() {

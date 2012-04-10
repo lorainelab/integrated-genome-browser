@@ -15,6 +15,7 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 //import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -27,14 +28,14 @@ public final class KeyStrokeEditPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
 	public final JRPTextField key_field = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
-//  private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
+	private final JRPCheckBox toolbar_field = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
 	public final JLabel key_label = new JLabel("Type a shortcut: ");
 	public final JLabel note_label = new JLabel("Changes will take effect next time you launch IGB");
 	public final JRPButton clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
 	private int key_code;
 	private int modifiers;
 	private Preferences the_keystroke_node = null;
-//  private Preferences the_toolbar_node = null;
+	  private Preferences the_toolbar_node = null;
 	private String the_key = null;
 
 	/** Creates a new instance of KeyStrokesView */
@@ -104,10 +105,9 @@ public final class KeyStrokeEditPanel extends JPanel {
 		return null;
 	}
 
-//  void setPreferenceKey(Preferences keystroke_node, Preferences toolbar_node, String key, String def_value) {
-	void setPreferenceKey(Preferences keystroke_node, String key, String def_value) {
+	void setPreferenceKey(Preferences keystroke_node, Preferences toolbar_node, String key, String def_value) {
 		this.the_keystroke_node = keystroke_node;
-//	this.the_toolbar_node = toolbar_node;
+		this.the_toolbar_node = toolbar_node;
 		this.the_key = key;
 		if (this.the_keystroke_node == null || this.the_key == null) {
 			key_label.setText("Make a selection");
@@ -119,8 +119,8 @@ public final class KeyStrokeEditPanel extends JPanel {
 			key_field.setText(value);
 			setEnabled(true);
 		}
-//    boolean isToolbar = this.the_toolbar_node != null && this.the_toolbar_node.getBoolean(key, false);
-//    toolbar_field.setSelected(isToolbar);
+	    boolean isToolbar = this.the_toolbar_node != null && this.the_toolbar_node.getBoolean(key, false);
+	    toolbar_field.setSelected(isToolbar);
 		key_field.getToolTipText();
 	}
 
@@ -128,7 +128,7 @@ public final class KeyStrokeEditPanel extends JPanel {
 	public void setEnabled(boolean b) {
 		clear_button.setEnabled(b);
 		key_field.setEnabled(b);
-//    toolbar_field.setEnabled(b);
+	    toolbar_field.setEnabled(b);
 	}
 
 	private void applyAction() {
@@ -185,10 +185,10 @@ public final class KeyStrokeEditPanel extends JPanel {
 			return;
 		}
 		key_field.setText("");
-//    toolbar_field.setSelected(false);
+	    toolbar_field.setSelected(false);
 		this.the_keystroke_node.put(this.the_key, "");
 		//TO DO:  Fix cell update 
-		//KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeySrokeColumn);
+		//KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeyStrokeColumn);
 	}
 
 	/** Returns true if the primary key code is control, or alt, etc. */

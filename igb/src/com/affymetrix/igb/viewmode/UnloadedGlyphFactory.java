@@ -113,6 +113,11 @@ public class UnloadedGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		@Override
+		protected boolean shouldDrawToolBar(){
+			return false;
+		}
+		
+		@Override
 		public Map<String, Class<?>> getPreferences() {
 			return PREFERENCES;
 		}

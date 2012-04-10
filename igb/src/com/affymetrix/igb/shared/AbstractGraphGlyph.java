@@ -1405,4 +1405,8 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		return super.getSlotsNeeded(theView);
 	}
 
+	@Override
+	protected boolean shouldDrawToolBar(){
+		return false;
+	}
 }

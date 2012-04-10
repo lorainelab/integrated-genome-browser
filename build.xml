@@ -40,22 +40,23 @@
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
-
+		
 		<!-- directory paths -->
-		<property name="lib.dir"     value="${basedir}/ext" />
-		<property name="etc.dir"     value="${basedir}/etc" />
-		<property name="demos.dir"   value="${genoviz}/demo" />
-		<property name="docs.dir"    value="${basedir}/doc/api" />
-		<property name="report.dir"  value="${basedir}/reports" />
-		<property name="bundle.dir"  value="${basedir}/bundles" />
-		<property name="igb.ant.dir" value="${basedir}/plugins/ant" />
-		<property name="jar_extensions" value="${basedir}/jar_extensions" />
+		<property name="lib.dir"			 value="${basedir}/ext" />
+		<property name="etc.dir"			 value="${basedir}/etc" />
+		<property name="demos.dir"			 value="${genoviz}/demo" />
+		<property name="docs.dir"			 value="${basedir}/doc/api" />
+		<property name="report.dir"			 value="${basedir}/reports" />
+		<property name="bundle.dir"			 value="${basedir}/bundles" />
+		<property name="igb.ant.dir"		 value="${basedir}/plugins/ant" />
+		<property name="jar_extensions"		 value="${basedir}/jar_extensions" />
 
 		<!-- list the libraries to create bundle -->
 		<property name="include.lib" value="affx_fusion,be.pwnt.jflow_1.0.0,freehep-2.1.1,jdom-1.1.3,colt,commons-net-2.0,image4j,jide,jlfgr-1_0,log4j-1.2.11,picard,swing-layout,ant-1.7.1"/>
-		
+
 		<!-- list the libraries to extend bundle -->
-		<property name="extend.lib" value="sam,tribble-0.2"/>
+		<property name="sam"				 value="${jar_extensions}/sam" />
+		<property name="tribble-0.2"		 value="${jar_extensions}/tribble-0.2" />
 		
 		<!-- list the libraries to copy -->
 		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1"/>
@@ -66,6 +67,7 @@
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
+		<iterate-jar-ext target="compile" />
 		<iterate target="compile" />
 	</target>
 
@@ -135,41 +137,7 @@
 			<param name="jar_name" value="${name_jar}"/>
 		</antcall>
 	</target>
-	
-	<target name="extend-bundle-if" description="extend and copy lib to bundle dir" unless="${jar_name}.present">
-		<mkdir dir="jar_extensions/${jar_name}/build"/>
-		<delete includeemptydirs="true">
-			<fileset dir="jar_extensions/${jar_name}/build" includes="**/*"/>
-		</delete>
-		<mkdir dir="jar_extensions/${jar_name}/dist"/>
-		<delete includeemptydirs="true">
-			<fileset dir="jar_extensions/${jar_name}/dist" includes="**/*"/>
-		</delete>
-	    	<my.javac srcdir="jar_extensions/${jar_name}/src" destdir="jar_extensions/${jar_name}/build" classpath="${lib.dir}/${jar_name}.jar" />
-		<jar destfile="jar_extensions/${jar_name}/dist/${jar_name}--igbext.jar">
-			<fileset dir="jar_extensions/${jar_name}/build"/>
-			<zipfileset includes="**/*" src="${lib.dir}/${jar_name}.jar"/>
-		</jar>
-		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="jar_extensions/${jar_name}/dist" >
-			<arg value="wrap"/>
-			<arg value="${jar_name}--igbext.jar"/>
-		</java>
-		<move file="jar_extensions/${jar_name}/dist/${jar_name}--igbext.bar" tofile="${bundle.dir}/${jar_name}--igbext.bnd.jar" filtering="false" />
-  	</target>
-
-	<target name="extend-bundle" description="extend bundles to bundle dir">
-		<available file="${bundle.dir}/${jar_name}--igbext.bnd.jar" property="${jar_name}.present"/>
-		<antcall target="extend-bundle-if">
-    			<param name="jar_name" value="${jar_name}"/>
-		</antcall>
-	</target>
-
-	<target name="ant-extend-bundle" description="ant call to extend bundle">
-		<antcall target="extend-bundle">
-			<param name="jar_name" value="${jar_name}"/>
-		</antcall>
-	</target>
-	
+		
 	<target name="bundle-copy" description="copy lib to bundles dir">
 		<copy file="${lib.dir}/${jar_name}.jar" tofile="${bundle.dir}/${jar_name}.jar" filtering="false" />
 	</target>
@@ -183,8 +151,9 @@
 		<foreach target="bundle-copy" parallel="true" inheritall="true" param="jar_name" list="${copy.lib}"/>
 		<foreach target="ant-extend-bundle" parallel="true" inheritall="true" param="jar_name" list="${extend.lib}"/>
 	</target>
-
+	
 	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
+		<iterate-jar-ext target="jar" />
 		<parallel>
 			<iterate target="jar" />
 			<antcall target="copy-bundles" inheritAll="true" inheritRefs="true" />
@@ -396,6 +365,7 @@
 			<fileset file="${etc.dir}/bundles.properties" />
 		</delete>
 		<iterate target="clean" />
+		<iterate-jar-ext target="clean" />
 	</target>
 
 	<target name="docs" depends="common-init" description="Create java documentation for all genoviz subprojects">
@@ -697,6 +667,18 @@
 		</subant>
 	</target>
 
+	<macrodef name="iterate-jar-ext">
+		<attribute name="target" default=""/>
+		<sequential>
+			<subant	target="@{target}" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
+				<dirset dir="${jar_extensions}">
+					<include name="sam" />
+					<include name="tribble-0.2" />
+				</dirset>
+			</subant>
+		</sequential>
+	</macrodef>
+	
 	<!--                                                                 -->
 	<!-- Macro to pass targets to each sub project.  All sub projects    -->
 	<!-- are build using generic.xml.                                    -->

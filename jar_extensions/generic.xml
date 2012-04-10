@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<import file="../common.xml" />
+	<import file="../generic.xml" />
+	
+	<target name="extra-init">
+		<property name="proj.dist"	value="${basedir}/dist"/>
+	</target>
+	
+	<target name="compile" depends="init, extra-init">
+		<!-- <echo message="${basedir}"/>
+		<subant target="compile" genericantfile="../../generic.xml" inheritall="true" >
+			<dirset dir="${basedir}"/>
+		</subant> -->
+		
+		<antcall target="extend-bundle" />
+	</target>
+	
+	<target name="extend-bundle" description="extend bundles to bundle dir">
+		<available file="${bundle.dir}/${project}--igbext.bnd.jar" property="${project}.present"/>
+		<antcall target="extend-bundle-if" />
+	</target>
+	
+	<target name="extend-bundle-if" description="extend and copy lib to bundle dir" unless="${project}.present">
+		<echo message="here" />
+		<mkdir dir="${build.dir}" />
+		<my.javac destdir="${build.dir}" />
+		
+		
+		<mkdir dir="${proj.dist}" />
+		
+		
+		<jar destfile="${proj.dist}/${project}--igbext.jar">
+			<fileset dir="${build.dir}"/>
+			<zipfileset includes="**/*" src="${lib.dir}/${project}.jar"/>
+		</jar>
+		
+		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${proj.dist}" >
+			<arg value="wrap"/>
+			<arg value="${project}--igbext.jar"/>
+		</java>
+		
+		<move file="${proj.dist}/${project}--igbext.bar" tofile="${bundle.dir}/${project}--igbext.bnd.jar" filtering="false" />
+  	</target>
+	
+	<target name="clean" depends="init, extra-init">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${proj.dist}" />
+			<fileset file="${bundle.dir}/${project}--igbext.bnd.jar" />
+		</delete>
+	</target>
+	
+	<target name="jar" depends="compile" />
+	
+</project>
+

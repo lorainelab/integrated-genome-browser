@@ -7,12 +7,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -31,6 +33,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	}
 
 	public abstract String getIndexedFileName(String method, Direction direction);
+	protected abstract FileTypeCategory getFileTypeCategory();
 
 	protected boolean hasIndex(String uri) {
 		if (uri == null) {
@@ -84,6 +87,10 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			defaultGlyph = getEmptyGraphGlyph(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq), trackStyle, gviewer);
 		}
 
+		protected RootSeqSymmetry getRootSym() {
+			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
+		}
+
 		protected ViewModeGlyph getDetailGlyph(SimpleSeqSpan span) throws Exception {
 			GenericFeature feature = style.getFeature();
 			SeqSymmetry optimized_sym = feature.optimizeRequest(span);	
@@ -93,7 +100,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				//	Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "getDetailGlyph() result is false");
 				}
 			}
-			SymWithProps rootSym = span.getBioSeq().getAnnotation(style.getMethodName());
+			SymWithProps rootSym = getRootSym();
 			if (rootSym == null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
 				return null;
@@ -179,5 +186,17 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				defaultGlyph.setCoordBox(parentCoordBox);
 			}
 		}
+
+		@Override
+		public Object getInfo() {
+			RootSeqSymmetry rootSym = getRootSym();
+			if (rootSym == null) {
+				rootSym = new RootSeqSymmetry() { // so that it is not null
+					@Override public FileTypeCategory getCategory() { return getFileTypeCategory(); }
+				};
+			};
+			return rootSym;
+		}
 	}
+	// end glyph class
 }

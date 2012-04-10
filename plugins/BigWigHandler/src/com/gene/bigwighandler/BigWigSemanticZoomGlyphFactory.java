@@ -11,6 +11,7 @@ import org.broad.tribble.util.SeekableStreamFactory;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -43,7 +44,17 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 
 	@Override
 	public String getName() {
-		return "bigwig semantic zoom " + defaultGlyphFactory.getName();
+		return "bigwig semantic zoom " + getFileTypeCategory().toString();
+	}
+
+	@Override
+	protected FileTypeCategory getFileTypeCategory() {
+		for (FileTypeCategory category : FileTypeCategory.values()) {
+			if (defaultGlyphFactory.isCategorySupported(category)) {
+				return category;
+			}
+		}
+		return null;
 	}
 
 	@Override

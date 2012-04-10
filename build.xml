@@ -67,7 +67,6 @@
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
-		<iterate-jar-ext target="compile" />
 		<iterate target="compile" />
 	</target>
 
@@ -153,7 +152,6 @@
 	</target>
 	
 	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
-		<iterate-jar-ext target="jar" />
 		<parallel>
 			<iterate target="jar" />
 			<antcall target="copy-bundles" inheritAll="true" inheritRefs="true" />
@@ -365,7 +363,6 @@
 			<fileset file="${etc.dir}/bundles.properties" />
 		</delete>
 		<iterate target="clean" />
-		<iterate-jar-ext target="clean" />
 	</target>
 
 	<target name="docs" depends="common-init" description="Create java documentation for all genoviz subprojects">
@@ -666,18 +663,6 @@
 			</dirset>
 		</subant>
 	</target>
-
-	<macrodef name="iterate-jar-ext">
-		<attribute name="target" default=""/>
-		<sequential>
-			<subant	target="@{target}" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
-				<dirset dir="${jar_extensions}">
-					<include name="sam" />
-					<include name="tribble-0.2" />
-				</dirset>
-			</subant>
-		</sequential>
-	</macrodef>
 	
 	<!--                                                                 -->
 	<!-- Macro to pass targets to each sub project.  All sub projects    -->
@@ -689,6 +674,12 @@
 			<condition property="findbugs">
 				<equals arg1="@{target}" arg2="findbugs" />
 			</condition>
+			<subant	target="@{target}" genericantfile="${jar_extensions}/generic.xml" inheritall="true">
+				<dirset dir="${jar_extensions}">
+					<include name="sam" />
+					<include name="tribble-0.2" />
+				</dirset>
+			</subant>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">

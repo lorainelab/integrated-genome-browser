@@ -52,6 +52,17 @@
 	</target>
 	
 	<target name="jar" depends="compile" />
+	<target name="test" depends="compile" />
+	<target name="compile-tests" depends="compile" />
+	<target name="webapp" depends="jar"/>
+	<target name="all" depends="jar" />
+
+	<target name="docs" />
+	<target name="pmd" />
+	<target name="cpd" />
+	<target name="findbugs" />
+	<target name="clean-manifest" />
+	<target name="check-nullness" />
 	
 </project>
 

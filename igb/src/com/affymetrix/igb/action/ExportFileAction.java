@@ -31,4 +31,9 @@ public class ExportFileAction extends AbstractExportFileAction{
 	public boolean isPopup() {
 		return true;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/SaveAs16.gif";
+	}
 }

@@ -108,6 +108,12 @@ public class OperatorGlyphFactory extends MapViewGlyphFactoryA {
 		return true;
 	}
 	
+	@Override
+	public boolean supportsTwoTrack() {
+		return  operator.getOutputCategory() == FileTypeCategory.Annotation ||
+				operator.getOutputCategory() == FileTypeCategory.Alignment;
+	}
+
 	private static List<List<SeqSymmetry>> getChilds(SeqMapViewExtendedI smv, SeqSymmetry parentSym){
 		int initial_size = parentSym.getChildCount()/2;
 		List<List<SeqSymmetry>> lists = new ArrayList<List<SeqSymmetry>>(2);

@@ -21,7 +21,12 @@ public abstract class MapViewGlyphFactoryA implements MapViewGlyphFactoryI {
 		}
 		return displayName;
 	}
-	
+
+	@Override
+	public boolean supportsTwoTrack() {
+		return false;
+	}
+
 	@Override
 	public boolean isURISupported(String uri) {
 		return true;

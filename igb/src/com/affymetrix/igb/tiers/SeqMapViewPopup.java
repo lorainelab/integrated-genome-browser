@@ -714,8 +714,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!style.isGraphTier()) {
-				(style).setSeparate(b);
+			if (!b || MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(style.getViewMode())) {
+				style.setSeparate(b);
 			}
 		}
 		refreshMap(false, true);
@@ -1012,7 +1012,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
 			if (!astyle.isGraphTier()) {
 				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate());
+				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate() && MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(astyle.getViewMode()));
 			}
 			any_view_mode = any_view_mode || (!astyle.isGraphTier());
 
@@ -1075,9 +1075,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();
+				boolean isSeparate = style.getSeparate();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
+					if (isSeparate && ! MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
+						continue;
+					}
 					Action action = new GenericAction() {
-
 						private static final long serialVersionUID = 1L;
 
 						@Override

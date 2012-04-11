@@ -93,6 +93,11 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		
 	}
 
+	@Override
+	public boolean supportsTwoTrack() {
+		return true;
+	}
+
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
 		SeqSymmetry current = sym;

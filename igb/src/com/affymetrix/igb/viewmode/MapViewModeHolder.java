@@ -66,6 +66,16 @@ public class MapViewModeHolder {
 		defaultView.put(category, factory);
 	}
 
+	public boolean viewModeSupportsTwoTrack(String viewMode) {
+		MapViewGlyphFactoryI factory = getViewFactory(viewMode);
+		if (factory == null) {
+			return false;
+		}
+		else {
+			return factory.supportsTwoTrack();
+		}
+	}
+
 	public Object[] getAllViewModesFor(FileTypeCategory category, String uri) {
 		List<Object> mode = new ArrayList<Object>(view2Factory.size());
 

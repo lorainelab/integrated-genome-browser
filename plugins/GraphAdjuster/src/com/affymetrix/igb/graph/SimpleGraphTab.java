@@ -35,6 +35,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.operator.Operator.Order;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -778,6 +779,24 @@ public final class SimpleGraphTab
 				new Comparator<Operator>() {
 					@Override
 					public int compare(Operator o1, Operator o2) {
+						if(o1 instanceof Order && o2 instanceof Order){
+							if (((Order)o1).getOrder() == ((Order)o2).getOrder()){
+								return 0;
+							} else if (((Order)o1).getOrder() > ((Order)o2).getOrder()){
+								return 1;
+							}
+							
+							return -1;
+						}
+						
+						if(o1 instanceof Order && !(o2 instanceof Order)){
+							return -1;
+						}
+						
+						if(!(o1 instanceof Order) && o2 instanceof Order){
+							return 1;
+						}
+						
 						return o1.getDisplay().compareTo(o2.getDisplay());
 					}
 				}

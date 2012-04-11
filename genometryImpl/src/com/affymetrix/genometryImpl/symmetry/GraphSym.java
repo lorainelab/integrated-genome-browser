@@ -573,7 +573,7 @@ public class GraphSym extends RootSeqSymmetry {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + bufStart;
+//		DO NOT USE bufStart
 		result = prime * result + ((gid == null) ? 0 : gid.hashCode());
 		result = prime
 				* result
@@ -590,7 +590,7 @@ public class GraphSym extends RootSeqSymmetry {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + xMax;
 		result = prime * result + xMin;
-		result = prime * result + Arrays.hashCode(yBuf);
+//		DO NOT USE yBuf
 		result = prime * result + Float.floatToIntBits(yFirst);
 		return result;
 	}
@@ -604,8 +604,7 @@ public class GraphSym extends RootSeqSymmetry {
 		if (getClass() != obj.getClass())
 			return false;
 		GraphSym other = (GraphSym) obj;
-		if (bufStart != other.bufStart)
-			return false;
+//		DO NOT USE bufStart
 		if (gid == null) {
 			if (other.gid != null)
 				return false;
@@ -637,8 +636,7 @@ public class GraphSym extends RootSeqSymmetry {
 			return false;
 		if (xMin != other.xMin)
 			return false;
-		if (!Arrays.equals(yBuf, other.yBuf))
-			return false;
+//		DO NOT USE yBuf
 		if (Float.floatToIntBits(yFirst) != Float.floatToIntBits(other.yFirst))
 			return false;
 		return true;

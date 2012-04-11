@@ -37,7 +37,7 @@ public class ExportImageAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Export16.gif";
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	public static LoadRefTrackAction getAction() {
 		return ACTION;
 	}
-	
+
 	@Override
 	protected void addSupportedFiles() {
 		Map<String, String[]> nameToExtensionMap = FileTypeHolder.getInstance().getSequenceToExtensionMap();
@@ -37,6 +37,11 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	@Override
 	protected String getFriendlyNameID() {
 		return "openRefSeq";
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Open16.gif";
 	}
 
 	@Override

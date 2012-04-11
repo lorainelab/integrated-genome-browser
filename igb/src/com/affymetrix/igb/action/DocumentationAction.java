@@ -33,7 +33,7 @@ public class DocumentationAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Help16.gif";
 	}
 
 	@Override

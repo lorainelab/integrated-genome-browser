@@ -52,7 +52,7 @@ public class SaveSessionAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Save16.gif";
 	}
 
 	@Override

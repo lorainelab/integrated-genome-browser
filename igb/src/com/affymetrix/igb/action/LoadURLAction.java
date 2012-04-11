@@ -68,20 +68,20 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 			ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL");
 			return;
 		}
-		
+
 		String friendlyName = getFriendlyName(urlStr);
-		
+
 		if (!checkFriendlyName(friendlyName)) {
 			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
 			return;
 		}
-		
+
 		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.versionCB.getSelectedItem());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
-	
+
 		openURI(uri, friendlyName, mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem(), true);
-		
+
 	}
 
 	private static String getFriendlyName(String urlStr) {
@@ -103,14 +103,14 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Open16.gif";
 	}
 
 	@Override
 	protected String getID() {
 		return "loadURL";
 	}
-		
+
 	@Override
 	public boolean isPopup() {
 		return true;

@@ -46,4 +46,9 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	public boolean isPopup() {
 		return true;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/development/Application16.gif";
+	}
 }

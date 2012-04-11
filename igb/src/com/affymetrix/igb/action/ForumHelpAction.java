@@ -40,7 +40,7 @@ public class ForumHelpAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Information16.gif";
 	}
 
 	@Override

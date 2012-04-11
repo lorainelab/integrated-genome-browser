@@ -28,4 +28,9 @@ public class NextSearchSpanAction extends GenericAction {
 		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().getMapRangeBox().nextSpan();
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/navigation/Forward16.gif";
+	}
 }

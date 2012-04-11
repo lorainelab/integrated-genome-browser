@@ -40,4 +40,9 @@ public class ExitAction extends GenericAction {
 	public int getMnemonic() {
 		return KeyEvent.VK_X;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Stop16.gif";
+	}
 }

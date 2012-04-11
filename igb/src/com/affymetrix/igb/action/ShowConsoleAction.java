@@ -33,7 +33,7 @@ public class ShowConsoleAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/History16.gif";
 	}
 
 	@Override

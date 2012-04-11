@@ -52,4 +52,9 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction {
 	public boolean isPopup() {
 		return true;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Zoom16.gif";
+	}
 }

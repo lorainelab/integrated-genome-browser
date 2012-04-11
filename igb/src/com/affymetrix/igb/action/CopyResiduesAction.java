@@ -16,10 +16,10 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 @SuppressWarnings("serial")
 public abstract class CopyResiduesAction extends GenericAction {
 	private static final CopyResiduesAction ACTION = new CopyResiduesAction() {
-		@Override public String getText() { return BUNDLE.getString("copySelectedResiduesToClipboard"); }		
+		@Override public String getText() { return BUNDLE.getString("copySelectedResiduesToClipboard"); }
 	};
 	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction() {
-		@Override public String getText() { return "Copy"; }		
+		@Override public String getText() { return "Copy"; }
 	};
 
 	public static CopyResiduesAction getAction() {
@@ -41,7 +41,7 @@ public abstract class CopyResiduesAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Copy16.gif";
 	}
 
 	@Override

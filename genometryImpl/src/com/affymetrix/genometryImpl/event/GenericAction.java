@@ -1,18 +1,20 @@
 package com.affymetrix.genometryImpl.event;
 
+import com.affymetrix.common.CommonUtils;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import com.affymetrix.common.CommonUtils;
-
-public abstract class GenericAction extends AbstractAction implements ActionListener {
+/**
+ * Some sort of specialization of an action just for Affymetrix and IGB.
+ * For what purpose is this designed? - elb
+ * Mostly to call back when the action is done? - elb
+ */
+public abstract class GenericAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private static final char POPUP_DIALOG = '\u2026';
 	private static final String ELLIPSIS = "...";
@@ -52,6 +54,7 @@ public abstract class GenericAction extends AbstractAction implements ActionList
 		}
 		return cleanText;
 	}
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
 	}

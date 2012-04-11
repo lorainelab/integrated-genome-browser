@@ -76,7 +76,7 @@ public class ExportDialog implements ExportConstants {
 	}
 	public static Component component; // Export component
 	public static ImageInfo imageInfo;
-	private static ImageInfo originalInfo;
+	private static ImageInfo currentInfo;
 	private static String unit = "";
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
@@ -107,12 +107,12 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	public void initSpinner(String unit) {
-		double width = originalInfo.getWidth();
-		double height = originalInfo.getHeight();
+		double width = currentInfo.getWidth();
+		double height = currentInfo.getHeight();
 
 		if (unit.equals(UNIT[1])) {
-			width /= originalInfo.getResolution();
-			height /= originalInfo.getResolution();
+			width /= currentInfo.getResolution();
+			height /= currentInfo.getResolution();
 		}
 
 		SpinnerModel sm = new SpinnerNumberModel(width, 0, 10000, 1);
@@ -137,7 +137,7 @@ public class ExportDialog implements ExportConstants {
 			imageInfo.setHeight(component.getHeight());
 		}
 
-		originalInfo = new ImageInfo(imageInfo.getWidth(),
+		currentInfo = new ImageInfo(imageInfo.getWidth(),
 				imageInfo.getHeight(),
 				imageInfo.getResolution());
 
@@ -392,13 +392,6 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
-	public void resetButtonActionPerformed() {
-		unitComboBox.setSelectedItem(UNIT[0]);
-		widthSpinner.setValue(originalInfo.getWidth());
-		heightSpinner.setValue(originalInfo.getHeight());
-		resolutionComboBox.setSelectedItem(originalInfo.getResolution());
-	}
-
 	public void previewImage() {
 		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
@@ -425,7 +418,7 @@ public class ExportDialog implements ExportConstants {
 	public void widthSpinnerStateChanged() {
 		if (!isHeightSpinner) {
 			double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
-			double newHeight = newWidth * originalInfo.getHeightWidthRate();
+			double newHeight = newWidth * currentInfo.getHeightWidthRate();
 
 			isWidthSpinner = true;
 			heightSpinner.setValue(newHeight);
@@ -438,7 +431,7 @@ public class ExportDialog implements ExportConstants {
 	public void heightSpinnerStateChanged() {
 		if (!isWidthSpinner) {
 			double newHeight = ((Double) heightSpinner.getValue()).doubleValue();
-			double newWidth = newHeight * originalInfo.getWidthHeightRate();
+			double newWidth = newHeight * currentInfo.getWidthHeightRate();
 
 			isHeightSpinner = true;
 			widthSpinner.setValue(newWidth);

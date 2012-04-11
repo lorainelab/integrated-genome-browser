@@ -115,7 +115,7 @@ public class ExportDialogGUI extends JPanel {
         widthSpinner = export.widthSpinner;
         heightSpinner = export.heightSpinner;
         xLabel = new javax.swing.JLabel();
-        resetButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
         resolutionComboBox = export.resolutionComboBox;
         unitComboBox = export.unitComboBox;
         sizeLabel = export.sizeLabel;
@@ -155,10 +155,10 @@ public class ExportDialogGUI extends JPanel {
 
         xLabel.setText("Resolution:");
 
-        resetButton.setText("Reset");
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
+                refreshButtonActionPerformed(evt);
             }
         });
 
@@ -200,7 +200,7 @@ public class ExportDialogGUI extends JPanel {
                         .add(resolutionComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .add(14, 14, 14)
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(resetButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                    .add(refreshButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(unitComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .add(0, 0, Short.MAX_VALUE))
         );
@@ -220,7 +220,7 @@ public class ExportDialogGUI extends JPanel {
                 .add(imageSizePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(sizeLabel)
                     .add(resolutionComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(resetButton)
+                    .add(refreshButton)
                     .add(xLabel)))
         );
 
@@ -413,9 +413,25 @@ public class ExportDialogGUI extends JPanel {
 		export.heightSpinnerStateChanged();
 	}//GEN-LAST:event_heightSpinnerStateChanged
 
-	private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-		export.resetButtonActionPerformed();
-	}//GEN-LAST:event_resetButtonActionPerformed
+	private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+		seqMap = IGB.getSingleton().getMapView().getSeqMap();
+
+		if (wfRadioButton.isSelected()) {
+			wholeFrame = IGB.getSingleton().getFrame().getContentPane();
+			wfRadioButtonActionPerformed(evt);
+		} else if (mvRadioButton.isSelected()) {
+			mainView = seqMap.getNeoCanvas();
+			mvRadioButtonActionPerformed(evt);
+		} else if (mvlRadioButton.isSelected()) {
+			AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
+			mainViewWithLabels = tm.getSplitPane();
+			mvlRadioButtonActionPerformed(evt);
+		} else if (svRadioButton.isSelected()) {
+			AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+			slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
+			svRadioButtonActionPerformed(evt);
+		}
+	}//GEN-LAST:event_refreshButtonActionPerformed
 
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed
 		export.setComponent(mainView);
@@ -477,7 +493,7 @@ public class ExportDialogGUI extends JPanel {
     private javax.swing.JButton okButton;
     private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
-    private javax.swing.JButton resetButton;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JComboBox resolutionComboBox;
     private javax.swing.JLabel sizeLabel;
     private javax.swing.JRadioButton svRadioButton;

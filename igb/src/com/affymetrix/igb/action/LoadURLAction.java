@@ -102,7 +102,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 
 	@Override
 	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
+		return "toolbarButtonGraphics/development/Server16.gif";
 	}
 
 	@Override

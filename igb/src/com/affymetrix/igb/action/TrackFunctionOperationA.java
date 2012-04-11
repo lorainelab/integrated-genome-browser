@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.symloader.Delegate.DelegateParent;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -53,7 +55,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 			
 		}
 
-		GenericFeature feature = createFeature(getMethod(tiers), operator, dps);
+		GenericFeature feature = createFeature(getMethod(tiers), operator, dps, ((TierGlyph)tiers.get(0)).getAnnotStyle());
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
 	}
 
@@ -116,7 +118,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		return tier.getDirection() == TierGlyph.Direction.FORWARD;
 	}
 	
-	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps) {
+	public GenericFeature createFeature(String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
 		String method = GeneralUtils.URLEncode(featureName);	
 		method = TrackStyle.getUniqueName("file:/"+method);
 		
@@ -130,6 +132,10 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
 		
 		GeneralLoadView.getLoadView().createFeaturesTable();
+		
+		if(preferredStyle != null){
+			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).copyPropertiesFrom(preferredStyle);
+		}
 		
 		return feature;
 	}

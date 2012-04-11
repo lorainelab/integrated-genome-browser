@@ -271,10 +271,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 		} else if (smv.getPixelFloater().getChildren() != null
 				&& col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
-			List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
-			for (GlyphI i : floatingGraphs) {
-				AbstractGraphGlyph j = (AbstractGraphGlyph) i;
-				if (j.getGraphState().getTierStyle() == style) {
+			for (GlyphI i : smv.getPixelFloater().getChildren()) {
+				if (((ViewModeGlyph) i).getAnnotStyle() == style) {
 					return false;
 				}
 			}
@@ -421,8 +419,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)){
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (smv.getPixelFloater().getChildren() != null) {
-						List<GlyphI> floatingGraphs = smv.getPixelFloater().getChildren();
-						for (GlyphI g : floatingGraphs) {
+						for (GlyphI g : smv.getPixelFloater().getChildren()) {
 							ViewModeGlyph j = (ViewModeGlyph) g;
 							if (j.getAnnotStyle() == style) {
 								stylemap.put((TrackStyle) style, (TrackStyle) style);

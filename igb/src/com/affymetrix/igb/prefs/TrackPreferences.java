@@ -29,7 +29,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 
 	AbstractTableModel model;
 	public int[] selectedRows;
-	protected boolean settingValueFromTable;
 	public ColorComboBox bgColorComboBox;
 	public ColorComboBox fgColorComboBox;
 	public JComboBox labelFieldComboBox;
@@ -48,6 +47,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public StyledJTable table;
 	public ListSelectionModel lsm;
 	public boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
+	public boolean applyChanged; // Whether apply the changed value to track or not. 
 	public static final int COL_MAX_DEPTH = 5;
 	public static final int COL_LABEL_FIELD = 7;
 	public static final int COL_BACKGROUND = 1;
@@ -219,37 +219,37 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	}
 
 	public void bgColorComboBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
 		}
 	}
 
 	public void fgColorComboBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
 		}
 	}
 
 	public void labelFieldComboBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(labelFieldComboBox.getSelectedItem(), 0, COL_LABEL_FIELD);
 		}
 	}
 
 	public void show2TracksCheckBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(show2TracksCheckBox.isSelected(), 0, COL_SHOW_2_TRACKS);
 		}
 	}
 
 	public void maxDepthTextField() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
 		}
 	}
 
 	public void applyMaxDepth() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			maxDepthTextField();
 			if (!(((TierPrefsView) this).autoApplyChanges())) {
 				((TierPrefsView.TierPrefsTableModel) model).update(COL_MAX_DEPTH);
@@ -258,13 +258,13 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	}
 
 	public void connectedCheckBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
 		}
 	}
 
 	public void collapsedCheckBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(collapsedCheckBox.isSelected(), 0, COL_COLLAPSED);
 		}
 	}
@@ -272,19 +272,19 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public abstract void trackNameSizeComboBox();
 
 	public void possitiveColorComboBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(possitiveColorComboBox.getSelectedColor(), 0, COL_POS_STRAND_COLOR);
 		}
 	}
 
 	public void negativeColorComboBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(negativeColorComboBox.getSelectedColor(), 0, COL_NEG_STRAND_COLOR);
 		}
 	}
 
 	public void colorCheckBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, 0, COL_DIRECTION_TYPE);
@@ -302,7 +302,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	}
 
 	public void arrowCheckBox() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
 					model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, 0, COL_DIRECTION_TYPE);

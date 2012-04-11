@@ -26,7 +26,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -62,7 +61,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public JButton applyDisplayNameButton;
 	public ButtonGroup showStrandButtonGroup;
 	public JLabel applyToAllTip;
-
+	
 	public static synchronized TierPrefsView getSingleton() {
 		if (singleton == null) {
 			singleton = new TierPrefsView();
@@ -255,7 +254,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		fgColorComboBox.setEnabled(b);
 		trackNameSizeComboBox.setEnabled(b);
 		applyToAllButton.setEnabled(b);
-		labelFieldComboBox.setEnabled(b);
 		maxDepthTextField.setEnabled(b);
 	}
 
@@ -288,6 +286,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private void resetValueBySelectedRows() {
+		applyChanged = false;
+		
 		displayNameTextField.setText("");
 		displayNameTextField.setEnabled(false);
 
@@ -312,10 +312,16 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		negativeColorComboBox.setSelectedColor((Color) getValueAt(COL_NEG_STRAND_COLOR));
 
 		viewModeCB.setEnabled(false);
+		
+		applyChanged = true;
 	}
 
-	// If one of the values in the same cloumn is different, return null
-	// otherwise return value
+	/**
+	 * If one of the values in the same column is different, return null
+	 * Otherwise return value
+	 *
+	 * @param col
+	 */
 	private Object getValueAt(int col) {
 		TrackStyle style, temp;
 		Object object = null;
@@ -586,7 +592,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 						ArrayList<String> properties = new ArrayList<String>();
 						properties.add((String) TrackConstants.LABELFIELD[0]);
 						properties.addAll(props.keySet());
-						labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(properties.toArray()));
+						labelFieldComboBox.setModel(new DefaultComboBoxModel(properties.toArray()));
 					}
 				}
 			}
@@ -626,15 +632,14 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	public void displayNameTextField() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			model.setValueAt(displayNameTextField.getText(), 0, COL_TRACK_NAME);
 		}
 	}
 
 	@Override
 	public void trackNameSizeComboBox() {
-		if (!settingValueFromTable
-				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
+		if (applyChanged) {
 			Float trackNameSize = null;
 
 			if (trackNameSizeComboBox.getSelectedItem() != null) {
@@ -646,7 +651,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	public void viewModeCB() {
-		if (!settingValueFromTable) {
+		if (applyChanged) {
 			for (int i = 0; i < selectedRows.length; i++) {
 				model.setValueAt(viewModeCB.getSelectedItem(),
 						0, COL_VIEW_MODE);
@@ -778,7 +783,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		}
 
 		public void setValueAt(Object value, int row, int col, boolean apply) {
-			settingValueFromTable = true;
+			applyChanged = false;
 			TrackStyle style = tier_styles.get(row);
 			if (value != null && !initializationDetector) {
 				try {
@@ -804,7 +809,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							break;
 						case COL_LABEL_FIELD:
 							style.setLabelField((String) value);
-							labelFieldComboBox.setSelectedItem(value);
+							labelFieldComboBox.setSelectedItem((String) value);
 							break;
 						case COL_MAX_DEPTH: {
 							tempInt = parseInteger(((String) value), 0, style.getMaxDepth());
@@ -850,7 +855,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				}
 			}
 			setRowSelection(style);
-			settingValueFromTable = false;
+			applyChanged = true;
 		}
 
 		public void update(int col) {

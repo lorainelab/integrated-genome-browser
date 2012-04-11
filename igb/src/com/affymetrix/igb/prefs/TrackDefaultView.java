@@ -107,7 +107,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	@Override
 	public void trackNameSizeComboBox() {
-		if (!settingValueFromTable && !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
+		if (applyChanged) { 
 			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
 			model.setValueAt(trackNameSize, selectedRows[0], COL_TRACK_NAME_SIZE);
 		}
@@ -364,7 +364,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		}
 
 		public void setValue(Object value, int row, int col) {
-			settingValueFromTable = true;
+			applyChanged = false;
 			if (value != null && !initializationDetector) {
 				try {
 					TrackStyle style = tier_styles.get(row);
@@ -462,7 +462,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
 			}
-			settingValueFromTable = false;
+			applyChanged = true;
 		}
 
 		int parseInteger(String s, int empty_string, int fallback) {

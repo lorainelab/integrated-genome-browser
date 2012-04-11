@@ -102,14 +102,14 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Open16.gif";
 	}
 
 	@Override
 	protected String getID() {
 		return "loadURL";
 	}
-		
+
 	@Override
 	public boolean isPopup() {
 		return true;

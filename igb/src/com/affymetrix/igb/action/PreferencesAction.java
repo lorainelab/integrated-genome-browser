@@ -49,7 +49,7 @@ public class PreferencesAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Preferences16.gif";
 	}
 
 	@Override

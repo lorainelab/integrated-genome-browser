@@ -50,6 +50,11 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 	}
 
 	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Zoom16.gif";
+	}
+
+	@Override
 	public String getText() {
 		return BUNDLE.getString("ViewGenomicSequenceInSeqViewer");
 	}

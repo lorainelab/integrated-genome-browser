@@ -35,4 +35,9 @@ public class ImportBookmarkAction extends GenericAction {
 	public boolean isPopup() {
 		return true;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Import16.gif";
+	}
 }

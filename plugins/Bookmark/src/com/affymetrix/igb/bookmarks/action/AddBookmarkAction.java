@@ -21,7 +21,7 @@ import javax.swing.tree.TreePath;
 public class AddBookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	protected void bookmarkCurrentPosition() {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
@@ -38,7 +38,7 @@ public class AddBookmarkAction extends GenericAction {
 			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
 			return;
 		}
-		
+
 		BookmarkEditor.init(bookmark);
 		BookmarkEditor.run();
 	}
@@ -90,5 +90,10 @@ public class AddBookmarkAction extends GenericAction {
 	@Override
 	public String getText() {
 		return null;
+	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Bookmarks16.gif";
 	}
 }

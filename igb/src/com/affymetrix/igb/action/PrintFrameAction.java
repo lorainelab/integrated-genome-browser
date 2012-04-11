@@ -40,7 +40,7 @@ public class PrintFrameAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Print16.gif";
 	}
 
 	@Override

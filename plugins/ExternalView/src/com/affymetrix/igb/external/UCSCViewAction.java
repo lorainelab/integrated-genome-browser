@@ -37,7 +37,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final Set<String> UCSCSources = Collections.<String>synchronizedSet(new HashSet<String>());
 	private final IGBService igbService;
-	
+
 	public UCSCViewAction(IGBService igbService) {
 		super();
 		this.igbService = igbService;
@@ -122,6 +122,6 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Zoom16.gif";
 	}
 }

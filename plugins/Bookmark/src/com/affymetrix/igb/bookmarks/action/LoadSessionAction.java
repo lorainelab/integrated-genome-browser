@@ -57,7 +57,7 @@ public class LoadSessionAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Open16.gif";
 	}
 
 	@Override

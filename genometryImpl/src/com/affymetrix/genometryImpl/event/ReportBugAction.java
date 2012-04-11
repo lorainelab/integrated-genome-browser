@@ -37,4 +37,9 @@ public class ReportBugAction extends GenericAction {
 	public boolean isPopup() {
 		return true;
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Edit16.gif";
+	}
 }

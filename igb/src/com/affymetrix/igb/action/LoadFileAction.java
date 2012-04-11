@@ -113,7 +113,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		}
 		return speciesName;
 	}
-		
+
 	/**
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
@@ -122,20 +122,25 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 		super();
 		this.gviewerFrame.setTransferHandler(fdh);
 	}
-	
+
 	@Override
 	public String getText() {
 		return BUNDLE.getString("openFile");
 	}
 
 	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Open16.gif";
+	}
+
+	@Override
 	public int getMnemonic() {
 		return KeyEvent.VK_O;
-	} 	 
+	}
 
 	@Override
 	protected String getID() {
 		return "loadFile";
 	}
-		
+
 }

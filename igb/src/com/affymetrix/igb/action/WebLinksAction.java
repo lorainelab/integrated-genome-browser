@@ -37,7 +37,7 @@ public final class WebLinksAction extends GenericAction {
 
 	@Override
 	public String getIconPath() {
-		return null;
+		return "toolbarButtonGraphics/general/Search16.gif";
 	}
 
 	@Override

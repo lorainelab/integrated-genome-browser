@@ -67,4 +67,9 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 			setEnabled(false);
 		}
 	}
+
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/Zoom16.gif";
+	}
 }

@@ -546,10 +546,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				|| style.isGraphTier()) {
 			if (!style.isGraphTier()) {
 				displayNameTextField.setEnabled(false);
+				maxDepthTextField.setEnabled(false);
 			}
 			viewModeCB.setEnabled(false);
 			labelFieldComboBox.setEnabled(false);
-			maxDepthTextField.setEnabled(false);
 			connectedCheckBox.setEnabled(false);
 			collapsedCheckBox.setEnabled(false);
 			colorCheckBox.setEnabled(false);

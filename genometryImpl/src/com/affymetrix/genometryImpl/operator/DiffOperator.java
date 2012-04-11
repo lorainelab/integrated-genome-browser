@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.GenometryConstants;
  *
  * @author auser
  */
-public class DiffOperator extends AbstractGraphOperator implements Operator{
+public class DiffOperator extends AbstractGraphOperator implements Operator, Operator.Order{
 
 	@Override
 	public String getName() {
@@ -33,6 +33,10 @@ public class DiffOperator extends AbstractGraphOperator implements Operator{
 	protected String getSymbol() {
 		return "-";
 	}
-	
+
+	@Override
+	public int getOrder() {
+		return 2;
+	}
 	
 }

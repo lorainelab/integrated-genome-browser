@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.GenometryConstants;
  *
  * @author auser
  */
-public class MeanOperator extends AbstractGraphOperator implements Operator{
+public class MeanOperator extends AbstractGraphOperator implements Operator, Operator.Order{
 
 	@Override
 	protected String getSymbol() {
@@ -36,5 +36,10 @@ public class MeanOperator extends AbstractGraphOperator implements Operator{
 	@Override
 	public String getDisplay() {
 		return GenometryConstants.BUNDLE.getString("operator_" + getName());
+	}
+	
+	@Override
+	public int getOrder() {
+		return 5;
 	}
 }

@@ -17,4 +17,8 @@ public interface Operator  {
 	public boolean setParameters( Map<String, Object> parms);
 	public boolean supportsTwoTrack();
 	public FileTypeCategory getOutputCategory();
+	
+	public static interface Order{
+		public int getOrder();
+	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.GenometryConstants;
 
-public class SumOperator extends AbstractGraphOperator implements Operator {
+public class SumOperator extends AbstractGraphOperator implements Operator, Operator.Order{
 
 	@Override
 	public String getName() {
@@ -28,5 +28,10 @@ public class SumOperator extends AbstractGraphOperator implements Operator {
 			total += f.floatValue();
 		}
 		return total;
+	}
+	
+	@Override
+	public int getOrder() {
+		return 1;
 	}
 }

@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.GenometryConstants;
  *
  * @author auser
  */
-public class MedianOperator extends AbstractGraphOperator implements Operator{
+public class MedianOperator extends AbstractGraphOperator implements Operator, Operator.Order{
 
 	@Override
 	protected String getSymbol() {
@@ -39,5 +39,10 @@ public class MedianOperator extends AbstractGraphOperator implements Operator{
 	@Override
 	public String getDisplay() {
 		return GenometryConstants.BUNDLE.getString("operator_" + getName());
+	}
+	
+	@Override
+	public int getOrder() {
+		return 6;
 	}
 }

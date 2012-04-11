@@ -148,4 +148,9 @@ public class AutoLoadThresholdAction extends GenericAction
 	public String getText() {
 		return BUNDLE.getString("setThreshold");
 	}
+
+	@Override
+	public String getIconPath() {
+		return "images/autoload.png";
+	}
 }

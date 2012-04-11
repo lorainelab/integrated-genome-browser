@@ -452,11 +452,14 @@ public class ExportDialogGUI extends JPanel {
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
 		export.extComboBoxActionPerformed();
 
-		if (export.selectedExt.equals(export.EXTENSION[0])) {
+		if (export.selectedExt.equals(ExportConstants.EXTENSION[0])) {
 			mvRadioButton.setSelected(true);
+			mvRadioButtonActionPerformed(evt);
 			wfRadioButton.setEnabled(false);
+			resolutionComboBox.setEnabled(false);
 		} else {
 			wfRadioButton.setEnabled(true);
+			resolutionComboBox.setEnabled(true);
 		}
 	}//GEN-LAST:event_extComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

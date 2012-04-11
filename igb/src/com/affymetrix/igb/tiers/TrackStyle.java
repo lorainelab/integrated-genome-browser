@@ -951,8 +951,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 	
 	public void setViewMode(String s) {
-		if (s != null && !default_view_mode.equalsIgnoreCase(s)
-				&& MapViewModeHolder.getInstance().getViewFactory(s) == null) {
+		if (s == null || MapViewModeHolder.getInstance().getViewFactory(s) == null) {
 			Logger.getLogger(TrackStyle.class.getName()).log(Level.WARNING, "No view mode factory found for {0}. Using default view mode only.", s);
 			s = default_view_mode;
 		}

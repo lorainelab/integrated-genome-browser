@@ -25,7 +25,8 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author auser
  */
-public abstract class TrackPreferences implements ListSelectionListener{
+public abstract class TrackPreferences implements ListSelectionListener {
+
 	AbstractTableModel model;
 	public int[] selectedRows;
 	protected boolean settingValueFromTable;
@@ -51,7 +52,7 @@ public abstract class TrackPreferences implements ListSelectionListener{
 	public static final int COL_LABEL_FIELD = 7;
 	public static final int COL_BACKGROUND = 1;
 	public static final int COL_FOREGROUND = 2;
-	public static final int Col_Show_2_Tracks = 6;
+	public static final int COL_SHOW_2_TRACKS = 6;
 	public static final int COL_CONNECTED = 8;
 	public static final int COL_COLLAPSED = 4;
 	public static final int COL_TRACK_NAME_SIZE = 3;
@@ -59,7 +60,8 @@ public abstract class TrackPreferences implements ListSelectionListener{
 	public static final int COL_NEG_STRAND_COLOR = 11;
 	public static final int COL_DIRECTION_TYPE = 9;
 	protected float trackNameSize;
-	public String b1Text,b2Text,track,title;
+	public String b1Text, b2Text, track, title;
+
 	public void initTable() {
 		table = new StyledJTable(model);
 		table.list.add(TierPrefsView.COL_BACKGROUND);
@@ -101,24 +103,24 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(110);
 		table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(110);
 	}
-	public void initCommonComponents()
-	{
+
+	public void initCommonComponents() {
 		possitiveColorComboBox = new ColorComboBox();
 		negativeColorComboBox = new ColorComboBox();
 		viewModeCB = new javax.swing.JComboBox();
 		autoRefreshCheckBox = new JCheckBox();
-		refreshButton = new JRPButton(this.getClass().getCanonicalName()+"_refreshButton");
-		colorCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_colorCheckBox");
-		arrowCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_arrowCheckBox");
+		refreshButton = new JRPButton(this.getClass().getCanonicalName() + "_refreshButton");
+		colorCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_colorCheckBox");
+		arrowCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_arrowCheckBox");
 		bgColorComboBox = new ColorComboBox();
 		trackNameSizeComboBox = new JComboBox();
 		fgColorComboBox = new ColorComboBox();
 		labelFieldComboBox = new JComboBox();
-		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName()+"_maxDepth");
-		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_show2TracksCheckBox");
-		connectedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_connectedCheckBox");
-		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName()+"_collapsedCheckBox");
-        colorCheckBox.setText("Color");
+		maxDepthTextField = new JRPNumTextField(this.getClass().getCanonicalName() + "_maxDepth");
+		show2TracksCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_show2TracksCheckBox");
+		connectedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_connectedCheckBox");
+		collapsedCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_collapsedCheckBox");
+		colorCheckBox.setText("Color");
 		arrowCheckBox.setText("Arrow");
 		possitiveColorComboBox.setBackground(new Color(255, 255, 255));
 		possitiveColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
@@ -133,7 +135,7 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		negativeColorComboBox.setColorValueVisible(false);
 		negativeColorComboBox.setMaximumSize(new Dimension(150, 20));
 		negativeColorComboBox.setStretchToFit(true);
-		
+
 		bgColorComboBox.setBackground(new Color(255, 255, 255));
 		bgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		bgColorComboBox.setButtonVisible(false);
@@ -149,7 +151,7 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		fgColorComboBox.setColorValueVisible(false);
 		fgColorComboBox.setMaximumSize(new Dimension(150, 20));
 		fgColorComboBox.setStretchToFit(true);
-		
+
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
 
 		show2TracksCheckBox.setText("Show (+/-) tracks");
@@ -159,8 +161,11 @@ public abstract class TrackPreferences implements ListSelectionListener{
 		collapsedCheckBox.setText("Collapsed");
 
 	}
+
 	public abstract void valueChanged(ListSelectionEvent evt);
+
 	public abstract JTextField getTrackDefaultTextField();
+
 	public ColorComboBox getPossitiveColorCombo() {
 		return possitiveColorComboBox;
 	}
@@ -176,10 +181,12 @@ public abstract class TrackPreferences implements ListSelectionListener{
 	public JRPCheckBox getArrowCheckBox() {
 		return arrowCheckBox;
 	}
+
 	public JTable getTable() {
 		return table;
 	}
-		public ColorComboBox getBgColorComboBox() {
+
+	public ColorComboBox getBgColorComboBox() {
 		return bgColorComboBox;
 	}
 
@@ -198,6 +205,7 @@ public abstract class TrackPreferences implements ListSelectionListener{
 	public JTextField getMaxDepthTextField() {
 		return maxDepthTextField;
 	}
+
 	public JCheckBox getShow2TracksCheckBox() {
 		return show2TracksCheckBox;
 	}
@@ -209,60 +217,73 @@ public abstract class TrackPreferences implements ListSelectionListener{
 	public JCheckBox getCollapsedCheckBox() {
 		return collapsedCheckBox;
 	}
-	public void bgColorComboBox(){
+
+	public void bgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[0], COL_BACKGROUND);
 		}
 	}
-	public void fgColorComboBox(){
+
+	public void fgColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(fgColorComboBox.getSelectedColor(), 0, COL_FOREGROUND);
 		}
 	}
-	public void labelFieldComboBox(){
+
+	public void labelFieldComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(labelFieldComboBox.getSelectedItem(), 0, COL_LABEL_FIELD);
 		}
 	}
-	public void show2TracksCheckBox(){
+
+	public void show2TracksCheckBox() {
 		if (!settingValueFromTable) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), 0, Col_Show_2_Tracks);
+			model.setValueAt(show2TracksCheckBox.isSelected(), 0, COL_SHOW_2_TRACKS);
 		}
 	}
-	public void maxDepthTextField(){
+
+	public void maxDepthTextField() {
 		if (!settingValueFromTable) {
 			model.setValueAt(maxDepthTextField.getText(), 0, COL_MAX_DEPTH);
 		}
 	}
-	public void applyMaxDepth(){
-		if(!settingValueFromTable){
+
+	public void applyMaxDepth() {
+		if (!settingValueFromTable) {
 			maxDepthTextField();
-			if(!(((TierPrefsView)this).autoApplyChanges()))
-				((TierPrefsView.TierPrefsTableModel)model).update(COL_MAX_DEPTH);
-		}			
+			if (!(((TierPrefsView) this).autoApplyChanges())) {
+				((TierPrefsView.TierPrefsTableModel) model).update(COL_MAX_DEPTH);
+			}
+		}
 	}
-	public void connectedCheckBox(){
+
+	public void connectedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(connectedCheckBox.isSelected(), 0, COL_CONNECTED);
 		}
 	}
-	public void collapsedCheckBox(){
+
+	public void collapsedCheckBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(collapsedCheckBox.isSelected(), 0, COL_COLLAPSED);
 		}
 	}
+
 	public abstract void trackNameSizeComboBox();
-	public void possitiveColorComboBox(){
+
+	public void possitiveColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(possitiveColorComboBox.getSelectedColor(), 0, COL_POS_STRAND_COLOR);
 		}
 	}
-	public void negativeColorComboBox(){
+
+	public void negativeColorComboBox() {
 		if (!settingValueFromTable) {
 			model.setValueAt(negativeColorComboBox.getSelectedColor(), 0, COL_NEG_STRAND_COLOR);
 		}
 	}
-	public void colorCheckBox(){
+
+	public void colorCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -279,7 +300,8 @@ public abstract class TrackPreferences implements ListSelectionListener{
 			}
 		}
 	}
-	public void arrowCheckBox(){
+
+	public void arrowCheckBox() {
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {

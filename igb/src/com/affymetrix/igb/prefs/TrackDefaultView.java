@@ -415,7 +415,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							}
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
-						case Col_Show_2_Tracks:
+						case COL_SHOW_2_TRACKS:
 							if (!style.equals(default_annot_style)) {
 								element.getPropertyMap().put(PROP_SEPARATE, value.toString());
 							}

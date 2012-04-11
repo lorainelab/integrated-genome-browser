@@ -55,7 +55,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public SeqMapView smv;
 	public List<TierLabelGlyph> selectedTiers;
 	public int selectedRow;
-	public TrackStyle selectedStyle;
 	public List<TierGlyph> currentTiers;
 	public List<TrackStyle> currentStyles;
 	public JRPButton applyToAllButton;
@@ -92,7 +91,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		initTable();
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
-		applyDisplayNameButton = new JRPButton("TierPrefsView_applyDisplayNameButton");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
 		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
@@ -183,7 +181,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
-		
+
 		AltSpliceView.getSingleton().refreshView();
 	}
 
@@ -243,7 +241,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	private void setEnabled(boolean b) {
 		displayNameTextField.setEnabled(b);
 		displayNameTextField.setEditable(b);
-		applyDisplayNameButton.setEnabled(b);
 		viewModeCB.setEnabled(b);
 		labelFieldComboBox.setEnabled(b);
 		maxDepthTextField.setEnabled(b);
@@ -276,90 +273,13 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		setEnabled(true);
 
 		if (selectedRows.length > 1) {
-			displayNameTextField.setText("");
-			displayNameTextField.setEnabled(false);
-			applyDisplayNameButton.setEnabled(false);
-			viewModeCB.setEnabled(false);
-			bgColorComboBox.setSelectedColor(null);
-			fgColorComboBox.setSelectedColor(null);
-			trackNameSizeComboBox.setSelectedItem("");
-			labelFieldComboBox.setSelectedIndex(-1);
-			maxDepthTextField.setText(null);
-			show2TracksCheckBox.setSelected(false);
-			connectedCheckBox.setSelected(false);
-			collapsedCheckBox.setSelected(false);
-			colorCheckBox.setSelected(false);
-			arrowCheckBox.setSelected(false);
-			possitiveColorComboBox.setSelectedColor(null);
-			negativeColorComboBox.setSelectedColor(null);
+			resetValueBySelectedRows();
 		} else if (selectedRows.length == 1) {
-			selectedStyle = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
+			TrackStyle style = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
 
-			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
-					|| selectedStyle.isGraphTier()) {
-				if (!selectedStyle.isGraphTier()) {
-					displayNameTextField.setEnabled(false);
-					applyDisplayNameButton.setEnabled(false);
-				}
-				viewModeCB.setEnabled(false);
-				labelFieldComboBox.setEnabled(false);
-				maxDepthTextField.setEnabled(false);
-				connectedCheckBox.setEnabled(false);
-				collapsedCheckBox.setEnabled(false);
-				colorCheckBox.setEnabled(false);
-				arrowCheckBox.setEnabled(false);
-				possitiveColorComboBox.setEnabled(false);
-				negativeColorComboBox.setEnabled(false);
-				show2TracksCheckBox.setEnabled(false);
-			} else {
-				initialLabelField();
-			}
+			setEnabledByAxisOrGraph(style);
 
-			possitiveColorComboBox.setSelectedColor(selectedStyle.getForwardColor());
-			negativeColorComboBox.setSelectedColor(selectedStyle.getReverseColor());
-			viewModeCB.removeAllItems();
-
-			if (!selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && !selectedStyle.isGraphTier()) {
-				viewModeCB.setModel(new javax.swing.DefaultComboBoxModel(MapViewModeHolder.getInstance().getAllViewModesFor(selectedStyle.getFileTypeCategory(), null)));
-				String view_mode = selectedStyle.getViewMode();
-				if (view_mode == null) {
-					viewModeCB.setSelectedIndex(0);
-				} else {
-					viewModeCB.setSelectedItem(view_mode);
-				}
-			}
-
-			displayNameTextField.setText(selectedStyle.getTrackName());
-			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
-			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
-			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
-			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
-			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
-			show2TracksCheckBox.setSelected(selectedStyle.getSeparate());
-			connectedCheckBox.setSelected(selectedStyle.getConnected());
-			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
-
-			DIRECTION_TYPE direction = selectedStyle.getDirectionName();
-			switch (direction) {
-				case NONE:
-					colorCheckBox.setSelected(false);
-					arrowCheckBox.setSelected(false);
-					break;
-				case ARROW:
-					colorCheckBox.setSelected(false);
-					arrowCheckBox.setSelected(true);
-					break;
-				case COLOR:
-					colorCheckBox.setSelected(true);
-					arrowCheckBox.setSelected(false);
-					break;
-				case BOTH:
-					colorCheckBox.setSelected(true);
-					arrowCheckBox.setSelected(true);
-					break;
-				default:
-					System.out.println("Wrong Direction Type");
-			}
+			resetValueBySelectedRow(style);
 		} else {
 			setEnabled(false);
 		}
@@ -367,10 +287,296 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		initializationDetector = false;
 	}
 
-	private void initialLabelField() {
-		if (selectedStyle != null && smv != null) {
+	private void resetValueBySelectedRows() {
+		displayNameTextField.setText("");
+		displayNameTextField.setEnabled(false);
+
+		bgColorComboBox.setSelectedColor((Color) getValueAt(COL_BACKGROUND));
+		fgColorComboBox.setSelectedColor((Color) getValueAt(COL_FOREGROUND));
+		trackNameSizeComboBox.setSelectedItem((Float) getValueAt(COL_TRACK_NAME_SIZE));
+		labelFieldComboBox.setSelectedItem((String) getValueAt(COL_LABEL_FIELD));
+		maxDepthTextField.setText(String.valueOf(getValueAt(COL_MAX_DEPTH)));
+		show2TracksCheckBox.setSelected((Boolean) getValueAt(COL_SHOW_2_TRACKS));
+		connectedCheckBox.setSelected((Boolean) getValueAt(COL_CONNECTED));
+		collapsedCheckBox.setSelected((Boolean) getValueAt(COL_COLLAPSED));
+
+		DIRECTION_TYPE type = (DIRECTION_TYPE) getValueAt(COL_DIRECTION_TYPE);
+		if (type == null) {
+			colorCheckBox.setSelected(false);
+			arrowCheckBox.setSelected(false);
+		} else {
+			setSelectedByDirection(type);
+		}
+
+		possitiveColorComboBox.setSelectedColor((Color) getValueAt(COL_POS_STRAND_COLOR));
+		negativeColorComboBox.setSelectedColor((Color) getValueAt(COL_NEG_STRAND_COLOR));
+
+		viewModeCB.setEnabled(false);
+	}
+
+	// If one of the values in the same cloumn is different, return null
+	// otherwise return value
+	private Object getValueAt(int col) {
+		TrackStyle style, temp;
+		Object object = null;
+
+		for (int i = 0; i < selectedRows.length - 1; i++) {
+			style = ((TierPrefsTableModel) model).getStyles().get(selectedRows[i]);
+			temp = ((TierPrefsTableModel) model).getStyles().get(selectedRows[i + 1]);
+
+			switch (col) {
+				case COL_BACKGROUND:
+					object = checkBG(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_FOREGROUND:
+					object = checkFG(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_TRACK_NAME_SIZE:
+					object = checkSize(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_LABEL_FIELD:
+					object = checkLabel(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_MAX_DEPTH:
+					object = checkDepth(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_SHOW_2_TRACKS:
+					object = check2Tracks(style, temp);
+					if (object == null) {
+						object = Boolean.FALSE;
+						break;
+					}
+					break;
+				case COL_CONNECTED:
+					object = checkConnected(style, temp);
+					if (object == null) {
+						object = Boolean.FALSE;
+						break;
+					}
+					break;
+				case COL_COLLAPSED:
+					object = checkCollapsed(style, temp);
+					if (object == null) {
+						object = Boolean.FALSE;
+						break;
+					}
+					break;
+				case COL_DIRECTION_TYPE:
+					object = checkDirection(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_POS_STRAND_COLOR:
+					object = checkForwardColor(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+				case COL_NEG_STRAND_COLOR:
+					object = checkReverseColor(style, temp);
+					if (object == null) {
+						break;
+					}
+					break;
+			}
+		}
+
+		return object;
+	}
+
+	private Color checkBG(TrackStyle style, TrackStyle temp) {
+		Color value = style.getBackground();
+		if (!value.equals(temp.getBackground())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Color checkFG(TrackStyle style, TrackStyle temp) {
+		Color value = style.getForeground();
+		if (!value.equals(temp.getForeground())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Float checkSize(TrackStyle style, TrackStyle temp) {
+		Float value = style.getTrackNameSize();
+		if (value != temp.getTrackNameSize()) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private String checkLabel(TrackStyle style, TrackStyle temp) {
+		String value = style.getLabelField();
+		if (!value.equals(temp.getLabelField())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Integer checkDepth(TrackStyle style, TrackStyle temp) {
+		Integer value = style.getMaxDepth();
+		if (value != temp.getMaxDepth()) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Boolean check2Tracks(TrackStyle style, TrackStyle temp) {
+		Boolean value = style.getSeparate();
+		if (value != temp.getSeparate()) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Boolean checkConnected(TrackStyle style, TrackStyle temp) {
+		Boolean value = style.getConnected();
+		if (value != temp.getConnected()) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Boolean checkCollapsed(TrackStyle style, TrackStyle temp) {
+		Boolean value = style.getCollapsed();
+		if (value != temp.getCollapsed()) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private DIRECTION_TYPE checkDirection(TrackStyle style, TrackStyle temp) {
+		DIRECTION_TYPE value = style.getDirectionName();
+		if (!value.equals(temp.getDirectionName())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Color checkForwardColor(TrackStyle style, TrackStyle temp) {
+		Color value = style.getForwardColor();
+		if (!value.equals(temp.getForwardColor())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private Color checkReverseColor(TrackStyle style, TrackStyle temp) {
+		Color value = style.getReverseColor();
+		if (!value.equals(temp.getReverseColor())) {
+			return null;
+		}
+
+		return value;
+	}
+
+	private void resetValueBySelectedRow(TrackStyle style) {
+		possitiveColorComboBox.setSelectedColor(style.getForwardColor());
+		negativeColorComboBox.setSelectedColor(style.getReverseColor());
+
+		displayNameTextField.setText(style.getTrackName());
+		bgColorComboBox.setSelectedColor(style.getBackground());
+		fgColorComboBox.setSelectedColor(style.getForeground());
+		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
+		labelFieldComboBox.setSelectedItem(style.getLabelField());
+		maxDepthTextField.setText(String.valueOf(style.getMaxDepth()));
+		show2TracksCheckBox.setSelected(style.getSeparate());
+		connectedCheckBox.setSelected(style.getConnected());
+		collapsedCheckBox.setSelected(style.getCollapsed());
+
+		setSelectedByDirection(style.getDirectionName());
+	}
+
+	private void setSelectedByDirection(DIRECTION_TYPE direction) {
+		switch (direction) {
+			case NONE:
+				colorCheckBox.setSelected(false);
+				arrowCheckBox.setSelected(false);
+				break;
+			case ARROW:
+				colorCheckBox.setSelected(false);
+				arrowCheckBox.setSelected(true);
+				break;
+			case COLOR:
+				colorCheckBox.setSelected(true);
+				arrowCheckBox.setSelected(false);
+				break;
+			case BOTH:
+				colorCheckBox.setSelected(true);
+				arrowCheckBox.setSelected(true);
+				break;
+			default:
+				System.out.println("Wrong Direction Type");
+		}
+	}
+
+	private void setEnabledByAxisOrGraph(TrackStyle style) {
+		viewModeCB.removeAllItems();
+
+		if (style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
+				|| style.isGraphTier()) {
+			if (!style.isGraphTier()) {
+				displayNameTextField.setEnabled(false);
+			}
+			viewModeCB.setEnabled(false);
+			labelFieldComboBox.setEnabled(false);
+			maxDepthTextField.setEnabled(false);
+			connectedCheckBox.setEnabled(false);
+			collapsedCheckBox.setEnabled(false);
+			colorCheckBox.setEnabled(false);
+			arrowCheckBox.setEnabled(false);
+			possitiveColorComboBox.setEnabled(false);
+			negativeColorComboBox.setEnabled(false);
+			show2TracksCheckBox.setEnabled(false);
+		} else {
+			viewModeCB.setModel(new DefaultComboBoxModel(
+					MapViewModeHolder.getInstance().getAllViewModesFor(
+					style.getFileTypeCategory(), null)));
+
+			String view_mode = style.getViewMode();
+			if (view_mode == null) {
+				viewModeCB.setSelectedIndex(0);
+			} else {
+				viewModeCB.setSelectedItem(view_mode);
+			}
+
+			resetLabelField(style);
+		}
+	}
+
+	private void resetLabelField(TrackStyle style) {
+		if (style != null && smv != null) {
 			if (smv.getAnnotatedSeq() != null) { //Fixes NPE
-				SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(selectedStyle.getMethodName());
+				SeqSymmetry sym = smv.getAnnotatedSeq().getAnnotation(style.getMethodName());
 				if (sym != null && sym.getChildCount() > 0) {
 					SeqSymmetry child = sym.getChild(0);
 					SeqSymmetry original = getMostOriginalSymmetry(child);
@@ -429,10 +635,13 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public void trackNameSizeComboBox() {
 		if (!settingValueFromTable
 				&& !initializationDetector) {   // !initializationDetector condition is for the initialization when multiple rows are selected to prevent null exception
-			if (!"".equals(trackNameSizeComboBox.getSelectedItem().toString())) { //Fixes NumberFormatException in special cases
-				float trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-				model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
+			Float trackNameSize = null;
+
+			if (trackNameSizeComboBox.getSelectedItem() != null) {
+				trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
 			}
+
+			model.setValueAt(trackNameSize, 0, COL_TRACK_NAME_SIZE);
 		}
 	}
 
@@ -479,6 +688,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		List<TrackStyle> tier_styles;
 		private Object tempObject;
 		private int tempInt;
+
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
 		}
@@ -604,7 +814,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 						case COL_DIRECTION_TYPE:
 							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
-						case Col_Show_2_Tracks:
+						case COL_SHOW_2_TRACKS:
 							style.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_CONNECTED:

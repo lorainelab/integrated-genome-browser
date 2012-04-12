@@ -32,6 +32,8 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
@@ -240,6 +242,19 @@ public class SeqMapView extends JPanel
 		}
 	};
 
+	private final NeoRangeListener rangeListener = new NeoRangeListener(){
+
+		@Override
+		public void rangeChanged(NeoRangeEvent evt) {
+			for(TierGlyph tier : seqmap.getTiers()){
+				if(tier.getViewModeGlyph() instanceof NeoRangeListener){
+					((NeoRangeListener)tier.getViewModeGlyph()).rangeChanged(evt);
+				}
+			}
+		}
+		
+	};
+		
 	public SeqMapView(boolean add_popups, String id) {
 		super();
 		this.id = id;
@@ -250,7 +265,8 @@ public class SeqMapView extends JPanel
 		seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 
 		seqmap.addComponentListener(new SeqMapViewComponentListener());
-
+		seqmap.addRangeListener(rangeListener);
+		
 		// the MapColor MUST be a very dark color or else the hairline (which is
 		// drawn with XOR) will not be visible!
 		seqmap.setMapColor(Color.BLACK);

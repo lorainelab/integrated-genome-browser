@@ -17,15 +17,16 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
-import com.affymetrix.genoviz.event.NeoViewBoxListener;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
 	// glyph class
-	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements NeoViewBoxListener {
+	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements NeoRangeListener {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph;
 		
@@ -44,9 +45,9 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected abstract ViewModeGlyph getDefaultGlyph();
 
 		@Override
-		public void viewBoxChanged(final NeoViewBoxChangeEvent e){
-			if(e.getSource() instanceof ViewI){
-				lastUsedGlyph = getGlyph((ViewI)e.getSource());
+		public void rangeChanged(NeoRangeEvent evt){
+			if(evt.getSource() instanceof NeoMap){
+				lastUsedGlyph = getGlyph(((NeoMap)evt.getSource()).getView());
 			}
 		}
 				

@@ -16,6 +16,8 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
@@ -71,7 +73,7 @@ public class AffyTieredMap extends NeoMap {
 	 */
 	public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
-
+	
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
 		ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, Boolean.valueOf(show_plus));
@@ -495,17 +497,7 @@ public class AffyTieredMap extends NeoMap {
 		// tier and getting the labelmap lined-up with the main tier map.
 		packTiers(false, true, false);
 	}
-
-	@Override
-	public void viewBoxChanged(final NeoViewBoxChangeEvent e){
-		super.viewBoxChanged(e);
-		for(TierGlyph tier : tiers){
-			if(tier.getViewModeGlyph() instanceof NeoViewBoxListener){
-				((NeoViewBoxListener)tier.getViewModeGlyph()).viewBoxChanged(e);
-			}
-		}
-	}
-	
+		
 	/** Prints this component with dialogue box. */
  	public void print() throws PrinterException {
 		print(PageFormat.LANDSCAPE, false);

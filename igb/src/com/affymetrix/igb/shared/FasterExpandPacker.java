@@ -291,10 +291,10 @@ public class FasterExpandPacker extends ExpandPacker {
 
 		Rectangle2D intersection;
 		for (int i = 0; i < child_count; i++) {
-			GlyphI child = parent.getChild(i);
-			child.setVisibility(true);
-			child.setOverlapped(false);
-			cbox = child.getCoordBox();
+//			GlyphI child = parent.getChild(i);
+//			child.setVisibility(true);
+//			child.setOverlapped(false);
+			cbox = parent.getChild(i).getCoordBox();
 			intersection = cbox.createIntersection(inView);
 			if (intersection.getWidth() <= 0) {
 				continue;

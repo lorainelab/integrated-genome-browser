@@ -99,10 +99,13 @@ public final class GeneralLoadView {
 	private void initComponents() {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
+		
 		tableModel = new DataManagementTableModel(this);
 		tableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
 		table = new JTableX(tableModel);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
+		initDataManagementTable();
+		
 		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
@@ -308,34 +311,21 @@ public final class GeneralLoadView {
 
 	/**
 	 * @param gFeature the feature to check
-	 * @return if this feature is "preloaded", that is, it has a view mode
-	 * that is displayed without "Load Data", like Semantic zooming
+	 * @return if this feature is "preloaded", that is, it has a view mode that
+	 * is displayed without "Load Data", like Semantic zooming
 	 */
-/*
-	private static boolean isPreLoaded(GenericFeature gFeature) {
-		if (gFeature.getMethods().size() > 1) {
-			return false;
-		}
-		String method = null;
-		if (gFeature.getMethods().size() == 0) {
-			if (gFeature.symL != null &&  gFeature.symL.uri != null) {
-				method = gFeature.symL.uri.toString();
-			}
-		}
-		else {
-			method = gFeature.getMethods().iterator().next();
-		}
-		if (method == null) {
-			return false;
-		}
-		ITrackStyleExtended style = TrackView.getInstance().getStyle(method, gFeature);
-		TierGlyph tierGlyph = TrackView.getInstance().getTier(style, Direction.BOTH);
-		if (tierGlyph != null && tierGlyph.getViewModeGlyph() != null) {
-			return tierGlyph.getViewModeGlyph().isPreLoaded();
-		}
-		return false;
-	}
-*/
+	/*
+	 * private static boolean isPreLoaded(GenericFeature gFeature) { if
+	 * (gFeature.getMethods().size() > 1) { return false; } String method =
+	 * null; if (gFeature.getMethods().size() == 0) { if (gFeature.symL != null
+	 * && gFeature.symL.uri != null) { method = gFeature.symL.uri.toString(); }
+	 * } else { method = gFeature.getMethods().iterator().next(); } if (method
+	 * == null) { return false; } ITrackStyleExtended style =
+	 * TrackView.getInstance().getStyle(method, gFeature); TierGlyph tierGlyph =
+	 * TrackView.getInstance().getTier(style, Direction.BOTH); if (tierGlyph !=
+	 * null && tierGlyph.getViewModeGlyph() != null) { return
+	 * tierGlyph.getViewModeGlyph().isPreLoaded(); } return false; }
+	 */
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (GeneralLoadUtils.isLoaded(gFeature)) {
@@ -464,31 +454,21 @@ public final class GeneralLoadView {
 		});
 	}
 
-	/**
-	 * Create the table with the list of features and their status.
-	 */
-	public List<GenericFeature> createFeaturesTable() {
-		String versionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
+	public void refreshDataManagementView() {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 
-		if (DEBUG_EVENTS) {
-			BioSeq curSeq = gmodel.getSelectedSeq();
-			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
-			System.out.println("features for " + versionName + ": " + visibleFeatures.toString());
-		}
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				initDataManagementTable();
+				tableModel.createVirtualFeatures(visibleFeatures);
 			}
 		});
 
 		disableButtonsIfNecessary();
-		changeVisibleDataButtonIfNecessary(visibleFeatures);	// might have been disabled when switching to another chromosome or genome.
-		return visibleFeatures;
+		changeVisibleDataButtonIfNecessary(visibleFeatures);
 	}
 
-	public void initDataManagementTable() {
+	private void initDataManagementTable() {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 		int maxFeatureNameLength = 1;
 		for (GenericFeature feature : visibleFeatures) {
@@ -524,9 +504,6 @@ public final class GeneralLoadView {
 		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setPreferredWidth(55);
 		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMinWidth(55);
 		table.getColumnModel().getColumn(DataManagementTableModel.SEPARATE_COLUMN).setMaxWidth(55);
-
-		table.setRowSelectionAllowed(false);
-		table.setCellSelectionEnabled(true);
 
 		// Don't enable combo box for full genome sequence
 		// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
@@ -616,8 +593,7 @@ public final class GeneralLoadView {
 			addFeatureTier(feature);
 		}
 
-		createFeaturesTable();
-
+		refreshDataManagementView();
 	}
 
 	public static void addFeatureTier(final GenericFeature feature) {
@@ -706,7 +682,7 @@ public final class GeneralLoadView {
 				if (refresh) {
 					// Refresh
 					refreshTreeViewAndRestore();
-					createFeaturesTable();
+					refreshDataManagementView();
 					gviewer.dataRemoved();
 				}
 			}
@@ -720,18 +696,8 @@ public final class GeneralLoadView {
 		return refreshDataAction;
 	}
 
-	public static DataManagementTableModel getLoadModeTableModel() {
-		if (tableModel != null) {
-			return tableModel;
-		}
-		return null;
-	}
-
 	public FeatureTreeView getFeatureTree() {
-		if (feature_tree_view != null) {
-			return feature_tree_view;
-		}
-		return null;
+		return feature_tree_view;
 	}
 
 	public void setShowLoadingConfirm(boolean showLoadingConfirm) {

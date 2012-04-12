@@ -131,7 +131,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true, true);
 		
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 		
 		if(preferredStyle != null){
 			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).copyPropertiesFrom(preferredStyle);

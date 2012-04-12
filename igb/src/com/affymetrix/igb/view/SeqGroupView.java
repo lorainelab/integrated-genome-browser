@@ -529,7 +529,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (aseq == null) {
 			GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-			GeneralLoadView.getLoadView().createFeaturesTable();
+			GeneralLoadView.getLoadView().refreshDataManagementView();
 			// refreshTreeView should only be called if feature table
 			// needs to be cleared.
 
@@ -565,7 +565,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
 	}
 

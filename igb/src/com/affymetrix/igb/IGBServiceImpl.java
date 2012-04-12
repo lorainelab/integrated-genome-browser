@@ -145,7 +145,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void updateGeneralLoadView() {
 		GeneralLoadView.getLoadView().refreshTreeView();
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
 
 	@Override

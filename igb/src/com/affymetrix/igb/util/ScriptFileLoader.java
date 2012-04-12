@@ -380,7 +380,7 @@ public class ScriptFileLoader {
 			feature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
 		}
 
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
 
 	private static void loadFile(String fileName) {

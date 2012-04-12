@@ -87,7 +87,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		this.fireTableDataChanged();
+		
+		fireTableDataChanged();
 	}
 
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
@@ -212,7 +213,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				}
 				return style.getTrackName();
 			case FOREGROUND_COLUMN:
-				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
+				if (style == null || style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
 					return Color.WHITE;
 				}
 				return style.getForeground();
@@ -248,14 +249,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	public boolean isCellEditable(int row, int col) {
 		VirtualFeature vFeature = virtualFeatures.get(row);
 		ITrackStyleExtended style = vFeature.getStyle();
-		
+
 		if ((style == null)
 				&& (col == TRACK_NAME_COLUMN
 				|| col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
 				|| col == SEPARATE_COLUMN || col == HIDE_FEATURE_COLUMN)) {
 			return false;
-		} else if(style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)){
-			if(col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN){
+		} else if (style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
+			if (col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN) {
 				return true;
 			}
 			return false;
@@ -332,7 +333,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 					return;	// We can't change strategies once we've loaded the entire genome.
 				}
 				if (vFeature.getFeature().getLoadChoices().size() <= 1) {
-					return;	
+					return;
 				}
 				String valueString = value.toString();
 				if (!vFeature.getFeature().getLoadStrategy().toString().equals(valueString)) {
@@ -391,7 +392,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		} else {
 			for (int i = 0; i < smv.getPopup().getShowMenu().getItemCount(); i++) {
 				JMenuItem item = smv.getPopup().getShowMenu().getItem(i);
-				if(item.getName().equals(style.getMethodName())){
+				if (item.getName().equals(style.getMethodName())) {
 					item.getAction().actionPerformed(null);
 				}
 			}
@@ -416,7 +417,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (style instanceof TrackStyle) {
 					if (tier.getChildCount() > 0 || tier.getDirection() == Direction.AXIS) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
-					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)){
+					} else if (style.getMethodName().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
 						stylemap.put((TrackStyle) style, (TrackStyle) style);
 					} else if (smv.getPixelFloater().getChildren() != null) {
 						for (GlyphI g : smv.getPixelFloater().getChildren()) {
@@ -442,7 +443,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 	}
 
 	/**
-	 * The strategy was changed.  Update the table, and if necessary, load the annotations and change the button statuses.
+	 * The strategy was changed. Update the table, and if necessary, load the
+	 * annotations and change the button statuses.
+	 *
 	 * @param row
 	 * @param col
 	 * @param gFeature

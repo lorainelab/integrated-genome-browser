@@ -714,7 +714,7 @@ public final class GeneralLoadUtils {
 						gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
 					}
 				}
-				GeneralLoadView.getLoadView().initDataManagementTable();
+				GeneralLoadView.getLoadView().refreshDataManagementView();
 			}
 
 			private void loadOnSequence(BioSeq seq) {
@@ -775,7 +775,7 @@ public final class GeneralLoadUtils {
 					SeqGroupView.getInstance().refreshTable();
 				}
 
-				GeneralLoadView.getLoadView().initDataManagementTable();
+				GeneralLoadView.getLoadView().refreshDataManagementView();
 
 				if (this.isCancelled()) {
 					return;
@@ -1078,7 +1078,7 @@ public final class GeneralLoadUtils {
 		if (autoload) {
 			GeneralLoadView.loadWholeRangeFeatures(null);
 			GeneralLoadView.getLoadView().refreshTreeView();
-			GeneralLoadView.getLoadView().createFeaturesTable();
+			GeneralLoadView.getLoadView().refreshDataManagementView();
 		}
 	}
 
@@ -1133,7 +1133,7 @@ public final class GeneralLoadUtils {
 
 		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
@@ -1408,7 +1408,7 @@ public final class GeneralLoadUtils {
 					}
 
 					SeqGroupView.getInstance().refreshTable();
-					GeneralLoadView.getLoadView().initDataManagementTable();
+					GeneralLoadView.getLoadView().refreshDataManagementView();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}

@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
@@ -59,6 +58,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at1;
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
+	private final RepackTiersAction repackStub;
+	private final Action repack_selected_tracks_action;
+	private final Action repack_all_tracks_action;
+	private final Action change_color_action;
+	private final Action change_bg_color_action;
 	private final Action save_track_action = ExportFileAction.getAction();
 	private final Action save_selected_annotations_action = ExportSelectedAnnotationFileAction.getAction();
 	private final Action rename_action = new GenericAction() {
@@ -195,38 +199,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		@Override
 		public String getText() {
 			return BUNDLE.getString("showAllAction");
-		}
-	};
-	private final Action change_color_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			changeColor(handler.getSelectedTierLabels(), true);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("changeColorAction");
-		}
-	};
-	private final Action change_bg_color_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			changeColor(handler.getSelectedTierLabels(), false);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("changeBGColorAction");
 		}
 	};
 	private final Action color_by_score_on_action = new GenericAction() {
@@ -386,69 +358,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 
-	/**
-	 * Handles tier (track) repacking actions.
-	 *
-	 * @param theTiers generally either all or selected tiers.
-	 */
-	private void repackTiers(List<TierLabelGlyph> theTiers) {
-		ViewI ourView = gviewer.getSeqMap().getView();
-		for (TierLabelGlyph tl : theTiers) {
-			TierGlyph t = (TierGlyph) tl.getInfo();
-			int a = t.getSlotsNeeded(ourView);
-			ITrackStyleExtended style = t.getAnnotStyle();
-			TierGlyph.Direction d = t.getDirection();
-			switch (d) {
-				case REVERSE:
-					style.setReverseMaxDepth(a);
-					break;
-				default:
-				case FORWARD:
-					style.setForwardMaxDepth(a);
-					break;
-			}
-			com.affymetrix.igb.shared.ViewModeGlyph vmg = t.getViewModeGlyph();
-			if (vmg instanceof com.affymetrix.igb.shared.AbstractGraphGlyph) {
-				// So far this has only been tested with annotation depth graphs.
-				com.affymetrix.igb.shared.AbstractGraphGlyph gg
-						= (com.affymetrix.igb.shared.AbstractGraphGlyph) vmg;
-				gg.setVisibleMaxY(a);
-			}
-		}
-		// Now repack with the newly appointed maxima.
-		repack(true);
-	}
-	private final Action repack_selected_tracks_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			repackTiers(handler.getSelectedTierLabels());
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("repackSelectedTracksAction");
-		}
-	};
-	private final Action repack_all_tracks_action = new GenericAction() {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			repackTiers(handler.getAllTierLabels());
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("repackAllTracksAction");
-		}
-	};
-
 	/*
 	 *
 	 */
@@ -547,6 +456,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
+		this.repackStub = new RepackTiersAction(gviewer) {
+			private static final long serialVersionUID = 1L;
+			@Override public String getText() { return null; }
+		};
+		repack_selected_tracks_action = new RepackSelectedTiersAction(gviewer);
+		repack_all_tracks_action = new RepackAllTiersAction(gviewer);
+		change_color_action = new ChangeForegroundColorAction(gviewer);
+		change_bg_color_action = new ChangeBackgroundColorAction(gviewer);
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
@@ -868,62 +785,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		repack(false);
 	}
 
-	private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
-		if (tier_label_glyphs.isEmpty()) {
-			return;
-		}
-
-		final JColorChooser chooser = new JColorChooser();
-
-		TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
-		TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
-		ITrackStyleExtended style_0 = tier_0.getAnnotStyle();
-		if (style_0 != null) {
-			if (fg) {
-				chooser.setColor(style_0.getForeground());
-			} else {
-				chooser.setColor(style_0.getBackground());
-			}
-		}
-
-		ActionListener al = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (TierLabelGlyph tlg : tier_label_glyphs) {
-					TierGlyph tier = (TierGlyph) tlg.getInfo();
-					ITrackStyleExtended style = tier.getAnnotStyle();
-
-					if (style != null) {
-						if (fg) {
-							style.setForeground(chooser.getColor());
-						} else {
-							style.setBackground(chooser.getColor());
-						}
-					}
-					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-						if (fg) {
-							gg.setColor(chooser.getColor());
-							gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
-						} else {
-							gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
-						}
-					}
-				}
-			}
-		};
-
-		JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
-				"Pick a Color",
-				true, //modal
-				chooser,
-				al, //OK button handler
-				null); //no CANCEL button handler
-		dialog.setVisible(true);
-
-		refreshMap(false, false);
-	}
-
 	public void renameTier(final TierGlyph tier) {
 		if (tier == null) {
 			return;
@@ -962,16 +823,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	public void repack(final boolean full_repack) {
-		AbstractAction action = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				handler.repackTheTiers(full_repack, true);
-			}
-		};
-		
-		gviewer.preserveSelectionAndPerformAction(action);
+		repackStub.repack(full_repack);
 	}
 
 	private JMenu addOperationMenu(List<SeqSymmetry> syms) {

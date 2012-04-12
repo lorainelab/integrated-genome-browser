@@ -123,6 +123,8 @@ public class IGBUtils {
 		JRPMenu edit_menu = MenuUtil.getRPMenu(menuBar, id + "_main_editMenu", BUNDLE.getString("editMenu"));
 		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
+		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack",
+				new com.affymetrix.igb.action.ZoomingRepackAction(com.affymetrix.igb.Application.getSingleton().getMapView())));
 	}
 
 	private static void viewMenu(JMenuBar menuBar, String id) {

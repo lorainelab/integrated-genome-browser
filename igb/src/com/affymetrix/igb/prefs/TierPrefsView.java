@@ -61,7 +61,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	public JButton applyDisplayNameButton;
 	public ButtonGroup showStrandButtonGroup;
 	public JLabel applyToAllTip;
-	
+
 	public static synchronized TierPrefsView getSingleton() {
 		if (singleton == null) {
 			singleton = new TierPrefsView();
@@ -114,7 +114,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			refreshButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent evt) {
-					refreshSeqMapView();
+					refreshSeqMapViewAndSlicedView();
 				}
 			});
 
@@ -127,7 +127,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					if (refreshButton != null) {
 						refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
 						if (autoRefreshCheckBox.isSelected()) {
-							refreshSeqMapView();
+							refreshSeqMapViewAndSlicedView();
 						}
 					}
 				}
@@ -176,12 +176,16 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 				default_auto_refresh);
 	}
 
+	public void refreshSeqMapViewAndSlicedView() {
+		refreshSeqMapView();
+
+		AltSpliceView.getSingleton().refreshView();
+	}
+
 	public void refreshSeqMapView() {
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 		}
-
-		AltSpliceView.getSingleton().refreshView();
 	}
 
 	public void refreshList() {
@@ -287,7 +291,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	private void resetValueBySelectedRows() {
 		applyChanged = false;
-		
+
 		displayNameTextField.setText("");
 		displayNameTextField.setEnabled(false);
 
@@ -312,7 +316,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		negativeColorComboBox.setSelectedColor((Color) getValueAt(COL_NEG_STRAND_COLOR));
 
 		viewModeCB.setEnabled(false);
-		
+
 		applyChanged = true;
 	}
 
@@ -619,7 +623,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			SwingUtilities.invokeLater(new Runnable() {
 
 				public void run() {
-					refreshSeqMapView();
+					refreshSeqMapViewAndSlicedView();
 				}
 			});
 		}
@@ -672,7 +676,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 			model.fireTableDataChanged();
 
-			refreshSeqMapView();
+			refreshSeqMapViewAndSlicedView();
 
 			table.setRowSelectionInterval(previousSelectedRows[0], previousSelectedRows[0]);
 		}
@@ -873,7 +877,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 				smv.getSeqMap().updateWidget();
 			} else {
-				refreshSeqMapView();
+				refreshSeqMapViewAndSlicedView();
 			}
 		}
 

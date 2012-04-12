@@ -30,8 +30,8 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -316,7 +316,13 @@ public class AltSpliceView extends IGBTabPanel
 		if (evt.getKey().equals(OrfAnalyzer.PREF_STOP_CODON_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_BACKGROUND_COLOR)) {
-			orf_analyzer.redoOrfs();
+			// Each time changed the color, it would triger this method twice and caused a concurrent modification exception 
+			ThreadUtils.runOnEventQueue(new Runnable() {
+
+				public void run() {
+					orf_analyzer.redoOrfs();
+				}
+			});
 		}
 	}
 

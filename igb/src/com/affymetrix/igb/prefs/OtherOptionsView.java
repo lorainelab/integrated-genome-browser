@@ -413,11 +413,11 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void showCollapseOptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCollapseOptionCheckBoxActionPerformed
@@ -425,23 +425,23 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 	}//GEN-LAST:event_showCollapseOptionCheckBoxActionPerformed
 
 	private void AColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_AColorComboBoxActionPerformed
 
 	private void TColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_TColorComboBoxActionPerformed
 
 	private void GColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_GColorComboBoxActionPerformed
 
 	private void CColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_CColorComboBoxActionPerformed
 
 	private void OtherColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OtherColorComboBoxActionPerformed
-		TierPrefsView.getSingleton().refreshSeqMapView();
+		TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_OtherColorComboBoxActionPerformed
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged

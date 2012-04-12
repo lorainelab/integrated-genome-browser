@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
@@ -592,7 +593,15 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private String getViewModeDisplayName(String mode) {
-		return MapViewModeHolder.getInstance().getViewFactory(mode).getDisplayName();
+		String displayName = null;
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(mode);
+		if (factory == null) {
+			displayName = mode;
+		}
+		else {
+			displayName = factory.getDisplayName();
+		}
+		return displayName;
 	}
 
 	private void resetLabelField(TrackStyle style) {

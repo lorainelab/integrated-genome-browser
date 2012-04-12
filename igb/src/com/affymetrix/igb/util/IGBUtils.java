@@ -5,6 +5,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.ReportBugAction;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.InfoLabel;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -30,6 +31,7 @@ import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.PrintAction;
 import com.affymetrix.igb.action.PrintFrameAction;
 import com.affymetrix.igb.action.RequestFeatureAction;
+import com.affymetrix.igb.action.SelectAllAction;
 import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMixedStrandAction;
@@ -125,6 +127,14 @@ public class IGBUtils {
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack",
 				new com.affymetrix.igb.action.ZoomingRepackAction(com.affymetrix.igb.Application.getSingleton().getMapView())));
+		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", "Select");
+		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
+//		for (FileTypeCategory category : FileTypeCategory.values()) {
+//			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));
+//			item.setText(SelectAllAction.getAction(category).getText() + " " + category.toString());
+//			select_menu.add(item);
+//		}
+		edit_menu.add(select_menu);
 	}
 
 	private static void viewMenu(JMenuBar menuBar, String id) {

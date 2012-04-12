@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
 
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.osgi.framework.BundleActivator;
@@ -30,6 +29,10 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.action.ChangeBackgroundColorAction;
+import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.RepackAllTiersAction;
+import com.affymetrix.igb.action.RepackSelectedTiersAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -279,8 +282,19 @@ public class Activator implements BundleActivator {
 			null
 		);
 		initMapViewGlyphFactorys();
+		initSeqMapViewActions();
 	}
 
+	/**
+	 * call getAction on all subclasses of SeqMapViewActionA so that they appear in
+	 * the toolbar, must be done after SeqMapView is created and assigned to IGB.map_view
+	 */
+	private void initSeqMapViewActions() {
+		RepackSelectedTiersAction.getAction();
+		RepackAllTiersAction.getAction();
+		ChangeForegroundColorAction.getAction();
+		ChangeBackgroundColorAction.getAction();
+	}
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);

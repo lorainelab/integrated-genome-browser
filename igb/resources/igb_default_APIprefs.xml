@@ -68,6 +68,10 @@
                             <entry key="Preferences Window / Import" value=""/>
                             <entry key="Refresh Data" value="ctrl R"/>
                             <entry key="Next Search Span" value="ctrl X"/>
+                            <entry key="Repack Selected Tracks" value=""/>
+                            <entry key="Optimize All Tracks" value=""/>
+                            <entry key="Change FG Color" value=""/>
+                            <entry key="Change BG Color" value=""/>
                         </map>
                     </node>
                     <node name="toolbar">
@@ -75,6 +79,10 @@
                             <entry key="Open URL" value="true"/>
                             <entry key="Open file" value="true"/>
                             <entry key="Export Image" value="true"/>
+                            <entry key="Repack Selected Tracks" value="true"/>
+                            <entry key="Optimize All Tracks" value="true"/>
+                            <entry key="Change FG Color" value="true"/>
+                            <entry key="Change BG Color" value="true"/>
                         </map>
                     </node>
                 </node>

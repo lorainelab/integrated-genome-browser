@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.*;
@@ -391,7 +392,7 @@ public class SeqMapView extends JPanel
 		
 		yzoombox = Box.createVerticalBox();
 		yzoombox.add((Component) yzoomer);
-		yzoombox.add((Component) specialZoomer);
+		yzoombox.add(specialZoomer);
 		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
 			this.add(BorderLayout.WEST, yzoombox);
@@ -449,7 +450,7 @@ public class SeqMapView extends JPanel
 				int max = getMaximum();
 				int trackLength = this.getWidth();
 				double valueRange = (double) max - (double) min;
-				double pixelsPerValue = (double) trackLength / valueRange;
+				double pixelsPerValue = trackLength / valueRange;
 
 				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
 			}
@@ -1691,7 +1692,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
-		return setUpMenuItem((Container) menu, action_command, action_listener);
+		return setUpMenuItem(menu, action_command, action_listener);
 	}
 
 	public final SeqMapViewMouseListener getMouseListener() {
@@ -1712,7 +1713,7 @@ public class SeqMapView extends JPanel
 		JMenuItem mi = new JMenuItem(action_command);
 		// Setting accelerator via the MenuUtil.addAccelerator makes it also
 		// work when the pop-up menu isn't visible.
-		KeyStroke ks = MenuUtil.addAccelerator((JComponent) this,
+		KeyStroke ks = MenuUtil.addAccelerator(this,
 				al, action_command);
 		if (ks != null) {
 			// Make the accelerator be visible in the menu item.
@@ -1987,6 +1988,28 @@ public class SeqMapView extends JPanel
 		popup_listeners.add(listener);
 	}
 
+	private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory category) {
+		return rootSeqSymmetry.getCategory() == category || category == null;
+	}
+
+	public void selectAll(FileTypeCategory category) {
+		GlyphI root = seqmap.getScene().getGlyph();
+		int max = root.getChildCount();
+		for (int i = 0; i < max; i++) {
+			GlyphI child = root.getChild(i);
+			if (child.isVisible() &&
+				child instanceof TierGlyph &&
+				((TierGlyph)child).getViewModeGlyph().getInfo() != null &&
+				matchesCategory((RootSeqSymmetry)((TierGlyph)child).getViewModeGlyph().getInfo(), category)) {
+				seqmap.select(child);
+			}
+			else {
+				seqmap.deselect(child);
+			}
+		}
+		seqmap.updateWidget();
+	}
+
 	/** Recurse through glyphs and collect those that are instances of GraphGlyph. */
 	final List<GlyphI> collectGraphs() {
 		List<GlyphI> graphs = new ArrayList<GlyphI>();
@@ -2001,7 +2024,7 @@ public class SeqMapView extends JPanel
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
 			if (child instanceof TierGlyph && ((TierGlyph)child).getViewModeGlyph() instanceof AbstractGraphGlyph) {
-				graphs.add((AbstractGraphGlyph) ((TierGlyph)child).getViewModeGlyph());
+				graphs.add(((TierGlyph)child).getViewModeGlyph());
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);
@@ -2307,7 +2330,7 @@ public class SeqMapView extends JPanel
 		for (GlyphI glyph : getSeqMap().getSelected()) {
 
 			if (glyph.getInfo() instanceof SeqSymmetry
-					&& selected_syms.contains((SeqSymmetry) glyph.getInfo())) {
+					&& selected_syms.contains(glyph.getInfo())) {
 				continue;
 			}
 

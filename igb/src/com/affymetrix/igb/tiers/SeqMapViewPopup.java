@@ -59,10 +59,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final ActionToggler at2;
 //  private final ActionToggler at3;
 	private final RepackTiersAction repackStub;
-	private final Action repack_selected_tracks_action;
-	private final Action repack_all_tracks_action;
-	private final Action change_color_action;
-	private final Action change_bg_color_action;
 	private final Action save_track_action = ExportFileAction.getAction();
 	private final Action save_selected_annotations_action = ExportSelectedAnnotationFileAction.getAction();
 	private final Action rename_action = new GenericAction() {
@@ -460,10 +456,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			private static final long serialVersionUID = 1L;
 			@Override public String getText() { return null; }
 		};
-		repack_selected_tracks_action = new RepackSelectedTiersAction(gviewer);
-		repack_all_tracks_action = new RepackAllTiersAction(gviewer);
-		change_color_action = new ChangeForegroundColorAction(gviewer);
-		change_bg_color_action = new ChangeBackgroundColorAction(gviewer);
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
@@ -880,8 +872,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		delete_action.setEnabled(num_selections > 0);
 		show_all_action.setEnabled(containHiddenTiers());
 
-		change_color_action.setEnabled(num_selections > 0);
-		change_bg_color_action.setEnabled(num_selections > 0);
+		ChangeForegroundColorAction.getAction().setEnabled(num_selections > 0);
+		ChangeBackgroundColorAction.getAction().setEnabled(num_selections > 0);
 		change_font_size_action.setEnabled(num_selections > 0);
 		rename_action.setEnabled(num_selections == 1);
 
@@ -899,7 +891,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
-		this.repack_selected_tracks_action.setEnabled(0 < this.handler.getSelectedTierLabels().size());
+		RepackSelectedTiersAction.getAction().setEnabled(0 < this.handler.getSelectedTierLabels().size());
 
 		viewModeMenu.removeAll();
 		transformMenu.removeAll();
@@ -993,8 +985,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				save_track_action.setEnabled(false);
 				strandsMenu.setEnabled(false);
-				repack_selected_tracks_action.setEnabled(false);
-				repack_all_tracks_action.setEnabled(false);
+				RepackSelectedTiersAction.getAction().setEnabled(false);
+				RepackAllTiersAction.getAction().setEnabled(false);
 				delete_action.setEnabled(false);
 				show_two_tiers.setEnabled(false);
 				color_by_score_on_action.setEnabled(false);
@@ -1003,8 +995,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 
 		changeMenu.removeAll();
-		changeMenu.add(change_color_action);
-		changeMenu.add(change_bg_color_action);
+		changeMenu.add(ChangeForegroundColorAction.getAction());
+		changeMenu.add(ChangeBackgroundColorAction.getAction());
 		changeMenu.add(rename_action);
 		changeMenu.add(change_font_size_action);
 		changeMenu.add(change_expand_max_action);
@@ -1080,8 +1072,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		popup.add(summaryMenu);
 		popup.add(new JSeparator());
 		popup.add(delete_action); // Remove data from selected tracks.
-		popup.add(this.repack_selected_tracks_action);
-		popup.add(this.repack_all_tracks_action);
+		popup.add(RepackSelectedTiersAction.getAction());
+		popup.add(RepackAllTiersAction.getAction());
 
 //	strandsMenu.add(at3);
 

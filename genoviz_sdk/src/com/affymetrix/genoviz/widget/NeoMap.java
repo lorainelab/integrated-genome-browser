@@ -1550,18 +1550,29 @@ public class NeoMap extends NeoWidget implements
 		}
 		if (range_listeners.size() > 0) {
 			Rectangle2D.Double vbox = e.getCoordBox();
-			NeoRangeEvent nevt = null;
+			Rectangle2D.Double pvbox = e.getPrevCoordBox();
+			
+			NeoRangeEvent nevt;
 			if (orient == NeoConstants.VERTICAL) {
+				// If previous y and previous height has not changed then, 
+				// range is not changing. It means only offset has changed. 
+				// In such a situation do not fire NeoRangeEvent.
+				if(vbox.y == pvbox.y && vbox.height == pvbox.height){
+					return;
+				}
 				nevt = new NeoRangeEvent(this, vbox.y, vbox.y + vbox.height);
 			} else {
+				// If previous x and previous width has not changed then, 
+				// range is not changing. It means only offset has changed. 
+				// In such a situation do not fire NeoRangeEvent.
+				if(vbox.x == pvbox.x && vbox.width == pvbox.width){
+					return;
+				}
 				nevt = new NeoRangeEvent(this, vbox.x, vbox.x + vbox.width);
 			}
 
 			for (NeoRangeListener l : this.range_listeners) {
 				l.rangeChanged(nevt);
-				// currently range events are generated for _any_ viewbox change
-				//    event, so sometimes the range may not actually have changed,
-				//    might be only "offset" that is changing
 			}
 		}
 	}

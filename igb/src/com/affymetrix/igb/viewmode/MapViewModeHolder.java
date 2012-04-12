@@ -76,19 +76,18 @@ public class MapViewModeHolder {
 		}
 	}
 
-	public Object[] getAllViewModesFor(FileTypeCategory category, String uri) {
-		List<Object> mode = new ArrayList<Object>(view2Factory.size());
+	public List<MapViewGlyphFactoryI> getAllViewModesFor(FileTypeCategory category, String uri) {
+		List<MapViewGlyphFactoryI> modes = new ArrayList<MapViewGlyphFactoryI>(view2Factory.size());
 
 		for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 			MapViewGlyphFactoryI emv = entry.getValue();
 			if (emv.isCategorySupported(category) && emv.isURISupported(uri)) {
-				mode.add(entry.getKey());
+				modes.add(emv);
 			}
 
 		}
 
-		return mode.toArray(new Object[0]);
-
+		return modes;
 	}
 
 	public MapViewGlyphFactoryI getDefaultFactory() {

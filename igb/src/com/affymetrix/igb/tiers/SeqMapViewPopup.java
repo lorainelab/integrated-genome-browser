@@ -928,26 +928,26 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 				Map<String, Action> actions = new HashMap<String, Action>();
 				final boolean isSeparate = style.getSeparate();
-				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
+				for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
 						@Override
 						public void actionPerformed(ActionEvent ae) {
-							if (isSeparate && ! MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
+							if (isSeparate && ! mode.supportsTwoTrack()) {
 								setTwoTiers(handler.getSelectedTierLabels(), false);
 							}
 							ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph)glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, comboStyle, mode.toString());
+							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, comboStyle, mode.getName());
 							refreshMap(false, false);
 						}
 
 						@Override
 						public String getText() {
-							return MapViewModeHolder.getInstance().getViewFactory(mode.toString()).getDisplayName();
+							return mode.getDisplayName();
 						}
 					};
-					actions.put(mode.toString(), action);
+					actions.put(mode.getName(), action);
 					viewModeMenu.add(new JCheckBoxMenuItem(action));
 				}
 

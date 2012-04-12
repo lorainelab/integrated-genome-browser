@@ -576,32 +576,20 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	private void resetViewModeCB(TrackStyle style) {
 		viewModeCB.removeAllItems();
 
-		for (final Object mode :
-				MapViewModeHolder.getInstance().getAllViewModesFor(
-				style.getFileTypeCategory(),
-				style.getMethodName())) {
+		for (final MapViewGlyphFactoryI mode :
+				MapViewModeHolder.getInstance().getAllViewModesFor(style.getFileTypeCategory(), style.getMethodName())) {
 
-			if (style.getSeparate()
-					&& !MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
-				continue;
-			}
+//			if (style.getSeparate()
+//					&& !mode.supportsTwoTrack()) {
+//				continue;
+//			}
 
-			viewModeCB.addItem(getViewModeDisplayName(mode.toString()));
+			viewModeCB.addItem(mode.getDisplayName());
 		}
 
-		viewModeCB.setSelectedItem(getViewModeDisplayName(style.getViewMode()));
-	}
-
-	private String getViewModeDisplayName(String mode) {
-		String displayName = null;
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getViewFactory(mode);
-		if (factory == null) {
-			displayName = mode;
+		if(MapViewModeHolder.getInstance().getViewFactory(style.getViewMode()) != null){
+			viewModeCB.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(style.getViewMode()).getDisplayName());
 		}
-		else {
-			displayName = factory.getDisplayName();
-		}
-		return displayName;
 	}
 
 	private void resetLabelField(TrackStyle style) {

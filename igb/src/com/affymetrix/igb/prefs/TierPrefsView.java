@@ -550,8 +550,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 	}
 
 	private void setEnabledByAxisOrGraph(TrackStyle style) {
-		viewModeCB.removeAllItems();
-
 		if (style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
 				|| style.isGraphTier()) {
 			if (!style.isGraphTier()) {
@@ -568,19 +566,33 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			negativeColorComboBox.setEnabled(false);
 			show2TracksCheckBox.setEnabled(false);
 		} else {
-			viewModeCB.setModel(new DefaultComboBoxModel(
-					MapViewModeHolder.getInstance().getAllViewModesFor(
-					style.getFileTypeCategory(), null)));
-
-			String view_mode = style.getViewMode();
-			if (view_mode == null) {
-				viewModeCB.setSelectedIndex(0);
-			} else {
-				viewModeCB.setSelectedItem(view_mode);
-			}
+			resetViewModeCB(style);
 
 			resetLabelField(style);
 		}
+	}
+
+	private void resetViewModeCB(TrackStyle style) {
+		viewModeCB.removeAllItems();
+
+		for (final Object mode :
+				MapViewModeHolder.getInstance().getAllViewModesFor(
+				style.getFileTypeCategory(),
+				style.getMethodName())) {
+
+			if (style.getSeparate()
+					&& !MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
+				continue;
+			}
+
+			viewModeCB.addItem(getViewModeDisplayName(mode.toString()));
+		}
+
+		viewModeCB.setSelectedItem(getViewModeDisplayName(style.getViewMode()));
+	}
+
+	private String getViewModeDisplayName(String mode) {
+		return MapViewModeHolder.getInstance().getViewFactory(mode).getDisplayName();
 	}
 
 	private void resetLabelField(TrackStyle style) {

@@ -460,6 +460,7 @@ public final class GeneralLoadView {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
+				table.stopCellEditing();
 				tableModel.createVirtualFeatures(visibleFeatures);
 			}
 		});

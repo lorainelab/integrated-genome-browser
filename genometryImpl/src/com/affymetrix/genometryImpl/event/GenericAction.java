@@ -86,4 +86,12 @@ public abstract class GenericAction extends AbstractAction {
 	public Object getExtraInfo() {
 		return null;
 	}
+
+	/**
+	 * make final, see http://stackoverflow.com/questions/3404301/whats-wrong-with-overridable-method-calls-in-constructors
+	 */
+	@Override
+	public final void putValue(String key, Object newValue) {
+		super.putValue(key, newValue);
+	}
 }

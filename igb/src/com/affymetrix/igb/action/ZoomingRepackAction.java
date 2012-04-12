@@ -86,4 +86,8 @@ public class ZoomingRepackAction extends GenericAction {
 		return "Optimize All Tracks";
 	}
 
+	@Override
+	public String getIconPath() {
+		return "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif";
+	}
 }

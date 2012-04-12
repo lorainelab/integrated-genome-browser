@@ -321,6 +321,9 @@ public class GraphSym extends RootSeqSymmetry {
 		if (i < bufStart || i >= bufStart + BUFSIZE) {
 			readIntoBuffers(i);
 		}
+		if (wBuf == null) {
+			return 0;
+		}
 		return wBuf[i - bufStart];
 	}
 

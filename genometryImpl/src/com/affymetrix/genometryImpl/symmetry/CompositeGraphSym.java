@@ -58,7 +58,7 @@ public final class CompositeGraphSym extends GraphSym {
 		float[] new_ycoords = copyFloatCoords(coordSize, sliceSize, slice_index, old_ycoords, slice_ycoords);
 
 		int[] old_wcoords = this.getGraphWidthCoords();	// may be null
-		int[] new_wcoords = copyIntCoords(coordSize, sliceSize, slice_index, old_wcoords, slice_wcoords);
+		int[] new_wcoords = (old_wcoords == null) ? null : copyIntCoords(coordSize, sliceSize, slice_index, old_wcoords, slice_wcoords);
 
 		setCoords(new_xcoords, new_ycoords, new_wcoords);
 	}

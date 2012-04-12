@@ -17,13 +17,15 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
 	// glyph class
-	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph {
+	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements NeoViewBoxListener {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph;
 		
@@ -42,13 +44,20 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected abstract ViewModeGlyph getDefaultGlyph();
 
 		@Override
+		public void viewBoxChanged(final NeoViewBoxChangeEvent e){
+			if(e.getSource() instanceof ViewI){
+				lastUsedGlyph = getGlyph((ViewI)e.getSource());
+			}
+		}
+				
+		@Override
 		public void setStyle(ITrackStyleExtended style){
 			super.setStyle(style);
 			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
 				vmg.setStyle(style);
 			}
 		}
-		
+
 		@Override
 		public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
 			super.processParentCoordBox(parentCoordBox);
@@ -68,7 +77,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
 		@Override
 		public void setPreferredHeight(double height, ViewI view) {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.setPreferredHeight(height, view);
 		}
 
@@ -135,7 +143,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public Rectangle getPixelBox(ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.getPixelBox(view);
 		}
 		@Override
@@ -152,22 +159,18 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.getGlobalChildTransform(view, trans);
 		}
 		@Override
 		public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.getGlobalTransform(view, trans);
 		}
 		@Override
 		public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.hit(pixel_hitbox, view);
 		}
 		@Override
 		public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.hit(coord_hitbox, view);
 		}
 		@Override
@@ -180,7 +183,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.intersects(rect, view);
 		}
 		@Override
@@ -197,7 +199,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public boolean withinView(ViewI view) {
-			lastUsedGlyph = getGlyph(view);
 			return lastUsedGlyph.withinView(view);
 		}
 		@Override
@@ -226,7 +227,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public void calcPixels (ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.calcPixels(view);
 		}
 		@Override
@@ -235,22 +235,18 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public void draw(ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.draw(view);
 		}
 		@Override
 		public void drawSelected(ViewI view) {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.drawSelected(view);
 		}
 		@Override
 		public void drawTraversal(ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.drawTraversal(view);
 		}
 		@Override
 		public void getChildTransform(ViewI view, LinearTransform trans) {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.getChildTransform(view, trans);
 		}
 		@Override
@@ -272,14 +268,12 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		@Override
 		public void pack(ViewI view) {
-			lastUsedGlyph = getGlyph(view);
 			for(ViewModeGlyph vmg : viewModeGlyphs.values()){
 				vmg.pack(view);
 			}
 		}
 		@Override
 		public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
-			lastUsedGlyph = getGlyph(view);
 			lastUsedGlyph.pickTraversal(pickRect, pickList, view);
 		}
 		@Override

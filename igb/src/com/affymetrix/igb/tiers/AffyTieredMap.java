@@ -16,6 +16,8 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -494,6 +496,16 @@ public class AffyTieredMap extends NeoMap {
 		packTiers(false, true, false);
 	}
 
+	@Override
+	public void viewBoxChanged(final NeoViewBoxChangeEvent e){
+		super.viewBoxChanged(e);
+		for(TierGlyph tier : tiers){
+			if(tier.getViewModeGlyph() instanceof NeoViewBoxListener){
+				((NeoViewBoxListener)tier.getViewModeGlyph()).viewBoxChanged(e);
+			}
+		}
+	}
+	
 	/** Prints this component with dialogue box. */
  	public void print() throws PrinterException {
 		print(PageFormat.LANDSCAPE, false);

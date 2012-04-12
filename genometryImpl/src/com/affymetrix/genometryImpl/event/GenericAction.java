@@ -24,6 +24,12 @@ public abstract class GenericAction extends AbstractAction {
 	public GenericAction() {
 		super();
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
+			_setProperties();
+	}
+	private void _setProperties() {
+		setProperties();
+	}
+	protected void setProperties() {
 		putValue(Action.NAME, getText() + (isPopup() ? ("" + POPUP_DIALOG) : ""));
 		if (getIconPath() != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());

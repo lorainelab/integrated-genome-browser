@@ -926,7 +926,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			if (glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
-				Map<String, Action> actions = new HashMap<String, Action>();
 				final boolean isSeparate = style.getSeparate();
 				for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
 					Action action = new GenericAction() {
@@ -947,21 +946,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 							return mode.getDisplayName();
 						}
 					};
-					actions.put(mode.getName(), action);
-					viewModeMenu.add(new JCheckBoxMenuItem(action));
-				}
-
-				if (actions.size() > 0) {
-					Action action = actions.get(style.getViewMode());
-					if (action != null) {
+					if(mode.getName().equals(style.getViewMode())){
 						action.putValue(Action.SELECTED_KEY, true);
 					}
-					viewModeMenu.setEnabled(true);
-
+					viewModeMenu.add(new JCheckBoxMenuItem(action));
 				}
-
+				viewModeMenu.setEnabled(viewModeMenu.getMenuComponentCount() > 0);
+				
 				if (style instanceof TrackStyle) {
-					Map<String, Action> transform_actions = new HashMap<String, Action>();
 					for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
 						Action action = new GenericAction() {
 
@@ -980,17 +972,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 								return operator == null ? transform.toString() : operator.getDisplay();
 							}
 						};
-						transform_actions.put(transform.toString(), action);
-						transformMenu.add(new JCheckBoxMenuItem(action));
-					}
-
-					if (transform_actions.size() > 0) {
-						Action action = transform_actions.get(style.getOperator());
-						if (action != null) {
+						if(transform.toString().equals(style.getOperator())){
 							action.putValue(Action.SELECTED_KEY, true);
 						}
-						transformMenu.setEnabled(true);
+						transformMenu.add(new JCheckBoxMenuItem(action));
 					}
+					transformMenu.setEnabled(transformMenu.getMenuComponentCount() > 0);
 				}
 
 			}

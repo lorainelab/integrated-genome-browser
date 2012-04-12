@@ -10,6 +10,7 @@
  */
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -18,7 +19,6 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 /**
@@ -28,13 +28,9 @@ import javax.swing.Action;
  * i.e. You may need to scroll afterward.
  * Instead of changing the glyph sizes to fit the panel,
  * this keeps glyph sizes constant.
- * 
- * <p>This does not yet extend IGB's GenericAction.
- * When it does remove this paragraph.
- * </p>
  * @author Eric Blossom
  */
-public class ZoomingRepackAction extends AbstractAction {
+public class ZoomingRepackAction extends GenericAction {
 
 	private final SeqMapView gviewer;
 
@@ -42,7 +38,7 @@ public class ZoomingRepackAction extends AbstractAction {
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction(SeqMapView theSubject) {
-		super("Optimize All Tracks");
+		super();
 		putValue(Action.SHORT_DESCRIPTION, "Optimize track stack heights for the region in view.");
 		this.gviewer = theSubject;
 	}
@@ -83,6 +79,11 @@ public class ZoomingRepackAction extends AbstractAction {
 		gviewer.getSeqMap().updateWidget();
 		// Full update doesn't seem to happen.
 		// Or, rather, it happens when the user clicks on the map.
+	}
+
+	@Override
+	public String getText() {
+		return "Optimize All Tracks";
 	}
 
 }

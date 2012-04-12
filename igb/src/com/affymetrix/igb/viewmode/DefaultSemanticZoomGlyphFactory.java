@@ -51,6 +51,11 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
+	public boolean supportsTwoTrack() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
 		return "semantic_zoom_" + detailGlyphFactory.getName();
 	}

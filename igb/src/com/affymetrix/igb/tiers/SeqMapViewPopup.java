@@ -844,7 +844,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	@Override
-	public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
+	public void popupNotify(javax.swing.JPopupMenu popup, final TierLabelManager handler) {
 		final List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selections = labels.size();
 		boolean not_empty = !handler.getAllTierLabels().isEmpty();
@@ -927,16 +927,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 
 				Map<String, Action> actions = new HashMap<String, Action>();
-				boolean isSeparate = style.getSeparate();
+				final boolean isSeparate = style.getSeparate();
 				for (final Object mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-					if (isSeparate && ! MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
-						continue;
-					}
 					Action action = new GenericAction() {
 						private static final long serialVersionUID = 1L;
 
 						@Override
 						public void actionPerformed(ActionEvent ae) {
+							if (isSeparate && ! MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(mode.toString())) {
+								setTwoTiers(handler.getSelectedTierLabels(), false);
+							}
 							ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph)glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
 							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, comboStyle, mode.toString());
 							refreshMap(false, false);

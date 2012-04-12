@@ -29,6 +29,7 @@ public class NeoViewBoxChangeEvent extends EventObject  {
 	public final static int ADJUSTMENT = 30000;
 
 	protected Rectangle2D.Double currentCoordBox;
+	protected Rectangle2D.Double previousCoordBox;
 	protected int id;
 	boolean predraw;
 
@@ -38,15 +39,16 @@ public class NeoViewBoxChangeEvent extends EventObject  {
 	 * @param currentCoordBox the bounding box of the new visible coordinate
 	 *    area of the widget
 	 */
-	public NeoViewBoxChangeEvent(Object source, Rectangle2D.Double currentCoordBox) {
-		this(source, currentCoordBox, false);
+	public NeoViewBoxChangeEvent(Object source, Rectangle2D.Double currentCoordBox, Rectangle2D.Double previousCoordBox) {
+		this(source, currentCoordBox, previousCoordBox, false);
 	}
 
-	public NeoViewBoxChangeEvent(Object source, Rectangle2D.Double currentCoordBox,
+	public NeoViewBoxChangeEvent(Object source, Rectangle2D.Double currentCoordBox, Rectangle2D.Double previousCoordBox,
 			boolean predraw) {
 		super(source);
 		id = ADJUSTMENT;
 		this.currentCoordBox = currentCoordBox;
+		this.previousCoordBox = previousCoordBox;
 		this.predraw = predraw;
 	}
 
@@ -55,6 +57,13 @@ public class NeoViewBoxChangeEvent extends EventObject  {
 	 */
 	public Rectangle2D.Double getCoordBox() {
 		return currentCoordBox;
+	}
+
+	/**
+	* @return the bounding box of the previous visible coordinate area.
+	*/
+	public Rectangle2D.Double getPrevCoordBox() {
+		return previousCoordBox;
 	}
 
 	/**

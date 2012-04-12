@@ -329,10 +329,12 @@ public class View implements ViewI, NeoPaintListener,
 		if (!(coordbox.equals(prevCoordBox))) {
 			// need to change this to a more general ViewBoxChange event...
 			if (predraw_viewbox_listeners.size() > 0) {
+				Rectangle2D.Double oldbox = new Rectangle2D.Double(prevCoordBox.x, prevCoordBox.y,
+						prevCoordBox.width, prevCoordBox.height);
 				Rectangle2D.Double newbox = new Rectangle2D.Double(coordbox.x, coordbox.y,
 						coordbox.width, coordbox.height);
 				NeoViewBoxChangeEvent nevt =
-						new NeoViewBoxChangeEvent(this, newbox, true);
+						new NeoViewBoxChangeEvent(this, newbox, oldbox, true);
 				for (NeoViewBoxListener listener : predraw_viewbox_listeners) {
 					listener.viewBoxChanged(nevt);
 				}
@@ -383,10 +385,12 @@ public class View implements ViewI, NeoPaintListener,
 		if (!(coordbox.equals(prevCoordBox))) {
 			// need to change this to a more general ViewBoxChange event...
 			if (viewbox_listeners.size() > 0) {
+				Rectangle2D.Double oldbox = new Rectangle2D.Double(prevCoordBox.x, prevCoordBox.y,
+						prevCoordBox.width, prevCoordBox.height);
 				Rectangle2D.Double newbox = new Rectangle2D.Double(coordbox.x, coordbox.y,
 						coordbox.width, coordbox.height);
 				NeoViewBoxChangeEvent nevt =
-						new NeoViewBoxChangeEvent(this, newbox, false);
+						new NeoViewBoxChangeEvent(this, newbox, oldbox, false);
 
 				for (NeoViewBoxListener l : viewbox_listeners) {
 					l.viewBoxChanged(nevt);

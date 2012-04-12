@@ -1542,7 +1542,7 @@ public class NeoMap extends NeoWidget implements
 	public void viewBoxChanged(NeoViewBoxChangeEvent e) {
 		if (viewbox_listeners.size() > 0) {
 			NeoViewBoxChangeEvent vevt =
-					new NeoViewBoxChangeEvent(this, e.getCoordBox());
+					new NeoViewBoxChangeEvent(this, e.getCoordBox(), e.getPrevCoordBox());
 
 			for (NeoViewBoxListener l : viewbox_listeners) {
 				l.viewBoxChanged(vevt);

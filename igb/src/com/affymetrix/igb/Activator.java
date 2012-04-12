@@ -366,7 +366,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(MapViewGlyphFactoryI.class, new TbiSemanticZoomGlyphFactory(annotationGlyphFactory, stairStepGraphGlyphFactory), null);
 
 		// Add Default factories
-		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationSemanticZoomGlyphFactory);
+		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, alignmentSemanticZoomGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
 		MapViewModeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, stairStepGraphGlyphFactory);

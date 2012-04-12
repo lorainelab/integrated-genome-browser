@@ -64,14 +64,10 @@ public class TrackView {
 	private static final Map<ITrackStyleExtended, TierGlyph> gstyle2track = new HashMap<ITrackStyleExtended, TierGlyph>();
 
 
-	/**List of Dependent data */
-	private static final Map<BioSeq, List<DependentData>> dependent_list = new HashMap<BioSeq, List<DependentData>>();
-
 	void clear() {
 		style2forwardTierGlyph.clear();
 		style2reverseTierGlyph.clear();
 		gstyle2track.clear();
-		dependent_list.clear();
 	}
 
 	public TierGlyph getTier(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
@@ -167,18 +163,6 @@ public class TrackView {
 	}
 
 	void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
-		List<DependentData> dd_list = dependent_list.get(seq);
-		if (dd_list != null) {
-			for (DependentData d : dd_list) {
-				SymWithProps sym = d.getSym();
-				if (sym != null) {
-					addAnnotationGlyphs(smv, sym);
-					// TODO: reimplement middleground shading in a generic fashion
-					doMiddlegroundShading(smv, sym, seq);
-				}
-			}
-		}
-		
 		for(GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()){
 			addEmptyTierFor(feature, smv, false);
 		}
@@ -326,34 +310,6 @@ public class TrackView {
 		}
 	}
 
-	public SymWithProps addToDependentList(DependentData dd){
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if(seq == null)
-			return null;
-
-		List<DependentData> dd_list = dependent_list.get(seq);
-		if(dd_list == null){
-			dd_list = new ArrayList<DependentData>();
-			dependent_list.put(seq, dd_list);
-		}
-		
-		dd_list.add(dd);
-		return dd.createTier(seq);
-	}
-
-	public void updateDependentData() {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if (seq == null)
-			return;
-		
-		List<DependentData> dd_list = dependent_list.get(seq);
-		if(dd_list == null)
-			return;
-		
-		for (DependentData dd : dd_list)
-			dd.createTier(seq);
-	}
-
 	public void delete(AffyTieredMap map, String method, ITrackStyleExtended style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();
@@ -364,7 +320,6 @@ public class TrackView {
 			return;
 		}
 
-		deleteDependentData(map, method, seq);
 		deleteSymsOnSeq(map, method, seq, feature);
 	}
 	
@@ -391,33 +346,6 @@ public class TrackView {
 		}
 	}
 	
-	public void deleteDependentData(AffyTieredMap map, String method, BioSeq seq) {
-		DependentData dd = null;
-		List<DependentData> dd_list = dependent_list.get(seq);
-		if(dd_list == null)
-			return;
-		
-		List<DependentData> remove_list = new ArrayList<DependentData>();
-		for (int i = 0; i < dd_list.size(); i++) {
-			dd = dd_list.get(i);
-			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
-					|| method.equals(dd.getID())) {
-				remove_list.add(dd);
-//				GlyphI glyph = map.getItem(dd.getSym());
-//				if(glyph != null){
-//					map.removeItem(glyph);
-//				}
-//				seq.unloadAnnotation(dd.getSym());
-			}
-		}
-		
-		for(DependentData r : remove_list){
-			dd_list.remove(r);
-		}
-		
-		remove_list.clear();
-	}
-
 	public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer, boolean setViewMode) {
 
 		// No sequence selected or if it is cytoband or it is residue file. Then return

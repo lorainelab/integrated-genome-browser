@@ -150,7 +150,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void updateDependentData() {
-		TrackView.getInstance().updateDependentData();
+		
 	}
 
 	@Override

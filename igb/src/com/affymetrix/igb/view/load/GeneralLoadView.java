@@ -406,7 +406,6 @@ public final class GeneralLoadView {
 							}
 
 							((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
-							TrackView.getInstance().updateDependentData();
 
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -652,7 +651,6 @@ public final class GeneralLoadView {
 				if (!feature.getMethods().isEmpty()) {
 					for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
 						for (String method : feature.getMethods()) {
-							TrackView.getInstance().deleteDependentData(gviewer.getSeqMap(), method, bioseq);
 							TrackView.getInstance().deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq, feature);
 						}
 					}

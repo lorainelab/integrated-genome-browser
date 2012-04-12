@@ -750,9 +750,7 @@ public final class GeneralLoadUtils {
 			@Override
 			protected Boolean runInBackground() {
 				try {
-					boolean result = loadFeaturesForSym(feature, optimized_sym);
-					TrackView.getInstance().updateDependentData();
-					return result;
+					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1389,7 +1387,6 @@ public final class GeneralLoadUtils {
 			protected Object runInBackground() {
 				try {
 					quickLoad.loadAndAddAllSymmetries(feature);
-					TrackView.getInstance().updateDependentData();
 				} catch (Exception ex) {
 					quickLoad.logException(ex);
 				}

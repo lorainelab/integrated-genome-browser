@@ -149,11 +149,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void updateDependentData() {
-		
-	}
-
-	@Override
 	public void doActions(String batchFileStr) {
 		ScriptFileLoader.runScript(batchFileStr);
 	}

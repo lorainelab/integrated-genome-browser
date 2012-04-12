@@ -157,7 +157,6 @@ public final class UrlLoaderThread extends Thread {
 
 			public void run() {
 				try {
-					igbService.updateDependentData();
 					igbService.getSeqMapView().setAnnotatedSeq(seq, true, true);
 				} catch (Exception e) {
 					handleException(e);

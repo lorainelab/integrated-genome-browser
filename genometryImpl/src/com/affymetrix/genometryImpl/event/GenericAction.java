@@ -24,7 +24,7 @@ public abstract class GenericAction extends AbstractAction {
 	public GenericAction() {
 		super();
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
-			_setProperties();
+		_setProperties();
 	}
 	private void _setProperties() {
 		setProperties();

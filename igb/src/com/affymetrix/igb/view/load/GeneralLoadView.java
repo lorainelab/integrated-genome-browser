@@ -462,6 +462,7 @@ public final class GeneralLoadView {
 			public void run() {
 				table.stopCellEditing();
 				tableModel.createVirtualFeatures(visibleFeatures);
+				DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 

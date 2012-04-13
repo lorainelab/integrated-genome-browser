@@ -10,9 +10,13 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 /**
- * Some sort of specialization of an action just for Affymetrix and IGB.
- * For what purpose is this designed? - elb
- * Mostly to call back when the action is done? - elb
+ * Superclass of all IGB actions.
+ * This is so we can keep track of actions for scripting, shortcuts, etc.
+ * All actions in IGB also need to be added
+ * to a singleton {@link GenericActionHolder}.
+ * This is done via the constructor, a dubious practice.
+ * @see GenericActionDoneCallback
+ * @see GenericActionListener
  */
 public abstract class GenericAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -125,11 +129,4 @@ public abstract class GenericAction extends AbstractAction {
 		}
 	}
 
-	/**
-	 * make final, see http://stackoverflow.com/questions/3404301/whats-wrong-with-overridable-method-calls-in-constructors
-	 */
-	@Override
-	public final void putValue(String key, Object newValue) {
-		super.putValue(key, newValue);
-	}
 }

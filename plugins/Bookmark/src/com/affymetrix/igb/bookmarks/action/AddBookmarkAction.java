@@ -1,7 +1,6 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -21,6 +20,10 @@ import javax.swing.tree.TreePath;
 public class AddBookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
+
+	public AddBookmarkAction() {
+		super(null, "toolbarButtonGraphics/general/Bookmarks16.gif");
+	}
 
 	protected void bookmarkCurrentPosition() {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
@@ -45,7 +48,7 @@ public class AddBookmarkAction extends GenericAction {
 
 	public static void addBookmarkFolder() {
 		BookmarkList bl = new BookmarkList("Folder");
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		DefaultMutableTreeNode node = bl;
 		addNode(node);
 	}
 
@@ -54,14 +57,14 @@ public class AddBookmarkAction extends GenericAction {
 		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
 
 		BookmarkList bl = new BookmarkList(bm);
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		DefaultMutableTreeNode node = bl;
 		addNode(node);
 	}
 
 	public static void addSeparator() {
 		Separator s = new Separator();
 		BookmarkList bl = new BookmarkList(s);
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) bl;
+		DefaultMutableTreeNode node = bl;
 		addNode(node);
 	}
 
@@ -76,24 +79,5 @@ public class AddBookmarkAction extends GenericAction {
 		}
 		BookmarkManagerView.getSingleton().insert(tree, path, new DefaultMutableTreeNode[]{node});
 		BookmarkActionManager.getInstance().rebuildMenus();
-	}
-
-	private String getIdFromName(String name) {
-		String id = "";
-		try {
-			id = "Bookmark_" + URLEncoder.encode("UTF-8", name);
-		} catch (Exception x) {
-		}
-		return id;
-	}
-
-	@Override
-	public String getText() {
-		return null;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Bookmarks16.gif";
 	}
 }

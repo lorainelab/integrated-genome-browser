@@ -15,9 +15,8 @@ public class ImportBookmarkAction extends GenericAction {
 		return ACTION;
 	}
 
-	@Override
-	public String getText() {
-		return BUNDLE.getString("importBookmarks");
+	public ImportBookmarkAction() {
+		super(BUNDLE.getString("importBookmarks"), null, "toolbarButtonGraphics/general/Import16.gif", KeyEvent.VK_I, null);
 	}
 
 	@Override
@@ -27,17 +26,7 @@ public class ImportBookmarkAction extends GenericAction {
 	}
 
 	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_I;
-	}
-
-	@Override
 	public boolean isPopup() {
 		return true;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Import16.gif";
 	}
 }

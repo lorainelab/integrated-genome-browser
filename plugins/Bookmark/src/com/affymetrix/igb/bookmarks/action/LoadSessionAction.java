@@ -21,7 +21,7 @@ public class LoadSessionAction extends GenericAction {
 	private IGBService igbService;
 
 	public LoadSessionAction(IGBService igbService) {
-		super();
+		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null, "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_L, null);
 		this.igbService = igbService;
 	}
 
@@ -48,21 +48,6 @@ public class LoadSessionAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
 			}
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BookmarkManagerView.BUNDLE.getString("loadSession");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_L;
 	}
 
 	@Override

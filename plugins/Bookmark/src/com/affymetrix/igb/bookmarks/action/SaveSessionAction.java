@@ -20,10 +20,11 @@ public class SaveSessionAction extends GenericAction {
 	private IGBService igbService;
 
 	public SaveSessionAction(IGBService igbService) {
-		super();
+		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null, "toolbarButtonGraphics/general/Save16.gif", KeyEvent.VK_S, null);
 		this.igbService = igbService;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		JFileChooser chooser = PreferenceUtils.getJFileChooser();
@@ -43,21 +44,6 @@ public class SaveSessionAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);
 			}
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BookmarkManagerView.BUNDLE.getString("saveSession");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Save16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_S;
 	}
 
 	@Override

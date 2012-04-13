@@ -15,9 +15,8 @@ public class ExportBookmarkAction extends GenericAction {
 		return ACTION;
 	}
 
-	@Override
-	public String getText() {
-		return BUNDLE.getString("exportBookmarks");
+	public ExportBookmarkAction() {
+		super(BUNDLE.getString("exportBookmarks"), null, "toolbarButtonGraphics/general/Export16.gif", KeyEvent.VK_E, null);
 	}
 
 	@Override
@@ -27,17 +26,7 @@ public class ExportBookmarkAction extends GenericAction {
 	}
 
 	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_E;
-	}
-
-	@Override
 	public boolean isPopup() {
 		return true;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Export16.gif";
 	}
 }

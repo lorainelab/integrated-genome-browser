@@ -214,7 +214,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			try {
 				File fil = chooser.getSelectedFile();
 				BookmarksParser.parse(bookmark_list, fil);
-				AddBookmarkAction.addNode((DefaultMutableTreeNode) bookmark_list);
+				AddBookmarkAction.addNode(bookmark_list);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
 			}
@@ -222,10 +222,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	public Action makeImportAction() {
-		Action a = new GenericAction() {
+		Action a = new GenericAction("Import ...", null) {
 
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				BookmarkList bl = new BookmarkList("Import");
@@ -234,11 +235,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 				bl.setComment("Created Time: " + createdTime);
 				importBookmarks(bl, null);
 				//tree_model.reload();
-			}
-
-			@Override
-			public String getText() {
-				return "Import ...";
 			}
 		};
 		return a;
@@ -263,38 +259,30 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	public Action makeExportAction() {
-		Action a = new GenericAction() {
+		Action a = new GenericAction("Export ...", null) {
 
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				BookmarkList bl = (BookmarkList) tree_model.getRoot();
 				exportBookmarks(bl, null); // already contains a null check on bookmark list
-			}
-
-			@Override
-			public String getText() {
-				return "Export ...";
 			}
 		};
 		return a;
 	}
 
 	Action makeDeleteAction() {
-		Action a = new GenericAction() {
+		Action a = new GenericAction("Delete ...", null) {
 
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				deleteAction();
 		//		setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
-			}
-
-			@Override
-			public String getText() {
-				return "Delete ...";
 			}
 		};
 		return a;
@@ -403,6 +391,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private JFileChooser getJFileChooser(boolean export) {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser() {
+				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void approveSelection() {
@@ -663,18 +652,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		private Action makePropertiesAction() {
-			Action a = new GenericAction() {
+			Action a = new GenericAction("Properties ...", null) {
 
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					BookmarkPropertiesGUI.getSingleton().displayPanel(selected_bl);
-				}
-
-				@Override
-				public String getText() {
-					return "Properties ...";
 				}
 			};
 			return a;
@@ -685,18 +670,14 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		private Action makeGoToAction() {
-			Action a = new GenericAction() {
+			Action a = new GenericAction("Go To", null) {
 
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					goToAction();
-				}
-
-				@Override
-				public String getText() {
-					return "Go To";
 				}
 			};
 			return a;

@@ -11,13 +11,12 @@ public class OKAction extends GenericAction {
 		return ACTION;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
+	private OKAction() {
+		super("OK", null);//BUNDLE.getString("ok");
 	}
 
 	@Override
-	public String getText() {
-		return "OK";//BUNDLE.getString("ok");
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
 	}
 }

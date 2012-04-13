@@ -18,28 +18,18 @@ public class ReportBugAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ReportBugAction() {
+		super("Report a bug", null, "toolbarButtonGraphics/general/Edit16.gif", KeyEvent.VK_R, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
 	}
 
 	@Override
-	public String getText() {
-		return "Report a bug";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_R;
-	}
-
-	@Override
 	public boolean isPopup() {
 		return true;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Edit16.gif";
 	}
 }

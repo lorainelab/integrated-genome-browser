@@ -48,19 +48,19 @@ public abstract class GenericAction extends AbstractAction {
 		setProperties(true);
 	}
 	protected void setProperties(boolean add) {
-		putValue(Action.NAME, getText() + (isPopup() ? ("" + POPUP_DIALOG) : ""));
-		if (getIconPath() != null) {
-			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());
+		putValue(Action.NAME, text + (isPopup() ? ("" + POPUP_DIALOG) : ""));
+		if (iconPath != null) {
+			ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 			if (icon == null) {
-				System.out.println("icon " + getIconPath() + " returned null");
+				System.out.println("icon " + iconPath + " returned null");
 			}
 			putValue(Action.SMALL_ICON, icon);
 		}
-		if (getMnemonic() != KeyEvent.VK_UNDEFINED) {
-			this.putValue(MNEMONIC_KEY, getMnemonic());
+		if (mnemonic != KeyEvent.VK_UNDEFINED) {
+			this.putValue(MNEMONIC_KEY, mnemonic);
 		}
-		if (getTooltip() != null) {
-			this.putValue(SHORT_DESCRIPTION, getTooltip());
+		if (tooltip != null) {
+			this.putValue(SHORT_DESCRIPTION, tooltip);
 		}
 		if (add) {
 			GenericActionHolder.getInstance().addGenericAction(this);

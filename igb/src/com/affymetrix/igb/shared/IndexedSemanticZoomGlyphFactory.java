@@ -1,17 +1,13 @@
 package com.affymetrix.igb.shared;
 
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -58,8 +54,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		return hasIndex(uri);
 	}
 
-	protected AbstractGraphGlyph getEmptyGraphGlyph(SimpleSeqSpan span, ITrackStyleExtended trackStyle, SeqMapViewExtendedI gviewer) {
-		GraphSym graf = new GraphSym(new int[]{span.getMin()}, new int[]{span.getLength()}, new float[]{0}, trackStyle.getMethodName(), span.getBioSeq());
+	protected AbstractGraphGlyph getEmptyGraphGlyph(ITrackStyleExtended trackStyle, SeqMapViewExtendedI gviewer) {
+		GraphSym graf = new GraphSym(new int[]{gviewer.getVisibleSpan().getMin()}, new int[]{gviewer.getVisibleSpan().getLength()}, 
+				new float[]{0}, trackStyle.getMethodName(), gviewer.getVisibleSpan().getBioSeq());
 		return (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
 	}
 
@@ -91,17 +88,16 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected void init(SeqSymmetry sym, ITrackStyleExtended trackStyle,
 			Direction direction, SeqMapViewExtendedI gviewer) {
 			viewModeGlyphs = new HashMap<String, ViewModeGlyph>();
-			BioSeq seq = gviewer.getAnnotatedSeq();
-			defaultGlyph = getEmptyGraphGlyph(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq), trackStyle, gviewer);
+			defaultGlyph = getEmptyGraphGlyph(trackStyle, gviewer);
 		}
 
 		protected RootSeqSymmetry getRootSym() {
 			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
 		}
 
-		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv, SeqSpan span) throws Exception {
+		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv) throws Exception {
 			GenericFeature feature = style.getFeature();
-			SeqSymmetry optimized_sym = feature.optimizeRequest(span);	
+			SeqSymmetry optimized_sym = feature.optimizeRequest(smv.getVisibleSpan());	
 			if (optimized_sym != null) {
 				boolean result = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 				if (!result) {
@@ -116,9 +112,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
 		}
 
-		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv, SeqSpan span) throws Exception {
+		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {
 			ViewModeGlyph resultGlyph = null;
-			List<? extends SeqSymmetry> symList = summarySymL.getRegion(span);
+			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());
 			if (symList.size() > 0) {
 				GraphSym gsym = (GraphSym)symList.get(0);
 				resultGlyph = (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH, smv);
@@ -132,25 +128,25 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 		@Override
 		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
-			BioSeq seq = smv.getAnnotatedSeq();
+//			BioSeq seq = smv.getAnnotatedSeq();
 			ViewI view = smv.getSeqMap().getView();
 	        int startBase = (int)Math.round(view.getCoordBox().getX());
 			int length = (int)Math.round(view.getCoordBox().getWidth());
-	        int endBase = startBase + length;
-	        SimpleSeqSpan span = new SimpleSeqSpan(startBase, endBase, seq);
+//	        int endBase = startBase + length;
+//	        SimpleSeqSpan span = new SimpleSeqSpan(startBase, endBase, seq);
 //	        if (span.equals(saveSpan) && lastUsedGlyph != null) {
 //	        	return lastUsedGlyph;
 //	        }
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {
-					resultGlyph = getDetailGlyph(smv, span);
+					resultGlyph = getDetailGlyph(smv);
 				}
 				else {
-					resultGlyph = getSummaryGlyph(smv, span);
+					resultGlyph = getSummaryGlyph(smv);
 				}
 				if (resultGlyph == null) {
-					resultGlyph = getEmptyGraphGlyph(span, style, smv);
+					resultGlyph = getEmptyGraphGlyph(style, smv);
 				}
 				resultGlyph.setSelectable(false);
 				double y = resultGlyph.getCoordBox().y;
@@ -189,7 +185,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		@Override
-		public void processParentCoordBox(Rectangle2D.Double parentCoordBox) {
+		public void processParentCoordBox(java.awt.geom.Rectangle2D.Double parentCoordBox) {
 			super.processParentCoordBox(parentCoordBox);
 			if (defaultGlyph != null) {
 				defaultGlyph.setCoordBox(parentCoordBox);

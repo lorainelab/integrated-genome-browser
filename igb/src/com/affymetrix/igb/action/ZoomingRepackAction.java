@@ -45,8 +45,8 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		TierLabelManager handler = this.gviewer.getTierManager();
-		List<TierLabelGlyph> theTiers = handler.getAllTierLabels();
+		TierLabelManager manager = this.gviewer.getTierManager();
+		List<TierLabelGlyph> theTiers = manager.getAllTierLabels();
 		ViewI ourView = gviewer.getSeqMap().getView();
 		for (TierLabelGlyph tl : theTiers) {
 			TierGlyph t = (TierGlyph) tl.getInfo();

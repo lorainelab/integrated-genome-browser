@@ -1,13 +1,17 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.igb.tiers.TierLabelManager;
+import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.view.SeqMapView;
-
+/**
+ * Superclass of all IGB actions that must refer to a {@link SeqMapView}.
+ * These classes are automatically added to a static hash map.
+ * This is done via the constructor, a dubious practice.
+ */
 public abstract class SeqMapViewActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	protected static final Map<String, SeqMapViewActionA> ACTION_MAP = new HashMap<String, SeqMapViewActionA>();
@@ -21,6 +25,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 		this.gviewer = gviewer;
 		this.handler = gviewer.getTierManager();
 		ACTION_MAP.put(gviewer.getId(), this);
+		// Don't do anything with "this" after leaking it from the constructor.
 	}
 
 	protected SeqMapView gviewer;

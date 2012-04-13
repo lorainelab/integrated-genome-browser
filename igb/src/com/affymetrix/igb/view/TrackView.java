@@ -375,8 +375,8 @@ public class TrackView {
 			}
 		} else {
 			style = getStyle(feature.getURI().toString(), feature);
-			addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
 			style.setFeature(feature);
+			addTierFor(style, gviewer, feature.getRequestSym(), setViewMode);
 		}
 
 	}

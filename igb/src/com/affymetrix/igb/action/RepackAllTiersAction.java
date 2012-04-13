@@ -11,7 +11,7 @@ public class RepackAllTiersAction extends RepackTiersAction {
 	private static RepackAllTiersAction ACTION;
 
 	public RepackAllTiersAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("repackAllTracksAction"), null, "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
+		super(gviewer, IGBConstants.BUNDLE.getString("repackAllTracksAction"), "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
 	}
 
 	public static RepackAllTiersAction getAction() {

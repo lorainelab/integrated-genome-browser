@@ -101,7 +101,7 @@ final class ApplicationListenerProxy implements InvocationHandler {
 		Object result = null;
 		try {
 			if (method.getName().equals("handleAbout")) {
-				AboutIGBAction a = new AboutIGBAction();
+				AboutIGBAction a = AboutIGBAction.getAction();
 				a.actionPerformed(null);
 				Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
 				setHandled.invoke(args[0], true);

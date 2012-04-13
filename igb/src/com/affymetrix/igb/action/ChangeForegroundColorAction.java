@@ -19,7 +19,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForegroundColorAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("changeColorAction"), null, "images/change_color.png");
+		super(gviewer, IGBConstants.BUNDLE.getString("changeColorAction"), "images/change_color.png");
 	}
 
 	@Override

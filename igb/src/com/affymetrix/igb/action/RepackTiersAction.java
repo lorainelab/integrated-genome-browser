@@ -19,8 +19,8 @@ import com.affymetrix.igb.view.SeqMapView;
 public abstract class RepackTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
-	protected RepackTiersAction(SeqMapView gviewer, String text, String tooltip, String iconPath) {
-		super(gviewer, text, tooltip, iconPath);
+	protected RepackTiersAction(SeqMapView gviewer, String text, String iconPath) {
+		super(gviewer, text, iconPath);
 	}
 
 	public void repack(final boolean full_repack) {

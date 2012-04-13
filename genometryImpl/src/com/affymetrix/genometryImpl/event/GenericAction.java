@@ -36,8 +36,8 @@ public abstract class GenericAction extends AbstractAction {
 		_setProperties();
 	}
 
-	public GenericAction(String text, String tooltip, String iconPath) {
-		this(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED, null);
+	public GenericAction(String text, String iconPath) {
+		this(text, null, iconPath, KeyEvent.VK_UNDEFINED, null);
 	}
 
 	public GenericAction() {

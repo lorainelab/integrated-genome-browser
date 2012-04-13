@@ -33,7 +33,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 	}
 
 	protected SelectAllAction(SeqMapView gviewer, FileTypeCategory category) {
-		super(gviewer, IGBConstants.BUNDLE.getString("selectAllAction") + (category == null ? "" : category.toString()), null, null);
+		super(gviewer, IGBConstants.BUNDLE.getString("selectAllAction") + (category == null ? "" : category.toString()), null);
 		this.category = category;
 	}
 

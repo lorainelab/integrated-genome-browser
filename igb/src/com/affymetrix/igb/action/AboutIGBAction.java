@@ -43,6 +43,10 @@ public class AboutIGBAction extends GenericAction {
 		return ACTION;
 	}
 
+	private AboutIGBAction() {
+		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), "toolbarButtonGraphics/general/About16.gif");
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		JPanel message_pane = new JPanel();

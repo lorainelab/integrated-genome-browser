@@ -11,8 +11,8 @@ public abstract class SeqMapViewActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	protected static final Map<String, SeqMapViewActionA> ACTION_MAP = new HashMap<String, SeqMapViewActionA>();
 
-	protected SeqMapViewActionA(SeqMapView gviewer, String text, String tooltip, String iconPath) {
-		super(text, tooltip, iconPath);
+	protected SeqMapViewActionA(SeqMapView gviewer, String text, String iconPath) {
+		super(text, iconPath);
 		this.gviewer = gviewer;
 		this.handler = gviewer.getTierManager();
 		ACTION_MAP.put(gviewer.getId(), this);

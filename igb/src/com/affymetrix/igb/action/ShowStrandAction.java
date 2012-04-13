@@ -36,7 +36,7 @@ public class ShowStrandAction extends SeqMapViewActionA implements SymSelectionL
 	private boolean separateStrands;
 
 	protected ShowStrandAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("showTwoTiersAction"), null, "images/strand_separate.png");
+		super(gviewer, IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png");
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 

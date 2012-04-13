@@ -27,9 +27,9 @@ public abstract class GenericAction extends AbstractAction {
 		_setProperties();
 	}
 	private void _setProperties() {
-		setProperties();
+		setProperties(true);
 	}
-	protected void setProperties() {
+	protected void setProperties(boolean add) {
 		putValue(Action.NAME, getText() + (isPopup() ? ("" + POPUP_DIALOG) : ""));
 		if (getIconPath() != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(getIconPath());
@@ -44,7 +44,9 @@ public abstract class GenericAction extends AbstractAction {
 		if (getTooltip() != null) {
 			this.putValue(SHORT_DESCRIPTION, getTooltip());
 		}
-		GenericActionHolder.getInstance().addGenericAction(this);
+		if (add) {
+			GenericActionHolder.getInstance().addGenericAction(this);
+		}
 	}
 	public String getIconPath() {
 		return null;

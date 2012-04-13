@@ -33,6 +33,7 @@ import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;
 import com.affymetrix.igb.action.RepackAllTiersAction;
 import com.affymetrix.igb.action.RepackSelectedTiersAction;
+import com.affymetrix.igb.action.ShowStrandAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -294,6 +295,7 @@ public class Activator implements BundleActivator {
 		RepackAllTiersAction.getAction();
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
+		ShowStrandAction.getAction();
 	}
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);

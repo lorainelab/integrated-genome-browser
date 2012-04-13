@@ -18,7 +18,7 @@ public class ToggleEdgeMatchingAction extends GenericAction {
 	private SeqMapView map_view = IGB.getSingleton().getMapView();
 
 	private ToggleEdgeMatchingAction(){
-		super();
+		super(BUNDLE.getString("toggleEdgeMatching"), KeyEvent.VK_M);
 		this.putValue(SELECTED_KEY, map_view.getEdgeMatching());
 	}
 
@@ -26,19 +26,10 @@ public class ToggleEdgeMatchingAction extends GenericAction {
 		return ACTION;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		map_view.setEdgeMatching(!map_view.getEdgeMatching());
 		ACTION.putValue(AbstractAction.SELECTED_KEY, map_view.getEdgeMatching());
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("toggleEdgeMatching");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_M;
 	}
 }

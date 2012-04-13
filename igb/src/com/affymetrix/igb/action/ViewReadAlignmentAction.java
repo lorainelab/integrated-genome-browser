@@ -1,7 +1,6 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
@@ -18,27 +17,19 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author hiralv
  */
-public abstract class ViewReadAlignmentAction extends GenericAction {
+public class ViewReadAlignmentAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1l;
 
 	private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
 	private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");
 
-	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction() {
-		private static final long serialVersionUID = 1L;
-		@Override public String getText() { return RESTOREREAD; }
-	};
-	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction() {
-		private static final long serialVersionUID = 1L;
-		@Override public String getText() { return SHOWMISMATCH; }
-	};
+	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(IGB.getSingleton().getMapView(), RESTOREREAD);
+	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(IGB.getSingleton().getMapView(), SHOWMISMATCH);
 
 	private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
-	SeqMapView gViewer = IGB.getSingleton().getMapView();
-
-	private ViewReadAlignmentAction(){
-		super();
+	private ViewReadAlignmentAction(SeqMapView gViewer, String text){
+		super(gViewer, text, null);
 	}
 
 	public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms){
@@ -73,7 +64,6 @@ public abstract class ViewReadAlignmentAction extends GenericAction {
 			}
 		}
 
-		gViewer.getSeqMap().repaint();
+		gviewer.getSeqMap().repaint();
 	}
-
 }

@@ -28,9 +28,10 @@ public class SaveScriptAction extends GenericAction {
 	}
 
 	private SaveScriptAction() {
-		super();
+		super(BUNDLE.getString("saveScript"), KeyEvent.VK_C);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		JRPFileChooser chooser = new JRPFileChooser("saveScript");
@@ -57,20 +58,5 @@ public class SaveScriptAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving script to file", x);
 			}
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("saveScript");
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_C;
 	}
 }

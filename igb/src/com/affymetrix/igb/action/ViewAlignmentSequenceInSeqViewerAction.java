@@ -26,7 +26,7 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	}
 
 	private ViewAlignmentSequenceInSeqViewerAction() {
-		super();
+		super(BUNDLE.getString("ViewAlignmentSequenceInSeqViewer"), "toolbarButtonGraphics/general/Zoom16.gif");
 		this.setEnabled(false);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
@@ -47,11 +47,6 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	}
 
 	@Override
-	public String getText() {
-		return BUNDLE.getString("ViewAlignmentSequenceInSeqViewer");
-	}
-
-	@Override
 	public boolean isPopup() {
 		return true;
 	}
@@ -66,10 +61,5 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 		} else{
 			setEnabled(false);
 		}
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Zoom16.gif";
 	}
 }

@@ -22,6 +22,11 @@ public class PrintFrameAction extends GenericAction {
 		return ACTION;
 	}
 
+	private PrintFrameAction() {
+		super(BUNDLE.getString("printWhole"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		ComponentPagePrinter cprinter = new ComponentPagePrinter(IGB.getSingleton().getFrame());
@@ -31,21 +36,6 @@ public class PrintFrameAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("printWhole");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Print16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_P;
 	}
 
 	@Override

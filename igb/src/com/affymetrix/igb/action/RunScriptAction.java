@@ -49,12 +49,13 @@ public final class RunScriptAction extends GenericAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	private RunScriptAction() {
-		super();
+		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("runScript")), KeyEvent.VK_R);
 
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		loadFile(load_dir_tracker, gviewerFrame);
@@ -111,22 +112,5 @@ public final class RunScriptAction extends GenericAction {
 			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file");
 		}
 
-	}
-
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("runScript"));
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_R;
 	}
 }

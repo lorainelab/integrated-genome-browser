@@ -27,6 +27,11 @@ public class PreferencesAction extends GenericAction {
 		return ACTION;
 	}
 
+	private PreferencesAction() {
+		super(BUNDLE.getString("preferences"), null, "toolbarButtonGraphics/general/Preferences16.gif", KeyEvent.VK_E, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 
@@ -40,21 +45,6 @@ public class PreferencesAction extends GenericAction {
 		p.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 		((TierPrefsView)p.tpvGUI.tdv).setTier_label_glyphs(tier_label_glyphs);
 		p.getFrame().setVisible(true);
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("preferences");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Preferences16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_E;
 	}
 
 	@Override

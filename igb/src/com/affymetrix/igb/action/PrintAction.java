@@ -21,6 +21,11 @@ public class PrintAction extends GenericAction {
 		return ACTION;
 	}
 
+	private PrintAction() {
+		super(BUNDLE.getString("print"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		try {
@@ -28,21 +33,6 @@ public class PrintAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("print");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Print16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_P;
 	}
 
 	@Override

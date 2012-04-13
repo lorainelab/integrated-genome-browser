@@ -27,7 +27,7 @@ public abstract class RefreshAFeatureAction extends GenericAction {
 	}
 
 	private RefreshAFeatureAction(){
-		super();
+		super(null, null);
 	}
 
 	private void setFeature(GenericFeature feature) {
@@ -39,11 +39,5 @@ public abstract class RefreshAFeatureAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
-	}
-
-	@Override
-	public String getIconPath() {
-		//return "images/refresh16.png";
-		return null;
 	}
 }

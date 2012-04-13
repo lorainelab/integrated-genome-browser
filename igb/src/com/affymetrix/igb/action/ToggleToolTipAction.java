@@ -17,7 +17,7 @@ public class ToggleToolTipAction extends GenericAction {
 	private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();
 
 	private ToggleToolTipAction() {
-		super();
+		super(BUNDLE.getString("togglePropertiesTooltip"), KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 
@@ -33,21 +33,12 @@ public class ToggleToolTipAction extends GenericAction {
 		return ACTION;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		PreferenceUtils.getTopNode().putBoolean(
 				SeqMapView.PREF_SHOW_TOOLTIP,
 				IGB.getSingleton().getMapView().togglePropertiesTooltip());
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("togglePropertiesTooltip");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_H;
 	}
 
 	@Override

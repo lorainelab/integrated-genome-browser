@@ -15,7 +15,7 @@ public class ShowPlusStrandAction extends GenericAction {
 	}
 
 	private ShowPlusStrandAction() {
-		super();
+		super("Show (+) tiers", null);
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowPlus());
 	}
 

@@ -10,7 +10,6 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -30,17 +29,15 @@ import javax.swing.Action;
  * this keeps glyph sizes constant.
  * @author Eric Blossom
  */
-public class ZoomingRepackAction extends GenericAction {
-
-	private final SeqMapView gviewer;
+public class ZoomingRepackAction extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction(SeqMapView theSubject) {
-		super();
+		super(theSubject, "Optimize All Tracks", "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
 		putValue(Action.SHORT_DESCRIPTION, "Optimize track stack heights for the region in view.");
-		this.gviewer = theSubject;
 	}
 
 	/**
@@ -79,15 +76,5 @@ public class ZoomingRepackAction extends GenericAction {
 		gviewer.getSeqMap().updateWidget();
 		// Full update doesn't seem to happen.
 		// Or, rather, it happens when the user clicks on the map.
-	}
-
-	@Override
-	public String getText() {
-		return "Optimize All Tracks";
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif";
 	}
 }

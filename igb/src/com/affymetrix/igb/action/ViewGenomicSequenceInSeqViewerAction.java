@@ -30,7 +30,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 	}
 
 	private ViewGenomicSequenceInSeqViewerAction() {
-		super();
+		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), "toolbarButtonGraphics/general/Zoom16.gif");
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 //		if (ks != null) {
@@ -47,16 +47,6 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
 		}
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Zoom16.gif";
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("ViewGenomicSequenceInSeqViewer");
 	}
 
 	@Override

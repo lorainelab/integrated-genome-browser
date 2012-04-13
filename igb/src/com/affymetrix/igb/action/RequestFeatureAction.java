@@ -27,28 +27,17 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 		return ACTION;
 	}
 
+	private RequestFeatureAction() {
+		super(BUNDLE.getString("requestAFeature"), null, "toolbarButtonGraphics/development/Application16.gif", KeyEvent.VK_R, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
 	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("requestAFeature");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_R;
-	}
-
 	@Override
 	public boolean isPopup() {
 		return true;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/development/Application16.gif";
 	}
 }

@@ -19,7 +19,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 	private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 
 	private ToggleHairlineLabelAction() {
-		super();
+		super(BUNDLE.getString("toggleHairlineLabel"), KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 
@@ -46,16 +46,6 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
         }
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("toggleHairlineLabel");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_H;
 	}
 
 	@Override

@@ -21,24 +21,14 @@ public class ShowConsoleAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ShowConsoleAction() {
+		super(BUNDLE.getString("showConsole"), null, "toolbarButtonGraphics/general/History16.gif", KeyEvent.VK_C, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		ConsoleView.showConsole(IGBConstants.APP_NAME);
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("showConsole");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/History16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_C;
 	}
 
 	@Override

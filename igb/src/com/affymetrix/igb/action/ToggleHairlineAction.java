@@ -14,7 +14,7 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 	private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
 
 	private ToggleHairlineAction() {
-		super();
+		super(BUNDLE.getString("toggleHairline"), null);
 		//this.putValue(MNEMONIC_KEY, java.awt.event.KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		//this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
@@ -28,6 +28,7 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 		return ACTION;
 	}
 
+	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		PreferenceUtils.getTopNode().putBoolean(
@@ -42,11 +43,6 @@ public class ToggleHairlineAction extends GenericAction implements java.util.pre
 			this.putValue(SELECTED_KEY, PreferenceUtils.getBooleanParam(
 				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
         }
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("toggleHairline");
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class ShrinkWrapAction extends GenericAction {
 	private static final ShrinkWrapAction ACTION = new ShrinkWrapAction();
 
 	private ShrinkWrapAction() {
-		super();
+		super(BUNDLE.getString("toggleShrinkWrapping"), KeyEvent.VK_S);
 		this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
 	}
 
@@ -26,20 +26,11 @@ public class ShrinkWrapAction extends GenericAction {
 		return ACTION;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		SeqMapView map_view = IGB.getSingleton().getMapView();
 		map_view.setShrinkWrap(!map_view.getShrinkWrap());
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("toggleShrinkWrapping");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_S;
 	}
 
 	@Override

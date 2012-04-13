@@ -35,7 +35,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 	protected final Operator operator;
 	
 	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator) {
-		super();
+		super(null, null);
 		this.gviewer = gviewer;
 		this.operator = operator;
 	}
@@ -101,11 +101,6 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		}
 	}
 			
-	@Override
-	public String getText() {
-		return "";
-	}
-	
 	private static Boolean isForward(TierGlyph tier){
 		if(tier.getAnnotStyle().isGraphTier()){
 			return null;

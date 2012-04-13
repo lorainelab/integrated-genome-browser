@@ -63,6 +63,14 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		return (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(graf, trackStyle, Direction.BOTH, gviewer);
 	}
 
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
+			ITrackStyleExtended style, Direction direction,
+			SeqMapViewExtendedI smv) {
+		SemanticZoomGlyph szg = (SemanticZoomGlyph) super.getViewModeGlyph(sym, style, direction, smv);
+		szg.setLastUsedGlyph(szg.getGlyph(smv));
+		return szg;
+	}
 	// glyph class
 	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph {
 		protected ViewModeGlyph defaultGlyph; 

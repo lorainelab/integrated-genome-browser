@@ -24,6 +24,20 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 
+	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym);
+	
+	@Override
+	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
+			ITrackStyleExtended style, Direction direction,
+			SeqMapViewExtendedI smv) {
+
+		SemanticZoomGlyph szg = getSemanticZoomGlyph(sym);
+		szg.init(sym, style, direction, smv);
+		szg.setDirection(direction);
+		szg.setLastUsedGlyph(szg.getDefaultGlyph());
+		szg.setStyle(style);
+		return szg;
+	}
 	// glyph class
 	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements NeoRangeListener {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
@@ -461,20 +475,5 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 		}
 	}
-	
-	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym);
-	
 	// end glyph class
-	@Override
-	public final ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction,
-			SeqMapViewExtendedI smv) {
-
-		SemanticZoomGlyph szg = getSemanticZoomGlyph(sym);
-		szg.init(sym, style, direction, smv);
-		szg.setDirection(direction);
-		szg.setLastUsedGlyph(szg.getDefaultGlyph());
-		szg.setStyle(style);
-		return szg;
-	}
 }

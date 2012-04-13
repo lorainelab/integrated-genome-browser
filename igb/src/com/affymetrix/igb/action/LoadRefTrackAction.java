@@ -21,7 +21,7 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	}
 
 	protected LoadRefTrackAction() {
-		super(BUNDLE.getString("openRefTrackFile"), "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_UNDEFINED);
+		super(BUNDLE.getString("openRefTrackFile"), null, "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override
@@ -47,10 +47,5 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	@Override
 	protected boolean loadSequenceAsTrack() {
 		return false;
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

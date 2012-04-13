@@ -29,7 +29,7 @@ public class ExportPreferencesAction extends GenericAction {
 	}
 
 	private ExportPreferencesAction() {
-		super(BUNDLE.getString("ExportPreferences"), KeyEvent.VK_E);
+		super(BUNDLE.getString("ExportPreferences"), null, null, KeyEvent.VK_E, null, true);
 	}
 
 	@Override
@@ -46,10 +46,5 @@ public class ExportPreferencesAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving preferences to file", e);
 			}
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

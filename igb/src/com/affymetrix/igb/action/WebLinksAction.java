@@ -20,7 +20,7 @@ public final class WebLinksAction extends GenericAction {
 	}
 
 	private WebLinksAction() {
-		super(BUNDLE.getString("configureWebLinks"), "Manage Web Links", "toolbarButtonGraphics/general/Search16.gif", KeyEvent.VK_W, null);
+		super(BUNDLE.getString("configureWebLinks"), "Manage Web Links", "toolbarButtonGraphics/general/Search16.gif", KeyEvent.VK_W, null, true);
 	    putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
 	}
 
@@ -29,9 +29,4 @@ public final class WebLinksAction extends GenericAction {
     	super.actionPerformed(evt);
 		WebLinksViewGUI.getSingleton().displayPanel();
     }
-
-	@Override
-	public boolean isPopup() {
-		return true;
-	}
 }

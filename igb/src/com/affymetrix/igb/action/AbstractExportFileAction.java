@@ -47,8 +47,8 @@ public abstract class AbstractExportFileAction extends GenericAction {
 //		fileExporters.put(FileTypeCategory.Mismatch, new MismatchFileExporter()); // wait until tally format is finalized
 	}
 
-	protected AbstractExportFileAction(String text, String iconPath) {
-		super(text, iconPath);
+	protected AbstractExportFileAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
 
 	@Override

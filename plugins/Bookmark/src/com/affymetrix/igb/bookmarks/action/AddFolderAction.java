@@ -21,24 +21,13 @@ public class AddFolderAction extends AddBookmarkAction {
 		return ACTION;
 	}
 
-	@Override
-	public String getText() {
-		return BUNDLE.getString("addBookmarkFolder");
+	private AddFolderAction() {
+		super(BUNDLE.getString("addBookmarkFolder"), null, null, KeyEvent.VK_G, null, false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		addBookmarkFolder();
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_G;
 	}
 }

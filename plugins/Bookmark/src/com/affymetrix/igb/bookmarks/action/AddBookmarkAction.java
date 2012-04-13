@@ -17,12 +17,12 @@ import javax.swing.tree.TreePath;
  *
  * @author Nick & David
  */
-public class AddBookmarkAction extends GenericAction {
+public abstract class AddBookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public AddBookmarkAction() {
-		super(null, "toolbarButtonGraphics/general/Bookmarks16.gif");
+	public AddBookmarkAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
 
 	protected void bookmarkCurrentPosition() {

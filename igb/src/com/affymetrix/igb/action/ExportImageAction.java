@@ -3,6 +3,8 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.util.ExportDialogGUI;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import com.affymetrix.genometryImpl.event.GenericAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -20,7 +22,7 @@ public class ExportImageAction extends GenericAction {
 	}
 
 	private ExportImageAction() {
-		super(BUNDLE.getString("exportImage"), "toolbarButtonGraphics/general/Export16.gif");
+		super(BUNDLE.getString("exportImage"), null, "toolbarButtonGraphics/general/Export16.gif", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override
@@ -32,10 +34,5 @@ public class ExportImageAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

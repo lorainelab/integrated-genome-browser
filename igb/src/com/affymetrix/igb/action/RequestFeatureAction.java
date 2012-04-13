@@ -28,16 +28,12 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	}
 
 	private RequestFeatureAction() {
-		super(BUNDLE.getString("requestAFeature"), null, "toolbarButtonGraphics/development/Application16.gif", KeyEvent.VK_R, null);
+		super(BUNDLE.getString("requestAFeature"), null, "toolbarButtonGraphics/development/Application16.gif", KeyEvent.VK_R, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
-	}
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

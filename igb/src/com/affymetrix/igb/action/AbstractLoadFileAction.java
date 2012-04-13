@@ -30,8 +30,8 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
-	protected AbstractLoadFileAction(String text, String iconPath, int mnemonic) {
-		super(text, iconPath, mnemonic);
+	protected AbstractLoadFileAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	}
@@ -71,16 +71,4 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
-
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
-	}
-	
 }

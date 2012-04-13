@@ -28,7 +28,7 @@ public class PreferencesAction extends GenericAction {
 	}
 
 	private PreferencesAction() {
-		super(BUNDLE.getString("preferences"), null, "toolbarButtonGraphics/general/Preferences16.gif", KeyEvent.VK_E, null);
+		super(BUNDLE.getString("preferences"), null, "toolbarButtonGraphics/general/Preferences16.gif", KeyEvent.VK_E, null, true);
 	}
 
 	@Override
@@ -45,10 +45,5 @@ public class PreferencesAction extends GenericAction {
 		p.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
 		((TierPrefsView)p.tpvGUI.tdv).setTier_label_glyphs(tier_label_glyphs);
 		p.getFrame().setVisible(true);
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

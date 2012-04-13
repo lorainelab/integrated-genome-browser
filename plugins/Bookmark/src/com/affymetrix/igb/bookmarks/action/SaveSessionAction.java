@@ -20,7 +20,7 @@ public class SaveSessionAction extends GenericAction {
 	private IGBService igbService;
 
 	public SaveSessionAction(IGBService igbService) {
-		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null, "toolbarButtonGraphics/general/Save16.gif", KeyEvent.VK_S, null);
+		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null, "toolbarButtonGraphics/general/Save16.gif", KeyEvent.VK_S, null, true);
 		this.igbService = igbService;
 	}
 
@@ -44,10 +44,5 @@ public class SaveSessionAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);
 			}
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

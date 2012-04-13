@@ -44,7 +44,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	private static final AutoScrollAction action = new AutoScrollAction();
 
 	private AutoScrollAction() {
-		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", KeyEvent.VK_A, null);
+		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", KeyEvent.VK_A, null, true);
 
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);
@@ -218,10 +218,5 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 			swing_timer = null;
 			map_auto_scroller = null;
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

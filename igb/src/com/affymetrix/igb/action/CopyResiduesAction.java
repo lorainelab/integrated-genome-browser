@@ -27,7 +27,7 @@ public class CopyResiduesAction extends GenericAction {
 	}
 
 	private CopyResiduesAction(String text) {
-		super(text, null, "toolbarButtonGraphics/general/Copy16.gif", KeyEvent.VK_C, null);
+		super(text, null, "toolbarButtonGraphics/general/Copy16.gif", KeyEvent.VK_C);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -10,24 +10,19 @@ import java.awt.event.ActionEvent;
  *
  * @author hiralv
  */
-public abstract class RefreshAFeatureAction extends GenericAction {
+public class RefreshAFeatureAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private GenericFeature feature;
 
 	public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
-		RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public String getText() {
-				return "Load "+feature.featureName;
-			}
-		};
+		final String text = "Load "+feature.featureName;
+		RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text, null);
 		refreshAFeature.setFeature(feature);
 		return refreshAFeature;
 	}
 
-	private RefreshAFeatureAction(){
-		super(null, null);
+	private RefreshAFeatureAction(String text, String iconPath){
+		super(text, iconPath);
 	}
 
 	private void setFeature(GenericFeature feature) {

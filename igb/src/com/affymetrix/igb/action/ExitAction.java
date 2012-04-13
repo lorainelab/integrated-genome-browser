@@ -24,7 +24,7 @@ public class ExitAction extends GenericAction {
 	}
 
 	private ExitAction() {
-		super(BUNDLE.getString("exit"), null, "toolbarButtonGraphics/general/Stop16.gif", KeyEvent.VK_X, null);
+		super(BUNDLE.getString("exit"), null, "toolbarButtonGraphics/general/Stop16.gif", KeyEvent.VK_X);
 	}
 
 	public void actionPerformed(ActionEvent e) {

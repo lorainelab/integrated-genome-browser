@@ -13,29 +13,13 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 		return ACTION;
 	}
 
-	@Override
-	public String getText() {
-		return BUNDLE.getString("addBookmark");
+	private AddPositionBookmarkAction() {
+		super(BUNDLE.getString("addBookmark"), null, "toolbarButtonGraphics/general/Bookmarks16.gif", KeyEvent.VK_P, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 	     bookmarkCurrentPosition();
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Bookmarks16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_P;
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

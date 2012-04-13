@@ -23,32 +23,38 @@ public abstract class GenericAction extends AbstractAction {
 	private String iconPath;
 	private int mnemonic;
 	private Object extraInfo;
+	private boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
 
-	public GenericAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo) {
+	public GenericAction(String text, String tooltip, String iconPath, int mnemonic) {
+		this(text, tooltip, iconPath, mnemonic, null, false);
+	}
+
+	public GenericAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super();
 		this.text = text;
 		this.tooltip = tooltip;
 		this.iconPath = iconPath;
 		this.mnemonic = mnemonic;
 		this.extraInfo = extraInfo;
+		this.popup = popup;
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
 		_setProperties();
 	}
 
 	public GenericAction(String text, String iconPath) {
-		this(text, null, iconPath, KeyEvent.VK_UNDEFINED, null);
+		this(text, null, iconPath, KeyEvent.VK_UNDEFINED);
 	}
 
 	public GenericAction(String text, int mnemonic) {
-		this(text, null, null, mnemonic, null);
+		this(text, null, null, mnemonic);
 	}
 
 	private void _setProperties() {
 		setProperties(true);
 	}
 	protected void setProperties(boolean add) {
-		putValue(Action.NAME, text + (isPopup() ? ("" + POPUP_DIALOG) : ""));
+		putValue(Action.NAME, text + (popup ? ("" + POPUP_DIALOG) : ""));
 		if (iconPath != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 			if (icon == null) {
@@ -66,19 +72,19 @@ public abstract class GenericAction extends AbstractAction {
 			GenericActionHolder.getInstance().addGenericAction(this);
 		}
 	}
-	public String getText() {
+	public final String getText() {
 		return text;
 	}
-	public String getTooltip() {
+	public final String getTooltip() {
 		return tooltip;
 	}
-	public String getIconPath() {
+	public final String getIconPath() {
 		return iconPath;
 	}
-	public int getMnemonic() {
+	public final int getMnemonic() {
 		return mnemonic;
 	}
-	public Object getExtraInfo() {
+	public final Object getExtraInfo() {
 		return extraInfo;
 	}
 	public String getId() {
@@ -104,8 +110,8 @@ public abstract class GenericAction extends AbstractAction {
 	public boolean isToggle() {
 		return false;
 	}
-	public boolean isPopup() {
-		return false;
+	public final boolean isPopup() {
+		return popup;
 	}
 	public void addDoneCallback(GenericActionDoneCallback doneCallback) {
 		doneCallbacks.add(doneCallback);

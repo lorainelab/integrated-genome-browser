@@ -23,7 +23,7 @@ public class PrintFrameAction extends GenericAction {
 	}
 
 	private PrintFrameAction() {
-		super(BUNDLE.getString("printWhole"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null);
+		super(BUNDLE.getString("printWhole"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null, true);
 	}
 
 	@Override
@@ -36,10 +36,5 @@ public class PrintFrameAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

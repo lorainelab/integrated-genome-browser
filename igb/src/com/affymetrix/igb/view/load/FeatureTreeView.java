@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -662,8 +663,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			private static final long serialVersionUID = 1L;
 			private final JRPCheckBox checkbox;
 
-			private FeatureLoadAction(JRPCheckBox checkbox) {
-				super(null, null);
+			private FeatureLoadAction(JRPCheckBox checkbox, Object extraInfo) {
+				super(null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
 				this.checkbox = checkbox;
 			}
 
@@ -698,23 +699,22 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					}
 				}
 			}
-
-			@Override
-			public Object getExtraInfo() {
-				String extraInfo = "";
-				Object nodeData = editedNode.getUserObject();
-				if (nodeData instanceof TreeNodeUserInfo) {
-					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-					if (tn.genericObject instanceof GenericFeature) {
-						GenericFeature feature = (GenericFeature) tn.genericObject;
-						extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
-					}
-				}
-				return extraInfo;
-			}
 		}
 		FeatureTreeCellRenderer renderer;
 		DefaultMutableTreeNode editedNode;
+
+		public Object getExtraInfo() {
+			String extraInfo = "";
+			Object nodeData = editedNode.getUserObject();
+			if (nodeData instanceof TreeNodeUserInfo) {
+				TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+				if (tn.genericObject instanceof GenericFeature) {
+					GenericFeature feature = (GenericFeature) tn.genericObject;
+					extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+				}
+			}
+			return extraInfo;
+		}
 
 		@Override
 		public boolean isCellEditable(EventObject e) {
@@ -739,7 +739,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						if (renderer == null) {
 							renderer = new FeatureTreeCellRenderer();
 							final JRPCheckBox checkbox = renderer.getLeafFeatureRenderer();
-							checkbox.addActionListener(new FeatureLoadAction(checkbox));
+							checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
 						}
 						JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 						checkbox.setText("");

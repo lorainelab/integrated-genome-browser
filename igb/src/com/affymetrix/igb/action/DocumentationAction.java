@@ -22,17 +22,12 @@ public class DocumentationAction extends GenericAction {
 	}
 
 	private DocumentationAction() {
-		super(BUNDLE.getString("documentation"), null, "toolbarButtonGraphics/general/Help16.gif", KeyEvent.VK_D, null);
+		super(BUNDLE.getString("documentation"), null, "toolbarButtonGraphics/general/Help16.gif", KeyEvent.VK_D, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://wiki.transvar.org/confluence/display/igbman");
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

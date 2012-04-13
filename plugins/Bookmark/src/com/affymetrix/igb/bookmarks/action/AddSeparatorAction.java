@@ -20,28 +20,13 @@ public class AddSeparatorAction extends AddBookmarkAction {
 		return ACTION;
 	}
 
+	private AddSeparatorAction() {
+		super("New Separator", "New Separator", null, KeyEvent.VK_S, null, false);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		addSeparator();
-	}
-
-	@Override
-	public String getText() {
-		return "New Separator";
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_S;
-	}
-
-	@Override
-	public String getTooltip() {
-		return "New Separator";
 	}
 }

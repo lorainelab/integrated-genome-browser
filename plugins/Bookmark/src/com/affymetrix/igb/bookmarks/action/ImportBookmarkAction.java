@@ -16,17 +16,12 @@ public class ImportBookmarkAction extends GenericAction {
 	}
 
 	public ImportBookmarkAction() {
-		super(BUNDLE.getString("importBookmarks"), null, "toolbarButtonGraphics/general/Import16.gif", KeyEvent.VK_I, null);
+		super(BUNDLE.getString("importBookmarks"), null, "toolbarButtonGraphics/general/Import16.gif", KeyEvent.VK_I, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 	    BookmarkManagerView.getSingleton().makeImportAction().actionPerformed(e);
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

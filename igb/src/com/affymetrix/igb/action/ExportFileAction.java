@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -18,16 +19,11 @@ public class ExportFileAction extends AbstractExportFileAction{
 	}
 
 	private ExportFileAction() {
-		super(BUNDLE.getString("saveTrackAction"), "toolbarButtonGraphics/general/SaveAs16.gif");
+		super(BUNDLE.getString("saveTrackAction"), null, "toolbarButtonGraphics/general/SaveAs16.gif", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override
 	protected void exportFile(FileExporterI fileExporter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
 		fileExporter.exportFile(dos, (SeqSymmetry)atier.getViewModeGlyph().getInfo(), aseq);
-	}
-	
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

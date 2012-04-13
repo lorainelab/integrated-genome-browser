@@ -36,6 +36,7 @@ import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -77,18 +78,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		}
 	};
-	private final Action customize_action = new GenericAction(BUNDLE.getString("customizeAction"), null) {
+	private final Action customize_action = new GenericAction(BUNDLE.getString("customizeAction"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			showCustomizer();
-		}
-
-		@Override
-		public boolean isPopup() {
-			return true;
 		}
 	};
 	private final Action expand_action = new GenericAction(BUNDLE.getString("expandAction"), null) {

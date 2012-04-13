@@ -22,17 +22,12 @@ public class ShowConsoleAction extends GenericAction {
 	}
 
 	private ShowConsoleAction() {
-		super(BUNDLE.getString("showConsole"), null, "toolbarButtonGraphics/general/History16.gif", KeyEvent.VK_C, null);
+		super(BUNDLE.getString("showConsole"), null, "toolbarButtonGraphics/general/History16.gif", KeyEvent.VK_C, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		ConsoleView.showConsole(IGBConstants.APP_NAME);
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

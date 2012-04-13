@@ -21,7 +21,7 @@ public class LoadSessionAction extends GenericAction {
 	private IGBService igbService;
 
 	public LoadSessionAction(IGBService igbService) {
-		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null, "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_L, null);
+		super(BookmarkManagerView.BUNDLE.getString("loadSession"), null, "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_L, null, true);
 		this.igbService = igbService;
 	}
 
@@ -48,10 +48,5 @@ public class LoadSessionAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
 			}
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

@@ -128,7 +128,7 @@ public final class SimpleGraphTab
 			deleteGraphs(gmodel, grafs);
 		}
 	};
-	private final Action save_selected_graphs_action = new GenericAction(BUNDLE.getString("saveSelectedGraphs"), null) {
+	private final Action save_selected_graphs_action = new GenericAction(BUNDLE.getString("saveSelectedGraphs"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -136,24 +136,14 @@ public final class SimpleGraphTab
 			super.actionPerformed(e);
 			saveGraphs(gmodel, grafs);
 		}
-
-		@Override
-		public boolean isPopup() {
-			return true;
-		}
 	};
-	private final Action graph_threshold_action = new GenericAction(BUNDLE.getString("graphThresholding"), null) {
+	private final Action graph_threshold_action = new GenericAction(BUNDLE.getString("graphThresholding"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			showGraphScoreThreshSetter();
-		}
-
-		@Override
-		public boolean isPopup() {
-			return true;
 		}
 	};
 	public final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);

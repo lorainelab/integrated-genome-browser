@@ -79,7 +79,7 @@ final class SeqMapViewActionListener implements ActionListener {
 				doAction(ZOOM_IN_Y);
 			}
 		};
-		new GenericAction("Home Position", "Zoom out fully", null, KeyEvent.VK_UNDEFINED, null) {
+		new GenericAction("Home Position", "Zoom out fully", null, KeyEvent.VK_UNDEFINED) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

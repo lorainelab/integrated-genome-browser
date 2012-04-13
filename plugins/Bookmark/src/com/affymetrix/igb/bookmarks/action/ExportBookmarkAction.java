@@ -16,17 +16,12 @@ public class ExportBookmarkAction extends GenericAction {
 	}
 
 	public ExportBookmarkAction() {
-		super(BUNDLE.getString("exportBookmarks"), null, "toolbarButtonGraphics/general/Export16.gif", KeyEvent.VK_E, null);
+		super(BUNDLE.getString("exportBookmarks"), null, "toolbarButtonGraphics/general/Export16.gif", KeyEvent.VK_E, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 	    BookmarkManagerView.getSingleton().makeExportAction().actionPerformed(e);
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

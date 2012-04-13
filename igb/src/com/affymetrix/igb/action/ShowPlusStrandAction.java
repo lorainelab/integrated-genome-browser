@@ -27,11 +27,6 @@ public class ShowPlusStrandAction extends GenericAction {
 	}
 
 	@Override
-	public String getText() {
-		return "Show (+) tiers";
-	}
-
-	@Override
 	public boolean isToggle() {
 		return true;
 	}

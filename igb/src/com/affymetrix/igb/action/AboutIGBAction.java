@@ -44,7 +44,7 @@ public class AboutIGBAction extends GenericAction {
 	}
 
 	private AboutIGBAction() {
-		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), "toolbarButtonGraphics/general/About16.gif");
+		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null, "toolbarButtonGraphics/general/About16.gif", KeyEvent.VK_A, null, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -142,23 +142,6 @@ public class AboutIGBAction extends GenericAction {
 		dialog.setVisible(true);
 	}
 
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("about"),
-				APP_NAME);
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/About16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_A;
-	}
-
 	private String readFile(String file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -169,10 +152,5 @@ public class AboutIGBAction extends GenericAction {
 			stringBuilder.append(ls);
 		}
 		return stringBuilder.toString();
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

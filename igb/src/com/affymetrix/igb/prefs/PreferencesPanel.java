@@ -300,7 +300,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getImportAction() {
 		if (import_action == null) {
-			import_action = new GenericAction("Import Preferences", KeyEvent.VK_I) {
+			import_action = new GenericAction("Import Preferences", null, null, KeyEvent.VK_I, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -326,11 +326,6 @@ public final class PreferencesPanel extends JPanel {
 						components[i].refresh();
 					}
 				}
-
-				@Override
-				public boolean isPopup() {
-					return true;
-				}
 			};
 			import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
 //			import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
@@ -340,18 +335,13 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpAction() {
 		if (help_action == null) {
-			help_action = new GenericAction("General Help", KeyEvent.VK_G) {
+			help_action = new GenericAction("General Help", null, null, KeyEvent.VK_G, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					showHelp(getHelpTextHTML());
-				}
-
-				@Override
-				public boolean isPopup() {
-					return true;
 				}
 			};
 			help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
@@ -362,18 +352,12 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpTabAction() {
 		if (help_for_tab_action == null) {
-			help_for_tab_action = new GenericAction(BUNDLE.getString("HelpForCurrentTab"), KeyEvent.VK_C) {
-
+			help_for_tab_action = new GenericAction(BUNDLE.getString("HelpForCurrentTab"), null, null, KeyEvent.VK_C, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					showHelpForTab();
-				}
-
-				@Override
-				public boolean isPopup() {
-					return true;
 				}
 			};
 			help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);

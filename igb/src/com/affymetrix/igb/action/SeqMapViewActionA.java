@@ -17,7 +17,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 	}
 
 	protected SeqMapViewActionA(SeqMapView gviewer, String text, String tooltip, String iconPath) {
-		super(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED, null);
+		super(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED);
 		this.gviewer = gviewer;
 		this.handler = gviewer.getTierManager();
 		ACTION_MAP.put(gviewer.getId(), this);

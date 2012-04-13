@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -26,7 +27,7 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	}
 
 	private ViewAlignmentSequenceInSeqViewerAction() {
-		super(BUNDLE.getString("ViewAlignmentSequenceInSeqViewer"), "toolbarButtonGraphics/general/Zoom16.gif");
+		super(BUNDLE.getString("ViewAlignmentSequenceInSeqViewer"), null, "toolbarButtonGraphics/general/Zoom16.gif", KeyEvent.VK_UNDEFINED, null, true);
 		this.setEnabled(false);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 //		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
@@ -44,11 +45,6 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {

@@ -19,17 +19,12 @@ public class ReportBugAction extends GenericAction {
 	}
 
 	private ReportBugAction() {
-		super("Report a bug", null, "toolbarButtonGraphics/general/Edit16.gif", KeyEvent.VK_R, null);
+		super("Report a bug", null, "toolbarButtonGraphics/general/Edit16.gif", KeyEvent.VK_R, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

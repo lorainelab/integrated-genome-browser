@@ -24,7 +24,7 @@ public class AdjustEdgeMatchAction extends GenericAction {
 	}
 
 	private AdjustEdgeMatchAction() {
-		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("adjustEdgeMatchFuzziness")), null, null, KeyEvent.VK_F, null);
+		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("adjustEdgeMatchFuzziness")), null, null, KeyEvent.VK_F);
 	}
 
 	public void actionPerformed(ActionEvent e) {

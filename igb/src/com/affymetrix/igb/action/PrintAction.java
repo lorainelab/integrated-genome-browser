@@ -22,7 +22,7 @@ public class PrintAction extends GenericAction {
 	}
 
 	private PrintAction() {
-		super(BUNDLE.getString("print"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null);
+		super(BUNDLE.getString("print"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null, true);
 	}
 
 	@Override
@@ -33,10 +33,5 @@ public class PrintAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

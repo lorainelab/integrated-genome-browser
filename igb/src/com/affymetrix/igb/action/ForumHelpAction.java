@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -22,17 +23,12 @@ public class ForumHelpAction extends GenericAction {
 	}
 
 	private ForumHelpAction() {
-		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME), "toolbarButtonGraphics/general/Information16.gif");
+		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME), null, "toolbarButtonGraphics/general/Information16.gif", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("https://sourceforge.net/projects/genoviz/forums/forum/439787");
-	}
-
-	@Override
-	public boolean isPopup() {
-		return true;
 	}
 }

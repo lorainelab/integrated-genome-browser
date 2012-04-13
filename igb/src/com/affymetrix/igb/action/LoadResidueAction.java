@@ -29,13 +29,9 @@ public class LoadResidueAction extends GenericAction {
 	final boolean tryFull;
 	
 	public LoadResidueAction(final SeqSpan span, boolean tryFull){
+		super("Load Residue", null);
 		this.span = span;
 		this.tryFull = tryFull;
-	}
-	
-	@Override
-	public String getText() {
-		return "Load Residue";
 	}
 	
 	@Override

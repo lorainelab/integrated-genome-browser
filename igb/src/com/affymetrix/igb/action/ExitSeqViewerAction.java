@@ -19,24 +19,15 @@ public class ExitSeqViewerAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	Frame mapframe;
 	public ExitSeqViewerAction(Frame mapframe) {
-		super();
+		super(BUNDLE.getString("closeSequenceViewer"), KeyEvent.VK_W);
 		this.mapframe=mapframe;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
 				new WindowEvent(mapframe,
 					WindowEvent.WINDOW_CLOSING));
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("closeSequenceViewer");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_W;
 	}
 }

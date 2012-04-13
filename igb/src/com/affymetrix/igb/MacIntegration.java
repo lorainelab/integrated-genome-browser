@@ -106,7 +106,7 @@ final class ApplicationListenerProxy implements InvocationHandler {
 				Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
 				setHandled.invoke(args[0], true);
 			} else if (method.getName().equals("handleQuit")) {
-				ExitAction a = new ExitAction();
+				ExitAction a = ExitAction.getAction();
 				a.actionPerformed(null);
 			} else if (method.getName().equals("handlePreferences")) {
 				PreferencesPanel pv = PreferencesPanel.getSingleton();

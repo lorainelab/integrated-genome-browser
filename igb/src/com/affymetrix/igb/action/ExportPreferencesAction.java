@@ -29,7 +29,7 @@ public class ExportPreferencesAction extends GenericAction {
 	}
 
 	private ExportPreferencesAction() {
-		super();
+		super(BUNDLE.getString("ExportPreferences"), KeyEvent.VK_E);
 	}
 
 	@Override
@@ -46,16 +46,6 @@ public class ExportPreferencesAction extends GenericAction {
 				ErrorHandler.errorPanel("ERROR", "Error saving preferences to file", e);
 			}
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("ExportPreferences");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_E;
 	}
 
 	@Override

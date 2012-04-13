@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,11 @@ public abstract class SeqMapViewActionA extends GenericAction {
 	protected static final Map<String, SeqMapViewActionA> ACTION_MAP = new HashMap<String, SeqMapViewActionA>();
 
 	protected SeqMapViewActionA(SeqMapView gviewer, String text, String iconPath) {
-		super(text, iconPath);
+		this(gviewer, text, null, iconPath);
+	}
+
+	protected SeqMapViewActionA(SeqMapView gviewer, String text, String tooltip, String iconPath) {
+		super(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED, null);
 		this.gviewer = gviewer;
 		this.handler = gviewer.getTierManager();
 		ACTION_MAP.put(gviewer.getId(), this);

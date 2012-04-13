@@ -14,23 +14,13 @@ public class NextSearchSpanAction extends GenericAction {
 	}
 
 	private NextSearchSpanAction() {
-		super();
+		super("Next Search Span", "toolbarButtonGraphics/navigation/Forward16.gif");
 		setEnabled(false);
-	}
-
-	@Override
-	public String getText() {
-		return "Next Search Span";
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().getMapRangeBox().nextSpan();
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/navigation/Forward16.gif";
 	}
 }

@@ -16,22 +16,13 @@ public class FeatureInfoAction extends GenericAction {
 	final String url ;
 
 	public FeatureInfoAction(String url){
-		super();
+		super(BUNDLE.getString("trackInfo"), null);
 		this.url = url;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse(url);
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("trackInfo");
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
 	}
 }

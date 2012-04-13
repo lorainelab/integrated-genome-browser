@@ -19,6 +19,10 @@ public class ExportImageAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ExportImageAction() {
+		super(BUNDLE.getString("exportImage"), "toolbarButtonGraphics/general/Export16.gif");
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
@@ -28,16 +32,6 @@ public class ExportImageAction extends GenericAction {
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("exportImage");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Export16.gif";
 	}
 
 	@Override

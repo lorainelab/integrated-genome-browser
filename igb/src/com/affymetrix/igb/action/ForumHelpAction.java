@@ -22,25 +22,13 @@ public class ForumHelpAction extends GenericAction {
 	}
 
 	private ForumHelpAction() {
-		super();
+		super(MessageFormat.format(BUNDLE.getString("forumHelp"),APP_NAME), "toolbarButtonGraphics/general/Information16.gif");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("https://sourceforge.net/projects/genoviz/forums/forum/439787");
-	}
-
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-					BUNDLE.getString("forumHelp"),
-					APP_NAME);
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Information16.gif";
 	}
 
 	@Override

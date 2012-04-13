@@ -23,26 +23,15 @@ public class ExitAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ExitAction() {
+		super(BUNDLE.getString("exit"), null, "toolbarButtonGraphics/general/Stop16.gif", KeyEvent.VK_X, null);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
 				new WindowEvent(
 					IGB.getSingleton().getFrame(),
 					WindowEvent.WINDOW_CLOSING));
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("exit");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_X;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Stop16.gif";
 	}
 }

@@ -14,17 +14,12 @@ public class ExportSequenceViewerAction extends ExportComponentAction{
 	private final Component comp;
 
 	public ExportSequenceViewerAction(Component comp) {
-		super();
+		super(BUNDLE.getString("exportImage"), null);
 		this.comp = comp;
 	}
 
 	@Override
 	public Component determineSlicedComponent() {
 		return comp;
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("exportImage");
 	}
 }

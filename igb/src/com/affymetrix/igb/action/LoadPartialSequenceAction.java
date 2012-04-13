@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -22,15 +21,11 @@ public class LoadPartialSequenceAction extends GenericAction {
 	}
 
 	private LoadPartialSequenceAction(){
-		super();
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		GeneralLoadView.getLoadView().loadResidues(this);
+		super(MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("sequenceInViewCap")), null);
 	}
 
 	@Override
-	public String getText() {
-		return MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("sequenceInViewCap"));
+	public void actionPerformed(ActionEvent e) {
+		GeneralLoadView.getLoadView().loadResidues(this);
 	}
 }

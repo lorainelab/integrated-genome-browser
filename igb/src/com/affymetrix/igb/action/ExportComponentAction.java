@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -16,7 +15,11 @@ import java.awt.event.ActionEvent;
 public abstract class ExportComponentAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
+	protected ExportComponentAction(String text, String iconPath) {
+		super(text, iconPath);
+	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		Component component = determineSlicedComponent();
@@ -33,6 +36,5 @@ public abstract class ExportComponentAction extends GenericAction {
 	}
 
 	public abstract Component determineSlicedComponent(); 
-		
 }
 

@@ -66,7 +66,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 	// glyph class
 	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph {
 		protected ViewModeGlyph defaultGlyph; 
-		protected final SeqMapViewExtendedI smv;
+//		protected final SeqMapViewExtendedI smv;
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
 //		protected SimpleSeqSpan saveSpan;
@@ -74,7 +74,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 			Direction direction, SeqMapViewExtendedI smv) {
 			super(sym, style, direction, smv);
-			this.smv = smv;
+//			this.smv = smv;
 //			saveSpan = null;
 		}
 
@@ -92,7 +92,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return (RootSeqSymmetry)GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
 		}
 
-		protected ViewModeGlyph getDetailGlyph(SimpleSeqSpan span) throws Exception {
+		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv, SeqSpan span) throws Exception {
 			GenericFeature feature = style.getFeature();
 			SeqSymmetry optimized_sym = feature.optimizeRequest(span);	
 			if (optimized_sym != null) {
@@ -109,7 +109,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
 		}
 
-		protected ViewModeGlyph getSummaryGlyph(SeqSpan span) throws Exception {
+		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv, SeqSpan span) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(span);
 			if (symList.size() > 0) {
@@ -124,8 +124,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		}
 
 		@Override
-		public ViewModeGlyph getGlyph(ViewI view) {
+		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
 			BioSeq seq = smv.getAnnotatedSeq();
+			ViewI view = smv.getSeqMap().getView();
 	        int startBase = (int)Math.round(view.getCoordBox().getX());
 			int length = (int)Math.round(view.getCoordBox().getWidth());
 	        int endBase = startBase + length;
@@ -136,10 +137,10 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {
-					resultGlyph = getDetailGlyph(span);
+					resultGlyph = getDetailGlyph(smv, span);
 				}
 				else {
-					resultGlyph = getSummaryGlyph(span);
+					resultGlyph = getSummaryGlyph(smv, span);
 				}
 				if (resultGlyph == null) {
 					resultGlyph = getEmptyGraphGlyph(span, style, smv);

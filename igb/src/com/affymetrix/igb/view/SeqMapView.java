@@ -247,9 +247,10 @@ public class SeqMapView extends JPanel
 
 		@Override
 		public void rangeChanged(NeoRangeEvent evt) {
+			NeoRangeEvent newevt = new NeoRangeEvent(SeqMapView.this, evt.getVisibleStart(), evt.getVisibleEnd());
 			for(TierGlyph tier : seqmap.getTiers()){
 				if(tier.getViewModeGlyph() instanceof NeoRangeListener){
-					((NeoRangeListener)tier.getViewModeGlyph()).rangeChanged(evt);
+					((NeoRangeListener)tier.getViewModeGlyph()).rangeChanged(newevt);
 				}
 			}
 		}
@@ -638,6 +639,7 @@ public class SeqMapView extends JPanel
 	 *       // both x and y direction.
 	 *       [GAH: temporarily changed to preserve scale in only the x direction]
 	 */
+	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
@@ -658,6 +660,7 @@ public class SeqMapView extends JPanel
 	//               need to "genometrize" them
 	//            currently sequence is not properly displayed when reverse complementing
 	//
+	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		Application.getSingleton().getFrame().setTitle(getTitleBar(seq));
 
@@ -1243,6 +1246,7 @@ public class SeqMapView extends JPanel
 	 *  a SeqSymmetry from {@link #getAnnotatedSeq()} to
 	 *  {@link #getViewSeq()}.
 	 */
+	@Override
 	public final SeqSymmetry[] getTransformPath() {
 		return transform_path;
 	}
@@ -1265,11 +1269,11 @@ public class SeqMapView extends JPanel
 	public final AffyTieredMap getSeqMap() {
 		return seqmap;
 	}
-
+	@Override
 	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
 		seqmap.setDataModelFromOriginalSym(g, sym);
 	}
-
+	@Override
 	public final void selectAllGraphs() {
 		List<GlyphI> glyphlist = collectGraphs();
 		List<GlyphI> visibleList = new ArrayList<GlyphI>(glyphlist.size());
@@ -1293,7 +1297,7 @@ public class SeqMapView extends JPanel
 
 		select(glyphsToSyms(visibleList), false, true, true);
 	}
-
+	@Override
 	public final void select(List<SeqSymmetry> sym_list, boolean normal_selection) {
 		select(sym_list, false, normal_selection, true);
 		if (normal_selection) {
@@ -1305,7 +1309,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
-
+	
 	private void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
 			boolean call_listeners, boolean update_widget) {
 		if (!add_to_previous) {
@@ -1338,6 +1342,7 @@ public class SeqMapView extends JPanel
 	 *  Figures out which symmetries are currently selected and then calls
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
+	@Override
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
@@ -1461,7 +1466,7 @@ public class SeqMapView extends JPanel
 		}
 		return new ArrayList<SeqSymmetry>(symSet);
 	}
-
+	@Override
 	public final void zoomTo(SeqSpan span) {
 		BioSeq zseq = span.getBioSeq();
 		if (zseq != null && zseq != this.getAnnotatedSeq()) {
@@ -1501,6 +1506,7 @@ public class SeqMapView extends JPanel
 	/**
 	 * Center at the hairline.
 	 */
+	@Override
 	public final void centerAtHairline() {
 		if (this.hairline == null) {
 			return;
@@ -1640,6 +1646,7 @@ public class SeqMapView extends JPanel
 	/**
 	 *  return a SeqSpan representing the visible bounds of the view seq
 	 */
+	@Override
 	public final SeqSpan getVisibleSpan() {
 		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
 		SeqSpan vspan = new SimpleSeqSpan((int) vbox.x,
@@ -1710,7 +1717,7 @@ public class SeqMapView extends JPanel
 	public JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
 		return setUpMenuItem(menu, action_command, action_listener);
 	}
-
+	@Override
 	public final SeqMapViewMouseListener getMouseListener() {
 		return mouse_listener;
 	}
@@ -2000,6 +2007,7 @@ public class SeqMapView extends JPanel
 		label.setText(title);
 	}
 
+	@Override
 	public void addPopupListener(ContextualPopupListener listener) {
 		popup_listeners.add(listener);
 	}
@@ -2246,7 +2254,7 @@ public class SeqMapView extends JPanel
 		}
 		return ag;
 	}
-
+	@Override
 	public int getAverageSlots() {
 		int slot = 1;
 		int noOfTiers = 1;
@@ -2260,6 +2268,7 @@ public class SeqMapView extends JPanel
 
 		return slot/noOfTiers;
 	}
+	@Override
 	public final void addToRefreshList(SeqMapRefreshed smr) {
 		seqmap_refresh_list.add(smr);
 	}
@@ -2271,7 +2280,7 @@ public class SeqMapView extends JPanel
 	public GenericAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
-
+	@Override
 	public void setPropertyHandler(PropertyHandler propertyHandler) {
 		this.propertyHandler = propertyHandler;
 	}
@@ -2329,6 +2338,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	@Override
 	public void setRegion(int start, int end, BioSeq seq) {
 		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
 			final SeqSpan view_span = new SimpleSeqSpan(start, end, seq);

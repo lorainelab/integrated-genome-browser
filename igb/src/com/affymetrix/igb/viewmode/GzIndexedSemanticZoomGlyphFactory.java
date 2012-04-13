@@ -84,9 +84,9 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		}
 
 		@Override
-		protected ViewModeGlyph getSummaryGlyph(SeqSpan span) throws Exception {
+		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv, SeqSpan span) throws Exception {
 			if (saveSummaryGlyph == null /* || !span.getBioSeq().equals(saveSpan.getBioSeq()) */) {
-				saveSummaryGlyph = super.getSummaryGlyph(span);
+				saveSummaryGlyph = super.getSummaryGlyph(smv, span);
 			}
 			return saveSummaryGlyph;
 		}

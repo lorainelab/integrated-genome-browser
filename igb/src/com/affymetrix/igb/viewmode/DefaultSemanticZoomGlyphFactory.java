@@ -5,7 +5,6 @@ import java.util.HashMap;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.shared.SemanticZoomGlyphFactory;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
@@ -26,8 +25,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		}
 
 		@Override
-		public ViewModeGlyph getGlyph(ViewI view) {
-			return view.getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : detailGlyph;
+		public ViewModeGlyph getGlyph(SeqMapViewExtendedI smv) {
+			return smv.getSeqMap().getView().getTransform().getScaleX() < ZOOM_X_SCALE ? depthGlyph : detailGlyph;
 		}
 
 		@Override

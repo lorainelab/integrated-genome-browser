@@ -310,19 +310,19 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return TrackStyle.getInstance(meth, false);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getAllTierGlyphs() {
 		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs();
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getSelectedTierGlyphs() {
 		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({"unchecked", "rawtypes", "cast"})
 	@Override
 	public List<Glyph> getVisibleTierGlyphs() {
 		return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();

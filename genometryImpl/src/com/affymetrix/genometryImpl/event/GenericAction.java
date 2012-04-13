@@ -44,11 +44,6 @@ public abstract class GenericAction extends AbstractAction {
 		this(text, null, null, mnemonic, null);
 	}
 
-	public GenericAction() {
-		super();
-		doneCallbacks = new HashSet<GenericActionDoneCallback>();
-		_setProperties();
-	}
 	private void _setProperties() {
 		setProperties(true);
 	}

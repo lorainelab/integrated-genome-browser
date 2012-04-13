@@ -29,12 +29,8 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	public final Box box;
 	public final JRPComboBox speciesCB;
 	public final JRPComboBox versionCB;
-	private final GenericAction speciesAction = new GenericAction() {
+	private final GenericAction speciesAction = new GenericAction(null, null) {
 		private static final long serialVersionUID = 1L;
-		@Override
-		public String getText() {
-			return null;
-		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getModifiers() != 0) {
@@ -52,12 +48,8 @@ public final class MergeOptionChooser extends JRPFileChooser {
 			return MergeOptionChooser.this.getId() + "_speciesAction";
 		}
 	};
-	private final GenericAction versionAction = new GenericAction() {
+	private final GenericAction versionAction = new GenericAction(null, null) {
 		private static final long serialVersionUID = 1L;
-		@Override
-		public String getText() {
-			return null;
-		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getModifiers() != 0) {

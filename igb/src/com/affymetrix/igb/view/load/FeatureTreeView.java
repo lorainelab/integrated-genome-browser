@@ -663,13 +663,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			private final JRPCheckBox checkbox;
 
 			private FeatureLoadAction(JRPCheckBox checkbox) {
-				super();
+				super(null, null);
 				this.checkbox = checkbox;
-			}
-
-			@Override
-			public String getText() {
-				return null;
 			}
 
 			@Override

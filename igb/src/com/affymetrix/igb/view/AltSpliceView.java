@@ -255,8 +255,7 @@ public class AltSpliceView extends IGBTabPanel
 			return;
 		}
 
-		Action hide_action = new GenericAction() {
-
+		Action hide_action = new GenericAction("Hide Tier", null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -264,15 +263,9 @@ public class AltSpliceView extends IGBTabPanel
 				spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
 				handler.hideTiers(handler.getSelectedTierLabels(), false, true);
 			}
-
-			@Override
-			public String getText() {
-				return "Hide Tier";
-			}
 		};
 
-		Action restore_all_action = new GenericAction() {
-
+		Action restore_all_action = new GenericAction("Show All", null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -280,11 +273,6 @@ public class AltSpliceView extends IGBTabPanel
 				// undo all edge-matching, because packing will behave badly otherwise.
 				spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
 				handler.showTiers(handler.getAllTierLabels(), true, true);
-			}
-
-			@Override
-			public String getText() {
-				return "Show All";
 			}
 		};
 

@@ -21,8 +21,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Adjustable;
 import java.awt.event.*;
 
-import javax.swing.*;
-
 final class SeqMapViewActionListener implements ActionListener {
 
 	private final static String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
@@ -47,105 +45,59 @@ final class SeqMapViewActionListener implements ActionListener {
 		seqmap = gviewer.seqmap;
 
 		for (String command : commands) {
-			MenuUtil.addAccelerator((JComponent) gviewer, this, command);
+			MenuUtil.addAccelerator(gviewer, this, command);
 		}
-		new GenericAction() {
+		new GenericAction("Zoom out horizontally", null) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_X);
 			}
-			@Override
-			public String getText() {
-				return "Zoom out horizontally";
-			}
-			@Override
-			public String getIconPath() {
-				return null;
-			}
 		};
-		new GenericAction() {
+		new GenericAction("Zoom in horizontally", null) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_X);
 			}
-			@Override
-			public String getText() {
-				return "Zoom in horizontally";
-			}
-			@Override
-			public String getIconPath() {
-				return null;
-			}
 		};
-		new GenericAction() {
+		new GenericAction("Zoom out vertically", null) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_Y);
 			}
-			@Override
-			public String getText() {
-				return "Zoom out vertically";
-			}
-			@Override
-			public String getIconPath() {
-				return null;
-			}
 		};
-		new GenericAction() {
+		new GenericAction("Zoom in vertically", null) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_Y);
 			}
-			@Override
-			public String getText() {
-				return "Zoom in vertically";
-			}
-			@Override
-			public String getIconPath() {
-				return null;
-			}
 		};
-		new GenericAction() {
+		new GenericAction("Home Position", "Zoom out fully", null, KeyEvent.VK_UNDEFINED, null) {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_FULLY);
 			}
-
-			@Override
-			public String getText() {
-				return "Home Position";
-			}
-			@Override
-			public String getIconPath() {
-				return null;
-			}
-			@Override
-			public String getTooltip() {
-				return "Zoom out fully";
-			}
 		};
 		
-		new GenericAction() {
+		new GenericAction(ZOOM_TO_SELECTED, null) {
 			private static final long serialVersionUID = 1L;
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_TO_SELECTED);
-			}
-			@Override
-			public String getText() {
-				return ZOOM_TO_SELECTED;
-			}
-			@Override
-			public String getIconPath() {
-				return null;
 			}
 		};
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 		String command = evt.getActionCommand();
 		//System.out.println("SeqMapView received action event "+command);

@@ -19,9 +19,8 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 		private static final double ZOOM_X_SCALE = 0.002;
 		private ViewModeGlyph depthGlyph; 
 		private ViewModeGlyph detailGlyph; 
-		private DefaultSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-			Direction direction, SeqMapViewExtendedI smv) {
-			super(sym, style, direction, smv);
+		private DefaultSemanticZoomGlyph(SeqSymmetry sym) {
+			super(sym);
 		}
 
 		@Override
@@ -65,9 +64,7 @@ public class DefaultSemanticZoomGlyphFactory extends SemanticZoomGlyphFactory {
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction,
-			SeqMapViewExtendedI smv) {
-		return new DefaultSemanticZoomGlyph(sym, style, direction, smv);
+	protected SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym) {
+		return new DefaultSemanticZoomGlyph(sym);
 	}
 }

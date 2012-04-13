@@ -29,12 +29,10 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
-			ITrackStyleExtended style, Direction direction,
-			SeqMapViewExtendedI smv) {
-		return new GzIndexedSemanticZoomGlyph(sym, style, direction, smv);
+	protected SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym){
+		return new GzIndexedSemanticZoomGlyph(sym);
 	}
-
+	
 	@Override
 	public String getName() {
 		return getExtension() + "_semantic_zoom";
@@ -53,9 +51,8 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		private static final double ZOOM_X_SCALE = 0.002;
 		private ViewModeGlyph saveSummaryGlyph;
 
-		public GzIndexedSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-				Direction direction, SeqMapViewExtendedI smv) {
-			super(sym, style, direction, smv);
+		public GzIndexedSemanticZoomGlyph(SeqSymmetry sym) {
+			super(sym);
 		}
 
 		@Override

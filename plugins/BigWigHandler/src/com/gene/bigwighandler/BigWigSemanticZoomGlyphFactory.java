@@ -68,9 +68,8 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 	}
 
 	@Override
-	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-		Direction direction, SeqMapViewExtendedI smv) {
-		return new BigWigSemanticZoomGlyph(sym, style, direction, smv);
+	protected SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym) {
+		return new BigWigSemanticZoomGlyph(sym);
 	}
 
 	@Override
@@ -84,9 +83,8 @@ public class BigWigSemanticZoomGlyphFactory extends IndexedSemanticZoomGlyphFact
 		private List<BBZoomLevelHeader> levelHeaders;
 //		private final List<ViewModeGlyph> levelGlyphs;
 
-		public BigWigSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
-			Direction direction, SeqMapViewExtendedI smv) {
-			super(sym, style, direction, smv);
+		public BigWigSemanticZoomGlyph(SeqSymmetry sym) {
+			super(sym);
 		}
 
 		@Override

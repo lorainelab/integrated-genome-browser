@@ -29,24 +29,24 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph;
 		
-		protected SemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv) {
+		protected SemanticZoomGlyph(SeqSymmetry sym) {
 			super();
 			super.setInfo(sym);
-			init(sym, style, direction, smv);
-			setDirection(direction);
-			lastUsedGlyph = getDefaultGlyph();
-			setStyle(style);
 		}
 
 		protected abstract ViewModeGlyph getGlyph(SeqMapViewExtendedI smv);
 
 		protected abstract void init(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv);
 		protected abstract ViewModeGlyph getDefaultGlyph();
-
+		
+		protected void setLastUsedGlyph(ViewModeGlyph vmg){
+			lastUsedGlyph = vmg;
+		}
+		
 		@Override
 		public void rangeChanged(NeoRangeEvent evt){
 			if(evt.getSource() instanceof SeqMapViewExtendedI){
-				lastUsedGlyph = getGlyph(((SeqMapViewExtendedI)evt.getSource()));
+				setLastUsedGlyph(getGlyph(((SeqMapViewExtendedI)evt.getSource())));
 			}
 		}
 				
@@ -461,5 +461,20 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 		}
 	}
+	
+	protected abstract SemanticZoomGlyph getSemanticZoomGlyph(SeqSymmetry sym);
+	
 	// end glyph class
+	@Override
+	public final ViewModeGlyph getViewModeGlyph(SeqSymmetry sym,
+			ITrackStyleExtended style, Direction direction,
+			SeqMapViewExtendedI smv) {
+
+		SemanticZoomGlyph szg = getSemanticZoomGlyph(sym);
+		szg.init(sym, style, direction, smv);
+		szg.setDirection(direction);
+		szg.setLastUsedGlyph(szg.getDefaultGlyph());
+		szg.setStyle(style);
+		return szg;
+	}
 }

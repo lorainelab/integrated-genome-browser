@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -68,13 +69,13 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		protected final SeqMapViewExtendedI smv;
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
-		protected SimpleSeqSpan saveSpan;
+//		protected SimpleSeqSpan saveSpan;
 
 		public IndexedSemanticZoomGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 			Direction direction, SeqMapViewExtendedI smv) {
 			super(sym, style, direction, smv);
 			this.smv = smv;
-			saveSpan = null;
+//			saveSpan = null;
 		}
 
 		public abstract boolean isDetail(ViewI view);
@@ -108,7 +109,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
 		}
 
-		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
+		protected ViewModeGlyph getSummaryGlyph(SeqSpan span) throws Exception {
 			ViewModeGlyph resultGlyph = null;
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(span);
 			if (symList.size() > 0) {
@@ -162,7 +163,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				if (resultGlyph.getCoordBox().y != saveY) {
 					resultGlyph.moveAbsolute(resultGlyph.getCoordBox().x, saveY);
 				}
-				saveSpan = span;
+//				saveSpan = span;
 				lastUsedGlyph = resultGlyph;
 				viewModeGlyphs.put("lastUsed", lastUsedGlyph);
 				return resultGlyph;

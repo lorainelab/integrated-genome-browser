@@ -8,8 +8,10 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
@@ -47,7 +49,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	protected abstract SymLoader createSummarySymLoader(URI uri, String featureName, AnnotatedSeqGroup group);
 
 	// glyph class
-	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph {
+	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph implements SeqSelectionListener{
 		private static final double ZOOM_X_SCALE = 0.002;
 		private ViewModeGlyph saveSummaryGlyph;
 
@@ -82,11 +84,16 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 		}
 
 		@Override
-		protected ViewModeGlyph getSummaryGlyph(SimpleSeqSpan span) throws Exception {
-			if (saveSummaryGlyph == null || !span.getBioSeq().equals(saveSpan.getBioSeq())) {
+		protected ViewModeGlyph getSummaryGlyph(SeqSpan span) throws Exception {
+			if (saveSummaryGlyph == null /* || !span.getBioSeq().equals(saveSpan.getBioSeq()) */) {
 				saveSummaryGlyph = super.getSummaryGlyph(span);
 			}
 			return saveSummaryGlyph;
+		}
+
+		@Override
+		public void seqSelectionChanged(SeqSelectionEvent evt) {
+			saveSummaryGlyph = null;
 		}
 	}
 	// end glyph class

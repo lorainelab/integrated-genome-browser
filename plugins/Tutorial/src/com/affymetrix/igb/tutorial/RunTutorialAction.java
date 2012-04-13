@@ -26,7 +26,6 @@ public class RunTutorialAction extends GenericAction {
 		this.tutorialManager = tutorialManager;
 		this.name = name;
 		this.uri = uri;
-		putValue(Action.NAME, getText());
 	}
 
 	@Override

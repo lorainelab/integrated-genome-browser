@@ -129,9 +129,9 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			int length = (int)Math.round(view.getCoordBox().getWidth());
 	        int endBase = startBase + length;
 	        SimpleSeqSpan span = new SimpleSeqSpan(startBase, endBase, seq);
-	        if (span.equals(saveSpan) && lastUsedGlyph != null) {
-	        	return lastUsedGlyph;
-	        }
+//	        if (span.equals(saveSpan) && lastUsedGlyph != null) {
+//	        	return lastUsedGlyph;
+//	        }
 			try {
 				ViewModeGlyph resultGlyph = null;
 				if (isDetail(view)) {

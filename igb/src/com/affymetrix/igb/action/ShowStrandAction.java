@@ -36,7 +36,7 @@ public class ShowStrandAction extends SeqMapViewActionA implements SymSelectionL
 	private boolean separateStrands;
 
 	protected ShowStrandAction(SeqMapView gviewer) {
-		super(gviewer);
+		super(gviewer, IGBConstants.BUNDLE.getString("showTwoTiersAction"), null, "images/strand_separate.png");
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 
@@ -60,15 +60,15 @@ public class ShowStrandAction extends SeqMapViewActionA implements SymSelectionL
 		setStrand(new ArrayList<SeqSymmetry>());
 	}
 
-	@Override
-	public String getText() {
-		return separateStrands ? IGBConstants.BUNDLE.getString("showTwoTiersAction") : IGBConstants.BUNDLE.getString("showSingleTierAction");
-	}
+//	@Override
+//	public String getText() {
+//		return separateStrands ? IGBConstants.BUNDLE.getString("showTwoTiersAction") : IGBConstants.BUNDLE.getString("showSingleTierAction");
+//	}
 
-	@Override
-	public String getIconPath() {
-		return separateStrands ? "images/strand_separate.png" : "images/strand_mixed.png";
-	}
+//	@Override
+//	public String getIconPath() {
+//		return separateStrands ? "images/strand_separate.png" : "images/strand_mixed.png";
+//	}
 
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {

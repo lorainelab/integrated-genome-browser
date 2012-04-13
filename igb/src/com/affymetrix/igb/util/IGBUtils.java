@@ -129,11 +129,11 @@ public class IGBUtils {
 				new com.affymetrix.igb.action.ZoomingRepackAction(com.affymetrix.igb.Application.getSingleton().getMapView())));
 		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", "Select");
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
-//		for (FileTypeCategory category : FileTypeCategory.values()) {
-//			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));
-//			item.setText(SelectAllAction.getAction(category).getText() + " " + category.toString());
-//			select_menu.add(item);
-//		}
+		for (FileTypeCategory category : FileTypeCategory.values()) {
+			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));
+			item.setText(SelectAllAction.getAction(category).getText() + " " + category.toString());
+			select_menu.add(item);
+		}
 		edit_menu.add(select_menu);
 	}
 

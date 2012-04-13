@@ -22,8 +22,8 @@ import com.affymetrix.igb.view.SeqMapView;
 public abstract class ChangeColorActionA extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
-	protected ChangeColorActionA(SeqMapView gviewer) {
-		super(gviewer);
+	protected ChangeColorActionA(SeqMapView gviewer, String text, String tooltip, String iconPath) {
+		super(gviewer, text, tooltip, iconPath);
 	}
 
 	protected void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {

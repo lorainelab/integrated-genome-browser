@@ -19,7 +19,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForegroundColorAction(SeqMapView gviewer) {
-		super(gviewer);
+		super(gviewer, IGBConstants.BUNDLE.getString("changeColorAction"), null, "images/change_color.png");
 	}
 
 	@Override
@@ -27,15 +27,5 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 		super.actionPerformed(e);
 		changeColor(handler.getSelectedTierLabels(), true);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-	}
-
-	@Override
-	public String getText() {
-		return IGBConstants.BUNDLE.getString("changeColorAction");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "images/change_color.png";
 	}
 }

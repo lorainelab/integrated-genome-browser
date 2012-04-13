@@ -83,7 +83,6 @@
                             <entry key="Optimize All Tracks" value="true"/>
                             <entry key="Change FG Color" value="true"/>
                             <entry key="Change BG Color" value="true"/>
-                            <entry key="Show 1 track (+/-)" value="true"/>
                         </map>
                     </node>
                 </node>

@@ -11,7 +11,7 @@ public class RepackAllTiersAction extends RepackTiersAction {
 	private static RepackAllTiersAction ACTION;
 
 	public RepackAllTiersAction(SeqMapView gviewer) {
-		super(gviewer);
+		super(gviewer, IGBConstants.BUNDLE.getString("repackAllTracksAction"), null, "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
 	}
 
 	public static RepackAllTiersAction getAction() {
@@ -25,15 +25,5 @@ public class RepackAllTiersAction extends RepackTiersAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		repackTiers(handler.getAllTierLabels());
-	}
-
-	@Override
-	public String getText() {
-		return IGBConstants.BUNDLE.getString("repackAllTracksAction");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif";
 	}
 }

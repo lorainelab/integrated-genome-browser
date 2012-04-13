@@ -179,8 +179,8 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 
 	private void toggleAutoScroll(final SeqMapView seqMapView, int bases_per_pixel, int pix_to_scroll,
 					int timer_interval, final int start_coord, final int end_coord, final boolean cycle) {
-		double pix_per_coord = 1.0 / (double) bases_per_pixel;
-		final double coords_to_scroll = (double) pix_to_scroll / pix_per_coord;
+		double pix_per_coord = 1.0 / bases_per_pixel;
+		final double coords_to_scroll = pix_to_scroll / pix_per_coord;
 
 		seqMapView.getSeqMap().zoom(NeoAbstractWidget.X, pix_per_coord);
 		seqMapView.getSeqMap().scroll(NeoAbstractWidget.X, start_coord);

@@ -18,8 +18,27 @@ public abstract class GenericAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private static final char POPUP_DIALOG = '\u2026';
 	private static final String ELLIPSIS = "...";
-
+	private String text;
+	private String tooltip;
+	private String iconPath;
+	private int mnemonic;
+	private Object extraInfo;
 	private Set<GenericActionDoneCallback> doneCallbacks;
+
+	public GenericAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo) {
+		super();
+		this.text = text;
+		this.tooltip = tooltip;
+		this.iconPath = iconPath;
+		this.mnemonic = mnemonic;
+		this.extraInfo = extraInfo;
+		doneCallbacks = new HashSet<GenericActionDoneCallback>();
+		_setProperties();
+	}
+
+	public GenericAction(String text, String tooltip, String iconPath) {
+		this(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED, null);
+	}
 
 	public GenericAction() {
 		super();
@@ -48,10 +67,24 @@ public abstract class GenericAction extends AbstractAction {
 			GenericActionHolder.getInstance().addGenericAction(this);
 		}
 	}
-	public String getIconPath() {
-		return null;
+	public String getText() {
+		return text;
 	}
-	public abstract String getText();
+	public String getTooltip() {
+		return tooltip;
+	}
+	public String getIconPath() {
+		return iconPath;
+	}
+	public int getMnemonic() {
+		return mnemonic;
+	}
+	public Object getExtraInfo() {
+		return extraInfo;
+	}
+	public String getId() {
+		return this.getClass().getSimpleName();
+	}
 	public static String getCleanText(String text) {
 		String cleanText = text;
 		if (cleanText.endsWith("" + POPUP_DIALOG)) {
@@ -65,11 +98,6 @@ public abstract class GenericAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GenericActionHolder.getInstance().notifyActionPerformed(this);
-	}
-	public int getMnemonic() { return KeyEvent.VK_UNDEFINED; }
-	public String getTooltip() { return null; }
-	public String getId() {
-		return this.getClass().getSimpleName();
 	}
 	public boolean usePrefixInMenu() {
 		return false;
@@ -90,9 +118,6 @@ public abstract class GenericAction extends AbstractAction {
 		for (GenericActionDoneCallback doneCallback : doneCallbacks) {
 			doneCallback.actionDone(this);
 		}
-	}
-	public Object getExtraInfo() {
-		return null;
 	}
 
 	/**

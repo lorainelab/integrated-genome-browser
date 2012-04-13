@@ -23,23 +23,17 @@ public class SelectAllAction extends SeqMapViewActionA {
 		return ACTION;
 	}
 
-	public static SelectAllAction getAction(final FileTypeCategory _category) {
-		SelectAllAction selectAllAction = CATEGORY_ACTION.get(_category);
+	public static SelectAllAction getAction(final FileTypeCategory category) {
+		SelectAllAction selectAllAction = CATEGORY_ACTION.get(category);
 		if (selectAllAction == null) {
-			selectAllAction = new SelectAllAction(Application.getSingleton().getMapView(), _category) {
-				private static final long serialVersionUID = 1L;
-				@Override
-				public String getText() {
-					return IGBConstants.BUNDLE.getString("selectAllAction") + " " + _category.toString();
-				}
-			};
-			CATEGORY_ACTION.put(_category, selectAllAction);
+			selectAllAction = new SelectAllAction(Application.getSingleton().getMapView(), category);
+			CATEGORY_ACTION.put(category, selectAllAction);
 		}
 		return ACTION;
 	}
 
 	protected SelectAllAction(SeqMapView gviewer, FileTypeCategory category) {
-		super(gviewer);
+		super(gviewer, IGBConstants.BUNDLE.getString("selectAllAction") + (category == null ? "" : category.toString()), null, null);
 		this.category = category;
 	}
 
@@ -47,15 +41,5 @@ public class SelectAllAction extends SeqMapViewActionA {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		gviewer.selectAll(category);
-	}
-
-	@Override
-	public String getText() {
-		return IGBConstants.BUNDLE.getString("selectAllAction");
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
 	}
 }

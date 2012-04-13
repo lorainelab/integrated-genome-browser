@@ -18,12 +18,12 @@ public abstract class GenericAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private static final char POPUP_DIALOG = '\u2026';
 	private static final String ELLIPSIS = "...";
-	private String text;
-	private String tooltip;
-	private String iconPath;
-	private int mnemonic;
-	private Object extraInfo;
-	private boolean popup;
+	private final String text;
+	private final String tooltip;
+	private final String iconPath;
+	private final int mnemonic;
+	private final Object extraInfo;
+	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
 
 	public GenericAction(String text, String tooltip, String iconPath, int mnemonic) {

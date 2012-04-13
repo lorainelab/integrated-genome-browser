@@ -12,6 +12,7 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.AutoScrollAction;
@@ -127,7 +128,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack",
 				new com.affymetrix.igb.action.ZoomingRepackAction(com.affymetrix.igb.Application.getSingleton().getMapView())));
-		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", "Select");
+		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectAllAction"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));

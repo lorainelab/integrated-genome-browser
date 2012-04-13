@@ -274,25 +274,29 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     return mapsplitter;
   }
 
-  // If some bug arise while resizing, the uncomment below code and also check
-  // for same method in AffyTieredMap.
-//  @Override
-//  public void componentResized(java.awt.event.ComponentEvent evt) {
-//	if (evt.getSource() == canvas) {
-//		int[] range = this.getVisibleOffset();
-//		stretchToFit(false, true);
-//		
-//		int coord_height = range[1] - range[0];
-//		double pixel_height = this.getView().getPixelBox().height;
-//		double ppc = pixel_height / coord_height; 
-//		ppc = Math.min(ppc, getMaxZoom(Y));
-//		ppc = Math.max(ppc, getMinZoom(Y));
-//		zoom(Y, ppc);
-//		scroll(Y, range[0]);
-//		setZoomBehavior(Y, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
-//		
-//		updateWidget();
-//	}
-//  }
+  @Override
+  public void componentResized(java.awt.event.ComponentEvent evt) {
+	if (evt.getSource() == canvas) {
+		if (trans.getScaleX() == 0 || trans.getScaleY() == 0) {
+			stretchToFit(true, true);
+		}else{
+			int[] offset = getVisibleOffset();
+			int[] range = getVisibleRange();
+			stretchToFit(true, true);
+			restoreView(Y, offset, getView().getPixelBox().height);
+			restoreView(X, range, getView().getPixelBox().width);
+		}
+		updateWidget();
+	}
+  }
 
+  private void restoreView(int axis, int[] range, double pixels) {
+		int coord_height = range[1] - range[0];
+		double ppc = pixels / coord_height;
+		ppc = Math.min(ppc, getMaxZoom(axis));
+		ppc = Math.max(ppc, getMinZoom(axis));
+		zoom(axis, ppc);
+		scroll(axis, range[0]);
+		setZoomBehavior(axis, CONSTRAIN_COORD, (range[0] + range[1]) / 2);
+	}
 }

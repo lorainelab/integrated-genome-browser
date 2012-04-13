@@ -8,23 +8,13 @@ public class TutorialNextAction extends GenericAction {
 	private final TutorialManager tutorialManager;
 
 	public TutorialNextAction(TutorialManager tutorialManager) {
-		super();
+		super("Next", "images/right.png");
 		this.tutorialManager = tutorialManager;
-	}
-
-	@Override
-	public String getText() {
-		return "Next";
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		tutorialManager.next();
 		super.actionPerformed(e);
-	}
-
-	@Override
-	public String getIconPath() {
-		return "images/right.png";
 	}
 }

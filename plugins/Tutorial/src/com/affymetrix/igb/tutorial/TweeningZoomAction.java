@@ -19,12 +19,7 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 	}
 
 	private TweeningZoomAction() {
-		super();
-	}
-
-	@Override
-	public String getText() {
-		return null;
+		super(null, null);
 	}
 
 	public void setAmount(double amount) {

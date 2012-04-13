@@ -22,16 +22,11 @@ public class RunTutorialAction extends GenericAction {
 	private String uri;
 
 	public RunTutorialAction(TutorialManager tutorialManager, String name, String uri) {
-		super();
+		super(name, null);
 		this.tutorialManager = tutorialManager;
 		this.name = name;
 		this.uri = uri;
 		putValue(Action.NAME, getText());
-	}
-
-	@Override
-	public String getText() {
-		return name;
 	}
 
 	@Override

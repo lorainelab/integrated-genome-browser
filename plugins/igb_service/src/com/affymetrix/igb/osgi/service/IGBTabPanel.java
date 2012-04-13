@@ -75,15 +75,14 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private class SelectAction extends GenericAction {
 		private static final long serialVersionUID = 1L;
 
+		private SelectAction() {
+			super(null, null);
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			select();
-		}
-
-		@Override
-		public String getText() {
-			return null;
 		}
 
 		@Override

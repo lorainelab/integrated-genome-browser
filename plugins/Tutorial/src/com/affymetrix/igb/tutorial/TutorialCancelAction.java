@@ -8,22 +8,12 @@ public class TutorialCancelAction extends GenericAction {
 	private final TutorialManager tutorialManager;
 
 	public TutorialCancelAction(TutorialManager tutorialManager) {
-		super();
+		super("cancel", "images/stop.png");
 		this.tutorialManager = tutorialManager;
-	}
-
-	@Override
-	public String getText() {
-		return "cancel";
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		tutorialManager.stop();
-	}
-
-	@Override
-	public String getIconPath() {
-		return "images/stop.png";
 	}
 }

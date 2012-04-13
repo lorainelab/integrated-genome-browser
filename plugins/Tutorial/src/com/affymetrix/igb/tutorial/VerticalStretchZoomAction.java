@@ -27,12 +27,7 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 	}
 
 	private VerticalStretchZoomAction() {
-		super();
-	}
-
-	@Override
-	public String getText() {
-		return null;
+		super(null, null);
 	}
 
 	public void setAmount(double amount) {

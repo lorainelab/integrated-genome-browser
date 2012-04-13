@@ -57,14 +57,13 @@ public final class SearchView extends IGBTabPanel implements
 	private static final int TAB_POSITION = 2;
 
 	public class SearchModeAction extends GenericAction {
-
 		private static final long serialVersionUID = 1L;
 
-		@Override
-		public String getText() {
-			return null;
+		private SearchModeAction() {
+			super(null, null);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
@@ -95,14 +94,13 @@ public final class SearchView extends IGBTabPanel implements
 	private SearchModeAction searchModeAction = new SearchModeAction();
 
 	public class SearchAction extends GenericAction {
-
 		private static final long serialVersionUID = 1L;
 
-		@Override
-		public String getText() {
-			return null;
+		private SearchAction() {
+			super(null, null);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			String searchMode = (String) SearchView.this.searchCB.getSelectedItem();
@@ -157,14 +155,13 @@ public final class SearchView extends IGBTabPanel implements
 	private SearchAction searchAction = new SearchAction();
 
 	public class ClearAction extends GenericAction {
-
 		private static final long serialVersionUID = 1L;
 
-		@Override
-		public String getText() {
-			return null;
+		private ClearAction() {
+			super(null, null);
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			clearResults();

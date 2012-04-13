@@ -41,7 +41,6 @@ public final class PreferencesPanel extends JPanel {
 	private JFrame frame = null;
 	public static PreferencesPanel singleton = null;
 	private final JTabbedPane tab_pane;
-	private Action export_action;
 	private Action import_action;
 	//Action clear_action;
 	private Action help_action;
@@ -223,18 +222,12 @@ public final class PreferencesPanel extends JPanel {
 		JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
 		final JDialog dialog = new JDialog(frameAncestor, HELP, true);
 		dialog.getContentPane().add(scroller, "Center");
-		Action close_action = new GenericAction() {
-
+		Action close_action = new GenericAction("OK", null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				super.actionPerformed(e);
 				dialog.dispose();
-			}
-
-			@Override
-			public String getText() {
-				return "OK";
 			}
 		};
 		JRPButton close = new JRPButton("PreferencesPanel_close", close_action);
@@ -307,10 +300,10 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getImportAction() {
 		if (import_action == null) {
-			import_action = new GenericAction() {
-
+			import_action = new GenericAction("Import Preferences", KeyEvent.VK_I) {
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					JFileChooser chooser = PreferenceUtils.getJFileChooser();
@@ -335,19 +328,6 @@ public final class PreferencesPanel extends JPanel {
 				}
 
 				@Override
-				public String getText() {
-					return "Import Preferences";
-				}
-
-				public String getIconPath() {
-					return null;
-				}
-
-				public int getMnemonic() {
-					return KeyEvent.VK_I;
-				}
-
-				@Override
 				public boolean isPopup() {
 					return true;
 				}
@@ -360,26 +340,13 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpAction() {
 		if (help_action == null) {
-			help_action = new GenericAction() {
-
+			help_action = new GenericAction("General Help", KeyEvent.VK_G) {
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					showHelp(getHelpTextHTML());
-				}
-
-				@Override
-				public String getText() {
-					return "General Help";
-				}
-
-				public String getIconPath() {
-					return null;
-				}
-
-				public int getMnemonic() {
-					return KeyEvent.VK_G;
 				}
 
 				@Override
@@ -395,26 +362,13 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpTabAction() {
 		if (help_for_tab_action == null) {
-			help_for_tab_action = new GenericAction() {
+			help_for_tab_action = new GenericAction(BUNDLE.getString("HelpForCurrentTab"), KeyEvent.VK_C) {
 
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent ae) {
 					super.actionPerformed(ae);
 					showHelpForTab();
-				}
-
-				@Override
-				public String getText() {
-					return BUNDLE.getString("HelpForCurrentTab");
-				}
-
-				public String getIconPath() {
-					return null;
-				}
-
-				public int getMnemonic() {
-					return KeyEvent.VK_C;
 				}
 
 				@Override

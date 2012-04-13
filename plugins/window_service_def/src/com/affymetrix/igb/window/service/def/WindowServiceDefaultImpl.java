@@ -185,11 +185,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			if (tabState.isTab()) {
 				JRPMenuItem change_tab_state_item = new JRPMenuItem(
 					"WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"),
-					new GenericAction() {
+					new GenericAction(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())), null) {
 						private static final long serialVersionUID = 1L;
-						@Override
-						public String getText() {
-							return MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name()));						}
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							setTabState(((JTabbedTrayPane)tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
@@ -205,12 +202,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			if (tabState.isTab()) {
 				JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem(
 					"WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"),
-					new GenericAction() {
+					new GenericAction(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())), null) {
 						private static final long serialVersionUID = 1L;
-						@Override
-						public String getText() {
-							return MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name()));
-						}
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							((JTabbedTrayPane)tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);

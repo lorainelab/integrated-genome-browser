@@ -110,18 +110,13 @@ public final class SimpleGraphTab
 	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
-	private final Action select_all_graphs_action = new GenericAction() {
+	private final Action select_all_graphs_action = new GenericAction(BUNDLE.getString("selectAllGraphs"), null) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			igbService.getSeqMapView().selectAllGraphs();
-		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("selectAllGraphs");
 		}
 	};
 	private final Action delete_selected_graphs_action = new GenericAction(BUNDLE.getString("deleteSelectedGraphs"), null) {

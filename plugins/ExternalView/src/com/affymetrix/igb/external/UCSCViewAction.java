@@ -39,7 +39,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 	private final IGBService igbService;
 
 	public UCSCViewAction(IGBService igbService) {
-		super();
+		super(BUNDLE.getString("viewRegionInUCSCBrowser"), "toolbarButtonGraphics/general/Zoom16.gif");
 		this.igbService = igbService;
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);
@@ -113,15 +113,5 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 	private String getRegionString() {
 		SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
 		return span.getBioSeq() + ":" + span.getMin() + "-" + span.getMax();
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("viewRegionInUCSCBrowser");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Zoom16.gif";
 	}
 }

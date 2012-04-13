@@ -111,7 +111,6 @@ public final class SimpleGraphTab
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
 	private final Action select_all_graphs_action = new GenericAction() {
-
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -125,46 +124,41 @@ public final class SimpleGraphTab
 			return BUNDLE.getString("selectAllGraphs");
 		}
 	};
-	private final Action delete_selected_graphs_action = new GenericAction() {
-
+	private final Action delete_selected_graphs_action = new GenericAction(BUNDLE.getString("deleteSelectedGraphs"), null) {
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			deleteGraphs(gmodel, grafs);
 		}
-
-		@Override
-		public String getText() {
-			return BUNDLE.getString("deleteSelectedGraphs");
-		}
 	};
-	private final Action save_selected_graphs_action = new GenericAction() {
-
+	private final Action save_selected_graphs_action = new GenericAction(BUNDLE.getString("saveSelectedGraphs"), null) {
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			saveGraphs(gmodel, grafs);
 		}
 
 		@Override
-		public String getText() {
-			return BUNDLE.getString("saveSelectedGraphs") + "...";
+		public boolean isPopup() {
+			return true;
 		}
 	};
-	private final Action graph_threshold_action = new GenericAction() {
-
+	private final Action graph_threshold_action = new GenericAction(BUNDLE.getString("graphThresholding"), null) {
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			super.actionPerformed(e);
 			showGraphScoreThreshSetter();
 		}
 
 		@Override
-		public String getText() {
-			return BUNDLE.getString("graphThresholding") + "...";
+		public boolean isPopup() {
+			return true;
 		}
 	};
 	public final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);
@@ -485,6 +479,7 @@ public final class SimpleGraphTab
 		GraphType graphType = GraphType.LINE_GRAPH;
 
 		public GraphStyleSetter(GraphType graphType) {
+			super(null, null);
 			this.graphType = graphType;
 		}
 
@@ -524,11 +519,6 @@ public final class SimpleGraphTab
 			};
 
 			SwingUtilities.invokeLater(r);
-		}
-
-		@Override
-		public String getText() {
-			return null;
 		}
 	}
 
@@ -577,7 +567,7 @@ public final class SimpleGraphTab
 			}
 
 			if (e.getSource() == height_slider) {
-				setTheHeights((double) height_slider.getValue());
+				setTheHeights(height_slider.getValue());
 			}
 		}
 

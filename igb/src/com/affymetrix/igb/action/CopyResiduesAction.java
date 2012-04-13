@@ -14,13 +14,9 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 @SuppressWarnings("serial")
-public abstract class CopyResiduesAction extends GenericAction {
-	private static final CopyResiduesAction ACTION = new CopyResiduesAction() {
-		@Override public String getText() { return BUNDLE.getString("copySelectedResiduesToClipboard"); }
-	};
-	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction() {
-		@Override public String getText() { return "Copy"; }
-	};
+public class CopyResiduesAction extends GenericAction {
+	private static final CopyResiduesAction ACTION = new CopyResiduesAction(BUNDLE.getString("copySelectedResiduesToClipboard"));
+	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction("Copy");
 
 	public static CopyResiduesAction getAction() {
 		return ACTION;
@@ -30,22 +26,12 @@ public abstract class CopyResiduesAction extends GenericAction {
 		return ACTION_SHORT;
 	}
 
-	private CopyResiduesAction() {
-		super();
+	private CopyResiduesAction(String text) {
+		super(text, null, "toolbarButtonGraphics/general/Copy16.gif", KeyEvent.VK_C, null);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().copySelectedResidues(false);
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Copy16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_C;
 	}
 }

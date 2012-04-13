@@ -38,7 +38,8 @@ public abstract class OpenURIAction extends GenericAction {
 	protected final IGBService igbService;
 	protected MergeOptionChooser chooser = null;
 	
-	public OpenURIAction(IGBService _igbService){
+	public OpenURIAction(IGBService _igbService, String text, String iconPath, int mnemonic){
+		super(text, null, iconPath, mnemonic, null);
 		igbService = _igbService;
 	}
 	

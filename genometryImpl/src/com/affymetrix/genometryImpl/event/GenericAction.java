@@ -40,6 +40,10 @@ public abstract class GenericAction extends AbstractAction {
 		this(text, null, iconPath, KeyEvent.VK_UNDEFINED, null);
 	}
 
+	public GenericAction(String text, int mnemonic) {
+		this(text, null, null, mnemonic, null);
+	}
+
 	public GenericAction() {
 		super();
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();

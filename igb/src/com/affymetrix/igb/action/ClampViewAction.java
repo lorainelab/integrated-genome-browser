@@ -18,7 +18,7 @@ public class ClampViewAction extends GenericAction {
 	private static final ClampViewAction ACTION = new ClampViewAction();
 
 	private ClampViewAction() {
-		super();
+		super(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
 		this.putValue(SELECTED_KEY, false);
 	}
 
@@ -29,16 +29,6 @@ public class ClampViewAction extends GenericAction {
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().toggleClamp();
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("clampToView");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_V;
 	}
 
 	@Override

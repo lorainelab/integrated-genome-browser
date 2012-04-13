@@ -22,22 +22,14 @@ public class ClearAllAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ClearAllAction() {
+		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("clearAll")), KeyEvent.VK_C);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear entire view?")) {
 			//IGB.getSingleton().getMapView().clear();
 		}
-	}
-
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("clearAll"));
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_C;
 	}
 }

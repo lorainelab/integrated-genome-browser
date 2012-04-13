@@ -16,7 +16,7 @@ public class CenterAtHairlineAction extends GenericAction {
 	}
 
 	private CenterAtHairlineAction() {
-		super();
+		super(IGBConstants.BUNDLE.getString("centerZoomStripe"), null);
 	}
 
 	@Override
@@ -24,10 +24,5 @@ public class CenterAtHairlineAction extends GenericAction {
 		super.actionPerformed(e);
 		SeqMapView gviewer = IGB.getSingleton().getMapView();
 		gviewer.centerAtHairline();
-	}
-
-	@Override
-	public String getText() {
-		return IGBConstants.BUNDLE.getString("centerZoomStripe");
 	}
 }

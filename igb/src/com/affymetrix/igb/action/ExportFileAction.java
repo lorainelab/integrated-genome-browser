@@ -16,24 +16,18 @@ public class ExportFileAction extends AbstractExportFileAction{
 	public static ExportFileAction getAction() {
 		return ACTION;
 	}
-				
+
+	private ExportFileAction() {
+		super(BUNDLE.getString("saveTrackAction"), "toolbarButtonGraphics/general/SaveAs16.gif");
+	}
+
 	@Override
 	protected void exportFile(FileExporterI fileExporter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
 		fileExporter.exportFile(dos, (SeqSymmetry)atier.getViewModeGlyph().getInfo(), aseq);
 	}
 	
 	@Override
-	public String getText() {
-		return BUNDLE.getString("saveTrackAction");
-	}
-
-	@Override
 	public boolean isPopup() {
 		return true;
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/SaveAs16.gif";
 	}
 }

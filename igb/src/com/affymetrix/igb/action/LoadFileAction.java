@@ -119,23 +119,8 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	private LoadFileAction() {
-		super();
+		super(BUNDLE.getString("openFile"), "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_O);
 		this.gviewerFrame.setTransferHandler(fdh);
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("openFile");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_O;
 	}
 
 	@Override

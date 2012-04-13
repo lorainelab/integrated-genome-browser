@@ -16,16 +16,15 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 		return ACTION;
 	}
 				
+	private ExportSelectedAnnotationFileAction() {
+		super(BUNDLE.getString("saveSelectedAnnotationAction"), null);
+	}
+
 	@Override
 	protected void exportFile(FileExporterI fileExporter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
 		fileExporter.exportFile(dos, atier.getViewModeGlyph().getSelected(), aseq);
 	}
 	
-	@Override
-	public String getText() {
-		return BUNDLE.getString("saveSelectedAnnotationAction");
-	}
-
 	@Override
 	public boolean isPopup() {
 		return true;

@@ -21,24 +21,14 @@ public class DocumentationAction extends GenericAction {
 		return ACTION;
 	}
 
+	private DocumentationAction() {
+		super(BUNDLE.getString("documentation"), null, "toolbarButtonGraphics/general/Help16.gif", KeyEvent.VK_D, null);
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralUtils.browse("http://wiki.transvar.org/confluence/display/igbman");
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("documentation");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Help16.gif";
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_D;
 	}
 
 	@Override

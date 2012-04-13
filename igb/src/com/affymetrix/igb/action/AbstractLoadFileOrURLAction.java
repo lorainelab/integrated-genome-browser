@@ -17,8 +17,8 @@ import com.affymetrix.igb.shared.OpenURIAction;
 public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 	private static final long serialVersionUID = 1L;
 
-	public AbstractLoadFileOrURLAction(){
-		super(IGBServiceImpl.getInstance());
+	public AbstractLoadFileOrURLAction(String text, String iconPath, int mnemonic){
+		super(IGBServiceImpl.getInstance(), text, iconPath, mnemonic);
 	}
 	
 	@Override

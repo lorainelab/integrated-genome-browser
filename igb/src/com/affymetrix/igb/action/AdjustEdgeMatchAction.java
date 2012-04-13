@@ -23,21 +23,13 @@ public class AdjustEdgeMatchAction extends GenericAction {
 		return ACTION;
 	}
 
+	private AdjustEdgeMatchAction() {
+		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("adjustEdgeMatchFuzziness")), null, null, KeyEvent.VK_F, null);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		SeqMapView map_view = IGB.getSingleton().getMapView();
 		EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
-	}
-
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("adjustEdgeMatchFuzziness"));
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_F;
 	}
 }

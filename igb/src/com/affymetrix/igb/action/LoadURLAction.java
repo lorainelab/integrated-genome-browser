@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.net.URL;
 import javax.swing.Box;
@@ -30,7 +31,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	private JDialog dialog = null;
 
 	private LoadURLAction() {
-		super();
+		super(BUNDLE.getString("openURL"), "toolbarButtonGraphics/development/Server16.gif", KeyEvent.VK_UNDEFINED);
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 
@@ -93,16 +94,6 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		urlStr = urlStr.substring(urlStr.lastIndexOf('/')+1);
 
 		return urlStr;
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("openURL");
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/development/Server16.gif";
 	}
 
 	@Override

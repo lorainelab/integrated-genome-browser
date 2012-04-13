@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.event.KeyEvent;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.util.UniFileFilter;
@@ -17,6 +18,10 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 
 	public static LoadRefTrackAction getAction() {
 		return ACTION;
+	}
+
+	protected LoadRefTrackAction() {
+		super(BUNDLE.getString("openRefTrackFile"), "toolbarButtonGraphics/general/Open16.gif", KeyEvent.VK_UNDEFINED);
 	}
 
 	@Override
@@ -37,16 +42,6 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	@Override
 	protected String getFriendlyNameID() {
 		return "openRefSeq";
-	}
-
-	@Override
-	public String getIconPath() {
-		return "toolbarButtonGraphics/general/Open16.gif";
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("openRefTrackFile");
 	}
 
 	@Override

@@ -22,22 +22,14 @@ public class ClearGraphsAction extends GenericAction {
 		return ACTION;
 	}
 
+	private ClearGraphsAction() {
+		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("clearGraphs")), KeyEvent.VK_L);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear graphs?")) {
 			IGB.getSingleton().getMapView().clearGraphs();
 		}
-	}
-
-	@Override
-	public String getText() {
-		return MessageFormat.format(
-				BUNDLE.getString("menuItemHasDialog"),
-				BUNDLE.getString("clearGraphs"));
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_L;
 	}
 }

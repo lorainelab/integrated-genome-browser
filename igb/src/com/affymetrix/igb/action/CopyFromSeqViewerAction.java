@@ -13,27 +13,12 @@ public class CopyFromSeqViewerAction extends GenericAction {
 
 	AbstractSequenceViewer sv;
 	public CopyFromSeqViewerAction(AbstractSequenceViewer sv) {
-		super();
+		super(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
 		this.sv=sv;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		sv.copyAction();
-	}
-
-	@Override
-	public String getIconPath() {
-		return null;
-	}
-
-	@Override
-	public String getText() {
-		return BUNDLE.getString("copySelectedResiduesToClipboard");
-	}
-
-	@Override
-	public int getMnemonic() {
-		return KeyEvent.VK_C;
 	}
 }

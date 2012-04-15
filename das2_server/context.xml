@@ -1,5 +1,5 @@
 <!-- $Id: context.xml 9086 2011-10-03 15:55:15Z biotelerock $ -->
-<Context path="/das2gnomwz" docBase="webapps/das2gnomex" debug="0" reloadable="true" allowLinking="true">
+<Context path="/das2gnomex" docBase="webapps/das2gnomex" debug="0" reloadable="true" allowLinking="true">
 
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
 	     log format. -->

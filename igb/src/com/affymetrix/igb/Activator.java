@@ -229,7 +229,7 @@ public class Activator implements BundleActivator {
 				@Override
 				public void onCreateGenericAction(GenericAction genericAction) {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
-						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getText(), false);
+						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
 							String iconPath = genericAction.getIconPath();
 							if (iconPath == null) {

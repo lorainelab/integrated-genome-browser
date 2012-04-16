@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -227,10 +225,13 @@ public class Activator implements BundleActivator {
 							if (iconPath == null) {
 								iconPath = DEFAULT_ICON_PATH;
 							}
-							ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
-							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), icon);
-							button.addActionListener(genericAction);
-							button.setToolTipText(genericAction.getText());
+							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction) {
+								private static final long serialVersionUID = 1L;
+								@Override
+								public void setText(String text) {
+									super.setText("");
+								}
+							};
 							((IGB)Application.getSingleton()).addToolbarButton(button);
 						}
 					}

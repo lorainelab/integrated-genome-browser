@@ -3,9 +3,13 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
@@ -60,19 +64,10 @@ public class ShowStrandAction extends SeqMapViewActionA implements SymSelectionL
 		setStrand(new ArrayList<SeqSymmetry>());
 	}
 
-//	@Override
-//	public String getText() {
-//		return separateStrands ? IGBConstants.BUNDLE.getString("showTwoTiersAction") : IGBConstants.BUNDLE.getString("showSingleTierAction");
-//	}
-
-//	@Override
-//	public String getIconPath() {
-//		return separateStrands ? "images/strand_separate.png" : "images/strand_mixed.png";
-//	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
+		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms((List<GlyphI>)gviewer.getSelectedTiers());
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 
@@ -104,10 +99,21 @@ public class ShowStrandAction extends SeqMapViewActionA implements SymSelectionL
 				hasMixed |= !separate;
 			}
 		}
-		separateStrands = !separateStrands;//!hasSeparate || hasMixed;
-		Object oldValue = getValue(Action.SMALL_ICON);
-		setProperties(false);
-		Object newValue = getValue(Action.SMALL_ICON);
-		this.firePropertyChange(Action.SMALL_ICON, oldValue, newValue);
+		separateStrands = !hasSeparate || hasMixed;
+		String text = separateStrands ? IGBConstants.BUNDLE.getString("showTwoTiersAction") : IGBConstants.BUNDLE.getString("showSingleTierAction") ;
+		putValue(Action.NAME, text);
+		String iconPath = separateStrands ? "images/strand_separate.png" : "images/strand_mixed.png";
+		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
+		if (icon == null) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "icon " + iconPath + " returned null");
+		}
+		else {
+			putValue(Action.SMALL_ICON, icon);
+		}
+	}
+
+	@Override
+	public boolean isToggle() {
+		return true;
 	}
 }

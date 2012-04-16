@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.CollapseExpandAction;
 import com.affymetrix.igb.action.RepackAllTiersAction;
 import com.affymetrix.igb.action.RepackSelectedTiersAction;
 import com.affymetrix.igb.action.ShowStrandAction;
@@ -297,6 +298,7 @@ public class Activator implements BundleActivator {
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
 		ShowStrandAction.getAction();
+		CollapseExpandAction.getAction();
 	}
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);

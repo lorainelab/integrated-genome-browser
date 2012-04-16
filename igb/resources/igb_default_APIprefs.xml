@@ -84,6 +84,7 @@
                             <entry key="Change FG Color" value="true"/>
                             <entry key="Change BG Color" value="true"/>
                             <entry key="Show 2 tracks (+) and (-)" value="true"/>
+                            <entry key="Collapse" value="true"/>
                         </map>
                     </node>
                 </node>

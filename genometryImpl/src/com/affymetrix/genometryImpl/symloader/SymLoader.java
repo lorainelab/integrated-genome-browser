@@ -3,6 +3,8 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.NewSymLoadedEvent;
+import com.affymetrix.genometryImpl.event.NewSymLoadedListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -25,12 +27,9 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,7 +49,8 @@ public abstract class SymLoader {
 	protected final Map<BioSeq,Boolean> chrSort = new HashMap<BioSeq,Boolean>();
 	protected final AnnotatedSeqGroup group;
 	public final String featureName;
-
+	private static Set<NewSymLoadedListener> new_sym_loaded_listeners = new CopyOnWriteArraySet<NewSymLoadedListener>();
+	
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -347,6 +347,12 @@ public abstract class SymLoader {
 		for (SeqSymmetry feat : filteredFeats) {
 			seq.addAnnotation(feat, feature.getExtension());
 		}
+		
+		// Fire event that new syms were loaded
+		NewSymLoadedEvent nsye = new NewSymLoadedEvent(feature, seq, filteredFeats);
+		for(NewSymLoadedListener listener : new_sym_loaded_listeners){
+			listener.newSymLoaded(nsye);
+		}
 	}
 
 
@@ -400,5 +406,13 @@ public abstract class SymLoader {
 			return new ArrayList<SeqSymmetry>();
 		}
 		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
+	}
+	
+	public static void addNewSymLoadedListener(NewSymLoadedListener listener){
+		new_sym_loaded_listeners.add(listener);
+	}
+	
+	public static void removeNewSymLoadedListener(NewSymLoadedListener listener){
+		new_sym_loaded_listeners.remove(listener);
 	}
 }

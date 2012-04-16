@@ -166,26 +166,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		}
 	};
-	private final Action show_two_tiers = new GenericAction(BUNDLE.getString("showTwoTiersAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTwoTiers(handler.getSelectedTierLabels(), true);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action show_single_tier = new GenericAction(BUNDLE.getString("showSingleTierAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTwoTiers(handler.getSelectedTierLabels(), false);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
 
 	private final Action maximize_track_action = new GenericAction(BUNDLE.getString("maximizeTrackAction"), null) {
 		private static final long serialVersionUID = 1L;
@@ -696,8 +676,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		collapse_action.setEnabled(any_are_expanded);
 		expand_action.setEnabled(any_are_collapsed);
 		change_expand_max_action.setEnabled(any_are_expanded);
-		show_single_tier.setEnabled(any_are_separate_tiers);
-		show_two_tiers.setEnabled(any_are_single_tier);
+		ShowOneTierAction.getAction().setEnabled(any_are_separate_tiers);
+		ShowTwoTiersAction.getAction().setEnabled(any_are_single_tier);
 		collapse_all_action.setEnabled(not_empty);
 		expand_all_action.setEnabled(not_empty);
 		change_expand_max_all_action.setEnabled(not_empty);
@@ -791,7 +771,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				RepackSelectedTiersAction.getAction().setEnabled(false);
 				RepackAllTiersAction.getAction().setEnabled(false);
 				delete_action.setEnabled(false);
-				show_two_tiers.setEnabled(false);
+				ShowTwoTiersAction.getAction().setEnabled(false);
 				color_by_score_on_action.setEnabled(false);
 				break;
 			}
@@ -804,8 +784,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(change_font_size_action);
 		changeMenu.add(change_expand_max_action);
 		changeMenu.add(new JSeparator());
-		changeMenu.add(show_two_tiers);
-		changeMenu.add(show_single_tier);
+		changeMenu.add(ShowTwoTiersAction.getAction());
+		changeMenu.add(ShowOneTierAction.getAction());
 		changeMenu.add(new JSeparator());
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);

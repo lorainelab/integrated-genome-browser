@@ -87,46 +87,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			showCustomizer();
 		}
 	};
-	private final Action expand_action = new GenericAction(BUNDLE.getString("expandAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTiersCollapsed(handler.getSelectedTierLabels(), false);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action expand_all_action = new GenericAction(BUNDLE.getString("expandAllAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTiersCollapsed(handler.getAllTierLabels(), false);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action collapse_action = new GenericAction(BUNDLE.getString("collapseAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTiersCollapsed(handler.getSelectedTierLabels(), true);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action collapse_all_action = new GenericAction(BUNDLE.getString("collapseAllAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setTiersCollapsed(handler.getAllTierLabels(), true);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
 	private final Action hide_action = new GenericAction(BUNDLE.getString("hideAction"), null) {
 		private static final long serialVersionUID = 1L;
 
@@ -289,11 +249,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 		return styles;
-	}
-
-	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
-		handler.setTiersCollapsed(tier_labels, collapsed);
-		gviewer.getSeqMap().updateWidget();
 	}
 
 	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
@@ -673,13 +628,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		color_by_score_on_action.setEnabled(any_are_color_off);
 		color_by_score_off_action.setEnabled(any_are_color_on);
 
-		collapse_action.setEnabled(any_are_expanded);
-		expand_action.setEnabled(any_are_collapsed);
+		CollapseAction.getAction().setEnabled(any_are_expanded);
+		ExpandAction.getAction().setEnabled(any_are_collapsed);
 		change_expand_max_action.setEnabled(any_are_expanded);
 		ShowOneTierAction.getAction().setEnabled(any_are_separate_tiers);
 		ShowTwoTiersAction.getAction().setEnabled(any_are_single_tier);
-		collapse_all_action.setEnabled(not_empty);
-		expand_all_action.setEnabled(not_empty);
 		change_expand_max_all_action.setEnabled(not_empty);
 		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 		viewModeMenu.setEnabled(false);
@@ -838,8 +791,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (add_maximize) {
 			popup.add(maximize_track_action);
 		}
-		popup.add(collapse_action);
-		popup.add(expand_action);
+		popup.add(CollapseAction.getAction());
+		popup.add(ExpandAction.getAction());
 		popup.add(new JSeparator());
 		popup.add(transformMenu);
 		JMenu operationsMenu = addOperationMenu(TrackUtils.getInstance().getSymsFromLabelGlyphs(labels));

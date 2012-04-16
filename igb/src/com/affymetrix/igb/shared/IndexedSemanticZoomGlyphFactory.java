@@ -117,7 +117,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			List<? extends SeqSymmetry> symList = summarySymL.getRegion(smv.getVisibleSpan());
 			if (symList.size() > 0) {
 				GraphSym gsym = (GraphSym)symList.get(0);
-				resultGlyph = (AbstractGraphGlyph)graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH, smv);
+				resultGlyph = graphGlyphFactory.getViewModeGlyph(gsym, style, Direction.BOTH, smv);
 			}
 			if (resultGlyph != null) {
 				((AbstractGraphGlyph)resultGlyph).drawHandle(false);

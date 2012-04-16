@@ -85,6 +85,7 @@
                             <entry key="Change BG Color" value="true"/>
                             <entry key="Show 2 tracks (+) and (-)" value="true"/>
                             <entry key="Collapse" value="true"/>
+                            <entry key="Set AutoLoad Threshold to Current View" value="true"/>
                         </map>
                     </node>
                 </node>

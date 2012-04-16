@@ -10,82 +10,45 @@
                     <map/>
                     <node name="keystrokes">
                         <map>
-                            <entry key="About Integrated Genome Browser..." value="ctrl shift A"/>
-                            <entry key="SCROLL_DOWN" value="alt DOWN"/>
-                            <entry key="Clear All" value=""/>
-                            <entry key="Manage Bookmarks" value=""/>
-                            <entry key="Toggle Shrink Wrapping" value="ctrl E"/>
-                            <entry key="Preferences ..." value="alt P"/>
-                            <entry key="Toggle Hairline Label" value="ctrl H"/>
-                            <entry key="Print" value="ctrl P"/>
-                            <entry key="AutoScroll" value=""/>
-                            <entry key="Documentation..." value=""/>
-                            <entry key="Preferences Window / Help for current tab" value=""/>
-                            <entry key="Configure Web Links" value=""/>
-                            <entry key="Find Annotations For Loaded Data..." value="ctrl F"/>
-                            <entry key="Open file" value="ctrl O"/>
-                            <entry key="Web Links Manager / Export ..." value=""/>
-                            <entry key="SCROLL_LEFT" value="alt LEFT"/>
-                            <entry key="Open Current Left Tab in New Window" value=""/>
-                            <entry key="Open Current Bottom Tab in New Window" value=""/>
-                            <entry key="Open Current Right Tab in New Window" value=""/>
-                            <entry key="SCROLL_RIGHT" value="alt RIGHT"/>
-                            <entry key="ZOOM_IN_Y" value="ctrl shift UP"/>
-                            <entry key="Center at selected" value=""/>
-                            <entry key="Set AutoLoad Threshold to Current View" value="" />
-                            <entry key="Select parent" value="ctrl P"/>
-                            <entry key="ZOOM_OUT_X" value="ctrl shift LEFT"/>
-                            <entry key="Web Links Manager / Edit..." value=""/>
-                            <entry key="Add Position Bookmark" value="ctrl shift B"/>
-                            <entry key="SCROLL_UP" value="alt UP"/>
-                            <entry key="Main View (With Labels)" value=""/>
-                            <entry key="Clamp To View" value=""/>
-                            <entry key="Sliced View (With Labels)" value=""/>
-                            <entry key="Exit" value="ctrl Q"/>
-                            <entry key="Close Sequence Viewer" value="ctrl W" />
-                            <entry key="Web Links Manager / Configure Web Links" value=""/>
-                            <entry key="Zoom to selected" value="ctrl PAGE_UP"/>
-                            <entry key="Adjust edge match fuzziness" value=""/>
-                            <entry key="Unclamp" value=""/>
-                            <entry key="Open Left Tabbed Panes in New Window" value=""/>
-                            <entry key="Open Bottom Tabbed Panes in New Window" value=""/>
-                            <entry key="Open Right Tabbed Panes in New Window" value=""/>
-                            <entry key="Show Console..." value="ctrl shift C"/>
-                            <entry key="ZOOM_OUT_FULLY" value="ctrl shift HOME"/>
-                            <entry key="Web Links Manager / Add..." value=""/>
-                            <entry key="Preferences Window / Export" value=""/>
-                            <entry key="ZOOM_OUT_Y" value="ctrl shift DOWN"/>
-                            <entry key="Web Links Manager / Import ..." value=""/>
-                            <entry key="Copy Selected Residues to Clipboard" value="ctrl C"/>
-                            <entry key="Toggle Edge Matching" value="ctrl M"/>
-                            <entry key="Preferences Window / Help" value=""/>
-                            <entry key="Main View" value=""/>
-                            <entry key="View Region in UCSC Browser" value="ctrl U"/>
-                            <entry key="ZOOM_IN_X" value="ctrl shift RIGHT"/>
-                            <entry key="Web Links Manager / Delete ..." value=""/>
-                            <entry key="Add Position &amp; Graphs Bookmark" value="ctrl B"/>
-                            <entry key="Clear Graphs" value=""/>
-                            <entry key="Preferences Window / Import" value=""/>
-                            <entry key="Refresh Data" value="ctrl R"/>
-                            <entry key="Next Search Span" value="ctrl X"/>
-                            <entry key="Repack Selected Tracks" value=""/>
-                            <entry key="Optimize All Tracks" value=""/>
-                            <entry key="Change FG Color" value=""/>
-                            <entry key="Change BG Color" value=""/>
+                            <entry key="AboutIGBAction" value="ctrl shift A"/>
+                            <entry key="ScrollDownAction" value="alt DOWN"/>
+                            <entry key="PreferencesAction" value="alt P"/>
+                            <entry key="ToggleHairlineLabelAction" value="ctrl H"/>
+                            <entry key="PrintAction" value="ctrl P"/>
+                            <entry key="LoadFileAction" value="ctrl O"/>
+                            <entry key="ScrollLeftAction" value="alt LEFT"/>
+                            <entry key="ScrollRightAction" value="alt RIGHT"/>
+                            <entry key="ZoomInYAction" value="ctrl shift UP"/>
+                            <entry key="SelectParentAction" value="ctrl P"/>
+                            <entry key="ZoomOutXAction" value="ctrl shift LEFT"/>
+                            <entry key="AddPositionBookmarkAction" value="ctrl shift B"/>
+                            <entry key="ScrollUpAction" value="alt UP"/>
+                            <entry key="ExitAction" value="ctrl Q"/>
+                            <entry key="ExitSeqViewerAction" value="ctrl W" />
+                            <entry key="ShowConsoleAction" value="ctrl shift C"/>
+                            <entry key="ZoomOutFullyAction" value="ctrl shift HOME"/>
+                            <entry key="ZoomOutYAction" value="ctrl shift DOWN"/>
+                            <entry key="CopyResiduesAction" value="ctrl C"/>
+                            <entry key="ToggleEdgeMatchingAction" value="ctrl M"/>
+                            <entry key="UCSCViewAction" value="ctrl U"/>
+                            <entry key="ZoomInXAction" value="ctrl shift RIGHT"/>
+                            <entry key="AddBookmarkAction" value="ctrl B"/>
+                            <entry key="RefreshDataAction" value="ctrl R"/>
+                            <entry key="NextSearchSpanAction" value="ctrl X"/>
                         </map>
                     </node>
                     <node name="toolbar">
                         <map>
-                            <entry key="Open URL" value="true"/>
-                            <entry key="Open file" value="true"/>
-                            <entry key="Export Image" value="true"/>
-                            <entry key="Repack Selected Tracks" value="true"/>
-                            <entry key="Optimize All Tracks" value="true"/>
-                            <entry key="Change FG Color" value="true"/>
-                            <entry key="Change BG Color" value="true"/>
-                            <entry key="Show 2 tracks (+) and (-)" value="true"/>
-                            <entry key="Collapse" value="true"/>
-                            <entry key="Set AutoLoad Threshold to Current View" value="true"/>
+                            <entry key="LoadURLAction" value="true"/>
+                            <entry key="LoadFileAction" value="true"/>
+                            <entry key="ExportImageAction" value="true"/>
+                            <entry key="RepackSelectedTiersAction" value="true"/>
+                            <entry key="ZoomingRepackAction" value="true"/>
+                            <entry key="ChangeForegroundColorAction" value="true"/>
+                            <entry key="ChangeBackgroundColorAction" value="true"/>
+                            <entry key="ShowStrandAction" value="true"/>
+                            <entry key="CollapseExpandAction" value="true"/>
+                            <entry key="AutoLoadThresholdAction" value="true"/>
                         </map>
                     </node>
                 </node>

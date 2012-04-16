@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GenericActionHolder {
 	private static GenericActionHolder instance = new GenericActionHolder();
@@ -35,6 +36,10 @@ public class GenericActionHolder {
 
 	public GenericAction getGenericAction(String name) {
 		return genericActions.get(name);
+	}
+
+	public Set<String> getGenericActionIds() {
+		return genericActions.keySet();
 	}
 
 	public void addGenericActionListener(GenericActionListener listener) {

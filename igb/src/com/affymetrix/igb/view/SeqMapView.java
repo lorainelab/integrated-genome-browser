@@ -159,7 +159,7 @@ public class SeqMapView extends JPanel
 	private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final GlyphEdgeMatcher edge_matcher;
-	private final JPopupMenu sym_popup = new JPopupMenu();
+	private JPopupMenu sym_popup = null;
 	private JLabel sym_info;
 	// A fake menu item, prevents null pointer exceptions in loadResidues()
 	// for menu items whose real definitions are commented-out in the code
@@ -172,7 +172,6 @@ public class SeqMapView extends JPanel
 //	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
 //	JMenuItem viewParentinSequenceViewer = empty_menu_item;
 	// for right-click on background
-	private final SeqMapViewActionListener action_listener;
 	private final SeqMapViewMouseListener mouse_listener;
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
@@ -288,7 +287,6 @@ public class SeqMapView extends JPanel
 
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 
-		action_listener = new SeqMapViewActionListener(this);
 		mouse_listener = new SeqMapViewMouseListener(this);
 
 		seqmap.getNeoCanvas().setDoubleBuffered(false);
@@ -357,7 +355,6 @@ public class SeqMapView extends JPanel
 		// Add listener to notify tiers about selection change event.
 		gmodel.addSeqSelectionListener(seqSelectionListener);
 		
-		setupPopups();
 		this.setLayout(new BorderLayout());
 
 		xzoombox = Box.createHorizontalBox();
@@ -540,7 +537,13 @@ public class SeqMapView extends JPanel
 //		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
-		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
+		selectParentMI = new JRPMenuItem("SeqMapView_" + getId() + "_popup_selectParent", SelectParentAction.getAction());
+		KeyStroke ks = MenuUtil.addAccelerator(this,
+				SelectParentAction.getAction(), SelectParentAction.getAction().getText());
+		if (ks != null) {
+			// Make the accelerator be visible in the menu item.
+			selectParentMI.setAccelerator(ks);
+		}
 //		setThreshold = setUpMenuItem(sym_popup, "Set AutoLoad Threshold to Current View");
 //		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
 //		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
@@ -1714,43 +1717,13 @@ public class SeqMapView extends JPanel
 		seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, y);
 	}
 
-	public JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
-		return setUpMenuItem(menu, action_command, action_listener);
-	}
 	@Override
 	public final SeqMapViewMouseListener getMouseListener() {
 		return mouse_listener;
 	}
 
-	/**
-	 *  Adds a new menu item and sets-up an accelerator key based
-	 *  on user prefs.  The accelerator key is registered directly
-	 *  to the SeqMapView *and* on the JMenuItem itself: this does
-	 *  not seem to cause a conflict.
-	 *  @param menu if not null, the new JMenuItem will be added
-	 *  to the given Container (perhaps a JMenu or JPopupMenu).
-	 *  Use null if you don't want that to happen.
-	 */
-	public final JMenuItem setUpMenuItem(Container menu, String action_command,
-			ActionListener al) {
-		JMenuItem mi = new JMenuItem(action_command);
-		// Setting accelerator via the MenuUtil.addAccelerator makes it also
-		// work when the pop-up menu isn't visible.
-		KeyStroke ks = MenuUtil.addAccelerator(this,
-				al, action_command);
-		if (ks != null) {
-			// Make the accelerator be visible in the menu item.
-			mi.setAccelerator(ks);
-		}
-		mi.addActionListener(al);
-		if (menu != null) {
-			menu.add(mi);
-		}
-		return mi;
-	}
-
 	/** Select the parents of the current selections */
-	final void selectParents() {
+	public final void selectParents() {
 		if (seqmap.getSelected().isEmpty()) {
 			ErrorHandler.errorPanel("Nothing selected");
 			return;
@@ -1890,6 +1863,10 @@ public class SeqMapView extends JPanel
 	}
 
 	final void showPopup(NeoMouseEvent nevt) {
+		if (sym_popup == null) {
+			sym_popup = new JPopupMenu();
+			setupPopups();
+		}
 		sym_popup.setVisible(false); // in case already showing
 		sym_popup.removeAll();
 

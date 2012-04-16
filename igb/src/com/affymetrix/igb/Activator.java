@@ -32,7 +32,16 @@ import com.affymetrix.igb.action.ChangeForegroundColorAction;
 import com.affymetrix.igb.action.CollapseExpandAction;
 import com.affymetrix.igb.action.RepackAllTiersAction;
 import com.affymetrix.igb.action.RepackSelectedTiersAction;
+import com.affymetrix.igb.action.ScrollDownAction;
+import com.affymetrix.igb.action.ScrollLeftAction;
+import com.affymetrix.igb.action.ScrollRightAction;
+import com.affymetrix.igb.action.ScrollUpAction;
 import com.affymetrix.igb.action.ShowStrandAction;
+import com.affymetrix.igb.action.ZoomInXAction;
+import com.affymetrix.igb.action.ZoomInYAction;
+import com.affymetrix.igb.action.ZoomOutFullyAction;
+import com.affymetrix.igb.action.ZoomOutXAction;
+import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -299,7 +308,17 @@ public class Activator implements BundleActivator {
 		ChangeBackgroundColorAction.getAction();
 		ShowStrandAction.getAction();
 		CollapseExpandAction.getAction();
+		ZoomInXAction.getAction();
+		ZoomOutXAction.getAction();
+		ZoomInYAction.getAction();
+		ZoomOutYAction.getAction();
+		ZoomOutFullyAction.getAction();
+		ScrollUpAction.getAction();
+		ScrollDownAction.getAction();
+		ScrollLeftAction.getAction();
+		ScrollRightAction.getAction();
 	}
+
 	private void initOperators() {
 		ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
 		bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);

@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -67,8 +68,29 @@ public final class KeyStrokesView implements ListSelectionListener,
 		refresh();
 	}
 
+	private static String getSortField(GenericAction genericAction) {
+		return genericAction.getDisplay() + (genericAction.isToggle() ? "1" : "2");
+	}
+
+	private static TreeSet<String> filterActions() {
+		List<String> keys = new ArrayList<String>(GenericActionHolder.getInstance().getGenericActionIds());
+		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return getSortField(GenericActionHolder.getInstance().getGenericAction(o1)).compareTo(getSortField(GenericActionHolder.getInstance().getGenericAction(o2)));
+			}
+		});
+		for (String key : keys) {
+			GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
+			if (genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
+				actions.add(key);
+			}
+		}
+		return actions;
+	}
+
     private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-		Collection<String> keys = PreferenceUtils.getKeystrokesNodeNames();
+    	TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
 		Object[][] rows;
 
 		synchronized (keys) {
@@ -78,9 +100,10 @@ public final class KeyStrokesView implements ListSelectionListener,
 			Iterator<String> iter = keys.iterator();
 			for (int i = 0; iter.hasNext(); i++) {
 				String key = iter.next();
-				rows[i][0] = key;
+				GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
+				rows[i][0] = genericAction.getDisplay();
 				rows[i][1] = keystroke_node.get(key, "");
-				rows[i][2] = toolbar_node.getBoolean(GenericAction.getCleanText(key), false);
+				rows[i][2] = toolbar_node.getBoolean(key, false);
 			}
 		}
 		return rows;

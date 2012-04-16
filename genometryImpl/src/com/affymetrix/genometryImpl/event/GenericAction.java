@@ -58,7 +58,7 @@ public abstract class GenericAction extends AbstractAction {
 		setProperties(true);
 	}
 	protected void setProperties(boolean add) {
-		putValue(Action.NAME, text + (popup ? ("" + POPUP_DIALOG) : ""));
+		putValue(Action.NAME, getDisplay());
 		if (iconPath != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 			if (icon == null) {
@@ -78,6 +78,9 @@ public abstract class GenericAction extends AbstractAction {
 	}
 	public final String getText() {
 		return text;
+	}
+	public final String getDisplay() {
+		return  text + (popup ? ("" + POPUP_DIALOG) : "");
 	}
 	public final String getTooltip() {
 		return tooltip;

@@ -28,7 +28,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 
-	protected void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
+	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();

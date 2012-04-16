@@ -444,7 +444,7 @@ public final class TierLabelManager implements PropertyHolder {
 	 * @param tier_labels
 	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
 	 */
-	void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
+	public void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		for (TierLabelGlyph tlg : tier_labels) {
 			setTierCollapsed(tlg.getReferenceTier(), collapsed);
 		}

@@ -371,7 +371,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!b || MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(style.getViewMode())) {
+			if (!b || MapViewModeHolder.getInstance().styleSupportsTwoTrack(style)) {
 				style.setSeparate(b);
 			}
 		}
@@ -604,7 +604,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			any_are_color_off = any_are_color_off || (!astyle.getColorByScore());
 			if (!astyle.isGraphTier()) {
 				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate() && MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(astyle.getViewMode()));
+				any_are_single_tier = any_are_single_tier || (!astyle.getSeparate() && MapViewModeHolder.getInstance().styleSupportsTwoTrack(astyle));
 			}
 			any_view_mode = any_view_mode || (!astyle.isGraphTier());
 

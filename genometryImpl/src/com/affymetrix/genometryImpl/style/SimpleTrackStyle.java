@@ -14,6 +14,8 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+
 import java.awt.Color;
 
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
@@ -124,6 +126,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 
 	public String getFileType() {
 		return "";
+	}
+
+	public FileTypeCategory getFileTypeCategory(){
+		return null;
 	}
 
 	public int getDirectionType() {

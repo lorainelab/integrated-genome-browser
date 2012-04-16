@@ -13,6 +13,8 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+
 import java.awt.Color;
 
 public interface ITrackStyleExtended extends ITrackStyle {
@@ -57,7 +59,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	int getDirectionType();
 	
 	String getFileType();
-	
+	public FileTypeCategory getFileTypeCategory();
+
 	void setForwardHeight(double theNewHeight);
 	double getForwardHeight();
 	void setReverseHeight(double theNewHeight);

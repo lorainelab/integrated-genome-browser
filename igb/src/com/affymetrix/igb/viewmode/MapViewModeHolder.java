@@ -10,7 +10,9 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 /**
  * All implementation of map view mode are stored here.
@@ -66,7 +68,11 @@ public class MapViewModeHolder {
 		defaultView.put(category, factory);
 	}
 
-	public boolean viewModeSupportsTwoTrack(String viewMode) {
+	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
+		String viewMode = style.getViewMode();
+		if (viewMode == TrackConstants.default_view_mode) {
+			viewMode = getDefaultFactoryFor(style.getFileTypeCategory()).getName();
+		}
 		MapViewGlyphFactoryI factory = getViewFactory(viewMode);
 		if (factory == null) {
 			return false;

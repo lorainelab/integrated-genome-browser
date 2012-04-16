@@ -32,7 +32,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
 			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (!b || MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(style.getViewMode())) {
+			if (!b || MapViewModeHolder.getInstance().styleSupportsTwoTrack(style)) {
 				style.setSeparate(b);
 			}
 		}
@@ -70,7 +70,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 		boolean hasMixed = false;
 		for (TierGlyph tg : gviewer.getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
-			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && MapViewModeHolder.getInstance().viewModeSupportsTwoTrack(vg.getAnnotStyle().getViewMode())) {
+			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && MapViewModeHolder.getInstance().styleSupportsTwoTrack(vg.getAnnotStyle())) {
 				boolean separate = vg.getAnnotStyle().getSeparate();
 				hasSeparate |= separate;
 				hasMixed |= !separate;

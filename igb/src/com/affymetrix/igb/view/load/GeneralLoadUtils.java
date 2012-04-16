@@ -32,11 +32,15 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.NewSymLoadedEvent;
+import com.affymetrix.genometryImpl.event.NewSymLoadedListener;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometryImpl.regionfinder.DefaultRegionFinder;
+import com.affymetrix.genometryImpl.regionfinder.RegionFinder;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -60,6 +64,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
 import com.affymetrix.igb.Application;
@@ -136,6 +141,11 @@ public final class GeneralLoadUtils {
 	 */
 	private static Map<String, String> servermapping = new HashMap<String, String>();
 
+	/**
+	 * 
+	 */
+	private static RegionFinder regionFinder = new DefaultRegionFinder();
+	
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 *
@@ -744,12 +754,24 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
+		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
 		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>("Loading feature " + feature.featureName) {
-
+			List<SeqSymmetry> temp = new ArrayList<SeqSymmetry>();
+			NewSymLoadedListener temp_listener = null;
+			
 			@Override
 			protected Boolean runInBackground() {
 				try {
+					temp_listener = new NewSymLoadedListener() {
+
+						public void newSymLoaded(NewSymLoadedEvent e) {
+							if(e.getSource() == feature){
+								temp.addAll(e.getNewSyms());
+							}
+						}
+					};
+					
+					SymLoader.addNewSymLoadedListener(temp_listener);
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -759,13 +781,16 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected void finished() {
+				SymLoader.removeNewSymLoadedListener(temp_listener);
+				
 				BioSeq aseq = gmodel.getSelectedSeq();
 
 				if (aseq != null) {
 					gviewer.setAnnotatedSeq(aseq, true, true);
 				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 					// This can happen when loading a brand-new genome
-					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+					aseq = gmodel.getSelectedSeqGroup().getSeq(0);
+					gmodel.setSelectedSeq(aseq);
 				}
 
 				//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
@@ -774,7 +799,15 @@ public final class GeneralLoadUtils {
 				}
 
 				GeneralLoadView.getLoadView().refreshDataManagementView();
-
+				
+				if(!temp.isEmpty() && gviewer.getVisibleSpan().getMin() == aseq.getMin() &&
+						gviewer.getVisibleSpan().getMax() == aseq.getMax()){
+					SeqSpan span = regionFinder.findInterestingRegion(aseq, temp);
+					if(span != null){
+						gviewer.zoomTo(span);
+					}
+				}
+				
 				if (this.isCancelled()) {
 					return;
 				}

@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
@@ -78,10 +77,10 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     add("Center", mapsplitter);
 
     if (hscroll_show) {
-      add(hscroll_loc, (Component) scroller[X]);
+      add(hscroll_loc, scroller[X]);
     }
     if (vscroll_show)  {
-      add(vscroll_loc, (Component)scroller[Y]);
+      add(vscroll_loc, scroller[Y]);
     }
   }
 
@@ -163,6 +162,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 
 	private class TierSelectionModel extends DefaultListSelectionModel
 	implements ActionListener {
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {

@@ -168,7 +168,7 @@ public class TrackView {
 		}
 	}
 
-	public void changeViewMode(SeqMapView gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode) {
+	public void changeViewMode(SeqMapView gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
 		String oldViewMode = style.getViewMode();
 		if (oldViewMode.equals(viewMode)) {
 			return;

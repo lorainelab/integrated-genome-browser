@@ -418,6 +418,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void changeViewMode(SeqMapViewI gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode) {
-		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, rootSym, style, comboStyle, viewMode);
+		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, style, viewMode, rootSym, comboStyle);
 	}
 }

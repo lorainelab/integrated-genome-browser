@@ -675,7 +675,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 								setTwoTiers(handler.getSelectedTierLabels(), false);
 							}
 							ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph)glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-							TrackView.getInstance().changeViewMode(gviewer, rootSym, style, comboStyle, mode.getName());
+							TrackView.getInstance().changeViewMode(gviewer, style, mode.getName(), rootSym, comboStyle);
 							refreshMap(false, false);
 						}
 					};

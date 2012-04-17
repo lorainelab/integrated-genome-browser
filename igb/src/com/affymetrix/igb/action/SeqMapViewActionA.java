@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.KeyEvent;
@@ -25,6 +26,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 		this.gviewer = gviewer;
 		this.handler = gviewer.getTierManager();
 		ACTION_MAP.put(gviewer.getId(), this);
+		MenuUtil.addAccelerator(gviewer, this, this.getId());
 		// Don't do anything with "this" after leaking it from the constructor.
 	}
 

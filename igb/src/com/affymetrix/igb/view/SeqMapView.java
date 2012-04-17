@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.*;
@@ -52,6 +53,7 @@ import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -67,7 +69,7 @@ import javax.swing.event.ChangeListener;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder, JRPWidget {
+		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
 
 	public static final String PREF_AUTO_CHANGE_VIEW = "Auto change view of BAM/SAM";
 	public static final boolean default_auto_change_view = false;
@@ -423,6 +425,7 @@ public class SeqMapView extends JPanel
 		this.addPopupListener(new ReadAlignmentView());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
+		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 
 	}
 
@@ -1350,6 +1353,10 @@ public class SeqMapView extends JPanel
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
+	}
+
+	public void trackstylePropertyChanged(EventObject eo) {
+		postSelections();
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)

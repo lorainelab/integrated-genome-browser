@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -67,8 +68,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
-import java.net.URI;
+import java.io.OutputStream;
+import java.net.*;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * View of genome features as a tree.
@@ -657,6 +661,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
 		private static final long serialVersionUID = 1L;
+		FeatureTreeCellRenderer renderer;
+		DefaultMutableTreeNode editedNode;
 
 		public class FeatureLoadAction extends GenericAction {
 
@@ -679,6 +685,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						GenericFeature feature = (GenericFeature) tn.genericObject;
 						String message;
 						if (checkbox.isSelected()) {
+
+							if (!isURLReachable(feature.getURI())) {
+								message = "The feature " + feature.getURI() + " is not reachable.";
+								ErrorHandler.errorPanel("Cannot load feature", message);
+								tn.setChecked(false);
+								return;
+							}
+
 							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
 								message = "The feature " + feature.getURI() + " has already been added.";
 								ErrorHandler.errorPanel("Cannot add same feature", message);
@@ -700,8 +714,19 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				}
 			}
 		}
-		FeatureTreeCellRenderer renderer;
-		DefaultMutableTreeNode editedNode;
+
+		private boolean isURLReachable(URI uri) {
+			try {
+				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
+					return false;
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+
+			return true;
+		}
 
 		public Object getExtraInfo() {
 			String extraInfo = "";
@@ -905,10 +930,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		updateTree(uri);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void updateTree(URI uri) {
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 		DefaultMutableTreeNode node;
-		@SuppressWarnings("unchecked")
 		Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
 		GenericFeature feature = null;
 		while (nodes.hasMoreElements()) {

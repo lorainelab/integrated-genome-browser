@@ -64,7 +64,6 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
 import com.affymetrix.igb.Application;
@@ -76,7 +75,6 @@ import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
 
 /**
  *

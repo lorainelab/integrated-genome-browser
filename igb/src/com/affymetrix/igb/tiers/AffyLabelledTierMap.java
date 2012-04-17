@@ -20,13 +20,18 @@ import com.affymetrix.igb.shared.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which 
@@ -156,6 +161,35 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     ordered_glyphs = null;
   }
 
+	private class TierSelectionModel extends DefaultListSelectionModel
+	implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+			//throw new UnsupportedOperationException("Not supported yet.");
+			// Perhaps, here we should find out what the selection really is
+			// instead of leaving it up to the listeners.
+			// Soon...
+			this.fireValueChanged(0, 1, false);
+		}
+		
+		@Override
+		public void setSelectionMode(int theMode) {
+			if (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION != theMode) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+			super.setSelectionMode(theMode);
+		}
+	}
+	private TierSelectionModel selectionModel = new TierSelectionModel();
+	public void addListSelectionListener(ListSelectionListener theListener) {
+		this.selectionModel.addListSelectionListener(theListener);
+	}
+	public void removeListSelectionListener(ListSelectionListener theListener) {
+		this.selectionModel.removeListSelectionListener(theListener);
+	}
+ 
   /**
    * Adds a tier to the map and generates a label for it.
    */
@@ -179,6 +213,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     //   (which also sets value returned by label_glyph.getInfo())
     labelmap.setDataModel(label_glyph, mtg);  
     label_glyphs.add(label_glyph);
+	label_glyph.setSelectionListener(this.selectionModel);
     ordered_glyphs = null;
   }
 
@@ -187,6 +222,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     super.removeTier(toRemove);
     TierLabelGlyph label_glyph = labelmap.<TierLabelGlyph>getItem(toRemove);
     if (label_glyph != null) {
+      label_glyph.setSelectionListener(null);
       labelmap.removeItem(label_glyph);
       label_glyphs.remove(label_glyph);
       ordered_glyphs = null;

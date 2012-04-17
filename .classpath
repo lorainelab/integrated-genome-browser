@@ -37,9 +37,7 @@
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
 	<classpathentry kind="lib" path="ext/org.mortbay.jetty.jar"/>
 	<classpathentry kind="lib" path="ext/picard.jar"/>
-	<classpathentry kind="lib" path="ext/sam.jar"/>
 	<classpathentry kind="lib" path="ext/swing-layout.jar"/>
-	<classpathentry kind="lib" path="ext/tribble-0.2.jar"/>
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/furbelow.jar"/>
 	<classpathentry kind="lib" path="plugins/Tutorial/lib/jackson-all-1.7.9.jar"/>
 	<classpathentry kind="lib" path="plugins/ant/lib/ant.jar"/>
@@ -87,5 +85,7 @@
 	<classpathentry kind="lib" path="ext/gnomex.jar"/>
 	<classpathentry kind="lib" path="ext/hci_framework.jar"/>
 	<classpathentry kind="lib" path="ext/hci_utils.jar"/>
+	<classpathentry kind="lib" path="jar_extensions/sam/dist/sam--igbext.jar"/>
+	<classpathentry kind="lib" path="jar_extensions/tribble-0.2/dist/tribble-0.2--igbext.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

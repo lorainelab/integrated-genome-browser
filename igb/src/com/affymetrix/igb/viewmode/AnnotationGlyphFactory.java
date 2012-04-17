@@ -345,7 +345,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 		SeqSymmetry sym = insym;
 		if (insym instanceof DerivedSeqSymmetry) {
-			sym = (SymWithProps) getMostOriginalSymmetry(insym);
+			sym = getMostOriginalSymmetry(insym);
 		}
 
 		if (use_item_rgb && sym instanceof SymWithProps) {
@@ -593,10 +593,5 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public String getName() {
 		return category.name().toLowerCase();
-	}
-
-	// for GenericGraphGlyphFactory, can be removed when that is removed
-	public static ViewModeGlyph getViewModeGlyph(ITrackStyleExtended style) {
-		return new AnnotationGlyph(style);
 	}
 }

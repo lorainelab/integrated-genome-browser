@@ -6,7 +6,6 @@ package com.affymetrix.igb.prefs;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 /**
@@ -64,7 +63,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (columnIndex == KeyStrokesView.ToolbarColumn && rows != null) {
 			rows[rowIndex][columnIndex] = aValue;
-			String pref_name = GenericAction.getCleanText((String)rows[rowIndex][0]);
+			String pref_name = (String)rows[rowIndex][KeyStrokesView.IdColumn];
 			PreferenceUtils.getToolbarNode().putBoolean(pref_name, (Boolean)aValue);
 		}
     }

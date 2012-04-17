@@ -34,6 +34,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 	;
 	public static final int KeyStrokeColumn = 1;
 	public static final int ToolbarColumn = 2;
+	public static final int IdColumn = 3; // not displayed in table
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
@@ -82,20 +83,36 @@ public final class KeyStrokesView implements ListSelectionListener,
 		});
 		for (String key : keys) {
 			GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-			if (genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
+			boolean hasGetAction;
+			try {
+				Class<?> actionClass = genericAction.getClass();
+				actionClass.getMethod("getAction");
+				hasGetAction = true;
+			}
+			catch (NoSuchMethodException x) {
+				hasGetAction = false;
+			}
+			if (hasGetAction && genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
 				actions.add(key);
 			}
 		}
 		return actions;
 	}
 
+    /**
+     * build the underlying data array - there is a fourth column, not shown in the
+     * table, but needed by the seetValue() method
+     * @param keystroke_node
+     * @param toolbar_node
+     * @return
+     */
     private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
     	TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
 		Object[][] rows;
 
 		synchronized (keys) {
 			int num_rows = keys.size();
-			int num_cols = 3;
+			int num_cols = 4;
 			rows = new Object[num_rows][num_cols];
 			Iterator<String> iter = keys.iterator();
 			for (int i = 0; iter.hasNext(); i++) {
@@ -104,6 +121,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 				rows[i][0] = genericAction.getDisplay();
 				rows[i][1] = keystroke_node.get(key, "");
 				rows[i][2] = toolbar_node.getBoolean(key, false);
+				rows[i][3] = genericAction.getId();
 			}
 		}
 		return rows;

@@ -539,7 +539,7 @@ public class SeqMapView extends JPanel
 
 		selectParentMI = new JRPMenuItem("SeqMapView_" + getId() + "_popup_selectParent", SelectParentAction.getAction());
 		KeyStroke ks = MenuUtil.addAccelerator(this,
-				SelectParentAction.getAction(), SelectParentAction.getAction().getText());
+				SelectParentAction.getAction(), SelectParentAction.getAction().getId());
 		if (ks != null) {
 			// Make the accelerator be visible in the menu item.
 			selectParentMI.setAccelerator(ks);

@@ -80,6 +80,9 @@ public abstract class GenericAction extends AbstractAction {
 		return text;
 	}
 	public final String getDisplay() {
+		if (text == null) {
+			return null;
+		}
 		return  text + (popup ? ("" + POPUP_DIALOG) : "");
 	}
 	public final String getTooltip() {
@@ -94,8 +97,8 @@ public abstract class GenericAction extends AbstractAction {
 	public final Object getExtraInfo() {
 		return extraInfo;
 	}
-	public String getId() {
-		return this.getClass().getSimpleName();
+	public final String getId() {
+		return this.getClass().getName();
 	}
 	public static String getCleanText(String text) {
 		String cleanText = text;

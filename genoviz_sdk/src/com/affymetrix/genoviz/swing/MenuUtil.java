@@ -117,11 +117,12 @@ public abstract class MenuUtil {
     return addToMenu(menu, item, "");
   }
 
-  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix){
-	String command = item.getText();
-	if (command != null) {
+  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix) {
+	Action action = item.getAction();
+	if (action != null) {
+		String command = action.getClass().getName();
 		if(prefix != null && prefix.length() > 0){
-			command = prefix + " / " + command;
+			command = prefix + "/" + command;
 		}
 		addAccelerator(item, command);
 	}
@@ -129,8 +130,8 @@ public abstract class MenuUtil {
   }
 
   public static final JMenuItem insertIntoMenu(JMenu menu, JMenuItem item, int position) {
-    String command = item.getText();
-    if (command != null) { addAccelerator(item, command); }
+    Action action = item.getAction();
+    if (action != null) { addAccelerator(item, action.getClass().getName()); }
     return menu.insert(item, position);
   }
 

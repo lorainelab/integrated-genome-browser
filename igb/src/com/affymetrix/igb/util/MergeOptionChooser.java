@@ -29,7 +29,10 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	public final Box box;
 	public final JRPComboBox speciesCB;
 	public final JRPComboBox versionCB;
-	private final GenericAction speciesAction = new GenericAction(null, null) {
+	private class SpeciesAction extends GenericAction {
+		public SpeciesAction() {
+			super(null, null);
+		}
 		private static final long serialVersionUID = 1L;
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -37,18 +40,20 @@ public final class MergeOptionChooser extends JRPFileChooser {
 				super.actionPerformed(e);
 			}
 			populateVersionCB();
-			if(speciesCB.getSelectedIndex() == 0)
+			if(speciesCB.getSelectedIndex() == 0) {
 				speciesCB.setEditable(true);
-			else
+			}
+			else {
 				speciesCB.setEditable(false);
+			}
 			versionCB.setSelectedIndex(0);
 		}
-		@Override
-		public String getId() {
-			return MergeOptionChooser.this.getId() + "_speciesAction";
-		}
 	};
-	private final GenericAction versionAction = new GenericAction(null, null) {
+	private final SpeciesAction speciesAction = new SpeciesAction();
+	private class VersionAction extends GenericAction {
+		public VersionAction() {
+			super(null, null);
+		}
 		private static final long serialVersionUID = 1L;
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -61,11 +66,8 @@ public final class MergeOptionChooser extends JRPFileChooser {
 				versionCB.setEditable(false);
 			}
 		}
-		@Override
-		public String getId() {
-			return MergeOptionChooser.this.getId() + "_versionAction";
-		}
 	};
+	private final VersionAction versionAction = new VersionAction();
 
 	public MergeOptionChooser(String id) {
 		super(id);

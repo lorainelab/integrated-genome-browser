@@ -22,7 +22,7 @@ public class RefreshDataAction extends GenericAction {
 
 	public RefreshDataAction(JComponent comp) {
 		super(BUNDLE.getString("refreshDataButton"), BUNDLE.getString("refreshDataTip"), null, KeyEvent.VK_UNDEFINED);
-		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("refreshDataButton"));
+		KeyStroke ks = MenuUtil.addAccelerator(comp, this, getId());
 		if (ks != null) {
 			this.putValue(MNEMONIC_KEY, ks.getKeyCode());
 		}

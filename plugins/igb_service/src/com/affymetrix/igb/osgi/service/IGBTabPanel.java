@@ -84,11 +84,6 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 			super.actionPerformed(e);
 			select();
 		}
-
-		@Override
-		public String getId() {
-			return "select_" + IGBTabPanel.this.getClass().getSimpleName() + "_action";
-		}
 	}
 	protected final IGBService igbService;
 	private final String displayName;

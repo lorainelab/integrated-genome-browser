@@ -10,45 +10,45 @@
                     <map/>
                     <node name="keystrokes">
                         <map>
-                            <entry key="AboutIGBAction" value="ctrl shift A"/>
-                            <entry key="ScrollDownAction" value="alt DOWN"/>
-                            <entry key="PreferencesAction" value="alt P"/>
-                            <entry key="ToggleHairlineLabelAction" value="ctrl H"/>
-                            <entry key="PrintAction" value="ctrl P"/>
-                            <entry key="LoadFileAction" value="ctrl O"/>
-                            <entry key="ScrollLeftAction" value="alt LEFT"/>
-                            <entry key="ScrollRightAction" value="alt RIGHT"/>
-                            <entry key="ZoomInYAction" value="ctrl shift UP"/>
-                            <entry key="SelectParentAction" value="ctrl P"/>
-                            <entry key="ZoomOutXAction" value="ctrl shift LEFT"/>
-                            <entry key="AddPositionBookmarkAction" value="ctrl shift B"/>
-                            <entry key="ScrollUpAction" value="alt UP"/>
-                            <entry key="ExitAction" value="ctrl Q"/>
-                            <entry key="ExitSeqViewerAction" value="ctrl W" />
-                            <entry key="ShowConsoleAction" value="ctrl shift C"/>
-                            <entry key="ZoomOutFullyAction" value="ctrl shift HOME"/>
-                            <entry key="ZoomOutYAction" value="ctrl shift DOWN"/>
-                            <entry key="CopyResiduesAction" value="ctrl C"/>
-                            <entry key="ToggleEdgeMatchingAction" value="ctrl M"/>
-                            <entry key="UCSCViewAction" value="ctrl U"/>
-                            <entry key="ZoomInXAction" value="ctrl shift RIGHT"/>
-                            <entry key="AddBookmarkAction" value="ctrl B"/>
-                            <entry key="RefreshDataAction" value="ctrl R"/>
-                            <entry key="NextSearchSpanAction" value="ctrl X"/>
+                            <entry key="com.affymetrix.igb.action.AboutIGBAction" value="ctrl shift A"/>
+                            <entry key="com.affymetrix.igb.action.ScrollDownAction" value="alt DOWN"/>
+                            <entry key="com.affymetrix.igb.action.PreferencesAction" value="alt P"/>
+                            <entry key="com.affymetrix.igb.action.ToggleHairlineLabelAction" value="ctrl H"/>
+                            <entry key="com.affymetrix.igb.action.PrintAction" value="ctrl P"/>
+                            <entry key="com.affymetrix.igb.action.LoadFileAction" value="ctrl O"/>
+                            <entry key="com.affymetrix.igb.action.ScrollLeftAction" value="alt LEFT"/>
+                            <entry key="com.affymetrix.igb.action.ScrollRightAction" value="alt RIGHT"/>
+                            <entry key="com.affymetrix.igb.action.ZoomInYAction" value="ctrl shift UP"/>
+                            <entry key="com.affymetrix.igb.action.SelectParentAction" value="ctrl P"/>
+                            <entry key="com.affymetrix.igb.action.ZoomOutXAction" value="ctrl shift LEFT"/>
+                            <entry key="com.affymetrix.igb.bookmarks.action.AddPositionBookmarkAction" value="ctrl shift B"/>
+                            <entry key="com.affymetrix.igb.action.ScrollUpAction" value="alt UP"/>
+                            <entry key="com.affymetrix.igb.action.ExitAction" value="ctrl Q"/>
+                            <entry key="com.affymetrix.igb.action.ExitSeqViewerAction" value="ctrl W" />
+                            <entry key="com.affymetrix.igb.action.ShowConsoleAction" value="ctrl shift C"/>
+                            <entry key="com.affymetrix.igb.action.ZoomOutFullyAction" value="ctrl shift HOME"/>
+                            <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift DOWN"/>
+                            <entry key="com.affymetrix.igb.action.CopyResiduesAction" value="ctrl C"/>
+                            <entry key="com.affymetrix.igb.action.ToggleEdgeMatchingAction" value="ctrl M"/>
+                            <entry key="com.affymetrix.igb.action.UCSCViewAction" value="ctrl U"/>
+                            <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
+                            <entry key="com.affymetrix.igb.bookmarks.action.AddBookmarkAction" value="ctrl B"/>
+                            <entry key="com.affymetrix.igb.action.RefreshDataAction" value="ctrl R"/>
+                            <entry key="com.affymetrix.igb.action.NextSearchSpanAction" value="ctrl X"/>
                         </map>
                     </node>
                     <node name="toolbar">
                         <map>
-                            <entry key="LoadURLAction" value="true"/>
-                            <entry key="LoadFileAction" value="true"/>
-                            <entry key="ExportImageAction" value="true"/>
-                            <entry key="RepackSelectedTiersAction" value="true"/>
-                            <entry key="ZoomingRepackAction" value="true"/>
-                            <entry key="ChangeForegroundColorAction" value="true"/>
-                            <entry key="ChangeBackgroundColorAction" value="true"/>
-                            <entry key="ShowStrandAction" value="true"/>
-                            <entry key="CollapseExpandAction" value="true"/>
-                            <entry key="AutoLoadThresholdAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.LoadURLAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.LoadFileAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.RepackSelectedTiersAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.ZoomingRepackAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.ChangeForegroundColorAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.ChangeBackgroundColorAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.ShowStrandAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.CollapseExpandAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.AutoLoadThresholdAction" value="true"/>
                         </map>
                     </node>
                 </node>

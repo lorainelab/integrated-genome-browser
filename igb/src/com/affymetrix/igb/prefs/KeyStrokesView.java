@@ -10,6 +10,8 @@
 package com.affymetrix.igb.prefs;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -70,6 +72,9 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	private static String getSortField(GenericAction genericAction) {
+		if (genericAction == null) {
+			return "";
+		}
 		return genericAction.getDisplay() + (genericAction.isToggle() ? "1" : "2");
 	}
 
@@ -78,7 +83,15 @@ public final class KeyStrokesView implements ListSelectionListener,
 		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
-				return getSortField(GenericActionHolder.getInstance().getGenericAction(o1)).compareTo(getSortField(GenericActionHolder.getInstance().getGenericAction(o2)));
+				GenericAction ga1 = GenericActionHolder.getInstance().getGenericAction(o1);
+				if (ga1 == null) {
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no GenericAction found for \"" + o1 + "\"");
+				}
+				GenericAction ga2 = GenericActionHolder.getInstance().getGenericAction(o2);
+				if (ga2 == null) {
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no GenericAction found for \"" + o2 + "\"");
+				}
+				return getSortField(ga1).compareTo(getSortField(ga2));
 			}
 		});
 		for (String key : keys) {

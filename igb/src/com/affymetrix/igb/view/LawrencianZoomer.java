@@ -174,11 +174,14 @@ public class LawrencianZoomer implements ChangeListener {
 		}
 	}
 
+	private boolean zoomDynamically = true;
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		JSlider source = (JSlider) e.getSource();
-		if (!source.getValueIsAdjusting()) {
-			source.setEnabled(false);
+		if (zoomDynamically || !source.getValueIsAdjusting()) {
+			if (!zoomDynamically) {
+				source.setEnabled(false);
+			}
 			// Invert the vertically oriented zoomer.
 			int zoomLevel = source.getMaximum() - source.getValue();
 			if (source.getModel() != this.range) {
@@ -186,7 +189,9 @@ public class LawrencianZoomer implements ChangeListener {
 				zoomLevel = this.range.getMaximum() * zoomLevel / source.getMaximum();
 			}
 			this.setZoomLevel(zoomLevel);
-			source.setEnabled(true);
+			if (!zoomDynamically) {
+				source.setEnabled(true);
+			}
 		}
 	}
 

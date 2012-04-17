@@ -120,7 +120,7 @@ public abstract class MenuUtil {
   public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix) {
 	Action action = item.getAction();
 	if (action != null) {
-		String command = action.getClass().getName();
+		String command = action.getClass().getName(); // duplicates GenericAction.getId()
 		if(prefix != null && prefix.length() > 0){
 			command = prefix + "/" + command;
 		}
@@ -131,7 +131,7 @@ public abstract class MenuUtil {
 
   public static final JMenuItem insertIntoMenu(JMenu menu, JMenuItem item, int position) {
     Action action = item.getAction();
-    if (action != null) { addAccelerator(item, action.getClass().getName()); }
+    if (action != null) { addAccelerator(item, action.getClass().getName()); } // duplicates GenericAction.getId()
     return menu.insert(item, position);
   }
 

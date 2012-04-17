@@ -121,7 +121,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 				rows[i][0] = genericAction.getDisplay();
 				rows[i][1] = keystroke_node.get(key, "");
 				rows[i][2] = toolbar_node.getBoolean(key, false);
-				rows[i][3] = genericAction.getId();
+				rows[i][3] = genericAction.getId(); // not displayed
 			}
 		}
 		return rows;

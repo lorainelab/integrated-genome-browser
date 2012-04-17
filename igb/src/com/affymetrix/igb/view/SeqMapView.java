@@ -60,6 +60,7 @@ import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -401,7 +402,7 @@ public class SeqMapView extends JPanel
 		}
 
 		JSlider specialZoomer = new JSlider(JSlider.VERTICAL, 0, 100, 50);
-		javax.swing.event.ChangeListener zoomie = new LawrencianZoomer(seqmap);
+		ChangeListener zoomie = new LawrencianZoomer(seqmap, specialZoomer.getModel());
 		specialZoomer.addChangeListener(zoomie);
 		
 		yzoombox = Box.createVerticalBox();

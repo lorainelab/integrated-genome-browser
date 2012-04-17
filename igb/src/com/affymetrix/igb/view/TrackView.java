@@ -193,10 +193,13 @@ public class TrackView {
 			//gviewer.getSeqMap().packTiers(true, false, false);
 			gviewer.getSeqMap().updateWidget();
 		}
-		// kludge to get GraphAdjuster tab to update Style box (graph type)
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(rootSym);
-		GenometryModel.getGenometryModel().setSelectedSymmetries(syms, gviewer);
+		
+		if(rootSym != null){
+			// kludge to get GraphAdjuster tab to update Style box (graph type)
+			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+			syms.add(rootSym);
+			GenometryModel.getGenometryModel().setSelectedSymmetries(syms, gviewer);
+		}
 	}
 
 	public void addAnnotationGlyphs(SeqMapView smv, ITrackStyleExtended style){ 

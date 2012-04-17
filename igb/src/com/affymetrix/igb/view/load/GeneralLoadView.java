@@ -453,9 +453,8 @@ public final class GeneralLoadView {
 		});
 	}
 
-	public void refreshDataManagementView() {
-		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-
+	private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures){
+		
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
@@ -464,7 +463,12 @@ public final class GeneralLoadView {
 				DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
-
+	}
+	
+	public void refreshDataManagementView() {
+		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+		refreshDataManagementTable(visibleFeatures);
+		
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(visibleFeatures);
 	}
@@ -614,6 +618,7 @@ public final class GeneralLoadView {
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
+						refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
 						gviewer.getSeqMap().packTiers(true, true, false);
 						gviewer.getSeqMap().stretchToFit(false, true);
 						gviewer.getSeqMap().updateWidget();

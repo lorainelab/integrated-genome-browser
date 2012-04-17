@@ -83,5 +83,9 @@
 	<classpathentry kind="src" path="plugins/window_service_def/resources"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="protannot/src"/>
+	<classpathentry kind="lib" path="ext/gnomex_realm.jar"/>
+	<classpathentry kind="lib" path="ext/gnomex.jar"/>
+	<classpathentry kind="lib" path="ext/hci_framework.jar"/>
+	<classpathentry kind="lib" path="ext/hci_utils.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

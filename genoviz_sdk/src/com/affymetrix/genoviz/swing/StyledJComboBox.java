@@ -13,7 +13,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  */
 public class StyledJComboBox extends JComboBox {
 
-	private final String separator = ":";
+	private final String separator = ":"; //Use to separate actual value and display value
 
 	public StyledJComboBox() {
 		setRenderer(new ItemRenderer());
@@ -22,22 +22,22 @@ public class StyledJComboBox extends JComboBox {
 	@SuppressWarnings("unchecked")
 	public void initModel(String[] list) {
 		Vector model = new Vector();
-		String selectedValue = "", displayValue = "";
+		String actualValue = "", displayValue = "";
 
 		for (String values : list) {
-			selectedValue = values.split(separator)[0];
+			actualValue = values.split(separator)[0];
 			displayValue = values.split(separator)[1];
-			model.addElement(new Item(selectedValue, displayValue));
+			model.addElement(new Item(actualValue, displayValue));
 		}
 
 		setModel(new DefaultComboBoxModel(model));
 	}
 
 	public void addItem(String item) {
-		String selectedValue = item.split(separator)[0];
+		String actualValue = item.split(separator)[0];
 		String displayValue = item.split(separator)[1];
 
-		this.addItem(new Item(selectedValue, displayValue));
+		this.addItem(new Item(actualValue, displayValue));
 	}
 
 	public void setSelectedItem(String value) {
@@ -49,7 +49,7 @@ public class StyledJComboBox extends JComboBox {
 	}
 
 	public String getSelectedValue() {
-		return ((Item) this.getSelectedItem()).getSelectedValue();
+		return ((Item) this.getSelectedItem()).getActualValue();
 	}
 
 	class ItemRenderer extends BasicComboBoxRenderer {
@@ -71,16 +71,16 @@ public class StyledJComboBox extends JComboBox {
 
 	class Item {
 
-		private String selectedValue;
+		private String actualValue;
 		private String displayValue;
 
-		public Item(String selectedValue, String displayValue) {
-			this.selectedValue = selectedValue;
+		public Item(String actualValue, String displayValue) {
+			this.actualValue = actualValue;
 			this.displayValue = displayValue;
 		}
 
-		public String getSelectedValue() {
-			return selectedValue;
+		public String getActualValue() {
+			return actualValue;
 		}
 
 		public String getDisplayValue() {
@@ -88,7 +88,7 @@ public class StyledJComboBox extends JComboBox {
 		}
 
 		public String toString() {
-			return selectedValue;
+			return actualValue;
 		}
 	}
 }

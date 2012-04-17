@@ -202,7 +202,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		public TableCellRenderer getCellRenderer(int row, int col) {
 			TableCellRenderer renderer = super.getCellRenderer(row, col);
 			if (col == ToolbarColumn) {
-				((JCheckBox) renderer).setHorizontalAlignment(SwingConstants.RIGHT);
+				((JCheckBox) renderer).setHorizontalAlignment(SwingConstants.CENTER);
 			}
 			else {
 				((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);

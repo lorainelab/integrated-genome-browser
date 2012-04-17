@@ -28,7 +28,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 			selectAllAction = new SelectAllAction(Application.getSingleton().getMapView(), category);
 			CATEGORY_ACTION.put(category, selectAllAction);
 		}
-		return ACTION;
+		return selectAllAction;
 	}
 
 	protected SelectAllAction(SeqMapView gviewer, FileTypeCategory category) {

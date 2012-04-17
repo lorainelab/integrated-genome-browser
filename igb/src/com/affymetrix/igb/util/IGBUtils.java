@@ -132,7 +132,6 @@ public class IGBUtils {
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));
-//			item.setText(SelectAllAction.getAction(category).getText() + " " + category.toString());
 			select_menu.add(item);
 		}
 		edit_menu.add(select_menu);

@@ -61,6 +61,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Color end_color = default_end;
 	private String view_mode = default_view_mode;
 	private String operator = default_operator;
+	private float min_score_color = default_min_score_color;
+	private float max_score_color = default_max_score_color;
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
@@ -935,13 +937,29 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return color_by_score;
 	}
 
+	public void setMinScoreColor(float min_score_color){
+		this.min_score_color = min_score_color;
+	}
+	
+	public float getMinScoreColor(){
+		return min_score_color;
+	}
+	
+	public void setMaxScoreColor(float max_score_color){
+		this.max_score_color = max_score_color;
+	}
+	
+	public float getMaxScoreColor(){
+		return max_score_color;
+	}
+	
 	/**
 	 *  Returns a color that can be used to indicate a score between 1 and 1000.
 	 *  This will return a color even if getColorByScore() is false.
 	 */
 	public Color getScoreColor(float score) {
-		final float min = 1.0f; // min and max might become variables later...
-		final float max = 1000.0f;
+		final float min = getMinScoreColor();
+		final float max = getMaxScoreColor();
 		
 		if (score < min) {
 			score = min;

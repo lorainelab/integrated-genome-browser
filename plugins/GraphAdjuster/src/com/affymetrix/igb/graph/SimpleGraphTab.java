@@ -484,7 +484,7 @@ public final class SimpleGraphTab
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
 					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(glyphs)) {
 						sggl.setShowGraph(true);
-						igbService.changeViewMode(igbService.getSeqMapView(), (RootSeqSymmetry)sggl.getInfo(), sggl.getAnnotStyle(), sggl.getGraphState().getComboStyle(), viewMode);
+						igbService.changeViewMode(igbService.getSeqMapView(), sggl.getAnnotStyle(), viewMode, (RootSeqSymmetry)sggl.getInfo(), sggl.getGraphState().getComboStyle());
 						if ((graphType == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}

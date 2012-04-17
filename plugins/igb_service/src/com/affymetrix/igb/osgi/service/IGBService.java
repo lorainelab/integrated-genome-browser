@@ -183,6 +183,6 @@ public interface IGBService {
 	public Collection<GenericServer> getAllServersList();
 	public void discoverServer(final GenericServer server);
 
-	public void changeViewMode(SeqMapViewI gviewer, RootSeqSymmetry rootSym, ITrackStyleExtended style, ITrackStyleExtended comboStyle, String viewMode);
+	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle);
 
 }

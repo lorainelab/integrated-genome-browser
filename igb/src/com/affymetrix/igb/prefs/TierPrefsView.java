@@ -92,7 +92,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		displayNameTextField = new JRPTextField("TierPrefsView_displayNameTextField");
 		showStrandButtonGroup = new javax.swing.ButtonGroup();
-		viewModeCB = new JRPComboBox("TierPrefsView_viewModeCB");
+		viewModeCB = new JRPStyledJComboBox("TierPrefsView_viewModeCB");
 		applyToAllButton = new JRPButton("TierPrefsView_applyToAllButton");
 		refreshButton = new JRPButton("TierPrefsView_refreshButton");
 
@@ -101,8 +101,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
 
 		labelFieldComboBox.setModel(new DefaultComboBoxModel(TrackConstants.LABELFIELD));
-
-		viewModeCB.setModel(new DefaultComboBoxModel(TrackConstants.VIEWMODE));
 
 		ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
 
@@ -272,27 +270,23 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		selectedRows = table.getSelectedRows();
 
 		initializationDetector = true;
+		applyChanged = false;
 
 		setEnabled(true);
 
 		if (selectedRows.length > 1) {
 			resetValueBySelectedRows();
 		} else if (selectedRows.length == 1) {
-			TrackStyle style = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
-
-			setEnabledByAxisOrGraph(style);
-
-			resetValueBySelectedRow(style);
+			resetValueBySelectedRow();
 		} else {
 			setEnabled(false);
 		}
 
+		applyChanged = true;
 		initializationDetector = false;
 	}
 
 	private void resetValueBySelectedRows() {
-		applyChanged = false;
-
 		displayNameTextField.setText("");
 		displayNameTextField.setEnabled(false);
 
@@ -317,8 +311,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		negativeColorComboBox.setSelectedColor((Color) getValueAt(COL_NEG_STRAND_COLOR));
 
 		viewModeCB.setEnabled(false);
-
-		applyChanged = true;
 	}
 
 	/**
@@ -510,7 +502,11 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		return value;
 	}
 
-	private void resetValueBySelectedRow(TrackStyle style) {
+	private void resetValueBySelectedRow() {
+		TrackStyle style = ((TierPrefsTableModel) model).getStyles().get(selectedRows[0]);
+
+		setEnabledByAxisOrGraph(style);
+
 		possitiveColorComboBox.setSelectedColor(style.getForwardColor());
 		negativeColorComboBox.setSelectedColor(style.getReverseColor());
 
@@ -577,18 +573,22 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		viewModeCB.removeAllItems();
 
 		for (final MapViewGlyphFactoryI mode :
-				MapViewModeHolder.getInstance().getAllViewModesFor(style.getFileTypeCategory(), style.getMethodName())) {
+				MapViewModeHolder.getInstance().getAllViewModesFor(
+				style.getFileTypeCategory(), style.getMethodName())) {
 
 //			if (style.getSeparate()
 //					&& !mode.supportsTwoTrack()) {
 //				continue;
 //			}
 
-			viewModeCB.addItem(mode.getDisplayName());
+			viewModeCB.addItem(mode.getName() + ":" + mode.getDisplayName());
 		}
 
-		if(MapViewModeHolder.getInstance().getViewFactory(style.getViewMode()) != null){
-			viewModeCB.setSelectedItem(MapViewModeHolder.getInstance().getViewFactory(style.getViewMode()).getDisplayName());
+		MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().
+				getViewFactory(style.getViewMode());
+
+		if (mode != null) {
+			viewModeCB.setSelectedItem(mode.getName());
 		}
 	}
 
@@ -665,10 +665,16 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	public void viewModeCB() {
 		if (applyChanged) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(viewModeCB.getSelectedItem(),
-						0, COL_VIEW_MODE);
+			String mode = viewModeCB.getSelectedValue();
+			Boolean supportsTwoTrack = MapViewModeHolder.getInstance().
+					getViewFactory(mode).supportsTwoTrack();
+			if (!supportsTwoTrack) {
+				show2TracksCheckBox.setEnabled(false);
+			} else if (!show2TracksCheckBox.isEnabled()) {
+				show2TracksCheckBox.setEnabled(true);
 			}
+			
+			model.setValueAt(mode, 0, COL_VIEW_MODE);
 		}
 	}
 

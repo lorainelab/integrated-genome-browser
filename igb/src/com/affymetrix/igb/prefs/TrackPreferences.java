@@ -6,6 +6,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.StyledJComboBox;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
@@ -41,7 +42,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public ColorComboBox negativeColorComboBox;
 	public JRPCheckBox colorCheckBox;
 	public JRPCheckBox arrowCheckBox;
-	public javax.swing.JComboBox viewModeCB;
+	public StyledJComboBox viewModeCB;
 	public JCheckBox autoRefreshCheckBox;
 	public JRPButton refreshButton;
 	public StyledJTable table;
@@ -107,7 +108,7 @@ public abstract class TrackPreferences implements ListSelectionListener {
 	public void initCommonComponents() {
 		possitiveColorComboBox = new ColorComboBox();
 		negativeColorComboBox = new ColorComboBox();
-		viewModeCB = new javax.swing.JComboBox();
+		viewModeCB = new StyledJComboBox();
 		autoRefreshCheckBox = new JCheckBox();
 		refreshButton = new JRPButton(this.getClass().getCanonicalName() + "_refreshButton");
 		colorCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_colorCheckBox");

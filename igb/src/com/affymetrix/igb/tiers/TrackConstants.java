@@ -46,7 +46,7 @@ public interface TrackConstants {
 	static final Color default_start = new Color(204, 255, 255);
 	static final Color default_end = new Color(51, 255, 255);
 	static final String default_label_field = "";
-	static final String default_view_mode = "default";
+	static final String default_view_mode = "annotation";
 	static final String default_operator = "none";
 	static final int default_glyphDepth = 2;
 	static final double default_height = 50.0;//25.0;
@@ -57,7 +57,6 @@ public interface TrackConstants {
 	static final DIRECTION_TYPE default_direction_type = DIRECTION_TYPE.NONE;
 	public static final Object[] SUPPORTED_SIZE = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f};
 	public static final Object[] LABELFIELD = {NO_LABEL, "id", "name", "score"};
-	public static final Object[] VIEWMODE = {"default", "depth"};
 
 	public static enum DIRECTION_TYPE {
 

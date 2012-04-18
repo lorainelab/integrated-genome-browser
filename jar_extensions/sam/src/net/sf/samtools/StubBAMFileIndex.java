@@ -1,7 +1,7 @@
 package net.sf.samtools;
 
-import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -13,9 +13,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StubBAMFileIndex extends AbstractBAMFileIndex {
-	public StubBAMFileIndex(final File file, SAMSequenceDictionary dictionary) {
-        super(file, dictionary);
+import net.sf.samtools.util.SeekableStream;
+
+public class StubBAMFileIndex extends AbstractBAMFileIndex_ {
+	public StubBAMFileIndex(final SeekableStream ss, URI uri, SAMSequenceDictionary dictionary) {
+		super(dictionary, new SeekableStreamFileBuffer(ss, uri));
     }
 
 	@Override

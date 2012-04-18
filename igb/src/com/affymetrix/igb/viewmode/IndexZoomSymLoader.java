@@ -51,9 +51,9 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 		GraphIntervalSym sym = (GraphIntervalSym)depthOperator.operate(span.getBioSeq(), symList);
 		float total = 0.0f;
 		for (int i = 0; i < sym.getPointCount(); i++) {
-			total += sym.getGraphYCoord(i) * (float)sym.getGraphWidthCoord(i);
+			total += sym.getGraphYCoord(i) * sym.getGraphWidthCoord(i);
 		}
-		return total / (float)span.getLength();
+		return total / span.getLength();
 	}
 
 	@Override

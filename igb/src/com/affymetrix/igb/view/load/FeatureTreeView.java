@@ -4,10 +4,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
@@ -684,9 +681,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					if (tn.genericObject instanceof GenericFeature) {
 						GenericFeature feature = (GenericFeature) tn.genericObject;
 						String message;
-						if (checkbox.isSelected()) {
-
-							if (!isURLReachable(feature.getURI())) {
+						if (checkbox.isSelected()) {							
+							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
+									&& !isURLReachable(feature.getURI())) {
 								message = "The feature " + feature.getURI() + " is not reachable.";
 								ErrorHandler.errorPanel("Cannot load feature", message);
 								tn.setChecked(false);
@@ -716,7 +713,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 
 		private boolean isURLReachable(URI uri) {
-			try {
+			try {				
 				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
 					return false;
 				}

@@ -435,6 +435,7 @@
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="freehep-2.1.1.jar"/>
 				<include name="jlfgr-1_0.jar"/>
+				<include name="tango-icon-theme-0.8.90.jar"/>
 				<include name="colt.jar" />
 				<include name="sam.jar" />
 			</zipgroupfileset>

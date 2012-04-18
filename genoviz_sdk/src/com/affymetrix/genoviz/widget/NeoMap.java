@@ -132,6 +132,7 @@ public class NeoMap extends NeoWidget implements
 	protected final Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
 	protected final Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 	private NeoWidgetListener listeners = null;
+	private boolean mouse_wheel_action;
 
 	/**
 	 * Constructs a horizontal NeoMap with scrollbars.
@@ -398,7 +399,7 @@ public class NeoMap extends NeoWidget implements
 		//when it is important to know the mouse location, e.g. to position the center of zoom, we'll have to route them through the
 		//view to transform pixel coordinates to view coordinates, or revamp the whole sequence of events altogether so that
 		//such transformation occurs somewhere else
-		canvas.addMouseWheelListener(mouseWheelListener); //listen for the mouse wheel so that we can scroll and zoom
+		enableMouseWheelAction(true); //listen for the mouse wheel so that we can scroll and zoom
 
 		canvas.addKeyListener(view);
 		canvas.addComponentListener(this);
@@ -1590,6 +1591,21 @@ public class NeoMap extends NeoWidget implements
 		}
 	}
 
+	public void enableMouseWheelAction(boolean enable){
+		mouse_wheel_action = enable;
+		if (mouse_wheel_action) { // wheel scrolling turned on
+			if (mouseWheelListener != null) {
+				this.canvas.removeMouseWheelListener(mouseWheelListener);
+				
+				this.canvas.addMouseWheelListener(mouseWheelListener);
+			}
+		} else {  // wheel scrolling turned off
+			if (mouseWheelListener != null) {
+				this.canvas.removeMouseWheelListener(mouseWheelListener);
+			}
+		}
+	}
+	
 	public void addViewBoxListener(NeoViewBoxListener l) {
 		viewbox_listeners.add(l);
 	}

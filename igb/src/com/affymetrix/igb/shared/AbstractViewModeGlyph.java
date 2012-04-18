@@ -121,7 +121,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		this.offset = offset;
 		tier_transform.setTransform(tier_transform.getScaleX(),0,0,
 				tier_transform.getScaleY(),tier_transform.getTranslateX(), 
-				view.getTransform().getScaleY() * offset  * 10);
+				tier_transform.getScaleY() + (offset  * 10));
 	}
 	
 	public int getOffset(){

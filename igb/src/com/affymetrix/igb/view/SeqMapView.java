@@ -2003,18 +2003,13 @@ public class SeqMapView extends JPanel
 	}
 
 	public void selectAll(FileTypeCategory category) {
-		GlyphI root = seqmap.getScene().getGlyph();
-		int max = root.getChildCount();
-		for (int i = 0; i < max; i++) {
-			GlyphI child = root.getChild(i);
-			if (child.isVisible() &&
-				child instanceof TierGlyph &&
-				((TierGlyph)child).getViewModeGlyph().getInfo() != null &&
-				matchesCategory((RootSeqSymmetry)((TierGlyph)child).getViewModeGlyph().getInfo(), category)) {
-				seqmap.select(child);
-			}
-			else {
-				seqmap.deselect(child);
+	for (TierLabelGlyph labelGlyph : tier_manager.getAllTierLabels()) {
+			TierGlyph tierGlyph = (TierGlyph)labelGlyph.getInfo();
+			if (labelGlyph.isVisible() &&
+				tierGlyph.getViewModeGlyph().getInfo() != null) {
+				ViewModeGlyph gl = tierGlyph.getViewModeGlyph();
+				boolean matches = matchesCategory((RootSeqSymmetry)gl.getInfo(), category);
+				labelGlyph.setSelected(matches);
 			}
 		}
 		seqmap.updateWidget();

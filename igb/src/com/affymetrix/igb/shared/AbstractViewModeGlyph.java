@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
@@ -36,6 +37,15 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
 	
+	// Variable for scrolling in tier
+	private int offset = 1;
+	protected LinearTransform tier_transform = new LinearTransform();
+	protected Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
+	protected Rectangle2D.Double lower = new Rectangle2D.Double();
+	protected Rectangle2D.Double upper = new Rectangle2D.Double();
+	protected Rectangle lower_pixelbox = new Rectangle();
+	protected Rectangle upper_pixelbox = new Rectangle();
+		
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;
@@ -107,6 +117,38 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		}
 	}
 
+	public void setOffset(int offset, ViewI view){
+		this.offset = offset;
+		tier_transform.setTransform(tier_transform.getScaleX(),0,0,
+				tier_transform.getScaleY(),tier_transform.getTranslateX(), 
+				view.getTransform().getScaleY() * offset  * 10);
+	}
+	
+	public int getOffset(){
+		return offset;
+	}
+	
+	@Override
+	public void setCoordBox(Rectangle2D.Double coordbox)   {
+		super.setCoordBox(coordbox);
+		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+		
+	@Override
+	public void setCoords(double x, double y, double width, double height)  {
+		super.setCoords(x, y, width, height);
+		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+	
+	@Override
+	public void moveRelative(double diffx, double diffy) {
+		super.moveRelative(diffx, diffy);
+		upper.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+	
 	@Override
 	public void drawMiddle(ViewI view) {
 		view.transformToPixels(getCoordBox(), getPixelBox());

@@ -13,6 +13,16 @@ Import-Package: javax.swing,
  toolbarButtonGraphics.general,
  toolbarButtonGraphics.navigation,
  toolbarButtonGraphics.table,
- toolbarButtonGraphics.media
+ toolbarButtonGraphics.media,
+ 16x16.actions,
+ 16x16.animations,
+ 16x16.apps,
+ 16x16.categories,
+ 16x16.devices,
+ 16x16.emblems,
+ 16x16.emotes,
+ 16x16.mimetypes,
+ 16x16.places,
+ 16x16.status
 Export-Package: com.affymetrix.common;version="@appVersion@"
 

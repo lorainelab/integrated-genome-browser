@@ -72,6 +72,9 @@ public abstract class GenericAction extends AbstractAction {
 		if (tooltip != null) {
 			this.putValue(SHORT_DESCRIPTION, tooltip);
 		}
+		if (tooltip == null && text != null) {
+			this.putValue(SHORT_DESCRIPTION, text);
+		}
 		if (add) {
 			GenericActionHolder.getInstance().addGenericAction(this);
 		}

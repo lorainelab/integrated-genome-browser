@@ -34,9 +34,9 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	private AffyLabelledTierMap tiermap;
 	private SeqMapView gviewer = null;
 	private double start;
-	private double ourCeiling, ourFloor;
-	private int atBorder; // points to the tier immediately below the mouse pointer.
+	private double ourFloor, ourCeiling;
 	private List<TierLabelGlyph> resizeRegion;
+	private int atBorder; // points to the tier immediately below the mouse pointer.
 	
 	/**
 	 * Construct a resizer for the given tiered map.
@@ -52,8 +52,9 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	@Override
 	public void mouseMoved(MouseEvent theEvent) {
 		NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
+		Object src = theEvent.getSource();
 		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-		assert m != nevt.getSource(); // This seems odd.
+		assert m != (AffyTieredMap) src; // This seems odd.
 		// Seems both cursors are the same, but you never know...
 		if (atResizeTop(nevt)) {
 			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
@@ -72,13 +73,13 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	 * All tiers in the region than can be resized will be.
 	 * Interior tiers that cannot be resized will just go along for the ride.
 	 *
-	 * @param theTierMouseIsAbove tier just below the border being dragged.
+	 * @param theTierMouseIsAbove points to the tier just below the border being dragged.
 	 * @param theList of tiers that might be resized.
 	 * @return a maximal (possibly empty) section of theList
 	 *         such that some tiers in this list can be resized.
 	 */
 	private static List<TierLabelGlyph> pertinentTiers(
-			int theTierMouseIsAbove,
+            int theTierMouseIsAbove,
 			List<TierLabelGlyph> theList) {
 		assert 0 <= theTierMouseIsAbove;
 		assert theTierMouseIsAbove < theList.size();
@@ -147,8 +148,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 	}
 
 	/**
-	 * Resume resizing drag where we left off.
-	 * Of course, if no drag was active when we left, no resume is needed.
+	 * Get the mouse cursor right.
 	 */
 	@Override
 	public void mouseEntered(MouseEvent theEvent) {
@@ -160,7 +160,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent evt) {
-		
+
 		// We only want to react when we're supposed to.
 		// i.e. when we have set the mouse cursor.
 		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
@@ -319,7 +319,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 				
 			}
 		}
-		
+
 		if (needRepacking) {
 			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
 			com.affymetrix.igb.tiers.AffyLabelledTierMap lm

@@ -4,6 +4,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -21,6 +22,49 @@ public abstract class TransformViewModeGlyph extends AbstractViewModeGlyph {
 	protected LinearTransform incoming_view_transform;
 	protected Rectangle2D.Double incoming_view_coordbox;
 
+	protected abstract void setModifiedViewCoords(ViewI view);
+	
+	protected void modifiedDrawChildren(ViewI view){
+		super.drawChildren(view);
+	}
+	
+	@Override
+	public void drawChildren(ViewI view) {
+		// MODIFY VIEW
+		incoming_view_transform = view.getTransform();
+		incoming_view_coordbox = view.getCoordBox();
+
+		// figure out draw transform by combining tier transform with view transform
+		// should allow for arbitrarily deep nesting of transforms too, since cumulative
+		//     transform is set to be view transform, and view transform is restored after draw...
+
+		AffineTransform trans2D = new AffineTransform();
+		trans2D.translate(0.0, incoming_view_transform.getTranslateY());
+		trans2D.scale(1.0, incoming_view_transform.getScaleY());
+		trans2D.translate(1.0, tier_transform.getTranslateY());
+		trans2D.scale(1.0, tier_transform.getScaleY());
+
+		modified_view_transform = new LinearTransform();
+		modified_view_transform.setTransform(
+				incoming_view_transform.getScaleX(), 0, 0, trans2D.getScaleY(),
+				incoming_view_transform.getTranslateX(), trans2D.getTranslateY());
+		view.setTransform(modified_view_transform);
+
+		// need to set view coordbox based on nested transformation
+		//   (for methods like withinView(), etc.)
+	
+		setModifiedViewCoords(view);
+		view.setCoordBox(modified_view_coordbox);
+		
+		// CALL NORMAL DRAWCHILDREN(), BUT WITH MODIFIED VIEW
+		modifiedDrawChildren(view);
+	
+
+		// RESTORE ORIGINAL VIEW
+		view.setTransform(incoming_view_transform);
+		view.setCoordBox(incoming_view_coordbox);
+	}
+	
 	// Need to redo pickTraversal, etc. to take account of transform also...
 	@Override
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,

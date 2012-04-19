@@ -7,11 +7,9 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -105,41 +103,12 @@ public final class TransformTierGlyph extends TransformViewModeGlyph {
 	}
 
   @Override
-  public void drawChildren(ViewI view) {
-
-    // MODIFY VIEW
-    incoming_view_transform = view.getTransform();
-    incoming_view_coordbox = view.getCoordBox();
-
-    // figure out draw transform by combining tier transform with view transform
-    // should allow for arbitrarily deep nesting of transforms too, since cumulative
-    //     transform is set to be view transform, and view transform is restored after draw...
-
-    AffineTransform trans2D = new AffineTransform();
-    trans2D.translate(0.0, incoming_view_transform.getTranslateY());
-    trans2D.scale(1.0, incoming_view_transform.getScaleY());
-    trans2D.translate(1.0, tier_transform.getTranslateY());
-    trans2D.scale(1.0, tier_transform.getScaleY());
-
-    modified_view_transform = new LinearTransform();
-	modified_view_transform.setTransform(
-			incoming_view_transform.getScaleX(),0,0,trans2D.getScaleY(),
-			incoming_view_transform.getTranslateX(),trans2D.getTranslateY());
-    view.setTransform(modified_view_transform);
-
-    // need to set view coordbox based on nested transformation
-    //   (for methods like withinView(), etc.)
-    view.transformToCoords(view.getPixelBox(), modified_view_coordbox);
-    view.setCoordBox(modified_view_coordbox);
-
-    // CALL NORMAL DRAWCHILDREN(), BUT WITH MODIFIED VIEW
-    super.drawChildren(view);
-
-    // RESTORE ORIGINAL VIEW
-    view.setTransform(incoming_view_transform);
-    view.setCoordBox(incoming_view_coordbox);
+  protected void setModifiedViewCoords(ViewI view){
+	// This works fine too. But for now not modifying it. HV 05/19/12
+	// view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
+	view.transformToCoords(view.getPixelBox(), modified_view_coordbox);
   }
-
+	
   public void fitToPixelHeight(ViewI view) {
     // use view transform to determine how much "more" scaling must be
     //       done within tier to keep its

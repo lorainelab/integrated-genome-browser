@@ -16,10 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.event.NeoRangeEvent;
-import com.affymetrix.genoviz.event.NeoRangeListener;
-import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
-import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -316,28 +312,6 @@ public class AffyTieredMap extends NeoMap {
 //		if (!fitx) {
 //			doZoomFix(NeoMap.X);
 //		}
-	}
-
-	/**
-	 *  A hack.  Sometimes after a stretchToFit() where fity is false it can happen
-	 *  that a portion of the area that should be filled by map tiers is empty.
-	 *  (Perhaps because some tiers were just hidden and the remaining ones don't
-	 *  fill up all the space.)  As soon as the user touches the Y-zoomer,
-	 *  the map snaps to fill the given space.  This hack makes that happen automatically
-	 *  without the user having to touch the zoomer.
-	 */
-	private void doZoomFix(int id) {
-		if (zoomtrans[id] == null) {
-			return;
-		}
-		zoomer_scale[id] = zoomtrans[id].transform(id, zoomer_value[id]);
-		if (scale_constraint[id] == INTEGRAL_PIXELS ||
-						scale_constraint[id] == INTEGRAL_ALL) {
-			if (zoomer_scale[id] >= 1) {
-				zoomer_scale[id] = (int) (zoomer_scale[id] + .0001);
-			}
-		}
-		zoom(id, zoomer_scale[id]);
 	}
 
 	/**

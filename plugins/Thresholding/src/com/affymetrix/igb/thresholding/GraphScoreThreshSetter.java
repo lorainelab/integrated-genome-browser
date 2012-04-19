@@ -84,7 +84,6 @@ public final class GraphScoreThreshSetter extends JPanel
 	private List<AbstractGraphGlyph> graphs = new ArrayList<AbstractGraphGlyph>();
 	private IGBService igbService;
 	private final NeoAbstractWidget widg;
-	private final GraphVisibleBoundsSetter per_info_provider;
 	private final MaxGapThresholder max_gap_thresher;
 	private final MinRunThresholder min_run_thresher;
 	private final JRPSlider score_val_slider;
@@ -132,10 +131,9 @@ public final class GraphScoreThreshSetter extends JPanel
 		shift_format = new DecimalFormat();
 	}
 
-	public GraphScoreThreshSetter(IGBService igbService, GraphVisibleBoundsSetter bounds_setter) {
+	public GraphScoreThreshSetter(IGBService igbService) {
 		this.igbService = igbService;
 		this.widg = igbService.getSeqMap();
-		per_info_provider = bounds_setter;
 
 		score_val_slider = new JRPSlider("GraphScoreThreshSetter_score_val_slider", JSlider.HORIZONTAL);
 		score_percent_slider = new JRPSlider("GraphScoreThreshSetter_score_percent_slider", JSlider.HORIZONTAL,
@@ -427,7 +425,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				} else { // assume direction is GraphState.THRESHOLD_DIRECTION_LESS
 					val = gl.getMaxScoreThreshold();
 				}
-				float percent = per_info_provider.getPercentForValue(gl, val);
+				float percent = GraphGlyphUtils.getPercentForValue(gl, val);
 				min_of_score_vals = Math.min(min_of_score_vals, percent);
 				max_of_score_vals = Math.max(max_of_score_vals, percent);
 				avg_of_score_vals += percent;
@@ -616,7 +614,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float max_per = Float.NEGATIVE_INFINITY;
 			float avg_per = 0;
 			for (AbstractGraphGlyph sgg : graphs) {
-				float percent = per_info_provider.getPercentForValue(sgg, val);
+				float percent = GraphGlyphUtils.getPercentForValue(sgg, val);
 				min_per = Math.min(percent, min_per);
 				max_per = Math.max(percent, max_per);
 				avg_per += percent;
@@ -673,7 +671,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float max_val = Float.NEGATIVE_INFINITY;
 			float avg_val = 0;
 			for (AbstractGraphGlyph sgg : graphs) {
-				float val = per_info_provider.getValueForPercent(sgg, percent);
+				float val = GraphGlyphUtils.getValueForPercent(sgg, percent);
 
 				min_val = Math.min(val, min_val);
 				max_val = Math.max(val, max_val);

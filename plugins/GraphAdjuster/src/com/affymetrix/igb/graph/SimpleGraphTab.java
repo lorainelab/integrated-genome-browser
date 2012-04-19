@@ -89,7 +89,6 @@ public final class SimpleGraphTab
 	BioSeq current_seq;
 	GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
-	GraphScoreThreshSetter score_thresh_adjuster;
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
 	public JLabel selected_graphs_label = new JLabel(BUNDLE.getString("selectedGraphsLabel"));
@@ -137,19 +136,13 @@ public final class SimpleGraphTab
 			saveGraphs(gmodel, grafs);
 		}
 	};
-	private final Action graph_threshold_action = new GenericAction(BUNDLE.getString("graphThresholding"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			showGraphScoreThreshSetter();
-		}
-	};
+	public void setThresholdAction(GenericAction thresholdAction) {
+		threshB.setAction(thresholdAction);
+	}
 	public final JRPButton selectAllB = new JRPButton("SimpleGraphTab_selectAllB", select_all_graphs_action);
 	public final JRPButton saveB = new JRPButton("SimpleGraphTab_saveB", save_selected_graphs_action);
 	public final JRPButton deleteB = new JRPButton("SimpleGraphTab_deleteB", delete_selected_graphs_action);
-	public final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB", graph_threshold_action);
+	public final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB");
 	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
 	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
@@ -188,7 +181,6 @@ public final class SimpleGraphTab
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
-		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
 		height_slider.addChangeListener(new GraphHeightSetter());
 
@@ -202,10 +194,6 @@ public final class SimpleGraphTab
 
 	public boolean isTierGlyph(GlyphI glyph) {
 		return glyph instanceof TierGlyph;
-	}
-
-	private void showGraphScoreThreshSetter() {
-		score_thresh_adjuster.showFrame();
 	}
 
 	public void addOperator(Operator operator) {
@@ -323,7 +311,6 @@ public final class SimpleGraphTab
 			height_slider.setValue((int) the_height);
 		}
 		vis_bounds_setter.setGraphs(glyphs);
-		score_thresh_adjuster.setGraphs(glyphs);
 
 		if (!glyphs.isEmpty()) {
 			floatCB.setSelected(all_are_floating);
@@ -333,7 +320,7 @@ public final class SimpleGraphTab
 
 		boolean b = !(grafs.isEmpty());
 		height_slider.setEnabled(b);
-		graph_threshold_action.setEnabled(b);
+		threshB.setEnabled(b);
 		boolean type = b;
 		for (GraphSym graf : grafs) {
 			type = !(graf instanceof MisMatchGraphSym);

@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -20,9 +21,13 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class GraphGlyphUtils {
+	private static final float sliders_per_percent = 10.0f;
 
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
@@ -115,5 +120,67 @@ public final class GraphGlyphUtils {
 			array[i] = list.get(i);
 		}
 		return array;
+	}
+
+	private static final int MAX_INFO2PSCORES_SIZE = 1000; // prevent it from getting too big
+	private static final Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
+	/**
+	 *  Gets the percents2scores array for the given graph, creating the array
+	 *  if necessary.
+	 */
+	private static float[] getPercents2Scores(AbstractGraphGlyph gl) {
+		Object info = gl.getInfo();
+		if (info == null) {
+			System.err.println("Graph has no info! " + gl);
+		}
+		float[] p2score = info2pscores.get(info);
+
+		if (p2score == null) {
+			float[] ycoords = gl.copyYCoords();
+			p2score = GraphSymUtils.calcPercents2Scores(ycoords, sliders_per_percent);
+			if (info2pscores.size() >= MAX_INFO2PSCORES_SIZE) {
+				info2pscores.clear();
+			}
+			info2pscores.put(info, p2score);
+		}
+		return p2score;
+	}
+
+	public static float getValueForPercent(AbstractGraphGlyph gl, float percent) {
+		float[] percent2score = getPercents2Scores(gl);
+		int index = Math.round(percent * sliders_per_percent);
+
+		// I have actually seen a case where index was calculated as -1,
+		// and an exception was thrown. That is why I added this check. (Ed)
+		if (index < 0) {
+			index = 0;
+		} else if (index >= percent2score.length) {
+			index = percent2score.length - 1;
+		}
+
+		return percent2score[index];
+	}
+
+	public static float getPercentForValue(AbstractGraphGlyph gl, float value) {
+		float percent = Float.NEGATIVE_INFINITY;
+		float[] percent2score = getPercents2Scores(gl);
+		// do a binary search through percent2score array to find percent bin closest to value
+		int index = Arrays.binarySearch(percent2score, value);
+		if (index < 0) {
+			index = -index - 2;
+		}
+		if (index >= percent2score.length) {
+			percent = 100;
+		} else if (value >= gl.getGraphMaxY()) {
+			percent = 100;
+		} else if (index < 0) {
+			percent = 0;
+		} else if (value <= gl.getGraphMinY()) {
+			percent = 0;
+		} else {
+			percent = index / sliders_per_percent;
+		}
+
+		return percent;
 	}
 }

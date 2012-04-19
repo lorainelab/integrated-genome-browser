@@ -25,12 +25,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPRadioButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPSlider;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
@@ -90,7 +90,6 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//    FIX THIS!  But also need to balance between memory concerns and the
 	//    desire to avoid recalculation of percent-to-score array (which requires a
 	//    sort) every time a graph is selected...
-	private final Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
 	private final List<AbstractGraphGlyph> graphs = new ArrayList<AbstractGraphGlyph>();
 
 	/*
@@ -346,8 +345,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				AbstractGraphGlyph gl = graphs.get(i);
 				float vismin_val = gl.getVisibleMinY();
 				float vismax_val = gl.getVisibleMaxY();
-				float vismin_per = getPercentForValue(gl, vismin_val);
-				float vismax_per = getPercentForValue(gl, vismax_val);
+				float vismin_per = GraphGlyphUtils.getPercentForValue(gl, vismin_val);
+				float vismax_per = GraphGlyphUtils.getPercentForValue(gl, vismax_val);
 
 				min_of_vismins = Math.min(min_of_vismins, vismin_per);
 				max_of_vismins = Math.max(max_of_vismins, vismin_per);
@@ -528,7 +527,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			// set values
 			for (int i = 0; i < gcount; i++) {
 				AbstractGraphGlyph gl = graphs.get(i);
-				float min_per = getPercentForValue(gl, val);
+				float min_per = GraphGlyphUtils.getPercentForValue(gl, val);
 				min_of_mins = Math.min(min_per, min_of_mins);
 				max_of_mins = Math.max(min_per, max_of_mins);
 				avg_of_mins += min_per;
@@ -571,7 +570,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float avg_of_maxes = 0;
 			for (int i = 0; i < gcount; i++) {
 				AbstractGraphGlyph gl = graphs.get(i);
-				float max_per = getPercentForValue(gl, val);
+				float max_per = GraphGlyphUtils.getPercentForValue(gl, val);
 				min_of_maxes = Math.min(max_per, min_of_maxes);
 				max_of_maxes = Math.max(max_per, max_of_maxes);
 				avg_of_maxes += max_per;
@@ -625,7 +624,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			// set percentages
 			for (int i = 0; i < gcount; i++) {
 				AbstractGraphGlyph gl = graphs.get(i);
-				float min_val = getValueForPercent(gl, percent);
+				float min_val = GraphGlyphUtils.getValueForPercent(gl, percent);
 				min_of_mins = Math.min(min_val, min_of_mins);
 				max_of_mins = Math.max(min_val, max_of_mins);
 				avg_of_mins += min_val;
@@ -683,7 +682,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			float avg_of_maxes = 0;
 			for (int i = 0; i < gcount; i++) {
 				AbstractGraphGlyph gl = graphs.get(i);
-				float max_val = getValueForPercent(gl, percent);
+				float max_val = GraphGlyphUtils.getValueForPercent(gl, percent);
 				min_of_maxes = Math.min(max_val, min_of_maxes);
 				max_of_maxes = Math.max(max_val, max_of_maxes);
 				avg_of_maxes += max_val;
@@ -709,63 +708,6 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 			turnOnListening();
 		}
-	}
-
-	/**
-	 *  Gets the percents2scores array for the given graph, creating the array
-	 *  if necessary.
-	 */
-	private float[] getPercents2Scores(AbstractGraphGlyph gl) {
-		Object info = gl.getInfo();
-		if (info == null) {
-			System.err.println("Graph has no info! " + gl);
-		}
-		float[] p2score = info2pscores.get(info);
-
-		if (p2score == null) {
-			float[] ycoords = gl.copyYCoords();
-			p2score = GraphSymUtils.calcPercents2Scores(ycoords, sliders_per_percent);
-			info2pscores.put(info, p2score);
-		}
-		return p2score;
-	}
-
-	float getValueForPercent(AbstractGraphGlyph gl, float percent) {
-		float[] percent2score = getPercents2Scores(gl);
-		int index = Math.round(percent * sliders_per_percent);
-
-		// I have actually seen a case where index was calculated as -1,
-		// and an exception was thrown. That is why I added this check. (Ed)
-		if (index < 0) {
-			index = 0;
-		} else if (index >= percent2score.length) {
-			index = percent2score.length - 1;
-		}
-
-		return percent2score[index];
-	}
-
-	float getPercentForValue(AbstractGraphGlyph gl, float value) {
-		float percent = Float.NEGATIVE_INFINITY;
-		float[] percent2score = getPercents2Scores(gl);
-		// do a binary search through percent2score array to find percent bin closest to value
-		int index = Arrays.binarySearch(percent2score, value);
-		if (index < 0) {
-			index = -index - 2;
-		}
-		if (index >= percent2score.length) {
-			percent = 100;
-		} else if (value >= gl.getGraphMaxY()) {
-			percent = 100;
-		} else if (index < 0) {
-			percent = 0;
-		} else if (value <= gl.getGraphMinY()) {
-			percent = 0;
-		} else {
-			percent = index / sliders_per_percent;
-		}
-
-		return percent;
 	}
 
 	private void turnOffListening() {

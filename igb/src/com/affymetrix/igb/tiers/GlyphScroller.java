@@ -4,8 +4,8 @@ package com.affymetrix.igb.tiers;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.ViewModeGlyph;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -15,15 +15,18 @@ import java.awt.event.MouseWheelListener;
  */
 public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
 	AffyLabelledTierMap map;
-	ViewModeGlyph ag;
+	ScrollableViewModeGlyph ag;
 	
 	public GlyphScroller(AffyLabelledTierMap map){
 		this.map = map;
 	}
 	
 	public void startscroll(TierGlyph tier){
+		if(!(tier.getViewModeGlyph() instanceof ScrollableViewModeGlyph)){
+			return;
+		}
 		
-		ag = tier.getViewModeGlyph();
+		ag = (ScrollableViewModeGlyph)tier.getViewModeGlyph();
 		
 		// Flushing, just in case
 		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(this);

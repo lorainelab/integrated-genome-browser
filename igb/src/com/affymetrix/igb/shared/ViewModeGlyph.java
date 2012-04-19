@@ -36,8 +36,6 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract void addMiddleGlyph(GlyphI gl);	
 	public abstract List<SeqSymmetry> getSelected();
 	public abstract boolean toolBarHit(Rectangle2D.Double coord_hitbox, ViewI view);
-	public abstract void setOffset(int offset, ViewI view);
-	public abstract int getOffset();
 	protected abstract boolean shouldDrawToolBar();
 	public boolean isCombo() {
 		return false;

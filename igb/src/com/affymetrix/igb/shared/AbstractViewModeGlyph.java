@@ -37,11 +37,15 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
 	
-	// Variable for scrolling in tier
-	private int offset = 1;
+	// Variable for transformable tier
 	protected LinearTransform tier_transform = new LinearTransform();
 	protected Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
-		
+	protected LinearTransform modified_view_transform = new LinearTransform();
+	protected final Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
+
+	protected LinearTransform incoming_view_transform;
+	protected Rectangle2D.Double incoming_view_coordbox;
+	
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
 		return style;
@@ -111,17 +115,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 				other_fill_color = col.brighter();
 			}
 		}
-	}
-
-	public void setOffset(int offset, ViewI view){
-		this.offset = offset;
-		tier_transform.setTransform(tier_transform.getScaleX(),0,0,
-				tier_transform.getScaleY(),tier_transform.getTranslateX(), 
-				tier_transform.getScaleY() + (offset  * 10));
-	}
-	
-	public int getOffset(){
-		return offset;
 	}
 	
 	@Override

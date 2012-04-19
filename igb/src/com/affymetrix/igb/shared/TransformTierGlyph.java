@@ -36,17 +36,6 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
 		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
 		PREFERENCES = Collections.unmodifiableMap(temp);
 	}
-
-  private final LinearTransform tier_transform = new LinearTransform();
-
-  private LinearTransform modified_view_transform = new LinearTransform();
-  private final Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
-
-  private LinearTransform incoming_view_transform;
-  private Rectangle2D.Double incoming_view_coordbox;
-
-  // for caching in pickTraversal() methods
-  private final Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   
   public TransformTierGlyph(ITrackStyleExtended style)  {
 		setHitable(false);

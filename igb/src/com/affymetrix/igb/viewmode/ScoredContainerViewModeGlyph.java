@@ -24,6 +24,7 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 
 	ScoredContainerViewModeGlyph(ITrackStyleExtended style){
 		setStyle(style);
+		initUnloaded();
 	}
 	
 

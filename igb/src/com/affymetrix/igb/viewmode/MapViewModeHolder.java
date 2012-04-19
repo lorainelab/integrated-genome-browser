@@ -127,6 +127,6 @@ public class MapViewModeHolder {
 				}
 			}
 		}
-		return UnloadedGlyphFactory.getInstance();
+		return MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
 	}
 }

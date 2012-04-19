@@ -7,11 +7,18 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 import java.util.logging.Level;
@@ -260,5 +267,52 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			}
 		}
 		return selectedSyms;
+	}
+
+	protected void initUnloaded() {
+		if (getChildCount() <= 0) {
+			Glyph glyph;
+
+			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
+			SeqSymmetry sym = new SimpleMutableSeqSymmetry();
+			int slots = 1;//smv.getAverageSlots();
+			double height = style.getHeight();
+			if(!style.isGraphTier()){
+				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
+			}
+			for (int i = 0; i < slots; i++) {
+				// Add empty child.
+				glyph = new Glyph() {
+				};
+				glyph.setCoords(0, 0, 0, height);
+				addChild(glyph);
+			}
+			
+			if(style.getFeature() != null){
+				sym = style.getFeature().getRequestSym();
+			}
+			
+			// Add middle glyphs.
+			SeqSymmetry inverse = SeqUtils.inverse(sym, seq);
+			int child_count = inverse.getChildCount();
+			//If any request was made.
+			if (child_count > 0) {
+				for (int i = 0; i < child_count; i++) {
+					SeqSymmetry child = inverse.getChild(i);
+					for (int j = 0; j < child.getSpanCount(); j++) {
+						SeqSpan ospan = child.getSpan(j);
+						if (ospan.getLength() > 1) {
+							glyph = new FillRectGlyph();
+							glyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+							addMiddleGlyph(glyph);
+						}
+					}
+				}
+			} else {
+				glyph = new FillRectGlyph();
+				glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
+				addMiddleGlyph(glyph);
+			}
+		}
 	}
 }

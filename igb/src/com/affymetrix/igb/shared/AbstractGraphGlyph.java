@@ -145,6 +145,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	protected AbstractGraphGlyph(GraphState state) {
 		super();
 		this.state = state;
+		initUnloaded();
 	}
 	
 	protected AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
@@ -188,6 +189,7 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 //		}
 		
 		resetThreshLabel();
+		initUnloaded();
 	}
 
 	private void setColor(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {

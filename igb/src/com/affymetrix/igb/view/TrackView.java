@@ -6,9 +6,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -36,7 +33,6 @@ import com.affymetrix.igb.viewmode.DummyGlyphFactory;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -402,11 +398,6 @@ public class TrackView {
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
 		if(setViewMode){
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
-			if (factory == UnloadedGlyphFactory.getInstance()) {
-				FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
-				FileTypeCategory category = (fth == null) ? FileTypeCategory.Annotation : fth.getFileTypeCategory();
-				factory = MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
-			}
 			String viewmode = factory.getName();
 			style.setViewMode(viewmode);
 		}

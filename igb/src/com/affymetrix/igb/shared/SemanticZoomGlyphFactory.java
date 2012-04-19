@@ -46,6 +46,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected SemanticZoomGlyph(SeqSymmetry sym) {
 			super();
 			super.setInfo(sym);
+			initUnloaded();
 		}
 
 		protected abstract ViewModeGlyph getGlyph(SeqMapViewExtendedI smv);

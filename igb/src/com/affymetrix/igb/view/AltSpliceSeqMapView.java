@@ -25,7 +25,6 @@ import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
@@ -71,7 +70,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style
 		// associated with it.  Reset the style to be certain.
-		TierGlyph tierGlyph = super.getTrack(sym, style_copy, tier_direction, UnloadedGlyphFactory.getInstance());
+		TierGlyph tierGlyph = super.getTrack(sym, style_copy, tier_direction);
 		tierGlyph.setStyle(style_copy);
 		
 		return tierGlyph;

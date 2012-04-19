@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.viewmode.*;
-import com.affymetrix.igb.viewmode.UnloadedGlyphFactory.UnloadedGlyph;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -65,8 +64,8 @@ public class TierGlyph extends SolidGlyph {
 
 	private void setViewModeGlyph(ViewModeGlyph vmg) {
 		if (smv.isGenomeSequenceSupported() && smv.getViewSeq().getComposition() != null && 
-				smv.getViewSeq() != smv.getAnnotatedSeq() && !(vmg instanceof UnloadedGlyph)) {
-			if (viewModeGlyph == null || viewModeGlyph instanceof UnloadedGlyph) {
+				smv.getViewSeq() != smv.getAnnotatedSeq()) {
+			if (viewModeGlyph == null) {
 				initViewModeGlyph(vmg);
 			} else {
 				viewModeGlyph.copyChildren(vmg);

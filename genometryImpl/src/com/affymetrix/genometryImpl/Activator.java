@@ -5,6 +5,8 @@ import org.osgi.framework.BundleContext;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterProps;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
@@ -22,6 +24,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
 		initFileTypeHandlers();
+		initGenericActions();
 		initServerTypes();
 		initOperators();
 	}
@@ -41,6 +44,22 @@ public class Activator implements BundleActivator {
 			@Override
 			public void addService(FileTypeHandler fileTypeHandler) {
 				FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
+			}
+		});
+	}
+
+	private void initGenericActions() {
+		// add all GenericAction implementations to GenericActionHolder
+		ExtensionPointHandler<GenericAction> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GenericAction.class);
+		extensionPoint.addListener(new ExtensionPointListener<GenericAction>() {
+			@Override
+			public void removeService(GenericAction genericAction) {
+				GenericActionHolder.getInstance().addGenericAction(genericAction);
+			}
+			
+			@Override
+			public void addService(GenericAction genericAction) {
+				GenericActionHolder.getInstance().removeGenericAction(genericAction);
 			}
 		});
 	}

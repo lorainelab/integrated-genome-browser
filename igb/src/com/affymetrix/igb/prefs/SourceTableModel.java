@@ -134,28 +134,21 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Refresh:
-				String message = "Warning:\n"
-						+ "Refreshing the server will force IGB to re-read configuration files from the server.\n"
-						+ "This means all data sets currently loaded from the server will be deleted.\n"
-						+ "This is useful mainly for setting up or configuring a QuickLoad site.";
-
-				if (server.isEnabled()
-						&& !Application.confirmPanel(DataLoadPrefsView.getSingleton(),
-						message, PreferenceUtils.getTopNode(),
-						PreferenceUtils.CONFIRM_BEFORE_REFRESH,
-						PreferenceUtils.default_confirm_before_refresh)) {
-					break;
+				if (!server.isEnabled()
+						|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
+					DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
+							server.serverType, server.serverName, server.URL);
 				}
-
-				DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
-						server.serverType, server.serverName, server.URL);
 				break;
 			case Enabled:
 				server.setEnabled((Boolean) value);
 				if (((Boolean) value).booleanValue()) {
 					discoverServer(server);
 				} else {
-					serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
+					if (DataLoadPrefsView.getSingleton().confirmDelete()) {
+						serverList.fireServerInitEvent(server,
+								LoadUtils.ServerStatus.NotResponding);
+					}
 				}
 				break;
 			case Name:

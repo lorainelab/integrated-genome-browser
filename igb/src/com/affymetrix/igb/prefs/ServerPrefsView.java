@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.FileTracker;
@@ -100,11 +101,13 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 			public void actionPerformed(ActionEvent e) {
 				sourcesTable.stopCellEditing();
-				Object url = sourcesTable.getModel().getValueAt(
-						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-				removeDataSource(url.toString());
-				sourceTableModel.init();
+				if (confirmDelete()) {
+					Object url = sourcesTable.getModel().getValueAt(
+							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+					removeDataSource(url.toString());
+					sourceTableModel.init();
+				}
 			}
 		});
 		removeServerButton.setEnabled(false);
@@ -225,6 +228,29 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 		ServerList.getServerInstance().addServerToPrefs(server, order);
 		sourceTableModel.init();
+	}
+
+	public boolean confirmRefresh() {
+		String message = "Warning:\n"
+				+ "Refreshing the server will force IGB to re-read configuration files from the server.\n"
+				+ "This means all data sets currently loaded from the server will be deleted.\n"
+				+ "This is useful mainly for setting up or configuring a QuickLoad site.";
+
+		return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+				message, PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_REFRESH,
+				PreferenceUtils.default_confirm_before_refresh);
+	}
+
+	public boolean confirmDelete() {
+		String message = "Warning:\n"
+				+ "Disabling or removing a server will cause any"
+				+ " currently loaded data from that server to be removed from IGB.\n";
+
+		return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+				message, PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_DELETE,
+				PreferenceUtils.default_confirm_before_delete);
 	}
 
 	public void updateDataSource(String url, ServerTypeI type, String name, String newUrl) {

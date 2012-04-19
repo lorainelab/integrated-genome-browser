@@ -180,27 +180,8 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
-		if (!isVisible() || !intersects(pickRect,view)) {
-			return;
-		}
-		if (hit(pickRect, view)) {
-			if (!pickList.contains(this)) {
-				pickList.add(this);
-			}
-		}
-
-		if (getChildren() != null) {
-			// modify pickRect on the way in
-			//   (transform from view coords to local (tier) coords)
-			//    [ an inverse transform? ]
-			LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
-
-			for (GlyphI child : getChildren()) {
-				child.pickTraversal(internal_pickRect, pickList, view);
-			}
-		}
-	}
-
+	modifiedPickTraversal(pickRect, pickList, view);
+  }
 
   // Don't move children! Just change tier's transform offset.
   @Override

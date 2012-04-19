@@ -8,9 +8,7 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import com.affymetrix.igb.shared.AbstractViewModeGlyph;
-import com.affymetrix.igb.shared.CollapsePacker;
-import com.affymetrix.igb.shared.FasterExpandPacker;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -20,7 +18,7 @@ import java.util.*;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends AbstractViewModeGlyph {
+public class AnnotationGlyph extends TransformViewModeGlyph implements ScrollableViewModeGlyph {
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -57,6 +55,13 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
+	// Variable for scrolling in tier
+	private int offset = 1;
+	protected Rectangle2D.Double lower = new Rectangle2D.Double();
+	protected Rectangle2D.Double upper = new Rectangle2D.Double();
+	protected Rectangle lower_pixelbox = new Rectangle();
+	protected Rectangle upper_pixelbox = new Rectangle();
+	private Rectangle child_temp = new Rectangle();
 	
 	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();
@@ -64,7 +69,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 		setSpacer(spacer);
 		setStyle(style);
 	}
-
+	
 	@Override
 	public final void setStyle(ITrackStyleExtended style) {
 		super.setStyle(style);
@@ -206,8 +211,47 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	}
 
 	@Override
+	public void setCoordBox(Rectangle2D.Double coordbox)   {
+		super.setCoordBox(coordbox);
+		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+		
+	@Override
+	public void setCoords(double x, double y, double width, double height)  {
+		super.setCoords(x, y, width, height);
+		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+	
+	@Override
+	public void moveRelative(double diffx, double diffy) {
+		super.moveRelative(diffx, diffy);
+		upper.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy,  getCoordBox().width, 50);
+		lower.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy + getCoordBox().height - 50, getCoordBox().width, 50);
+	}
+	
+	@Override
+	public void setOffset(int offset, ViewI view){
+		this.offset = offset;
+		tier_transform.setTransform(tier_transform.getScaleX(),0,0,
+				tier_transform.getScaleY(),tier_transform.getTranslateX(), 
+				tier_transform.getScaleY() + (offset  * 10));
+	}
+	
+	@Override
+	public int getOffset(){
+		return offset;
+	}
+	
+	@Override
+	protected void setModifiedViewCoords(ViewI view){
+		view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
+	}
+		
+	@Override
 	public void drawChildren(ViewI view) {
-		try{
+	try{
 		if (getChildren() != null) {
 			GlyphI child;
 			int numChildren = getChildren().size();
@@ -232,7 +276,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 			System.out.println(ex);
 		}
 	}
-
+		
 	private boolean shouldDrawLabel() {
 		return (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
 	}

@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jdom-1.1.3.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/jar_extensions/sam/build"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/jar_extensions/tribble-0.2/build"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Thresholding"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

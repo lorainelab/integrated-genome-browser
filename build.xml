@@ -28,18 +28,19 @@
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 
 		<!-- Locations of optional bundle subprojects -->
-		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
-		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
-		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
-		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
-		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
-		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
-		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
-		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
-		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
 		<property name="BigBedHandler"       value="${basedir}/plugins/BigBedHandler" />
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
+		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
+		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
+		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
+		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
+		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
+		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />
+		<property name="SearchModeSymmetryFilter"   value="${basedir}/plugins/SearchModeSymmetryFilter" />
+		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
+		<property name="Thresholding"        value="${basedir}/plugins/Thresholding" />
 		<property name="Tutorial"            value="${basedir}/plugins/Tutorial" />
+		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 		
 		<!-- directory paths -->
 		<property name="lib.dir"			 value="${basedir}/ext" />

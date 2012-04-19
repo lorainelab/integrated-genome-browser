@@ -37,6 +37,7 @@ public class ShowStrandAction extends ShowStrandActionA implements SymSelectionL
 		separateStrands = !hasSeparate || hasMixed;
 		String text = separateStrands ? IGBConstants.BUNDLE.getString("showTwoTiersAction") : IGBConstants.BUNDLE.getString("showSingleTierAction") ;
 		putValue(Action.NAME, text);
+		putValue(SHORT_DESCRIPTION, text);
 		String iconPath = separateStrands ? "images/strand_separate.png" : "images/strand_mixed.png";
 		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 		if (icon == null) {

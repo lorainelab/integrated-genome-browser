@@ -37,6 +37,7 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 		collapsedTracks = !hasCollapsed || hasExpanded;
 		String text = collapsedTracks ? IGBConstants.BUNDLE.getString("collapseAction") : IGBConstants.BUNDLE.getString("expandAction") ;
 		putValue(Action.NAME, text);
+		putValue(SHORT_DESCRIPTION, text);
 		String iconPath = collapsedTracks ? "images/collapse.png" : "images/expand.png";
 		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 		if (icon == null) {

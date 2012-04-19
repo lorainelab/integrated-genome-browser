@@ -23,20 +23,27 @@ public class TierResizer extends MouseInputAdapter {
 
 	private static final double RESIZE_THRESHOLD = 4.0;
 	private AffyLabelledTierMap tiermap;
-	private TierLabelGlyph lowerGl;
-	private TierLabelGlyph upperGl;
 	private SeqMapView gviewer = null;
 	private double start;
 	private double ourFloor, ourCeiling;
+	protected static Cursor[] ourCursors = new Cursor[2];
+
 	private List<TierLabelGlyph> fixedInterior;
+	private TierLabelGlyph lowerGl;
+	private TierLabelGlyph upperGl;
 	
+	static {
+		ourCursors[0] = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+		ourCursors[1] = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+	}
+
 	/**
 	 * Construct a resizer for the given tiered map.
 	 */
 	public TierResizer(AffyLabelledTierMap theDataTiers) {
 		assert null != theDataTiers;
 		this.tiermap = theDataTiers;
-	}		
+	}
 
 	/**
 	 * Manage the mouse cursor indicating when a resizing drag is possible.
@@ -49,10 +56,10 @@ public class TierResizer extends MouseInputAdapter {
 		assert m != (AffyTieredMap) src; // This seems odd.
 		// Seems both cursors are the same, but you never know...
 		if (atResizeTop(nevt)) {
-			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+			m.setCursor(ourCursors[0]);
 		}
 		else if (atResizeBottom(nevt)) {
-			m.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+			m.setCursor(ourCursors[1]);
 		}
 		// Otherwise, leave it alone. Other listeners can (and will) handle it.
 	}
@@ -63,22 +70,23 @@ public class TierResizer extends MouseInputAdapter {
 	 * that will be affected by the resize.
 	 * Note that the returned list is of contiguous tiers.
 	 * The top and bottom tiers will be resized.
-	 * Interior tiers are cannot be resized and will just go along for the ride.
+	 * Interior tiers that cannot be resized will just go along for the ride.
 	 *
 	 * @param theFirst points to tier just above the border being dragged.
-	 * @param theLast points to the tier just below the border being dragged.
+	 * @param theTierMouseIsAbove points to the tier just below the border being dragged.
 	 * @param theList of tiers that might be resized.
 	 * @return a maximal (possibly empty) section of theList
 	 *         such that the tiers in this list can be resized
 	 *         and none of the others can.
 	 */
 	private static List<TierLabelGlyph> pertinentTiers(
-			int theFirst, int theLast,
+			int theFirst,
+            int theTierMouseIsAbove,
 			List<TierLabelGlyph> theList) {
 		assert 0 <= theFirst;
-		assert theFirst < theLast;
-		assert theLast < theList.size();
-		int top = theLast, limit = theLast;
+		assert theFirst < theTierMouseIsAbove;
+		assert theTierMouseIsAbove < theList.size();
+		int top = theTierMouseIsAbove, limit = theTierMouseIsAbove;
 		for (int i = theFirst; 0 <= i; i--) {
 			TierLabelGlyph g = theList.get(i);
 			if (g.isManuallyResizable()) {
@@ -86,7 +94,7 @@ public class TierResizer extends MouseInputAdapter {
 				break;
 			}
 		}
-		for (int i = theLast; i < theList.size(); i++) {
+		for (int i = theTierMouseIsAbove; i < theList.size(); i++) {
 			TierLabelGlyph g = theList.get(i);
 			if (g.isManuallyResizable()) {
 				limit = i + 1;
@@ -106,16 +114,16 @@ public class TierResizer extends MouseInputAdapter {
 		this.dragStarted = true;
 		this.upperGl = theRegion.get(0);
 		this.lowerGl = theRegion.get(theRegion.size()-1);
-		
+
 		this.start = nevt.getCoordY();
-	
+
 		// These minimum heights are in coord space.
 		// Shouldn't we be dealing in pixels?
 		ourCeiling = this.upperGl.getCoordBox().getY()
 				+ this.upperGl.getMinimumHeight();
 		java.awt.geom.Rectangle2D.Double box = this.lowerGl.getCoordBox();
 		ourFloor = box.getY() + box.getHeight() - this.lowerGl.getMinimumHeight();
-		
+
 		this.fixedInterior = theRegion.subList(1, theRegion.size()-1);
 		for (TierLabelGlyph g: this.fixedInterior) {
 			Rectangle2D.Double b = g.getCoordBox();
@@ -131,18 +139,28 @@ public class TierResizer extends MouseInputAdapter {
 
 	/**
 	 * Get the mouse cursor right.
-	 * @param theEvent 
 	 */
 	@Override
 	public void mouseEntered(MouseEvent theEvent) {
 		if (this.dragStarted) {
 			AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-			m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+			m.setCursor(ourCursors[0]);
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent evt) {
+
+		// We only want to react when we're supposed to.
+		// i.e. when we have set the mouse cursor.
+		AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+		assert m != evt.getSource(); // This seems odd.
+		Cursor c = m.getCursor();
+		if (c != ourCursors[0]
+				&& c != ourCursors[1]) {
+			return;
+		}
+
 		if (null == this.gviewer) {
 			this.gviewer = Application.getSingleton().getMapView();
 			assert null != this.gviewer;
@@ -168,9 +186,9 @@ public class TierResizer extends MouseInputAdapter {
 			startDrag(resizeRegion, nevt);
 		}
 	}
-	
+
 	/**
-	 * Adjust the tiers on either side of the mouse pointer.
+	 * Adjust the tier labels on either side of the mouse pointer.
 	 * This adjustment is going on in scene space rather than pixel space.
 	 * That doesn't seem quite right. - elb
 	 * @param evt is the drag event.
@@ -190,23 +208,23 @@ public class TierResizer extends MouseInputAdapter {
 				double inital_height = this.upperGl.getCoordBox().getHeight();
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
-				this.upperGl.getReferenceTier().resizeHeight(y, height);
-				
+//				this.upperGl.getReferenceTier().resizeHeight(y, height);
+
 				// Move the fixed height glyphs in the middle,
 				// assuming that the list is sorted top to bottom.
 				height = this.upperGl.getCoordBox().getHeight();
 				y = this.upperGl.getCoordBox().getY() + height;
 				for (TierLabelGlyph g: this.fixedInterior) {
 					g.resizeHeight(y, g.getCoordBox().getHeight());
-					g.getReferenceTier().resizeHeight(y, g.getCoordBox().getHeight());
+//					g.getReferenceTier().resizeHeight(y, g.getCoordBox().getHeight());
 					y += g.getCoordBox().getHeight();
 				}
-				
+
 				y = this.lowerGl.getCoordBox().getY() + delta;
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
-				this.lowerGl.getReferenceTier().resizeHeight(y, height);
-				
+//				this.lowerGl.getReferenceTier().resizeHeight(y, height);
+
 				this.gviewer.getSeqMap().updateWidget();
 			}
 			else { // then we're out of bounds.
@@ -224,66 +242,66 @@ public class TierResizer extends MouseInputAdapter {
 	@Override
 	public void mouseReleased(MouseEvent evt) {
 
-//		if (!this.dragStarted) {
-//			return;
-//		}
-//		this.dragStarted = false;
-//		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
-//		
-//		if (this.upperGl != null) {
-//			com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
-//			gl.setPreferredHeight(
-//					this.upperGl.getCoordBox().getHeight(),
-//					this.gviewer.getSeqMap().getView()
-//					);
-//		}
-//		
-//		if (this.lowerGl != null) {
-//			com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
-//			gl.setPreferredHeight(
-//					this.lowerGl.getCoordBox().getHeight(),
-//					this.gviewer.getSeqMap().getView()
-//					);
-//		}
-//		
-//		if (needRepacking) {
-//			
-//			// This is pretty good now. Tiers jump just a bit after resizing.
-//			// Mostly in one direction. Maybe can get to the bottom of this.
-//			// The border width of 2 pixels looks suspicious both here
-//			// and when moving the lower split pane.
-//			// - elb
-//			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
-//			com.affymetrix.igb.tiers.AffyLabelledTierMap lm
-//					= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-//			boolean full_repack = true, stretch_vertically = true;
-//			lm.repackTheTiers(full_repack, stretch_vertically);
-//			//lm.repackTiersToLabels();
-//			// The above repack (either one I think)
-//			// changes (enlarges) the tier map's bounds.
-//			// This probably affects the tiers' spacing. - elb 2012-02-21
-//
-//			// Vanilla repack seems to have worse symptoms.
-//			//m.repack();
-//			//m.packTiers(true, false, false, true);
-//			
-//			// This was also commented out.
-//			// From the name "kludgeRepackingTheTiers" 
-//			// it looks like someone tried a specialized repack.
-//			// Don't know who or how far they got.
-//			//com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
-//			//if (m instanceof com.affymetrix.igb.tiers.AffyLabelledTierMap) {
-//			//	com.affymetrix.igb.tiers.AffyLabelledTierMap lm
-//			//			= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-//			//	lm.kludgeRepackingTheTiers(needRepacking, needRepacking, needRepacking);
-//			//}
-//			// The above may not have worked,
-//			// but it would seem we need something to repack the tiers
-//			// based on the label glyphs' height and position.
-//			// Would have thought
-//			// that's what the last paramater in repackTheTiers was for.
-//
-//		}
+		if (!this.dragStarted) {
+			return;
+		}
+		this.dragStarted = false;
+		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
+
+		if (this.upperGl != null) {
+			com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
+			gl.setPreferredHeight(
+					this.upperGl.getCoordBox().getHeight(),
+					this.gviewer.getSeqMap().getView()
+					);
+		}
+
+		if (this.lowerGl != null) {
+			com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
+			gl.setPreferredHeight(
+					this.lowerGl.getCoordBox().getHeight(),
+					this.gviewer.getSeqMap().getView()
+					);
+		}
+
+		if (needRepacking) {
+
+			// This is pretty good now. Tiers jump just a bit after resizing.
+			// Mostly in one direction. Maybe can get to the bottom of this.
+			// The border width of 2 pixels looks suspicious both here
+			// and when moving the lower split pane.
+			// - elb
+			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
+			com.affymetrix.igb.tiers.AffyLabelledTierMap lm
+					= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
+			boolean full_repack = true, stretch_vertically = true;
+			lm.repackTheTiers(full_repack, stretch_vertically);
+			//lm.repackTiersToLabels();
+			// The above repack (either one I think)
+			// changes (enlarges) the tier map's bounds.
+			// This probably affects the tiers' spacing. - elb 2012-02-21
+
+			// Vanilla repack seems to have worse symptoms.
+			//m.repack();
+			//m.packTiers(true, false, false, true);
+
+			// This was also commented out.
+			// From the name "kludgeRepackingTheTiers"
+			// it looks like someone tried a specialized repack.
+			// Don't know who or how far they got.
+			//com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
+			//if (m instanceof com.affymetrix.igb.tiers.AffyLabelledTierMap) {
+			//	com.affymetrix.igb.tiers.AffyLabelledTierMap lm
+			//			= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
+			//	lm.kludgeRepackingTheTiers(needRepacking, needRepacking, needRepacking);
+			//}
+			// The above may not have worked,
+			// but it would seem we need something to repack the tiers
+			// based on the label glyphs' height and position.
+			// Would have thought
+			// that's what the last paramater in repackTheTiers was for.
+
+		}
 
 		this.upperGl = null; // helps with garbage collection
 		this.lowerGl = null; // helps with garbage collection

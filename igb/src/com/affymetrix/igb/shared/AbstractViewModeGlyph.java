@@ -41,10 +41,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private int offset = 1;
 	protected LinearTransform tier_transform = new LinearTransform();
 	protected Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
-	protected Rectangle2D.Double lower = new Rectangle2D.Double();
-	protected Rectangle2D.Double upper = new Rectangle2D.Double();
-	protected Rectangle lower_pixelbox = new Rectangle();
-	protected Rectangle upper_pixelbox = new Rectangle();
 		
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
@@ -126,27 +122,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	
 	public int getOffset(){
 		return offset;
-	}
-	
-	@Override
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
-		super.setCoordBox(coordbox);
-		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
-	}
-		
-	@Override
-	public void setCoords(double x, double y, double width, double height)  {
-		super.setCoords(x, y, width, height);
-		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
-	}
-	
-	@Override
-	public void moveRelative(double diffx, double diffy) {
-		super.moveRelative(diffx, diffy);
-		upper.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy + getCoordBox().height - 50, getCoordBox().width, 50);
 	}
 	
 	@Override

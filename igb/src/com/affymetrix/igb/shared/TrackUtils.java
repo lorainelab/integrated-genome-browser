@@ -50,7 +50,9 @@ public class TrackUtils {
 		if (preferredStyle == null) {
 			style.setGlyphDepth(1);
 			style.setSeparate(false); // there are not separate (+) and (-) strands
-			style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+			
+			// This might have become obsolete
+			// style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 		} else {
 			style.copyPropertiesFrom(preferredStyle);
 			style.setGlyphDepth(Math.max(1, SeqUtils.getDepth(sym) - 1));

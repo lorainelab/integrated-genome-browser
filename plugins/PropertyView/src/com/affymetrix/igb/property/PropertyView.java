@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.genoviz.swing.recordplayback.JRPStyledTable;
+import com.affymetrix.igb.shared.JRPStyledTable;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;

@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.genoviz.swing.recordplayback;
+package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import java.util.Vector;
-
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;

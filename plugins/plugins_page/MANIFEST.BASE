@@ -10,6 +10,7 @@ Bundle-Category: IGBTabPanel-com.affymetrix.igb.plugins.PluginsView
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
+ com.affymetrix.igb.shared,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.util,
  com.affymetrix.genometryImpl.event,

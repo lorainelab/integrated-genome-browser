@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 
@@ -36,15 +35,6 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	private static final int handle_width = 10;  // width of handle in pixels
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	protected String label = null;
-	
-	// Variable for transformable tier
-	protected LinearTransform tier_transform = new LinearTransform();
-	protected Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
-	protected LinearTransform modified_view_transform = new LinearTransform();
-	protected final Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
-
-	protected LinearTransform incoming_view_transform;
-	protected Rectangle2D.Double incoming_view_coordbox;
 	
 	@Override
 	public ITrackStyleExtended getAnnotStyle() {
@@ -164,30 +154,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			drawExpandCollapse(view);
 		}
 	}
-	
-	protected void modifiedPickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
-			ViewI view){
-		if (!isVisible() || !intersects(pickRect, view)) {
-			return;
-		}
-		if (hit(pickRect, view)) {
-			if (!pickList.contains(this)) {
-				pickList.add(this);
-			}
-		}
-
-		if (getChildren() != null) {
-			// modify pickRect on the way in
-			//   (transform from view coords to local (tier) coords)
-			//    [ an inverse transform? ]
-			LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
-
-			for (GlyphI child : getChildren()) {
-				child.pickTraversal(internal_pickRect, pickList, view);
-			}
-		}
-	}
-		
+			
 	private void drawExpandCollapse(ViewI view) {
 		Rectangle hpix = getToolbarPixel(view);
 		if (hpix != null) {

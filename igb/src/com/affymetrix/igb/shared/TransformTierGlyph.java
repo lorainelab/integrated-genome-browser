@@ -28,7 +28,7 @@ import java.util.Map;
  *     these are _not_ considered children, so transform does not apply to them
  *
  */
-public final class TransformTierGlyph extends AbstractViewModeGlyph {
+public final class TransformTierGlyph extends TransformViewModeGlyph {
   private int fixedPixHeight = 1;
   private double spacer = 2;
   private static final Map<String,Class<?>> PREFERENCES;
@@ -162,14 +162,6 @@ public final class TransformTierGlyph extends AbstractViewModeGlyph {
 	FasterExpandPacker expand_packer = new FasterExpandPacker();
 	((PaddedPackerI) expand_packer).setParentSpacer(spacer);
 	setPacker(expand_packer);
-  }
-
-  // Need to redo pickTraversal, etc. to take account of transform also...
-  @Override
-  public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
-                            ViewI view)  {
-
-	modifiedPickTraversal(pickRect, pickList, view);
   }
 
   // Don't move children! Just change tier's transform offset.

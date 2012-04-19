@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.prefs.WebLink;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.prefs.WebLink.RegexType;
 import com.affymetrix.igb.shared.FileTracker;
 import java.util.List;

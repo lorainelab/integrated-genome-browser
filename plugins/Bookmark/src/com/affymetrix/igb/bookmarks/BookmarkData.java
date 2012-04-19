@@ -1,7 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.igb.shared.StyledJTable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;

@@ -1,5 +1,6 @@
-package com.affymetrix.genoviz.swing;
+package com.affymetrix.igb.shared;
 
+import com.affymetrix.genoviz.swing.PartialLineBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

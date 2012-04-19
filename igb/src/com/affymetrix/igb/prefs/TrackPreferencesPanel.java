@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.WindowEvent;

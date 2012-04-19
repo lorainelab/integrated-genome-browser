@@ -4,7 +4,7 @@
  */
 package com.affymetrix.genoviz.swing.recordplayback;
 
-import com.affymetrix.genoviz.swing.StyledJTable;
+import com.affymetrix.igb.shared.StyledJTable;
 import java.util.Vector;
 
 import javax.swing.ListSelectionModel;

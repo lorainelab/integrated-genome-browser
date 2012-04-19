@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/window_service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/igb"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

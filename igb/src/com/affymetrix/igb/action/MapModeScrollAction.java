@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -12,17 +12,19 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class MapModeScrollAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1l;
 
-	public MapModeScrollAction(SeqMapView seqMapView) {
-		super(seqMapView,
+	public MapModeScrollAction(String id) {
+		super(
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Button"),
 			  BUNDLE.getString(MapMode.MapScrollMode.name() + "Tip"),
-			  "images/open_hand.png"
+			  "images/open_hand.png",
+			  KeyEvent.VK_UNDEFINED
 		);
+		this.id = id;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		gviewer.setMapMode(MapMode.MapScrollMode);
+		getSeqMapView().setMapMode(MapMode.MapScrollMode);
 	}
 }

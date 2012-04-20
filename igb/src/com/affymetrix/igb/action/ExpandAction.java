@@ -1,9 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class ExpandAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -11,13 +9,13 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 
 	public static ExpandAction getAction() {
 		if (ACTION == null) {
-			ACTION = new ExpandAction(Application.getSingleton().getMapView());
+			ACTION = new ExpandAction();
 		}
 		return ACTION;
 	}
 
-	protected ExpandAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("expandAction"), null, "images/expand.png");
+	protected ExpandAction() {
+		super(IGBConstants.BUNDLE.getString("expandAction"), "images/expand.png");
 		collapsedTracks = false;
 	}
 

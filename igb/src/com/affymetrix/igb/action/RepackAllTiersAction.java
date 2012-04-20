@@ -2,21 +2,19 @@ package com.affymetrix.igb.action;
 
 import java.awt.event.ActionEvent;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class RepackAllTiersAction extends RepackTiersAction {
 	private static final long serialVersionUID = 1L;
 	private static RepackAllTiersAction ACTION;
 
-	public RepackAllTiersAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("repackAllTracksAction"), "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
+	public RepackAllTiersAction() {
+		super(IGBConstants.BUNDLE.getString("repackAllTracksAction"), "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
 	}
 
 	public static RepackAllTiersAction getAction() {
 		if (ACTION == null) {
-			ACTION = new RepackAllTiersAction(Application.getSingleton().getMapView());
+			ACTION = new RepackAllTiersAction();
 		}
 		return ACTION;
 	}
@@ -24,6 +22,6 @@ public class RepackAllTiersAction extends RepackTiersAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		repackTiers(handler.getAllTierLabels());
+		repackTiers(getTierManager().getAllTierLabels());
 	}
 }

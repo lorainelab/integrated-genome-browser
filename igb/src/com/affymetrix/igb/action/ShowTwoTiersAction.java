@@ -1,9 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class ShowTwoTiersAction extends ShowStrandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -11,13 +9,13 @@ public class ShowTwoTiersAction extends ShowStrandActionA implements SymSelectio
 
 	public static ShowTwoTiersAction getAction() {
 		if (ACTION == null) {
-			ACTION = new ShowTwoTiersAction(Application.getSingleton().getMapView());
+			ACTION = new ShowTwoTiersAction();
 		}
 		return ACTION;
 	}
 
-	protected ShowTwoTiersAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("showTwoTiersAction"), null, "images/strand_separate.png");
+	protected ShowTwoTiersAction() {
+		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png");
 		separateStrands = true;
 	}
 

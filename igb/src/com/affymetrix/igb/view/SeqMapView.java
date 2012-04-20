@@ -368,12 +368,12 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox.add(map_range_box.range_box);
 
-		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeSelectAction(this));
+		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeSelectAction(getId()));
 		select_mode_button.setText("");
 		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		xzoombox.add(select_mode_button);
 
-		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeScrollAction(this));
+		scroll_mode_button = new JRPToggleButton(id + "_scroll_mode_button", new MapModeScrollAction(getId()));
 		scroll_mode_button.setText("");
 		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
 		xzoombox.add(scroll_mode_button);

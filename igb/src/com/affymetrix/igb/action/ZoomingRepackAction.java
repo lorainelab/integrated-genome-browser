@@ -31,12 +31,20 @@ import javax.swing.Action;
  */
 public class ZoomingRepackAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
+	private static ZoomingRepackAction ACTION;
+
+	public static ZoomingRepackAction getAction() {
+		if (ACTION == null) {
+			ACTION = new ZoomingRepackAction();
+		}
+		return ACTION;
+	}
 
 	/**
 	 * Create an action for the given tiered map.
 	 */
-	public ZoomingRepackAction(SeqMapView theSubject) {
-		super(theSubject, "Optimize All Tracks", "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
+	public ZoomingRepackAction() {
+		super("Optimize All Tracks", "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
 		putValue(Action.SHORT_DESCRIPTION, "Optimize track stack heights for the region in view.");
 	}
 
@@ -45,7 +53,8 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		TierLabelManager manager = this.gviewer.getTierManager();
+		SeqMapView gviewer = getSeqMapView();
+		TierLabelManager manager = getTierManager();
 		List<TierLabelGlyph> theTiers = manager.getAllTierLabels();
 		ViewI ourView = gviewer.getSeqMap().getView();
 		for (TierLabelGlyph tl : theTiers) {

@@ -8,9 +8,7 @@ import javax.swing.ImageIcon;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class ShowStrandAction extends ShowStrandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -18,13 +16,13 @@ public class ShowStrandAction extends ShowStrandActionA implements SymSelectionL
 
 	public static ShowStrandAction getAction() {
 		if (ACTION == null) {
-			ACTION = new ShowStrandAction(Application.getSingleton().getMapView());
+			ACTION = new ShowStrandAction();
 		}
 		return ACTION;
 	}
 
-	protected ShowStrandAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("showTwoTiersAction"), null, "images/strand_separate.png");
+	protected ShowStrandAction() {
+		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png");
 	}
 
 	@Override

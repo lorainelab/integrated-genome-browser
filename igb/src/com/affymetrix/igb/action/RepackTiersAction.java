@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  * note - this class contains an instance of SeqMapView. For now, there
@@ -19,8 +18,8 @@ import com.affymetrix.igb.view.SeqMapView;
 public abstract class RepackTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
-	protected RepackTiersAction(SeqMapView gviewer, String text, String iconPath) {
-		super(gviewer, text, iconPath);
+	protected RepackTiersAction(String text, String iconPath) {
+		super(text, iconPath);
 	}
 
 	public void repack(final boolean full_repack) {
@@ -29,11 +28,11 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				handler.repackTheTiers(full_repack, true);
+				getTierManager().repackTheTiers(full_repack, true);
 			}
 		};
 		
-		gviewer.preserveSelectionAndPerformAction(action);
+		getSeqMapView().preserveSelectionAndPerformAction(action);
 	}
 
 	/**
@@ -42,7 +41,7 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 	 * @param theTiers generally either all or selected tiers.
 	 */
 	protected void repackTiers(List<TierLabelGlyph> theTiers) {
-		ViewI ourView = gviewer.getSeqMap().getView();
+		ViewI ourView = getSeqMapView().getSeqMap().getView();
 		for (TierLabelGlyph tl : theTiers) {
 			TierGlyph t = (TierGlyph) tl.getInfo();
 			int a = t.getSlotsNeeded(ourView);

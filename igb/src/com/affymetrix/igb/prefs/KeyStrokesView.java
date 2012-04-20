@@ -79,7 +79,10 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	private static TreeSet<String> filterActions() {
-		List<String> keys = new ArrayList<String>(GenericActionHolder.getInstance().getGenericActionIds());
+		List<String> keys;
+		synchronized(GenericActionHolder.getInstance()) {
+			keys = new ArrayList<String>(GenericActionHolder.getInstance().getGenericActionIds());
+		}
 		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {

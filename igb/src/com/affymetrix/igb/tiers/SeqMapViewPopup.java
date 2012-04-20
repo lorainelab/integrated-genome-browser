@@ -195,7 +195,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
-		this.repackStub = new RepackTiersAction(gviewer, null, null) {
+		this.repackStub = new RepackTiersAction(null, null) {
 			private static final long serialVersionUID = 1L;
 		};
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());

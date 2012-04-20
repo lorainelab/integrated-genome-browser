@@ -1,12 +1,10 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Superclass of all IGB actions that must refer to a {@link SeqMapView}.
@@ -15,23 +13,46 @@ import java.util.Map;
  */
 public abstract class SeqMapViewActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;
-	protected static final Map<String, SeqMapViewActionA> ACTION_MAP = new HashMap<String, SeqMapViewActionA>();
+//	protected static final Map<String, SeqMapViewActionA> ACTION_MAP = new HashMap<String, SeqMapViewActionA>();
+	protected String id;
+	private SeqMapView gviewer;
+	private TierLabelManager handler;
 
-	protected SeqMapViewActionA(SeqMapView gviewer, String text, String iconPath) {
-		this(gviewer, text, null, iconPath);
+	public SeqMapViewActionA(String text, String tooltip, String iconPath, int mnemonic) {
+		super(text, tooltip, iconPath, mnemonic);
 	}
 
-	protected SeqMapViewActionA(SeqMapView gviewer, String text, String tooltip, String iconPath) {
-		super(text, tooltip, iconPath, KeyEvent.VK_UNDEFINED);
-		this.gviewer = gviewer;
-		this.handler = gviewer.getTierManager();
-		ACTION_MAP.put(gviewer.getId(), this);
-		MenuUtil.addAccelerator(gviewer, this, this.getId());
-		// Don't do anything with "this" after leaking it from the constructor.
+	public SeqMapViewActionA(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
 
-	protected SeqMapView gviewer;
-	protected TierLabelManager handler;
+	public SeqMapViewActionA(String text, String iconPath) {
+		super(text, iconPath);
+	}
+
+	public SeqMapViewActionA(String text, int mnemonic) {
+		super(text, mnemonic);
+	}
+
+	protected SeqMapView getSeqMapView() {
+		if (gviewer == null) {
+			if (id == null) {
+				gviewer = Application.getSingleton().getMapView();
+			}
+			else {
+				gviewer = (SeqMapView)RecordPlaybackHolder.getInstance().getWidget(id);
+			}
+		}
+		return gviewer;
+	}
+
+	protected TierLabelManager getTierManager() {
+		if (handler == null) {
+			handler = getSeqMapView().getTierManager();
+		}
+		return handler;
+	}
+
 	protected void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.

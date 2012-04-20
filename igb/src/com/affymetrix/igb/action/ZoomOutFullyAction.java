@@ -4,30 +4,27 @@ import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class ZoomOutFullyAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static ZoomOutFullyAction ACTION;
-	private final AffyTieredMap seqmap;
 
 	public static ZoomOutFullyAction getAction() {
 		if (ACTION == null) {
-			ACTION = new ZoomOutFullyAction(Application.getSingleton().getMapView());
+			ACTION = new ZoomOutFullyAction();
 		}
 		return ACTION;
 	}
 
-	public ZoomOutFullyAction(SeqMapView gviewer) {
-		super(gviewer, "Home Position", "Zoom out fully", null);
-		seqmap = gviewer.getSeqMap();
+	public ZoomOutFullyAction() {
+		super("Home Position", "Zoom out fully");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		AffyTieredMap seqmap = getSeqMapView().getSeqMap();
 		Adjustable adj = seqmap.getZoomer(NeoMap.X);
 		adj.setValue(adj.getMinimum());
 		adj = seqmap.getZoomer(NeoMap.Y);

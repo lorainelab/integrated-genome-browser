@@ -21,21 +21,20 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 	private static final long serialVersionUID = 1L;
 	protected boolean collapsedTracks;
 
-	protected CollapseExpandActionA(SeqMapView gviewer, String text,
-			String tooltip, String iconPath) {
-		super(gviewer, text, tooltip, iconPath);
+	protected CollapseExpandActionA(String text, String iconPath) {
+		super(text, iconPath);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
-		handler.setTiersCollapsed(tier_labels, collapsed);
-		gviewer.getSeqMap().updateWidget();
+		getTierManager().setTiersCollapsed(tier_labels, collapsed);
+		getSeqMapView().getSeqMap().updateWidget();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		setTiersCollapsed(handler.getSelectedTierLabels(), collapsedTracks);
+		setTiersCollapsed(getTierManager().getSelectedTierLabels(), collapsedTracks);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		changeActionDisplay(new ArrayList<SeqSymmetry>());
 	}
@@ -43,6 +42,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
+		SeqMapView gviewer = getSeqMapView();
 		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms((List<GlyphI>)gviewer.getSelectedTiers());
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
@@ -60,7 +60,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 	private void changeActionDisplay(List<SeqSymmetry> selected_syms) {
 		boolean hasCollapsed = false;
 		boolean hasExpanded = false;
-		for (TierGlyph tg : gviewer.getTierManager().getVisibleTierGlyphs()) {
+		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && vg instanceof AnnotationGlyph) {
 				boolean collapsed = vg.getAnnotStyle().getCollapsed();

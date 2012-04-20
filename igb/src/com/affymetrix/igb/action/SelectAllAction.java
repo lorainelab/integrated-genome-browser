@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class SelectAllAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +15,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 
 	public static SelectAllAction getAction() {
 		if (ACTION == null) {
-			ACTION = new SelectAllAction(Application.getSingleton().getMapView(), null);
+			ACTION = new SelectAllAction(null);
 		}
 		return ACTION;
 	}
@@ -25,20 +23,20 @@ public class SelectAllAction extends SeqMapViewActionA {
 	public static SelectAllAction getAction(final FileTypeCategory category) {
 		SelectAllAction selectAllAction = CATEGORY_ACTION.get(category);
 		if (selectAllAction == null) {
-			selectAllAction = new SelectAllAction(Application.getSingleton().getMapView(), category);
+			selectAllAction = new SelectAllAction(category);
 			CATEGORY_ACTION.put(category, selectAllAction);
 		}
 		return selectAllAction;
 	}
 
-	protected SelectAllAction(SeqMapView gviewer, FileTypeCategory category) {
-		super(gviewer, ((category == null ? "" : (category.toString() + " ")) + "Tracks"), null) ;
+	protected SelectAllAction(FileTypeCategory category) {
+		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null) ;
 		this.category = category;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		gviewer.selectAll(category);
+		getSeqMapView().selectAll(category);
 	}
 }

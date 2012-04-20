@@ -45,6 +45,7 @@ import com.affymetrix.igb.action.ToggleToolTipAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.action.ViewAlignmentSequenceInSeqViewerAction;
 import com.affymetrix.igb.action.WebLinksAction;
+import com.affymetrix.igb.action.ZoomingRepackAction;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -128,8 +129,7 @@ public class IGBUtils {
 		JRPMenu edit_menu = MenuUtil.getRPMenu(menuBar, id + "_main_editMenu", BUNDLE.getString("editMenu"));
 		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
-		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack",
-				new com.affymetrix.igb.action.ZoomingRepackAction(com.affymetrix.igb.Application.getSingleton().getMapView())));
+		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack", ZoomingRepackAction.getAction()));
 		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectAllAction"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {

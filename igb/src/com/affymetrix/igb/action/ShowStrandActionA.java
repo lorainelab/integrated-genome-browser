@@ -22,9 +22,8 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 	private static final long serialVersionUID = 1L;
 	protected boolean separateStrands;
 
-	protected ShowStrandActionA(SeqMapView gviewer, String text,
-			String tooltip, String iconPath) {
-		super(gviewer, text, tooltip, iconPath);
+	protected ShowStrandActionA(String text, String iconPath) {
+		super(text, iconPath);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 
@@ -37,13 +36,13 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 			}
 		}
 		refreshMap(false, true);
-		handler.sortTiers();
+		getTierManager().sortTiers();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		setTwoTiers(handler.getSelectedTierLabels(), separateStrands);
+		setTwoTiers(getTierManager().getSelectedTierLabels(), separateStrands);
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		changeStrandActionDisplay(new ArrayList<SeqSymmetry>());
 	}
@@ -51,6 +50,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 	@SuppressWarnings("unchecked")
 	@Override
 	public void symSelectionChanged(SymSelectionEvent evt) {
+		SeqMapView gviewer = getSeqMapView();
 		List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms((List<GlyphI>)gviewer.getSelectedTiers());
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
@@ -68,7 +68,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 	private void changeStrandActionDisplay(List<SeqSymmetry> selected_syms) {
 		boolean hasSeparate = false;
 		boolean hasMixed = false;
-		for (TierGlyph tg : gviewer.getTierManager().getVisibleTierGlyphs()) {
+		for (TierGlyph tg : getSeqMapView().getTierManager().getVisibleTierGlyphs()) {
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			if (selected_syms.contains(vg.getInfo()) && !(vg instanceof MultiGraphGlyph) && MapViewModeHolder.getInstance().styleSupportsTwoTrack(vg.getAnnotStyle())) {
 				boolean separate = vg.getAnnotStyle().getSeparate();

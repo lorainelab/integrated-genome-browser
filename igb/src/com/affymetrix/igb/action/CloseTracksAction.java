@@ -4,11 +4,9 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class CloseTracksAction extends SeqMapViewActionA {
@@ -17,18 +15,18 @@ public class CloseTracksAction extends SeqMapViewActionA {
 
 	public static CloseTracksAction getAction() {
 		if (ACTION == null) {
-			ACTION = new CloseTracksAction(Application.getSingleton().getMapView());
+			ACTION = new CloseTracksAction();
 		}
 		return ACTION;
 	}
 
-	protected CloseTracksAction(SeqMapView gviewer) {
-		super(gviewer, IGBConstants.BUNDLE.getString("closeTracksAction"), null, "toolbarButtonGraphics/general/Delete16.gif");
+	protected CloseTracksAction() {
+		super(IGBConstants.BUNDLE.getString("closeTracksAction"), "toolbarButtonGraphics/general/Delete16.gif");
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		List<TierLabelGlyph> tiers = handler.getSelectedTierLabels();
+		List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();
 		for (TierLabelGlyph tlg : tiers) {
 			TierGlyph tg = (TierGlyph)tlg.getInfo();
 			GenericFeature gFeature = tg.getAnnotStyle().getFeature();

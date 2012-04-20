@@ -46,7 +46,7 @@ public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
 	
 	
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED), map.getView());
+		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
 		map.updateWidget(true);
 	}
 

@@ -19,6 +19,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.MultiGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 public class SelectionListener implements SeqSelectionListener, SymSelectionListener {
 	private final IGBService igbService;

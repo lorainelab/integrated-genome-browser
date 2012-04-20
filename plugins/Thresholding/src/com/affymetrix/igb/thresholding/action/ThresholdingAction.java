@@ -1,4 +1,4 @@
-package com.affymetrix.igb.thresholding;
+package com.affymetrix.igb.thresholding.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
+import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;
 
 public class ThresholdingAction extends GenericAction {
 	private static final long serialVersionUID = 1L;

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 public class Activator implements BundleActivator {
 	private BundleContext bundleContext;

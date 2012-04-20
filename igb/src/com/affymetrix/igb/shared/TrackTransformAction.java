@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.action.TrackFunctionOperationA;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
 public class TrackTransformAction extends TrackFunctionOperationA {

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.igb.action.TrackFunctionOperationA;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 
 public class TrackOperationAction extends TrackFunctionOperationA {

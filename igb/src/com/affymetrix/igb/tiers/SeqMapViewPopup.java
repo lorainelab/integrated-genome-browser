@@ -10,8 +10,6 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
@@ -20,8 +18,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -37,7 +33,6 @@ import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +42,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private static final boolean DEBUG = false;
 	private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final SeqMapView gviewer;
 	private final TierLabelManager handler;
 	private final JMenu showMenu = new JMenu(BUNDLE.getString("showMenu"));
@@ -159,20 +153,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			super.actionPerformed(e);
 			changeExpandMax(handler.getAllTierLabels());
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action delete_action = new GenericAction(BUNDLE.getString("deleteAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			BioSeq seq = gmodel.getSelectedSeq();
-
-			if (IGB.confirmPanel(MessageFormat.format(BUNDLE.getString("confirmDelete"), seq.getID()), PreferenceUtils.getTopNode(),
-					PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
-				removeTiers(handler.getSelectedTierLabels());
-			}
 		}
 	};
 	private final Action change_font_size_action = new GenericAction(BUNDLE.getString("changeFontSizeAction"), null) {
@@ -617,7 +597,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		customize_action.setEnabled(true);
 
 		hide_action.setEnabled(num_selections > 0);
-		delete_action.setEnabled(num_selections > 0);
+		RemoveDataFromTracksAction.getAction().setEnabled(num_selections > 0);
 		show_all_action.setEnabled(containHiddenTiers());
 
 		ChangeForegroundColorAction.getAction().setEnabled(num_selections > 0);
@@ -723,7 +703,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				strandsMenu.setEnabled(false);
 				RepackSelectedTiersAction.getAction().setEnabled(false);
 				RepackAllTiersAction.getAction().setEnabled(false);
-				delete_action.setEnabled(false);
+				RemoveDataFromTracksAction.getAction().setEnabled(false);
 				ShowTwoTiersAction.getAction().setEnabled(false);
 				color_by_score_on_action.setEnabled(false);
 				break;
@@ -807,7 +787,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		}
 //		popup.add(summaryMenu);
 		popup.add(new JSeparator());
-		popup.add(delete_action); // Remove data from selected tracks.
+		popup.add(RemoveDataFromTracksAction.getAction()); // Remove data from selected tracks.
 		popup.add(RepackSelectedTiersAction.getAction());
 		popup.add(RepackAllTiersAction.getAction());
 
@@ -837,23 +817,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 			});
 		}
-	}
-
-	private void removeTiers(List<TierLabelGlyph> tiers) {
-		for (TierLabelGlyph tlg : tiers) {
-			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			String method = style.getMethodName();
-			if (method != null) {
-				TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);
-			} else {
-				for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tiers)) {
-					style = gg.getGraphState().getTierStyle();
-					method = style.getMethodName();
-					TrackView.getInstance().delete(gviewer.getSeqMap(), method, style);
-				}
-			}
-		}
-		gviewer.dataRemoved();	// refresh
 	}
 
 	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception {

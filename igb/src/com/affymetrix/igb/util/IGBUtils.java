@@ -17,6 +17,7 @@ import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.action.ClampViewAction;
+import com.affymetrix.igb.action.CloseTracksAction;
 import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.DocumentationAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
@@ -116,6 +117,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportImage", ExportImageAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportFile", ExportFileAction.getAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_closeTracks", CloseTracksAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_preferences", PreferencesAction.getAction()));
 		file_menu.addSeparator();

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;

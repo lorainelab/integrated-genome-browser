@@ -1,0 +1,40 @@
+package com.affymetrix.igb.action;
+
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+
+public class CloseTracksAction extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
+	private static CloseTracksAction ACTION;
+
+	public static CloseTracksAction getAction() {
+		if (ACTION == null) {
+			ACTION = new CloseTracksAction(Application.getSingleton().getMapView());
+		}
+		return ACTION;
+	}
+
+	protected CloseTracksAction(SeqMapView gviewer) {
+		super(gviewer, IGBConstants.BUNDLE.getString("closeTracksAction"), null, "toolbarButtonGraphics/general/Delete16.gif");
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		List<TierLabelGlyph> tiers = handler.getSelectedTierLabels();
+		for (TierLabelGlyph tlg : tiers) {
+			TierGlyph tg = (TierGlyph)tlg.getInfo();
+			GenericFeature gFeature = tg.getAnnotStyle().getFeature();
+			if (gFeature != null) {
+				GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+			}
+		}
+	}
+}

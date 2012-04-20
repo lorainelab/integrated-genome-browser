@@ -36,6 +36,8 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		szg.setDirection(direction);
 		szg.setLastUsedGlyph(szg.getDefaultGlyph());
 		szg.setStyle(style);
+		// Calling this in the construction is causes NPE
+		szg.initUnloaded();
 		return szg;
 	}
 	// glyph class
@@ -46,7 +48,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		protected SemanticZoomGlyph(SeqSymmetry sym) {
 			super();
 			super.setInfo(sym);
-			initUnloaded();
+			// initUnloaded();
 		}
 
 		protected abstract ViewModeGlyph getGlyph(SeqMapViewExtendedI smv);

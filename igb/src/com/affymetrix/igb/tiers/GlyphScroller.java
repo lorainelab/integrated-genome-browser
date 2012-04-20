@@ -14,6 +14,7 @@ import java.awt.event.MouseWheelListener;
  * @author hiralv
  */
 public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
+	private static final int SPEED = 10;
 	AffyLabelledTierMap map;
 	ScrollableViewModeGlyph ag;
 	
@@ -45,7 +46,7 @@ public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
 	
 	
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount()), map.getView());
+		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED), map.getView());
 		map.updateWidget(true);
 	}
 

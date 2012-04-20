@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -71,26 +70,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			showAllTiers();
 		}
 	};
-	private final Action color_by_score_on_action = new GenericAction(BUNDLE.getString("colorByScoreONAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setColorByScore(handler.getSelectedTierLabels(), true);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action color_by_score_off_action = new GenericAction(BUNDLE.getString("colorByScoreOFFAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			setColorByScore(handler.getSelectedTierLabels(), false);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
+	private final Action color_by_score_on_action = ColorByScoreAction.getOnAction();
+	private final Action color_by_score_off_action = ColorByScoreAction.getOffAction();
 
 	private final Action maximize_track_action = MaximizeTrackAction.getAction();
 
@@ -99,15 +80,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	 */
 	private final Action change_expand_max_action = ChangeExpandMaxAction.getAction();
 	private final Action change_expand_max_all_action = ChangeExpandMaxAllAction.getAction();
-	private final Action set_color_by_score_action = new GenericAction("Set Color By Score", null){
-		private static final long serialVersionUID = 1L;
-		
-		@Override
-		public void actionPerformed(ActionEvent e){
-			super.actionPerformed(e);
-			updateColorByScore(handler.getSelectedTierLabels());
-		}
-	};
+	private final Action set_color_by_score_action = SetColorByScoreAction.getAction();
 	private final Action change_font_size_action = ChangeFontSizeAction.getAction();
 	private final Action use_as_reference_seq_action = UseAsReferenceSeqAction.getAction();
 
@@ -139,42 +112,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 		return styles;
-	}
-
-	public void updateColorByScore(List<TierLabelGlyph> theTiers){
-		if(theTiers == null || theTiers.isEmpty()){
-			ErrorHandler.errorPanel("updateColorByScore called with an empty list");
-			return;
-		}
-		ColorByScoreEditor editor;
-		float min,max;
-		TrackStyle style;
-		String minText = "";
-		String maxText = "";
-		if(theTiers.size() == 1){
-			TierLabelGlyph tlg = theTiers.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			style = (TrackStyle)tg.getAnnotStyle();
-			min = style.getMinScoreColor();
-			max = style.getMaxScoreColor();
-			minText+= min;
-			maxText+=max;
-		}
-		editor = new ColorByScoreEditor(minText, maxText);
-		int isOK = JOptionPane.showConfirmDialog(null, editor, "Set Color By Score", JOptionPane.OK_CANCEL_OPTION);
-		
-		switch(isOK){
-			case JOptionPane.OK_OPTION : 
-				float updatedMinRange = editor.getMinRange();
-				float updatedMaxRange = editor.getMaxRange();
-				for(TierLabelGlyph label : theTiers){
-					TierGlyph tg = (TierGlyph)label.getInfo();
-					style = (TrackStyle)tg.getAnnotStyle();
-					style.setMinScoreColor(updatedMinRange);
-					style.setMaxScoreColor(updatedMaxRange);
-				}
-		}
-		refreshMap(false, false);
 	}
 
 	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -333,15 +270,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		// NOTE: Below call to stretchToFit is not redundancy. It is there
 		//       to solve above mentioned bug.
 		repack(false);
-	}
-
-	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
-		for (TierLabelGlyph tlg : tier_labels) {
-			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			style.setColorByScore(b);
-		}
-
-		refreshMap(false, false);
 	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {

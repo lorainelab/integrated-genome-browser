@@ -155,6 +155,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 		}
 	};
+	private final Action set_color_by_score_action = new GenericAction("Set Color By Score", null){
+		private static final long serialVersionUID = 1L;
+		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			super.actionPerformed(e);
+			updateColorByScore(handler.getSelectedTierLabels());
+		}
+	};
 	private final Action change_font_size_action = new GenericAction(BUNDLE.getString("changeFontSizeAction"), null) {
 		private static final long serialVersionUID = 1L;
 
@@ -267,7 +276,42 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		gviewer.getSeqMap().updateWidget();
 	}
-
+	
+	public void updateColorByScore(List<TierLabelGlyph> theTiers){
+		if(theTiers == null || theTiers.isEmpty()){
+			ErrorHandler.errorPanel("updateColorByScore called with an empty list");
+			return;
+		}
+		ColorByScoreEditor editor;
+		float min,max;
+		TrackStyle style;
+		String minText = "";
+		String maxText = "";
+		if(theTiers.size() == 1){
+			TierLabelGlyph tlg = theTiers.get(0);
+			TierGlyph tg = (TierGlyph) tlg.getInfo();
+			style = (TrackStyle)tg.getAnnotStyle();
+			min = style.getMinScoreColor();
+			max = style.getMaxScoreColor();
+			minText+= min;
+			maxText+=max;
+		}
+		editor = new ColorByScoreEditor(minText, maxText);
+		int isOK = JOptionPane.showConfirmDialog(null, editor, "Set Color By Score", JOptionPane.OK_CANCEL_OPTION);
+		
+		switch(isOK){
+			case JOptionPane.OK_OPTION : 
+				float updatedMinRange = editor.getMinRange();
+				float updatedMaxRange = editor.getMaxRange();
+				for(TierLabelGlyph label : theTiers){
+					TierGlyph tg = (TierGlyph)label.getInfo();
+					style = (TrackStyle)tg.getAnnotStyle();
+					style.setMinScoreColor(updatedMinRange);
+					style.setMaxScoreColor(updatedMaxRange);
+				}
+		}
+		refreshMap(false, false);
+	}
 	public void changeExpandMax(List<TierLabelGlyph> theTiers) {
 		if (theTiers == null || theTiers.isEmpty()) {
 			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
@@ -720,6 +764,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(ShowTwoTiersAction.getAction());
 		changeMenu.add(ShowOneTierAction.getAction());
 		changeMenu.add(new JSeparator());
+		changeMenu.add(set_color_by_score_action);
 		changeMenu.add(color_by_score_on_action);
 		changeMenu.add(color_by_score_off_action);
 		popup.add(save_track_action);

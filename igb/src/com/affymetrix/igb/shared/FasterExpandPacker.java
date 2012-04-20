@@ -98,7 +98,7 @@ public class FasterExpandPacker extends ExpandPacker {
 
 	private int max_slots_allowed = 1000;
 	private boolean constant_heights = true;
-	private int actual_slots;
+	protected int actual_slots;
 	
 	/**
 	 *  Sets the maximum depth of glyphs to pack in the tier.

@@ -1,0 +1,61 @@
+package com.affymetrix.igb.action;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
+
+public class HideAction extends RepackTiersAction {
+	private static final long serialVersionUID = 1L;
+	private static final HideAction ACTION = new HideAction();
+
+	public static HideAction getAction() {
+		return ACTION;
+	}
+
+	private HideAction() {
+		super(BUNDLE.getString("hideAction"), null);
+	}
+
+	/**
+	 * Hides multiple tiers and then repacks.
+	 *
+	 * @param tiers a List of GlyphI objects for each of which getInfo() returns
+	 * a TierGlyph.
+	 */
+	void hideTiers(List<TierLabelGlyph> tiers) {
+		for (TierLabelGlyph g : tiers) {
+			if (g.getInfo() instanceof TierGlyph) {
+				TierGlyph tier = (TierGlyph) g.getInfo();
+				ITrackStyleExtended style = tier.getAnnotStyle();
+				if (style != null) {
+					style.setShow(false);
+					tier.setVisibility(false);
+				}
+			}
+		}
+
+		repack(false);
+
+		/**
+		 * Possible bug : When all strands are hidden. tier label and tier do
+		 * appear at same position.
+		 *
+		 */
+		// NOTE: Below call to stretchToFit is not redundancy. It is there
+		//       to solve above mentioned bug.
+		repack(false);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		hideTiers(getTierManager().getSelectedTierLabels());
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+}

@@ -11,6 +11,8 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -27,11 +29,10 @@ import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 
-public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
+public final class SeqMapViewPopup implements TierLabelManager.PopupListener, GenericActionListener {
 
 	private static final boolean DEBUG = false;
 	private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
@@ -51,25 +52,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final Action save_selected_annotations_action = ExportSelectedAnnotationFileAction.getAction();
 	private final Action rename_action = RenameAction.getAction();
 	private final Action customize_action = CustomizeAction.getAction();
-	private final Action hide_action = new GenericAction(BUNDLE.getString("hideAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			hideTiers(handler.getSelectedTierLabels());
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action show_all_action = new GenericAction(BUNDLE.getString("showAllAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			showAllTiers();
-		}
-	};
+	private final Action hide_action = HideAction.getAction();
+	private final Action show_all_action = ShowAllAction.getAction();
 	private final Action color_by_score_action = ColorByScoreAction.getAction();
 
 	private final Action maximize_track_action = MaximizeTrackAction.getAction();
@@ -92,6 +76,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
+		GenericActionHolder.getInstance().addGenericActionListener(this);
 	}
 
 	List<ITrackStyleExtended> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
@@ -125,23 +110,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		handler.sortTiers();
 	}
 
-	public void showAllTiers() {
-		List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
-
-		for (TierLabelGlyph label : tiervec) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null) {
-				style.setShow(true);
-				tier.setVisibility(true);
-			}
-		}
-		showMenu.removeAll();
-		handler.sortTiers();
-		repack(false);
-		//refreshMap(false, true); // when re-showing all tier, do strech_to_fit in the y-direction
-	}
-
 	public boolean containHiddenTiers() {
 		for (TierLabelGlyph label : handler.getAllTierLabels()) {
 			TierGlyph tier = (TierGlyph) label.getInfo();
@@ -158,50 +126,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	 * Hides one tier and creates a JMenuItem that can be used to show it again.
 	 * Does not re-pack the given tier, or any other tiers.
 	 */
-	public void hideOneTier(final TierGlyph tier) {
-		final ITrackStyleExtended style = tier.getAnnotStyle();
-		// if style.getShow() is already false, there is likely a bug somewhere!
-		if (style == null) {
-			return;
-		}
-		if (style.getShow()) {
-			style.setShow(false);
-			final JMenuItem show_tier = new JMenuItem() {
-
-				private static final long serialVersionUID = 1L;
-				// override getText() because the HumanName of the style might change
-
-				@Override
-				public String getText() {
-					String name = style.getTrackName();
-					if (name == null) {
-						name = "<unnamed>";
-					}
-					if (name.length() > 30) {
-						name = name.substring(0, 30) + "...";
-					}
-					return name;
-				}
-			};
-			show_tier.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					style.setShow(true);
-					showMenu.remove(show_tier);
-					handler.sortTiers();
-					repack(false);
-				}
-			});
-			showMenu.add(show_tier);
-		}
-		tier.setVisibility(false);
-	}
-
-	/**
-	 * Hides one tier and creates a JMenuItem that can be used to show it again.
-	 * Does not re-pack the given tier, or any other tiers.
-	 */
 	//Called from LodeModeTableModel to hide tracks selectively from the eye icon.
 	public void hideOneTier(final ITrackStyleExtended style) {
 		// if style.getShow() is already false, there is likely a bug somewhere!
@@ -210,65 +134,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		if (style.getShow()) {
 			style.setShow(false);
-			final JMenuItem show_tier = new JMenuItem() {
-
-				private static final long serialVersionUID = 1L;
-				// override getText() because the HumanName of the style might change
-
-				@Override
-				public String getText() {
-					String name = style.getTrackName();
-					if (name == null) {
-						name = "<unnamed>";
-					}
-					if (name.length() > 30) {
-						name = name.substring(0, 30) + "...";
-					}
-					return name;
-				}
-			};
-			show_tier.setName(style.getMethodName());
-			show_tier.setAction(new AbstractAction() {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					style.setShow(true);
-					showMenu.remove(show_tier);
-					handler.sortTiers();
-					repack(false);
-				}
-			});
-			showMenu.add(show_tier);
+			rebuildShowMenu();
 		}
-		style.setShow(false);
-	}
-
-	/**
-	 * Hides multiple tiers and then repacks.
-	 *
-	 * @param tiers a List of GlyphI objects for each of which getInfo() returns
-	 * a TierGlyph.
-	 */
-	void hideTiers(List<TierLabelGlyph> tiers) {
-		for (TierLabelGlyph g : tiers) {
-			if (g.getInfo() instanceof TierGlyph) {
-				TierGlyph tier = (TierGlyph) g.getInfo();
-				hideOneTier(tier);
-			}
-		}
-
-		repack(false);
-
-		/**
-		 * Possible bug : When all strands are hidden. tier label and tier do
-		 * appear at same position.
-		 *
-		 */
-		// NOTE: Below call to stretchToFit is not redundancy. It is there
-		//       to solve above mentioned bug.
-		repack(false);
 	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
@@ -355,7 +222,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		ShowOneTierAction.getAction().setEnabled(any_are_separate_tiers);
 		ShowTwoTiersAction.getAction().setEnabled(any_are_single_tier);
 		change_expand_max_all_action.setEnabled(not_empty);
-		showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
+		rebuildShowMenu();
 		viewModeMenu.setEnabled(false);
 		transformMenu.setEnabled(false);
 		RepackSelectedTiersAction.getAction().setEnabled(0 < this.handler.getSelectedTierLabels().size());
@@ -577,10 +444,67 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	public JMenu getShowMenu() {
+		rebuildShowMenu();
 		return showMenu;
 	}
 
 	public TierLabelManager getHandler() {
 		return handler;
+	}
+
+	private void rebuildShowMenu() {
+		showMenu.removeAll();
+		showMenu.setEnabled(false);
+		List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
+
+		for (TierLabelGlyph label : tiervec) {
+			TierGlyph tier = (TierGlyph) label.getInfo();
+			final ITrackStyleExtended style = tier.getAnnotStyle();
+			if (style != null && !style.getShow() && tier.getDirection() != Direction.REVERSE) {
+				final JMenuItem show_tier = new JMenuItem() {
+
+					private static final long serialVersionUID = 1L;
+					// override getText() because the HumanName of the style might change
+
+					@Override
+					public String getText() {
+						String name = style.getTrackName();
+						if (name == null) {
+							name = "<unnamed>";
+						}
+						if (name.length() > 30) {
+							name = name.substring(0, 30) + "...";
+						}
+						return name;
+					}
+				};
+				show_tier.setName(style.getMethodName());
+				show_tier.setAction(new AbstractAction() {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						style.setShow(true);
+						showMenu.remove(show_tier);
+						handler.sortTiers();
+						repack(false);
+					}
+				});
+				showMenu.add(show_tier);
+				showMenu.setEnabled(true);
+			}
+		}
+		show_all_action.setEnabled(containHiddenTiers());
+	}
+
+	@Override
+	public void onCreateGenericAction(GenericAction genericAction) {}
+
+	@Override
+	public void notifyGenericAction(GenericAction genericAction) {
+		if (genericAction == show_all_action || genericAction == hide_action) {
+			rebuildShowMenu();
+		}
 	}
 }

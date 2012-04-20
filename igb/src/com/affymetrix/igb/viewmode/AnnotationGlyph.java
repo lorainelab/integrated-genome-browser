@@ -8,8 +8,9 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
+import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -50,6 +51,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	private static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
 
+	private static final int BUFFER = 50;
 	private static final Font default_font = NeoConstants.default_plain_font;
 	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
@@ -178,7 +180,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		super.pack(view);
 		Rectangle2D.Double mbox = getScene().getCoordBox();
 		Rectangle2D.Double cbox = this.getCoordBox();
-
+		
 		if (shouldDrawLabel()) {
 			// Add extra space to make room for the label.
 
@@ -210,34 +212,12 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 
 		super.draw(view);
 	}
-
-	@Override
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
-		super.setCoordBox(coordbox);
-		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
-	}
-		
-	@Override
-	public void setCoords(double x, double y, double width, double height)  {
-		super.setCoords(x, y, width, height);
-		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - 50, getCoordBox().width, 50);
-	}
 	
 	@Override
-	public void moveRelative(double diffx, double diffy) {
-		super.moveRelative(diffx, diffy);
-		upper.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy,  getCoordBox().width, 50);
-		lower.setRect(getCoordBox().x + diffx, getCoordBox().y + diffy + getCoordBox().height - 50, getCoordBox().width, 50);
-	}
-	
-	@Override
-	public void setOffset(int offset, ViewI view){
+	public void setOffset(int offset){
 		this.offset = offset;
-		tier_transform.setTransform(tier_transform.getScaleX(),0,0,
-				tier_transform.getScaleY(),tier_transform.getTranslateX(), 
-				tier_transform.getScaleY() + (offset  * 10));
+		tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
+			tier_transform.getScaleY(), tier_transform.getTranslateX(), offset);
 	}
 	
 	@Override
@@ -252,28 +232,28 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		
 	@Override
 	public void drawChildren(ViewI view) {
-	try{
-		if (getChildren() != null) {
-			GlyphI child;
-			int numChildren = getChildren().size();
-			for (int i = 0; i < numChildren; i++) {
-				child = getChildren().get(i);
-				// TransientGlyphs are usually NOT drawn in standard drawTraversal
-				if (!(child instanceof TransientGlyph) || drawTransients()) {
-					if (child.isOverlapped()) {
-						Graphics2D g = view.getGraphics();
-						Composite dac = g.getComposite();
-						g.setComposite(ac);
-						child.drawTraversal(view);
-						g.setComposite(dac);
-					} else {
-						child.drawTraversal(view);
+		try {
+			if (getChildren() != null) {
+				GlyphI child;
+				int numChildren = getChildren().size();
+				for (int i = 0; i < numChildren; i++) {
+					child = getChildren().get(i);
+					// TransientGlyphs are usually NOT drawn in standard drawTraversal
+					if (!(child instanceof TransientGlyph) || drawTransients()) {
+						if (child.isOverlapped()) {
+							Graphics2D g = view.getGraphics();
+							Composite dac = g.getComposite();
+							g.setComposite(ac);
+							child.drawTraversal(view);
+							g.setComposite(dac);
+						} else {
+							child.drawTraversal(view);
+						}
 					}
 				}
 			}
-		}
 
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			System.out.println(ex);
 		}
 	}

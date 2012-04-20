@@ -20,22 +20,16 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -56,31 +50,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private final RepackTiersAction repackStub;
 	private final Action save_track_action = ExportFileAction.getAction();
 	private final Action save_selected_annotations_action = ExportSelectedAnnotationFileAction.getAction();
-	private final Action rename_action = new GenericAction(BUNDLE.getString("renameAction"), null) {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			List<TierGlyph> current_tiers = handler.getSelectedTiers();
-			if (current_tiers.size() != 1) {
-				ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-			}
-			TierGlyph current_tier = current_tiers.get(0);
-			renameTier(current_tier);
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action customize_action = new GenericAction(BUNDLE.getString("customizeAction"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			showCustomizer();
-		}
-	};
+	private final Action rename_action = RenameAction.getAction();
+	private final Action customize_action = CustomizeAction.getAction();
 	private final Action hide_action = new GenericAction(BUNDLE.getString("hideAction"), null) {
 		private static final long serialVersionUID = 1L;
 
@@ -121,40 +92,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	};
 
-	private final Action maximize_track_action = new GenericAction(BUNDLE.getString("maximizeTrackAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			TierGlyph current_tier = handler.getSelectedTiers().get(0);
-			gviewer.focusTrack(current_tier);
-		}
-	};
+	private final Action maximize_track_action = MaximizeTrackAction.getAction();
 
 	/*
 	 *
 	 */
-	private final Action change_expand_max_action = new GenericAction(BUNDLE.getString("changeExpandMaxAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			changeExpandMax(handler.getSelectedTierLabels());
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action change_expand_max_all_action = new GenericAction(BUNDLE.getString("changeExpandMaxAllAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			changeExpandMax(handler.getAllTierLabels());
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
+	private final Action change_expand_max_action = ChangeExpandMaxAction.getAction();
+	private final Action change_expand_max_all_action = ChangeExpandMaxAllAction.getAction();
 	private final Action set_color_by_score_action = new GenericAction("Set Color By Score", null){
 		private static final long serialVersionUID = 1L;
 		
@@ -164,33 +108,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			updateColorByScore(handler.getSelectedTierLabels());
 		}
 	};
-	private final Action change_font_size_action = new GenericAction(BUNDLE.getString("changeFontSizeAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			super.actionPerformed(e);
-			changeFontSize(handler.getSelectedTierLabels());
-			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
-		}
-	};
-	private final Action use_as_reference_seq_action = new GenericAction(BUNDLE.getString("useAsReferenceSeqAction"), null) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				super.actionPerformed(e);
-				List<TierGlyph> current_tiers = handler.getSelectedTiers();
-				if (current_tiers.size() > 1) {
-					ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
-				}
-				useTrackAsReferenceSequence(current_tiers.get(0));
-			} catch (Exception ex) {
-				Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-	};
+	private final Action change_font_size_action = ChangeFontSizeAction.getAction();
+	private final Action use_as_reference_seq_action = UseAsReferenceSeqAction.getAction();
 
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
@@ -201,24 +120,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
-	}
-
-	private void showCustomizer() {
-		PreferencesPanel pv = PreferencesPanel.getSingleton();
-		pv.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-		((TierPrefsView) pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
-
-		// If and only if the selected track is coordinate track, will open 'Other Options' panel 
-		if (handler.getSelectedTierLabels().size() == 1) {
-			final TierLabelGlyph label = handler.getSelectedTierLabels().get(0);
-			String name = label.getReferenceTier().getAnnotStyle().getTrackName();
-			if (name.equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-				pv.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
-			}
-		}
-
-		JFrame f = pv.getFrame();
-		f.setVisible(true);
 	}
 
 	List<ITrackStyleExtended> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
@@ -240,43 +141,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		return styles;
 	}
 
-	private void changeFontSize(List<TierLabelGlyph> tier_labels) {
-		if (tier_labels == null || tier_labels.isEmpty()) {
-			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-			return;
-		}
-
-		Object initial_value = TrackStyle.default_track_name_size;
-		if (tier_labels.size() == 1) {
-			TierLabelGlyph tlg = tier_labels.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tg.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				initial_value = ((TrackStyle) style).getTrackNameSize();
-			}
-		}
-
-		Object input = JOptionPane.showInputDialog(null, BUNDLE.getString("selectFontSize"), BUNDLE.getString("changeSelectedTrackFontSize"), JOptionPane.PLAIN_MESSAGE, null,
-				TrackConstants.SUPPORTED_SIZE, initial_value);
-
-		if (input == null) {
-			return;
-		}
-
-		changeFontSize(tier_labels, (Float) input);
-	}
-
-	private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null && style instanceof TrackStyle) {
-				((TrackStyle) style).setTrackNameSize(size);
-			}
-		}
-		gviewer.getSeqMap().updateWidget();
-	}
-	
 	public void updateColorByScore(List<TierLabelGlyph> theTiers){
 		if(theTiers == null || theTiers.isEmpty()){
 			ErrorHandler.errorPanel("updateColorByScore called with an empty list");
@@ -311,84 +175,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 		}
 		refreshMap(false, false);
-	}
-	public void changeExpandMax(List<TierLabelGlyph> theTiers) {
-		if (theTiers == null || theTiers.isEmpty()) {
-			ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
-			return;
-		}
-
-		int ourLimit = 0;
-		// Shouldn't we set the limit to the max of the limits in the tiers (remember n < 0 for all n).
-		// Then we could combine this with the loop below.
-		if (theTiers.size() == 1) {
-			TierLabelGlyph tlg = theTiers.get(0);
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ITrackStyleExtended style = tg.getAnnotStyle();
-			if (style != null) {
-				switch (tg.getDirection()) {
-					case FORWARD:
-						ourLimit = style.getForwardMaxDepth();
-						break;
-					case REVERSE:
-						ourLimit = style.getReverseMaxDepth();
-						break;
-					default:
-						ourLimit = style.getMaxDepth();
-				}
-			}
-		}
-
-		int ourOptimum = 1;
-		for (TierLabelGlyph tlg : theTiers) {
-			TierGlyph tg = (TierGlyph) tlg.getInfo();
-			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(this.gviewer.getSeqMap().getView()));
-		}
-
-		MaxSlotsChooser chooser = new MaxSlotsChooser(BUNDLE.getString("maxHeight"), ourLimit, ourOptimum);
-
-		int isOK = JOptionPane.showConfirmDialog(
-				null,
-				chooser,
-				BUNDLE.getString("changeMaxHeight"),
-				JOptionPane.OK_CANCEL_OPTION);
-		switch (isOK) {
-			case JOptionPane.OK_OPTION:
-				try {
-					ourLimit = chooser.getValue();
-				} catch (NumberFormatException nex) {
-					ErrorHandler.errorPanel(nex.getLocalizedMessage()
-							+ " Maximum must be an integer: "
-							+ chooser.toString());
-					return;
-				}
-				break;
-			default:
-				return;
-		}
-
-		changeExpandMax(theTiers, ourLimit);
-	}
-
-	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
-		for (TierLabelGlyph tlg : tier_label_glyphs) {
-			TierGlyph tier = tlg.getReferenceTier();
-			ITrackStyleExtended style = tier.getAnnotStyle();
-			switch (tier.getDirection()) {
-				case FORWARD:
-					style.setForwardMaxDepth(max);
-					break;
-				case REVERSE:
-					style.setReverseMaxDepth(max);
-					break;
-				default:
-				case BOTH:
-				case NONE:
-				case AXIS:
-					style.setMaxDepth(max);
-			}
-		}
-		repack(true);
 	}
 
 	private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -547,21 +333,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		// NOTE: Below call to stretchToFit is not redundancy. It is there
 		//       to solve above mentioned bug.
 		repack(false);
-	}
-
-	public void renameTier(final TierGlyph tier) {
-		if (tier == null) {
-			return;
-		}
-		ITrackStyleExtended style = tier.getAnnotStyle();
-
-		String new_label = JOptionPane.showInputDialog(BUNDLE.getString("label") + ": ", style.getTrackName());
-		if (new_label != null && new_label.length() > 0) {
-			style.setTrackName(new_label);
-			tier.setLabel(new_label);
-			gviewer.getSeqMap().setTierLabels();
-		}
-		gviewer.getSeqMap().updateWidget();
 	}
 
 	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
@@ -862,12 +633,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 			});
 		}
-	}
-
-	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception {
-		ITrackStyleExtended style = tier.getAnnotStyle();
-		GenericFeature feature = style.getFeature();
-		GeneralLoadView.getLoadView().useAsRefSequence(feature);
 	}
 
 	// purely for debugging

@@ -11,8 +11,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.GenericActionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -32,7 +30,7 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 import javax.swing.*;
 
-public final class SeqMapViewPopup implements TierLabelManager.PopupListener, GenericActionListener {
+public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	private static final boolean DEBUG = false;
 	private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
@@ -76,7 +74,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener, Ge
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
 		at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
-		GenericActionHolder.getInstance().addGenericActionListener(this);
 	}
 
 	List<ITrackStyleExtended> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
@@ -214,7 +211,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener, Ge
 		change_font_size_action.setEnabled(num_selections > 0);
 		rename_action.setEnabled(num_selections == 1);
 
-		color_by_score_action.putValue(color_by_score_action.SELECTED_KEY,any_are_color_off);
+		color_by_score_action.putValue(ColorByScoreAction.SELECTED_KEY,any_are_color_off);
 
 		CollapseAction.getAction().setEnabled(any_are_expanded);
 		ExpandAction.getAction().setEnabled(any_are_collapsed);
@@ -300,7 +297,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener, Ge
 			}
 		} else {
 			color_by_score_action.setEnabled(false);
-			color_by_score_action.putValue(color_by_score_action.SELECTED_KEY, false);
+			color_by_score_action.putValue(ColorByScoreAction.SELECTED_KEY, false);
 //			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
 			//coverage_action.setEnabled(false);
@@ -496,15 +493,5 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener, Ge
 			}
 		}
 		show_all_action.setEnabled(containHiddenTiers());
-	}
-
-	@Override
-	public void onCreateGenericAction(GenericAction genericAction) {}
-
-	@Override
-	public void notifyGenericAction(GenericAction genericAction) {
-		if (genericAction == show_all_action || genericAction == hide_action) {
-			rebuildShowMenu();
-		}
 	}
 }

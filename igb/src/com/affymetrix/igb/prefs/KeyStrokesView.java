@@ -131,10 +131,13 @@ public final class KeyStrokesView implements ListSelectionListener,
 			for (int i = 0; iter.hasNext(); i++) {
 				String key = iter.next();
 				GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-				rows[i][0] = genericAction.getDisplay();
+				if (genericAction == null) {
+					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, "!!! no GenericAction for key = " + key);
+				}
+				rows[i][0] = (genericAction == null) ? "???" : genericAction.getDisplay();
 				rows[i][1] = keystroke_node.get(key, "");
 				rows[i][2] = toolbar_node.getBoolean(key, false);
-				rows[i][3] = genericAction.getId(); // not displayed
+				rows[i][3] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
 			}
 		}
 		return rows;

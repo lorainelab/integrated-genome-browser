@@ -11,36 +11,27 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 
 public class ColorByScoreAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static final ColorByScoreAction ON_ACTION = new ColorByScoreAction("colorByScoreONAction", true);
-	private static final ColorByScoreAction OFF_ACTION = new ColorByScoreAction("colorByScoreOFFAction", false);
-	private final boolean on;
-	
-	public static ColorByScoreAction getOnAction() {
-		return ON_ACTION;
+	private static final ColorByScoreAction ACTION = new ColorByScoreAction("colorByScoreAction");
+		
+	public static ColorByScoreAction getAction() {
+		return ACTION;
 	}
 
-	public static ColorByScoreAction getOffAction() {
-		return OFF_ACTION;
-	}
-
-	private ColorByScoreAction(String transKey, boolean on) {
+	private ColorByScoreAction(String transKey) {
 		super(BUNDLE.getString(transKey), null);
-		this.on = on;
 	}
 
-	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
-		for (TierLabelGlyph tlg : tier_labels) {
+	private void setColorByScore(TierLabelGlyph tlg) {
 			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			style.setColorByScore(b);
-		}
-
+			style.setColorByScore(!style.getColorByScore());
+			this.putValue(this.SELECTED_KEY,style.getColorByScore());
 		refreshMap(false, false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		setColorByScore(getTierManager().getSelectedTierLabels(), on);
+		setColorByScore(getTierManager().getSelectedTierLabels().get(0));
 		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
 	}
 

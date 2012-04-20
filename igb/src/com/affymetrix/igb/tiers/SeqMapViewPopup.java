@@ -70,8 +70,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			showAllTiers();
 		}
 	};
-	private final Action color_by_score_on_action = ColorByScoreAction.getOnAction();
-	private final Action color_by_score_off_action = ColorByScoreAction.getOffAction();
+	private final Action color_by_score_action = ColorByScoreAction.getAction();
 
 	private final Action maximize_track_action = MaximizeTrackAction.getAction();
 
@@ -348,8 +347,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		change_font_size_action.setEnabled(num_selections > 0);
 		rename_action.setEnabled(num_selections == 1);
 
-		color_by_score_on_action.setEnabled(any_are_color_off);
-		color_by_score_off_action.setEnabled(any_are_color_on);
+		color_by_score_action.putValue(color_by_score_action.SELECTED_KEY,any_are_color_off);
 
 		CollapseAction.getAction().setEnabled(any_are_expanded);
 		ExpandAction.getAction().setEnabled(any_are_collapsed);
@@ -379,6 +377,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			//sym_summarize_single_action.setEnabled(is_annotation_type);
 			//coverage_action.setEnabled(is_annotation_type);
 			//save_menu.setEnabled(is_annotation_type);
+			color_by_score_action.setEnabled(true);
 			if (glyph.getDirection() != Direction.AXIS) {
 				add_maximize = true;
 			}
@@ -433,6 +432,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				}
 			}
 		} else {
+			color_by_score_action.setEnabled(false);
+			color_by_score_action.putValue(color_by_score_action.SELECTED_KEY, false);
 //			summaryMenu.setEnabled(false);
 			//sym_summarize_single_action.setEnabled(false);
 			//coverage_action.setEnabled(false);
@@ -448,7 +449,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				RepackAllTiersAction.getAction().setEnabled(false);
 				RemoveDataFromTracksAction.getAction().setEnabled(false);
 				ShowTwoTiersAction.getAction().setEnabled(false);
-				color_by_score_on_action.setEnabled(false);
+				color_by_score_action.setEnabled(false);
 				break;
 			}
 		}
@@ -464,8 +465,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		changeMenu.add(ShowOneTierAction.getAction());
 		changeMenu.add(new JSeparator());
 		changeMenu.add(set_color_by_score_action);
-		changeMenu.add(color_by_score_on_action);
-		changeMenu.add(color_by_score_off_action);
+		changeMenu.add(new JCheckBoxMenuItem(color_by_score_action));
 		popup.add(save_track_action);
 		save_track_action.setEnabled(false);
 		popup.add(save_selected_annotations_action);

@@ -536,9 +536,10 @@ public class TierGlyph extends SolidGlyph {
 		System.out.println("!!!!!!!!! drawChildren(ViewI view)");
 /////		viewModeGlyph.drawChildren(view);
 	}
-	public void resizeHeight(double top, double height) {
+	public void resizeHeight(double diffy, double height) {
 		Rectangle2D.Double cbox = getCoordBox();
-		setCoords(cbox.x, top, cbox.width, height);
+		setCoords(cbox.x, cbox.y, cbox.width, height);
+		this.moveRelative(0, diffy);
 	}
 	
 	public boolean isManuallyResizable() {

@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.MaxSlotChooser1;
+
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 

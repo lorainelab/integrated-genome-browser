@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.symmetry;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
@@ -97,7 +98,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((children == null) ? 0 : children.hashCode());
+				+ ((children == null) ? 0 : new CopyOnWriteArrayList<SeqSymmetry>(children).hashCode());
 		result = prime * result + ((spans == null) ? 0 : spans.hashCode());
 		return result;
 	}
@@ -114,7 +115,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 		if (children == null) {
 			if (other.children != null)
 				return false;
-		} else if (!children.equals(other.children))
+		} else if (!(new CopyOnWriteArrayList<SeqSymmetry>(children)).equals(new CopyOnWriteArrayList<SeqSymmetry>(other.children)))
 			return false;
 		if (spans == null) {
 			if (other.spans != null)

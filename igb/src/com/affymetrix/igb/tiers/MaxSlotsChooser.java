@@ -5,6 +5,8 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import java.util.List;
 import javax.swing.JFrame;
@@ -15,12 +17,11 @@ import javax.swing.SwingUtilities;
  *
  * @author blossome
  */
-public class MaxSlotsChooser extends javax.swing.JPanel {
+public class MaxSlotsChooser extends javax.swing.JFrame {
 
 	private Integer optimum = 5;
 	private final Integer unlimitted = 0;
 	private Integer initial = 0;
-	private JFrame f = new JFrame();
 	private String theMessage ="";
 	private List<TierLabelGlyph> theTiers;
 	private ChangeExpandMaxActionA ac;
@@ -33,16 +34,15 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
 		this.optimum = theOptimalValue;
 		this.theTiers = theTiers;
 		this.ac = ac;
-		f.add(this);
+		setLocationRelativeTo(IGB.getSingleton().getFrame());
 		init();
 	}
 	public void init(){
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
-				f.setLocationRelativeTo(null);
-				f.setVisible(true);
+				setLocationRelativeTo(IGB.getSingleton().getFrame());
 				initComponents();
-				f.pack();
+				pack();
 			}
 		});
 	}
@@ -51,10 +51,6 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
 		return this.maxSlots.getText();
 	}
 	
-	public Integer getValue() {
-		// What about parsing exceptions?
-		return Integer.parseInt(maxSlots.getText());
-	}
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -64,20 +60,23 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        maxSlots = this.maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat("###0"));
-        Optimizer = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         Unlimitter = new javax.swing.JButton();
-        message = new javax.swing.JLabel();
+        Optimizer = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        message = new javax.swing.JLabel();
+        maxSlots = this.maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat("###0"));
 
-        maxSlots.setColumns(5);
-        maxSlots.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        maxSlots.setText(""+initial);
-        maxSlots.setToolTipText("An integer.");
-        maxSlots.addKeyListener(new java.awt.event.KeyAdapter() {
+        Unlimitter.setText("Unlimited");
+        Unlimitter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                UnlimitterMouseClicked(evt);
+            }
+        });
+        Unlimitter.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                maxSlotsKeyPressed(evt);
+                unlimitterKeyPressed(evt);
             }
         });
 
@@ -94,20 +93,6 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
             }
         });
 
-        Unlimitter.setText("Unlimited");
-        Unlimitter.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                UnlimitterMouseClicked(evt);
-            }
-        });
-        Unlimitter.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                unlimitterKeyPressed(evt);
-            }
-        });
-
-        message.setText(theMessage);
-
         okButton.setText("OK");
         okButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -122,45 +107,68 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
             }
         });
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
-        this.setLayout(layout);
+        message.setText(theMessage);
+
+        maxSlots.setColumns(5);
+        maxSlots.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        maxSlots.setText(""+initial);
+        maxSlots.setToolTipText("An integer.");
+        maxSlots.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                maxSlotsKeyPressed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(okButton)
+                        .add(18, 18, 18)
+                        .add(cancelButton)
+                        .add(38, 38, 38))
+                    .add(message, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(37, 37, 37)
+                        .add(Optimizer)
+                        .add(18, 18, 18)
+                        .add(Unlimitter)
+                        .addContainerGap(33, Short.MAX_VALUE))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(message)
+                .add(11, 11, 11)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(Unlimitter)
+                    .add(Optimizer)
+                    .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(okButton)
+                    .add(cancelButton))
+                .addContainerGap())
+        );
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(14, 14, 14)
-                        .add(message, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 86, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(Optimizer)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(Unlimitter)
-                            .add(layout.createSequentialGroup()
-                                .add(okButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(cancelButton)))
-                        .add(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(message)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(maxSlots, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(Optimizer)
-                    .add(Unlimitter))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 20, Short.MAX_VALUE)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(okButton)
-                    .add(cancelButton))
-                .add(18, 18, 18))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 97, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -177,33 +185,33 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
 	}//GEN-LAST:event_OptimizerMouseClicked
 
 	private void okButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okButtonMouseClicked
-		f.dispose();
+		dispose();
 		change();
 		
 	}//GEN-LAST:event_okButtonMouseClicked
 
 	private void cancelButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseClicked
 		maxSlots.setText(this.initial.toString());
-		f.dispose();
+		dispose();
 	}//GEN-LAST:event_cancelButtonMouseClicked
 
 	private void maxSlotsKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxSlotsKeyPressed
 		if(evt.getKeyCode() == 10){
-			f.dispose();
+			dispose();
 			change();
 		}
 	}//GEN-LAST:event_maxSlotsKeyPressed
 
 	private void optimizerKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_optimizerKeyPressed
 		if(evt.getKeyCode() == 10){
-			f.dispose();
+			dispose();
 			change();
 		}
 	}//GEN-LAST:event_optimizerKeyPressed
 
 	private void unlimitterKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_unlimitterKeyPressed
 		if(evt.getKeyCode() == 10){
-			f.dispose();
+			dispose();
 			change();
 		}
 	}//GEN-LAST:event_unlimitterKeyPressed
@@ -222,6 +230,7 @@ public class MaxSlotsChooser extends javax.swing.JPanel {
     private javax.swing.JButton Optimizer;
     private javax.swing.JButton Unlimitter;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField maxSlots;
     private javax.swing.JLabel message;
     private javax.swing.JButton okButton;

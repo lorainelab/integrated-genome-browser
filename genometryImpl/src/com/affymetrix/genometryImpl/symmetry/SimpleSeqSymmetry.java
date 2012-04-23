@@ -99,7 +99,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 		int result = 1;
 		result = prime * result
 				+ ((children == null) ? 0 : new CopyOnWriteArrayList<SeqSymmetry>(children).hashCode());
-		result = prime * result + ((spans == null) ? 0 : spans.hashCode());
+		result = prime * result + ((spans == null) ? 0 : new CopyOnWriteArrayList<SeqSpan>(spans).hashCode());
 		return result;
 	}
 
@@ -120,7 +120,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 		if (spans == null) {
 			if (other.spans != null)
 				return false;
-		} else if (!spans.equals(other.spans))
+		} else if (!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans)))
 			return false;
 		return true;
 	}

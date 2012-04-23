@@ -67,6 +67,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -687,9 +688,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		final List<String> speciesList = new ArrayList<String>();
-		speciesList.addAll(GeneralLoadUtils.getSpecies2Generic().keySet());
-		Collections.sort(speciesList);
+		List<String> speciesList_ = new ArrayList<String>();
+		speciesList_.addAll(GeneralLoadUtils.getSpecies2Generic().keySet());
+		Collections.sort(speciesList_);
+		final List<String> speciesList = new CopyOnWriteArrayList<String>(speciesList_);
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 

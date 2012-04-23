@@ -63,7 +63,6 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	protected Rectangle2D.Double upper = new Rectangle2D.Double();
 	protected Rectangle lower_pixelbox = new Rectangle();
 	protected Rectangle upper_pixelbox = new Rectangle();
-	private Rectangle child_temp = new Rectangle();
 	
 	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();

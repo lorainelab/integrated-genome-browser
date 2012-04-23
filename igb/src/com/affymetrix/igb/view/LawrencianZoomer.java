@@ -187,8 +187,8 @@ public class LawrencianZoomer implements ChangeListener {
 			if (source.getModel() != this.range) {
 				// Scale it.
 				zoomLevel = this.range.getMaximum() * zoomLevel / source.getMaximum();
-				this.setZoomLevel(zoomLevel);
 			}
+			this.setZoomLevel(zoomLevel);
 			if (!zoomDynamically) {
 				source.setEnabled(true);
 			}

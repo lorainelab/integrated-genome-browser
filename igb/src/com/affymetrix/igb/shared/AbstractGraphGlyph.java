@@ -151,12 +151,16 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	protected AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		this.graf = graf;
+		state = gstate;
+		if (graf == null && gstate == null) {
+			return; // only created for getName()
+		}
 		if(gstate != null){
 			setStyle(gstate.getTierStyle());
 		}
-		state = gstate;
 
 		if (graf == null || graf.getPointCount() == 0) {
+			initUnloaded();
 			return;
 		}
 

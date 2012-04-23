@@ -21,7 +21,7 @@ public class RefreshDataAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
 	public RefreshDataAction(JComponent comp) {
-		super(BUNDLE.getString("refreshDataButton"), BUNDLE.getString("refreshDataTip"), null, KeyEvent.VK_UNDEFINED);
+		super(BUNDLE.getString("refreshDataButton"), BUNDLE.getString("refreshDataTip"), "toolbarButtonGraphics/general/Refresh16.gif", KeyEvent.VK_UNDEFINED);
 		KeyStroke ks = MenuUtil.addAccelerator(comp, this, getId());
 		if (ks != null) {
 			this.putValue(MNEMONIC_KEY, ks.getKeyCode());

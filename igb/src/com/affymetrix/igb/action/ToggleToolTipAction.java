@@ -17,7 +17,7 @@ public class ToggleToolTipAction extends GenericAction {
 	private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();
 
 	private ToggleToolTipAction() {
-		super(BUNDLE.getString("togglePropertiesTooltip"), KeyEvent.VK_H);
+		super(BUNDLE.getString("togglePropertiesTooltip"), null, "toolbarButtonGraphics/general/ContextualHelp16.gif", KeyEvent.VK_H);
 		/* TODO: This is only correct for English Locale" */
 		this.putValue(DISPLAYED_MNEMONIC_INDEX_KEY, 5);
 

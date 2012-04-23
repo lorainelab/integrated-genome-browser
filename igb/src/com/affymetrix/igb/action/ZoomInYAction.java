@@ -18,7 +18,7 @@ public class ZoomInYAction extends SeqMapViewActionA {
 	}
 
 	public ZoomInYAction() {
-		super("Zoom in vertically", null);
+		super("Zoom in vertically", "toolbarButtonGraphics/general/ZoomIn16.gif");
 	}
 
 	@Override

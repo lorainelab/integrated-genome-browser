@@ -16,13 +16,13 @@ public class RefreshAFeatureAction extends GenericAction {
 
 	public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
 		final String text = "Load "+feature.featureName;
-		RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text, null);
+		RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text);
 		refreshAFeature.setFeature(feature);
 		return refreshAFeature;
 	}
 
-	private RefreshAFeatureAction(String text, String iconPath){
-		super(text, iconPath);
+	private RefreshAFeatureAction(String text){
+		super(text, "toolbarButtonGraphics/general/Refresh16.gif");
 	}
 
 	private void setFeature(GenericFeature feature) {

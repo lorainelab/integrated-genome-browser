@@ -120,14 +120,7 @@ public class LawrencianZoomer implements ChangeListener {
 					ourVal = Math.max(ourVal, tg.getActualSlots());
 				}
 			}
-			
-			// To prevent repacking upon selection, remove the listener.
-			LawrencianZoomer.this.context.removeListSelectionListener(LawrencianZoomer.this.rangeAdjuster);
-			
 			this.range.setRangeProperties(ourMax - ourVal, 0, 1, ourMax, true);
-			
-			// Once the range is set, add back the listener.
-			LawrencianZoomer.this.context.addListSelectionListener(LawrencianZoomer.this.rangeAdjuster);
 		}
 
 	}
@@ -194,8 +187,8 @@ public class LawrencianZoomer implements ChangeListener {
 			if (source.getModel() != this.range) {
 				// Scale it.
 				zoomLevel = this.range.getMaximum() * zoomLevel / source.getMaximum();
+				this.setZoomLevel(zoomLevel);
 			}
-			this.setZoomLevel(zoomLevel);
 			if (!zoomDynamically) {
 				source.setEnabled(true);
 			}

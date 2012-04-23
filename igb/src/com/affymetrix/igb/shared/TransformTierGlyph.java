@@ -115,7 +115,7 @@ public final class TransformTierGlyph extends TransformViewModeGlyph {
     LinearTransform view_transform = view.getTransform();
     double yscale = 0.0d;
     if ( 0.0d != getCoordBox().height ) {
-      yscale = (double)fixedPixHeight / getCoordBox().height;
+      yscale = fixedPixHeight / getCoordBox().height;
     }
 	if ( 0.0d != view_transform.getScaleY() ) {
 	  yscale = yscale / view_transform.getScaleY();

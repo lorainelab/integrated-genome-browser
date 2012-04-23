@@ -74,28 +74,7 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		}
 
 		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum, theTiers, this);
+		chooser.setVisible(true);
 		
-		/*int isOK = JOptionPane.showConfirmDialog(
-				null,
-				chooser,
-				IGBConstants.BUNDLE.getString("changeMaxHeight"),
-				JOptionPane.OK_CANCEL_OPTION);
-		switch (isOK) {
-			case JOptionPane.OK_OPTION:
-				try {
-					ourLimit = chooser.getValue();
-				} catch (NumberFormatException nex) {
-					ErrorHandler.errorPanel(nex.getLocalizedMessage()
-							+ " Maximum must be an integer: "
-							+ chooser.toString());
-					return;
-				}
-				break;
-			default:
-				return;
-		} */
-		int newLimit = chooser.getValue();
-		if(newLimit != ourLimit)
-			changeExpandMax(theTiers, newLimit);
 	}
 }

@@ -190,6 +190,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		} else {
 			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 		}
+		setInitialOffset();
 	}
 
 	/**
@@ -228,6 +229,26 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	@Override
 	protected void setModifiedViewCoords(ViewI view){
 		view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
+	}
+	
+	private void setInitialOffset() {
+		if(getPacker() != expand_packer)
+			return;
+		
+		int coord_offset = (int) (BUFFER * 1.5);
+		if (getDirection() != TierGlyph.Direction.REVERSE) {
+			int style_depth = getDirection() == TierGlyph.Direction.FORWARD ? getAnnotStyle().getForwardMaxDepth() : getAnnotStyle().getMaxDepth();
+			boolean use_label = getAnnotStyle().getLabelField() != null && !getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && (getAnnotStyle().getLabelField().trim().length() > 0);
+			int style_height = (int) (getDirection() == TierGlyph.Direction.FORWARD ? getAnnotStyle().getForwardHeight() : getAnnotStyle().getHeight());
+			style_height = use_label ? style_height * 2 : style_height;
+			style_height = (int) (style_height + expand_packer.getSpacing() * 2);
+			if(getActualSlots() > style_depth){
+				coord_offset = style_height * (getActualSlots() - style_depth) + coord_offset;
+			} 
+			coord_offset = -coord_offset;
+			//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
+		}
+		setOffset(coord_offset);
 	}
 		
 	@Override

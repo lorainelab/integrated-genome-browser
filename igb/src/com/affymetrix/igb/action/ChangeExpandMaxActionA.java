@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.tiers.MaxSlotChooser1;
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 
@@ -18,7 +19,7 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 		super(text, iconPath);
 	}
 
-	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
+	public void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = tlg.getReferenceTier();
 			ITrackStyleExtended style = tier.getAnnotStyle();
@@ -72,9 +73,9 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(getSeqMapView().getSeqMap().getView()));
 		}
 
-		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum);
-
-		int isOK = JOptionPane.showConfirmDialog(
+		MaxSlotsChooser chooser = new MaxSlotsChooser(IGBConstants.BUNDLE.getString("maxHeight"), ourLimit, ourOptimum, theTiers, this);
+		
+		/*int isOK = JOptionPane.showConfirmDialog(
 				null,
 				chooser,
 				IGBConstants.BUNDLE.getString("changeMaxHeight"),
@@ -92,8 +93,9 @@ public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 				break;
 			default:
 				return;
-		}
-
-		changeExpandMax(theTiers, ourLimit);
+		} */
+		int newLimit = chooser.getValue();
+		if(newLimit != ourLimit)
+			changeExpandMax(theTiers, newLimit);
 	}
 }

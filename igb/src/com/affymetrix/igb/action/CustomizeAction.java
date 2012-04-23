@@ -22,7 +22,7 @@ public class CustomizeAction extends SeqMapViewActionA {
 	}
 
 	private CustomizeAction() {
-		super(BUNDLE.getString("customizeAction"), null, null, KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("customizeAction"), null, "toolbarButtonGraphics/general/Preferences16.gif", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	private void showCustomizer() {

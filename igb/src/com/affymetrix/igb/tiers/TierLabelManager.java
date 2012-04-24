@@ -61,7 +61,7 @@ public final class TierLabelManager implements PropertyHolder {
 	private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
 
 		TierLabelGlyph dragging_label = null;
-
+		
 		@Override
 		public void mouseMoved(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
@@ -126,7 +126,7 @@ public final class TierLabelManager implements PropertyHolder {
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
 				doGraphSelections(preserve_selections);
-
+				
 				// make sure selections becomes visible
 				if (isOurPopupTrigger(evt)) {
 					doPopup(evt);
@@ -137,6 +137,7 @@ public final class TierLabelManager implements PropertyHolder {
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);
+					scrollTier(gl.getReferenceTier());
 				}
 				tiermap.updateWidget();
 			}
@@ -164,6 +165,11 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
+		private void scrollTier(TierGlyph gl){
+			GlyphScroller gs = new GlyphScroller(tiermap);
+			gs.startscroll(gl);
+		}
+		
 		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
 			dragging_label = gl;
 			GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget) nevt.getSource());
@@ -198,8 +204,8 @@ public final class TierLabelManager implements PropertyHolder {
 //		resizer = new MouseInputAdapter() {
 			// Stub out resizing to disable it.
 //		};
-//		resizer = new TierResizer(this.tiermap);
-		resizer = new AccordionTierResizer(this.tiermap);
+		resizer = new TierResizer(this.tiermap);
+//		resizer = new AccordionTierResizer(this.tiermap);
 
 		labelmap.addMouseListener(resizer);
 		labelmap.addMouseMotionListener(resizer);

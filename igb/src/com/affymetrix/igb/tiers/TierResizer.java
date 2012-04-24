@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
@@ -211,8 +212,10 @@ public class TierResizer extends MouseInputAdapter {
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(0, height);
 				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
-					((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
+					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
+						((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
 							((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
+					}
 				}
 				
 				// Move the fixed height glyphs in the middle,
@@ -229,8 +232,10 @@ public class TierResizer extends MouseInputAdapter {
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
 				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
-					((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
+					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
+						((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
 							((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
+					}
 				}
 				
 				this.gviewer.getSeqMap().updateWidget();

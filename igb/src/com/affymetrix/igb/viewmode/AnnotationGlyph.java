@@ -53,17 +53,19 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 
 	private static final int BUFFER = 50;
 	private static final Font default_font = NeoConstants.default_plain_font;
-	private FasterExpandPacker expand_packer = new FasterExpandPacker();
+	private FasterExpandPacker expand_packer = new ScrollableFasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
+	
 	// Variable for scrolling in tier
 	private int offset = 1;
-	protected Rectangle2D.Double lower = new Rectangle2D.Double();
-	protected Rectangle2D.Double upper = new Rectangle2D.Double();
-	protected Rectangle lower_pixelbox = new Rectangle();
-	protected Rectangle upper_pixelbox = new Rectangle();
-	
+	private Rectangle2D.Double lower = new Rectangle2D.Double();
+	private Rectangle2D.Double upper = new Rectangle2D.Double();
+	private Rectangle lower_pixelbox = new Rectangle();
+	private Rectangle upper_pixelbox = new Rectangle();
+	private Rectangle child_temp = new Rectangle();
+	 
 	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
@@ -252,6 +254,23 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		
 	@Override
 	public void drawChildren(ViewI view) {
+		// Set upper and lower buffer region coords
+		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, BUFFER);
+		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - BUFFER, getCoordBox().width, BUFFER);
+		
+		// Convert the upper and lower coords to pixelbox before modifying the view
+		view.transformToPixels(upper, upper_pixelbox);
+		view.transformToPixels(lower, lower_pixelbox);
+		
+		// Find the intersection
+		upper_pixelbox = upper_pixelbox.intersection(view.getPixelBox());
+		lower_pixelbox = lower_pixelbox.intersection(view.getPixelBox());
+		
+		super.drawChildren(view);
+	}
+	
+	@Override
+	protected void modifiedDrawChildren(ViewI view) {
 		try {
 			if (getChildren() != null) {
 				GlyphI child;
@@ -260,7 +279,11 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 					child = getChildren().get(i);
 					// TransientGlyphs are usually NOT drawn in standard drawTraversal
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
-						if (child.isOverlapped()) {
+						view.transformToPixels(child.getCoordBox(), child_temp);
+						if (child_temp.width == 0) {
+							child_temp.width = 1;
+						}
+						if (child_temp.intersects(lower_pixelbox) || child_temp.intersects(upper_pixelbox)) {
 							Graphics2D g = view.getGraphics();
 							Composite dac = g.getComposite();
 							g.setComposite(ac);

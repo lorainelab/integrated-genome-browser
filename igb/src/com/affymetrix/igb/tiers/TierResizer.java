@@ -228,6 +228,10 @@ public class TierResizer extends MouseInputAdapter {
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
+				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
+					((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
+							((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
+				}
 				
 				this.gviewer.getSeqMap().updateWidget();
 			}

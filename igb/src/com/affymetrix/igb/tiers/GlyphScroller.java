@@ -1,19 +1,18 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
  * @author hiralv
  */
-public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
+public class GlyphScroller implements MouseWheelListener, ListSelectionListener{
 	private static final int SPEED = 10;
 	AffyLabelledTierMap map;
 	ScrollableViewModeGlyph ag;
@@ -31,17 +30,20 @@ public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
 		
 		// Flushing, just in case
 		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(this);
-		GenometryModel.getGenometryModel().removeSymSelectionListener(this);
+		map.removeListSelectionListener(this);
 		
 		// Now add listeners
 		map.getLabelMap().getNeoCanvas().addMouseWheelListener(this);
-		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		map.addListSelectionListener(this);
 	}
 	
 	private void stopscroll(){
 		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(this);
-		GenometryModel.getGenometryModel().removeSymSelectionListener(this);
+		map.removeListSelectionListener(this);
+		
+		// Helps with garbage collection
 		ag = null;
+		map = null;
 	}
 	
 	
@@ -49,8 +51,8 @@ public class GlyphScroller implements MouseWheelListener, SymSelectionListener{
 		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
 		map.updateWidget(true);
 	}
-
-	public void symSelectionChanged(SymSelectionEvent evt) {
+	
+	public void valueChanged(ListSelectionEvent e) {
 		stopscroll();
 	}
 }

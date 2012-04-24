@@ -6,6 +6,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.JRPStyledTable;
 import java.awt.Cursor;
 
 import java.awt.Dimension;
@@ -17,7 +18,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
 
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 7;
-	private final JRPTable seqtable;
+	private final JRPStyledTable seqtable;
 	private static SeqGroupViewGUI singleton;
 	private SeqGroupView seqGroupModel;
 	static final Cursor defaultCursor, openHandCursor, closedHandCursor;

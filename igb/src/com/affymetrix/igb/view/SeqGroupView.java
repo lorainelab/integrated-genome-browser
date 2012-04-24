@@ -38,6 +38,7 @@ import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -89,7 +90,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
-	private final JRPTable seqtable;
+	private final JRPStyledTable seqtable;
 	private final ListSelectionModel lsm;
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
@@ -109,7 +110,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	SeqGroupView(IGBService _igbService) {
 		igbService = _igbService;
 		gviewer = Application.getSingleton().getMapView();
-		seqtable = new JRPTable("SeqGroupView_seqtable") {
+		seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
 
 			private static final long serialVersionUID = 1L;
 			//Implement table header tool tips.
@@ -130,7 +131,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		};
 		seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		seqtable.setFillsViewportHeight(true);
 
 		SeqGroupTableModel model = new SeqGroupTableModel(null);
 		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
@@ -943,7 +943,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
 	}
 
-	public JRPTable getTable() {
+	public JRPStyledTable getTable() {
 		return seqtable;
 	}
 

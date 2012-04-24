@@ -20,6 +20,7 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  javax.swing.event,
  javax.swing.plaf,
  javax.swing.table,
+ com.jidesoft.grid,
  org.osgi.framework;version="1.3.0",
  org.osgi.framework.launch;version="1.0.0",
  org.osgi.util.tracker;version="1.4.0"

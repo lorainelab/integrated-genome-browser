@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.PartialLineBorder;
+import com.jidesoft.grid.JideTable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -14,7 +15,7 @@ import javax.swing.table.*;
  *
  * @author david, modified by nick
  */
-public class StyledJTable extends JTable {
+public class StyledJTable extends JideTable {
 
 	private static final long serialVersionUID = 1L;
 	// The list will save all the unchangeable column num
@@ -56,7 +57,13 @@ public class StyledJTable extends JTable {
 		init();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void init() {
+		// Jidesoft table configuration methods
+		setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN_FILL); 
+		setFillsGrids(true);
+
+		// Java Default Table Configuration methods
 		setCellSelectionEnabled(true);
 		setSelectionForeground(Color.BLUE);
 		setIntercellSpacing(new Dimension(1, 1));

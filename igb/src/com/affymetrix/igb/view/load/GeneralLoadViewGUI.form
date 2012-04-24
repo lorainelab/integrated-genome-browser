@@ -86,7 +86,7 @@
               <SubComponents>
                 <Component class="javax.swing.JTable" name="dataManagementTable">
                   <Properties>
-                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor" postCode="dataManagementTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.&#xa;// Handle sizing of the columns&#xa;dataManagementTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized">
+                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="dataManagementTableModel" type="code"/>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

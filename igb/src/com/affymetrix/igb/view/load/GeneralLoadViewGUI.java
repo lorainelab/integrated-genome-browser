@@ -80,9 +80,6 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Management Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 0, 13))); // NOI18N
 
         dataManagementTable.setModel(dataManagementTableModel);
-        dataManagementTable.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
-        // Handle sizing of the columns
-        dataManagementTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
         jScrollPane2.setViewportView(dataManagementTable);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);

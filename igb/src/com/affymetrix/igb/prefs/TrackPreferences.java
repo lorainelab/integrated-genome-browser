@@ -13,6 +13,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.combobox.ColorExComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -79,15 +80,16 @@ public abstract class TrackPreferences implements ListSelectionListener {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected ColorComboBox createColorComboBox() {
-				final ColorComboBox combobox = new ColorComboBox();
+			protected ColorExComboBox createColorComboBox() {
+				final ColorExComboBox combobox = new ColorExComboBox();
 				combobox.setColorValueVisible(false);
 				combobox.setCrossBackGroundStyle(false);
-				combobox.setButtonVisible(false);
+		//		combobox.setButtonVisible(false);
 				combobox.setStretchToFit(true);
 				return combobox;
 			}
 		};
+		
 		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
 		table.setDefaultEditor(Color.class, cellEditor);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());

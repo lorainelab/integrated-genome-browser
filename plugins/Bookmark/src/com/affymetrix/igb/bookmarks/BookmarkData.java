@@ -33,7 +33,6 @@ public final class BookmarkData {
 	public BookmarkData() {
 		propertyModel = new BookmarkPropertyTableModel();
 		propertyTable = new StyledJTable(propertyModel);
-		propertyTable.setCellSelectionEnabled(true);
 
 		propertyModel.addTableModelListener(new TableModelListener() {
 
@@ -45,11 +44,9 @@ public final class BookmarkData {
 
 		infoModel = new BookmarkInfoTableModel();
 		infoTable = new StyledJTable(infoModel);
-		infoTable.setCellSelectionEnabled(true);
 
 		datalistModel = new BookmarkDataListTableModel();
 		datalistTable = new StyledJTable(datalistModel);
-		datalistTable.setCellSelectionEnabled(true);
 	}
 
 	public static synchronized BookmarkData getSingleton() {

@@ -4,7 +4,6 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.shared.StyledJTable;
@@ -16,7 +15,9 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
-import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.combobox.ColorExComboBox;
+import com.jidesoft.grid.ColorCellEditor;
+import com.jidesoft.grid.ColorCellRenderer;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.util.EventObject;
 import java.util.logging.Level;
@@ -92,17 +92,17 @@ public final class DataManagementTable {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected ColorComboBox createColorComboBox() {
-				final ColorComboBox combobox = new ColorComboBox();
+			protected ColorExComboBox createColorComboBox() {
+				final ColorExComboBox combobox = new ColorExComboBox();
 				combobox.setColorValueVisible(false);
 				combobox.setCrossBackGroundStyle(false);
-				combobox.setButtonVisible(false);
+				//combobox.setButtonVisible(false);
 				combobox.setStretchToFit(true);
 				return combobox;
 			}
 		};
 
-		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
+		table.setDefaultRenderer(Color.class, new ColorCellRenderer());
 		table.setDefaultEditor(Color.class, cellEditor);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
@@ -212,8 +212,8 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 	public JTableX(TableModel tm) {
 		super(tm);
 
-		this.list.add(DataManagementTableModel.BACKGROUND_COLUMN);
-		this.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
+		super.list.add(DataManagementTableModel.BACKGROUND_COLUMN);
+		super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
 
 		rmMap = new HashMap<Integer, RowEditorModel>();
 
@@ -221,7 +221,6 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 		if (igb != null) {
 			smv = igb.getMapView();
 		}
-		setRowSelectionAllowed(false);
 	}
 
 	void setRowEditorModel(int column, RowEditorModel rm) {

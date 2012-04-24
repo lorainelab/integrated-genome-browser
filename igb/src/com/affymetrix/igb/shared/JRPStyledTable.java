@@ -15,7 +15,7 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author dcnorris
+ * @author dcnorris, modified by nick
  */
 public class JRPStyledTable extends StyledJTable implements JRPWidget {
 

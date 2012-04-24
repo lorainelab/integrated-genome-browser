@@ -151,7 +151,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
 	private static StyledJTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
 		final StyledJTable table = new StyledJTable(sourceTableModel);
-		table.setFillsViewportHeight(true);
 		table.setAutoCreateRowSorter(sortable);
 
 		if (sortable) {

@@ -36,8 +36,8 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final int NARROW_COLUMN = 60;
 
 	/**
-	 * this panel has the Bundle Symbolic Name along with an (optional)
-	 * info icon that links to the documntation web page of the bundle.
+	 * this panel has the Bundle Symbolic Name along with an (optional) info
+	 * icon that links to the documntation web page of the bundle.
 	 */
 	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 
@@ -49,6 +49,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 		/**
 		 * get the NameInfoPanel for the given bundle
+		 *
 		 * @param bundle
 		 * @return the NameInfoPanel for the specified bundle
 		 */
@@ -158,8 +159,8 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	}
 
 	/**
-	 * helper class for bundle versions - they need to display the
-	 * latest version in parenthesis if necessary.
+	 * helper class for bundle versions - they need to display the latest
+	 * version in parenthesis if necessary.
 	 */
 	private static class VersionInfo {
 
@@ -263,17 +264,16 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			public void formatColumn(JTable jTable, TableColumn tc) {
 				tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
 				tc.setCellRenderer(
-					new TableCellRenderer() {
+						new TableCellRenderer() {
 
-						@Override
-						public Component getTableCellRendererComponent(JTable table, Object value,
-								boolean isSelected, boolean hasFocus, int row, int column) {
-							Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-							((JLabel) component).setToolTipText((String) value);
-							return component;
-						}
-					}
-				);
+							@Override
+							public Component getTableCellRendererComponent(JTable table, Object value,
+									boolean isSelected, boolean hasFocus, int row, int column) {
+								Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+								((JLabel) component).setToolTipText((String) value);
+								return component;
+							}
+						});
 			}
 		});
 		columns.add(new BundleColumn() { // version
@@ -357,6 +357,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	/**
 	 * get the index of the column in the table, given the column name
+	 *
 	 * @param key the name of the column
 	 * @return the index of the column in the table
 	 */
@@ -371,11 +372,12 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	/**
 	 * set the parent table
+	 *
 	 * @param jTable the parent table that uses this TableModel
 	 */
 	public void setJTable(JTable jTable) {
 		for (int i = 0; i < columns.size(); i++) {
-			BundleColumn bundleColumn = columns.get(i);
+			BundleColumn bundleColumn = columns.get(i);			
 			TableColumn checkboxColumn = jTable.getColumnModel().getColumn(i);
 			bundleColumn.formatColumn(jTable, checkboxColumn);
 		}

@@ -228,7 +228,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);
-		table.setFillsViewportHeight(true);
 		table.setMinimumSize(new Dimension(80000, 500));	//added by Max
 		//table.setPreferredScrollableViewportSize(new Dimension(80000, 500));  //added by Max
 		this.removeAll();

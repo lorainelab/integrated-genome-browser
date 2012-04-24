@@ -41,7 +41,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		return szg;
 	}
 	// glyph class
-	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements NeoRangeListener {
+	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements ScrollableViewModeGlyph, NeoRangeListener {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph;
 		
@@ -476,6 +476,21 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 					}
 				}
 			}
+		}
+		
+		@Override
+		public void setOffset(int offset){
+			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
+				((ScrollableViewModeGlyph)lastUsedGlyph).setOffset(offset);
+			}
+		}
+		
+		@Override
+		public int getOffset(){
+			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
+				return ((ScrollableViewModeGlyph)lastUsedGlyph).getOffset();
+			}
+			return 0;
 		}
 	}
 	// end glyph class

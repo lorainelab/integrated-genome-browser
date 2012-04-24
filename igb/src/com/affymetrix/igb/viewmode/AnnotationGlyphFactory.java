@@ -560,11 +560,7 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
-		String meth = BioSeq.determineMethod(sym);
-		if (meth == null && style != null) {
-			meth = style.getMethodName();
-		}
-		if (meth == null) {
+		if (sym == null) {
 			return createViewModeGlyph(style, tier_direction);
 		}
 		else {

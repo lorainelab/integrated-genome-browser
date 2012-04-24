@@ -12,8 +12,9 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author hiralv
  */
-public class GlyphScroller implements MouseWheelListener, ListSelectionListener{
+public class GlyphScroller {
 	private static final int SPEED = 10;
+	MouseWheelAndListListener listener;
 	AffyLabelledTierMap map;
 	ScrollableViewModeGlyph ag;
 	
@@ -26,33 +27,38 @@ public class GlyphScroller implements MouseWheelListener, ListSelectionListener{
 			return;
 		}
 		
+		listener = new MouseWheelAndListListener();
 		ag = (ScrollableViewModeGlyph)tier.getViewModeGlyph();
 		
-		// Flushing, just in case
-		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(this);
-		map.removeListSelectionListener(this);
-		
-		// Now add listeners
-		map.getLabelMap().getNeoCanvas().addMouseWheelListener(this);
-		map.addListSelectionListener(this);
+		// Add listeners
+		map.getLabelMap().getNeoCanvas().addMouseWheelListener(listener);
+		map.addListSelectionListener(listener);
+	}
+	
+	private void scroll(int i){
+		ag.setOffset(ag.getOffset() + (i * SPEED));
+		map.updateWidget(true);
 	}
 	
 	private void stopscroll(){
-		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(this);
-		map.removeListSelectionListener(this);
+		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(listener);
+		map.removeListSelectionListener(listener);
 		
 		// Helps with garbage collection
 		ag = null;
 		map = null;
+		listener = null;
 	}
 	
-	
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		ag.setOffset(ag.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
-		map.updateWidget(true);
+	private class MouseWheelAndListListener implements MouseWheelListener, ListSelectionListener {
+
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			scroll(e.getWheelRotation() * e.getScrollAmount());
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			stopscroll();
+		}
 	}
 	
-	public void valueChanged(ListSelectionEvent e) {
-		stopscroll();
-	}
 }

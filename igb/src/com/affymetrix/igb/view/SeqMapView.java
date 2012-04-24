@@ -403,13 +403,13 @@ public class SeqMapView extends JPanel
 			this.add(BorderLayout.SOUTH, pan);
 		}
 
-		JSlider specialZoomer = new JSlider(JSlider.VERTICAL, 0, 100, 50);
-		ChangeListener zoomie = new LawrencianZoomer(seqmap, specialZoomer.getModel());
-		specialZoomer.addChangeListener(zoomie);
+//		JSlider specialZoomer = new JSlider(JSlider.VERTICAL, 0, 100, 50);
+//		ChangeListener zoomie = new LawrencianZoomer(seqmap, specialZoomer.getModel());
+//		specialZoomer.addChangeListener(zoomie);
 		
 		yzoombox = Box.createVerticalBox();
 		yzoombox.add((Component) yzoomer);
-		yzoombox.add(specialZoomer);
+//		yzoombox.add(specialZoomer);
 		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
 			this.add(BorderLayout.WEST, yzoombox);

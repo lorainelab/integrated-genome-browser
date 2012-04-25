@@ -79,6 +79,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		super.setStyle(style);
 		if (style.getCollapsed()) {
 			setPacker(collapse_packer);
+			setOffset(0);
 		} else {
 			setPacker(expand_packer);
 		}
@@ -253,6 +254,14 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		return child_height;
 	}
 	
+	@Override
+	public boolean isScrollingAllowed(){
+		if(getPacker() != expand_packer)
+			return false;
+		
+		return true;
+	}
+	
 	private int getStyleDepth(){
 		switch(getDirection()){
 			case REVERSE:
@@ -272,18 +281,17 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	}
 	
 	private void setInitialOffset() {
-		if(getPacker() != expand_packer)
-			return;
-		
-		int coord_offset = (int) (BUFFER * 1.5);
-		if (getDirection() != TierGlyph.Direction.REVERSE) {
-			if(getActualSlots() > getStyleDepth()){
-				coord_offset = (int)getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
-			} 
-			coord_offset = -coord_offset;
-			//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
+		if (isScrollingAllowed()) {
+			int coord_offset = (int) (BUFFER * 1.5);
+			if (getDirection() != TierGlyph.Direction.REVERSE) {
+				if (getActualSlots() > getStyleDepth()) {
+					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
+				}
+				coord_offset = -coord_offset;
+				//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
+			}
+			setOffset(coord_offset);
 		}
-		setOffset(coord_offset);
 	}
 
 	@Override

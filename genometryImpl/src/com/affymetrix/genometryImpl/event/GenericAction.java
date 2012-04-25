@@ -21,7 +21,6 @@ import javax.swing.ImageIcon;
 public abstract class GenericAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private static final char POPUP_DIALOG = '\u2026';
-	private static final String ELLIPSIS = "...";
 	private final String text;
 	private final String tooltip;
 	private final String iconPath;
@@ -102,16 +101,6 @@ public abstract class GenericAction extends AbstractAction {
 	}
 	public final String getId() {
 		return this.getClass().getName();
-	}
-	public static String getCleanText(String text) {
-		String cleanText = text;
-		if (cleanText.endsWith("" + POPUP_DIALOG)) {
-			cleanText = cleanText.substring(0, cleanText.length() - 1);
-		}
-		if (cleanText.endsWith(ELLIPSIS)) {
-			cleanText = cleanText.substring(0, cleanText.length() - ELLIPSIS.length());
-		}
-		return cleanText;
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

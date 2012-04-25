@@ -235,13 +235,8 @@ public class Activator implements BundleActivator {
 							if (iconPath == null) {
 								iconPath = DEFAULT_ICON_PATH;
 							}
-							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction) {
-								private static final long serialVersionUID = 1L;
-								@Override
-								public void setText(String text) {
-									super.setText("");
-								}
-							};
+							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							button.setHideActionText(true);
 							((IGB)Application.getSingleton()).addToolbarButton(button);
 						}
 					}

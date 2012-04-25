@@ -17,7 +17,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.util.*;
-import javax.swing.JMenuItem;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
@@ -360,7 +360,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setSeparate((Boolean) value);
 					smv.getPopup().refreshMap(false, true);
-					smv.getPopup().getHandler().sortTiers();
+					smv.getTierManager().sortTiers();
 				}
 				break;
 			case TRACK_NAME_COLUMN:
@@ -387,13 +387,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 	private void setVisibleTracks(ITrackStyleExtended style) {
 		if (style.getShow()) {
-			smv.getPopup().hideOneTier(style);
+			if (style.getShow()) {
+				style.setShow(false);
+			}
 		} else {
-			for (int i = 0; i < smv.getPopup().getShowMenu().getItemCount(); i++) {
-				JMenuItem item = smv.getPopup().getShowMenu().getItem(i);
-				if (item.getName().equals(style.getMethodName())) {
-					item.getAction().actionPerformed(null);
-				}
+			if (!style.getShow()) {
+				style.setShow(true);
 			}
 		}
 	}

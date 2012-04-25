@@ -23,7 +23,8 @@ public class GlyphScroller {
 	}
 	
 	public void startscroll(TierGlyph tier){
-		if(!(tier.getViewModeGlyph() instanceof ScrollableViewModeGlyph)){
+		if(!(tier.getViewModeGlyph() instanceof ScrollableViewModeGlyph)
+				|| !((ScrollableViewModeGlyph)tier.getViewModeGlyph()).isScrollingAllowed()){
 			return;
 		}
 		

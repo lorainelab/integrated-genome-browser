@@ -27,9 +27,6 @@
 	<classpathentry kind="lib" path="ext/hibernate3.jar"/>
 	<classpathentry kind="lib" path="ext/image4j.jar"/>
 	<classpathentry kind="lib" path="ext/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="ext/jide-common.jar"/>
-	<classpathentry kind="lib" path="ext/jide-components.jar"/>
-	<classpathentry kind="lib" path="ext/jide-grids.jar"/>
 	<classpathentry kind="lib" path="ext/jlfgr-1_0.jar"/>
 	<classpathentry kind="lib" path="ext/jta.jar"/>
 	<classpathentry kind="lib" path="ext/junit.jar"/>
@@ -44,6 +41,7 @@
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
 	<classpathentry kind="src" path="common/resources"/>
+	<classpathentry kind="src" path="plugins/Thresholding/src"/>
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="das2_server/src"/>
 	<classpathentry kind="src" path="debug/src"/>
@@ -87,5 +85,6 @@
 	<classpathentry kind="lib" path="ext/hci_utils.jar"/>
 	<classpathentry kind="lib" path="jar_extensions/sam/dist/sam--igbext.jar"/>
 	<classpathentry kind="lib" path="jar_extensions/tribble-0.2/dist/tribble-0.2--igbext.jar"/>
+	<classpathentry kind="lib" path="ext/jide.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

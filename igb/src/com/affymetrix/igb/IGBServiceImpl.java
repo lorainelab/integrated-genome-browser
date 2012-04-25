@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionListener;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -208,6 +209,18 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		return Application.getSingleton().getMapView().getSeqMap();
 	}
 
+	@Override
+	public void addListSelectionListener(ListSelectionListener listener){
+		AffyLabelledTierMap map = (AffyLabelledTierMap) getSeqMap();
+		map.addListSelectionListener(listener);
+	}
+	
+	@Override
+	public void removeListSelectionListener(ListSelectionListener listener){
+		AffyLabelledTierMap map = (AffyLabelledTierMap) getSeqMap();
+		map.removeListSelectionListener(listener);
+	}
+	
 	@Override
 	public SeqMapViewI getSeqMapView() {
 		return Application.getSingleton().getMapView();

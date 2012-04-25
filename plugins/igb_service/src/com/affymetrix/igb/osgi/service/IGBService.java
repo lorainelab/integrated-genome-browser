@@ -28,6 +28,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
@@ -116,7 +117,13 @@ public interface IGBService {
 	// for SearchView
 	public void zoomToCoord(String seqID, int start, int end);
 	public void mapRefresh(List<GlyphI> glyphs);
+	
 	public NeoAbstractWidget getSeqMap();
+	
+	// Listener
+	public void addListSelectionListener(ListSelectionListener listener);
+	public void removeListSelectionListener(ListSelectionListener listener);
+	
 	/**
 	 * get the SeqMapViewI, the main window for IGB
 	 * @return the SeqMapViewI
@@ -184,5 +191,5 @@ public interface IGBService {
 	public void discoverServer(final GenericServer server);
 
 	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle);
-
+	
 }

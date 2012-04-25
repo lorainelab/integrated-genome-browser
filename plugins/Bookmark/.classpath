@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/swing-layout.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/igb"/>
 	<classpathentry kind="lib" path="resources"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jide.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

@@ -492,6 +492,14 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 			return 0;
 		}
+		
+		@Override
+		public double getChildHeight(){
+			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
+				return ((ScrollableViewModeGlyph)lastUsedGlyph).getChildHeight();
+			}
+			return lastUsedGlyph.getAnnotStyle().getHeight();
+		}
 	}
 	// end glyph class
 }

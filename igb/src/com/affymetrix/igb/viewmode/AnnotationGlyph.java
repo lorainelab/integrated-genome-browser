@@ -228,6 +228,32 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	}
 	
 	@Override
+	public double getChildHeight(){
+		double style_height = 0;
+				boolean use_label = getAnnotStyle().getLabelField() != null && 
+				!getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && 
+				(getAnnotStyle().getLabelField().trim().length() > 0);
+		
+		switch(getDirection()){
+			case REVERSE:
+				style_height = (int) getAnnotStyle().getReverseHeight();
+				break;
+			
+			case FORWARD:
+				style_height = (int) getAnnotStyle().getForwardHeight() * -1;
+				break;
+				
+			case BOTH:
+				style_height = (int) getAnnotStyle().getHeight() * -1;
+				break;
+		}
+		style_height = use_label ? style_height * 2 : style_height;
+		style_height = style_height + getSpacing() * 2;
+		style_height = style_height * getActualSlots();
+		return style_height;
+	}
+	
+	@Override
 	protected void setModifiedViewCoords(ViewI view){
 		view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
 	}

@@ -36,6 +36,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
 		setPosition(position);
+		selectionEvent = new ActionEvent(reference_tier, ActionEvent.ACTION_FIRST, "Select Tier");
 		isIGBTrack = Delegate.EXT.equalsIgnoreCase(reference_tier.getAnnotStyle().getFileType());
 	}
 
@@ -53,8 +54,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	private ActionListener selectionSnoop = null;
-	private final ActionEvent selectionEvent =
-			new ActionEvent(this, ActionEvent.ACTION_FIRST, "Select Tier");
+	private final ActionEvent selectionEvent;
 	/**
 	 * Snoop on selection or deselection of this glyph.
 	 * Selection of a TierLabelGlyph generally indicates

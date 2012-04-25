@@ -1,9 +1,11 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.WebLink;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.prefs.WebLink.RegexType;
 import com.affymetrix.igb.shared.FileTracker;
@@ -72,7 +74,7 @@ public final class WebLinksView implements ListSelectionListener {
 
 		initTable(serverTable);
 		initTable(localTable);
-		
+
 		nameTextField = new JTextField();
 		urlTextField = new JTextField();
 		regexTextField = new JTextField();
@@ -108,18 +110,12 @@ public final class WebLinksView implements ListSelectionListener {
 	}
 
 	/*
-	 *  Only allow to delete local web links
+	 * Only allow to delete local web links
 	 */
 	public void delete() throws HeadlessException {
 		if (localTable.getSelectedRow() != -1) {
 			selectedRows = localTable.getSelectedRows();
-			Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-
-			int yes = JOptionPane.showConfirmDialog(frame, "Delete these "
-					+ selectedRows.length + " selected link(s)?", "Delete?",
-					JOptionPane.YES_NO_OPTION);
-
-			if (yes == JOptionPane.YES_OPTION) {
+			if (confirmDelete()) {
 				List<WebLink> links = new ArrayList<WebLink>();
 				for (int i : selectedRows) {
 					links.add(localModel.webLinks.get(i));
@@ -133,6 +129,16 @@ public final class WebLinksView implements ListSelectionListener {
 
 			refreshList();
 		}
+	}
+
+	public boolean confirmDelete() {
+		String message = "Delete these " + selectedRows.length
+				+ " selected link(s)?\n";
+
+		return Application.confirmPanel(WebLinksViewGUI.getSingleton(),
+				message, PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_DELETE,
+				PreferenceUtils.default_confirm_before_delete);
 	}
 
 	public void add() {
@@ -216,8 +222,10 @@ public final class WebLinksView implements ListSelectionListener {
 	public void nameRadioButton() {
 		localModel.setValueAt(WebLink.RegexType.TYPE, selectedRows[0], COL_TYPE);
 	}
-	
-	/** Gets a static re-usable file chooser that prefers "html" files. */
+
+	/**
+	 * Gets a static re-usable file chooser that prefers "html" files.
+	 */
 	private static JFileChooser getJFileChooser() {
 		if (static_chooser == null) {
 			static_chooser = UniFileChooser.getFileChooser("XML file", "xml");
@@ -286,8 +294,10 @@ public final class WebLinksView implements ListSelectionListener {
 		regexTextField.setText("");
 	}
 
-	/** Called when the user selects a row of the table.
-	 *  @param evt
+	/**
+	 * Called when the user selects a row of the table.
+	 *
+	 * @param evt
 	 */
 	public void valueChanged(ListSelectionEvent evt) {
 		setEnabled(true);
@@ -299,7 +309,7 @@ public final class WebLinksView implements ListSelectionListener {
 		if (localTable.getSelectedRowCount() == 0) {
 			setEnabled(false);
 			clear();
-		} else if (selectedRows.length == 1) {			
+		} else if (selectedRows.length == 1) {
 			WebLink selectedLink = localModel.getLinks().get(selectedRows[0]);
 
 			nameTextField.setText(selectedLink.getName());

@@ -24,8 +24,8 @@ import javax.swing.table.AbstractTableModel;
 public final class WebLinksView implements ListSelectionListener {
 
 	private static WebLinksView singleton;
-	public JTable serverTable;
-	public JTable localTable;
+	public StyledJTable serverTable;
+	public StyledJTable localTable;
 	public WebLinksTableModel serverModel;
 	public WebLinksTableModel localModel;
 	public ListSelectionModel lsm;
@@ -65,7 +65,7 @@ public final class WebLinksView implements ListSelectionListener {
 		super();
 
 		serverTable = new StyledJTable();
-		localTable = new JTable();
+		localTable = new StyledJTable();
 
 		serverModel = new WebLinksTableModel();
 		localModel = new WebLinksTableModel();

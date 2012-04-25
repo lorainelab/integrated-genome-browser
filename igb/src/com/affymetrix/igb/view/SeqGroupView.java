@@ -30,7 +30,6 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTable;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;

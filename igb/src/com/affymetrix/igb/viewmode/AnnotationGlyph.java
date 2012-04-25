@@ -229,28 +229,28 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	
 	@Override
 	public double getChildHeight(){
-		double style_height = 0;
+		double child_height = 0;
 				boolean use_label = getAnnotStyle().getLabelField() != null && 
 				!getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && 
 				(getAnnotStyle().getLabelField().trim().length() > 0);
 		
 		switch(getDirection()){
 			case REVERSE:
-				style_height = (int) getAnnotStyle().getReverseHeight();
+				child_height = (int) getAnnotStyle().getReverseHeight();
 				break;
 			
 			case FORWARD:
-				style_height = (int) getAnnotStyle().getForwardHeight() * -1;
+				child_height = (int) getAnnotStyle().getForwardHeight();
 				break;
 				
 			case BOTH:
-				style_height = (int) getAnnotStyle().getHeight() * -1;
+				child_height = (int) getAnnotStyle().getHeight();
 				break;
 		}
-		style_height = use_label ? style_height * 2 : style_height;
-		style_height = style_height + getSpacing() * 2;
-		style_height = style_height * getActualSlots();
-		return style_height;
+		child_height = use_label ? child_height * 2 : child_height;
+		child_height = child_height + getSpacing() * 2;
+		
+		return child_height;
 	}
 	
 	@Override
@@ -265,11 +265,8 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		int coord_offset = (int) (BUFFER * 1.5);
 		if (getDirection() != TierGlyph.Direction.REVERSE) {
 			int style_depth = getDirection() == TierGlyph.Direction.FORWARD ? getAnnotStyle().getForwardMaxDepth() : getAnnotStyle().getMaxDepth();
-			boolean use_label = getAnnotStyle().getLabelField() != null && !getAnnotStyle().getLabelField().equals(TrackConstants.NO_LABEL) && (getAnnotStyle().getLabelField().trim().length() > 0);
-			int style_height = (int) (getDirection() == TierGlyph.Direction.FORWARD ? getAnnotStyle().getForwardHeight() : getAnnotStyle().getHeight());
-			style_height = use_label ? style_height * 2 : style_height;
-			style_height = (int) (style_height + expand_packer.getSpacing() * 2);
 			if(getActualSlots() > style_depth){
+				int style_height = (int) getChildHeight();
 				coord_offset = style_height * (getActualSlots() - style_depth) + coord_offset;
 			} 
 			coord_offset = -coord_offset;

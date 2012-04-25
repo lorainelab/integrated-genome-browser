@@ -20,7 +20,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private SetColorByScoreAction() {
-		super("Set Color By Score", null);
+		super("Set Range of Color By Score", null);
 	}
 
 	public void updateColorByScore(List<TierLabelGlyph> theTiers){

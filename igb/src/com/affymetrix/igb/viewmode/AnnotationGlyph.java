@@ -253,6 +253,19 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		return child_height;
 	}
 	
+	private int getStyleDepth(){
+		switch(getDirection()){
+			case REVERSE:
+				return getAnnotStyle().getReverseMaxDepth();
+			
+			case FORWARD:
+				return getAnnotStyle().getForwardMaxDepth();
+						
+			default:
+				return getAnnotStyle().getMaxDepth();
+		}
+	}
+		
 	@Override
 	protected void setModifiedViewCoords(ViewI view){
 		view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
@@ -264,17 +277,15 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		
 		int coord_offset = (int) (BUFFER * 1.5);
 		if (getDirection() != TierGlyph.Direction.REVERSE) {
-			int style_depth = getDirection() == TierGlyph.Direction.FORWARD ? getAnnotStyle().getForwardMaxDepth() : getAnnotStyle().getMaxDepth();
-			if(getActualSlots() > style_depth){
-				int style_height = (int) getChildHeight();
-				coord_offset = style_height * (getActualSlots() - style_depth) + coord_offset;
+			if(getActualSlots() > getStyleDepth()){
+				coord_offset = (int)getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
 			} 
 			coord_offset = -coord_offset;
 			//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
 		}
 		setOffset(coord_offset);
 	}
-		
+
 	@Override
 	public void drawChildren(ViewI view) {
 		// Set upper and lower buffer region coords

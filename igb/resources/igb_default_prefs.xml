@@ -56,19 +56,19 @@
    />
 
 <!-- BioViz DAS data sets -->
-  <annotation_url annot_type_regex="^EST (single map)$"
+  <annotation_url annot_type_regex="^EST \(single map\)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
 	type="default"
   />
 
-  <annotation_url annot_type_regex="^EST (multiple map)$"
+  <annotation_url annot_type_regex="^EST \(multiple map\)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
 	type="default"
   />
 
-  <annotation_url annot_type_regex="^EST (spliced, single map)$"
+  <annotation_url annot_type_regex="^EST \(spliced, single map\)$"
     name="GenBank EST"
     url="http://www.ncbi.nlm.nih.gov/nucest/$$"
 	type="default"
@@ -155,19 +155,19 @@
 	type="default"
   />
 
-  <annotation_url annot_type_regex="^NCBI EST (single map)$"
+  <annotation_url annot_type_regex="^NCBI EST \(single map\)$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
 	type="default"
   />
 
-  <annotation_url annot_type_regex="^NCBI EST (multiple map)$"
+  <annotation_url annot_type_regex="^NCBI EST \(multiple map\)$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
 	type="default"
   />
 
-  <annotation_url annot_type_regex="^NCBI EST (spliced, single map)$" 
+  <annotation_url annot_type_regex="^NCBI EST \(spliced, single map\)$" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
 	type="default"

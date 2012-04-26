@@ -392,15 +392,22 @@ public class TierGlyph extends SolidGlyph {
 		if (viewModeGlyph.getParent() == null) {
 			viewModeGlyph.setParent(super.getParent());
 		}
-		Glyph dummyGlyph = null;
+		Glyph glyph = null;
 		if (viewModeGlyph.getChildCount() == 0) {
-			dummyGlyph = new Glyph() {};
-			dummyGlyph.setCoordBox(viewModeGlyph.getCoordBox());
-			viewModeGlyph.addChild(dummyGlyph);
+			double height = style.getHeight();
+			if(!style.isGraphTier()){
+				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
+			}
+			// Add empty child.
+			glyph = new Glyph() {
+			};
+			glyph.setCoords(0, 0, 0, height);
+			addChild(glyph);
+			viewModeGlyph.addChild(glyph);
 		}
 		viewModeGlyph.pack(view);
-		if (dummyGlyph != null) {
-			viewModeGlyph.removeChild(dummyGlyph);
+		if (glyph != null) {
+			viewModeGlyph.removeChild(glyph);
 		}
 	}
 	@Override

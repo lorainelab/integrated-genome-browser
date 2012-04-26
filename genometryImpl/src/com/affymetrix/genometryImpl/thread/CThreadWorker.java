@@ -43,7 +43,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	protected abstract void finished();
 
 	protected boolean showCancelConfirmation(){
-		return false;
+		return true;
 	}
 	
 	public void cancelThread(boolean b){

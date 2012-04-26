@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.AbstractButton;
@@ -96,6 +99,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 					box.setVisible(false);
 					if(worker != null && !worker.isCancelled() && !worker.isDone()){
 						worker.cancelThread(true);
+						Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled thread " + worker.getMessage());
 					}
 				}
 			});

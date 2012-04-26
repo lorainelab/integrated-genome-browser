@@ -29,6 +29,14 @@ public abstract class GenericAction extends AbstractAction {
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
 
+	public GenericAction(String text, int mnemonic) {
+		this(text, null, null, mnemonic);
+	}
+	
+	public GenericAction(String text, String iconPath) {
+		this(text, null, iconPath, KeyEvent.VK_UNDEFINED);
+	}
+	
 	public GenericAction(String text, String tooltip, String iconPath, int mnemonic) {
 		this(text, tooltip, iconPath, mnemonic, null, false);
 	}
@@ -45,18 +53,7 @@ public abstract class GenericAction extends AbstractAction {
 		_setProperties();
 	}
 
-	public GenericAction(String text, String iconPath) {
-		this(text, null, iconPath, KeyEvent.VK_UNDEFINED);
-	}
-
-	public GenericAction(String text, int mnemonic) {
-		this(text, null, null, mnemonic);
-	}
-
 	private void _setProperties() {
-		setProperties(true);
-	}
-	protected void setProperties(boolean add) {
 		putValue(Action.NAME, getDisplay());
 		if (iconPath != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
@@ -74,10 +71,9 @@ public abstract class GenericAction extends AbstractAction {
 		if (tooltip == null && text != null) {
 			this.putValue(SHORT_DESCRIPTION, text);
 		}
-		if (add) {
-			GenericActionHolder.getInstance().addGenericAction(this);
-		}
+		GenericActionHolder.getInstance().addGenericAction(this);
 	}
+
 	public final String getText() {
 		return text;
 	}

@@ -620,11 +620,11 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
 		if (!initialized) {
 			resize();
 			initialized = true;
 		}
+		super.paint(g);
 	}
 
 	@Override

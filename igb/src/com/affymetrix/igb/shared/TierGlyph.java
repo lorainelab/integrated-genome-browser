@@ -44,7 +44,7 @@ public class TierGlyph extends SolidGlyph {
 
 	private final SeqMapViewExtendedI smv;
 	private SeqSymmetry modelSym;
-	private boolean ignoreUnloaded = false;
+	private boolean unloadedOK = false;
 
 	public TierGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI smv, ViewModeGlyph viewModeGlyph) {
  		this.modelSym = sym;
@@ -117,7 +117,7 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	private boolean isSymLoaded() {
-		if (ignoreUnloaded) {
+		if (unloadedOK) {
 			return true;
 		}
 		if (modelSym == null) {
@@ -136,20 +136,10 @@ public class TierGlyph extends SolidGlyph {
 		return loaded;
 	}
 
-	public void reset(){
-		setStyle(this.style, viewModeGlyph.getChildCount() == 0);
-	}
-
-	private void setStyle(ITrackStyleExtended style, boolean force){
+	public void setStyle(ITrackStyleExtended style){
 		ITrackStyleExtended saveStyle = this.style;
 		this.style = style;
-		if(!isSymLoaded()){
-			if (force) {
-				MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
-				setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
-			}
-		}
-		else if (force || saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
+		if (saveStyle == null || !saveStyle.getViewMode().equals(style.getViewMode())) {
 			setViewModeGlyph(style);
 		}
 		else {
@@ -215,10 +205,6 @@ public class TierGlyph extends SolidGlyph {
 		comboGlyph.removeChild(joinedGlyph);
 		viewModeGlyph = joinedGlyph;
 		viewModeGlyph.setCoordBox(super.getCoordBox());
-	}
-
-	public void setStyle(ITrackStyleExtended style) {
-		setStyle(style, false);
 	}
 
 	public void setFillColor(Color col) {
@@ -406,7 +392,15 @@ public class TierGlyph extends SolidGlyph {
 		if (viewModeGlyph.getParent() == null) {
 			viewModeGlyph.setParent(super.getParent());
 		}
+		Glyph dummyGlyph = null;
+		if (viewModeGlyph.getChildCount() == 0) {
+			dummyGlyph = new Glyph() {};
+			viewModeGlyph.addChild(dummyGlyph);
+		}
 		viewModeGlyph.pack(view);
+		if (dummyGlyph != null) {
+			viewModeGlyph.removeChild(dummyGlyph);
+		}
 	}
 	@Override
 	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
@@ -541,17 +535,27 @@ public class TierGlyph extends SolidGlyph {
 		setCoords(cbox.x, cbox.y, cbox.width, height);
 		this.moveRelative(0, diffy);
 	}
-	
+
 	public boolean isManuallyResizable() {
 		return this.viewModeGlyph.isManuallyResizable();
 	}
 
-	public void setIgnoreUnloaded(boolean ignoreUnloaded) {
-		this.ignoreUnloaded = ignoreUnloaded;
+	public boolean isGarbage() {
+		return !unloadedOK && viewModeGlyph.isGarbage();
+	}
+
+	public void setUnloadedOK(boolean unloadedOK) {
+		this.unloadedOK = unloadedOK;
+	}
+
+	public void makeGarbage() {
+		viewModeGlyph.removeAllChildren();
+//		viewModeGlyph.setInfo(null);
+		setUnloadedOK(false);
 	}
 
 	@Override
 	public String toString() {
-		return "viewModeGlyph=" + (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? "###>" : " ---> ") + ";direction=" + getDirection() + ";style=" + (style == null ? "null" : style.toString());
+		return "viewModeGlyph=" + (viewModeGlyph == null ? "null" : viewModeGlyph.getClass().getSimpleName()) + (viewModeGlyph.getChildCount() == 0 ? " ###" : " ---") + (unloadedOK ? "y" : "n") + " >;direction=" + getDirection() + ";style=" + (style == null ? "null" : style.toString());
 	}
 }

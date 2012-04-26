@@ -23,8 +23,8 @@ public class ScoredContainerViewModeGlyph extends AbstractViewModeGlyph{
 	}
 
 	ScoredContainerViewModeGlyph(ITrackStyleExtended style){
+		super();
 		setStyle(style);
-		initUnloaded();
 	}
 	
 

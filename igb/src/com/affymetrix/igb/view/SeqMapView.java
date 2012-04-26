@@ -871,7 +871,7 @@ public class SeqMapView extends JPanel
 				continue;
 			}
 			TierGlyph tg = cur_tiers.get(i);
-			tg.removeAllChildren();
+			tg.makeGarbage();
 			temp_tiers.add(tg);
 			if (DEBUG_TIERS) {
 				System.out.println("removing tier from map: " + tg.getLabel());
@@ -1099,19 +1099,19 @@ public class SeqMapView extends JPanel
 			ViewModeGlyph vg = tg.getViewModeGlyph();
 			if (vg instanceof AbstractGraphGlyph && ((AbstractGraphGlyph)vg).getGraphState().getComboStyle() != null) {
 				TierGlyph comboTierGlyph = this.getTrack(null, ((AbstractGraphGlyph)vg).getGraphState().getComboStyle(), Direction.BOTH, ComboGlyphFactory.getInstance());
-				comboTierGlyph.setIgnoreUnloaded(true);
+				comboTierGlyph.setUnloadedOK(true);
 				tg.enjoin(comboTierGlyph.getViewModeGlyph(), getSeqMap());
 			}
  		}
 	}
 
 	/**
- 	 * hide TierGlyphs with no children (that is how IGB indicates that a glyph is garbage)
+ 	 * hide TierGlyphs with no children and !unloadedOK (that is how IGB indicates that a glyph is garbage)
  	 * @param tiers the list of TierGlyphs
 	 */
 	private void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
-			if (tg.getChildCount() == 0) {
+			if (tg.isGarbage()) {
 				tg.setVisibility(false);
 			}
 		}

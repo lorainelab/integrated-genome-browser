@@ -269,23 +269,16 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 		return selectedSyms;
 	}
 
-	protected void initUnloaded() {
+	@Override
+	public void initUnloaded() {
 		if (getChildCount() <= 0) {
 			Glyph glyph;
 
 			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
 			SeqSymmetry sym = new SimpleMutableSeqSymmetry();
-			int slots = 1;//smv.getAverageSlots();
 			double height = style.getHeight();
 			if(!style.isGraphTier()){
 				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-			}
-			for (int i = 0; i < slots; i++) {
-				// Add empty child.
-				glyph = new Glyph() {
-				};
-				glyph.setCoords(0, 0, 0, height);
-				addChild(glyph);
 			}
 			
 			if(style.getFeature() != null){

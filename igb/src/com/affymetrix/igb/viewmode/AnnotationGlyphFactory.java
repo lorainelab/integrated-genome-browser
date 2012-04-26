@@ -100,10 +100,12 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
-		SeqSymmetry current = sym;
-		while (current.getChildCount() != 0) {
-			current = current.getChild(0);
-			depth++;
+		if (sym != null) {
+			SeqSymmetry current = sym;
+			while (current.getChildCount() != 0) {
+				current = current.getChild(0);
+				depth++;
+			}
 		}
 		return depth;
 	}
@@ -139,6 +141,10 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 
 			if (annotseq != coordseq) {
 				sym = gviewer.transformForViewSeq(insym, annotseq);
+			}
+
+			if (sym == null) {
+				return;
 			}
 
 			SeqSpan pspan = gviewer.getViewSeqSpan(sym);

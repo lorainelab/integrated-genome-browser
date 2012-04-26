@@ -394,24 +394,30 @@ public class TrackView {
 				method, feature.featureName, feature.getExtension(), feature.featureProps);
 		}
 	}
-	
+
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
 		if(setViewMode){
 			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
 			String viewmode = factory.getName();
 			style.setViewMode(viewmode);
 		}
+		RootSeqSymmetry rootSym = null;
 		if(!style.isGraphTier()){
 			Direction direction = style.getSeparate() ? Direction.FORWARD : Direction.BOTH;
-			TierGlyph tgfor = gviewer.getTrack(null, style, direction);
-			tgfor.reset();
+			//rootSym = (category == FileTypeCategory.ScoredContainer) ? new ScoredContainerSym() : new TypeContainerAnnot(style.getMethodName());
+			TierGlyph tgfor = gviewer.getTrack(rootSym, style, direction);
+			tgfor.getViewModeGlyph().initUnloaded();
+			tgfor.setUnloadedOK(true);
 			if (style.getSeparate()) {
-				TierGlyph tgrev = gviewer.getTrack(null, style, Direction.REVERSE);
-				tgrev.reset();
+				TierGlyph tgrev = gviewer.getTrack(rootSym, style, Direction.REVERSE);
+				tgrev.getViewModeGlyph().initUnloaded();
+				tgrev.setUnloadedOK(true);
 			}
 		}else {
-			TierGlyph tg = gviewer.getTrack(null, style, Direction.NONE);
-			tg.reset();
+			//rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
+			TierGlyph tg = gviewer.getTrack(rootSym, style, Direction.NONE);
+			tg.getViewModeGlyph().initUnloaded();
+			tg.setUnloadedOK(true);
 		}
 		return;
 	}

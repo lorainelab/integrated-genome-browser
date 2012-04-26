@@ -208,7 +208,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 				if (style instanceof TrackStyle
 						&& style.getShow()
-						&& tier.getChildCount() > 0) {
+						&& !tier.isGarbage()) {
 					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
 			}
@@ -292,8 +292,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 		bgColorComboBox.setSelectedColor((Color) getValueAt(COL_BACKGROUND));
 		fgColorComboBox.setSelectedColor((Color) getValueAt(COL_FOREGROUND));
-		trackNameSizeComboBox.setSelectedItem((Float) getValueAt(COL_TRACK_NAME_SIZE));
-		labelFieldComboBox.setSelectedItem((String) getValueAt(COL_LABEL_FIELD));
+		trackNameSizeComboBox.setSelectedItem(getValueAt(COL_TRACK_NAME_SIZE));
+		labelFieldComboBox.setSelectedItem(getValueAt(COL_LABEL_FIELD));
 		maxDepthTextField.setText(String.valueOf(getValueAt(COL_MAX_DEPTH)));
 		show2TracksCheckBox.setSelected((Boolean) getValueAt(COL_SHOW_2_TRACKS));
 		connectedCheckBox.setSelected((Boolean) getValueAt(COL_CONNECTED));
@@ -824,11 +824,11 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 							break;
 						case COL_TRACK_NAME_SIZE:
 							style.setTrackNameSize((Float) value);
-							trackNameSizeComboBox.setSelectedItem((Float) value);
+							trackNameSizeComboBox.setSelectedItem(value);
 							break;
 						case COL_LABEL_FIELD:
 							style.setLabelField((String) value);
-							labelFieldComboBox.setSelectedItem((String) value);
+							labelFieldComboBox.setSelectedItem(value);
 							break;
 						case COL_MAX_DEPTH: {
 							tempInt = parseInteger(((String) value), 0, style.getMaxDepth());

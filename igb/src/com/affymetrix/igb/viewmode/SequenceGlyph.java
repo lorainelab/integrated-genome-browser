@@ -32,7 +32,6 @@ public class SequenceGlyph extends AbstractViewModeGlyph {
 		setSpacer(spacer);
 		setPacker(packer);
 		setStyle(style);
-		initUnloaded();
 	}
 
 	@Override

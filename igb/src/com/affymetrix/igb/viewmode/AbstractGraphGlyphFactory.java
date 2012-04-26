@@ -1,8 +1,11 @@
 package com.affymetrix.igb.viewmode;
 
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -13,6 +16,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
@@ -116,7 +120,8 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		}
 
 		SeqSpan pspan = smv.getViewSeqSpan(newgraf);
-		if (pspan == null || pspan.getLength() == 0) {
+//		if (pspan == null || pspan.getLength() == 0) {
+		if (pspan == null) {
 			return null;
 		}
 		graph_glyph.setCoords(pspan.getMin(), tier_style.getY(), pspan.getLength(), tier_style.getHeight());
@@ -164,11 +169,13 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {
+		ViewModeGlyph result = null;
 		if (sym == null) {
-			return createViewModeGlyph(null, new GraphState(style));
-		}
-		else if (sym instanceof GraphSym) {
-			ViewModeGlyph result = displayGraph((GraphSym) sym, smv, check_same_seq);
+			sym = new GraphSym(new int[]{smv.getVisibleSpan().getMin()}, new float[]{0}, style.getMethodName(), GenometryModel.getGenometryModel().getSelectedSeq());
+			result = getViewModeGlyph(sym, style, Direction.BOTH, smv);
+			result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+		} else if (sym instanceof GraphSym) {
+			result = displayGraph((GraphSym) sym, smv, check_same_seq);
 			if(smv.getViewSeq() != smv.getAnnotatedSeq()){
 				GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
 				genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
@@ -177,14 +184,13 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 				}
 				((AbstractGraphGlyph)result).drawHandle(false);
 				genomeGraphGlyph.addChild(result);
-				return genomeGraphGlyph;
+				result = genomeGraphGlyph;
 			}
-			return result;
 		} else {
-			System.err.println("GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "
 					+ "passed in is NOT a GraphSym: " + sym);
 		}
-		return null;
+		return result;
 	}
 	
 	public static class GenomeGraphGlyph extends MultiGraphGlyph{

@@ -145,7 +145,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	protected AbstractGraphGlyph(GraphState state) {
 		super();
 		this.state = state;
-		initUnloaded();
 	}
 	
 	protected AbstractGraphGlyph(GraphSym graf, GraphState gstate) {
@@ -160,7 +159,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 		}
 
 		if (graf == null || graf.getPointCount() == 0) {
-			initUnloaded();
 			return;
 		}
 

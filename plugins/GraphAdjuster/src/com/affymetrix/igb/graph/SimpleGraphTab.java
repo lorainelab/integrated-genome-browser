@@ -969,11 +969,9 @@ public final class SimpleGraphTab
 
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);
-			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
-				if (isTierGlyph(parentgl)) {
-					igbService.deleteGlyph(parentgl);
-					igbService.packMap(false, false);
-				}
+			if (isTierGlyph(parentgl) && ((TierGlyph)parentgl).isGarbage()) {  // if no children left in tier, then remove it
+				igbService.deleteGlyph(parentgl);
+				igbService.packMap(false, false);
 			}
 		} else {
 			igbService.deleteGraph(gsym);

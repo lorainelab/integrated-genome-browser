@@ -71,7 +71,6 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
-		initUnloaded();
 	}
 	
 	@Override

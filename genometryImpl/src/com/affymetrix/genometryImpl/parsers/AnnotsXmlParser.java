@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.jdom.input.SAXBuilder;
 import org.jdom.*;
 
@@ -12,6 +14,7 @@ import org.jdom.*;
  * the DAS/2 server.
  * Modified by nick
  */
+@SuppressWarnings("rawtypes")
 public abstract class AnnotsXmlParser {
 
 	static Element root;
@@ -187,7 +190,7 @@ public abstract class AnnotsXmlParser {
 		}
 
 		public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {
-			for (AnnotMapElt annotMapElt : annotList) {
+			for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<AnnotMapElt>(annotList)) {
 				if (annotMapElt.fileName.equalsIgnoreCase(fileName)) {
 					return annotMapElt;
 				}
@@ -196,7 +199,7 @@ public abstract class AnnotsXmlParser {
 		}
 
 		public static AnnotMapElt findTitleElt(String title, List<AnnotMapElt> annotList) {
-			for (AnnotMapElt annotMapElt : annotList) {
+			for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<AnnotMapElt>(annotList)) {
 				if (annotMapElt.title.equalsIgnoreCase(title)) {
 					return annotMapElt;
 				}

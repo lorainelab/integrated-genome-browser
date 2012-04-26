@@ -395,6 +395,7 @@ public class TierGlyph extends SolidGlyph {
 		Glyph dummyGlyph = null;
 		if (viewModeGlyph.getChildCount() == 0) {
 			dummyGlyph = new Glyph() {};
+			dummyGlyph.setCoordBox(viewModeGlyph.getCoordBox());
 			viewModeGlyph.addChild(dummyGlyph);
 		}
 		viewModeGlyph.pack(view);

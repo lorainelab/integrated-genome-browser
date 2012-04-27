@@ -10,6 +10,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.ColorByScoreEditor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public class SetColorByScoreAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -20,7 +21,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private SetColorByScoreAction() {
-		super("Set Range of Color By Score", null);
+		super(BUNDLE.getString("setColorByScoreRange"), null);
 	}
 
 	public void updateColorByScore(List<TierLabelGlyph> theTiers){

@@ -15,10 +15,11 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
 	/**
 	 * Creates new form ColorByScoreEditor
 	 */
-	public static String minText,maxText;
-	public ColorByScoreEditor(String minText, String maxText) {
+	public static String minText,maxText,intervalsText;
+	public ColorByScoreEditor(String minText, String maxText, String intervalsText) {
 		this.minText = minText;
 		this.maxText = maxText;
+		this.intervalsText = intervalsText;
 		initComponents();
 	}
 	public Float getMaxRange(){
@@ -43,6 +44,17 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
 			return null;
 		}
 	}
+	public Integer getColorIntervals(){
+		try{
+			return Integer.parseInt(colorIntervalsField.getText());
+		}
+		catch(NumberFormatException e){
+			ErrorHandler.errorPanel(e.getLocalizedMessage()
+			+ " Color Intervals must be an Integer value: "
+			+ this.toString());
+			return null;
+		}
+	}
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -56,6 +68,8 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
         minRangeField = new javax.swing.JTextField();
         maxLabel = new javax.swing.JLabel();
         maxRangeField = new javax.swing.JTextField();
+        colorIntervalsField = new javax.swing.JTextField();
+        colorIntervalsLabel = new javax.swing.JLabel();
 
         minLabel.setText("Minimum:");
 
@@ -67,20 +81,30 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
         maxRangeField.setText(maxText);
         maxRangeField.setColumns(10);
 
+        colorIntervalsField.setColumns(10);
+        colorIntervalsField.setText(intervalsText);
+
+        colorIntervalsLabel.setText("Color Intervals: ");
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(31, 31, 31)
-                .add(minLabel)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(minLabel)
+                    .add(colorIntervalsLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(minRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(29, 29, 29)
-                .add(maxLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(maxRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(colorIntervalsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(layout.createSequentialGroup()
+                        .add(minRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(29, 29, 29)
+                        .add(maxLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(maxRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -91,10 +115,16 @@ public class ColorByScoreEditor extends javax.swing.JPanel {
                     .add(minRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(maxLabel)
                     .add(maxRangeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(colorIntervalsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(colorIntervalsLabel))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField colorIntervalsField;
+    private javax.swing.JLabel colorIntervalsLabel;
     private javax.swing.JLabel maxLabel;
     private javax.swing.JTextField maxRangeField;
     private javax.swing.JLabel minLabel;

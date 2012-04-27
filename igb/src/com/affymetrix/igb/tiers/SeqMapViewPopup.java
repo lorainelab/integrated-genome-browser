@@ -189,7 +189,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		JMenuItem set_color_by_score = new JMenuItem(SetColorByScoreAction.getAction());
 		changeMenu.add(set_color_by_score);
 		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
-		color_by_score.setSelected(any_are_color_off && num_selections > 0 && !coordinates_track_selected);
+		color_by_score.setSelected(!any_are_color_off && num_selections > 0 && !coordinates_track_selected);
 		color_by_score.setEnabled(num_selections == 1);
 		changeMenu.add(color_by_score);
 		return changeMenu;

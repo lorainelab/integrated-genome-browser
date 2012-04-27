@@ -79,6 +79,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
+	private int colorIntervals = 255;
+	public boolean customise = false;
+	private Color customColors[] = new Color[10];
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;
@@ -546,7 +549,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private Preferences getNode() {
 		return this.node;
 	}
-
+	public int getColorIntervals(){
+		return colorIntervals;
+	}
+	public void setColorIntervals(int intervals){
+		colorIntervals = intervals; 
+	}
+	public void setCustomHeatMap(HeatMap map){
+		custom_heatmap = map;
+	}
 	/* Gets an instance that can be used for holding
 	 *  default values.  The default instance is used as a template in creating
 	 *  new instances.  (Although not ALL properties of the default instance are used
@@ -966,11 +977,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		} else if (score > max) {
 			score = max;
 		}
-		
 		final float range = max - min;
-		int index = (int) ((score / range) * 255);
-		
-		return getCustomHeatMap().getColors()[index];
+		int interSize = (int)(range/colorIntervals);
+		if(!customise){
+			int colorSize = 255/colorIntervals;
+			int index =  ((int)(score / interSize)) * colorSize;
+			if(index > 255)
+				index = 255;
+			return getCustomHeatMap().getColors()[index];
+		}
+		return custom_heatmap.interpolateColor(getBackground(), custom_heatmap.getColor((int)(score/interSize)), 0.5f);
 	}
 
 	/**

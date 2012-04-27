@@ -21,7 +21,7 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private SetColorByScoreAction() {
-		super(BUNDLE.getString("setColorByScoreRange"), null);
+		super(BUNDLE.getString("setColorByScore"), null);
 	}
 
 	public void updateColorByScore(List<TierLabelGlyph> theTiers){
@@ -34,27 +34,33 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 		TrackStyle style;
 		String minText = "";
 		String maxText = "";
+		String intervalsText = "";
+		int interval;
 		if(theTiers.size() == 1){
 			TierLabelGlyph tlg = theTiers.get(0);
 			TierGlyph tg = (TierGlyph) tlg.getInfo();
 			style = (TrackStyle)tg.getAnnotStyle();
 			min = style.getMinScoreColor();
 			max = style.getMaxScoreColor();
+			interval = style.getColorIntervals();
 			minText+= min;
 			maxText+=max;
+			intervalsText+=interval; 
 		}
-		editor = new ColorByScoreEditor(minText, maxText);
+		editor = new ColorByScoreEditor(minText, maxText, intervalsText);
 		int isOK = JOptionPane.showConfirmDialog(null, editor, "Set Color By Score", JOptionPane.OK_CANCEL_OPTION);
 		
 		switch(isOK){
 			case JOptionPane.OK_OPTION : 
 				float updatedMinRange = editor.getMinRange();
 				float updatedMaxRange = editor.getMaxRange();
+				int  updatedIntervals = editor.getColorIntervals(); 
 				for(TierLabelGlyph label : theTiers){
 					TierGlyph tg = (TierGlyph)label.getInfo();
 					style = (TrackStyle)tg.getAnnotStyle();
 					style.setMinScoreColor(updatedMinRange);
 					style.setMaxScoreColor(updatedMaxRange);
+					style.setColorIntervals(updatedIntervals);
 				}
 		}
 		refreshMap(false, false);

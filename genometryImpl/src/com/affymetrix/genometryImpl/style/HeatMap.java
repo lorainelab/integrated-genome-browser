@@ -139,7 +139,7 @@ public final class HeatMap {
 	public static HeatMap makeLinearHeatmap(String name, Color low, Color high) {
 		Color[] colors = new Color[256];
 		HeatMap heat_map = new HeatMap(name, colors);
-
+		
 		for (int i=0; i<256; i++) {
 			float x = (i*1.0f)/255.0f;
 			colors[i] = interpolateColor(low, high, x);

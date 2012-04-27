@@ -74,7 +74,7 @@ public abstract class AbstractExportFileAction extends GenericAction {
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 		JFileChooser chooser = UniFileChooser.getFileChooser(fth.getName(), extension);
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-
+		
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());

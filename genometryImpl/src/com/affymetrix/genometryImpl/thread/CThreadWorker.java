@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.thread;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.SwingWorker;
@@ -9,6 +11,7 @@ import javax.swing.SwingWorker;
  * @author hiralv
  */
 public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
+	private static Map<Thread, CThreadWorker> thread2CThreadWorker = new HashMap<Thread, CThreadWorker>();
 	
 	private Set<CThreadListener> listeners= new CopyOnWriteArraySet<CThreadListener>();
 	
@@ -34,8 +37,11 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	
 	@Override
 	protected final T doInBackground() throws Exception {
+		thread2CThreadWorker.put(Thread.currentThread(), this);
 		fireThreadEvent(this, CThreadEvent.STARTED);
-		return runInBackground();
+		T t = runInBackground();
+		thread2CThreadWorker.remove(Thread.currentThread());
+		return t;
 	}
 	
 	protected abstract T runInBackground();
@@ -64,4 +70,7 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		}
 	}
 
+	public static CThreadWorker getCurrentCThreadWorker() {
+		return thread2CThreadWorker.get(Thread.currentThread());
+	}
 }

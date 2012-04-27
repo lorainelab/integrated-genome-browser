@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -125,6 +126,7 @@ public final class BAM extends XAM {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		List<Throwable> errList = new ArrayList<Throwable>(10);
 		CloseableIterator<SAMRecord> iter = null;
+		CThreadWorker ctw = CThreadWorker.getCurrentCThreadWorker();
 		try {
 			if (reader != null) {
 				iter = reader.query(seqs.get(seq), min, max, contained);

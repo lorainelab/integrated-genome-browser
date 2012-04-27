@@ -399,10 +399,8 @@ public class TierGlyph extends SolidGlyph {
 				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
 			}
 			// Add empty child.
-			glyph = new Glyph() {
-			};
+			glyph = new Glyph() {};
 			glyph.setCoords(0, 0, 0, height);
-			addChild(glyph);
 			viewModeGlyph.addChild(glyph);
 		}
 		viewModeGlyph.pack(view);

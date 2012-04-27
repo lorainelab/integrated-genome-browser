@@ -50,6 +50,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 	}
 	
 	private ThreadHandler(){
+		super();
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		listeners= new CopyOnWriteArraySet<CThreadListener>();
@@ -75,7 +76,16 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		final int y = (int) frame.getAlignmentY() + frame.getHeight()  - ((size+1) * 29);
 		runningTasks.show(frame,x,y);
 	}
-	
+
+	public void cancelAllTasks() {
+		for (final CThreadWorker worker : workers) {
+			if(worker != null && !worker.isCancelled() && !worker.isDone()){
+				worker.cancelThread(true);
+			}
+		}		
+		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled all threads");
+	}
+
 	public int setCancelPopup() {
 		int size = workers.size();
 		if(size == 0){

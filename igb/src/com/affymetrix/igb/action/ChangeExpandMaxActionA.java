@@ -2,8 +2,6 @@ package com.affymetrix.igb.action;
 
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;

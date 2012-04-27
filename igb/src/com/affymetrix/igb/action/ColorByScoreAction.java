@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -24,7 +23,7 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 	private void setColorByScore(TierLabelGlyph tlg) {
 			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
 			style.setColorByScore(!style.getColorByScore());
-			this.putValue(this.SELECTED_KEY,style.getColorByScore());
+			this.putValue(SELECTED_KEY,style.getColorByScore());
 		refreshMap(false, false);
 	}
 

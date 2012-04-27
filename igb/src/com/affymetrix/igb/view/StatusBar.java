@@ -4,6 +4,9 @@ import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
@@ -12,6 +15,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.util.ThreadHandler;
 import java.awt.Color;
 import java.util.List;
@@ -22,7 +26,7 @@ import java.util.logging.Level;
 public final class StatusBar extends JPanel implements DisplaysError {
 	private static final long serialVersionUID = 1l;
 	
-	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
+//	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	private static final ImageIcon alertIcon = CommonUtils.getInstance().getIcon("images/Warning.png");
 	private static final ImageIcon stopIcon = CommonUtils.getInstance().getIcon("images/Stop16.gif");
 	private static final ImageIcon warningIcon = new ImageIcon("common/resources/images/warning.png");
@@ -46,13 +50,21 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		updateAvailable = new JButton(alertIcon);
 		updateAvailable.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		updateAvailable.setVisible(CommonUtils.getInstance().getUpdateAvailable());
-		mainCancel = new JRPButton("StatusBar_mainCancel", closeIcon);
+		mainCancel = new JRPButton("StatusBar_mainCancel", CancelAllAction.getAction());
 		stopAction = new JRPButton("StatusBar_stopAction", stopIcon);
 		stopAction.setVisible(false);
 		stopAction.setEnabled(false);
 		stopAction.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
-		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
+		mainCancel.setHideActionText(true);
+//		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
+		progressBar.addMouseListener(
+			new MouseAdapter() {
+			    public void mouseClicked(MouseEvent e) {
+			    	ThreadHandler.getThreadHandler().actionPerformed(null);
+			    }
+			}
+		);
 		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
@@ -78,19 +90,19 @@ public final class StatusBar extends JPanel implements DisplaysError {
 				
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addComponent(mainCancel)
+				.addComponent(progressBar)
 				.addComponent(stopAction)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
-				.addComponent(progressBar)
 				.addComponent(memory_item, 1, 200, 200)
 				.addComponent(updateAvailable));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(mainCancel)
+				.addComponent(progressBar)
 				.addComponent(stopAction)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
-				.addComponent(progressBar)
 				.addComponent(memory_item)
 				.addComponent(updateAvailable));
 		

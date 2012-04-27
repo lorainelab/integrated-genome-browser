@@ -35,7 +35,7 @@ public final class StatusBar extends JPanel implements DisplaysError {
 	private final MemoryStatusBarItem memory_item;
 	private final JRPButton mainCancel,stopAction;
 	private final JButton updateAvailable;
-	public final JProgressBar progressBar;
+	private final JProgressBar progressBar;
 	public static Timer timer;
 		
 	public StatusBar() {
@@ -71,8 +71,8 @@ public final class StatusBar extends JPanel implements DisplaysError {
 	
 		status_ta.setToolTipText(tt_status);
 		progressBar.setMaximumSize(new Dimension(150, 5));
-		progressBar.setIndeterminate(true);
-		progressBar.setVisible(false);
+		displayProgress(false);
+//		progressBar.setVisible(false);
 		
 		GroupLayout layout = new GroupLayout(this);
 		setLayout(layout);
@@ -119,6 +119,12 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		}
 
 		status_ta.setText(s);
+	}
+
+	public void displayProgress(boolean b) {
+//		progressBar.setVisible(b);
+		progressBar.setEnabled(b);
+		progressBar.setIndeterminate(b);
 	}
 
 	public String getStatus() {

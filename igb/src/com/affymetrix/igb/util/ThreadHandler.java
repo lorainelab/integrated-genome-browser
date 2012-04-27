@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.common.CommonUtils;
@@ -33,11 +34,11 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
  *
  * @author hiralv
  */
+@SuppressWarnings("rawtypes")
 public class ThreadHandler implements ActionListener, CThreadListener{
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
 	private static ThreadHandler singleton;
-	private final Set<CThreadListener> listeners;
 	private final Set<CThreadWorker> workers;
 	private final JPopupMenu runningTasks;
 	private final Set<AbstractButton> popupHandler;
@@ -53,7 +54,6 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		super();
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		listeners= new CopyOnWriteArraySet<CThreadListener>();
 		workers = new LinkedHashSet<CThreadWorker>();
 		popupHandler = new LinkedHashSet<AbstractButton>(1);
 	}
@@ -78,12 +78,11 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 	}
 
 	public void cancelAllTasks() {
-		for (final CThreadWorker worker : workers) {
+		for (final CThreadWorker worker : new CopyOnWriteArraySet<CThreadWorker>(workers)) {
 			if(worker != null && !worker.isCancelled() && !worker.isDone()){
 				worker.cancelThread(true);
 			}
 		}		
-		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled all threads");
 	}
 
 	public int setCancelPopup() {
@@ -113,11 +112,16 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 					}
 				}
 			});
-
+			final JProgressBar progressBar = new JProgressBar();
+			progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+			progressBar.setMaximumSize(new Dimension(150, 25));
+			
 			box.setBorder(BorderFactory.createEtchedBorder());
 			box.add(cancelTask);
 			box.add(Box.createRigidArea(new Dimension(5,25)));
 			box.add(taskName);
+			box.add(Box.createRigidArea(new Dimension(5,25)));
+			box.add(progressBar);
 			box.add(Box.createRigidArea(new Dimension(5,25)));
 			outerBox.add(box);
 

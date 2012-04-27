@@ -60,8 +60,6 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	
 	// Variable for scrolling in tier
 	private int offset = 1;
-	private Rectangle2D.Double lower = new Rectangle2D.Double();
-	private Rectangle2D.Double upper = new Rectangle2D.Double();
 	private Rectangle lower_pixelbox = new Rectangle();
 	private Rectangle upper_pixelbox = new Rectangle();
 	private Rectangle child_temp = new Rectangle();
@@ -296,13 +294,12 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	@Override
 	public void drawChildren(ViewI view) {
 		if (isScrollingAllowed()) {
-			// Set upper and lower buffer region coords
-			upper.setRect(getCoordBox().x, getCoordBox().y, getCoordBox().width, BUFFER);
-			lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - BUFFER, getCoordBox().width, BUFFER);
-
 			// Convert the upper and lower coords to pixelbox before modifying the view
-			view.transformToPixels(upper, upper_pixelbox);
-			view.transformToPixels(lower, lower_pixelbox);
+			view.transformToPixels(new Rectangle2D.Double(getCoordBox().x, 
+					getCoordBox().y, getCoordBox().width, BUFFER), upper_pixelbox);
+			view.transformToPixels(new Rectangle2D.Double(getCoordBox().x, 
+					getCoordBox().y + getCoordBox().height - BUFFER, 
+					getCoordBox().width, BUFFER), lower_pixelbox);
 
 			// Find the intersection
 			upper_pixelbox = upper_pixelbox.intersection(view.getPixelBox());

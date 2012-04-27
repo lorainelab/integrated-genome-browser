@@ -617,15 +617,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		servers.addAll(ServerList.getServerInstance().getEnabledServers());
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
-			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
 
-				protected Void doInBackground() throws Exception {
+				protected Void runInBackground() {
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}
 
 				@Override
-				public void done() {
+				public void finished() {
 					synchronized (servers) {
 						servers.remove(gServer);
 

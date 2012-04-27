@@ -7,6 +7,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
@@ -65,5 +66,16 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 			return false;
 		}
 		return true;
+	}
+	public final void setMinimumPixelBounds(Graphics g){
+		java.awt.FontMetrics fm = g.getFontMetrics();
+		int h = fm.getHeight();
+		h += 2 * 2; // border height
+		h += 4; // padding top
+		int w = fm.stringWidth("A Moderate Label");
+		w += 2; // border left
+		w += 4; // padding left
+		java.awt.Dimension minTierSizeInPixels = new java.awt.Dimension(w, h);
+		setMinimumPixelBounds(minTierSizeInPixels);
 	}
 }

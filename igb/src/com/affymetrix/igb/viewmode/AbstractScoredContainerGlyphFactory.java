@@ -196,7 +196,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 	}
 
 	private AbstractGraphGlyph displayGraphSym(GraphIntervalSym graf, SeqMapViewExtendedI smv) {
-		AbstractGraphGlyph graph_glyph = createViewModeGlyph(graf, graf.getGraphState());
+		AbstractGraphGlyph graph_glyph = createViewModeGlyph(graf, graf.getGraphState(), smv);
 		GraphState gstate = graph_glyph.getGraphState();
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(graf.getGraphName());
@@ -250,7 +250,7 @@ public abstract class AbstractScoredContainerGlyphFactory extends MapViewGlyphFa
 		return false;
 	}
 
-	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState);
+	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphIntervalSym graf, GraphState graphState, SeqMapViewExtendedI smv);
 
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv) {

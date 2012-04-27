@@ -544,22 +544,12 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 		return (checkCategory == category);
 	}
 
-	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction) {
+	protected ViewModeGlyph createViewModeGlyph(ITrackStyleExtended style, Direction direction, SeqMapViewExtendedI gviewer) {
 		ViewModeGlyph viewModeGlyph = new AnnotationGlyph(style);
 
 		//System.out.println("AnnotationGlyphFactory.createViewModeGlyph: style height: " + style.getHeight());
 		// Don't use style height. That seems to be in scene coordinates.
-		java.awt.Graphics g = Application.getSingleton().getMapView().getGraphics();
-		java.awt.FontMetrics fm = g.getFontMetrics();
-		int h = fm.getHeight();
-		h += 2 * 2; // border height
-		h += 4; // padding top
-		int w = fm.stringWidth("A Moderate Label");
-		w += 2; // border left
-		w += 4; // padding left
-		java.awt.Dimension minTierSizeInPixels = new java.awt.Dimension(w, h);
-		viewModeGlyph.setMinimumPixelBounds(minTierSizeInPixels);
-
+		viewModeGlyph.setMinimumPixelBounds(gviewer.getSeqMap().getGraphics());
 		viewModeGlyph.setDirection(direction);
 		return viewModeGlyph;
 	}
@@ -567,15 +557,15 @@ public class AnnotationGlyphFactory extends MapViewGlyphFactoryA {
 	@Override
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, Direction tier_direction, SeqMapViewExtendedI gviewer) {
 		if (sym == null) {
-			return createViewModeGlyph(style, tier_direction);
+			return createViewModeGlyph(style, tier_direction, gviewer);
 		}
 		else {
 			int glyph_depth = style.getGlyphDepth();
 
 			Direction useDirection = (tier_direction == Direction.BOTH) ? Direction.BOTH : Direction.FORWARD;
-			ViewModeGlyph ftier = createViewModeGlyph(style, useDirection);
+			ViewModeGlyph ftier = createViewModeGlyph(style, useDirection, gviewer);
 			ftier.setInfo(sym);
-			ViewModeGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(style, Direction.REVERSE);
+			ViewModeGlyph rtier = (tier_direction == Direction.BOTH) ? ftier : createViewModeGlyph(style, Direction.REVERSE, gviewer);
 			rtier.setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(gviewer, sym, ftier, rtier, glyph_depth);

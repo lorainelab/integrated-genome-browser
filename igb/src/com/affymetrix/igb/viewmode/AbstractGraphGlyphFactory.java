@@ -104,14 +104,14 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 		return displayGraphSym(newgraf, graf, smv, isGenome);
 	}
 
-	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate);
+	protected abstract AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv);
 
 	/**
 	 * Almost exactly the same as ScoredContainerGlyphFactory.displayGraphSym.
 	 */
 	private AbstractGraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapViewExtendedI smv, boolean isGenome) {
 		GraphState gstate = graf.getGraphState();
-		AbstractGraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate);
+		AbstractGraphGlyph graph_glyph = createViewModeGlyph(newgraf, gstate, smv);
 		ITrackStyleExtended tier_style = gstate.getTierStyle();
 		tier_style.setTrackName(newgraf.getGraphName());
 //		tier_style.setCollapsed(isGenome);

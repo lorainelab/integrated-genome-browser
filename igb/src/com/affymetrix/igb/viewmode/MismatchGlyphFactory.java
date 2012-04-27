@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -125,11 +126,15 @@ public class MismatchGlyphFactory extends AbstractGraphGlyphFactory {
 	}
 
 	@Override
-	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate) {
-		if(newgraf instanceof MisMatchPileupGraphSym)
-			return new MismatchPileupGlyph(newgraf, gstate);
-		
-		return new FillBarGraphGlyph(newgraf, gstate); 
+	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
+		AbstractGraphGlyph result = null;
+		if(newgraf instanceof MisMatchPileupGraphSym){
+			result = new MismatchPileupGlyph(newgraf, gstate);
+		}else{
+			result = new FillBarGraphGlyph(newgraf, gstate); 
+		}
+		result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
+		return result;
 	}
 	
 	@Override

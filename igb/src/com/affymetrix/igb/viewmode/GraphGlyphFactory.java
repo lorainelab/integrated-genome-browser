@@ -4,7 +4,7 @@ package com.affymetrix.igb.viewmode;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
-
+import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +18,7 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 	
 	public GraphGlyphFactory(Class<? extends AbstractGraphGlyph> clazz){
 		this.clazz = clazz;
-		AbstractGraphGlyph newInstance = createInstance(null, null);
+		AbstractGraphGlyph newInstance = createInstance(null, null, null);
 		if(newInstance != null){
 			this.name = newInstance.getName();
 		}else{
@@ -28,8 +28,8 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 	}
 	
 	@Override
-	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate) {
-		return createInstance(newgraf, gstate);
+	protected AbstractGraphGlyph createViewModeGlyph(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv) {
+		return createInstance(newgraf, gstate, smv);
 	}
 
 	@Override
@@ -37,9 +37,13 @@ public class GraphGlyphFactory extends AbstractGraphGlyphFactory {
 		return name;
 	}
 	
-	private AbstractGraphGlyph createInstance(GraphSym newgraf, GraphState gstate){
+	private AbstractGraphGlyph createInstance(GraphSym newgraf, GraphState gstate, SeqMapViewExtendedI smv){
 		try {
-			return clazz.getConstructor(new Class[]{GraphSym.class, GraphState.class}).newInstance(new Object[]{newgraf, gstate});
+			AbstractGraphGlyph result = clazz.getConstructor(new Class[]{GraphSym.class, GraphState.class}).newInstance(new Object[]{newgraf, gstate});
+			if(smv != null){
+				result.setMinimumPixelBounds(smv.getSeqMap().getGraphics());
+			}
+			return result;
 		} catch (Exception ex) {
 			Logger.getLogger(GraphGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
 		}

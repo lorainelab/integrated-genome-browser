@@ -38,6 +38,7 @@ public abstract class ViewModeGlyph extends SolidGlyph {
 	public abstract List<SeqSymmetry> getSelected();
 	public abstract void initUnloaded();
 	public abstract boolean toolBarHit(Rectangle2D.Double coord_hitbox, ViewI view);
+	public abstract double getChildHeight();
 	protected abstract boolean shouldDrawToolBar();
 	public boolean isGarbage() {
 		return getChildCount() == 0;

@@ -306,4 +306,10 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			addMiddleGlyph(glyph);
 		}
 	}
+	
+	@Override
+	public double getChildHeight(){
+		return style.getHeight();
+	}
+	
 }

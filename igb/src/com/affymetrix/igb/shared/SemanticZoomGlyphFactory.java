@@ -465,6 +465,12 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 			}
 		}
 		
+		
+		@Override
+		public double getChildHeight(){
+			return lastUsedGlyph.getChildHeight();
+		}
+		
 		//FIXME: Fix graph view mode.
 		@Override
 		public void copyChildren(ViewModeGlyph temp) {
@@ -490,14 +496,6 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 				return ((ScrollableViewModeGlyph)lastUsedGlyph).getOffset();
 			}
 			return 0;
-		}
-		
-		@Override
-		public double getChildHeight(){
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				return ((ScrollableViewModeGlyph)lastUsedGlyph).getChildHeight();
-			}
-			return lastUsedGlyph.getAnnotStyle().getHeight();
 		}
 		
 		@Override

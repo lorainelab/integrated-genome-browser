@@ -78,7 +78,6 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		super.setStyle(style);
 		if (style.getCollapsed()) {
 			setPacker(collapse_packer);
-			setOffset(0);
 		} else {
 			setPacker(expand_packer);
 		}
@@ -280,8 +279,9 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	}
 	
 	private void setInitialOffset() {
+		int coord_offset = 0;
 		if (isScrollingAllowed()) {
-			int coord_offset = (int) (BUFFER * 1.5);
+			coord_offset = (int) (BUFFER * 1.5);
 			if (getDirection() != TierGlyph.Direction.REVERSE) {
 				if (getActualSlots() > getStyleDepth()) {
 					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
@@ -289,24 +289,28 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 				coord_offset = -coord_offset;
 				//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
 			}
-			setOffset(coord_offset);
 		}
+		setOffset(coord_offset);
 	}
 
 	@Override
 	public void drawChildren(ViewI view) {
-		// Set upper and lower buffer region coords
-		upper.setRect(getCoordBox().x, getCoordBox().y,  getCoordBox().width, BUFFER);
-		lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - BUFFER, getCoordBox().width, BUFFER);
-		
-		// Convert the upper and lower coords to pixelbox before modifying the view
-		view.transformToPixels(upper, upper_pixelbox);
-		view.transformToPixels(lower, lower_pixelbox);
-		
-		// Find the intersection
-		upper_pixelbox = upper_pixelbox.intersection(view.getPixelBox());
-		lower_pixelbox = lower_pixelbox.intersection(view.getPixelBox());
-		
+		if (isScrollingAllowed()) {
+			// Set upper and lower buffer region coords
+			upper.setRect(getCoordBox().x, getCoordBox().y, getCoordBox().width, BUFFER);
+			lower.setRect(getCoordBox().x, getCoordBox().y + getCoordBox().height - BUFFER, getCoordBox().width, BUFFER);
+
+			// Convert the upper and lower coords to pixelbox before modifying the view
+			view.transformToPixels(upper, upper_pixelbox);
+			view.transformToPixels(lower, lower_pixelbox);
+
+			// Find the intersection
+			upper_pixelbox = upper_pixelbox.intersection(view.getPixelBox());
+			lower_pixelbox = lower_pixelbox.intersection(view.getPixelBox());
+		}else{
+			upper_pixelbox.setBounds(0, 0, 0, 0);
+			lower_pixelbox.setBounds(0, 0, 0, 0);
+		}
 		super.drawChildren(view);
 	}
 	

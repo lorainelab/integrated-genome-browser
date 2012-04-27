@@ -17,6 +17,7 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -407,10 +408,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		ArrayList<TrackStyle> currentStyleList = new ArrayList<TrackStyle>();
 		if (smv != null) {
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
-			List<TierGlyph> tiers = smv.getSeqMap().getTiers();
-			Iterator<TierGlyph> titer = tiers.iterator();
-			while (titer.hasNext()) {
-				TierGlyph tier = titer.next();
+			for (TierGlyph tier : new CopyOnWriteArrayList<TierGlyph>(smv.getSeqMap().getTiers())) {
 				ITrackStyle style = tier.getAnnotStyle();
 				if (style instanceof TrackStyle) {
 					if (!tier.isGarbage() || tier.getDirection() == Direction.AXIS) {

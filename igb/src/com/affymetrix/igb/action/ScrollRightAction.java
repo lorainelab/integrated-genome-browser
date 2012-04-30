@@ -17,7 +17,7 @@ public class ScrollRightAction extends SeqMapViewActionA {
 	}
 
 	public ScrollRightAction() {
-		super("Scroll Right",  "16x16/actions/go-next.png", "22x22/actions/go-next.png");
+		super("Scroll Right", null);
 	}
 
 	@Override

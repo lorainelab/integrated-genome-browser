@@ -1,3 +1,0 @@
-Bookmarks
- http://localhost:7085/UnibrowControl?version=A_thaliana_Jun_2009&seqid=chr1&start=0&end=30427670&loadresidues=false&feature_url_0=http%3A%2F%2Figbquickload.org%2Fquickload%2FA_thaliana_Jun_2009%2FTAIR10_mRNA.bed.gz&sym_method_0=http%3A%2F%2Figbquickload.org%2Fquickload%2FA_thaliana_Jun_2009%2FTAIR10_mRNA.bed.gz&sym_ypos_0=0&sym_yheight_0=25&sym_col_0=0x00FFFF&sym_bg_0=0x000000&sym_name_0=TAIR10+mRNA&view_mode_0=default&query_url=http%3A%2F%2Figbquickload.org%2Fquickload%2FA_thaliana_Jun_2009%2FTAIR10_mRNA.bed.gz&server_url=http%3A%2F%2Figbquickload.org%2Fquickload%2F&create=2012%2F02%2F27+10%3A43%3A12&modified=2012%2F02%2F27+10%3A43%3A12" COMMENT =A_thaliana_Jun_2009, chr1:0, 30427670
-

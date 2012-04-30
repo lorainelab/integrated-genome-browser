@@ -10,6 +10,7 @@ import javax.swing.SwingWorker;
  *
  * @author hiralv
  */
+@SuppressWarnings("rawtypes")
 public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private static Map<Thread, CThreadWorker> thread2CThreadWorker = new HashMap<Thread, CThreadWorker>();
 	
@@ -34,7 +35,14 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		finished();
 		fireThreadEvent(this, CThreadEvent.ENDED);
 	}
-	
+
+	public void setProgressAsPercent(double percent) {
+		if (percent > 1) {
+			percent = 1;
+		}
+		setProgress((int)(percent * 100.0));
+	}
+
 	@Override
 	protected final T doInBackground() throws Exception {
 		thread2CThreadWorker.put(Thread.currentThread(), this);

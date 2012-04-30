@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -112,9 +114,20 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 					}
 				}
 			});
-			final JProgressBar progressBar = new JProgressBar();
+			final JProgressBar progressBar = new JProgressBar(0, 100);
 			progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-			progressBar.setMaximumSize(new Dimension(150, 25));
+			progressBar.setMaximumSize(new Dimension(100, 25));
+
+			worker.addPropertyChangeListener(
+			     new PropertyChangeListener() {
+			         public void propertyChange(PropertyChangeEvent evt) {
+			             if ("progress".equals(evt.getPropertyName())) {
+			                 progressBar.setValue((Integer)evt.getNewValue());
+			                 progressBar.repaint();
+			             }
+			         }
+			     }
+			);
 			
 			box.setBorder(BorderFactory.createEtchedBorder());
 			box.add(cancelTask);

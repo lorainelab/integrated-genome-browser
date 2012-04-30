@@ -39,7 +39,7 @@ public final class WebLink {
 	private String species = "";
 	private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
 	private String original_regex = null;
-	private String type = null; // null implies from server or local weblink
+	private String type = null; // server or local source
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
@@ -295,8 +295,8 @@ public final class WebLink {
 		while (regex.startsWith("(?i)(?i)")) {
 			regex = regex.substring(4);
 		}
-		if (!regex.startsWith("(?i)")) {
-			regex = "(?i)" + regex; // force all web link matches to be case-insensitive
+		if (!regex.startsWith("(?i)") && !type.equals(LOCAL)) {
+			regex = "(?i)" + regex; // force all server web link matches to be case-insensitive
 		}
 		original_regex = regex;
 		pattern = Pattern.compile(regex);

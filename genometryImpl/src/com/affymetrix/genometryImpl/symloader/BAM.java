@@ -35,7 +35,8 @@ import net.sf.samtools.util.SeekableBufferedStream;
  * @author jnicol
  */
 public final class BAM extends XAM {
-	private static final int PROGRESS_FREQUENCY = 200;
+	private static final int PROGRESS_FREQUENCY = 50;
+	private static final int SLEEP_TIME = 20; // in milliseconds
 
 	private class CompressedStreamPosition {
 		private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
@@ -206,8 +207,10 @@ public final class BAM extends XAM {
 								CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
 								ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
 								counter = 0;
+								Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
 							}
 						}
+						catch (InterruptedException e) {}
 						catch (SAMException e) {
 							errList.add(e);
 						}

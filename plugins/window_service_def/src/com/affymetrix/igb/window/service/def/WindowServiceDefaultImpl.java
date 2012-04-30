@@ -6,8 +6,8 @@ import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -91,27 +91,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		frame = jFrame;
 		cpane = frame.getContentPane();
 		cpane.setLayout(new BorderLayout());
-		frame.addComponentListener(new ComponentListener()
-		{
-				@Override
-		        public void componentResized(ComponentEvent evt) {
-		    		for (TabState tabState : tabHolders.keySet()) {
-		    			tabHolders.get(tabState).resize();
-		    		}
-		        }
-
-				@Override
-				public void componentMoved(ComponentEvent e) {}
-
-				@Override
-				public void componentShown(ComponentEvent e) {
-		    		for (TabState tabState : tabHolders.keySet()) {
-		    			tabHolders.get(tabState).resize();
-		    		}
-				}
-
-				@Override
-				public void componentHidden(ComponentEvent e) {}
+		frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+		    	for (TabState tabState : tabHolders.keySet()) {
+		    		tabHolders.get(tabState).resize();
+		    	}
+			}
 		});
 		topPanel = new JPanel();
 		topPanel.setLayout(new BorderLayout());
@@ -143,6 +129,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void setSeqMapView(JPanel map_view) {
 		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(map_view);
+		bottom_pane.setResizeWeight(1.0);
 		bottom_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
 		try {
@@ -161,6 +148,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			left_pane.invokeTrayState(TrayState.getDefaultTrayState());
 		}
 		JTabbedTrayPane right_pane = new JTabbedTrayRightPane(left_pane);
+		right_pane.setResizeWeight(1.0);
 		right_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
 		try {

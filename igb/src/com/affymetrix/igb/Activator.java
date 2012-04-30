@@ -231,10 +231,6 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							String iconPath = genericAction.getIconPath();
-							if (iconPath == null) {
-								iconPath = DEFAULT_ICON_PATH;
-							}
 							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
 							button.setHideActionText(true);
 							((IGB)Application.getSingleton()).addToolbarButton(button);

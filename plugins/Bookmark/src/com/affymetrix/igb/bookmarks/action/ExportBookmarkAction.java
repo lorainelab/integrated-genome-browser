@@ -16,7 +16,7 @@ public class ExportBookmarkAction extends GenericAction {
 	}
 
 	public ExportBookmarkAction() {
-		super(BUNDLE.getString("exportBookmarks"), null, "16x16/actions/go-top.png", "32x32/actions/go-top.png", KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("exportBookmarks"), null, "16x16/actions/go-top.png", "22x22/actions/go-top.png", KeyEvent.VK_E, null, true);
 	}
 
 	@Override

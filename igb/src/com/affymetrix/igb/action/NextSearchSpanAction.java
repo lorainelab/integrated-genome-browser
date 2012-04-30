@@ -14,7 +14,7 @@ public class NextSearchSpanAction extends GenericAction {
 	}
 
 	private NextSearchSpanAction() {
-		super("Next Search Span", "16x16/actions/go-next.png","32x32/actions/go-next.png");
+		super("Next Search Span", "16x16/actions/go-next.png","22x22/actions/go-next.png");
 		setEnabled(false);
 	}
 

@@ -31,7 +31,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	private JDialog dialog = null;
 
 	private LoadURLAction() {
-		super(BUNDLE.getString("openURL"), null, "toolbarButtonGraphics/development/Server16.gif", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("openURL"), null, "16x16/places/network-server.png", "22x22/places/network-server.png", KeyEvent.VK_UNDEFINED, null, true);
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 

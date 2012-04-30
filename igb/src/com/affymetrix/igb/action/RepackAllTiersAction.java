@@ -9,7 +9,7 @@ public class RepackAllTiersAction extends RepackTiersAction {
 	private static RepackAllTiersAction ACTION;
 
 	public RepackAllTiersAction() {
-		super(IGBConstants.BUNDLE.getString("repackAllTracksAction"), "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
+		super(IGBConstants.BUNDLE.getString("repackAllTracksAction"), "16x16/actions/view-refresh.png", "22x22/actions/view-refresh.png");
 	}
 
 	public static RepackAllTiersAction getAction() {

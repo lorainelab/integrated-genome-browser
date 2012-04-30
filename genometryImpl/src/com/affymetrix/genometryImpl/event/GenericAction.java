@@ -29,7 +29,7 @@ public abstract class GenericAction extends AbstractAction {
 	private final Object extraInfo;
 	private final boolean popup;
 	private Set<GenericActionDoneCallback> doneCallbacks;
-
+	
 	public GenericAction(String text, int mnemonic) {
 		this(text, null, null, mnemonic);
 	}
@@ -70,6 +70,13 @@ public abstract class GenericAction extends AbstractAction {
 				System.out.println("icon " + iconPath + " returned null");
 			}
 			putValue(Action.SMALL_ICON, icon);
+		}
+		if (largeIconPath != null) {
+			ImageIcon icon = CommonUtils.getInstance().getIcon(largeIconPath);
+			if (icon == null) {
+				System.out.println("icon " + largeIconPath + " returned null");
+			}
+			putValue(Action.LARGE_ICON_KEY, icon);
 		}
 		if (mnemonic != KeyEvent.VK_UNDEFINED) {
 			this.putValue(MNEMONIC_KEY, mnemonic);
@@ -134,5 +141,5 @@ public abstract class GenericAction extends AbstractAction {
 			doneCallback.actionDone(this);
 		}
 	}
-
+	
 }

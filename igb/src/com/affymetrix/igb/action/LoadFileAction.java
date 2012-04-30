@@ -119,7 +119,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	private LoadFileAction() {
-		super(BUNDLE.getString("openFile"), null, "16x16/actions/document-open.png", "32x32/actions/document-open.png", KeyEvent.VK_O, null, true);
+		super(BUNDLE.getString("openFile"), null, "16x16/actions/document-open.png", "22x22/actions/document-open.png", KeyEvent.VK_O, null, true);
 		this.gviewerFrame.setTransferHandler(fdh);
 	}
 

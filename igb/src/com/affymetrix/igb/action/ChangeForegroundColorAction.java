@@ -17,7 +17,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForegroundColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeColorAction"), "images/change_color.png");
+		super(IGBConstants.BUNDLE.getString("changeColorAction"), "16x16/categories/applications-graphics.png", "22x22/categories/applications-graphics.png");
 	}
 
 	@Override

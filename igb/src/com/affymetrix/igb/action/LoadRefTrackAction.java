@@ -21,7 +21,7 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	}
 
 	protected LoadRefTrackAction() {
-		super(BUNDLE.getString("openRefTrackFile"), null, "16x16/actions/document-open.png", "32x32/actions/document-open.png", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("openRefTrackFile"), null, "16x16/actions/document-open.png", "22x22/actions/document-open.png", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override

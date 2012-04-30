@@ -22,6 +22,9 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
 		super(text, iconPath);
 	}
 
+	protected RepackTiersAction(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
+	}
 	public void repack(final boolean full_repack) {
 		AbstractAction action = new AbstractAction() {
 			private static final long serialVersionUID = 1L;

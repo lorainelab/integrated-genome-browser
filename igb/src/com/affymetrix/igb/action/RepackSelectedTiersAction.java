@@ -9,7 +9,7 @@ public class RepackSelectedTiersAction extends RepackTiersAction {
 	private static RepackSelectedTiersAction ACTION;
 
 	public RepackSelectedTiersAction() {
-		super(IGBConstants.BUNDLE.getString("repackSelectedTracksAction"), "toolbarButtonGraphics/general/AlignJustifyHorizontal16.gif");
+		super(IGBConstants.BUNDLE.getString("repackSelectedTracksAction"), "16x16/actions/view-refresh.png", "22x22/actions/view-refresh.png");
 	}
 
 	public static RepackSelectedTiersAction getAction() {

@@ -15,7 +15,7 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 	}
 
 	protected ExpandAction() {
-		super(IGBConstants.BUNDLE.getString("expandAction"), "images/expand.png");
+		super(IGBConstants.BUNDLE.getString("expandAction"), "16x16/actions/view-fullscreen.png",  "22x22/actions/view-fullscreen.png");
 		collapsedTracks = false;
 	}
 

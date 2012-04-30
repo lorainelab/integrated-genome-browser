@@ -14,7 +14,7 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 	}
 
 	private AddPositionBookmarkAction() {
-		super(BUNDLE.getString("addBookmark"), null, "16x16/actions/bookmark-new.png", "32x32/actions/bookmark-new.png", KeyEvent.VK_P, null, true);
+		super(BUNDLE.getString("addBookmark"), null, "16x16/actions/bookmark-new.png", "22x22/actions/bookmark-new.png", KeyEvent.VK_P, null, true);
 	}
 
 	@Override

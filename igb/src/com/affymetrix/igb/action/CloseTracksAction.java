@@ -21,7 +21,7 @@ public class CloseTracksAction extends SeqMapViewActionA {
 	}
 
 	protected CloseTracksAction() {
-		super(IGBConstants.BUNDLE.getString("closeTracksAction"), "16x16/status/user-trash-full.png", "32x32/status/user-trash-full.png");
+		super(IGBConstants.BUNDLE.getString("closeTracksAction"), "16x16/status/user-trash-full.png", "22x22/status/user-trash-full.png");
 	}
 
 	public void actionPerformed(ActionEvent e) {

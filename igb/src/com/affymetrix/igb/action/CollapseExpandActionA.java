@@ -25,7 +25,11 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
 		super(text, iconPath);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
-
+	
+	protected CollapseExpandActionA(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
+		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+	}
 	private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		getTierManager().setTiersCollapsed(tier_labels, collapsed);
 		getSeqMapView().getSeqMap().updateWidget();

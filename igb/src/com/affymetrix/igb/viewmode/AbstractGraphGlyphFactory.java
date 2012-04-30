@@ -176,15 +176,20 @@ public abstract class AbstractGraphGlyphFactory extends MapViewGlyphFactoryA {
 			result.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
 		} else if (sym instanceof GraphSym) {
 			result = displayGraph((GraphSym) sym, smv, check_same_seq);
-			if(smv.getViewSeq() != smv.getAnnotatedSeq()){
-				GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
-				genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
-				if (genomeGraphGlyph.getScene() != null) {
-					genomeGraphGlyph.pack(smv.getSeqMap().getView());
+			if (result == null) {
+				result = getViewModeGlyph(null, style, tier_direction, smv);
+			}
+			else {
+				if(smv.getViewSeq() != smv.getAnnotatedSeq()){
+					GenomeGraphGlyph genomeGraphGlyph = new GenomeGraphGlyph(smv, style);
+					genomeGraphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), style.getHeight());
+					if (genomeGraphGlyph.getScene() != null) {
+						genomeGraphGlyph.pack(smv.getSeqMap().getView());
+					}
+					((AbstractGraphGlyph)result).drawHandle(false);
+					genomeGraphGlyph.addChild(result);
+					result = genomeGraphGlyph;
 				}
-				((AbstractGraphGlyph)result).drawHandle(false);
-				genomeGraphGlyph.addChild(result);
-				result = genomeGraphGlyph;
 			}
 		} else {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "GenericGraphGlyphFactory.getViewModeGlyph() called, but symmetry "

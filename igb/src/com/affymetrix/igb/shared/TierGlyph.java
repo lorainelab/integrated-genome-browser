@@ -207,6 +207,14 @@ public class TierGlyph extends SolidGlyph {
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 	}
 
+	public boolean initUnloaded() {
+		boolean change = viewModeGlyph.initUnloaded();
+		if (change) {
+			setViewModeGlyph(style); // new viewModeGlyph
+		}
+		return change;
+	}
+
 	public void setFillColor(Color col) {
 		viewModeGlyph.setFillColor(col);
 	}

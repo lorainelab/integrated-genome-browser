@@ -13,6 +13,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -191,7 +192,6 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 //		}
 		
 		resetThreshLabel();
-		initUnloaded();
 	}
 
 	private void setColor(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {
@@ -1412,5 +1412,14 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 	@Override
 	protected boolean shouldDrawToolBar(){
 		return false;
+	}
+
+	@Override
+	public boolean initUnloaded() {
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
+		if (getInfo() != null && ((GraphSym)getInfo()).getGraphSeq() != seq) {
+			return true;
+		}
+		return super.initUnloaded();
 	}
 }

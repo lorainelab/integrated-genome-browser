@@ -270,7 +270,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 	}
 
 	@Override
-	public void initUnloaded() {
+	public boolean initUnloaded() {
 		Glyph glyph;
 
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();//smv.getAnnotatedSeq();
@@ -305,6 +305,7 @@ public abstract class AbstractViewModeGlyph extends ViewModeGlyph {
 			glyph.setCoords(seq.getMin(), 0, seq.getLength() - 1, 0);
 			addMiddleGlyph(glyph);
 		}
+		return false;
 	}
 	
 	@Override

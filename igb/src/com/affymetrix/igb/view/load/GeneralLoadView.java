@@ -13,8 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
 
-import javax.swing.SwingWorker;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -193,14 +191,14 @@ public final class GeneralLoadView {
 		final BioSeq seq = gmodel.getSelectedSeq();
 		final boolean partial = src == partial_residuesB;
 
-		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+		CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>("load " + (partial ? "partial" : "all") + " residues for " + seq) {
 
-			public Boolean doInBackground() {
+			public Boolean runInBackground() {
 				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);
 			}
 
 			@Override
-			public void done() {
+			public void finished() {
 				try {
 					if (get()) {
 						gviewer.setAnnotatedSeq(seq, true, true, true);
@@ -214,7 +212,7 @@ public final class GeneralLoadView {
 		};
 
 		// Use a SwingWorker to avoid locking up the GUI.
-		ThreadUtils.getPrimaryExecutor(src).execute(worker);
+		ThreadHandler.getThreadHandler().execute(src, worker);
 	}
 
 	public boolean loadResiduesInView(boolean tryFull) {
@@ -603,7 +601,7 @@ public final class GeneralLoadView {
 
 	public static void addFeatureTier(final GenericFeature feature) {
 
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading feature " + feature.featureName) {
 
 			@Override
 			protected Object runInBackground() {

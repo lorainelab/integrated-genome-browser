@@ -890,7 +890,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		};
 
 		gmodel.addGroupSelectionListener(listener);
-		worker.execute();
+		ThreadHandler.getThreadHandler().execute(versionName, worker);
 	}
 
 	/**

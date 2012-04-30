@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,32 @@ import net.sf.samtools.util.SeekableBufferedStream;
  * @author jnicol
  */
 public final class BAM extends XAM {
+	private static final int PROGRESS_FREQUENCY = 200;
 
+	private class CompressedStreamPosition {
+		private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
+		private static final double BLOCK_FACTOR = (2 << 15) * COMPRESS_RATIO;
+		private final long blockAddress;
+		private final int currentOffset;
+		private CompressedStreamPosition(long blockAddress, int currentOffset) {
+			super();
+			this.blockAddress = blockAddress;
+			this.currentOffset = currentOffset;
+		}
+		public long getBlockAddress() {
+			return blockAddress;
+		}
+		public int getCurrentOffset() {
+			return currentOffset;
+		}
+		public long getApproximateDifference(CompressedStreamPosition pos) {
+			return (long)((blockAddress - pos.getBlockAddress()) * BLOCK_FACTOR + (currentOffset - pos.getCurrentOffset()));
+		}
+		@Override
+		public String toString() {
+			return "" + blockAddress + ":" + currentOffset;
+		}
+	}
 	public final static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bam");
@@ -116,6 +142,32 @@ public final class BAM extends XAM {
 	public List<String> getFormatPrefList() {
 		return pref_list;
 	}
+
+	private double computeProgressAmount(CompressedStreamPosition startPosition, CompressedStreamPosition currentPosition, CompressedStreamPosition endPosition) {
+		double d = (double)currentPosition.getApproximateDifference(startPosition) / (double)endPosition.getApproximateDifference(startPosition);
+//		System.out.println(")))))) start=" + startPosition + ", current=" + currentPosition + ", end=" + endPosition + ", progress%=" + d);
+		return d;
+	}
+	/**
+	 * @return current CompressedStreamPosition for SAMFileReader
+	 * @throws Exception
+	 */
+	private CompressedStreamPosition getCompressedInputStreamPosition(SAMFileReader sfr) throws Exception {
+		Field privateReaderField = sfr.getClass().getDeclaredField("mReader");
+		privateReaderField.setAccessible(true);
+		Object mReaderValue = privateReaderField.get(sfr);
+		Field privateCompressedInputStreamField = mReaderValue.getClass().getDeclaredField("mCompressedInputStream");
+		privateCompressedInputStreamField.setAccessible(true);
+		Object compressedInputStreamValue = privateCompressedInputStreamField.get(mReaderValue);
+		Field privateBlockAddressField = compressedInputStreamValue.getClass().getDeclaredField("mBlockAddress");
+		privateBlockAddressField.setAccessible(true);
+		long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
+		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
+		privateCurrentOffsetField.setAccessible(true);
+		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
+		return new CompressedStreamPosition(blockAddressValue, currentOffsetValue);
+	}
+
 	/**
 	 * Return a list of symmetries for the given chromosome range
 	 * @param seq
@@ -126,18 +178,37 @@ public final class BAM extends XAM {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		List<Throwable> errList = new ArrayList<Throwable>(10);
 		CloseableIterator<SAMRecord> iter = null;
+		@SuppressWarnings("rawtypes")
 		CThreadWorker ctw = CThreadWorker.getCurrentCThreadWorker();
 		try {
 			if (reader != null) {
+				// this call is just to find the end position in the file
+				File fTemp = new File(uri);
+				File indexFileTemp = findIndexFile(fTemp);
+				SAMFileReader readerTemp = new SAMFileReader(fTemp, indexFileTemp, false);
+				readerTemp.query(seqs.get(seq), max - 1, max, contained);
+				CompressedStreamPosition endPosition = getCompressedInputStreamPosition(readerTemp);
+				// this call is the real call
 				iter = reader.query(seqs.get(seq), min, max, contained);
+				CompressedStreamPosition startPosition = getCompressedInputStreamPosition(reader);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
-					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
-						try{
+					int counter = 0;
+					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
+						try {
+							counter++;
 							sr = iter.next();
-							if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
+							if (skipUnmapped && sr.getReadUnmappedFlag()) {
+								continue;
+							}
 							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-						}catch(SAMException e){
+							if (counter >= PROGRESS_FREQUENCY) {
+								CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
+								ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
+								counter = 0;
+							}
+						}
+						catch (SAMException e) {
 							errList.add(e);
 						}
 					}
@@ -324,7 +395,7 @@ public final class BAM extends XAM {
 
 		return indexfile;
 	}
-	
+
 	public String getMimeType() {
 		return "binary/BAM";
 	}

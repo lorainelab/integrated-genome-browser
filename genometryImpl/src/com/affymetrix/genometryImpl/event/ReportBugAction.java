@@ -19,7 +19,7 @@ public class ReportBugAction extends GenericAction {
 	}
 
 	private ReportBugAction() {
-		super("Report a bug", null, "toolbarButtonGraphics/general/Edit16.gif", KeyEvent.VK_R, null, true);
+		super("Report a bug", null, "16x16/apps/accessories-text-editor.png", "32x32/apps/accessories-text-editor.png", KeyEvent.VK_R, null, true);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class PrintAction extends GenericAction {
 	}
 
 	private PrintAction() {
-		super(BUNDLE.getString("print"), null, "toolbarButtonGraphics/general/Print16.gif", KeyEvent.VK_P, null, true);
+		super(BUNDLE.getString("print"), null, "16x16/devices/printer.png", "32x32/devices/printer.png", KeyEvent.VK_P, null, true);
 	}
 
 	@Override

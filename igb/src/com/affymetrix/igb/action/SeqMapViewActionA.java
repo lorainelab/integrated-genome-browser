@@ -29,6 +29,10 @@ public abstract class SeqMapViewActionA extends GenericAction {
 	public SeqMapViewActionA(String text, String iconPath) {
 		super(text, iconPath);
 	}
+	
+	public SeqMapViewActionA(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath);
+	}
 
 	public SeqMapViewActionA(String text, int mnemonic) {
 		super(text, mnemonic);

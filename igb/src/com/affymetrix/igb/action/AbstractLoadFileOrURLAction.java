@@ -21,6 +21,10 @@ public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 		super(IGBServiceImpl.getInstance(), text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
 	
+	public AbstractLoadFileOrURLAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup){
+		super(IGBServiceImpl.getInstance(), text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+	}
+	
 	@Override
 	protected void addSupportedFiles() {
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();

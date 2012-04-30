@@ -35,6 +35,11 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	}
+	protected AbstractLoadFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
+		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);

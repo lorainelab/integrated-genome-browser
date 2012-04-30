@@ -50,6 +50,9 @@ public abstract class AbstractExportFileAction extends GenericAction {
 	protected AbstractExportFileAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
+	protected AbstractExportFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -157,6 +157,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="refreshButton.setToolTipText(&quot;Refreshes the size and the preview to the current dimensions of the image.&quot;);"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="resolutionComboBox">
           <Events>

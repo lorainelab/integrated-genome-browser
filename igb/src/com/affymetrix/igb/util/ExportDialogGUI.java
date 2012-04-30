@@ -37,6 +37,10 @@ public class ExportDialogGUI extends JPanel {
 		export.previewImage();
 	}
 
+	public boolean isVisible() {
+		return static_frame != null && static_frame.isVisible();
+	}
+
 	private void initRadioButton(boolean isSequenceViewer) {
 		if (!isSequenceViewer) {
 			initView();
@@ -58,6 +62,7 @@ public class ExportDialogGUI extends JPanel {
 		}
 
 		buttonsPanel.setVisible(!isSequenceViewer);
+		refreshButton.setEnabled(false);
 	}
 
 	private void initView() {
@@ -97,6 +102,13 @@ public class ExportDialogGUI extends JPanel {
 		export = ExportDialog.getSingleton();
 
 		initComponents();
+	}
+
+	public void enableRefreshButton() {
+		if (!refreshButton.isEnabled()) {
+			refreshButton.setEnabled(true);
+			refreshButton.setSelected(true);
+		}
 	}
 
 	/**
@@ -156,6 +168,7 @@ public class ExportDialogGUI extends JPanel {
         xLabel.setText("Resolution:");
 
         refreshButton.setText("Refresh");
+        refreshButton.setToolTipText("Refreshes the size and the preview to the current dimensions of the image.");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
@@ -431,6 +444,8 @@ public class ExportDialogGUI extends JPanel {
 			slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
 			svRadioButtonActionPerformed(evt);
 		}
+		
+		refreshButton.setEnabled(false);
 	}//GEN-LAST:event_refreshButtonActionPerformed
 
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed

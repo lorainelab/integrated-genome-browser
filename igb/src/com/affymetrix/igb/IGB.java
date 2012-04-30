@@ -73,6 +73,7 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
+import com.affymetrix.igb.util.*;
 
 /**
  * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -189,7 +190,7 @@ public final class IGB extends Application
 		// be captured there.
 		ConsoleView.init(APP_NAME);
 
-		
+
 		printDetails(args);
 
 		String offline = CommonUtils.getInstance().getArg("-offline", args);
@@ -284,8 +285,25 @@ public final class IGB extends Application
 			}
 		});
 
-		WebLink.autoLoad();
+		frm.addComponentListener(new ComponentListener() {
 
+			public void componentResized(ComponentEvent e) {
+				if (ExportDialogGUI.getSingleton().isVisible()) {
+					ExportDialogGUI.getSingleton().enableRefreshButton();
+				}
+			}
+
+			public void componentMoved(ComponentEvent ce) {
+			}
+
+			public void componentShown(ComponentEvent ce) {
+			}
+
+			public void componentHidden(ComponentEvent ce) {
+			}
+		});
+
+		WebLink.autoLoad();
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());

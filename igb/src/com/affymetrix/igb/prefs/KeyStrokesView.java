@@ -10,7 +10,7 @@
 package com.affymetrix.igb.prefs;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.*;
@@ -80,7 +80,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 	}
 
 	private static TreeSet<String> filterActions() {
-		List<String> keys = new CopyOnWriteArrayList<String>(GenericActionHolder.getInstance().getGenericActionIds());
+		// this still throws ConcurrentModificationException
+		Set<String> keys = new CopyOnWriteArraySet<String>(GenericActionHolder.getInstance().getGenericActionIds());
 		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {

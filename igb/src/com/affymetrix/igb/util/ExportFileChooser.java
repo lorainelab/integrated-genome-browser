@@ -13,10 +13,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Code referred from IGV
+ * An Export File Chooser class for IGB, it is extended from java default class
+ * and implemented some override methods. (Code referred from IGV)
+ *
  * @author nick
  */
 public class ExportFileChooser extends JFileChooser {
+
 	private static final long serialVersionUID = 1L;
 	boolean accepted = false;
 	File previousFile;
@@ -82,11 +85,8 @@ public class ExportFileChooser extends JFileChooser {
 		addPropertyChangeListener(new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent e) {
-//				File oldFile = null;
 				String property = e.getPropertyName();
-				if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(property)) {
-//					oldFile = (File) e.getOldValue();
-				} else if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
+				if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
 
 					if (e.getOldValue() instanceof ExportFileFilter
 							&& e.getNewValue() instanceof ExportFileFilter) {

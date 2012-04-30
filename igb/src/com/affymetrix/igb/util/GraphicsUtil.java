@@ -8,11 +8,20 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 /**
- * 
+ * A Graphics Util class for IGB, it is designed to add and implement all the
+ * graphic related methods and use globally.
+ *
  * @author nick
  */
 public class GraphicsUtil {
-	
+
+	/**
+	 * Get device compatible image by passed width and height.
+	 *
+	 * @param width
+	 * @param height
+	 * @return
+	 */
 	public static BufferedImage getDeviceCompatibleImage(int width, int height) {
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice screenDevice = graphicsEnvironment.getDefaultScreenDevice();
@@ -22,19 +31,27 @@ public class GraphicsUtil {
 		return image;
 	}
 
+	/**
+	 * Resize the passed image by passed width and height.
+	 *
+	 * @param image
+	 * @param width
+	 * @param height
+	 * @return
+	 */
 	public static BufferedImage resizeImage(BufferedImage image,
-			int newWidth, int newHeight) {
-		if (image.getWidth() == newWidth && 
-				image.getHeight() == newHeight) {
+			int width, int height) {
+		if (image.getWidth() == width
+				&& image.getHeight() == height) {
 			return image;
 		}
-		
+
 		int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
-		BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, type);
+		BufferedImage resizedImage = new BufferedImage(width, height, type);
 		Graphics2D g = resizedImage.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawImage(image, 0, 0, newWidth, newHeight, null);
+		g.drawImage(image, 0, 0, width, height, null);
 		g.dispose();
 
 		return resizedImage;

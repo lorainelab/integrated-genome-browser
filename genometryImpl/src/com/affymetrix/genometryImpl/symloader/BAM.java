@@ -203,7 +203,7 @@ public final class BAM extends XAM {
 								continue;
 							}
 							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-							if (counter >= PROGRESS_FREQUENCY) {
+							if (counter >= PROGRESS_FREQUENCY && ctw != null) {
 								CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
 								ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
 								counter = 0;

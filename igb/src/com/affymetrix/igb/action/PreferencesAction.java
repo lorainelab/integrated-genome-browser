@@ -28,7 +28,7 @@ public class PreferencesAction extends GenericAction {
 	}
 
 	private PreferencesAction() {
-		super(BUNDLE.getString("preferences"), null, "toolbarButtonGraphics/general/Preferences16.gif", KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("preferences"), null, "16x16/categories/preferences-system.png", "32x32/categories/preferences-system.png", KeyEvent.VK_E, null, true);
 	}
 
 	@Override

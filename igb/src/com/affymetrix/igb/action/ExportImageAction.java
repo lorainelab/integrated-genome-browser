@@ -22,7 +22,7 @@ public class ExportImageAction extends GenericAction {
 	}
 
 	private ExportImageAction() {
-		super(BUNDLE.getString("exportImage"), null, "toolbarButtonGraphics/general/Export16.gif", KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("exportImage"), null, "16x16/mimetypes/image-x-generic.png", "32x32/mimetypes/image-x-generic.png", KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override

@@ -23,6 +23,16 @@ Import-Package: javax.swing,
  16x16.emotes,
  16x16.mimetypes,
  16x16.places,
- 16x16.status
+ 16x16.status,
+ 32x32.actions,
+ 32x32.animations,
+ 32x32.apps,
+ 32x32.categories,
+ 32x32.devices,
+ 32x32.emblems,
+ 32x32.emotes,
+ 32x32.mimetypes,
+ 32x32.places,
+ 32x32.status
 Export-Package: com.affymetrix.common;version="@appVersion@"
 

@@ -24,7 +24,9 @@ public abstract class AddBookmarkAction extends GenericAction {
 	public AddBookmarkAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
 	}
-
+	public AddBookmarkAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
+		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+	}
 	protected void bookmarkCurrentPosition() {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");

@@ -16,7 +16,7 @@ public class ImportBookmarkAction extends GenericAction {
 	}
 
 	public ImportBookmarkAction() {
-		super(BUNDLE.getString("importBookmarks"), null, "toolbarButtonGraphics/general/Import16.gif", KeyEvent.VK_I, null, true);
+		super(BUNDLE.getString("importBookmarks"), null, "16x16/actions/go-bottom.png", "32x32/actions/go-bottom.png", KeyEvent.VK_I, null, true);
 	}
 
 	@Override

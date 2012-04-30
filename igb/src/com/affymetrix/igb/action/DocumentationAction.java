@@ -22,7 +22,7 @@ public class DocumentationAction extends GenericAction {
 	}
 
 	private DocumentationAction() {
-		super(BUNDLE.getString("documentation"), null, "toolbarButtonGraphics/general/Help16.gif", KeyEvent.VK_D, null, true);
+		super(BUNDLE.getString("documentation"), null, "16x16/status/dialog-information.png", "32x32/status/dialog-information.png", KeyEvent.VK_D, null, true);
 	}
 
 	@Override

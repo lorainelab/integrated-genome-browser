@@ -44,7 +44,7 @@ public class AboutIGBAction extends GenericAction {
 	}
 
 	private AboutIGBAction() {
-		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null, "16x16/apps/help-browser.png","32x32/apps/help-browser.png", KeyEvent.VK_A, null, true);
+		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null, "16x16/status/dialog-information.png", "32x32/status/dialog-information.png", KeyEvent.VK_A, null, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -194,21 +194,23 @@ public final class BAM extends XAM {
 				CompressedStreamPosition startPosition = getCompressedInputStreamPosition(reader);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
-					int counter = 0;
+					int progressCounter = 0;
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
-							counter++;
 							sr = iter.next();
+							progressCounter++;
+							if (progressCounter >= PROGRESS_FREQUENCY) {
+								if (ctw != null) {
+									CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
+									ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
+								}
+								progressCounter = 0;
+								Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
+							}
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {
 								continue;
 							}
 							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-							if (counter >= PROGRESS_FREQUENCY && ctw != null) {
-								CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
-								ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
-								counter = 0;
-								Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-							}
 						}
 						catch (InterruptedException e) {}
 						catch (SAMException e) {

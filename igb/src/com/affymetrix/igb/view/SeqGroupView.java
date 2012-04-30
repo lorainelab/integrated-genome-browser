@@ -40,6 +40,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
@@ -68,8 +69,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
@@ -616,7 +615,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		final Set<GenericServer> servers = new HashSet<GenericServer>();
 		servers.addAll(ServerList.getServerInstance().getEnabledServers());
 		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
-			Executor vexec = Executors.newSingleThreadExecutor();
 			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
 
 				protected Void runInBackground() {
@@ -636,7 +634,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				}
 			};
 
-			vexec.execute(worker);
+			ThreadHandler.getThreadHandler().execute(gServer, worker);
 		}
 	}
 

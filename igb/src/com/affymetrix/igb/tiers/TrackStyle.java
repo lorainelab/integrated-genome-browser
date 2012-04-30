@@ -969,24 +969,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 *  This will return a color even if getColorByScore() is false.
 	 */
 	public Color getScoreColor(float score) {
-		final float min = getMinScoreColor();
+	final float min = getMinScoreColor();
 		final float max = getMaxScoreColor();
 		
 		if (score < min) {
 			score = min;
-		} else if (score > max) {
+		} else if (score >= max) {
 			score = max;
 		}
+		
 		final float range = max - min;
-		int interSize = (int)(range/colorIntervals);
-		if(!customise){
-			int colorSize = 255/colorIntervals;
-			int index =  ((int)(score / interSize)) * colorSize;
-			if(index > 255)
-				index = 255;
-			return getCustomHeatMap().getColors()[index];
-		}
-		return custom_heatmap.interpolateColor(getBackground(), custom_heatmap.getColor((int)(score/interSize)), 0.5f);
+		int index = (int) ((score / range) * 255);
+		
+		return getCustomHeatMap().getColors()[index];
 	}
 
 	/**

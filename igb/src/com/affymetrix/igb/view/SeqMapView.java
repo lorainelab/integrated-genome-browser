@@ -667,7 +667,7 @@ public class SeqMapView extends JPanel
 	//   WARNING: currently graphs are not properly displayed when reverse complementing,
 	//               need to "genometrize" them
 	//            currently sequence is not properly displayed when reverse complementing
-	//
+	//	
 	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		Application.getSingleton().getFrame().setTitle(getTitleBar(seq));

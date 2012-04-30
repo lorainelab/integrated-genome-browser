@@ -17,7 +17,7 @@ public class ScrollUpAction extends SeqMapViewActionA {
 	}
 
 	public ScrollUpAction() {
-		super("Scroll Up", null);
+		super("Scroll Up",  "16x16/actions/go-up.png", "22x22/actions/go-up.png");
 	}
 
 	@Override

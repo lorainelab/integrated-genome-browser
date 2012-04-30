@@ -643,9 +643,8 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Return sliced view component.
 	 *
-	 * @return
+	 * @return sliced view component.
 	 */
 	public static Component determineSlicedComponent() {
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());

@@ -29,6 +29,11 @@ import org.freehep.graphicsio.svg.SVGExportFileType;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 /**
+ * An Export Image class for IGB. It is designed to export different part of IGB
+ * views to image file. Support format: SVG, PNG and JPG
+ *
+ * TODO: - preview image size should changed automatically basis on real
+ * percentile. - support PDF format.
  *
  * @author nick
  */
@@ -106,6 +111,11 @@ public class ExportDialog implements ExportConstants {
 		initSpinner(unit);
 	}
 
+	/**
+	 * Initialize height and width Spinner. Support Unit: pixels and Inches
+	 *
+	 * @param unit
+	 */
 	public void initSpinner(String unit) {
 		double width = currentInfo.getWidth();
 		double height = currentInfo.getHeight();
@@ -123,12 +133,21 @@ public class ExportDialog implements ExportConstants {
 		resetWidthHeight(width, height);
 	}
 
+	/**
+	 * Set component to export: Whole frame, main view, main view with label and
+	 * sliced view
+	 *
+	 * @param c
+	 */
 	public static void setComponent(Component c) {
 		component = c;
 
 		initImageInfo();
 	}
 
+	/**
+	 * Saved image information basis on component.
+	 */
 	public static void initImageInfo() {
 		if (imageInfo == null) {
 			imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
@@ -145,6 +164,12 @@ public class ExportDialog implements ExportConstants {
 		heightSpinner.setValue((double) component.getHeight());
 	}
 
+	/**
+	 * Passed meta data of PNG image and reset its DPI
+	 *
+	 * @param metadata
+	 * @throws IIOInvalidTreeException
+	 */
 	private static void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
 		horiz.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
@@ -162,6 +187,12 @@ public class ExportDialog implements ExportConstants {
 		metadata.mergeTree("javax_imageio_1.0", root);
 	}
 
+	/**
+	 * Passed meta data of JPEG image and reset its DPI
+	 *
+	 * @param metadata
+	 * @throws IIOInvalidTreeException
+	 */
 	private static void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
 		IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
 		IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
@@ -171,6 +202,13 @@ public class ExportDialog implements ExportConstants {
 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
 	}
 
+	/**
+	 * Passed file and changed its extension
+	 *
+	 * @param file
+	 * @param extension
+	 * @return file with new extension
+	 */
 	public static File changeFileExtension(File file, String extension) {
 		if ((file == null) || (extension == null) || extension.trim().isEmpty()) {
 			return null;
@@ -198,6 +236,11 @@ public class ExportDialog implements ExportConstants {
 		return new File(path);
 	}
 
+	/**
+	 * Display a file chooser panel and let user choose output path.
+	 *
+	 * @param panel
+	 */
 	public void browseButtonActionPerformed(JPanel panel) {
 		if (fileFilter == null) {
 			fileFilter = new File(defaultDir, "export");
@@ -230,11 +273,22 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Reset export file and file path text field to the new path.
+	 *
+	 * @param path
+	 */
 	private void resetPath(String path) {
 		exportFile = new File(path);
 		filePathTextField.setText(path);
 	}
 
+	/**
+	 * Get export file type by passed image format description
+	 *
+	 * @param description
+	 * @return
+	 */
 	private ExportFileType getType(String description) {
 		for (ExportFileType type : FILTER_LIST.keySet()) {
 			if (type.getDescription().equals(description)) {
@@ -245,6 +299,12 @@ public class ExportDialog implements ExportConstants {
 		return null;
 	}
 
+	/**
+	 * Get export filter by passed image format extension
+	 *
+	 * @param ext
+	 * @return
+	 */
 	private ExportFileFilter getFilter(String ext) {
 		for (ExportFileFilter filter : FILTER_LIST.values()) {
 			if (filter.getExtension().equals(ext)) {
@@ -255,6 +315,12 @@ public class ExportDialog implements ExportConstants {
 		return null;
 	}
 
+	/**
+	 * Get image format description by passed image format extension
+	 *
+	 * @param ext
+	 * @return
+	 */
 	private String getDescription(String ext) {
 		if (ext.equalsIgnoreCase(EXTENSION[0])) {
 			return DESCRIPTION[0];
@@ -265,6 +331,12 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Start export process when Ok Button action performed.
+	 *
+	 * @return successfully export or not
+	 * @throws IOException
+	 */
 	public boolean okButtonActionPerformed() throws IOException {
 		String previousPath = exportFile.getAbsolutePath();
 		String newPath = filePathTextField.getText();
@@ -314,6 +386,14 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
+	/**
+	 * Test whether the current export path is valid or not. If not, reset
+	 * current export path to previous export path and return false. Also, test
+	 * whether the image size is valid or not.
+	 *
+	 * @param previousPath
+	 * @return
+	 */
 	private boolean isValidExportFile(String previousPath) {
 		if (!exportFile.getParentFile().isDirectory()) {
 			// if output path is invalid, reset to previous correct path
@@ -334,10 +414,12 @@ public class ExportDialog implements ExportConstants {
 		return true;
 	}
 
+	/**
+	 * Give the user the choice to overwrite the existing file or not.
+	 *
+	 * @return
+	 */
 	private boolean isOverwrite() {
-		// give the user the choice to overwrite the existing file or not
-		// The option pane used differs from the confirmDialog only in
-		// that "No" is the default choice.
 		String[] options = {"Yes", "No"};
 		if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
 				null, "Overwrite Existing File?", "File Exists",
@@ -349,6 +431,14 @@ public class ExportDialog implements ExportConstants {
 		return false;
 	}
 
+	/**
+	 * According to passed image extention, export image to passed export file
+	 * path.
+	 *
+	 * @param f
+	 * @param ext
+	 * @throws IOException
+	 */
 	public static void exportScreenshot(File f, String ext) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
 			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
@@ -392,6 +482,9 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Creates a new buffered image by component and reset label's icon.
+	 */
 	public void previewImage() {
 		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
@@ -405,6 +498,13 @@ public class ExportDialog implements ExportConstants {
 		previewLabel.setIcon(icon);
 	}
 
+	/**
+	 * Return whether the passed extention is contained in IGB support image
+	 * extention list or not.
+	 *
+	 * @param ext
+	 * @return
+	 */
 	public static boolean isExt(String ext) {
 		for (String s : EXTENSION) {
 			if (s.equalsIgnoreCase(ext)) {
@@ -415,6 +515,9 @@ public class ExportDialog implements ExportConstants {
 		return false;
 	}
 
+	/**
+	 * Reset height Spinner's value when width Spinner changed.
+	 */
 	public void widthSpinnerStateChanged() {
 		if (!isHeightSpinner) {
 			double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
@@ -428,6 +531,9 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Reset width Spinner's value when height Spinner changed.
+	 */
 	public void heightSpinnerStateChanged() {
 		if (!isWidthSpinner) {
 			double newHeight = ((Double) heightSpinner.getValue()).doubleValue();
@@ -441,6 +547,10 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Update the file path text field value when image format combo box action
+	 * performed.
+	 */
 	public void extComboBoxActionPerformed() {
 		String path = filePathTextField.getText();
 		String ext = ParserController.getExtension(path);
@@ -472,6 +582,12 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Update width and height spinner's value when unit combo box action
+	 * performed.
+	 *
+	 * Reset width spinner will trigger to reset height spinner.
+	 */
 	public void unitComboBoxActionPerformed() {
 		unit = (String) unitComboBox.getSelectedItem();
 
@@ -486,6 +602,12 @@ public class ExportDialog implements ExportConstants {
 		widthSpinner.setValue(newWidth);
 	}
 
+	/**
+	 * Reset size label text by passed width and height.
+	 *
+	 * @param width
+	 * @param height
+	 */
 	private void resetWidthHeight(double width, double height) {
 		if (unit != null) {
 			if (unit.equals(UNIT[1])) {
@@ -504,6 +626,12 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Update output image resolution value when resolution combo box action
+	 * performed. If selected unit is 'inches', update width and height
+	 * spinner's value(reset width spinner will trigger to reset height
+	 * spinner).
+	 */
 	public void resolutionComboBoxActionPerformed() {
 		imageInfo.setResolution((Integer) resolutionComboBox.getSelectedItem());
 
@@ -514,6 +642,11 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Return sliced view component.
+	 *
+	 * @return
+	 */
 	public static Component determineSlicedComponent() {
 		AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view == null) {

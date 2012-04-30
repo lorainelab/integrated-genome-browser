@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
@@ -44,6 +46,8 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 	private final Set<CThreadWorker> workers;
 	private final JPopupMenu runningTasks;
 	private final Set<AbstractButton> popupHandler;
+	private JPanel outerBox;
+	private final Map<CThreadWorker, Box> cThreadWorker2Box = new HashMap<CThreadWorker, Box>();
 	
 	public static ThreadHandler getThreadHandler(){
 		if(singleton == null){
@@ -93,10 +97,11 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 			return 0;
 		}
 	
-		final JPanel outerBox = new JPanel();
+		outerBox = new JPanel();
 		outerBox.setLayout(new GridLayout(size,1));
 		outerBox.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
+		
+		cThreadWorker2Box.clear();
 		for (final CThreadWorker worker : workers) {
 			final Box box = Box.createHorizontalBox();		
 			//String string = worker.getMessage().substring(0, Math.min(40, worker.getMessage().length()));
@@ -122,8 +127,10 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 			     new PropertyChangeListener() {
 			         public void propertyChange(PropertyChangeEvent evt) {
 			             if ("progress".equals(evt.getPropertyName())) {
-			                 progressBar.setValue((Integer)evt.getNewValue());
-			                 progressBar.repaint();
+			         		if (runningTasks != null && runningTasks.isShowing()) {
+			        			progressBar.setValue((Integer)evt.getNewValue());
+			                	progressBar.repaint();
+			        		}
 			             }
 			         }
 			     }
@@ -136,6 +143,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 			box.add(Box.createRigidArea(new Dimension(5,25)));
 			box.add(progressBar);
 			box.add(Box.createRigidArea(new Dimension(5,25)));
+			cThreadWorker2Box.put(worker, box);
 			outerBox.add(box);
 
 		}
@@ -153,6 +161,14 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		} else {
 			workers.remove(w);
 			Application.getSingleton().removeNotLockedUpMsg(w.getMessage());
+     		if (runningTasks != null && runningTasks.isShowing()) {
+     			Box box = cThreadWorker2Box.get(w);
+     			if (box != null) {
+     				outerBox.remove(box);
+     				cThreadWorker2Box.remove(w);
+     				runningTasks.repaint();
+     			}
+     		}
 		}
 		
 		boolean nowEnabled = workers.size() > 0;

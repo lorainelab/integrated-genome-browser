@@ -91,7 +91,7 @@
                 <Component class="javax.swing.JButton" name="backwardActionButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/backward.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/go-previous.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Click to go back (Previous visited bookmark)&quot;" type="code"/>
@@ -113,7 +113,7 @@
                 <Component class="javax.swing.JButton" name="forwardActionButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/forward.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/go-next.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Click to go forward (Next visited bookmark)&quot;" type="code"/>
@@ -194,7 +194,7 @@
                 <Component class="javax.swing.JButton" name="addFolderButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/addFolder.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/folder-new.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Add a New Folder"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -209,12 +209,13 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addFolderButton.setBorder(null);"/>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="bmv.addFolderButton"/>
+                    <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="BookmarkManagerViewGUI_addFolderButton"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="addBookmarkActionButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/addBookmark.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/bookmark-new.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Add a new Bookmark&quot;" type="code"/>
@@ -258,7 +259,7 @@
                 <Component class="javax.swing.JButton" name="importButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/import.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/go-bottom.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Import"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -277,7 +278,7 @@
                 <Component class="javax.swing.JButton" name="exportButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/export.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/go-top.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Export"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -399,7 +400,7 @@
                 <Component class="javax.swing.JButton" name="undoNameButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/undo.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/edit-undo.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Undo"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -418,7 +419,7 @@
                 <Component class="javax.swing.JButton" name="redoNameButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/redo.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/edit-redo.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Redo"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">

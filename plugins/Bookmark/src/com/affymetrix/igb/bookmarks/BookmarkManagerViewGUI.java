@@ -96,7 +96,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         splitPane.setDividerLocation(400);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        backwardActionButton.setIcon(CommonUtils.getInstance().getIcon("images/backward.png"));
+        backwardActionButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/go-previous.png"));
         backwardActionButton.setToolTipText("Click to go back (Previous visited bookmark)");
         backwardActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         backwardActionButton.addActionListener(new java.awt.event.ActionListener() {
@@ -105,7 +105,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        forwardActionButton.setIcon(CommonUtils.getInstance().getIcon("images/forward.png"));
+        forwardActionButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/go-next.png"));
         forwardActionButton.setToolTipText("Click to go forward (Next visited bookmark)");
         forwardActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         forwardActionButton.setPreferredSize(new java.awt.Dimension(24, 24));
@@ -143,7 +143,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
         bookmarkTree.setModel(bmv.thing.def_tree_model);
         bmScrollPane.setViewportView(bookmarkTree);
 
-        addFolderButton.setIcon(CommonUtils.getInstance().getIcon("images/addFolder.png"));
+        addFolderButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/folder-new.png"));
         addFolderButton.setToolTipText("Add a New Folder");
         addFolderButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addFolderButton.addActionListener(new java.awt.event.ActionListener() {
@@ -152,7 +152,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        addBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("images/addBookmark.png"));
+        addBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/bookmark-new.png"));
         addBookmarkActionButton.setToolTipText("Add a new Bookmark");
         addBookmarkActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addBookmarkActionButton.addActionListener(new java.awt.event.ActionListener() {
@@ -170,7 +170,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        importButton.setIcon(CommonUtils.getInstance().getIcon("images/import.png"));
+        importButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/go-bottom.png"));
         importButton.setToolTipText("Import");
         importButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         importButton.addActionListener(new java.awt.event.ActionListener() {
@@ -179,7 +179,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        exportButton.setIcon(CommonUtils.getInstance().getIcon("images/export.png"));
+        exportButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/go-top.png"));
         exportButton.setToolTipText("Export");
         exportButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         exportButton.setPreferredSize(new java.awt.Dimension(2, 2));
@@ -274,7 +274,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
 
         nameLabel.setText("Name:");
 
-        undoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/undo.png"));
+        undoNameButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/edit-undo.png"));
         undoNameButton.setToolTipText("Undo");
         undoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         undoNameButton.addActionListener(new java.awt.event.ActionListener() {
@@ -283,7 +283,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        redoNameButton.setIcon(CommonUtils.getInstance().getIcon("images/redo.png"));
+        redoNameButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/edit-redo.png"));
         redoNameButton.setToolTipText("Redo");
         redoNameButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         redoNameButton.addActionListener(new java.awt.event.ActionListener() {

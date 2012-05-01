@@ -19,7 +19,7 @@ public class ShowAllAction extends RepackTiersAction {
 	}
 
 	private ShowAllAction() {
-		super(BUNDLE.getString("showAllAction"), null);
+		super(BUNDLE.getString("showAllAction"), null, null);
 	}
 
 	public void showAllTiers() {

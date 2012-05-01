@@ -24,7 +24,7 @@ public class UseAsReferenceSeqAction extends SeqMapViewActionA {
 	}
 
 	private UseAsReferenceSeqAction() {
-		super(BUNDLE.getString("useAsReferenceSeqAction"), null);
+		super(BUNDLE.getString("useAsReferenceSeqAction"), null, null);
 	}
 
 	private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception {

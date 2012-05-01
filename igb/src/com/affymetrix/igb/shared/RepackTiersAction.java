@@ -19,9 +19,6 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 public abstract class RepackTiersAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
-	protected RepackTiersAction(String text, String iconPath) {
-		super(text, iconPath);
-	}
 
 	protected RepackTiersAction(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);

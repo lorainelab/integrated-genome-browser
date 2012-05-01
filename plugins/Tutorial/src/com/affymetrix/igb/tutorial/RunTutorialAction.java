@@ -22,7 +22,7 @@ public class RunTutorialAction extends GenericAction {
 	private String uri;
 
 	public RunTutorialAction(TutorialManager tutorialManager, String name, String uri) {
-		super(name, null);
+		super(name, null, null);
 		this.tutorialManager = tutorialManager;
 		this.name = name;
 		this.uri = uri;

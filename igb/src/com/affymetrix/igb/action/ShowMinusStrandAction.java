@@ -15,7 +15,7 @@ public class ShowMinusStrandAction extends GenericAction {
 	}
 
 	private ShowMinusStrandAction() {
-		super("Show (-) tiers", null);
+		super("Show (-) tiers", null, null);
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMinus());
 	}
 

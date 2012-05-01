@@ -22,7 +22,7 @@ public class AutoLoadFeatureAction extends GenericAction {
 	private final JCheckBox autoloadCB;
 
 	private AutoLoadFeatureAction(){
-		super(null, null);
+		super(null, null, null);
 		autoloadCB = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
 				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		autoloadCB.setToolTipText("Automatically load default features when available (e.g., cytoband and refseq)");

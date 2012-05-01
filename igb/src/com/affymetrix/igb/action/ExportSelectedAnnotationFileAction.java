@@ -18,7 +18,7 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	}
 				
 	private ExportSelectedAnnotationFileAction() {
-		super(BUNDLE.getString("saveSelectedAnnotationAction"), null, null, KeyEvent.VK_UNDEFINED, null, true);
+		super(BUNDLE.getString("saveSelectedAnnotationAction"), null, null, null, KeyEvent.VK_UNDEFINED, null, true);
 	}
 
 	@Override

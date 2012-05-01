@@ -17,7 +17,7 @@ public class ColorByScoreAction extends SeqMapViewActionA {
 	}
 
 	private ColorByScoreAction(String transKey) {
-		super(BUNDLE.getString(transKey), null);
+		super(BUNDLE.getString(transKey), null, null);
 	}
 
 	private void setColorByScore(TierLabelGlyph tlg) {

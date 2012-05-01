@@ -26,7 +26,7 @@ public class ViewReadAlignmentAction extends SeqMapViewActionA {
 	private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
 	private ViewReadAlignmentAction(String text){
-		super(text, null);
+		super(text, null, null);
 	}
 
 	public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms){

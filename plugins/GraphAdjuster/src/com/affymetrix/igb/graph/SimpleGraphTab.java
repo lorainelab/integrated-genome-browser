@@ -109,7 +109,7 @@ public final class SimpleGraphTab
 	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
-	private final Action select_all_graphs_action = new GenericAction(BUNDLE.getString("selectAllGraphs"), null) {
+	private final Action select_all_graphs_action = new GenericAction(BUNDLE.getString("selectAllGraphs"), null, null) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -118,7 +118,7 @@ public final class SimpleGraphTab
 			igbService.getSeqMapView().selectAllGraphs();
 		}
 	};
-	private final Action delete_selected_graphs_action = new GenericAction(BUNDLE.getString("deleteSelectedGraphs"), null) {
+	private final Action delete_selected_graphs_action = new GenericAction(BUNDLE.getString("deleteSelectedGraphs"), null, null) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -127,7 +127,7 @@ public final class SimpleGraphTab
 			deleteGraphs(gmodel, grafs);
 		}
 	};
-	private final Action save_selected_graphs_action = new GenericAction(BUNDLE.getString("saveSelectedGraphs"), null, null, KeyEvent.VK_UNDEFINED, null, true) {
+	private final Action save_selected_graphs_action = new GenericAction(BUNDLE.getString("saveSelectedGraphs"), null, null, null, KeyEvent.VK_UNDEFINED, null, true) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -451,7 +451,7 @@ public final class SimpleGraphTab
 		GraphType graphType = GraphType.LINE_GRAPH;
 
 		public GraphStyleSetter(GraphType graphType) {
-			super(null, null);
+			super(null, null, null);
 			this.graphType = graphType;
 		}
 

@@ -15,7 +15,7 @@ public class ShowMixedStrandAction extends GenericAction {
 	}
 
 	private ShowMixedStrandAction() {
-		super("Show (+/-) tiers", null);
+		super("Show (+/-) tiers", null, null);
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMixed());
 	}
 

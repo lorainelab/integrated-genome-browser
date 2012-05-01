@@ -22,7 +22,7 @@ public class ShowStrandAction extends ShowStrandActionA implements SymSelectionL
 	}
 
 	protected ShowStrandAction() {
-		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png");
+		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png", null);
 	}
 
 	@Override

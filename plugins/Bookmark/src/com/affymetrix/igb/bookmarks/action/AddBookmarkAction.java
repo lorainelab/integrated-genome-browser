@@ -21,9 +21,6 @@ public abstract class AddBookmarkAction extends GenericAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public AddBookmarkAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
-		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
-	}
 	public AddBookmarkAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}

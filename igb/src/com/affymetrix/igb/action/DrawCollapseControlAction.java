@@ -20,7 +20,7 @@ public class DrawCollapseControlAction extends GenericAction {
 	}
 
 	private DrawCollapseControlAction() {
-		super(BUNDLE.getString("drawCollapseControl"), null);
+		super(BUNDLE.getString("drawCollapseControl"), null, null);
 		this.putValue(SELECTED_KEY, TrackStyle.getDrawCollapseState());
 	}
 	

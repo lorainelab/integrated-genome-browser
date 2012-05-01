@@ -15,8 +15,8 @@ import java.awt.event.ActionEvent;
 public abstract class ExportComponentAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 
-	protected ExportComponentAction(String text, String iconPath) {
-		super(text, iconPath);
+	protected ExportComponentAction(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
 	}
 
 	@Override

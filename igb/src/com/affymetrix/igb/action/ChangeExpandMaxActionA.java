@@ -13,8 +13,8 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 public abstract class ChangeExpandMaxActionA extends RepackTiersAction {
 	private static final long serialVersionUID = 1L;
 
-	protected ChangeExpandMaxActionA(String text, String iconPath) {
-		super(text, iconPath);
+	protected ChangeExpandMaxActionA(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
 	}
 
 	public void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {

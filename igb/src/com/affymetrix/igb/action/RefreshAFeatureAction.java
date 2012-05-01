@@ -22,7 +22,7 @@ public class RefreshAFeatureAction extends GenericAction {
 	}
 
 	private RefreshAFeatureAction(String text){
-		super(text, "toolbarButtonGraphics/general/Refresh16.gif");
+		super(text, "toolbarButtonGraphics/general/Refresh16.gif", null);
 	}
 
 	private void setFeature(GenericFeature feature) {

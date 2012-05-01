@@ -20,7 +20,7 @@ public class HideAction extends RepackTiersAction {
 	}
 
 	private HideAction() {
-		super(BUNDLE.getString("hideAction"), null);
+		super(BUNDLE.getString("hideAction"), null, null);
 	}
 
 	/**

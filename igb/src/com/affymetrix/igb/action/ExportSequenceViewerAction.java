@@ -14,7 +14,7 @@ public class ExportSequenceViewerAction extends ExportComponentAction{
 	private final Component comp;
 
 	public ExportSequenceViewerAction(Component comp) {
-		super(BUNDLE.getString("exportImage"), null);
+		super(BUNDLE.getString("exportImage"), null, null);
 		this.comp = comp;
 	}
 

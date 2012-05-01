@@ -96,7 +96,7 @@ public final class JTableCutPasteAdapter {
     JOptionPane.showMessageDialog(null, msg, msg, JOptionPane.ERROR_MESSAGE);
   }
   
-  public Action copyAction = new GenericAction(PropertyView.BUNDLE.getString("copy"), null) {
+  public Action copyAction = new GenericAction(PropertyView.BUNDLE.getString("copy"), null, null) {
 	private static final long serialVersionUID = 1L;
 	@Override
     public void actionPerformed(ActionEvent e) {
@@ -104,7 +104,7 @@ public final class JTableCutPasteAdapter {
     }
   };
   
-  public Action pasteAction = new GenericAction(PropertyView.BUNDLE.getString("paste"), null) {
+  public Action pasteAction = new GenericAction(PropertyView.BUNDLE.getString("paste"), null, null) {
 	private static final long serialVersionUID = 1L;
 	@Override
     public void actionPerformed(ActionEvent e) {

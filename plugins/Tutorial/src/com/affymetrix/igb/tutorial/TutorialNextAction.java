@@ -8,7 +8,7 @@ public class TutorialNextAction extends GenericAction {
 	private final TutorialManager tutorialManager;
 
 	public TutorialNextAction(TutorialManager tutorialManager) {
-		super("Next", "images/right.png");
+		super("Next", "images/right.png", null);
 		this.tutorialManager = tutorialManager;
 	}
 

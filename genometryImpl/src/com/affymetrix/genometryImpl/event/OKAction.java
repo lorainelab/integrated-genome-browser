@@ -12,7 +12,7 @@ public class OKAction extends GenericAction {
 	}
 
 	private OKAction() {
-		super("OK", null);//BUNDLE.getString("ok");
+		super("OK", null, null);//BUNDLE.getString("ok");
 	}
 
 	@Override

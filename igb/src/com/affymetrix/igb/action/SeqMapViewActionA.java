@@ -18,23 +18,12 @@ public abstract class SeqMapViewActionA extends GenericAction {
 	private SeqMapView gviewer;
 	private TierLabelManager handler;
 
-	public SeqMapViewActionA(String text, String tooltip, String iconPath, int mnemonic) {
-		super(text, tooltip, iconPath, mnemonic);
-	}
-
-	public SeqMapViewActionA(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
-		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
-	}
-
 	public SeqMapViewActionA(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic);
 	}
 
 	public SeqMapViewActionA(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
-	}
-	public SeqMapViewActionA(String text, String iconPath) {
-		super(text, iconPath);
 	}
 	
 	public SeqMapViewActionA(String text, String iconPath, String largeIconPath) {

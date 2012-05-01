@@ -21,7 +21,7 @@ public class LoadWholeSequenceAction extends GenericAction {
 	}
 
 	private LoadWholeSequenceAction(){
-		super(MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("allSequenceCap")), null);
+		super(MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("allSequenceCap")), null, null);
 	}
 
 	@Override

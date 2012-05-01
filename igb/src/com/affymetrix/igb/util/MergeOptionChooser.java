@@ -31,7 +31,7 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	public final JRPComboBox versionCB;
 	private class SpeciesAction extends GenericAction {
 		public SpeciesAction() {
-			super(null, null);
+			super(null, null, null);
 		}
 		private static final long serialVersionUID = 1L;
 		@Override
@@ -52,7 +52,7 @@ public final class MergeOptionChooser extends JRPFileChooser {
 	private final SpeciesAction speciesAction = new SpeciesAction();
 	private class VersionAction extends GenericAction {
 		public VersionAction() {
-			super(null, null);
+			super(null, null, null);
 		}
 		private static final long serialVersionUID = 1L;
 		@Override

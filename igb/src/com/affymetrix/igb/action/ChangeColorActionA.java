@@ -21,9 +21,6 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 public abstract class ChangeColorActionA extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 
-	protected ChangeColorActionA(String text, String iconPath) {
-		super(text, iconPath);
-	}
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}

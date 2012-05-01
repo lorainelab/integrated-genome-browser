@@ -29,7 +29,7 @@ public class LoadResidueAction extends GenericAction {
 	final boolean tryFull;
 	
 	public LoadResidueAction(final SeqSpan span, boolean tryFull){
-		super("Load Residue", null);
+		super("Load Residue", null, null);
 		this.span = span;
 		this.tryFull = tryFull;
 	}

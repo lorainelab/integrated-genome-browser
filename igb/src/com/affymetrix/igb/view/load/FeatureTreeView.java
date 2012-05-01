@@ -667,7 +667,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			private final JRPCheckBox checkbox;
 
 			private FeatureLoadAction(JRPCheckBox checkbox, Object extraInfo) {
-				super(null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
+				super(null, null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
 				this.checkbox = checkbox;
 			}
 

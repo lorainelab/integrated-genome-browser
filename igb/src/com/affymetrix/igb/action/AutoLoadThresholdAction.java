@@ -44,7 +44,7 @@ public class AutoLoadThresholdAction extends GenericAction
 	
 	private AutoLoadThresholdAction() {
 		//"Set AutoLoad Threshold to Current View"
-		super(BUNDLE.getString("setThreshold"), "images/autoload.png");
+		super(BUNDLE.getString("setThreshold"), "images/autoload.png", null);
 		this.map = ((IGB)IGB.getSingleton()).getMapView().getSeqMap();
 		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);

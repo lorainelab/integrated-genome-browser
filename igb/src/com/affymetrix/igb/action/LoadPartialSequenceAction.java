@@ -21,7 +21,7 @@ public class LoadPartialSequenceAction extends GenericAction {
 	}
 
 	private LoadPartialSequenceAction(){
-		super(MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("sequenceInViewCap")), null);
+		super(MessageFormat.format(BUNDLE.getString("load"),BUNDLE.getString("sequenceInViewCap")), null, null);
 	}
 
 	@Override

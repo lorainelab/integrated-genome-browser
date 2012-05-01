@@ -47,7 +47,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
-		this.repackStub = new RepackTiersAction(null, null) {
+		this.repackStub = new RepackTiersAction(null, null, null) {
 			private static final long serialVersionUID = 1L;
 		};
 		at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
@@ -123,7 +123,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			final boolean isSeparate = style.getSeparate();
 			for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-				Action action = new GenericAction(mode.getDisplayName(), null) {
+				Action action = new GenericAction(mode.getDisplayName(), null, null) {
 					private static final long serialVersionUID = 1L;
 	
 					@Override
@@ -154,7 +154,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
 					Operator operator = TransformHolder.getInstance().getOperator(transform.toString());
 					final String text = (operator == null) ? transform.toString() : operator.getDisplay();
-					Action action = new GenericAction(text, null) {
+					Action action = new GenericAction(text, null, null) {
 
 						private static final long serialVersionUID = 1L;
 

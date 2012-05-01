@@ -20,11 +20,6 @@ import com.affymetrix.igb.viewmode.AnnotationGlyph;
 public abstract class CollapseExpandActionA extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 	protected boolean collapsedTracks;
-
-	protected CollapseExpandActionA(String text, String iconPath) {
-		super(text, iconPath);
-		GenometryModel.getGenometryModel().addSymSelectionListener(this);
-	}
 	
 	protected CollapseExpandActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);

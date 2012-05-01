@@ -15,7 +15,7 @@ public class MaximizeTrackAction extends SeqMapViewActionA {
 	}
 
 	private MaximizeTrackAction() {
-		super(BUNDLE.getString("maximizeTrackAction"), null);
+		super(BUNDLE.getString("maximizeTrackAction"), null, null);
 	}
 
 	@Override

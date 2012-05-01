@@ -21,7 +21,7 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 	}
 
 	protected CollapseExpandAction() {
-		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png");
+		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png", null);
 	}
 
 	@Override

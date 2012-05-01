@@ -30,11 +30,6 @@ public abstract class AbstractLoadFileAction extends AbstractLoadFileOrURLAction
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
-	protected AbstractLoadFileAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
-		super(text, tooltip, iconPath, mnemonic, extraInfo, popup);
-		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
-		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
-	}
 	protected AbstractLoadFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();

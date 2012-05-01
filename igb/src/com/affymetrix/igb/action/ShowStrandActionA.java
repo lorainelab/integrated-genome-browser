@@ -18,8 +18,8 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
 	private static final long serialVersionUID = 1L;
 	protected boolean separateStrands;
 
-	protected ShowStrandActionA(String text, String iconPath) {
-		super(text, iconPath);
+	protected ShowStrandActionA(String text, String iconPath, String largeIconPath) {
+		super(text, iconPath, largeIconPath);
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 	}
 

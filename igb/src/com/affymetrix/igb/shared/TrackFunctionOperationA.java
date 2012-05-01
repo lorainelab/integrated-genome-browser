@@ -32,7 +32,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 	protected final Operator operator;
 	
 	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator) {
-		super(null, null);
+		super(null, null, null);
 		this.gviewer = gviewer;
 		this.operator = operator;
 	}

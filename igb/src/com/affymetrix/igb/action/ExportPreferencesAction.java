@@ -29,7 +29,7 @@ public class ExportPreferencesAction extends GenericAction {
 	}
 
 	private ExportPreferencesAction() {
-		super(BUNDLE.getString("ExportPreferences"), null, null, KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("ExportPreferences"), null, null, null, KeyEvent.VK_E, null, true);
 	}
 
 	@Override

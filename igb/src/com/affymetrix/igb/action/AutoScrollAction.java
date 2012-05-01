@@ -44,7 +44,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	private static final AutoScrollAction action = new AutoScrollAction();
 
 	private AutoScrollAction() {
-		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", KeyEvent.VK_A, null, true);
+		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", null, KeyEvent.VK_A, null, true);
 
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);

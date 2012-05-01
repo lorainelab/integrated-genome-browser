@@ -8,7 +8,7 @@ public class TutorialCancelAction extends GenericAction {
 	private final TutorialManager tutorialManager;
 
 	public TutorialCancelAction(TutorialManager tutorialManager) {
-		super("cancel", "images/stop.png");
+		super("cancel", "images/stop.png", null);
 		this.tutorialManager = tutorialManager;
 	}
 

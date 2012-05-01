@@ -15,7 +15,7 @@ public class CollapseAction extends CollapseExpandActionA implements SymSelectio
 	}
 
 	protected CollapseAction() {
-		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png");
+		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png", null);
 		collapsedTracks = true;
 	}
 

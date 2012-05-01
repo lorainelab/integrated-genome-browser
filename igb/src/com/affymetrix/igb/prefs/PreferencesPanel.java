@@ -222,7 +222,7 @@ public final class PreferencesPanel extends JPanel {
 		JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
 		final JDialog dialog = new JDialog(frameAncestor, HELP, true);
 		dialog.getContentPane().add(scroller, "Center");
-		Action close_action = new GenericAction("OK", null) {
+		Action close_action = new GenericAction("OK", null, null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -300,7 +300,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getImportAction() {
 		if (import_action == null) {
-			import_action = new GenericAction("Import Preferences", null, null, KeyEvent.VK_I, null, true) {
+			import_action = new GenericAction("Import Preferences", null, null, null, KeyEvent.VK_I, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -335,7 +335,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpAction() {
 		if (help_action == null) {
-			help_action = new GenericAction("General Help", null, null, KeyEvent.VK_G, null, true) {
+			help_action = new GenericAction("General Help", null, null, null, KeyEvent.VK_G, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -352,7 +352,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getHelpTabAction() {
 		if (help_for_tab_action == null) {
-			help_for_tab_action = new GenericAction(BUNDLE.getString("HelpForCurrentTab"), null, null, KeyEvent.VK_C, null, true) {
+			help_for_tab_action = new GenericAction(BUNDLE.getString("HelpForCurrentTab"), null, null, null, KeyEvent.VK_C, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent ae) {

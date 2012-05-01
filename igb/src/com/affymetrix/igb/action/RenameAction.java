@@ -21,7 +21,7 @@ public class RenameAction extends SeqMapViewActionA {
 	}
 
 	private RenameAction() {
-		super(BUNDLE.getString("renameAction"), null);
+		super(BUNDLE.getString("renameAction"), null, null);
 	}
 
 	private void renameTier(final TierGlyph tier) {

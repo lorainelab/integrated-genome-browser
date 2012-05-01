@@ -28,7 +28,7 @@ private static final RequestFeatureAction ACTION = new RequestFeatureAction();
 	}
 
 	private RequestFeatureAction() {
-		super(BUNDLE.getString("requestAFeature"), null, "toolbarButtonGraphics/development/Application16.gif", KeyEvent.VK_R, null, true);
+		super(BUNDLE.getString("requestAFeature"), null, "toolbarButtonGraphics/development/Application16.gif", null, KeyEvent.VK_R, null, true);
 	}
 
 	@Override

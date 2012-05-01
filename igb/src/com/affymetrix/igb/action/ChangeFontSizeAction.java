@@ -24,7 +24,7 @@ public class ChangeFontSizeAction extends SeqMapViewActionA {
 	}
 
 	private ChangeFontSizeAction() {
-		super(BUNDLE.getString("changeFontSizeAction"), null);
+		super(BUNDLE.getString("changeFontSizeAction"), null, null);
 	}
 
 	private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size) {

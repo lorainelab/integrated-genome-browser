@@ -18,7 +18,7 @@ public class CancelAllAction extends GenericAction {
 		return ACTION;
 	}
 	public CancelAllAction() {
-		super(BUNDLE.getString("cancelAllAction"), BUNDLE.getString("cancelAllActionTooltip"), "images/stop.png", KeyEvent.VK_UNDEFINED);
+		super(BUNDLE.getString("cancelAllAction"), BUNDLE.getString("cancelAllActionTooltip"), "images/stop.png", null, KeyEvent.VK_UNDEFINED);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

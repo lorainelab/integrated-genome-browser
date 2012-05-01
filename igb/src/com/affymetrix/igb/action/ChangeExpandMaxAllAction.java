@@ -15,7 +15,7 @@ public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
 	}
 
 	private ChangeExpandMaxAllAction() {
-		super(BUNDLE.getString("changeExpandMaxAllAction"), null);
+		super(BUNDLE.getString("changeExpandMaxAllAction"), null, null);
 	}
 
 	public void actionPerformed(ActionEvent e) {

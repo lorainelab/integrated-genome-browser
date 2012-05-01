@@ -222,7 +222,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	public Action makeImportAction() {
-		Action a = new GenericAction("Import ...", null) {
+		Action a = new GenericAction("Import ...", null, null) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -259,7 +259,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	public Action makeExportAction() {
-		Action a = new GenericAction("Export ...", null) {
+		Action a = new GenericAction("Export ...", null, null) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -274,7 +274,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	}
 
 	Action makeDeleteAction() {
-		Action a = new GenericAction("Delete ...", null) {
+		Action a = new GenericAction("Delete ...", null, null) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -652,7 +652,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		private Action makePropertiesAction() {
-			Action a = new GenericAction("Properties ...", null) {
+			Action a = new GenericAction("Properties ...", null, null) {
 
 				private static final long serialVersionUID = 1L;
 
@@ -670,7 +670,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		private Action makeGoToAction() {
-			Action a = new GenericAction("Go To", null) {
+			Action a = new GenericAction("Go To", null, null) {
 
 				private static final long serialVersionUID = 1L;
 

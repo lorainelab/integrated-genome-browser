@@ -31,7 +31,7 @@ public class SelectAllAction extends SeqMapViewActionA {
 	}
 
 	protected SelectAllAction(FileTypeCategory category) {
-		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null) ;
+		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null, null) ;
 		this.category = category;
 	}
 

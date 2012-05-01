@@ -16,7 +16,7 @@ public class MapModeSelectAction extends SeqMapViewActionA {
 		super(
 			BUNDLE.getString(MapMode.MapSelectMode.name() + "Button"),
 			BUNDLE.getString(MapMode.MapSelectMode.name() + "Tip"),
-			"images/arrow.png",
+			"images/arrow.png", null,
 			KeyEvent.VK_UNDEFINED
 		);
 		this.id = id;

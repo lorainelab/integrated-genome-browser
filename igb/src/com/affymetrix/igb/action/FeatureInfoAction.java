@@ -16,7 +16,7 @@ public class FeatureInfoAction extends GenericAction {
 	final String url ;
 
 	public FeatureInfoAction(String url){
-		super(BUNDLE.getString("trackInfo"), null);
+		super(BUNDLE.getString("trackInfo"), null, null);
 		this.url = url;
 	}
 

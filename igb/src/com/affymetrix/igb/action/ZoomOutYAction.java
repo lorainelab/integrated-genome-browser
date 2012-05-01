@@ -18,7 +18,7 @@ public class ZoomOutYAction extends SeqMapViewActionA {
 	}
 
 	public ZoomOutYAction() {
-		super("Zoom out vertically", "toolbarButtonGraphics/general/ZoomOut16.gif");
+		super("Zoom out vertically", "toolbarButtonGraphics/general/ZoomOut16.gif", null);
 	}
 
 	@Override

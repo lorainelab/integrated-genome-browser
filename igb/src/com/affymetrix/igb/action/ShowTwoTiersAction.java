@@ -15,7 +15,7 @@ public class ShowTwoTiersAction extends ShowStrandActionA implements SymSelectio
 	}
 
 	protected ShowTwoTiersAction() {
-		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png");
+		super(IGBConstants.BUNDLE.getString("showTwoTiersAction"), "images/strand_separate.png", null);
 		separateStrands = true;
 	}
 

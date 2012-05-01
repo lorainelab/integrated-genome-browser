@@ -255,7 +255,7 @@ public class AltSpliceView extends IGBTabPanel
 			return;
 		}
 
-		Action hide_action = new GenericAction("Hide Tier", null) {
+		Action hide_action = new GenericAction("Hide Tier", null, null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -265,7 +265,7 @@ public class AltSpliceView extends IGBTabPanel
 			}
 		};
 
-		Action restore_all_action = new GenericAction("Show All", null) {
+		Action restore_all_action = new GenericAction("Show All", null, null) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

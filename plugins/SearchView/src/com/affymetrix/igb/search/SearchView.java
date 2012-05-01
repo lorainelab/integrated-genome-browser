@@ -60,7 +60,7 @@ public final class SearchView extends IGBTabPanel implements
 		private static final long serialVersionUID = 1L;
 
 		private SearchModeAction() {
-			super(null, null);
+			super(null, null, null);
 		}
 
 		@Override
@@ -97,7 +97,7 @@ public final class SearchView extends IGBTabPanel implements
 		private static final long serialVersionUID = 1L;
 
 		private SearchAction() {
-			super(null, null);
+			super(null, null, null);
 		}
 
 		@Override
@@ -158,7 +158,7 @@ public final class SearchView extends IGBTabPanel implements
 		private static final long serialVersionUID = 1L;
 
 		private ClearAction() {
-			super(null, null);
+			super(null, null, null);
 		}
 
 		@Override

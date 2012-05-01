@@ -15,7 +15,7 @@ public class SelectParentAction extends SeqMapViewActionA {
 		return ACTION;
 	}
 	protected SelectParentAction() {
-		super(IGBConstants.BUNDLE.getString("selectParentAction"), null);
+		super(IGBConstants.BUNDLE.getString("selectParentAction"), null, null);
 	}
 
 	@Override

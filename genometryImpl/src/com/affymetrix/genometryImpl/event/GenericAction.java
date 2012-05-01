@@ -31,24 +31,17 @@ public abstract class GenericAction extends AbstractAction {
 	private Set<GenericActionDoneCallback> doneCallbacks;
 	
 	public GenericAction(String text, int mnemonic) {
-		this(text, null, null, mnemonic);
+		this(text, null, null, null, mnemonic);
 	}
 	
-	public GenericAction(String text, String iconPath) {
-		this(text, null, iconPath, KeyEvent.VK_UNDEFINED);
-	}
 	public GenericAction(String text, String iconPath, String largeIconPath) {
 		this(text, null, iconPath, largeIconPath, KeyEvent.VK_UNDEFINED);
 	}
-	public GenericAction(String text, String tooltip, String iconPath, int mnemonic) {
-		this(text, tooltip, iconPath, mnemonic, null, false);
-	}
+	
 	public GenericAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic) {
 		this(text, tooltip, iconPath, largeIconPath, mnemonic, null, false);
 	}
-	public GenericAction(String text, String tooltip, String iconPath, int mnemonic, Object extraInfo, boolean popup) {
-		this(text, tooltip, iconPath, null, mnemonic, null, false);
-	}
+	
 	public GenericAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic,Object extraInfo, boolean popup) {
 		super();
 		this.text = text;

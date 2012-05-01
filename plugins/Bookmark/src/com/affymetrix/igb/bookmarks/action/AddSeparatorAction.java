@@ -21,7 +21,7 @@ public class AddSeparatorAction extends AddBookmarkAction {
 	}
 
 	private AddSeparatorAction() {
-		super("New Separator", "New Separator", null, KeyEvent.VK_S, null, false);
+		super("New Separator", "New Separator", null, null, KeyEvent.VK_S, null, false);
 	}
 
 	@Override

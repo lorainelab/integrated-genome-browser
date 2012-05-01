@@ -16,7 +16,8 @@ import java.io.*;
 
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -28,6 +29,9 @@ import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.lang3.mutable.MutableLong;
+
 import net.sf.samtools.util.SeekableStream;
 
 public final class NibbleResiduesParser implements Parser {
@@ -59,7 +63,7 @@ public final class NibbleResiduesParser implements Parser {
 			if (istr instanceof SeekableStream) {
 				bis = new SeekableBufferedStream((SeekableStream) istr);
 			} else if (istr instanceof BufferedInputStream) {
-				bis = (BufferedInputStream) istr;
+				bis = istr;
 			} else {
 				bis = new BufferedInputStream(istr);
 			}
@@ -289,19 +293,26 @@ public final class NibbleResiduesParser implements Parser {
 		DataOutputStream dos = null;
 		try
 		{
-			@SuppressWarnings("rawtypes")
-			CThreadWorker ctw = CThreadWorker.getCurrentCThreadWorker();
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
+			final long saveStart = start;
+			// need to use MutableLong since sequenceLoop must be final to be used in inner class
+			final MutableLong sequenceLoop = new MutableLong();
+			ProgressUpdater progressUpdater = new ProgressUpdater(start, end,
+				new PositionCalculator() {
+					@Override
+					public long getCurrentPosition() {
+						return saveStart + sequenceLoop.longValue();
+					}
+				}
+			);
 
 			// Only keep BUFSIZE characters in memory at one time
-			for (int i=0;i<(end-start) && (!Thread.currentThread().isInterrupted());i+=BUFSIZE) {
-				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
+			for (sequenceLoop.setValue(0);sequenceLoop.longValue()<(end-start) && (!Thread.currentThread().isInterrupted());sequenceLoop.add(BUFSIZE)) {
+				String outString = seq.getResidues((int)sequenceLoop.longValue(), Math.min((int)sequenceLoop.longValue()+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
-				if (ctw != null) {
-					ctw.setProgressAsPercent((double)i / (double)(end - start));
-				}
 			}
 			dos.flush();
+			progressUpdater.kill();
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -4,7 +4,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -48,14 +49,8 @@ public final class BAM extends XAM {
 			this.blockAddress = blockAddress;
 			this.currentOffset = currentOffset;
 		}
-		public long getBlockAddress() {
-			return blockAddress;
-		}
-		public int getCurrentOffset() {
-			return currentOffset;
-		}
-		public long getApproximateDifference(CompressedStreamPosition pos) {
-			return (long)((blockAddress - pos.getBlockAddress()) * BLOCK_FACTOR + (currentOffset - pos.getCurrentOffset()));
+		public long getApproximatePosition() {
+			return (long)(blockAddress * BLOCK_FACTOR + currentOffset);
 		}
 		@Override
 		public String toString() {
@@ -144,11 +139,6 @@ public final class BAM extends XAM {
 		return pref_list;
 	}
 
-	private double computeProgressAmount(CompressedStreamPosition startPosition, CompressedStreamPosition currentPosition, CompressedStreamPosition endPosition) {
-		double d = (double)currentPosition.getApproximateDifference(startPosition) / (double)endPosition.getApproximateDifference(startPosition);
-//		System.out.println(")))))) start=" + startPosition + ", current=" + currentPosition + ", end=" + endPosition + ", progress%=" + d);
-		return d;
-	}
 	/**
 	 * @return current CompressedStreamPosition for SAMFileReader
 	 * @throws Exception
@@ -169,6 +159,17 @@ public final class BAM extends XAM {
 		return new CompressedStreamPosition(blockAddressValue, currentOffsetValue);
 	}
 
+	private long getEndPosition(BioSeq seq, int max, boolean contained) throws Exception {
+		File fTemp = new File(uri);
+		File indexFileTemp = findIndexFile(fTemp);
+		SAMFileReader readerTemp = new SAMFileReader(fTemp, indexFileTemp, false);
+		CloseableIterator<SAMRecord> iter = readerTemp.query(seqs.get(seq), max - 1, max, contained);
+		while (iter.hasNext()) {
+			iter.next();
+		}
+		return getCompressedInputStreamPosition(readerTemp).getApproximatePosition();
+	}
+
 	/**
 	 * Return a list of symmetries for the given chromosome range
 	 * @param seq
@@ -179,32 +180,35 @@ public final class BAM extends XAM {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		List<Throwable> errList = new ArrayList<Throwable>(10);
 		CloseableIterator<SAMRecord> iter = null;
-		@SuppressWarnings("rawtypes")
-		CThreadWorker ctw = CThreadWorker.getCurrentCThreadWorker();
 		try {
 			if (reader != null) {
-				// this call is just to find the end position in the file
-				File fTemp = new File(uri);
-				File indexFileTemp = findIndexFile(fTemp);
-				SAMFileReader readerTemp = new SAMFileReader(fTemp, indexFileTemp, false);
-				readerTemp.query(seqs.get(seq), max - 1, max, contained);
-				CompressedStreamPosition endPosition = getCompressedInputStreamPosition(readerTemp);
-				// this call is the real call
+				long endPosition = getEndPosition(seq, max, contained);
 				iter = reader.query(seqs.get(seq), min, max, contained);
-				CompressedStreamPosition startPosition = getCompressedInputStreamPosition(reader);
+				final long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+				ProgressUpdater progressUpdater = new ProgressUpdater(startPosition, endPosition,
+					new PositionCalculator() {
+						@Override
+						public long getCurrentPosition() {
+							long currentPosition = startPosition;
+							try {
+								currentPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
+							}
+							catch (Exception x) {
+								// log error here
+							}
+							return currentPosition;
+						}
+					}
+				);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
-					int progressCounter = 0;
+					int sleepCounter = 0;
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
 							sr = iter.next();
-							progressCounter++;
-							if (progressCounter >= PROGRESS_FREQUENCY) {
-								if (ctw != null) {
-									CompressedStreamPosition currentPosition = getCompressedInputStreamPosition(reader);
-									ctw.setProgressAsPercent(computeProgressAmount(startPosition, currentPosition, endPosition));
-								}
-								progressCounter = 0;
+							sleepCounter++;
+							if (sleepCounter >= PROGRESS_FREQUENCY) {
+								sleepCounter = 0;
 								Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
 							}
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {
@@ -218,6 +222,7 @@ public final class BAM extends XAM {
 						}
 					}
 				}
+				progressUpdater.kill();
 			}
 		} catch (Exception ex){
 			throw ex;

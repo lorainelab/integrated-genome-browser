@@ -32,7 +32,8 @@
 		<property name="BigWigHandler"       value="${basedir}/plugins/BigWigHandler" />
 		<property name="Bookmark"            value="${basedir}/plugins/Bookmark" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
-		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
+		<property name="TrackAdjuster"       value="${basedir}/plugins/TrackAdjuster" />
+		<property name="TrackOperations"     value="${basedir}/plugins/TrackOperations" />
 		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="SearchModeIdOrProps" value="${basedir}/plugins/SearchModeIdOrProps" />

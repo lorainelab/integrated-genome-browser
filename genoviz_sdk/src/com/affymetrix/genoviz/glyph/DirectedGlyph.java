@@ -39,6 +39,10 @@ public abstract class DirectedGlyph extends SolidGlyph {
 
 	private int orientation = NeoConstants.HORIZONTAL;
 
+	/**
+	 * @param theOrientation must be one of {@link NeoConstants.HORIZONTAL}
+	 *        or {@link NeoConstants.VERTICAL}
+	 */
 	public void setOrientation( int theOrientation ) {
 		switch ( theOrientation ) {
 			case NeoConstants.HORIZONTAL:
@@ -66,13 +70,15 @@ public abstract class DirectedGlyph extends SolidGlyph {
 	}
 
 	/**
-	 * possible direction
+	 * possible direction.
+	 * Note that these disagree with and mask their {@link NeoConstants} counterparts.
 	 * @see #getDirection
 	 */
 	protected static final int EAST = 1, SOUTH = 2, WEST = 4, NORTH = 8;
 
 	/**
-	 * gets the direction of the glyph.
+	 * @return one of {@link #EAST}, {@link #SOUTH}, {@link #WEST}, or {@link #NORTH}.
+	 * @throws IllegalStateException when not one of the above.
 	 */
 	public int getDirection() {
 		if ( this.isForward() && NeoConstants.HORIZONTAL == this.getOrientation() ) {
@@ -98,6 +104,7 @@ public abstract class DirectedGlyph extends SolidGlyph {
 	 * depending on the orientation and whether the "length"
 	 * of the glyph is negative.
 	 */
+	@Override
 	public void setCoords(double x, double y, double width, double height)  {
 		super.setCoords(x, y, width, height);
 		switch ( this.getOrientation() ) {

@@ -19,7 +19,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
  * AltSpliceView
  */
 public abstract class ChangeColorActionA extends SeqMapViewActionA {
-	protected static final java.awt.Color DEFAULT_COLOR = java.awt.Color.GRAY;
+	protected static final java.awt.Color DEFAULT_COLOR = javax.swing.UIManager.getColor("Button.background");
 	private static final long serialVersionUID = 1L;
 
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {

@@ -61,7 +61,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
  * OSGi Activator for igb bundle
  */
 public class Activator implements BundleActivator {
-	private static final String DEFAULT_ICON_PATH = "toolbarButtonGraphics/general/TipOfTheDay16.gif";
 	protected BundleContext bundleContext;
     String[] args;
 

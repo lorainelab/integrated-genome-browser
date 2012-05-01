@@ -73,7 +73,6 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
-import com.affymetrix.igb.util.*;
 
 /**
  * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).

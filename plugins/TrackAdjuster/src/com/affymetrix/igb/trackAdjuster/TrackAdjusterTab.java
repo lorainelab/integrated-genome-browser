@@ -645,7 +645,7 @@ public final class TrackAdjusterTab
 		GraphType graphType = GraphType.LINE_GRAPH;
 
 		public GraphStyleSetter(GraphType graphType) {
-			super(null, null);
+			super(null, null, null);
 			this.graphType = graphType;
 		}
 

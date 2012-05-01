@@ -29,7 +29,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
 		TrackAdjusterTab.init(igbService);
 		sgt = TrackAdjusterTab.getSingleton();
-		repackStub = new RepackTiersAction(null, null) {
+		repackStub = new RepackTiersAction(null, null, null) {
 
 			private static final long serialVersionUID = 1L;
 		};

@@ -161,7 +161,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        removeBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("images/removeBookmark.png"));
+        removeBookmarkActionButton.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/edit-clear.png"));
         removeBookmarkActionButton.setToolTipText("Remove a bookmark");
         removeBookmarkActionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         removeBookmarkActionButton.addActionListener(new java.awt.event.ActionListener() {
@@ -189,7 +189,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
             }
         });
 
-        addSeparator.setIcon(CommonUtils.getInstance().getIcon("images/separator.png"));
+        addSeparator.setIcon(CommonUtils.getInstance().getIcon("22x22/actions/list-remove.png"));
         addSeparator.setToolTipText("Add new separator");
         addSeparator.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addSeparator.addActionListener(new java.awt.event.ActionListener() {

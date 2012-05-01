@@ -237,7 +237,7 @@
                 <Component class="javax.swing.JButton" name="removeBookmarkActionButton">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/removeBookmark.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/edit-clear.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Remove a bookmark&quot;" type="code"/>
@@ -300,7 +300,7 @@
                 <Component class="javax.swing.JButton" name="addSeparator">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CommonUtils.getInstance().getIcon(&quot;images/separator.png&quot;)" type="code"/>
+                      <Connection code="CommonUtils.getInstance().getIcon(&quot;22x22/actions/list-remove.png&quot;)" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="&quot;Add new separator&quot;" type="code"/>

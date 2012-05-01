@@ -16,6 +16,7 @@ import java.io.*;
 
 
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -288,12 +289,17 @@ public final class NibbleResiduesParser implements Parser {
 		DataOutputStream dos = null;
 		try
 		{
+			@SuppressWarnings("rawtypes")
+			CThreadWorker ctw = CThreadWorker.getCurrentCThreadWorker();
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 
 			// Only keep BUFSIZE characters in memory at one time
 			for (int i=0;i<(end-start) && (!Thread.currentThread().isInterrupted());i+=BUFSIZE) {
 				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
+				if (ctw != null) {
+					ctw.setProgressAsPercent((double)i / (double)(end - start));
+				}
 			}
 			dos.flush();
 			return true;

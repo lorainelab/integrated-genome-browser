@@ -19,11 +19,13 @@ import com.affymetrix.igb.tiers.TierLabelManager;
  * AltSpliceView
  */
 public abstract class ChangeColorActionA extends SeqMapViewActionA {
+	protected static final java.awt.Color DEFAULT_COLOR = java.awt.Color.GRAY;
 	private static final long serialVersionUID = 1L;
 
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
+	public abstract java.awt.Color getColor();
 	protected void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
 		if (tier_label_glyphs.isEmpty()) {
 			return;

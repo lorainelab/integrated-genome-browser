@@ -22,6 +22,14 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 	}
 
 	@Override
+	public java.awt.Color getColor(){
+		if(getTierManager().getSelectedTiers().size() == 1){
+			getTierManager().getSelectedTiers().get(0).getBackgroundColor();
+		}
+		return DEFAULT_COLOR;
+	}
+	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		changeColor(getTierManager().getSelectedTierLabels(), false);

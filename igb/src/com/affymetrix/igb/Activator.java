@@ -27,27 +27,15 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.igb.action.ChangeBackgroundColorAction;
-import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.CollapseExpandAction;
-import com.affymetrix.igb.action.RepackAllTiersAction;
-import com.affymetrix.igb.action.RepackSelectedTiersAction;
-import com.affymetrix.igb.action.ScrollDownAction;
-import com.affymetrix.igb.action.ScrollLeftAction;
-import com.affymetrix.igb.action.ScrollRightAction;
-import com.affymetrix.igb.action.ScrollUpAction;
-import com.affymetrix.igb.action.ShowStrandAction;
-import com.affymetrix.igb.action.ZoomInXAction;
-import com.affymetrix.igb.action.ZoomInYAction;
-import com.affymetrix.igb.action.ZoomOutFullyAction;
-import com.affymetrix.igb.action.ZoomOutXAction;
-import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.viewmode.BaiSemanticZoomGlyphFactory;
@@ -58,7 +46,6 @@ import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
 import com.affymetrix.igb.viewmode.GraphGlyphFactory;
 import com.affymetrix.igb.viewmode.HeatMapGraphGlyph;
 import com.affymetrix.igb.viewmode.LineGraphGlyph;
-import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.MinMaxAvgGraphGlyph;
 import com.affymetrix.igb.viewmode.MismatchGlyphFactory;
 import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
@@ -68,10 +55,6 @@ import com.affymetrix.igb.viewmode.SequenceGlyphFactory;
 import com.affymetrix.igb.viewmode.StairStepGraphGlyph;
 import com.affymetrix.igb.viewmode.TbiSemanticZoomGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
-import com.affymetrix.igb.shared.GlyphProcessor;
-import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
 /**
@@ -231,7 +214,14 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							JRPButton button; 
+							if(genericAction instanceof ChangeColorActionA){
+								button = new JRPColoredButton("Toolbar_" + genericAction.getId(), (ChangeColorActionA)genericAction);
+								IGBServiceImpl.getInstance().addListSelectionListener((JRPColoredButton)button);
+							}else{
+								button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
+							}
+							
 							button.setHideActionText(true);
 							((IGB)Application.getSingleton()).addToolbarButton(button);
 						}

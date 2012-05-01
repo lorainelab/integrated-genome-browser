@@ -1,18 +1,17 @@
 
-package com.affymetrix.igb.viewmode;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * All implementation of map view mode are stored here.
@@ -21,7 +20,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
 public class MapViewModeHolder {
 
 	java.util.LinkedHashMap<String, MapViewGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, MapViewGlyphFactoryI>();
-	java.util.LinkedHashMap<FileTypeCategory, MapViewGlyphFactoryI> defaultView = new java.util.LinkedHashMap<FileTypeCategory, MapViewGlyphFactoryI>();
+	EnumMap<FileTypeCategory, MapViewGlyphFactoryI> defaultView = new EnumMap<FileTypeCategory, MapViewGlyphFactoryI>(FileTypeCategory.class);
 	private static final MapViewModeHolder instance = new MapViewModeHolder();
 
 	public static MapViewModeHolder getInstance(){
@@ -70,7 +69,7 @@ public class MapViewModeHolder {
 
 	public boolean styleSupportsTwoTrack(ITrackStyleExtended style) {
 		String viewMode = style.getViewMode();
-		if (viewMode == TrackConstants.default_view_mode) {
+		if (viewMode.equals(TrackConstants.default_view_mode)) {
 			viewMode = getDefaultFactoryFor(style.getFileTypeCategory()).getName();
 		}
 		MapViewGlyphFactoryI factory = getViewFactory(viewMode);

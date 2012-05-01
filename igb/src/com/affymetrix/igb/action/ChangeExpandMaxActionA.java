@@ -1,12 +1,12 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.shared.RepackTiersAction;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.TierGlyph;
-
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 

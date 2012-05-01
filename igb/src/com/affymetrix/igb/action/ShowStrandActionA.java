@@ -10,13 +10,9 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.MultiGraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 public abstract class ShowStrandActionA extends SeqMapViewActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.shared.RepackTiersAction;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.igb.IGBConstants;

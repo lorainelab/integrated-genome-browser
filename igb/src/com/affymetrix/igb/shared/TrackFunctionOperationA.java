@@ -25,7 +25,6 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 public abstract class TrackFunctionOperationA extends GenericAction {
 	private static final long serialVersionUID = 1L;

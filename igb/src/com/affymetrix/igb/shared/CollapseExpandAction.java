@@ -1,14 +1,13 @@
-package com.affymetrix.igb.action;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.Action;
-import javax.swing.ImageIcon;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.CollapseExpandActionA;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 public class CollapseExpandAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;

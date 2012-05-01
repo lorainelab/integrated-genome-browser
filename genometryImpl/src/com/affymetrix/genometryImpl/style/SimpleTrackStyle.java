@@ -158,4 +158,12 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public final void setFloatGraph(boolean b) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+	public void setTrackNameSize(float font_size) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public float getTrackNameSize() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

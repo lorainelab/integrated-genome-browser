@@ -98,4 +98,7 @@ public interface SeqMapViewI {
 	public void selectAllGraphs();
 	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
 	public List<? extends GlyphI> getSelectedTiers();
+	public void renameTier(GlyphI tier, String new_label);
+	public void setTierStyles();
+	public void repackTheTiers(boolean full_repack, boolean stretch_vertically);
 }

@@ -14,7 +14,6 @@ package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-
 import java.awt.Color;
 
 public interface ITrackStyleExtended extends ITrackStyle {
@@ -81,4 +80,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 
 	boolean getFloatGraph();
 	void setFloatGraph(boolean b);
+	public void setTrackNameSize(float font_size);
+	public float getTrackNameSize();
 }

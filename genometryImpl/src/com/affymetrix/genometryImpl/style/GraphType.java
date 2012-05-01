@@ -6,16 +6,16 @@ import java.util.Map;
 
 /**Contributed by Ido Tamir.*/
 public enum GraphType {
-	LINE_GRAPH("Line", 1),
-	BAR_GRAPH("Bar", 2),
-	DOT_GRAPH("Dot", 3),
-	MINMAXAVG("Min_Max_Avg", 4),
-	STAIRSTEP_GRAPH("Stairstep", 5),
-	HEAT_MAP("HeatMap", 6),
-	FILL_BAR_GRAPH("Fill Bar",7);
+	LINE_GRAPH("Line"),
+	BAR_GRAPH("Bar"),
+	DOT_GRAPH("Dot"),
+	MINMAXAVG("Min_Max_Avg"),
+	STAIRSTEP_GRAPH("Stairstep"),
+	HEAT_MAP("HeatMap"),
+	FILL_BAR_GRAPH("Fill Bar");
 	
 	private String humanReadable;
-	private static Map<String,GraphType> humanReadable2number;
+	private final static Map<String,GraphType> humanReadable2number;
 
 	static {
 		humanReadable2number = new HashMap<String,GraphType>();
@@ -25,7 +25,7 @@ public enum GraphType {
 	}
 
 
-	private GraphType(String humanReadable, int number){
+	private GraphType(String humanReadable){
 		this.humanReadable = humanReadable;
 	}
 

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 
 import java.awt.event.ActionEvent;
@@ -21,7 +22,11 @@ public class ClampViewAction extends GenericAction {
 		super(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
 		this.putValue(SELECTED_KEY, false);
 	}
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ClampViewAction getAction(){
 		return ACTION;
 	}

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -11,12 +12,13 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class CloseTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static CloseTracksAction ACTION;
+	private static CloseTracksAction ACTION = new CloseTracksAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static CloseTracksAction getAction() {
-		if (ACTION == null) {
-			ACTION = new CloseTracksAction();
-		}
 		return ACTION;
 	}
 

@@ -52,10 +52,7 @@ public abstract class GenericAction extends AbstractAction {
 		this.extraInfo = extraInfo;
 		this.popup = popup;
 		doneCallbacks = new HashSet<GenericActionDoneCallback>();
-		_setProperties();
-	}
 
-	private void _setProperties() {
 		putValue(Action.NAME, getDisplay());
 		if (iconPath != null) {
 			ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
@@ -80,7 +77,6 @@ public abstract class GenericAction extends AbstractAction {
 		if (tooltip == null && text != null) {
 			this.putValue(SHORT_DESCRIPTION, text);
 		}
-		GenericActionHolder.getInstance().addGenericAction(this);
 	}
 
 	public final String getText() {

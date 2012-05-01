@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedReader;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
@@ -38,7 +39,10 @@ public class AboutIGBAction extends GenericAction {
 
 	private static final long serialVersionUID = 1l;
 	private static final AboutIGBAction ACTION = new AboutIGBAction();
-
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static AboutIGBAction getAction() {
 		return ACTION;
 	}

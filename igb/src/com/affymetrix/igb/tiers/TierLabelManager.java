@@ -204,7 +204,8 @@ public final class TierLabelManager implements PropertyHolder {
 //		resizer = new MouseInputAdapter() {
 			// Stub out resizing to disable it.
 //		};
-		resizer = new TierResizer(this.tiermap);
+		resizer = new NewTierResizer(this.tiermap);
+//		resizer = new TierResizer(this.tiermap);
 //		resizer = new AccordionTierResizer(this.tiermap);
 
 		labelmap.addMouseListener(resizer);

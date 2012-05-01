@@ -26,9 +26,6 @@ public class ExportDialogGUI extends JPanel {
 		return singleton;
 	}
 
-	/**
-	 * Creates new form ExportUtils
-	 */
 	public ExportDialogGUI() {
 		ed = ExportDialog.getSingleton();
 

@@ -101,6 +101,7 @@ public class ExportDialog implements ExportConstants {
 	JRadioButton mvRadioButton = new JRadioButton();
 	JRadioButton mvlRadioButton = new JRadioButton();
 	JPanel buttonsPanel = new JPanel();
+	// detect export view size changed and activate refresh button.
 	private static final ComponentListener resizelistener = new ComponentListener() {
 
 		public void componentResized(ComponentEvent e) {
@@ -118,6 +119,7 @@ public class ExportDialog implements ExportConstants {
 		public void componentHidden(ComponentEvent ce) {
 		}
 	};
+	// detect export view range changed and activate refresh button.
 	private static final NeoRangeListener rangeListener = new NeoRangeListener() {
 
 		@Override
@@ -127,6 +129,7 @@ public class ExportDialog implements ExportConstants {
 			}
 		}
 	};
+	// detect export view changed and activate refresh button. (Just for Seq View)
 	private static final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
 
 		public void adjustmentValueChanged(AdjustmentEvent ae) {
@@ -135,6 +138,18 @@ public class ExportDialog implements ExportConstants {
 			}
 		}
 	};
+
+	/**
+	 *
+	 * @return ExportDialog instance
+	 */
+	public static ExportDialog getSingleton() {
+		if (singleton == null) {
+			singleton = new ExportDialog();
+		}
+
+		return singleton;
+	}
 
 	/**
 	 * Display the export panel and initialize all related objects for export
@@ -188,6 +203,7 @@ public class ExportDialog implements ExportConstants {
 			}
 
 			initImageInfo();
+
 			mvRadioButton.setEnabled(seqMap.getTiers().size() != 0);
 			mvlRadioButton.setEnabled(seqMap.getTiers().size() != 0);
 			svRadioButton.setEnabled(seqMap.getSelected().size() != 0);
@@ -220,7 +236,7 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Initialize export frame.
+	 * Initialize export panel.
 	 */
 	private void initFrame() {
 		if (static_frame == null) {
@@ -254,6 +270,12 @@ public class ExportDialog implements ExportConstants {
 		}
 	}
 
+	/**
+	 * Bind two listeners(detect size and view changed) to current export seq
+	 * view.
+	 *
+	 * @param seqView
+	 */
 	public void initSeqViewListener(Component seqView) {
 		seqView.addComponentListener(resizelistener);
 		((NeoSeq) seqView).getScroller().addAdjustmentListener(adjustmentlistener);
@@ -261,14 +283,6 @@ public class ExportDialog implements ExportConstants {
 
 	public static FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
-	}
-
-	public static ExportDialog getSingleton() {
-		if (singleton == null) {
-			singleton = new ExportDialog();
-		}
-
-		return singleton;
 	}
 
 	/**
@@ -294,8 +308,8 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * Set component to export: Whole frame, main view, main view with label and
-	 * sliced view
+	 * Set component to export: Whole frame, main view, main view with label,
+	 * sliced view and seq view.
 	 *
 	 * @param c
 	 */
@@ -314,8 +328,8 @@ public class ExportDialog implements ExportConstants {
 			imageInfo.setHeight(component.getHeight());
 		}
 
-		widthSpinner.setValue((double) component.getWidth());
-		heightSpinner.setValue((double) component.getHeight());
+		widthSpinner.setValue((double) imageInfo.getWidth());
+		heightSpinner.setValue((double) imageInfo.getHeight());
 	}
 
 	/**
@@ -590,11 +604,11 @@ public class ExportDialog implements ExportConstants {
 	}
 
 	/**
-	 * According to passed image extention, export image to passed export file
-	 * path.
+	 * Export image to passed file by passed extension.
 	 *
 	 * @param f
 	 * @param ext
+	 * @param isScript (is from command line or not)
 	 * @throws IOException
 	 */
 	public static void exportScreenshot(File f, String ext, boolean isScript) throws IOException {

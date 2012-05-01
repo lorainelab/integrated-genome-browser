@@ -25,7 +25,7 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	@Override
 	public java.awt.Color getColor(){
 		if(getTierManager().getSelectedTiers().size() == 1){
-			getTierManager().getSelectedTiers().get(0).getForegroundColor();
+			return getTierManager().getSelectedTiers().get(0).getForegroundColor();
 		}
 		return DEFAULT_COLOR;
 	}

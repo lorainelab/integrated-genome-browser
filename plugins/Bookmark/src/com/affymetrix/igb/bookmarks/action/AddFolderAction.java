@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.bookmarks.action;
 
 import java.awt.event.KeyEvent;
@@ -22,7 +18,8 @@ public class AddFolderAction extends AddBookmarkAction {
 	}
 
 	private AddFolderAction() {
-		super(BUNDLE.getString("addBookmarkFolder"), null, null, null, KeyEvent.VK_G, null, false);
+		super(BUNDLE.getString("addBookmarkFolder"), null,
+				null, null, KeyEvent.VK_G, null, false);
 	}
 
 	@Override

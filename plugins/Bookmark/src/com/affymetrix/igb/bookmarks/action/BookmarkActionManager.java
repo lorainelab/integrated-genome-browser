@@ -186,6 +186,12 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		component_hash.put(main_bookmark_list, main_bm_menu);
 	}
 
+	/**
+	 * Generate bookmark menus by passed bookmark list.
+	 *
+	 * @param pp
+	 * @param bl
+	 */
 	private void buildMenus(JRPMenu pp, BookmarkList bl) {
 		JRPMenu bl_menu = (JRPMenu) component_hash.get(bl);
 		if (bl_menu == null) {
@@ -207,6 +213,13 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 
 	}
 
+	/**
+	 * Add passed bookmark to passed menu.
+	 * 
+	 * @param parent_menu
+	 * @param bm
+	 * @return 
+	 */
 	private JRPMenuItem addBookmarkMI(JRPMenu parent_menu, Bookmark bm) {
 		JRPMenuItem markMI = (JRPMenuItem) component_hash.get(bm);
 		if (markMI != null) {
@@ -228,6 +241,13 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		return id;
 	}
 
+	/**
+	 * Add passed bookmark list to passed menu.
+	 * 
+	 * @param parent_menu
+	 * @param bm_list
+	 * @return 
+	 */
 	private JRPMenu addBookmarkListMenu(JRPMenu parent_menu, BookmarkList bm_list) {
 		JRPMenu sub_menu = (JRPMenu) component_hash.get(bm_list);
 		if (sub_menu != null) {
@@ -239,6 +259,13 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 		return sub_menu;
 	}
 
+	/**
+	 * Add s separator list to passed menu.
+	 * 
+	 * @param parent_menu
+	 * @param s
+	 * @return 
+	 */
 	private JSeparator addSeparator(JRPMenu parent_menu, Separator s) {
 		JSeparator jsep = (JSeparator) component_hash.get(s);
 		if (jsep != null) {

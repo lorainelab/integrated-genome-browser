@@ -14,6 +14,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 /**
+ * An AddBookmarkAction class for IGB. It is designed to create and add new
+ * bookmark to the list.
  *
  * @author Nick & David
  */
@@ -24,6 +26,10 @@ public abstract class AddBookmarkAction extends GenericAction {
 	public AddBookmarkAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}
+
+	/**
+	 * Generate a bookmark editor panel for adding a new bookmark.
+	 */
 	protected void bookmarkCurrentPosition() {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
@@ -45,12 +51,20 @@ public abstract class AddBookmarkAction extends GenericAction {
 		BookmarkEditor.run();
 	}
 
+	/**
+	 * add a folder to bookmark tree.
+	 */
 	public static void addBookmarkFolder() {
 		BookmarkList bl = new BookmarkList("Folder");
 		DefaultMutableTreeNode node = bl;
 		addNode(node);
 	}
 
+	/**
+	 * add a bookmark to bookmark tree.
+	 *
+	 * @param bm
+	 */
 	public static void addBookmark(Bookmark bm) {
 		BookmarkList parent_list = BookmarkManagerView.getSingleton().thing.selected_bl;
 		BookmarkManagerView.getSingleton().addBookmarkToHistory(parent_list);
@@ -60,6 +74,9 @@ public abstract class AddBookmarkAction extends GenericAction {
 		addNode(node);
 	}
 
+	/**
+	 * add a separator to bookmark tree.
+	 */
 	public static void addSeparator() {
 		Separator s = new Separator();
 		BookmarkList bl = new BookmarkList(s);
@@ -67,6 +84,11 @@ public abstract class AddBookmarkAction extends GenericAction {
 		addNode(node);
 	}
 
+	/**
+	 * add node to the tree.
+	 *
+	 * @param node (bookmark, folder or separator)
+	 */
 	public static void addNode(DefaultMutableTreeNode node) {
 		JTree tree = BookmarkManagerView.getSingleton().tree;
 		TreePath path;

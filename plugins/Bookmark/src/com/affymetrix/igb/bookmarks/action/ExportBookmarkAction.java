@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class ExportBookmarkAction extends GenericAction {
+
 	private static final long serialVersionUID = 1L;
 	private static final ExportBookmarkAction ACTION = new ExportBookmarkAction();
 
@@ -16,12 +17,13 @@ public class ExportBookmarkAction extends GenericAction {
 	}
 
 	public ExportBookmarkAction() {
-		super(BUNDLE.getString("exportBookmarks"), null, "16x16/actions/go-top.png", "22x22/actions/go-top.png", KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("exportBookmarks"), null, "16x16/actions/go-top.png",
+				"22x22/actions/go-top.png", KeyEvent.VK_E, null, true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-	    BookmarkManagerView.getSingleton().makeExportAction().actionPerformed(e);
+		BookmarkManagerView.getSingleton().makeExportAction().actionPerformed(e);
 	}
 }

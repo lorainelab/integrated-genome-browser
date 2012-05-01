@@ -16,11 +16,14 @@ import java.net.URLEncoder;
 import javax.swing.JFileChooser;
 
 public class SaveSessionAction extends GenericAction {
+
 	private static final long serialVersionUID = 1l;
 	private IGBService igbService;
 
 	public SaveSessionAction(IGBService igbService) {
-		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null, "16x16/devices/media-floppy.png", "22x22/devices/medis-floppy.png", KeyEvent.VK_S, null, true);
+		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null,
+				"16x16/devices/media-floppy.png", "22x22/devices/medis-floppy.png",
+				KeyEvent.VK_S, null, true);
 		this.igbService = igbService;
 	}
 
@@ -33,14 +36,15 @@ public class SaveSessionAction extends GenericAction {
 			try {
 				File f = chooser.getSelectedFile();
 				igbService.saveState();
-				Bookmark bookmark = BookmarkController.getCurrentBookmark(true, igbService.getSeqMapView().getVisibleSpan());
+				Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
+						igbService.getSeqMapView().getVisibleSpan());
 				if (bookmark != null) {
-					PreferenceUtils.getSessionPrefsNode().put("bookmark", URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC));
+					PreferenceUtils.getSessionPrefsNode().put("bookmark",
+							URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC));
 				}
 				PreferenceUtils.exportPreferences(PreferenceUtils.getTopNode(), f);
 				PreferenceUtils.getSessionPrefsNode().removeNode();
-			}
-			catch (Exception x) {
+			} catch (Exception x) {
 				ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);
 			}
 		}

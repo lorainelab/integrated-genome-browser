@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.bookmarks.action;
 
 import java.awt.event.ActionEvent;
@@ -21,7 +17,8 @@ public class AddSeparatorAction extends AddBookmarkAction {
 	}
 
 	private AddSeparatorAction() {
-		super("New Separator", "New Separator", null, null, KeyEvent.VK_S, null, false);
+		super("New Separator", "New Separator", null,
+				null, KeyEvent.VK_S, null, false);
 	}
 
 	@Override

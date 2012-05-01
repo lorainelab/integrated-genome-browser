@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.igb.IGBConstants;
@@ -7,12 +8,12 @@ import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
 public class ChangeBackgroundColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
-	private static ChangeBackgroundColorAction ACTION;
+	private static ChangeBackgroundColorAction ACTION = new ChangeBackgroundColorAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static ChangeBackgroundColorAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ChangeBackgroundColorAction();
-		}
 		return ACTION;
 	}
 

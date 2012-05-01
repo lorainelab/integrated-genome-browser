@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.event.ActionEvent;
@@ -10,6 +11,10 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 	private static final long serialVersionUID = 1L;
 	private static final ChangeExpandMaxAction ACTION = new ChangeExpandMaxAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ChangeExpandMaxAction getAction() {
 		return ACTION;
 	}

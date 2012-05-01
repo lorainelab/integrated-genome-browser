@@ -63,9 +63,15 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	}
 
 	@Override
-	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		TrackStyle style_copy = new TrackStyle(){};
+	public TierGlyph getTrack(final SeqSymmetry sym, final ITrackStyleExtended style, final TierGlyph.Direction tier_direction) {
+		TrackStyle style_copy = new TrackStyle(){
+			@Override
+			public String getMethodName(){
+				return style.getMethodName();
+			}
+		};
 		style_copy.copyPropertiesFrom(style);
+		style_copy.setMaxDepth(0);
 		// super.getTrack() may have created a brand new tier, in which case
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style

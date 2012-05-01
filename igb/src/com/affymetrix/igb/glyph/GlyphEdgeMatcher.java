@@ -15,11 +15,13 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Color;
-import java.util.List;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 public final class GlyphEdgeMatcher  {
 
@@ -116,7 +118,16 @@ public final class GlyphEdgeMatcher  {
       double tend = tbox.x + tbox.width;
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
-          FillRectGlyph mglyph = new FillRectGlyph();
+          SolidGlyph mglyph = new FillRectGlyph();
+		  System.out.println("target is a " + target.getClass().getName());
+		  System.out.println("target parent is a " + target.getParent().getClass().getName());
+		  if (target instanceof PointedGlyph) {
+		    PointedGlyph pg = (PointedGlyph) target;
+			if (!pg.isForward()) {
+			  mglyph = new PointedGlyph();
+			  ((PointedGlyph) mglyph).setForward(pg.isForward());
+			}
+		  }
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
@@ -131,7 +142,16 @@ public final class GlyphEdgeMatcher  {
 
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
-          FillRectGlyph mglyph = new FillRectGlyph();
+		  System.out.println("target is a " + target.getClass().getName());
+		  System.out.println("target parent is a " + target.getParent().getClass().getName());
+          SolidGlyph mglyph = new FillRectGlyph();
+		  if (target instanceof PointedGlyph) {
+		    PointedGlyph pg = (PointedGlyph) target;
+			if (pg.isForward()) {
+		      mglyph = new PointedGlyph();
+			  ((PointedGlyph) mglyph).setForward(pg.isForward());
+			}
+		  }
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);

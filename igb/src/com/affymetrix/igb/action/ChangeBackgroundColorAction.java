@@ -22,13 +22,18 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 	}
 
 	@Override
-	public java.awt.Color getColor(){
+	public java.awt.Color getBackgroundColor(){
 		if(getTierManager().getSelectedTiers().size() == 1){
 			return getTierManager().getSelectedTiers().get(0).getBackgroundColor();
 		}
-		return DEFAULT_COLOR;
+		return DEFAULT_COLOR.darker();
 	}
 	
+	@Override
+	public java.awt.Color getForegroundColor(){
+		return DEFAULT_COLOR;
+	}
+		
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);

@@ -25,7 +25,8 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
-	public abstract java.awt.Color getColor();
+	public abstract java.awt.Color getBackgroundColor();
+	public abstract java.awt.Color getForegroundColor();
 	protected void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
 		if (tier_label_glyphs.isEmpty()) {
 			return;

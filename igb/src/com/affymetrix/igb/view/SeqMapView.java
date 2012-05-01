@@ -390,7 +390,7 @@ public class SeqMapView extends JPanel
 		this.setLayout(new BorderLayout());
 
 		xzoombox = Box.createHorizontalBox();
-		ImageIcon searchIcon = MenuUtil.getIcon("images/search.png");
+		ImageIcon searchIcon = MenuUtil.getIcon("16x16/actions/system-search.png");
 		JLabel searchLabel = new JLabel(searchIcon);
 		xzoombox.add(searchLabel);
 

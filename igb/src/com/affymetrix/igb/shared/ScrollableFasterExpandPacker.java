@@ -120,7 +120,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
 		
 		if(getMaxSlots() != 0){
 			parent.setCoords(parent.getCoordBox().x, parent.getCoordBox().y, 
-				parent.getCoordBox().width, Math.min(getActualSlots(), getMaxSlots()) * slot_height);
+				parent.getCoordBox().width, (Math.min(getActualSlots(), getMaxSlots()) + 1) * slot_height);
 		}
 		
 		// Make sure the parent is not too short.

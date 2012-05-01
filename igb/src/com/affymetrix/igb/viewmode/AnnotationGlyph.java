@@ -283,7 +283,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 			coord_offset = (int) (BUFFER * 1.5);
 			if (getDirection() != TierGlyph.Direction.REVERSE) {
 				if (getStyleDepth() != MAX_EXPAND && getActualSlots() > getStyleDepth()) {
-					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
+					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth() - 1) + coord_offset;
 				}
 				coord_offset = -coord_offset;
 				//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);

@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -38,6 +39,7 @@ import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -59,7 +61,6 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionListener;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -418,15 +419,19 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void discoverServer(final GenericServer server) {
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server " + server.serverName) {
 
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Void runInBackground() {
 				GeneralLoadUtils.discoverServer(server);
 				return null;
 			}
+
+			@Override
+			protected void finished() {
+			}
 		};
-		ThreadUtils.getPrimaryExecutor(server).execute(worker);
+		ThreadHandler.getThreadHandler().execute(server, worker);
 	}
 
 	@Override

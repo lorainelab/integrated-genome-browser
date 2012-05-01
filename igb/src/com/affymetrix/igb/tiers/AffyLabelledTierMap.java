@@ -14,6 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -56,7 +57,20 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
    */
 	@Override
   public void initComponentLayout() {
-    labelmap = new AffyTieredMap(false, false, scroller[Y]);
+    labelmap = new AffyTieredMap(false, false, scroller[Y]) {
+
+			@Override
+			public void select(GlyphI glyph) {
+				super.select(glyph);
+				selectionModel.actionPerformed(new ActionEvent(glyph, ActionEvent.ACTION_FIRST, "Select Tier"));
+			}
+
+			@Override
+			public void deselect(GlyphI glyph) {
+				super.deselect(glyph);
+				selectionModel.actionPerformed(new ActionEvent(glyph, ActionEvent.ACTION_FIRST, "Deselect Tier"));
+			}
+		};
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
@@ -213,7 +227,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     //   (which also sets value returned by label_glyph.getInfo())
     labelmap.setDataModel(label_glyph, mtg);  
     label_glyphs.add(label_glyph);
-	label_glyph.setSelectionListener(this.selectionModel);
     ordered_glyphs = null;
   }
 
@@ -222,7 +235,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     super.removeTier(toRemove);
     TierLabelGlyph label_glyph = labelmap.<TierLabelGlyph>getItem(toRemove);
     if (label_glyph != null) {
-      label_glyph.setSelectionListener(null);
       labelmap.removeItem(label_glyph);
       label_glyphs.remove(label_glyph);
       ordered_glyphs = null;

@@ -9,8 +9,6 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -36,7 +34,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	public TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
 		setPosition(position);
-		selectionEvent = new ActionEvent(reference_tier, ActionEvent.ACTION_FIRST, "Select Tier");
 		isIGBTrack = Delegate.EXT.equalsIgnoreCase(reference_tier.getAnnotStyle().getFileType());
 	}
 
@@ -53,26 +50,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		super.drawTraversal(view);
 	}
 
-	private ActionListener selectionSnoop = null;
-	private final ActionEvent selectionEvent;
-	/**
-	 * Snoop on selection or deselection of this glyph.
-	 * Selection of a TierLabelGlyph generally indicates
-	 * that the whole tier is selected.
-	 * A more thorough design would be to add and remove listeners,
-	 * but this should suffice for now.
-	 * @param theSnoop might extend {@link javax.swing.ListSelectionModel}.
-	 *                 That was the motivating case for adding this.
-	 */
-	public final void setSelectionListener(ActionListener theSnoop) {
-		this.selectionSnoop = theSnoop;
-	}
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
-		if (null != this.selectionSnoop) {
-			this.selectionSnoop.actionPerformed(this.selectionEvent);
-		}
 	}
 
 	/** Overridden such that the info must be of type TierGlyph.  It is used

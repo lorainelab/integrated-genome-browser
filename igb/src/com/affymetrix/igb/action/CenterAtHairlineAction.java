@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqMapView;
@@ -11,6 +12,10 @@ public class CenterAtHairlineAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final CenterAtHairlineAction ACTION = new CenterAtHairlineAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static CenterAtHairlineAction getAction() {
 		return ACTION;
 	}

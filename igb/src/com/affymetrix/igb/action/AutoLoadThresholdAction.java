@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
@@ -24,7 +25,10 @@ public class AutoLoadThresholdAction extends GenericAction
 		implements MouseListener, MouseMotionListener, PreferenceChangeListener{
 	private static final long serialVersionUID = 1L;
 	private static final AutoLoadThresholdAction ACTION = new AutoLoadThresholdAction();
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static AutoLoadThresholdAction getAction(){
 		return ACTION;
 	}

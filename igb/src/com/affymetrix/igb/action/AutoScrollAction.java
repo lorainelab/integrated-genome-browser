@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
@@ -41,7 +42,7 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 	private int as_end_pos;
 	public ActionListener map_auto_scroller = null;
 
-	private static final AutoScrollAction action = new AutoScrollAction();
+	private static final AutoScrollAction ACTION = new AutoScrollAction();
 
 	private AutoScrollAction() {
 		super(BUNDLE.getString("autoScroll"), null, "toolbarButtonGraphics/media/Movie16.gif", null, KeyEvent.VK_A, null, true);
@@ -50,8 +51,12 @@ public class AutoScrollAction extends GenericAction implements SeqSelectionListe
 		model.addSeqSelectionListener(this);
 		this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
 	}
-
-	public static AutoScrollAction getAction() { return action; }
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
+	public static AutoScrollAction getAction() { return ACTION; }
 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);

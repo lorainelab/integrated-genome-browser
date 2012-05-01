@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.event.ActionEvent;
@@ -14,7 +15,9 @@ import javax.swing.JCheckBox;
 public class AutoLoadFeatureAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final AutoLoadFeatureAction ACTION = new AutoLoadFeatureAction();
-
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static AutoLoadFeatureAction getAction() {
 		return ACTION;
 	}

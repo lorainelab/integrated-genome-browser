@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.util.ThreadHandler;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -14,6 +15,9 @@ public class CancelAllAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final CancelAllAction ACTION = new CancelAllAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static CancelAllAction getAction() {
 		return ACTION;
 	}

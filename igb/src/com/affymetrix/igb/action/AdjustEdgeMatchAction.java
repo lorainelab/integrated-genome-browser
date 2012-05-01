@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.view.SeqMapView;
@@ -18,7 +19,9 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class AdjustEdgeMatchAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final AdjustEdgeMatchAction ACTION = new AdjustEdgeMatchAction();
-
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	public static AdjustEdgeMatchAction getAction() {
 		return ACTION;
 	}

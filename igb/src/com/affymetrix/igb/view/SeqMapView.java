@@ -59,11 +59,9 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
+import com.affymetrix.igb.viewmode.MapViewModeHolder;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
-import javax.swing.event.ChangeListener;
-
 /**
  *
  * @version $Id$
@@ -1357,7 +1355,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {
-		postSelections();
+		//postSelections();
 	}
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)

@@ -30,7 +30,7 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.viewmode.DummyGlyphFactory;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.ProbeSetGlyphFactory;
 import com.affymetrix.igb.viewmode.TransformHolder;
 

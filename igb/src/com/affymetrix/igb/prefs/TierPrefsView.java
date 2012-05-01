@@ -18,7 +18,7 @@ import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

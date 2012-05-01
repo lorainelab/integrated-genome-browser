@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.viewmode;
 
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

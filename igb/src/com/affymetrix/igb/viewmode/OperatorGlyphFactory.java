@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.viewmode;
 
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import java.util.ArrayList;
 import java.util.List;
 

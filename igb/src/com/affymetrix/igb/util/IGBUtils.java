@@ -33,7 +33,7 @@ import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.PrintAction;
 import com.affymetrix.igb.action.PrintFrameAction;
 import com.affymetrix.igb.action.RequestFeatureAction;
-import com.affymetrix.igb.action.SelectAllAction;
+import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMixedStrandAction;

@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;
-import com.affymetrix.igb.action.CollapseExpandAction;
+import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.action.RepackAllTiersAction;
 import com.affymetrix.igb.action.RepackSelectedTiersAction;
 import com.affymetrix.igb.action.ScrollDownAction;
@@ -58,7 +58,7 @@ import com.affymetrix.igb.viewmode.FillBarGraphGlyph;
 import com.affymetrix.igb.viewmode.GraphGlyphFactory;
 import com.affymetrix.igb.viewmode.HeatMapGraphGlyph;
 import com.affymetrix.igb.viewmode.LineGraphGlyph;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.MinMaxAvgGraphGlyph;
 import com.affymetrix.igb.viewmode.MismatchGlyphFactory;
 import com.affymetrix.igb.viewmode.OperatorGlyphFactory;
@@ -243,6 +243,10 @@ public class Activator implements BundleActivator {
     	);
         IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
+		
+		// To avoid race condition on startup
+		initMapViewGlyphFactorys();
+		
         igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
@@ -284,7 +288,6 @@ public class Activator implements BundleActivator {
 			},
 			null
 		);
-		initMapViewGlyphFactorys();
 		initSeqMapViewActions();
 	}
 

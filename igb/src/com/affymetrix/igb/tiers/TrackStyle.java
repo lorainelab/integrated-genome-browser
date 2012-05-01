@@ -19,7 +19,7 @@ import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
+import com.affymetrix.igb.shared.MapViewModeHolder;
 
 import java.io.File;
 import java.util.logging.Level;

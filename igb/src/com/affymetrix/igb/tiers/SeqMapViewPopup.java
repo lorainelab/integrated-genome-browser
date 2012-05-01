@@ -9,6 +9,9 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.igb.shared.RepackTiersAction;
+import com.affymetrix.igb.action.ChangeExpandMaxAction;
+import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -24,10 +27,10 @@ import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-import com.affymetrix.igb.viewmode.MapViewModeHolder;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
-import java.util.*;
+import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.*;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -61,6 +64,22 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		refreshMap(false, true);
 		handler.sortTiers();
+	}
+
+	public void renameTier(final TierGlyph tier) {
+		if (tier == null) {
+			return;
+		}
+		gviewer.renameTier(tier, JOptionPane.showInputDialog(BUNDLE.getString("label") + ": ", tier.getAnnotStyle().getTrackName()));
+	}
+	
+	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
+		for (TierLabelGlyph tlg : tier_labels) {
+			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
+			style.setColorByScore(b);
+		}
+
+		refreshMap(false, false);
 	}
 
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {

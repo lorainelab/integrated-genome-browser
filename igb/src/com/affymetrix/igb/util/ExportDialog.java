@@ -42,8 +42,10 @@ import org.freehep.graphicsio.svg.SVGGraphics2D;
  * An Export Image class for IGB. It is designed to export different part of IGB
  * views to image file. Support format: SVG, PNG and JPG
  *
- * TODO: - preview image size should changed automatically basis on real
- * percentile. - support PDF format.
+ * TODO: - Preview image size should changed automatically basis on real
+ * percentile. - Support PDF format. - Action performed to the view(not export
+ * view), this should not trigger to activate refresh button. Only current
+ * export view changed should activate refresh button.
  *
  * @author nick
  */
@@ -61,7 +63,6 @@ public class ExportDialog implements ExportConstants {
 	private static Component component; // Export component
 	private static BufferedImage exportImage;
 	private static ImageInfo imageInfo;
-	private static ImageInfo currentInfo;
 	private static String unit = "";
 	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
 	private boolean isHeightSpinner = false;
@@ -161,7 +162,6 @@ public class ExportDialog implements ExportConstants {
 	private static void enableRefreshButton() {
 		if (!refreshButton.isEnabled()) {
 			refreshButton.setEnabled(true);
-			refreshButton.setSelected(true);
 		}
 	}
 
@@ -277,12 +277,12 @@ public class ExportDialog implements ExportConstants {
 	 * @param unit
 	 */
 	public void initSpinner(String unit) {
-		double width = currentInfo.getWidth();
-		double height = currentInfo.getHeight();
+		double width = imageInfo.getWidth();
+		double height = imageInfo.getHeight();
 
 		if (unit.equals(UNIT[1])) {
-			width /= currentInfo.getResolution();
-			height /= currentInfo.getResolution();
+			width /= imageInfo.getResolution();
+			height /= imageInfo.getResolution();
 		}
 
 		SpinnerModel sm = new SpinnerNumberModel(width, 0, 10000, 1);
@@ -313,10 +313,6 @@ public class ExportDialog implements ExportConstants {
 			imageInfo.setWidth(component.getWidth());
 			imageInfo.setHeight(component.getHeight());
 		}
-
-		currentInfo = new ImageInfo(imageInfo.getWidth(),
-				imageInfo.getHeight(),
-				imageInfo.getResolution());
 
 		widthSpinner.setValue((double) component.getWidth());
 		heightSpinner.setValue((double) component.getHeight());
@@ -505,7 +501,7 @@ public class ExportDialog implements ExportConstants {
 		exportFile = new File(newPath);
 
 		if (!isValidExportFile(previousPath)) {
-			static_frame.setVisible(false);
+			return;
 		}
 
 		String path = exportFile.getAbsolutePath();
@@ -530,7 +526,7 @@ public class ExportDialog implements ExportConstants {
 
 		if (exportFile.exists()) {
 			if (!isOverwrite()) {
-				static_frame.setVisible(false);
+				return;
 			}
 		}
 
@@ -544,6 +540,8 @@ public class ExportDialog implements ExportConstants {
 		exportNode.put(PREF_DIR, defaultDir.getAbsolutePath());
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
+
+		static_frame.setVisible(false);
 	}
 
 	/**
@@ -684,7 +682,7 @@ public class ExportDialog implements ExportConstants {
 	public void widthSpinnerStateChanged() {
 		if (!isHeightSpinner) {
 			double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
-			double newHeight = newWidth * currentInfo.getHeightWidthRate();
+			double newHeight = newWidth * imageInfo.getHeightWidthRate();
 
 			isWidthSpinner = true;
 			heightSpinner.setValue(newHeight);
@@ -700,7 +698,7 @@ public class ExportDialog implements ExportConstants {
 	public void heightSpinnerStateChanged() {
 		if (!isWidthSpinner) {
 			double newHeight = ((Double) heightSpinner.getValue()).doubleValue();
-			double newWidth = newHeight * currentInfo.getWidthHeightRate();
+			double newWidth = newHeight * imageInfo.getWidthHeightRate();
 
 			isHeightSpinner = true;
 			widthSpinner.setValue(newWidth);
@@ -796,6 +794,9 @@ public class ExportDialog implements ExportConstants {
 					+ " x "
 					+ String.valueOf((int) height)
 					+ " pixels");
+
+			// Allow user to reset width and height back to current size
+			enableRefreshButton();
 		}
 	}
 

@@ -1,12 +1,12 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.util.ExportDialogGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.util.ExportDialog;
 
 /**
  *
@@ -30,7 +30,7 @@ public class ExportImageAction extends GenericAction {
 		super.actionPerformed(e);
 
 		try {
-			ExportDialogGUI.getSingleton().display(false);
+			ExportDialog.getSingleton().display(false);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex);
 		}

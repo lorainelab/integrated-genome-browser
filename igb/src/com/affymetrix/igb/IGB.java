@@ -285,24 +285,6 @@ public final class IGB extends Application
 			}
 		});
 
-		frm.addComponentListener(new ComponentListener() {
-
-			public void componentResized(ComponentEvent e) {
-				if (ExportDialogGUI.getSingleton().isVisible()) {
-					ExportDialogGUI.getSingleton().enableRefreshButton();
-				}
-			}
-
-			public void componentMoved(ComponentEvent ce) {
-			}
-
-			public void componentShown(ComponentEvent ce) {
-			}
-
-			public void componentHidden(ComponentEvent ce) {
-			}
-		});
-
 		WebLink.autoLoad();
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 

@@ -1,13 +1,23 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.AltSpliceView;
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
@@ -41,18 +51,32 @@ public class ExportDialog implements ExportConstants {
 
 	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
+	private static JFrame static_frame = null;
+	private static final String TITLE = "Export Image";
+	private AffyTieredMap seqMap;
+	private Component wholeFrame;
+	private Component mainView;
+	private Component mainViewWithLabels;
+	private Component slicedView;
+	private static Component component; // Export component
+	private static BufferedImage exportImage;
+	private static ImageInfo imageInfo;
+	private static ImageInfo currentInfo;
+	private static String unit = "";
+	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
+	private boolean isHeightSpinner = false;
 	private static File exportFile;
 	private static FileFilter extFilter;
 	private static File fileFilter;
 	private static File defaultDir = new File(FileTracker.EXPORT_DIR_TRACKER.getFile().getPath());
 	private static ExportFileChooser fileChooser;
 	private static final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
-	public static String selectedExt;
-	public static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
-	public static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
-	public static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-	public static final SVGExportFileType svgExport = new SVGExportFileType();
-	public static final Properties svgProperties = new Properties();
+	private static String selectedExt;
+	private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+	private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+	private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+	private static final SVGExportFileType svgExport = new SVGExportFileType();
+	private static final Properties svgProperties = new Properties();
 
 	static {
 		FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
@@ -67,6 +91,173 @@ public class ExportDialog implements ExportConstants {
 	static JSpinner heightSpinner = new JSpinner();
 	JLabel previewLabel = new JLabel();
 	JLabel sizeLabel = new JLabel();
+	JButton browseButton = new JButton();
+	JButton cancelButton = new JButton();
+	JButton okButton = new JButton();
+	static JButton refreshButton = new JButton();
+	JRadioButton svRadioButton = new JRadioButton();
+	JRadioButton wfRadioButton = new JRadioButton();
+	JRadioButton mvRadioButton = new JRadioButton();
+	JRadioButton mvlRadioButton = new JRadioButton();
+	JPanel buttonsPanel = new JPanel();
+	private static final ComponentListener resizelistener = new ComponentListener() {
+
+		public void componentResized(ComponentEvent e) {
+			if (isVisible()) {
+				enableRefreshButton();
+			}
+		}
+
+		public void componentMoved(ComponentEvent ce) {
+		}
+
+		public void componentShown(ComponentEvent ce) {
+		}
+
+		public void componentHidden(ComponentEvent ce) {
+		}
+	};
+	private static final NeoRangeListener rangeListener = new NeoRangeListener() {
+
+		@Override
+		public void rangeChanged(NeoRangeEvent evt) {
+			if (isVisible()) {
+				enableRefreshButton();
+			}
+		}
+	};
+	private static final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
+
+		public void adjustmentValueChanged(AdjustmentEvent ae) {
+			if (isVisible()) {
+				enableRefreshButton();
+			}
+		}
+	};
+
+	/**
+	 * Display the export panel and initialize all related objects for export
+	 * process.
+	 *
+	 * @param isSequenceViewer
+	 */
+	public synchronized void display(boolean isSequenceViewer) {
+		initRadioButton(isSequenceViewer);
+		initFrame();
+		DisplayUtils.bringFrameToFront(static_frame);
+
+		refreshButton.setEnabled(false);
+		previewImage();
+	}
+
+	/**
+	 *
+	 * @return whether the export panel is initialized and visible or not.
+	 */
+	private static boolean isVisible() {
+		return static_frame != null && static_frame.isVisible();
+	}
+
+	private static void enableRefreshButton() {
+		if (!refreshButton.isEnabled()) {
+			refreshButton.setEnabled(true);
+			refreshButton.setSelected(true);
+		}
+	}
+
+	/**
+	 * Set export component by determined which radio button is selected. If the
+	 * method is triggered by sequence viewer, radio buttons panel will be set
+	 * to invisible and set sequence viewer as export component.
+	 *
+	 * @param isSequenceViewer
+	 */
+	private void initRadioButton(boolean isSequenceViewer) {
+		if (!isSequenceViewer) {
+			initView();
+
+			if (svRadioButton.isSelected()) {
+				setComponent(slicedView);
+			} else if (mvRadioButton.isSelected()) {
+				setComponent(mainView);
+			} else if (mvlRadioButton.isSelected()) {
+				setComponent(mainViewWithLabels);
+			} else {
+				setComponent(wholeFrame);
+				wfRadioButton.setSelected(true);
+			}
+
+			initImageInfo();
+			mvRadioButton.setEnabled(seqMap.getTiers().size() != 0);
+			mvlRadioButton.setEnabled(seqMap.getTiers().size() != 0);
+			svRadioButton.setEnabled(seqMap.getSelected().size() != 0);
+		}
+
+		buttonsPanel.setVisible(!isSequenceViewer);
+	}
+
+	/**
+	 * Initialize the reference components from different part views of IGB.
+	 */
+	private void initView() {
+		if (seqMap == null) {
+			seqMap = IGB.getSingleton().getMapView().getSeqMap();
+			seqMap.addComponentListener(resizelistener);
+			((NeoMap) seqMap).addRangeListener(rangeListener);
+
+			wholeFrame = IGB.getSingleton().getFrame().getContentPane();
+
+			mainView = seqMap.getNeoCanvas();
+
+			AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
+			mainViewWithLabels = tm.getSplitPane();
+
+			AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+			slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
+			slicedView.addComponentListener(resizelistener);
+			((NeoMap) slice_view.getSplicedView().getSeqMap()).addRangeListener(rangeListener);
+		}
+	}
+
+	/**
+	 * Initialize export frame.
+	 */
+	private void initFrame() {
+		if (static_frame == null) {
+			String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
+			if (file.equals(DEFAULT_FILE)) {
+				exportFile = new File(defaultDir, file);
+			} else {
+				exportFile = new File(file);
+			}
+
+			defaultDir = new File(exportNode.get(PREF_DIR, defaultDir.getAbsolutePath()));
+
+			imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
+
+			filePathTextField.setText(exportFile.getAbsolutePath());
+
+			ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
+			extComboBox.setSelectedItem(type);
+			selectedExt = type.getExtension();
+			resolutionComboBox.setSelectedItem(imageInfo.getResolution());
+
+			unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
+			unitComboBox.setSelectedItem(unit);
+
+			initSpinner(unit);
+
+			static_frame = PreferenceUtils.createFrame(TITLE, ExportDialogGUI.getSingleton());
+			static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+		} else {
+			initSpinner((String) unitComboBox.getSelectedItem());
+		}
+	}
+
+	public void initSeqViewListener(Component seqView) {
+		seqView.addComponentListener(resizelistener);
+		((NeoSeq) seqView).getScroller().addAdjustmentListener(adjustmentlistener);
+	}
 
 	public static FileFilter[] getAllExportFileFilters() {
 		return FILTER_LIST.values().toArray(new FileFilter[FILTER_LIST.size()]);
@@ -78,37 +269,6 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		return singleton;
-	}
-	public static Component component; // Export component
-	public static ImageInfo imageInfo;
-	private static ImageInfo currentInfo;
-	private static String unit = "";
-	private boolean isWidthSpinner = false; // Prevent multiple triggering each other
-	private boolean isHeightSpinner = false;
-
-	public void init() {
-		String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
-		if (file.equals(DEFAULT_FILE)) {
-			exportFile = new File(defaultDir, file);
-		} else {
-			exportFile = new File(file);
-		}
-
-		defaultDir = new File(exportNode.get(PREF_DIR, defaultDir.getAbsolutePath()));
-
-		imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
-
-		filePathTextField.setText(exportFile.getAbsolutePath());
-
-		ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
-		extComboBox.setSelectedItem(type);
-		selectedExt = type.getExtension();
-		resolutionComboBox.setSelectedItem(imageInfo.getResolution());
-
-		unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
-		unitComboBox.setSelectedItem(unit);
-
-		initSpinner(unit);
 	}
 
 	/**
@@ -141,8 +301,6 @@ public class ExportDialog implements ExportConstants {
 	 */
 	public static void setComponent(Component c) {
 		component = c;
-
-		initImageInfo();
 	}
 
 	/**
@@ -234,6 +392,10 @@ public class ExportDialog implements ExportConstants {
 		}
 
 		return new File(path);
+	}
+
+	public void cancelButtonActionPerformed() {
+		static_frame.setVisible(false);
 	}
 
 	/**
@@ -337,13 +499,13 @@ public class ExportDialog implements ExportConstants {
 	 * @return successfully export or not
 	 * @throws IOException
 	 */
-	public boolean okButtonActionPerformed() throws IOException {
+	public void okButtonActionPerformed() throws IOException {
 		String previousPath = exportFile.getAbsolutePath();
 		String newPath = filePathTextField.getText();
 		exportFile = new File(newPath);
 
 		if (!isValidExportFile(previousPath)) {
-			return false;
+			static_frame.setVisible(false);
 		}
 
 		String path = exportFile.getAbsolutePath();
@@ -368,11 +530,11 @@ public class ExportDialog implements ExportConstants {
 
 		if (exportFile.exists()) {
 			if (!isOverwrite()) {
-				return false;
+				static_frame.setVisible(false);
 			}
 		}
 
-		exportScreenshot(exportFile, selectedExt);
+		exportScreenshot(exportFile, selectedExt, false);
 
 		String des = getDescription(ext);
 		extComboBox.setSelectedItem(getType(des));
@@ -382,8 +544,6 @@ public class ExportDialog implements ExportConstants {
 		exportNode.put(PREF_DIR, defaultDir.getAbsolutePath());
 		exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
 		exportNode.put(PREF_UNIT, unit);
-
-		return true;
 	}
 
 	/**
@@ -439,19 +599,22 @@ public class ExportDialog implements ExportConstants {
 	 * @param ext
 	 * @throws IOException
 	 */
-	public static void exportScreenshot(File f, String ext) throws IOException {
+	public static void exportScreenshot(File f, String ext, boolean isScript) throws IOException {
 		if (ext.equals(EXTENSION[0])) {
 			svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
 					(int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
 			svgExport.exportToFile(f, component, null, svgProperties, "");
 		} else {
-			BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
-					component.getWidth(), component.getHeight());
-			Graphics g = image.createGraphics();
-			component.paintAll(g);
+			// From Script Loader, need to initialize the export image
+			if (isScript) {
+				exportImage = GraphicsUtil.getDeviceCompatibleImage(
+						component.getWidth(), component.getHeight());
+				Graphics g = exportImage.createGraphics();
+				component.paintAll(g);
 
-			image = GraphicsUtil.resizeImage(image,
-					(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+				exportImage = GraphicsUtil.resizeImage(exportImage,
+						(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+			}
 
 			Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
 			while (iw.hasNext()) {
@@ -473,7 +636,7 @@ public class ExportDialog implements ExportConstants {
 				final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
 				try {
 					writer.setOutput(stream);
-					writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
+					writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
 				} finally {
 					stream.close();
 				}
@@ -486,15 +649,15 @@ public class ExportDialog implements ExportConstants {
 	 * Creates a new buffered image by component and reset label's icon.
 	 */
 	public void previewImage() {
-		BufferedImage image = GraphicsUtil.getDeviceCompatibleImage(
+		exportImage = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
-		Graphics g = image.createGraphics();
+		Graphics g = exportImage.createGraphics();
 		component.printAll(g);
 
-		image = GraphicsUtil.resizeImage(image,
+		exportImage = GraphicsUtil.resizeImage(exportImage,
 				previewLabel.getWidth(), previewLabel.getHeight());
 
-		ImageIcon icon = new ImageIcon(image);
+		ImageIcon icon = new ImageIcon(exportImage);
 		previewLabel.setIcon(icon);
 	}
 
@@ -580,6 +743,16 @@ public class ExportDialog implements ExportConstants {
 				filePathTextField.grabFocus();
 			}
 		}
+
+		if (selectedExt.equals(ExportConstants.EXTENSION[0])) {
+			mvRadioButton.setSelected(true);
+			mvRadioButtonActionPerformed();
+			wfRadioButton.setEnabled(false);
+			resolutionComboBox.setEnabled(false);
+		} else {
+			wfRadioButton.setEnabled(true);
+			resolutionComboBox.setEnabled(true);
+		}
 	}
 
 	/**
@@ -640,6 +813,38 @@ public class ExportDialog implements ExportConstants {
 			width /= imageInfo.getResolution();
 			widthSpinner.setValue(width);
 		}
+	}
+
+	public void refreshButtonActionPerformed() {
+		refreshPreview();
+
+		refreshButton.setEnabled(false);
+	}
+
+	public void mvRadioButtonActionPerformed() {
+		component = mainView;
+		refreshPreview();
+	}
+
+	public void mvlRadioButtonActionPerformed() {
+		component = mainViewWithLabels;
+		refreshPreview();
+	}
+
+	public void wfRadioButtonActionPerformed() {
+		component = wholeFrame;
+		refreshPreview();
+	}
+
+	public void svRadioButtonActionPerformed() {
+		component = slicedView;
+		refreshPreview();
+	}
+
+	private void refreshPreview() {
+		initImageInfo();
+		initSpinner((String) unitComboBox.getSelectedItem());
+		previewImage();
 	}
 
 	/**

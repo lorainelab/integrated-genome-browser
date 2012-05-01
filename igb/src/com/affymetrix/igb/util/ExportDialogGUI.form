@@ -83,7 +83,7 @@
                           <Component id="heightSpinner" linkSize="11" min="-2" pref="88" max="-2" attributes="1"/>
                       </Group>
                       <Group type="102" attributes="1">
-                          <Component id="xLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="resolutionLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="resolutionComboBox" max="32767" attributes="1"/>
                       </Group>
@@ -112,7 +112,7 @@
                       <Component id="sizeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="resolutionComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="refreshButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="xLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="resolutionLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -123,6 +123,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Width:"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="heightLabel">
           <Properties>
@@ -134,7 +137,7 @@
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="widthSpinnerStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.widthSpinner"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.widthSpinner"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSpinner" name="heightSpinner">
@@ -142,10 +145,10 @@
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="heightSpinnerStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.heightSpinner"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.heightSpinner"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="xLabel">
+        <Component class="javax.swing.JLabel" name="resolutionLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Resolution:"/>
           </Properties>
@@ -158,6 +161,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
           </Events>
           <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.refreshButton"/>
             <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="refreshButton.setToolTipText(&quot;Refreshes the size and the preview to the current dimensions of the image.&quot;);"/>
           </AuxValues>
         </Component>
@@ -166,7 +170,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resolutionComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.resolutionComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.resolutionComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="unitComboBox">
@@ -174,7 +178,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="unitComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.unitComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.unitComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="sizeLabel">
@@ -182,7 +186,7 @@
             <Property name="text" type="java.lang.String" value="  "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.sizeLabel"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.sizeLabel"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -226,10 +230,13 @@
             <Property name="text" type="java.lang.String" value="   "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.previewLabel"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.previewLabel"/>
           </AuxValues>
         </Component>
         <Container class="javax.swing.JPanel" name="buttonsPanel">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.buttonsPanel"/>
+          </AuxValues>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -263,6 +270,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="svRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.svRadioButton"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(svRadioButton);"/>
               </AuxValues>
             </Component>
@@ -274,6 +282,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvRadioButton"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvRadioButton);"/>
               </AuxValues>
             </Component>
@@ -285,6 +294,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wfRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.wfRadioButton"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(wfRadioButton);"/>
               </AuxValues>
             </Component>
@@ -296,6 +306,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvlRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvlRadioButton"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvlRadioButton);"/>
               </AuxValues>
             </Component>
@@ -347,10 +358,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="browseButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.browseButton"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="filePathTextField">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.filePathTextField"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.filePathTextField"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="okButton">
@@ -360,6 +374,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.okButton"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="cancelButton">
           <Properties>
@@ -368,13 +385,16 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.cancelButton"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="extComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="extComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="export.extComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.extComboBox"/>
           </AuxValues>
         </Component>
       </SubComponents>

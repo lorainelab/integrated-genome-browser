@@ -341,7 +341,8 @@ public class ScriptFileLoader {
 					break;
 			}
 			ExportDialog.setComponent(c);
-			ExportDialog.exportScreenshot(f, ext);
+			ExportDialog.initImageInfo();
+			ExportDialog.exportScreenshot(f, ext, true);
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}

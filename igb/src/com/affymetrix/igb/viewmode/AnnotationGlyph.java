@@ -20,6 +20,7 @@ import java.util.*;
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
 public class AnnotationGlyph extends TransformViewModeGlyph implements ScrollableViewModeGlyph {
+	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
@@ -281,7 +282,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		if (isScrollingAllowed()) {
 			coord_offset = (int) (BUFFER * 1.5);
 			if (getDirection() != TierGlyph.Direction.REVERSE) {
-				if (getActualSlots() > getStyleDepth()) {
+				if (getStyleDepth() != MAX_EXPAND && getActualSlots() > getStyleDepth()) {
 					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth()) + coord_offset;
 				}
 				coord_offset = -coord_offset;

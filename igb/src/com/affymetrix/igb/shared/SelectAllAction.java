@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,15 +10,16 @@ import com.affymetrix.igb.action.SeqMapViewActionA;
 
 public class SelectAllAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static SelectAllAction ACTION;
+	private static SelectAllAction ACTION = new SelectAllAction(null);
 	private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION = 
 		new HashMap<FileTypeCategory, SelectAllAction>();
 	private FileTypeCategory category;
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static SelectAllAction getAction() {
-		if (ACTION == null) {
-			ACTION = new SelectAllAction(null);
-		}
 		return ACTION;
 	}
 

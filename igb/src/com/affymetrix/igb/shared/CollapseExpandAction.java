@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.CollapseExpandActionA;
@@ -11,12 +12,13 @@ import javax.swing.ImageIcon;
 
 public class CollapseExpandAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static CollapseExpandAction ACTION;
+	private static final CollapseExpandAction ACTION = new CollapseExpandAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static CollapseExpandAction getAction() {
-		if (ACTION == null) {
-			ACTION = new CollapseExpandAction();
-		}
 		return ACTION;
 	}
 

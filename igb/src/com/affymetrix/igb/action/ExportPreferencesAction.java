@@ -6,6 +6,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,10 @@ public class ExportPreferencesAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final ExportPreferencesAction ACTION = new ExportPreferencesAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ExportPreferencesAction getAction() {
 		return ACTION;
 	}

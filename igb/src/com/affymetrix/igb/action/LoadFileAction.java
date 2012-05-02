@@ -13,6 +13,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
@@ -39,6 +40,10 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 	private static final long serialVersionUID = 1L;
 	private static final LoadFileAction ACTION = new LoadFileAction();
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
 	
 	public static LoadFileAction getAction() {
 		return ACTION;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 
@@ -16,6 +17,10 @@ public final class LoadRefTrackAction extends AbstractLoadFileAction {
 	private static final long serialVersionUID = 1L;
 	private static final LoadRefTrackAction ACTION = new LoadRefTrackAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static LoadRefTrackAction getAction() {
 		return ACTION;
 	}

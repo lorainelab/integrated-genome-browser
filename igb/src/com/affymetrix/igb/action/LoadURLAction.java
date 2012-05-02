@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import java.awt.BorderLayout;
@@ -23,6 +24,10 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 	private static final long serialVersionUID = 1l;
 	private static final LoadURLAction ACTION = new LoadURLAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static LoadURLAction getAction() {
 		return ACTION;
 	}

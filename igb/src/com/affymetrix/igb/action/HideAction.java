@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -15,6 +16,10 @@ public class HideAction extends RepackTiersAction {
 	private static final long serialVersionUID = 1L;
 	private static final HideAction ACTION = new HideAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static HideAction getAction() {
 		return ACTION;
 	}

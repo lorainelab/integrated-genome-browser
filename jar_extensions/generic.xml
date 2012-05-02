@@ -24,6 +24,8 @@
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
 		
+		<available file="${rsrc.dir}" property="${rsrc.dir}.present"/>
+		<antcall target="copy_resources" />
 		
 		<mkdir dir="${proj.dist}" />
 		
@@ -40,6 +42,16 @@
 		
 		<move file="${proj.dist}/${project}--igbext.bar" tofile="${bundle.dir}/${project}--igbext.bnd.jar" filtering="false" />
   	</target>
+	
+	<target name="copy_resources" if="${rsrc.dir}.present">
+		<!-- Necessary to copy binary files separately, as filtering can corrupt them.  See http://ant.apache.org/manual/CoreTasks/copy.html for details. -->
+		<copy todir="${build.dir}" filtering="false">
+			<fileset dir="${rsrc.dir}"> 
+				<include name="**/*.gif"/>
+				<include name="**/*.png"/>
+			</fileset>
+		</copy>	
+	</target>
 	
 	<target name="clean" depends="init, extra-init">
 		<delete includeEmptyDirs="true" quiet="true">

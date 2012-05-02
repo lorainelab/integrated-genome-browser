@@ -22,7 +22,7 @@ public class SaveSessionAction extends GenericAction {
 
 	public SaveSessionAction(IGBService igbService) {
 		super(BookmarkManagerView.BUNDLE.getString("saveSession"), null,
-				"16x16/devices/media-floppy.png", "22x22/devices/medis-floppy.png",
+				"16x16/devices/media-floppy.png", "22x22/devices/media-floppy.png",
 				KeyEvent.VK_S, null, true);
 		this.igbService = igbService;
 	}

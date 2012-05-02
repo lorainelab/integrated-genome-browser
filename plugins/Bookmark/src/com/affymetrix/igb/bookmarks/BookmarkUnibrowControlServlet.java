@@ -22,6 +22,7 @@ import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -33,8 +34,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-
-import javax.swing.SwingWorker;
+import com.affymetrix.igb.util.ThreadHandler;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -102,10 +102,10 @@ public final class BookmarkUnibrowControlServlet {
 			return;
 		}
 
-		new SwingWorker() {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("goToBookmark") {
 
 			@Override
-			protected Object doInBackground() throws Exception {				
+			protected Object runInBackground() {				
 				String seqid = getStringParameter(parameters, Bookmark.SEQID);
 				String version = getStringParameter(parameters, Bookmark.VERSION);
 				String start_param = getStringParameter(parameters, Bookmark.START);
@@ -244,7 +244,12 @@ public final class BookmarkUnibrowControlServlet {
 				}
 				return null;
 			}
-		}.execute();
+
+			@Override
+			protected void finished() {
+			}
+		};
+		ThreadHandler.getThreadHandler().execute(parameters, worker);
 	}
 	
 

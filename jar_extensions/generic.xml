@@ -3,6 +3,10 @@
 	
 	<target name="extra-init">
 		<property name="proj.dist"	value="${basedir}/dist"/>
+		<condition property="output.jar" value="${output}" >
+			<isset property="${output}" />
+		</condition>
+		<property name="output.jar" value="${project}"/>
 	</target>
 	
 	<target name="compile" depends="init, extra-init">
@@ -15,7 +19,7 @@
 	</target>
 	
 	<target name="extend-bundle" description="extend bundles to bundle dir">
-		<available file="${bundle.dir}/${project}--igbext.bnd.jar" property="${project}.present"/>
+		<available file="${bundle.dir}/${output.jar}--igbext.bnd.jar" property="${project}.present"/>
 		<antcall target="extend-bundle-if" />
 	</target>
 	
@@ -29,17 +33,17 @@
 		<mkdir dir="${proj.dist}" />
 		
 		
-		<jar destfile="${proj.dist}/${project}--igbext.jar">
+		<jar destfile="${proj.dist}/${output.jar}--igbext.jar">
 			<fileset dir="${build.dir}"/>
 			<zipfileset includes="**/*" src="${lib.dir}/${project}.jar"/>
 		</jar>
 		
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${proj.dist}" >
 			<arg value="wrap"/>
-			<arg value="${project}--igbext.jar"/>
+			<arg value="${output.jar}--igbext.jar"/>
 		</java>
 		
-		<move file="${proj.dist}/${project}--igbext.bar" tofile="${bundle.dir}/${project}--igbext.bnd.jar" filtering="false" />
+		<move file="${proj.dist}/${output.jar}--igbext.bar" tofile="${bundle.dir}/${output.jar}--igbext.bnd.jar" filtering="false" />
   	</target>
 	
 	<target name="copy_resources" if="${rsrc.dir}.present">
@@ -56,7 +60,7 @@
 		<delete includeEmptyDirs="true" quiet="true">
 			<fileset dir="${build.dir}" />
 			<fileset dir="${proj.dist}" />
-			<fileset file="${bundle.dir}/${project}--igbext.bnd.jar" />
+			<fileset file="${bundle.dir}/${output.jar}--igbext.bnd.jar" />
 		</delete>
 	</target>
 	

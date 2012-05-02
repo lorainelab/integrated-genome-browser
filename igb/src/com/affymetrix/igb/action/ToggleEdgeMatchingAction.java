@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGB;
 import java.awt.event.KeyEvent;
@@ -21,7 +22,11 @@ public class ToggleEdgeMatchingAction extends GenericAction {
 		super(BUNDLE.getString("toggleEdgeMatching"), KeyEvent.VK_M);
 		this.putValue(SELECTED_KEY, map_view.getEdgeMatching());
 	}
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ToggleEdgeMatchingAction getAction(){
 		return ACTION;
 	}

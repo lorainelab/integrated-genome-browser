@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -22,6 +23,10 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	private static final long serialVersionUID = 1l;
 	private static final ViewAlignmentSequenceInSeqViewerAction ACTION = new ViewAlignmentSequenceInSeqViewerAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ViewAlignmentSequenceInSeqViewerAction getAction() {
 		return ACTION;
 	}

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
@@ -28,7 +29,11 @@ public class ToggleToolTipAction extends GenericAction {
 		}
 		this.putValue(SELECTED_KEY, show_prop_tooltip);
 	}
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ToggleToolTipAction getAction() {
 		return ACTION;
 	}

@@ -7,17 +7,19 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 
 public class ShowStrandAction extends ShowStrandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static ShowStrandAction ACTION;
+	private static final ShowStrandAction ACTION = new ShowStrandAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ShowStrandAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ShowStrandAction();
-		}
 		return ACTION;
 	}
 

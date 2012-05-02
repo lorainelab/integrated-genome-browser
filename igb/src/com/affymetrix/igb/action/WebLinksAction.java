@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 
 import com.affymetrix.igb.view.WebLinksViewGUI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -15,6 +16,10 @@ public final class WebLinksAction extends GenericAction {
   private static final long serialVersionUID = 1L;
 	private static final WebLinksAction ACTION = new WebLinksAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static WebLinksAction getAction() {
 		return ACTION;
 	}

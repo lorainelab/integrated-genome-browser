@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,11 @@ public class ShrinkWrapAction extends GenericAction {
 		super(BUNDLE.getString("toggleShrinkWrapping"), KeyEvent.VK_S);
 		this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
 	}
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ShrinkWrapAction getAction() {
 		return ACTION;
 	}

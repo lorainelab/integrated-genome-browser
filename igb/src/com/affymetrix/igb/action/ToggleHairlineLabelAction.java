@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.UnibrowHairline;
 
@@ -27,7 +28,11 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 				UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label));
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
-
+	
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ToggleHairlineLabelAction getAction() {
 		return ACTION;
 	}

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 
 import java.awt.event.ActionEvent;
@@ -10,6 +11,10 @@ public class AddPositionBookmarkAction extends AddBookmarkAction {
 	private static final long serialVersionUID = 1L;
 	private static final AddPositionBookmarkAction ACTION = new AddPositionBookmarkAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static AddPositionBookmarkAction getAction() {
 		return ACTION;
 	}

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 
@@ -12,6 +13,10 @@ public class ExportBookmarkAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final ExportBookmarkAction ACTION = new ExportBookmarkAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ExportBookmarkAction getAction() {
 		return ACTION;
 	}

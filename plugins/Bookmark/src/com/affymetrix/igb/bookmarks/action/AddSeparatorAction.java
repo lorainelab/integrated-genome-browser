@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -12,6 +13,10 @@ public class AddSeparatorAction extends AddBookmarkAction {
 	private static final long serialVersionUID = 1L;
 	private static final AddSeparatorAction ACTION = new AddSeparatorAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static AddSeparatorAction getAction() {
 		return ACTION;
 	}

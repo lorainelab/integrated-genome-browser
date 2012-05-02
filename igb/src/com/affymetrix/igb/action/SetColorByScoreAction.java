@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -16,6 +17,10 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final SetColorByScoreAction ACTION = new SetColorByScoreAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static SetColorByScoreAction getAction() {
 		return ACTION;
 	}

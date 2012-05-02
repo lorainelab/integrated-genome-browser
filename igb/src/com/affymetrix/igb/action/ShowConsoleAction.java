@@ -2,6 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 
 import java.awt.event.ActionEvent;
@@ -17,6 +18,10 @@ public class ShowConsoleAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ShowConsoleAction ACTION = new ShowConsoleAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ShowConsoleAction getAction() {
 		return ACTION;
 	}

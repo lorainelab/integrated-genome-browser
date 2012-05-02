@@ -5,10 +5,7 @@ import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.Dimension;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.JWindow;
@@ -29,46 +26,43 @@ public class GlyphScroller {
 	Listeners listener;
 	
 	AffyLabelledTierMap map;
+	TierGlyph tier;
 	ScrollableViewModeGlyph svmg;
 	
 	public GlyphScroller(AffyLabelledTierMap map){
 		this.map = map;
 	}
 	
-	public void startscroll(TierGlyph tier){
-		if(!(tier.getViewModeGlyph() instanceof ScrollableViewModeGlyph)
-				|| !((ScrollableViewModeGlyph)tier.getViewModeGlyph()).isScrollingAllowed()){
+	public void startscroll(TierGlyph tg){
+		if(!(tg.getViewModeGlyph() instanceof ScrollableViewModeGlyph)
+				|| !((ScrollableViewModeGlyph)tg.getViewModeGlyph()).isScrollingAllowed()){
 			return;
 		}
 		
 		// Initialize all variables
+		tier = tg;
 		svmg = (ScrollableViewModeGlyph)tier.getViewModeGlyph();
 		scrollbar = getScrollBar(tier, svmg.getOffset());
 		scroll_window = getWindow(scrollbar);
 
 		// Add listeners
 		listener = new Listeners();
-		map.getLabelMap().getNeoCanvas().addMouseWheelListener(listener);
-		map.addListSelectionListener(listener);
-		scrollbar.addAdjustmentListener(listener);
+		addListeners();
 		
 		// Set scroll window properties
-		scroll_window.setPreferredSize(new Dimension(SCROLLBAR_WIDTH, tier.getPixelBox(map.getView()).height - WINDOW_OFFSET));
-		scroll_window.setLocation(map.getLocationOnScreen().x + Math.min(0, tier.getPixelBox(map.getView()).x) + WINDOW_OFFSET, 
-				map.getLocationOnScreen().y + tier.getPixelBox(map.getView()).y + WINDOW_OFFSET);
-		scroll_window.pack();
+		resizeWindow();
+		repositionWindow();
 		scroll_window.setVisible(true);
 	}
-	
+
 	private void scroll(int i){
 		svmg.setOffset(i);
 		map.updateWidget(true);
 	}
 	
 	private void stopscroll(){
-		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(listener);
-		map.removeListSelectionListener(listener);
-		scrollbar.removeAdjustmentListener(listener);
+		// Remove Listeners
+		removeListners();
 		
 		// Dispose window
 		scroll_window.dispose();
@@ -78,6 +72,30 @@ public class GlyphScroller {
 		svmg = null;
 		map = null;
 		listener = null;
+	}
+	
+	private void repositionWindow(){
+		scroll_window.setLocation(map.getLocationOnScreen().x + Math.min(0, tier.getPixelBox(map.getView()).x) + WINDOW_OFFSET, 
+				map.getLocationOnScreen().y + tier.getPixelBox(map.getView()).y + WINDOW_OFFSET);
+	}
+	
+	private void resizeWindow() {
+		scroll_window.setPreferredSize(new Dimension(SCROLLBAR_WIDTH, tier.getPixelBox(map.getView()).height - WINDOW_OFFSET));
+		scroll_window.pack();
+	}
+	
+	private void addListeners(){
+		map.getLabelMap().getNeoCanvas().addMouseWheelListener(listener);
+		map.addListSelectionListener(listener);
+		scrollbar.addAdjustmentListener(listener);
+		Application.getSingleton().getFrame().addComponentListener(listener);
+	}
+	
+	private void removeListners(){
+		map.getLabelMap().getNeoCanvas().removeMouseWheelListener(listener);
+		map.removeListSelectionListener(listener);
+		scrollbar.removeAdjustmentListener(listener);
+		Application.getSingleton().getFrame().removeComponentListener(listener);
 	}
 	
 	private static JWindow getWindow(JComponent... components){
@@ -102,7 +120,8 @@ public class GlyphScroller {
 		return new JScrollBar(JScrollBar.VERTICAL, sb_curr, 0, sb_min, sb_max);
 	}
 	
-	private class Listeners implements MouseWheelListener, ListSelectionListener, AdjustmentListener {
+	private class Listeners implements MouseWheelListener, 
+			ListSelectionListener, AdjustmentListener, ComponentListener {
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
@@ -118,6 +137,19 @@ public class GlyphScroller {
 		public void valueChanged(ListSelectionEvent e) {
 			stopscroll();
 		}
+		
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			repositionWindow();
+		}
+		
+		public void componentResized(ComponentEvent e) {
+			resizeWindow();
+			repositionWindow();
+		}
+		
+		public void componentShown(ComponentEvent e) { }
+		public void componentHidden(ComponentEvent e) { }
 	}
 	
 }

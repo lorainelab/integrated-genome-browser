@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.ActionEvent;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -7,12 +8,13 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 
 public class ScrollDownAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static ScrollDownAction ACTION;
+	private static final ScrollDownAction ACTION = new ScrollDownAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ScrollDownAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ScrollDownAction();
-		}
 		return ACTION;
 	}
 

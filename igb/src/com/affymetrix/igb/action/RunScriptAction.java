@@ -21,6 +21,7 @@ import javax.swing.*;
 import java.text.MessageFormat;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
@@ -37,6 +38,10 @@ public final class RunScriptAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final RunScriptAction ACTION = new RunScriptAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static RunScriptAction getAction() {
 		return ACTION;
 	}

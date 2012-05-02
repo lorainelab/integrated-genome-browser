@@ -4,6 +4,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.util.List;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 import java.awt.event.ActionEvent;
@@ -23,6 +24,10 @@ public class PreferencesAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final PreferencesAction ACTION = new PreferencesAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static PreferencesAction getAction() {
 		return ACTION;
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
@@ -18,12 +19,13 @@ import com.affymetrix.igb.view.TrackView;
 
 public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static RemoveDataFromTracksAction ACTION;
+	private static final RemoveDataFromTracksAction ACTION = new RemoveDataFromTracksAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static RemoveDataFromTracksAction getAction() {
-		if (ACTION == null) {
-			ACTION = new RemoveDataFromTracksAction();
-		}
 		return ACTION;
 	}
 

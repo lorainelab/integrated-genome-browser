@@ -72,7 +72,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
-import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -331,7 +330,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		speciesCB.setEnabled(false);
 		versionCB.setEnabled(false);
 
-		(new InitVersionWorker(versionName, group)).execute();
+		InitVersionWorker worker = new InitVersionWorker(versionName, group);
+		ThreadHandler.getThreadHandler().execute(versionName, worker);
 	}
 
 	public void valueChanged(ListSelectionEvent evt) {
@@ -897,25 +897,26 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	 * Run initialization of version on thread, so we don't lock up the GUI.
 	 * Merge with initVersion();
 	 */
-	private class InitVersionWorker extends SwingWorker<Void, Void> {
+	private class InitVersionWorker extends CThreadWorker<Void, Void> {
 
 		private final String versionName;
 		private final AnnotatedSeqGroup group;
 
 		InitVersionWorker(String versionName, AnnotatedSeqGroup group) {
+			super("init " + versionName);
 			this.versionName = versionName;
 			this.group = group;
 		}
 
 		@Override
-		public Void doInBackground() {
+		public Void runInBackground() {
 			igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 			return null;
 		}
 
 		@Override
-		protected void done() {
+		protected void finished() {
 			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);

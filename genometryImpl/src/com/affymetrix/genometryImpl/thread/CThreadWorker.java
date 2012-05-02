@@ -37,8 +37,11 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	}
 
 	public void setProgressAsPercent(double percent) {
-		if (percent > 1) {
-			percent = 1;
+		if (percent > 1.0) {
+			percent = 1.0;
+		}
+		if (percent < 0.0) {
+			percent = 0.0;
 		}
 		setProgress((int)(percent * 100.0));
 	}

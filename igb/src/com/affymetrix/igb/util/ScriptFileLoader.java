@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -24,8 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
@@ -35,6 +34,15 @@ import javax.swing.SwingWorker;
  * @author jnicol Parse actions from IGB response file.
  */
 public class ScriptFileLoader {
+	private static final ScriptFileLoader instance = new ScriptFileLoader();
+
+	public static ScriptFileLoader getInstance() {
+		return instance;
+	}
+
+	private ScriptFileLoader() {
+		super();
+	}
 
 	private static String splitter = "\\s";
 
@@ -56,7 +64,7 @@ public class ScriptFileLoader {
 		}
 	};
 
-	public static String getScriptFileStr(String[] args) {
+	public String getScriptFileStr(String[] args) {
 		if (args == null) {
 			return null;
 		}
@@ -77,11 +85,11 @@ public class ScriptFileLoader {
 	 * @param fileName the name of the file
 	 * @return true if the specified file is a script file, false otherwise
 	 */
-	public static boolean isScript(String fileName) {
+	public boolean isScript(String fileName) {
 		return fileName.toLowerCase().endsWith(".igb") || fileName.toLowerCase().endsWith(".py") || fileName.toLowerCase().endsWith(".js");
 	}
 
-	public static boolean runScript(String fileName) {
+	public boolean runScript(String fileName) {
 		if (!isScript(fileName)) {
 			return false;
 		} else if (fileName.toLowerCase().endsWith(".igb")) {
@@ -99,7 +107,7 @@ public class ScriptFileLoader {
 	 *
 	 * @param batchFileStr
 	 */
-	private static void executeScript(String fileName) {
+	private void executeScript(String fileName) {
 		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
 		(new SwingWorker<Void, Void>() {
 
@@ -122,11 +130,11 @@ public class ScriptFileLoader {
 	 *
 	 * @param batchFileStr
 	 */
-	private static void doActions(final String batchFileStr) {
-		Executor vexec = Executors.newSingleThreadExecutor();
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+	private void doActions(final String batchFileStr) {
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("run batch script") {
 
-			protected Void doInBackground() throws Exception {
+			@Override
+			protected Void runInBackground() {
 				if (batchFileStr == null || batchFileStr.length() == 0) {
 					Logger.getLogger(ScriptFileLoader.class.getName()).log(
 							Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
@@ -149,12 +157,16 @@ public class ScriptFileLoader {
 					return null;
 				}
 
-				ScriptFileLoader.doActions(f);
+				doActions(f);
 				return null;
+			}
+
+			@Override
+			protected void finished() {
 			}
 		};
 
-		vexec.execute(worker);
+		ThreadHandler.getThreadHandler().execute(this, worker);
 	}
 
 	/**
@@ -162,11 +174,11 @@ public class ScriptFileLoader {
 	 *
 	 * @param bis
 	 */
-	private static void doActions(File f) {
+	private void doActions(File f) {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(f));
-			ScriptFileLoader.doActions(br);
+			doActions(br);
 		} catch (FileNotFoundException ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -179,7 +191,7 @@ public class ScriptFileLoader {
 	 *
 	 * @param bis
 	 */
-	private static void doActions(BufferedReader br) {
+	private void doActions(BufferedReader br) {
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
@@ -203,7 +215,7 @@ public class ScriptFileLoader {
 		}
 	}
 
-	public static void doSingleAction(String line) {
+	public void doSingleAction(String line) {
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
 		if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
@@ -308,7 +320,7 @@ public class ScriptFileLoader {
 	 *
 	 * @param f
 	 */
-	private static void snapShot(ScriptFileLoader.ExportMode exportMode, File f) {
+	private void snapShot(ScriptFileLoader.ExportMode exportMode, File f) {
 		Logger.getLogger(ScriptFileLoader.class.getName()).log(
 				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
 		String ext = ParserController.getExtension(f.getName().toLowerCase());
@@ -348,7 +360,7 @@ public class ScriptFileLoader {
 		}
 	}
 
-	private static void goToGenome(String genomeVersion) {
+	private void goToGenome(String genomeVersion) {
 		AnnotatedSeqGroup group = UnibrowControlServlet.getInstance().determineAndSetGroup(genomeVersion);
 		if (group == null) {
 			return;
@@ -368,11 +380,11 @@ public class ScriptFileLoader {
 		}
 	}
 
-	private static void goToRegion(String region) {
+	private void goToRegion(String region) {
 		Application.getSingleton().getMapView().getMapRangeBox().setRange(Application.getSingleton().getMapView(), region);
 	}
 
-	private static void loadData(String serverURIorName, String feature_url) {
+	private void loadData(String serverURIorName, String feature_url) {
 		GenericServer server = UnibrowControlServlet.getInstance().loadServer(serverURIorName);
 		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(server, feature_url);
 
@@ -384,7 +396,7 @@ public class ScriptFileLoader {
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
 
-	private static void loadFile(String fileName) {
+	private void loadFile(String fileName) {
 		URI uri;
 		File f = new File(fileName.trim());
 		if (fileName.startsWith("http")) {
@@ -400,7 +412,7 @@ public class ScriptFileLoader {
 		LoadFileAction.getAction().openURI(uri, f.getName());
 	}
 
-	private static void loadMode(String loadMode, String featureURIStr) {
+	private void loadMode(String loadMode, String featureURIStr) {
 
 		URI featureURI = null;
 		File featureFile = new File(featureURIStr.trim());
@@ -446,7 +458,7 @@ public class ScriptFileLoader {
 		}
 	}
 
-	private static GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI) {
+	private GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI) {
 		GenericFeature feature = null;
 		for (GenericVersion version : seqGroup.getEnabledVersions()) {
 			feature = GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
@@ -465,7 +477,7 @@ public class ScriptFileLoader {
 	 * @param startField
 	 * @return
 	 */
-	private static String join(String[] fields, int startField) {
+	private String join(String[] fields, int startField) {
 		StringBuilder buffer = new StringBuilder("");
 		for (int i = startField; i < fields.length; i++) {
 			buffer.append(fields[i]);

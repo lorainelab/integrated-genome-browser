@@ -786,7 +786,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				IGB.commandLineBatchFileStr = null;	// we're not using this again!
 				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
-				ScriptFileLoader.runScript(batchFile);
+				ScriptFileLoader.getInstance().runScript(batchFile);
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;

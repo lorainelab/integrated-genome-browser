@@ -152,12 +152,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void doActions(String batchFileStr) {
-		ScriptFileLoader.runScript(batchFileStr);
+		ScriptFileLoader.getInstance().runScript(batchFileStr);
 	}
 
 	@Override
 	public void doSingleAction(String line) {
-		ScriptFileLoader.doSingleAction(line);
+		ScriptFileLoader.getInstance().doSingleAction(line);
 	}
 
 	@Override

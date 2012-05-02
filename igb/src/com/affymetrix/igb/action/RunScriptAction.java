@@ -110,8 +110,8 @@ public final class RunScriptAction extends GenericAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File file = fileChooser.getSelectedFile();
-		if (ScriptFileLoader.isScript(file.getAbsolutePath())) {
-			ScriptFileLoader.runScript(file.getAbsolutePath());
+		if (ScriptFileLoader.getInstance().isScript(file.getAbsolutePath())) {
+			ScriptFileLoader.getInstance().runScript(file.getAbsolutePath());
 		}
 		else {
 			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file");

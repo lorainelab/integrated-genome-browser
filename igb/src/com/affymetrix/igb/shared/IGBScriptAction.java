@@ -13,6 +13,6 @@ import com.affymetrix.igb.util.ScriptFileLoader;
 public class IGBScriptAction {
 	
 	public static void executeScriptAction(String tutorialArg) {
-		ScriptFileLoader.doSingleAction(tutorialArg);
+		ScriptFileLoader.getInstance().doSingleAction(tutorialArg);
 	}
 }

@@ -32,15 +32,11 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.NewSymLoadedEvent;
-import com.affymetrix.genometryImpl.event.NewSymLoadedListener;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.regionfinder.DefaultRegionFinder;
-import com.affymetrix.genometryImpl.regionfinder.RegionFinder;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
@@ -142,7 +138,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * 
 	 */
-	private static RegionFinder regionFinder = new DefaultRegionFinder();
+//	private static RegionFinder regionFinder = new DefaultRegionFinder();
 	
 	/**
 	 * Add specified server, finding species and versions associated with it.
@@ -754,8 +750,6 @@ public final class GeneralLoadUtils {
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
 		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>("Loading feature " + feature.featureName) {
-			List<SeqSymmetry> temp = new ArrayList<SeqSymmetry>();
-			NewSymLoadedListener temp_listener = null;
 			
 			@Override
 			protected Boolean runInBackground() {
@@ -1135,8 +1129,8 @@ public final class GeneralLoadUtils {
 	}
 
 	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
-		if (ScriptFileLoader.isScript(uri.toString())) {
-			ScriptFileLoader.runScript(uri.toString());
+		if (ScriptFileLoader.getInstance().isScript(uri.toString())) {
+			ScriptFileLoader.getInstance().runScript(uri.toString());
 			return;
 		}
 
@@ -1174,7 +1168,7 @@ public final class GeneralLoadUtils {
 		}
 
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
-		final String message = "Retrieving chromosomes for " + fileName;
+		final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), fileName);
 		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
 
 			@Override

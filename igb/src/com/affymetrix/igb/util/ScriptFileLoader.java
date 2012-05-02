@@ -27,7 +27,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -109,10 +108,10 @@ public class ScriptFileLoader {
 	 */
 	private void executeScript(String fileName) {
 		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
-		(new SwingWorker<Void, Void>() {
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("execute script") {
 
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Void runInBackground() {
 				try {
 					IGB.getSingleton().addNotLockedUpMsg("Executing script: " + scriptFileName);
 					RecordPlaybackHolder.getInstance().runScript(scriptFileName);
@@ -121,7 +120,12 @@ public class ScriptFileLoader {
 				}
 				return null;
 			}
-		}).execute();
+
+			@Override
+			protected void finished() {
+			}
+		};
+		ThreadHandler.getThreadHandler().execute(fileName, worker);
 		return;
 	}
 
@@ -166,7 +170,7 @@ public class ScriptFileLoader {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(this, worker);
+		ThreadHandler.getThreadHandler().execute(batchFileStr, worker);
 	}
 
 	/**

@@ -691,7 +691,7 @@ public final class GeneralLoadView {
 			}
 		};
 
-		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
+		ThreadHandler.getThreadHandler().execute(feature, delete);
 
 	}
 

@@ -3,8 +3,10 @@ package com.affymetrix.igb.view;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.List;
-import java.util.concurrent.Executor;
+//import java.util.concurrent.Executor;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingWorker;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -16,8 +18,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
 import com.affymetrix.igb.IGB;
@@ -25,6 +27,7 @@ import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.ThreadHandler;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
@@ -37,7 +40,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	 *  current symmetry used to determine slicing
 	 */
 	private SeqSymmetry slice_symmetry;
-	private Thread slice_thread = null;
+	private CThreadWorker<Void, Void> slice_thread = null;
 
 	AltSpliceSeqMapView(boolean b) {
 		super(b, "AltSpliceSeqMapView");
@@ -87,51 +90,56 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		popup.add(CenterAtHairlineAction.getAction());
 	}
 
-	protected final Executor setSliceBuffer(int bases) {
-		Executor exec = ThreadUtils.getPrimaryExecutor(this);
+	protected final void setSliceBuffer(int bases, final Runnable runnable) {
 		slice_buffer = bases;
 		if (slicing_in_effect) {
 			stopSlicingThread();
-
 			
-			slice_thread = new Thread() {
+			slice_thread = new CThreadWorker<Void, Void>("set slice buffer") {
 
 				@Override
-				public void run() {
+				protected Void runInBackground() {
 					enableSeqMap(false);
 					sliceAndDiceNow(slice_symmetry);
 					enableSeqMap(true);
+					runnable.run();
+					return null;
+				}
+
+				@Override
+				protected void finished() {
 				}
 			};
-			exec.execute(slice_thread);
-			
+			ThreadHandler.getThreadHandler().execute(this, slice_thread);
 		}
-		return exec;
 	}
 
 	final int getSliceBuffer() {
 		return slice_buffer;
 	}
 
-	public final Executor sliceAndDice(final List<SeqSymmetry> syms) {
-		Executor exec = ThreadUtils.getPrimaryExecutor(this);
+	public final void sliceAndDice(final List<SeqSymmetry> syms, final Runnable runnable) {
 		stopSlicingThread();
 		
-		slice_thread = new Thread() {
+		slice_thread = new CThreadWorker<Void, Void>("slice and dice") {
 
 			@Override
-			public void run() {
+			public Void runInBackground() {
 				enableSeqMap(false);
 				SimpleSymWithProps unionSym = new SimpleSymWithProps();
 				SeqUtils.union(syms, unionSym, aseq);
 				sliceAndDiceNow(unionSym);
 				enableSeqMap(true);
+				runnable.run();
+				return null;
+			}
+
+			@Override
+			protected void finished() {
 			}
 		};
 
-		exec.execute(slice_thread);
-		
-		return exec;
+		ThreadHandler.getThreadHandler().execute(this, slice_thread);
 	}
 
 	// disables the sliced view while the slicing thread works
@@ -158,12 +166,11 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void stopSlicingThread() {
 		if (slice_thread != null
-				&& slice_thread != Thread.currentThread()
-				&& slice_thread.isAlive()) {
-			slice_thread.stop(); // TODO: Deprecated, but seems OK here.  Maybe fix later.
+				&& slice_thread != CThreadWorker.getCurrentCThreadWorker()
+				&& slice_thread.getState() == SwingWorker.StateValue.STARTED) {
+			slice_thread.cancel(true); // TODO: Deprecated, but seems OK here.  Maybe fix later.
 			slice_thread = null;
 			enableSeqMap(true);
 		}

@@ -36,7 +36,6 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import java.util.concurrent.Executor;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -181,20 +180,20 @@ public class AltSpliceView extends IGBTabPanel
 
 	public void setSliceBuffer(int buf_size) {
 		buffer_sizeTF.setText(String.valueOf(buf_size));
-		Executor exec = spliced_view.setSliceBuffer(buf_size);
-		exec.execute(new Runnable() {
+		spliced_view.setSliceBuffer(buf_size, 
+				new Runnable() {
 
-			public void run() {
-				orf_analyzer.redoOrfs();
+				public void run() {
+					orf_analyzer.redoOrfs();
+				}
 			}
-		});
+		);
 	}
 
 	private void sliceAndDice(List<SeqSymmetry> syms) {
 		if (syms.size() > 0) {
-			Executor exec = spliced_view.sliceAndDice(syms);
-
-			exec.execute(new Runnable() {
+			spliced_view.sliceAndDice(syms,
+				new Runnable() {
 
 				public void run() {
 					orf_analyzer.redoOrfs();

@@ -123,6 +123,8 @@ public class IGBUtils {
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_preferences", PreferencesAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exit", ExitAction.getAction()));
+//		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_runScript", RunScriptAction.getAction()));
+//		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_saveScript", SaveScriptAction.getAction()));
 	}
 
 	private static void editMenu(JMenuBar menuBar, String id) {

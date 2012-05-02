@@ -166,6 +166,9 @@ public class ThreadHandler implements ActionListener, CThreadListener{
      			if (box != null) {
      				outerBox.remove(box);
      				cThreadWorker2Box.remove(w);
+     				if (workers.size() == 0) {
+     					runningTasks.setVisible(false);
+     				}
      				runningTasks.repaint();
      			}
      		}

@@ -1,12 +1,11 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.LoadUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.prefs.PreferenceChangeListener;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
-import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -168,15 +166,19 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	private void discoverServer(final GenericServer server) {
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server") {
 
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Void runInBackground() {
 				GeneralLoadUtils.discoverServer(server);
 				return null;
 			}
+
+			@Override
+			protected void finished() {
+			}
 		};
-		ThreadUtils.getPrimaryExecutor(server).execute(worker);
+		ThreadHandler.getThreadHandler().execute(server, worker);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {

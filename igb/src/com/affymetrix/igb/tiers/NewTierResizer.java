@@ -69,7 +69,7 @@ public class NewTierResizer extends MouseInputAdapter{
 		// Shouldn't we be dealing in pixels?
 		ourCeiling = this.upperGl.getCoordBox().getY()
 				+ this.upperGl.getMinimumHeight();
-		ourFloor = ourCeiling + upperGl.getReferenceTier().getViewModeGlyph().getChildHeight() * upperGl.getReferenceTier().getActualSlots();
+		//ourFloor = ourCeiling + upperGl.getReferenceTier().getViewModeGlyph().getChildHeight() * upperGl.getReferenceTier().getActualSlots();
 		this.fixedInterior = theRegion;
 	}
 
@@ -134,7 +134,7 @@ public class NewTierResizer extends MouseInputAdapter{
 		this.start = nevt.getCoordY();
 
 		if (this.upperGl != null) {
-			if (ourCeiling < nevt.getCoordY() && nevt.getCoordY() < ourFloor) {
+			if (ourCeiling < nevt.getCoordY() /** & nevt.getCoordY() < ourFloor **/) {
 //				this.gviewer.getSeqMap().setFloatBounds(NeoWidget.Y, 
 //					this.gviewer.getSeqMap().getCoordBounds().y, 
 //					this.gviewer.getSeqMap().getCoordBounds().height + delta);

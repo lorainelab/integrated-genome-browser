@@ -24,7 +24,7 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 	@Override
 	public java.awt.Color getBackgroundColor(){
 		if(getTierManager().getSelectedTiers().size() == 1){
-			return getTierManager().getSelectedTiers().get(0).getBackgroundColor();
+			return getTierManager().getSelectedTiers().get(0).getAnnotStyle().getBackground();
 		}
 		return DEFAULT_COLOR.darker();
 	}

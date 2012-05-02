@@ -1,14 +1,17 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.WebLink;
-
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.prefs.WebLink.RegexType;
 import com.affymetrix.igb.shared.FileTracker;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 import java.util.List;
 import java.awt.*;
 import java.io.File;
@@ -55,6 +58,8 @@ public final class WebLinksView implements ListSelectionListener {
 	public JRadioButton idRadioButton;
 	private final ButtonGroup button_group = new ButtonGroup();
 	public int previousSelectedRow;
+	public final static Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+	public final static Cursor defaultCursor = null;
 
 	public static synchronized WebLinksView getSingleton() {
 		if (singleton == null) {
@@ -143,9 +148,9 @@ public final class WebLinksView implements ListSelectionListener {
 
 	public void add() {
 		WebLink link = new WebLink();
-		link.setName("New Web Link");
-		link.setUrl("http://bioviz.org/igb/");
-		link.setRegex(".*");
+		link.setName(BUNDLE.getString("default_name"));
+		link.setUrl(BUNDLE.getString("default_url"));
+		link.setRegex(BUNDLE.getString("default_regex"));
 		link.setType(WebLink.LOCAL);
 		WebLink.addWebLink(link);
 
@@ -188,7 +193,7 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 	}
 
-	public void nameTextField() {
+	public void nameTextFieldKeyReleased() {
 		if (localTable.getSelectedRow() != -1) {
 			String name = nameTextField.getText();
 			if (!isEmpty(name)) {
@@ -206,7 +211,11 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 	}
 
-	public void regexTextField() {
+	public void regexTipMouseReleased() {
+		GeneralUtils.browse(BUNDLE.getString("instruction_page"));
+	}
+
+	public void regexTextFieldKeyReleased() {
 		if (localTable.getSelectedRow() != -1) {
 			String regex = regexTextField.getText();
 			if (!isEmpty(regex)) {
@@ -310,28 +319,21 @@ public final class WebLinksView implements ListSelectionListener {
 			setEnabled(false);
 			clear();
 		} else if (selectedRows.length == 1) {
-			WebLink selectedLink = localModel.getLinks().get(selectedRows[0]);
+			WebLink link = localModel.getLinks().get(selectedRows[0]);
 
-			nameTextField.setText(selectedLink.getName());
-			urlTextField.setText(selectedLink.getUrl());
-			String regex = selectedLink.getRegex();
+			nameTextField.setText(link.getName());
+			urlTextField.setText(link.getUrl());
+			regexTextField.setText(link.getRegex());
 
-			if (regex == null) {
-				regex = "";
-			} else if (regex.startsWith("(?i)")) {
-				regex = regex.substring(4);
-			}
-
-			regexTextField.setText(regex);
-			if (selectedLink.getRegexType() == RegexType.TYPE) {
+			if (link.getRegexType() == RegexType.TYPE) {
 				nameRadioButton.setSelected(true);
-			} else if (selectedLink.getRegexType() == RegexType.ID) {
+			} else if (link.getRegexType() == RegexType.ID) {
 				idRadioButton.setSelected(true);
 			}
 
-			if (!selectedLink.getType().equals(WebLink.LOCAL)) {
-				nameTextField.setText(selectedLink.getName()
-						+ "   (" + selectedLink.getType() + " web link - uneditable)");
+			if (!link.getType().equals(WebLink.LOCAL)) {
+				nameTextField.setText(link.getName()
+						+ "   (" + link.getType() + " web link - uneditable)");
 				setEnabled(false);
 			}
 		} else {

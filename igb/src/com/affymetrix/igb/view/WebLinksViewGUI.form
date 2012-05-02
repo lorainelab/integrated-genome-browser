@@ -43,12 +43,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" alignment="1" pref="600" max="32767" attributes="2"/>
+              <Component id="jScrollPane1" alignment="1" pref="614" max="32767" attributes="2"/>
               <Group type="102" alignment="1" attributes="0">
                   <Component id="createButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="230" max="32767" attributes="0"/>
+                  <EmptySpace pref="232" max="32767" attributes="0"/>
                   <Component id="importButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="exportButton" min="-2" max="-2" attributes="0"/>
@@ -161,22 +161,25 @@
                       <Component id="idRadioButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                       <Component id="matchTip" min="-2" pref="17" max="-2" attributes="0"/>
-                      <EmptySpace pref="155" max="32767" attributes="0"/>
+                      <EmptySpace pref="161" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="nameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="urlLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="urlTextField" alignment="0" pref="538" max="32767" attributes="2"/>
+                          <Component id="urlTextField" alignment="0" pref="556" max="32767" attributes="2"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="nameTextField" min="-2" pref="156" max="-2" attributes="2"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="regexLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="regexTextField" pref="238" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="regexTextField" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="regularExpressionTip" min="-2" pref="17" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -186,10 +189,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="regularExpressionTip" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="regexTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameTextField" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="regexLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="nameTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="nameLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -282,6 +286,19 @@
                 <Property name="text" type="java.lang.String" value="Regular Expression Matches:"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JLabel" name="regularExpressionTip">
+              <Properties>
+                <Property name="text" type="java.lang.String" value=" "/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="regularExpressionTipMouseReleased"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="regularExpressionTipMouseExited"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="regularExpressionTipMouseEntered"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="regularExpressionTip.setToolTipText(&quot;Click to the instruction page.&quot;);&#xa;regularExpressionTip.setIcon(CommonUtils.getInstance().getIcon(&quot;images/info.png&quot;));"/>
+              </AuxValues>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>
@@ -298,7 +315,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" alignment="0" pref="600" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" alignment="0" pref="614" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

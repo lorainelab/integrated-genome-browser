@@ -7,14 +7,13 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.StyledJComboBox;
-import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPNumTextField;
+import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.combobox.ColorExComboBox;
-import com.jidesoft.grid.ColorCellEditor;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.*;
@@ -74,24 +73,9 @@ public abstract class TrackPreferences implements ListSelectionListener {
 		lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		table.setRowSelectionAllowed(true);
-
-		ColorCellEditor cellEditor = new ColorCellEditor() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected ColorExComboBox createColorComboBox() {
-				final ColorExComboBox combobox = new ColorExComboBox();
-				combobox.setColorValueVisible(false);
-				combobox.setCrossBackGroundStyle(false);
-		//		combobox.setButtonVisible(false);
-				combobox.setStretchToFit(true);
-				return combobox;
-			}
-		};
 		
 		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
-		table.setDefaultEditor(Color.class, cellEditor);
+		table.setDefaultEditor(Color.class, new DefaultCellEditor(new ColorExComboBox()));
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));

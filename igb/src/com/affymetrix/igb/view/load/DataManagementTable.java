@@ -15,9 +15,8 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.jidesoft.combobox.ColorExComboBox;
-import com.jidesoft.grid.ColorCellEditor;
-import com.jidesoft.grid.ColorCellRenderer;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -87,23 +86,8 @@ public final class DataManagementTable {
 		table.setRowEditorModel(DataManagementTableModel.TRACK_NAME_COLUMN, text);
 		table.setRowEditorModel(DataManagementTableModel.DELETE_FEATURE_COLUMN, action);
 
-		ColorCellEditor cellEditor = new ColorCellEditor() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected ColorExComboBox createColorComboBox() {
-				final ColorExComboBox combobox = new ColorExComboBox();
-				combobox.setColorValueVisible(false);
-				combobox.setCrossBackGroundStyle(false);
-				//combobox.setButtonVisible(false);
-				combobox.setStretchToFit(true);
-				return combobox;
-			}
-		};
-
-		table.setDefaultRenderer(Color.class, new ColorCellRenderer());
-		table.setDefaultEditor(Color.class, cellEditor);
+		table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
+		table.setDefaultEditor(Color.class, new DefaultCellEditor(new ColorExComboBox()));
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
 		for (int row = 0; row < featureSize; row++) {
@@ -124,8 +108,7 @@ public final class DataManagementTable {
 				trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
 						vFeature.getFeature().featureName);
 			}
-			text.addEditorForRow(row, trackNameFieldEditor);
-			color.addEditorForRow(row, cellEditor);
+			text.addEditorForRow(row, trackNameFieldEditor); 
 		}
 
 

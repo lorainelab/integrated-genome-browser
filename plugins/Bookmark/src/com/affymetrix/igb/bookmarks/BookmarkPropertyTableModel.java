@@ -29,7 +29,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
 	 * The number of extra rows to display to give users room to enter extra
 	 * data into the table.
 	 */
-	public final static int EXTRA_ROWS = 5;
+	public final static int EXTRA_ROWS = 0;
 
 	/**
 	 * Fills the table model with data from the Map. Some extra empty rows may

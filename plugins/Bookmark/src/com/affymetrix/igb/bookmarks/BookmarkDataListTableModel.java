@@ -9,6 +9,11 @@ import java.util.Map;
  */
 public class BookmarkDataListTableModel extends BookmarkInfoTableModel {
 
+	/**
+	 * Save all the bookmark data that are not contained in info_list.
+	 *
+	 * @param map
+	 */
 	@Override
 	public void setValuesFromMap(Map<String, String[]> map) {
 		if (map == null) {

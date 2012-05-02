@@ -282,7 +282,6 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent ae) {
 				super.actionPerformed(ae);
 				deleteAction();
-		//		setBList(BookmarkActionManager.getInstance().getMainBookmarkList());
 			}
 		};
 		return a;
@@ -294,7 +293,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			return;
 		}
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.", PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
+		JCheckBox checkbox = PreferenceUtils.createCheckBox("Do not show this message again.",
+				PreferenceUtils.getTopNode(), "BookmarkManagerView_showDialog", false);
 		String message = "Delete these " + selectionPaths.length + " selected items?";
 		Object[] params = {message, checkbox};
 		doNotShowWarning = checkbox.isSelected();
@@ -391,18 +391,19 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 	private JFileChooser getJFileChooser(boolean export) {
 		if (static_chooser == null) {
 			static_chooser = new JFileChooser() {
+
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void approveSelection() {
 					File f = getSelectedFile();
 					String path;
-					if((f.getAbsolutePath().indexOf("."))<0)
-					{
-						if(static_chooser.getFileFilter().equals(ff))
-							path = f.getAbsolutePath()+".txt";
-						else
-							path = f.getAbsolutePath()+".html";
+					if ((f.getAbsolutePath().indexOf(".")) < 0) {
+						if (static_chooser.getFileFilter().equals(ff)) {
+							path = f.getAbsolutePath() + ".txt";
+						} else {
+							path = f.getAbsolutePath() + ".html";
+						}
 						f = new File(path);
 					}
 					if (f.exists() && getDialogType() == SAVE_DIALOG) {
@@ -425,17 +426,18 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			static_chooser.setAcceptAllFileFilterUsed(false);
 			static_chooser.setCurrentDirectory(getLoadDirectory());
 			static_chooser.addChoosableFileFilter(ff1);
-			
+
 		}
-		if(export)
+		if (export) {
 			static_chooser.addChoosableFileFilter(ff);
-		else
+		} else {
 			static_chooser.removeChoosableFileFilter(ff);
+		}
 		static_chooser.setFileFilter(ff1);
 		static_chooser.rescanCurrentDirectory();
 		return static_chooser;
 	}
-	
+
 	/**
 	 * Returns true or false to indicate that if an item is inserted at the
 	 * given row it will be inserted "into" (true) or "after" (false) the item
@@ -560,6 +562,11 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			this.igbService = igbService;
 		}
 
+		/**
+		 * Method triggered when tree selection changed.
+		 *
+		 * @param e
+		 */
 		public void valueChanged(TreeSelectionEvent e) {
 			updatePreviousBookmarkData();
 
@@ -609,7 +616,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		/*
-		 * Auto save comments when another node is selected.
+		 * Auto save name and comments when another node is selected.
 		 */
 		public void updatePreviousBookmarkData() {
 			updateNode(previousSelected_bl,
@@ -617,6 +624,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 					comment_text_area.getText());
 		}
 
+		/*
+		 * Auto save name and comments when bookmark edit action performed.
+		 */
 		public void updateBookmarkData() {
 			TreePath[] selections = tree.getSelectionPaths();
 			selected_path = selections[0];
@@ -684,7 +694,8 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 		}
 
 		private void goToAction() {
-			if (igbService == null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
+			if (igbService == null || selected_bl == null
+					|| !(selected_bl.getUserObject() instanceof Bookmark)) {
 				setEnabled(false);
 			} else {
 
@@ -694,7 +705,7 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 			}
 		}
 	}
-
+	
 	private abstract class ExportFileFilter extends javax.swing.filechooser.FileFilter {
 
 		final UniFileFilter filter;
@@ -739,7 +750,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-			BookmarkList.exportAsHTML(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+			BookmarkList.exportAsHTML(main_bookmark_list, fil,
+					CommonUtils.getInstance().getAppName(),
+					CommonUtils.getInstance().getAppVersion());
 		}
 	}
 
@@ -751,7 +764,9 @@ public final class BookmarkManagerView implements TreeSelectionListener {
 
 		@Override
 		public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-			BookmarkList.exportAsTEXT(main_bookmark_list, fil, CommonUtils.getInstance().getAppName(), CommonUtils.getInstance().getAppVersion());
+			BookmarkList.exportAsTEXT(main_bookmark_list, fil,
+					CommonUtils.getInstance().getAppName(),
+					CommonUtils.getInstance().getAppVersion());
 		}
 	}
 }

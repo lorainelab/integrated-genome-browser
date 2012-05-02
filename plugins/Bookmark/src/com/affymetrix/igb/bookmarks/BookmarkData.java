@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -16,6 +18,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 /**
+ * This class is designed to get and display one bookmark data to three
+ * different tables(property table, information table and details table).
  *
  * @author nick
  */
@@ -30,15 +34,45 @@ public final class BookmarkData {
 	private final JTable infoTable;
 	private final JTable datalistTable;
 
+	/**
+	 * Initialize bookmark tables and related models.
+	 */
 	public BookmarkData() {
 		propertyModel = new BookmarkPropertyTableModel();
 		propertyTable = new StyledJTable(propertyModel);
 
 		propertyModel.addTableModelListener(new TableModelListener() {
 
+			/**
+			 * Any values changed in property table will trigger to update info
+			 * or data list table
+			 */
 			public void tableChanged(TableModelEvent e) {
-				setBookmarkFromPropertyTable();
-				BookmarkManagerView.getSingleton().thing.updateInfoOrDataTable();
+				if (bookmarkList != null) {
+					Bookmark bm = (Bookmark) bookmarkList.getUserObject();
+					URL url = bm.getURL();
+					String url_base = bm.getURL().toExternalForm();
+					int index = url_base.indexOf('?');
+					if (index > 0) {
+						url_base = url_base.substring(0, index);
+					}
+
+					// record the modified time
+					Map<String, String[]> props = propertyModel.getValuesAsMap();
+					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
+					props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
+
+					String str = Bookmark.constructURL(url_base, props);
+					try {
+						url = new URL(str);
+					} catch (MalformedURLException ex) {
+						Logger.getLogger(BookmarkData.class.getName()).log(Level.SEVERE, null, ex);
+					}
+					bm.setURL(url);
+
+					BookmarkManagerView.getSingleton().thing.updateInfoOrDataTable();
+				}
 			}
 		});
 
@@ -89,6 +123,12 @@ public final class BookmarkData {
 		setTableFromBookmark(datalistModel, bl);
 	}
 
+	/**
+	 * Reset passed model data by passed bookmark list.
+	 *
+	 * @param model
+	 * @param bl
+	 */
 	private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
 		Bookmark bm = (Bookmark) bl.getUserObject();
 		if (bm == null) {
@@ -96,33 +136,6 @@ public final class BookmarkData {
 		} else {
 			URL url = bm.getURL();
 			model.setValuesFromMap(Bookmark.parseParameters(url));
-		}
-	}
-
-	public void setBookmarkFromPropertyTable() {
-		if (bookmarkList != null) {
-			Bookmark bm = (Bookmark) bookmarkList.getUserObject();
-			URL url = bm.getURL();
-			String url_base = bm.getURL().toExternalForm();
-			int index = url_base.indexOf('?');
-			if (index > 0) {
-				url_base = url_base.substring(0, index);
-			}
-
-			// record the modified time
-			Map<String, String[]> props = propertyModel.getValuesAsMap();
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Date date = new Date();
-			props.put(Bookmark.MODIFIED, new String[]{dateFormat.format(date)});
-
-			String str = Bookmark.constructURL(url_base, props);
-			try {
-				url = new URL(str);
-				bm.setURL(url);
-			} catch (MalformedURLException e) {
-				JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, null);
-				ErrorHandler.errorPanel(frame, "Error", "Cannot construct bookmark: " + e.getMessage(), null);
-			}
 		}
 	}
 }

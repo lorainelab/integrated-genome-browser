@@ -10,7 +10,8 @@ import java.util.Map;
  */
 public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 
-    static final List<String> info_list = getInfoList();
+	// A list to determine what bookmark data should be listed in table.
+	static final List<String> info_list = getInfoList();
 
 	static List<String> getInfoList() {
 		List<String> infoList = new ArrayList<String>(20);
@@ -25,6 +26,11 @@ public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 		return infoList;
 	}
 
+	/**
+	 * Save all the bookmark data that are contained in info_list.
+	 *
+	 * @param map
+	 */
 	@Override
 	public void setValuesFromMap(Map<String, String[]> map) {
 		if (map == null) {
@@ -52,7 +58,7 @@ public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
 
 		fireTableDataChanged();
 	}
-	
+
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;

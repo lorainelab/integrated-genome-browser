@@ -14,8 +14,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 /**
- * An AddBookmarkAction class for IGB. It is designed to create and add new
- * bookmark to the list.
+ * This class is designed to create and add new bookmark to the list.
  *
  * @author Nick & David
  */

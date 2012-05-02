@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import javax.swing.*;
 
 /**
+ * This class is the implementation of bookmark editor panel.
  *
  * @author nick
  */
@@ -27,6 +28,11 @@ public class BookmarkEditor {
 	public static final boolean defaultUseDefaultName = true;
 	public static final String PREF_USE_DEFAULT_NAME = "Use Default Name";
 
+	/**
+	 * Initialize all the components in the panel by passed bookmark.
+	 *
+	 * @param b
+	 */
 	public static void init(Bookmark b) {
 		bookmark = b;
 
@@ -56,6 +62,9 @@ public class BookmarkEditor {
 		}
 	}
 
+	/**
+	 * Used JDialog as display panel and initialized it.
+	 */
 	private static void initDialog() {
 		setNameField();
 		commentField.setText("");
@@ -78,6 +87,9 @@ public class BookmarkEditor {
 		}
 	}
 
+	/**
+	 * Activate the panel and complete adding a bookmark by user's operation.
+	 */
 	public static void run() {
 		initDialog();
 

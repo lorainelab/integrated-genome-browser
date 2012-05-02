@@ -14,6 +14,10 @@ public class ReportBugAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ReportBugAction ACTION = new ReportBugAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ReportBugAction getAction() {
 		return ACTION;
 	}

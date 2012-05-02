@@ -7,6 +7,10 @@ public class OKAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final OKAction ACTION = new OKAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static OKAction getAction() {
 		return ACTION;
 	}

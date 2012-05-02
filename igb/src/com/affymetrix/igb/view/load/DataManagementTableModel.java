@@ -87,7 +87,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (GenericFeature gFeature : features) {
 			createPrimaryVirtualFeatures(gFeature);
 		}
-		
+
 		fireTableDataChanged();
 	}
 
@@ -374,16 +374,20 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		fireTableCellUpdated(row, col);
-		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
-				&& col != FEATURE_NAME_COLUMN
-				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN && col != TRACK_NAME_COLUMN) {
+		update(col);
+		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
+	}
+
+	private void update(int col) {
+		if (col == BACKGROUND_COLUMN || col == TRACK_NAME_COLUMN) {
+			if (col == TRACK_NAME_COLUMN) {
+				smv.getSeqMap().setTierLabels();
+			}
+
+			smv.getSeqMap().updateWidget();
+		} else {
 			refreshSeqMapView();
 		}
-		if (col == TRACK_NAME_COLUMN) {
-			smv.getSeqMap().setTierLabels();
-			smv.getSeqMap().updateWidget();
-		}
-		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 
 	private void setVisibleTracks(ITrackStyleExtended style) {

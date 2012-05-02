@@ -20,7 +20,6 @@
 	</target>
 	
 	<target name="extend-bundle-if" description="extend and copy lib to bundle dir" unless="${project}.present">
-		<echo message="here" />
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
 		

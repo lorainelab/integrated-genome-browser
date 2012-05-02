@@ -63,7 +63,6 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
                     // http://www.unicode.org/charts/PDF/U2580.pdf
                     // http://en.wikipedia.org/wiki/Box-drawing_character
                     // Look for "Block Elements" in the above page.
-                    //sb.append("<span style=\"color: ").append(c).append("\"> █ </span>");
                     sb.append("<span style=\"color: ").append(c).append("\"> &#9608; </span>");
                 }
                 sb.append(" &nbsp;</span> ").append(n);

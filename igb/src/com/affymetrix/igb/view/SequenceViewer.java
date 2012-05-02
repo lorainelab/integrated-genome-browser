@@ -30,8 +30,9 @@ import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
-import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.util.ThreadHandler;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -48,7 +49,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
-import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -172,38 +172,16 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 				};
 
 				if (!isGenomicRequest) {
-
-					SwingWorker worker = new SwingWorker() {
-
-						@Override
-						protected Object doInBackground() throws Exception {
-							LoadResidueAction loadResidue = new LoadResidueAction(residues_sym.getSpan(aseq), true);
-							loadResidue.addDoneCallback(doneback);
-							loadResidue.actionPerformed(null);
-							loadResidue.removeDoneCallback(doneback);
-							return null;
-						}
-					};
-					worker.execute();
-					
+					SequenceViewWorker worker = new SequenceViewWorker("regular sequence viewer", residues_sym.getSpan(aseq), doneback);
+					ThreadHandler.getThreadHandler().execute(this, worker);
 				} else {
 					if (residues_sym == null) {
 						final SeqSpan span = seqmapview.getVisibleSpan();
 						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
 						//doneback.actionDone(null);
 						
-						SwingWorker worker = new SwingWorker() {
-
-							@Override
-							protected Object doInBackground() throws Exception {
-								LoadResidueAction loadResidue = new LoadResidueAction(span, true);
-								loadResidue.addDoneCallback(doneback);
-								loadResidue.actionPerformed(null);
-								loadResidue.removeDoneCallback(doneback);
-								return null;
-							}
-						};
-						worker.execute();
+						SequenceViewWorker worker = new SequenceViewWorker("genomic sequence viewer", span, doneback);
+						ThreadHandler.getThreadHandler().execute(this, worker);
 					}
 				}
 			}

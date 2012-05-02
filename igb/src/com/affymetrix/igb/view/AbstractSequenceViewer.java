@@ -31,11 +31,11 @@ import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
-import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.util.ThreadHandler;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -50,7 +50,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
-import javax.swing.SwingWorker;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -61,9 +60,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 	private NeoSeq seqview;
 	private JFrame mapframe;
 	private int COMMA = 0;
-	private int DEF = 1;
-	private int pixel_width = 500;
-	private int pixel_height = 400;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
 	public SeqSymmetry residues_sym;
@@ -186,18 +182,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 						residues_sym = new SingletonSeqSymmetry(span.getMin(), span.getMax(), span.getBioSeq());
 						//doneback.actionDone(null);
 						
-						SwingWorker worker = new SwingWorker() {
-
-							@Override
-							protected Object doInBackground() throws Exception {
-								LoadResidueAction loadResidue = new LoadResidueAction(span, true);
-								loadResidue.addDoneCallback(doneback);
-								loadResidue.actionPerformed(null);
-								loadResidue.removeDoneCallback(doneback);
-								return null;
-							}
-						};
-						worker.execute();
+						SequenceViewWorker worker = new SequenceViewWorker("start abstract sequence viewer", span, doneback);
+						ThreadHandler.getThreadHandler().execute(this, worker);
 					}
 				}
 			}

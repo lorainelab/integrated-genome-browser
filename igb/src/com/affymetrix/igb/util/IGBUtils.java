@@ -46,6 +46,7 @@ import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.action.ViewAlignmentSequenceInSeqViewerAction;
 import com.affymetrix.igb.action.WebLinksAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
+import com.affymetrix.igb.action.ColorSchemeChoiceAction;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -132,6 +133,7 @@ public class IGBUtils {
 		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_zoomingRepack", ZoomingRepackAction.getAction()));
+		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_colorChoice", ColorSchemeChoiceAction.getAction()));
 		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectAllAction"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {

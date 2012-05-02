@@ -119,8 +119,6 @@ public final class GlyphEdgeMatcher  {
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
           SolidGlyph mglyph = new FillRectGlyph();
-		  System.out.println("target is a " + target.getClass().getName());
-		  System.out.println("target parent is a " + target.getParent().getClass().getName());
 		  if (target instanceof PointedGlyph) {
 		    PointedGlyph pg = (PointedGlyph) target;
 			if (!pg.isForward()) {
@@ -142,8 +140,6 @@ public final class GlyphEdgeMatcher  {
 
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
-		  System.out.println("target is a " + target.getClass().getName());
-		  System.out.println("target parent is a " + target.getParent().getClass().getName());
           SolidGlyph mglyph = new FillRectGlyph();
 		  if (target instanceof PointedGlyph) {
 		    PointedGlyph pg = (PointedGlyph) target;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.event.GenericAction;
 
@@ -18,6 +19,10 @@ public class CopyResiduesAction extends GenericAction {
 	private static final CopyResiduesAction ACTION = new CopyResiduesAction(BUNDLE.getString("copySelectedResiduesToClipboard"));
 	private static final CopyResiduesAction ACTION_SHORT = new CopyResiduesAction("Copy");
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+		GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
+	}
 	public static CopyResiduesAction getAction() {
 		return ACTION;
 	}

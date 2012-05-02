@@ -12,7 +12,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class CloseTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static CloseTracksAction ACTION = new CloseTracksAction();
+	private static final CloseTracksAction ACTION = new CloseTracksAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);

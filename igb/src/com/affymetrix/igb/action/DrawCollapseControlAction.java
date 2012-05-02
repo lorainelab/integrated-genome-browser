@@ -2,6 +2,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,10 @@ public class DrawCollapseControlAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	private static final DrawCollapseControlAction ACTION = new DrawCollapseControlAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static DrawCollapseControlAction getAction() {
 		return ACTION;
 	}

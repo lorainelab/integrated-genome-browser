@@ -8,7 +8,7 @@ import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
 public class ChangeForegroundColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
-	private static ChangeForegroundColorAction ACTION = new ChangeForegroundColorAction();
+	private static final ChangeForegroundColorAction ACTION = new ChangeForegroundColorAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);

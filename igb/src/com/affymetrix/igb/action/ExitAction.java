@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 
 import java.awt.Toolkit;
@@ -19,6 +20,10 @@ public class ExitAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final ExitAction ACTION = new ExitAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ExitAction getAction() {
 		return ACTION;
 	}

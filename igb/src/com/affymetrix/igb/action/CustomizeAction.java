@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.event.ActionEvent;
@@ -17,6 +18,10 @@ public class CustomizeAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
 	private static final CustomizeAction ACTION = new CustomizeAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static CustomizeAction getAction() {
 		return ACTION;
 	}

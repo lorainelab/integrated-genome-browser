@@ -6,7 +6,7 @@ import com.affymetrix.igb.IGBConstants;
 
 public class CollapseAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static CollapseAction ACTION = new CollapseAction();
+	private static final CollapseAction ACTION = new CollapseAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);

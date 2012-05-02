@@ -1,16 +1,18 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 
 public class ExpandAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static ExpandAction ACTION;
+	private static ExpandAction ACTION = new ExpandAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ExpandAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ExpandAction();
-		}
 		return ACTION;
 	}
 

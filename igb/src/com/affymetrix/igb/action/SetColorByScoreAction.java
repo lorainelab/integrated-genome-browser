@@ -59,13 +59,13 @@ public class SetColorByScoreAction extends SeqMapViewActionA {
 			case JOptionPane.OK_OPTION : 
 				float updatedMinRange = editor.getMinRange();
 				float updatedMaxRange = editor.getMaxRange();
-				int  updatedIntervals = editor.getColorIntervals(); 
+				//int  updatedIntervals = editor.getColorIntervals(); 
 				for(TierLabelGlyph label : theTiers){
 					TierGlyph tg = (TierGlyph)label.getInfo();
 					style = (TrackStyle)tg.getAnnotStyle();
 					style.setMinScoreColor(updatedMinRange);
 					style.setMaxScoreColor(updatedMaxRange);
-					style.setColorIntervals(updatedIntervals);
+				//	style.setColorIntervals(updatedIntervals);
 				}
 		}
 		refreshMap(false, false);

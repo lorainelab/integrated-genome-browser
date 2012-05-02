@@ -14,7 +14,8 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.Activator());
 		activators.add(new com.affymetrix.igb.bookmarks.Activator());
 		activators.add(new com.affymetrix.igb.external.Activator());
-		activators.add(new com.affymetrix.igb.graph.Activator());
+		activators.add(new com.affymetrix.igb.trackAdjuster.Activator());
+		activators.add(new com.affymetrix.igb.trackOperations.Activator());
 		activators.add(new com.affymetrix.igb.plugins.Activator());
 		activators.add(new com.affymetrix.igb.property.Activator());
 		activators.add(new com.affymetrix.igb.restrictions.Activator());

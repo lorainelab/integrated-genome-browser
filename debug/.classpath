@@ -51,5 +51,7 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/jar_extensions/sam/build"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/jar_extensions/tribble-0.2/build"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Thresholding"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrackAdjuster"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrackOperations"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

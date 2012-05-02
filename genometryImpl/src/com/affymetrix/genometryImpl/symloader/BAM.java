@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
+import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeekableFTPStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -36,27 +37,7 @@ import net.sf.samtools.util.SeekableBufferedStream;
  * @author jnicol
  */
 public final class BAM extends XAM {
-	private static final int PROGRESS_FREQUENCY = 50;
-	private static final int SLEEP_TIME = 20; // in milliseconds
 
-	private class CompressedStreamPosition {
-		private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
-		private static final double BLOCK_FACTOR = (2 << 15) * COMPRESS_RATIO;
-		private final long blockAddress;
-		private final int currentOffset;
-		private CompressedStreamPosition(long blockAddress, int currentOffset) {
-			super();
-			this.blockAddress = blockAddress;
-			this.currentOffset = currentOffset;
-		}
-		public long getApproximatePosition() {
-			return (long)(blockAddress * BLOCK_FACTOR + currentOffset);
-		}
-		@Override
-		public String toString() {
-			return "" + blockAddress + ":" + currentOffset;
-		}
-	}
 	public final static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bam");
@@ -66,11 +47,54 @@ public final class BAM extends XAM {
 	
 	protected SAMFileHeader header;
 	
-	private File indexFile = null;
 	
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri, featureName, seq_group);
 		strategyList.add(LoadStrategy.AUTOLOAD);
+	}
+
+	private SAMFileReader getSAMFileReader() throws Exception {
+		File indexFile = null;
+		SAMFileReader samFileReader;
+		String scheme = uri.getScheme().toLowerCase();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			// BAM is file.
+			//indexFile = new File(uri.)
+			File f = new File(uri);
+			indexFile = findIndexFile(f);
+			samFileReader = new SAMFileReader(f, indexFile, false);
+			samFileReader.setValidationStringency(ValidationStringency.SILENT);
+		} else if (scheme.startsWith("http")) {
+			// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
+			String baiUriStr = findIndexFile(uri.toString());
+			// Guess at the location of the .bai URL as BAM URL + ".bai"	
+			if (baiUriStr == null) {
+				ErrorHandler.errorPanel("No BAM index file",
+						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
+				this.isInitialized = false;
+				return null;
+			}
+			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+			samFileReader = new SAMFileReader(uri.toURL(), indexFile, false);
+			samFileReader.setValidationStringency(ValidationStringency.SILENT);
+		} else if(scheme.startsWith("ftp")){
+			String baiUriStr = findIndexFile(uri.toString());
+			// Guess at the location of the .bai URL as BAM URL + ".bai"	
+			if (baiUriStr == null) {
+				ErrorHandler.errorPanel("No BAM index file",
+						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
+				this.isInitialized = false;
+				return null;
+			}
+			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+			samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
+			samFileReader.setValidationStringency(ValidationStringency.SILENT);
+		}else {
+			Logger.getLogger(BAM.class.getName()).log(
+					Level.SEVERE, "URL scheme: {0} not recognized", scheme);
+			return null;
+		}
+		return samFileReader;
 	}
 
 	@Override
@@ -80,44 +104,7 @@ public final class BAM extends XAM {
 		}
 		
 		try {
-			String scheme = uri.getScheme().toLowerCase();
-			if (scheme.length() == 0 || scheme.equals("file")) {
-				// BAM is file.
-				//indexFile = new File(uri.)
-				File f = new File(uri);
-				indexFile = findIndexFile(f);
-				reader = new SAMFileReader(f, indexFile, false);
-				reader.setValidationStringency(ValidationStringency.SILENT);
-			} else if (scheme.startsWith("http")) {
-				// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-				String baiUriStr = findIndexFile(uri.toString());
-				// Guess at the location of the .bai URL as BAM URL + ".bai"	
-				if (baiUriStr == null) {
-					ErrorHandler.errorPanel("No BAM index file",
-							"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
-					this.isInitialized = false;
-					return;
-				}
-				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-				reader = new SAMFileReader(uri.toURL(), indexFile, false);
-				reader.setValidationStringency(ValidationStringency.SILENT);
-			} else if(scheme.startsWith("ftp")){
-				String baiUriStr = findIndexFile(uri.toString());
-				// Guess at the location of the .bai URL as BAM URL + ".bai"	
-				if (baiUriStr == null) {
-					ErrorHandler.errorPanel("No BAM index file",
-							"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
-					this.isInitialized = false;
-					return;
-				}
-				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-				reader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
-				reader.setValidationStringency(ValidationStringency.SILENT);
-			}else {
-				Logger.getLogger(BAM.class.getName()).log(
-						Level.SEVERE, "URL scheme: {0} not recognized", scheme);
-				return;
-			}
+			reader = getSAMFileReader();
 			//set header
 			header = reader.getFileHeader();
 			
@@ -143,7 +130,7 @@ public final class BAM extends XAM {
 	 * @return current CompressedStreamPosition for SAMFileReader
 	 * @throws Exception
 	 */
-	private CompressedStreamPosition getCompressedInputStreamPosition(SAMFileReader sfr) throws Exception {
+	private BlockCompressedStreamPosition getCompressedInputStreamPosition(SAMFileReader sfr) throws Exception {
 		Field privateReaderField = sfr.getClass().getDeclaredField("mReader");
 		privateReaderField.setAccessible(true);
 		Object mReaderValue = privateReaderField.get(sfr);
@@ -156,13 +143,11 @@ public final class BAM extends XAM {
 		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
 		privateCurrentOffsetField.setAccessible(true);
 		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
-		return new CompressedStreamPosition(blockAddressValue, currentOffsetValue);
+		return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
 	}
 
 	private long getEndPosition(BioSeq seq, int max, boolean contained) throws Exception {
-		File fTemp = new File(uri);
-		File indexFileTemp = findIndexFile(fTemp);
-		SAMFileReader readerTemp = new SAMFileReader(fTemp, indexFileTemp, false);
+		SAMFileReader readerTemp = getSAMFileReader();
 		CloseableIterator<SAMRecord> iter = readerTemp.query(seqs.get(seq), max - 1, max, contained);
 		while (iter.hasNext()) {
 			iter.next();

@@ -18,22 +18,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="minLabel" min="-2" max="-2" attributes="0"/>
-                  <Component id="colorIntervalsLabel" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="minLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="colorIntervalsField" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="minRangeField" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                      <Component id="maxLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="maxRangeField" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <Component id="minRangeField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+              <Component id="maxLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="maxRangeField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="18" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -47,12 +39,7 @@
                   <Component id="maxLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="maxRangeField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="colorIntervalsField" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="colorIntervalsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="21" max="32767" attributes="0"/>
+              <EmptySpace pref="30" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -83,19 +70,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="maxRangeField.setText(maxText);"/>
       </AuxValues>
-    </Component>
-    <Component class="javax.swing.JTextField" name="colorIntervalsField">
-      <Properties>
-        <Property name="columns" type="int" value="10"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="colorIntervalsField.setText(intervalsText);"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JLabel" name="colorIntervalsLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Color Intervals: "/>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

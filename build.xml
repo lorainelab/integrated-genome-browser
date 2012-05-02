@@ -59,6 +59,7 @@
 		<!-- list the libraries to extend bundle -->
 		<property name="sam"				 value="${jar_extensions}/sam" />
 		<property name="tribble-0.2"		 value="${jar_extensions}/tribble-0.2" />
+		<property name="icons"				 value="${jar_extensions}/icons" />
 		
 		<!-- list the libraries to copy -->
 		<property name="copy.lib" value="BigWig,commons-codec-1.4,commons-lang3-3.1"/>
@@ -680,6 +681,7 @@
 				<dirset dir="${jar_extensions}">
 					<include name="sam" />
 					<include name="tribble-0.2" />
+					<include name="icons" />
 				</dirset>
 			</subant>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">

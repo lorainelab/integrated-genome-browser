@@ -10,6 +10,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
@@ -22,6 +23,8 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.util.ThreadHandler;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -289,20 +292,24 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				clearCache.setEnabled(true);
 				cacheCleared.setVisible(true);
 
-				new SwingWorker() {
+				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("clear cache") {
 
 					@Override
-					protected Object doInBackground() throws Exception {
+					protected Object runInBackground() {
 						System.out.println("Runnable :" + Thread.currentThread().getId());
-						Thread.sleep(5000);
+						try {
+							Thread.sleep(5000);
+						}
+						catch (InterruptedException x) {}
 						return null;
 					}
 
 					@Override
-					public void done() {
+					public void finished() {
 						cacheCleared.setVisible(false);
 					}
-				}.execute();
+				};
+				ThreadHandler.getThreadHandler().execute(cacheCleared, worker);
 			}
 		});
 

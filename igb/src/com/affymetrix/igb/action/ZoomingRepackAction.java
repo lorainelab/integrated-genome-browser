@@ -10,6 +10,7 @@
  */
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -31,12 +32,13 @@ import javax.swing.Action;
  */
 public class ZoomingRepackAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static ZoomingRepackAction ACTION;
+	private static final ZoomingRepackAction ACTION = new ZoomingRepackAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ZoomingRepackAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ZoomingRepackAction();
-		}
 		return ACTION;
 	}
 

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.Adjustable;
 import java.awt.event.ActionEvent;
 
@@ -8,12 +9,13 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 
 public class ZoomOutXAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
-	private static ZoomOutXAction ACTION;
+	private static final ZoomOutXAction ACTION = new ZoomOutXAction();
 
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	
 	public static ZoomOutXAction getAction() {
-		if (ACTION == null) {
-			ACTION = new ZoomOutXAction();
-		}
 		return ACTION;
 	}
 

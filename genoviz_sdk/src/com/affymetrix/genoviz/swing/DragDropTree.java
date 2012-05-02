@@ -87,8 +87,8 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	/*
-	 * Called when a drag operation is ongoing, while the mouse pointer is still 
-	 * over the operable part of the drop site for the DropTarget registered with this listener.
+	 * This method implements to highlight tree nodes when drag any nodes over
+	 * it.
 	 */
 	public void dragOver(DropTargetDragEvent dtde) {
 		Point pt = dtde.getLocation();
@@ -105,6 +105,13 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	public void dropActionChanged(DropTargetDragEvent dtde) {
 	}
 
+	/**
+	 * This method implements to drag any tree nodes and move to any place in
+	 * the tree. One exception is the folder nodes can't be moved into one of
+	 * its sub folders.
+	 *
+	 * @param dtde
+	 */
 	public void drop(DropTargetDropEvent dtde) {
 		Point pt = dtde.getLocation();
 		DropTargetContext dtc = dtde.getDropTargetContext();
@@ -137,10 +144,11 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 						selectedRow = tree.getRowForPath(selectedPath);
 
 						dragNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-						
+
 						if (parentNode.isNodeAncestor(dragNode) && !parentNode.isLeaf()) {
 							ErrorHandler.errorPanel("NOTICE", "The folder \""
-									+ dragNode.getUserObject().toString() +"\" can't be moved into one of its subfolders.");
+									+ dragNode.getUserObject().toString()
+									+ "\" can't be moved into one of its subfolders.");
 							return;
 						}
 

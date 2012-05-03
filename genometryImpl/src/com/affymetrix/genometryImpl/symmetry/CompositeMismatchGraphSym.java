@@ -70,7 +70,7 @@ public class CompositeMismatchGraphSym extends MisMatchGraphSym{
 		int[] new_acoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[0], slice_rcoords[0]);
 		int[] new_tcoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[1], slice_rcoords[1]);
 		int[] new_gcoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[2], slice_rcoords[2]);
-		int[] new_ccoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[3], slice_rcoords[3]);
+//		int[] new_ccoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[3], slice_rcoords[3]);
 		int[] new_ncoords = copyIntCoords(coordSize, sliceSize, slice_index, old_rcoords[4], slice_rcoords[4]);
 		
 		

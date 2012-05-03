@@ -85,11 +85,11 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	public int getLength() { return 1; }
 	public boolean isForward() { return true; }
 	public BioSeq getBioSeq() { return parent.getSpanSeq(0); }
-	public double getStartDouble() { return (double)getStart(); }
-	public double getEndDouble() { return (double)getEnd(); }
-	public double getMinDouble() { return (double)getMin(); }
-	public double getMaxDouble() { return (double)getMax(); }
-	public double getLengthDouble() { return (double)getLength(); }
+	public double getStartDouble() { return getStart(); }
+	public double getEndDouble() { return getEnd(); }
+	public double getMinDouble() { return getMin(); }
+	public double getMaxDouble() { return getMax(); }
+	public double getLengthDouble() { return getLength(); }
 	public boolean isIntegral() { return true; }
 
 

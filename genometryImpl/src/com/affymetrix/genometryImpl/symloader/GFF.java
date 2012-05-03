@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SingletonSymWithProps;
@@ -44,7 +43,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 	public static final int GTF = 201;
 	public static final String GFF3_ID = "ID";
 	public static final String GFF3_PARENT = "Parent";
-	static List pref_list = Arrays.asList("gff");
+	static List<String> pref_list = Arrays.asList("gff");
 	int gff_version = 0;
 	private static final boolean DEBUG = false;
 	boolean DEBUG_GROUPING = false;
@@ -286,6 +285,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 	}
 	boolean use_track_lines = true;
 
+	@SuppressWarnings("unused")
 	private List<? extends SeqSymmetry> parse(LineReader lineReader, boolean create_container_annot, boolean annotate_seq)
 			throws IOException {
 		if (DEBUG) {
@@ -518,7 +518,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
 	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
 		// Loop through the results List and add all Sym's to the BioSeq
-		Iterator iter = results.iterator();
+		Iterator<SeqSymmetry> iter = results.iterator();
 		while (iter.hasNext()) {
 			SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
 			BioSeq seq = sym.getBioSeq();
@@ -527,7 +527,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 				SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
 				// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
 				sym.setCoords(pspan.getStart(), pspan.getEnd());
-				resortChildren((MutableSingletonSeqSymmetry) sym, seq);
+				resortChildren(sym, seq);
 			}
 			if (create_container_annot) {
 				String meth = (String) sym.getProperty("method");
@@ -867,7 +867,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 						group_id = "" + value;
 					} else if (value instanceof List) {  // such as a Vector
 						// If there are multiple values for the group_tag, then take first one as String value
-						List valist = (List) value;
+						List<?> valist = (List<?>) value;
 						if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
 							group_id = (String) valist.get(0);
 							if (GROUP_ID_TO_LOWER_CASE) {

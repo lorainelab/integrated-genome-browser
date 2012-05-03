@@ -65,7 +65,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 			return (Map<String, Object>) ((TreeMap<String, Object>) props).clone();
 		}
 		try {
-			Map<String, Object> newprops = (Map<String, Object>) props.getClass().newInstance();
+			Map<String, Object> newprops = props.getClass().newInstance();
 			newprops.putAll(props);
 			return newprops;
 		} catch (Exception ex) {

@@ -420,7 +420,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	public Map<String, List<SeqSymmetry>> getCdsSpans() {
 		String gff3ID;
 		Map<String, List<SeqSymmetry>> cdsSpans = new LinkedHashMap<String, List<SeqSymmetry>>();
-		MutableSeqSpan span = null;
+//		MutableSeqSpan span = null;
 
 		for (SeqSymmetry child : children) {
 			if (isCdsSym(child)) {

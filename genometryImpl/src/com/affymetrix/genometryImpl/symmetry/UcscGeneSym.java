@@ -163,11 +163,11 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymWithProps
 	public int getLength() { return (txMax - txMin); }
 	public boolean isForward() { return forward; }
 	public BioSeq getBioSeq() { return seq; }
-	public double getStartDouble() { return (double)getStart(); }
-	public double getEndDouble() { return (double)getEnd(); }
-	public double getMaxDouble() { return (double)getMax(); }
-	public double getMinDouble() { return (double)getMin(); }
-	public double getLengthDouble() { return (double)getLength(); }
+	public double getStartDouble() { return getStart(); }
+	public double getEndDouble() { return getEnd(); }
+	public double getMaxDouble() { return getMax(); }
+	public double getMinDouble() { return getMin(); }
+	public double getLengthDouble() { return getLength(); }
 	public boolean isIntegral() { return true; }
 
 	public Map<String,Object> getProperties() {

@@ -168,11 +168,11 @@ public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId
 	public int getLength() { return (getMax() - getMin()); }
 	public boolean isForward() { return forward; }
 	public BioSeq getBioSeq() { return info.getBioSeq(); }
-	public double getStartDouble() { return (double)getStart(); }
-	public double getEndDouble() { return (double)getEnd(); }
-	public double getMinDouble() { return (double)getMin(); }
-	public double getMaxDouble() { return (double)getMax(); }
-	public double getLengthDouble() { return (double)getLength(); }
+	public double getStartDouble() { return getStart(); }
+	public double getEndDouble() { return getEnd(); }
+	public double getMinDouble() { return getMin(); }
+	public double getMaxDouble() { return getMax(); }
+	public double getLengthDouble() { return getLength(); }
 	public boolean isIntegral() { return true; }
 
 	/**
@@ -185,7 +185,7 @@ public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId
 		HashMap<String,Object> properties = new HashMap<String,Object>(1);
 		Map<String,Object> shared_props = info.getProps();
 		if (shared_props != null && shared_props.get("method") != null) {
-			properties.put("method", (String)shared_props.get("method"));
+			properties.put("method", shared_props.get("method"));
 		}
 		properties.put("id", "" + this.getID());
 		return properties;
@@ -198,8 +198,8 @@ public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId
 
 	/** See getProperties(). */
 	public Object getProperty(String key) {
-		Map shared_props = info.getProps();
-		if ("method".equals(key) && shared_props != null) { return (String)shared_props.get("method"); }
+		Map<String, Object> shared_props = info.getProps();
+		if ("method".equals(key) && shared_props != null) { return shared_props.get("method"); }
 		if ("id".equals(key)) return this.getID();
 		else return null;
 	}

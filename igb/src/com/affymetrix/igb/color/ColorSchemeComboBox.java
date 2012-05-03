@@ -10,7 +10,6 @@
  */
 package com.affymetrix.igb.color;
 
-//import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -26,6 +25,11 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ColorSchemeComboBox extends JComboBox implements ListSelectionListener {
 
+	/**
+	 * React to a selection change
+	 * by counting up the selected items
+	 * and then setting the choices appropriately.
+	 */
     @Override
     public void valueChanged(ListSelectionEvent e) {
         ListSelectionModel m = null;
@@ -36,13 +40,8 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
 		else if (o instanceof JList) {
 			JList l = (JList) o;
 			m = l.getSelectionModel();
-		}/*
-		else if (o instanceof AffyLabelledTierMap) {
-			AffyLabelledTierMap l = (AffyLabelledTierMap) o;
-			m = l.getSelectionModel();
-		}*/
+		}
 		if (null != m) {
-			// wish: m.getSelectionSize();
 			int count = 0;
 			for (int i = 0; i <= m.getMaxSelectionIndex(); i++) {
 				if (m.isSelectedIndex(i)) {
@@ -53,6 +52,12 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
 		}
     }
 
+	/**
+	 * Restricts choices
+	 * to only those schemes with the given number of foreground colors.
+	 * @param theSchemeSize a value of 0 lets all the schemes show
+	 *                      regardless of the number of foreground colors.
+	 */
     public void setChoices(int theSchemeSize) {
         this.removeAllItems();
         for (ColorScheme n: ColorScheme.values()) {

@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,9 +27,9 @@ import javax.swing.JProgressBar;
 import com.affymetrix.igb.Application;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 
 
@@ -43,7 +42,6 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
 	private static ThreadHandler singleton;
-	private final Set<CThreadWorker> workers;
 	private final JPopupMenu runningTasks;
 	private final Set<AbstractButton> popupHandler;
 	private JPanel outerBox;
@@ -60,16 +58,8 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		super();
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		workers = new LinkedHashSet<CThreadWorker>();
 		popupHandler = new LinkedHashSet<AbstractButton>(1);
-	}
-	
-	public void execute(Object obj, CThreadWorker worker){
-		if(obj == null || worker == null){
-			throw new IllegalArgumentException("None of parameters can be null");
-		}
-		worker.addThreadListener(this);
-		ThreadUtils.getPrimaryExecutor(obj).execute(worker);
+		CThreadHolder.getInstance().addListener(this);
 	}
 	
 	public void actionPerformed(ActionEvent ae) {
@@ -83,15 +73,8 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		runningTasks.show(frame,x,y);
 	}
 
-	public void cancelAllTasks() {
-		for (final CThreadWorker worker : new CopyOnWriteArraySet<CThreadWorker>(workers)) {
-			if(worker != null && !worker.isCancelled() && !worker.isDone()){
-				worker.cancelThread(true);
-			}
-		}		
-	}
-
 	public int setCancelPopup() {
+		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
 		int size = workers.size();
 		if(size == 0){
 			return 0;
@@ -153,6 +136,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 	}
 
 	public void heardThreadEvent(CThreadEvent cte) {
+		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
 		boolean enabled = workers.size() > 0;
 		CThreadWorker w = (CThreadWorker) cte.getSource();
 		if (cte.getState() == CThreadEvent.STARTED) {

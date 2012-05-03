@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
@@ -31,7 +32,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.util.ThreadHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -173,7 +173,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 
 				if (!isGenomicRequest) {
 					SequenceViewWorker worker = new SequenceViewWorker("regular sequence viewer", residues_sym.getSpan(aseq), doneback);
-					ThreadHandler.getThreadHandler().execute(this, worker);
+					CThreadHolder.getInstance().execute(this, worker);
 				} else {
 					if (residues_sym == null) {
 						final SeqSpan span = seqmapview.getVisibleSpan();
@@ -181,7 +181,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 						//doneback.actionDone(null);
 						
 						SequenceViewWorker worker = new SequenceViewWorker("genomic sequence viewer", span, doneback);
-						ThreadHandler.getThreadHandler().execute(this, worker);
+						CThreadHolder.getInstance().execute(this, worker);
 					}
 				}
 			}

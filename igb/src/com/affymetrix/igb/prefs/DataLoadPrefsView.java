@@ -10,6 +10,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -23,7 +24,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.IGBAuthenticator;
-import com.affymetrix.igb.util.ThreadHandler;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -309,7 +309,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 						cacheCleared.setVisible(false);
 					}
 				};
-				ThreadHandler.getThreadHandler().execute(cacheCleared, worker);
+				CThreadHolder.getInstance().execute(cacheCleared, worker);
 			}
 		});
 

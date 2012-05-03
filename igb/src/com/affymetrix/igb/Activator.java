@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.*;
@@ -36,6 +37,7 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.AnnotationGlyphFactory;
 import com.affymetrix.igb.viewmode.BaiSemanticZoomGlyphFactory;
@@ -164,7 +166,18 @@ public class Activator implements BundleActivator {
 				GeneralLoadView.getLoadView().refreshTreeView();
 			}
 		});
-		
+		ExtensionPointHandler<CThreadWorker> cThreadWorkerExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, CThreadWorker.class);
+		cThreadWorkerExtensionPoint.addListener(new ExtensionPointListener<CThreadWorker>() {
+			@Override
+			public void removeService(CThreadWorker worker) {
+				worker.addThreadListener(ThreadHandler.getThreadHandler());
+			}
+			
+			@Override
+			public void addService(CThreadWorker worker) {
+//				worker.removeThreadListener(ThreadHandler.getThreadHandler());
+			}
+		});
 		initOperators();
 	}
 

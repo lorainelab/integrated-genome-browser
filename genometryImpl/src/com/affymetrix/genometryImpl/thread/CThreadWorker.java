@@ -48,10 +48,14 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 
 	@Override
 	protected final T doInBackground() throws Exception {
-		thread2CThreadWorker.put(Thread.currentThread(), this);
+		synchronized(thread2CThreadWorker) {
+			thread2CThreadWorker.put(Thread.currentThread(), this);
+		}
 		fireThreadEvent(this, CThreadEvent.STARTED);
 		T t = runInBackground();
-		thread2CThreadWorker.remove(Thread.currentThread());
+		synchronized(thread2CThreadWorker) {
+			thread2CThreadWorker.remove(Thread.currentThread());
+		}
 		return t;
 	}
 	
@@ -82,6 +86,8 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	}
 
 	public static CThreadWorker getCurrentCThreadWorker() {
-		return thread2CThreadWorker.get(Thread.currentThread());
+		synchronized(thread2CThreadWorker) {
+			return thread2CThreadWorker.get(Thread.currentThread());
+		}
 	}
 }

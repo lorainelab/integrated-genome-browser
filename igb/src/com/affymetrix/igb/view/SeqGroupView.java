@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -40,7 +41,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
@@ -331,7 +331,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		versionCB.setEnabled(false);
 
 		InitVersionWorker worker = new InitVersionWorker(versionName, group);
-		ThreadHandler.getThreadHandler().execute(versionName, worker);
+		CThreadHolder.getInstance().execute(versionName, worker);
 	}
 
 	public void valueChanged(ListSelectionEvent evt) {
@@ -634,7 +634,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				}
 			};
 
-			ThreadHandler.getThreadHandler().execute(gServer, worker);
+			CThreadHolder.getInstance().execute(gServer, worker);
 		}
 	}
 
@@ -890,7 +890,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		};
 
 		gmodel.addGroupSelectionListener(listener);
-		ThreadHandler.getThreadHandler().execute(versionName, worker);
+		CThreadHolder.getInstance().execute(versionName, worker);
 	}
 
 	/**

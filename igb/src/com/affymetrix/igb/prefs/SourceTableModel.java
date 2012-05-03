@@ -1,11 +1,11 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.util.ArrayList;
@@ -178,7 +178,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			protected void finished() {
 			}
 		};
-		ThreadHandler.getThreadHandler().execute(server, worker);
+		CThreadHolder.getInstance().execute(server, worker);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {

@@ -7,6 +7,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.util.ThreadHandler;
 
@@ -19,7 +20,7 @@ public class DefaultSequenceViewer extends AbstractSequenceViewer{
 	@Override
 	public void doBackground(final GenericActionDoneCallback doneback) {
 		SequenceViewWorker worker = new SequenceViewWorker("default sequence viewer", residues_sym.getSpan(aseq), doneback);
-		ThreadHandler.getThreadHandler().execute(this, worker);
+		CThreadHolder.getInstance().execute(this, worker);
 	}
 
 	@Override

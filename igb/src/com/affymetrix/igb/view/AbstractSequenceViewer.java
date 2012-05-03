@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import java.awt.HeadlessException;
@@ -32,7 +33,6 @@ import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
 import com.affymetrix.igb.action.ExportSequenceViewerAction;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.util.ThreadHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -183,7 +183,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 						//doneback.actionDone(null);
 						
 						SequenceViewWorker worker = new SequenceViewWorker("start abstract sequence viewer", span, doneback);
-						ThreadHandler.getThreadHandler().execute(this, worker);
+						CThreadHolder.getInstance().execute(this, worker);
 					}
 				}
 			}

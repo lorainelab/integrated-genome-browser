@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -39,7 +40,6 @@ import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -431,7 +431,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 			protected void finished() {
 			}
 		};
-		ThreadHandler.getThreadHandler().execute(server, worker);
+		CThreadHolder.getInstance().execute(server, worker);
 	}
 
 	@Override

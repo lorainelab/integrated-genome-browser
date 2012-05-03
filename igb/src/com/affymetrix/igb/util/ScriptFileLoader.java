@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -125,7 +126,7 @@ public class ScriptFileLoader {
 			protected void finished() {
 			}
 		};
-		ThreadHandler.getThreadHandler().execute(fileName, worker);
+		CThreadHolder.getInstance().execute(fileName, worker);
 		return;
 	}
 
@@ -170,7 +171,7 @@ public class ScriptFileLoader {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(batchFileStr, worker);
+		CThreadHolder.getInstance().execute(batchFileStr, worker);
 	}
 
 	/**

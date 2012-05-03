@@ -22,6 +22,7 @@ import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -34,7 +35,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
-import com.affymetrix.igb.util.ThreadHandler;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -249,11 +249,9 @@ public final class BookmarkUnibrowControlServlet {
 			protected void finished() {
 			}
 		};
-		ThreadHandler.getThreadHandler().execute(parameters, worker);
+		CThreadHolder.getInstance().execute(parameters, worker);
 	}
-	
 
-	
 	/**Checks for nulls or Strings with zero length.*/
 	public static boolean missingString(String[] params){
 		for (String s : params){

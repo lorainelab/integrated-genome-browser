@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -45,7 +46,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadPartialSequenceAction;
 import com.affymetrix.igb.action.LoadWholeSequenceAction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -212,7 +212,7 @@ public final class GeneralLoadView {
 		};
 
 		// Use a SwingWorker to avoid locking up the GUI.
-		ThreadHandler.getThreadHandler().execute(src, worker);
+		CThreadHolder.getInstance().execute(src, worker);
 	}
 
 	public boolean loadResiduesInView(boolean tryFull) {
@@ -627,7 +627,7 @@ public final class GeneralLoadView {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(feature, worker);
+		CThreadHolder.getInstance().execute(feature, worker);
 	}
 
 	void removeAllFeautres(Set<GenericFeature> features) {
@@ -691,7 +691,7 @@ public final class GeneralLoadView {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(feature, delete);
+		CThreadHolder.getInstance().execute(feature, delete);
 
 	}
 

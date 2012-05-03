@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -27,7 +28,6 @@ import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.CenterAtHairlineAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.ThreadHandler;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	private static final long serialVersionUID = 1l;
@@ -110,7 +110,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 				protected void finished() {
 				}
 			};
-			ThreadHandler.getThreadHandler().execute(this, slice_thread);
+			CThreadHolder.getInstance().execute(this, slice_thread);
 		}
 	}
 
@@ -139,7 +139,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(this, slice_thread);
+		CThreadHolder.getInstance().execute(this, slice_thread);
 	}
 
 	// disables the sliced view while the slicing thread works

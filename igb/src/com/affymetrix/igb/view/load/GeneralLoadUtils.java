@@ -57,6 +57,7 @@ import com.affymetrix.genometryImpl.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -68,7 +69,6 @@ import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -737,7 +737,7 @@ public final class GeneralLoadUtils {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(feature, worker);
+		CThreadHolder.getInstance().execute(feature, worker);
 	}
 
 	private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
@@ -814,7 +814,7 @@ public final class GeneralLoadUtils {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(feature, worker);
+		CThreadHolder.getInstance().execute(feature, worker);
 	}
 
 	//TO DO: Make this private again.
@@ -1224,7 +1224,7 @@ public final class GeneralLoadUtils {
 				}
 			}
 		};
-		ThreadHandler.getThreadHandler().execute(gFeature, worker);
+		CThreadHolder.getInstance().execute(gFeature, worker);
 	}
 
 	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup, boolean loadAsTrack) {
@@ -1437,7 +1437,7 @@ public final class GeneralLoadUtils {
 			}
 		};
 
-		ThreadHandler.getThreadHandler().execute(feature, worker);
+		CThreadHolder.getInstance().execute(feature, worker);
 	}
 
 	public static boolean isLoaded(GenericFeature gFeature) {

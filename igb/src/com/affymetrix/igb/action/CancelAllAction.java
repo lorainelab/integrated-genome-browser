@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.igb.util.ThreadHandler;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -27,7 +28,7 @@ public class CancelAllAction extends GenericAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		ThreadHandler.getThreadHandler().cancelAllTasks();
+		CThreadHolder.getInstance().cancelAllTasks();
 		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cancelled all threads");
 	}
 }

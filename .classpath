@@ -41,6 +41,8 @@
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
 	<classpathentry kind="src" path="common/resources"/>
+	<classpathentry kind="src" path="plugins/TrackOperations/src"/>
+	<classpathentry kind="src" path="plugins/TrackAdjuster/src"/>
 	<classpathentry kind="src" path="plugins/Thresholding/src"/>
 	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="das2_server/src"/>

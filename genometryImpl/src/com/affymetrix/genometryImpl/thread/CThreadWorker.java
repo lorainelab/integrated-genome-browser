@@ -12,7 +12,7 @@ import javax.swing.SwingWorker;
  */
 @SuppressWarnings("rawtypes")
 public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
-	private static Map<Thread, CThreadWorker> thread2CThreadWorker = new HashMap<Thread, CThreadWorker>();
+	private final static Map<Thread, CThreadWorker> thread2CThreadWorker = new HashMap<Thread, CThreadWorker>();
 	
 	private Set<CThreadListener> listeners= new CopyOnWriteArraySet<CThreadListener>();
 	

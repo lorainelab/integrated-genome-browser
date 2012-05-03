@@ -60,7 +60,7 @@ public final class GraphSymUtils {
 
 		// calculating graf length from xcoords, since graf's span
 		//    is (usually) incorrectly set to start = 0, end = seq.getLength();
-		double points_per_base = (double) original_graf.getPointCount() / graf_base_length;
+		double points_per_base = original_graf.getPointCount() / graf_base_length;
 		int initcap = (int) (points_per_base * toseq.getLength() * 1.5);
 		if (initcap > MAX_INITCAP) {
 			initcap = MAX_INITCAP;

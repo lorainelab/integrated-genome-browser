@@ -18,6 +18,7 @@ import javax.swing.TransferHandler;
  * @author hiralv
  */
 public abstract class FileDropHandler extends TransferHandler {
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public boolean canImport(TransferSupport support) {

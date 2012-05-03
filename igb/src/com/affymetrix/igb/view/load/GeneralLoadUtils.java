@@ -1187,7 +1187,7 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected boolean showCancelConfirmation() {
-				return removeFeature("Cancel chromosome retrival and remove " + gFeature.featureName + "?");
+				return removeFeature("Cancel chromosome retrieval and remove " + gFeature.featureName + "?");
 			}
 
 			private boolean removeFeature(String msg) {

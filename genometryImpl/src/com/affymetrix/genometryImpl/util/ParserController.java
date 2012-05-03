@@ -3,13 +3,8 @@ package com.affymetrix.genometryImpl.util;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -33,7 +28,6 @@ public final class ParserController {
 		List<? extends SeqSymmetry> results = null;
 		try {
 			if (instr instanceof BufferedInputStream) {
-				str = (BufferedInputStream) instr;
 			} else {
 				str = new BufferedInputStream(instr);
 			}
@@ -109,7 +103,7 @@ public final class ParserController {
 	 * @param type_prefix
 	 * @return A list of parsed indexes
 	 */
-	static List parseIndexed(
+	static List<? extends SeqSymmetry> parseIndexed(
 			InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		try {
 			IndexWriter iWriter = getIndexWriter(stream_name);

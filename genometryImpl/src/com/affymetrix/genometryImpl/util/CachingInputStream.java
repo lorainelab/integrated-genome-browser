@@ -47,7 +47,7 @@ public class CachingInputStream extends FilterInputStream {
 	public int read() throws IOException {
 		byte[] b = new byte[1];
 		int ret = this.read(b, 0, b.length);
-		return (ret == -1 ? ret : ((int) b[0] & 0x00FF));
+		return (ret == -1 ? ret : (b[0] & 0x00FF));
 	}
 
 	@Override

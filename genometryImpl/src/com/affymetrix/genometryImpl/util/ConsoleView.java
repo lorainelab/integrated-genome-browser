@@ -127,6 +127,7 @@ public final class ConsoleView {
    *  duplicate of IconUtils.getIcon(String)
    *  @return An ImageIcon or null if the one specified could not be found.
    */
+/*
   private static ImageIcon getIcon(String resource_name) {
     ImageIcon icon = null;
     try {
@@ -144,7 +145,7 @@ public final class ConsoleView {
     
     return icon;    
   }
-
+*/
   /**
    *  Creates a JFrame to hold the console.
    */

@@ -44,8 +44,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import org.xml.sax.SAXParseException;
-
 /**
  * Utils for DAS/2 and other servers.
  */
@@ -512,7 +510,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		List loadedSyms = loadAnnotFile(file, annotTypeName, annotList, tempGenome, true);
+		List<? extends SeqSymmetry> loadedSyms = loadAnnotFile(file, annotTypeName, annotList, tempGenome, true);
 		getAddedChroms(tempGenome, genome, true);
 		getAlteredChroms(tempGenome, genome, true);
 
@@ -558,7 +556,7 @@ public abstract class ServerUtils {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
+	public static List<? extends SeqSymmetry> loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
 		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
 		InputStream istr = null;
 		try {

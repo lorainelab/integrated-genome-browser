@@ -622,7 +622,6 @@ public final class LocalUrlCacher {
 				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
 				String stream_name = stripped_name.toString();
 				if (str instanceof BufferedInputStream) {
-					str = (BufferedInputStream) str;
 				} else {
 					str = new BufferedInputStream(str);
 				}

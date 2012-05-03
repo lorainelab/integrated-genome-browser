@@ -12,8 +12,6 @@ import javax.swing.JTable;
  * @author hiralv
  */
 public class PropertyViewHelper implements MouseListener, MouseMotionListener {
-		private static final long serialVersionUID = 1L;
-
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
 		private final JTable table;

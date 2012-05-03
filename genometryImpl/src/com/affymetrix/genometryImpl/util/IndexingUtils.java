@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -154,9 +153,10 @@ public final class IndexingUtils {
 	 * @param returnTypeName
 	 * @throws java.io.IOException
 	 */
+	@SuppressWarnings("unused")
 	public static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName, String ext) throws IOException {
+			String dataRoot, File file, List<? extends SeqSymmetry> loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName, String ext) throws IOException {
 
 		for (BioSeq originalSeq : originalGenome.getSeqList()) {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
@@ -393,11 +393,11 @@ public final class IndexingUtils {
 	 * @return - sorted list of annotations
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
+	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List<? extends SeqSymmetry> syms, BioSeq seq, Comparator comp) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(10000);
 		int symSize = syms.size();
 		for (int i = 0; i < symSize; i++) {
-			SeqSymmetry sym = (SeqSymmetry) syms.get(i);
+			SeqSymmetry sym = syms.get(i);
 			if (sym instanceof UcscPslSym) {
 				// add the lines specifically with Target seq == seq.
 				if (((UcscPslSym)sym).getTargetSeq() == seq) {

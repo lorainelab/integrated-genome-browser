@@ -25,7 +25,7 @@ public class MeanOperator extends AbstractGraphOperator implements Operator, Ope
 		for (Float f : operands) {
 			total += f.floatValue();
 		}
-		return total / (float)operands.size();
+		return total / operands.size();
 	}
 	
 	@Override

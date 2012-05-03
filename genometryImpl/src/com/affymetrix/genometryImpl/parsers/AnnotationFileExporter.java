@@ -17,9 +17,7 @@ public class AnnotationFileExporter implements FileExporterI {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
 		for (int i = 0; i < childcount; i++) {
 			SeqSymmetry child = sym.getChild(i);
-			if (child instanceof SeqSymmetry) {
-				syms.add(child);
-			}
+			syms.add(child);
 		}
 
 		exportFile(dos, syms, aseq);

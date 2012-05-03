@@ -570,18 +570,18 @@ public final class GeneralUtils {
 	private static final double COMPRESSION_RATIO = 3.5;
 	public static long getUriLength(URI uri) {
 		long uriLength = -1;
-//		try {
-//			SeekableStream seekableStream = SeekableStreamFactory.getStreamFor(GeneralUtils.fixFileName(uri.toString()));
-//			uriLength = seekableStream.length();
-//			seekableStream.close();
-//			// very, very gross approximation
-//			if (uri.toString().toLowerCase().endsWith(".gz") || uri.toString().toLowerCase().endsWith(".zip")) {
-//				uriLength = (long)(uriLength * COMPRESSION_RATIO);
-//			}
-//		}
-//		catch (IOException x) {
-//			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can't get length of uri " + uri);
-//		}
+		try {
+			SeekableStream seekableStream = SeekableStreamFactory.getStreamFor(GeneralUtils.fixFileName(uri.toString()));
+			uriLength = seekableStream.length();
+			seekableStream.close();
+			// very, very gross approximation
+			if (uri.toString().toLowerCase().endsWith(".gz") || uri.toString().toLowerCase().endsWith(".zip")) {
+				uriLength = (long)(uriLength * COMPRESSION_RATIO);
+			}
+		}
+		catch (IOException x) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can't get length of uri " + uri);
+		}
 		return uriLength;
 	}
 

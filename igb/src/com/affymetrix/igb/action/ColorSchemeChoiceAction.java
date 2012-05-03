@@ -131,15 +131,13 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 					TierGlyph g = tlg.getReferenceTier();
 					if (tlg.isSelected()) {
 						Color c = newColor(s.getForeground(j));
-						g.setBackgroundColor(bg);
-						g.setForegroundColor(c);
+						g.getAnnotStyle().setBackground(bg);
+						g.getAnnotStyle().setForeground(c);
 						//g.setFillColor(c);
 						j = (j + 1) % colors;
 					}
 				}
-				this.getSeqMapView().updateUI();
-				ltm.updateWidget();
-				ltm.updateWidget(true);
+				refreshMap(false, false);
 				// None of the three above updates work.
 				// Data Management Table is updating fully when FG loses focus.
             }

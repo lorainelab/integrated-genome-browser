@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 public class ProgressUpdater {
 	private static final int NUM_THREADS = 1;
 	private static final boolean DONT_INTERRUPT_IF_RUNNING = false;
-	private static final int SECONDS_BETWEEN_UPDATE = 3;
+	private static final int SECONDS_BETWEEN_UPDATE = 2;
 	private ScheduledFuture<?> progressUpdateFuture;
 	private static final class ProgressUpdateTask implements Runnable {
 		private final long startPosition;

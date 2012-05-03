@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 
 
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
@@ -306,10 +307,16 @@ public final class NibbleResiduesParser implements Parser {
 				}
 			);
 
+			int sleepCounter = 0;
 			// Only keep BUFSIZE characters in memory at one time
 			for (sequenceLoop.setValue(0);sequenceLoop.longValue()<(end-start) && (!Thread.currentThread().isInterrupted());sequenceLoop.add(BUFSIZE)) {
 				String outString = seq.getResidues((int)sequenceLoop.longValue(), Math.min((int)sequenceLoop.longValue()+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
+				sleepCounter++;
+				if (sleepCounter >= SymLoader.PROGRESS_FREQUENCY) {
+					sleepCounter = 0;
+					Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+				}
 			}
 			dos.flush();
 			progressUpdater.kill();

@@ -53,6 +53,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Thresholding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackAdjuster"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackOperations"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/tango-icon-theme-0.8.90--igbext.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tango-icon-theme-0.8.90.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

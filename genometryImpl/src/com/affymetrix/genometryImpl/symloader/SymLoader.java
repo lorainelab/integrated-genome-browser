@@ -13,8 +13,6 @@ import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -54,66 +52,7 @@ public abstract class SymLoader {
 	protected final AnnotatedSeqGroup group;
 	public final String featureName;
 	private static Set<NewSymLoadedListener> new_sym_loaded_listeners = new CopyOnWriteArraySet<NewSymLoadedListener>();
-	protected SymLoaderProgressUpdater symLoaderProgressUpdater;
-	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
-
-	protected class SymLoaderProgressUpdater extends ProgressUpdater {
-		public SymLoaderProgressUpdater(final SeqSpan span) {
-			super(span.getMin(), span.getMax(),
-				new PositionCalculator() {
-					@Override
-					public long getCurrentPosition() {
-						if (symLoaderProgressUpdater == null) {
-							return span.getMin();
-						}
-						else {
-							SeqSpan testSpan = symLoaderProgressUpdater.getLastSeqSymmetry().getSpan(span.getBioSeq());
-							return testSpan.getMin();
-						}
-					}
-				}
-			);
-		}
-
-		private SeqSymmetry lastSeqSymmetry;
-
-		public SeqSymmetry getLastSeqSymmetry() {
-			return lastSeqSymmetry;
-		}
-
-		public void setLastSeqSymmetry(SeqSymmetry lastSeqSymmetry) {
-			this.lastSeqSymmetry = lastSeqSymmetry;
-		}
-	};
-
-	protected class ParseLinesProgressUpdater extends ProgressUpdater {
-		public ParseLinesProgressUpdater() throws Exception {
-			super(0, GeneralUtils.getUriLength(uri),
-				new PositionCalculator() {
-					@Override
-					public long getCurrentPosition() {
-						if (parseLinesProgressUpdater == null) {
-							return 0;
-						}
-						else {
-							return parseLinesProgressUpdater.getFilePosition();
-						}
-					}
-				}
-			);
-		}
-
-		private long filePosition;
-
-		public long getFilePosition() {
-			return filePosition;
-		}
-
-		public void lineRead(int lineLength) {
-			filePosition += (lineLength + 1); // don't know if line ends with LF (+ 1) or CRLF (+ 2)
-		}
-	};
-
+	
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -258,41 +197,16 @@ public abstract class SymLoader {
 		return results;
 	}
 
-	/**
-	 * called by the SymLoaders when they add a new SeqSymmetry during data load
-	 * used by the progress updater to show the progress of the data load
-	 * @param sym the last SeqSymmetry added during the data load
-	 */
-	protected void notifyAddSymmetry(SeqSymmetry sym) {
-		if (symLoaderProgressUpdater != null) {
-			symLoaderProgressUpdater.setLastSeqSymmetry(sym);
-		}
-	}
-
-	/**
-	 * called by the SymLoaders when they parse a new line during parseLines()
-	 * used by the progress updater to show the progress of the parseLines()
-	 * @param sym the last line read during the parseLines()
-	 */
-	protected void notifyReadLine(int lineLength) {
-		if (parseLinesProgressUpdater != null) {
-			parseLinesProgressUpdater.lineRead(lineLength);
-		}
-	}
-
     /**
      * Get a region of the chromosome.
      * @param seq - chromosome
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */
-    public List<? extends SeqSymmetry> getRegion(final SeqSpan overlapSpan) throws Exception {
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater(overlapSpan);
+    public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
 		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
 		return chrResults;
     }
 

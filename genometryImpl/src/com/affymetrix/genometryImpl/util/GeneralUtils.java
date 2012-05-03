@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -23,7 +22,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -31,14 +29,9 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
-
-import org.broad.tribble.util.SeekableStreamFactory;
-
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -524,62 +517,6 @@ public final class GeneralUtils {
 			fixedFileName = fileName.substring("file:".length());
 		}
 		return URLDecode(fixedFileName);
-	}
-
-	// http://www.java-examples.com/get-uncompressed-size-zip-entry-example
-	private static long getZipFileLength(String path) {
-		try {
-			ZipFile zipFile = new ZipFile(path);
-			Enumeration<? extends ZipEntry> e = zipFile.entries();
-			long size = 0;
-			while(e.hasMoreElements()) {
-				ZipEntry entry = e.nextElement();
-//				String entryName = entry.getName();
-				long originalSize = entry.getSize();
-//				long compressedSize = entry.getCompressedSize();
-				size += originalSize;
-			}
-			return size;
-		}
-		catch (Exception x) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "failed to get zip file length for " + path, x);
-		}
-		return -1;
-	}
-
-	// Thomas Abeel - http://www.abeel.be/content/determine-uncompressed-size-gzip-file
-	private static long getGZFileLength(File file) {
-		long val = -1;
-		try {
-			RandomAccessFile raf = new RandomAccessFile(file, "r");
-			raf.seek(raf.length() - 4);
-			int b4 = raf.read();
-			int b3 = raf.read();
-			int b2 = raf.read();
-			int b1 = raf.read();
-			val = (b1 << 24) | (b2 << 16) + (b3 << 8) + b4;
-			raf.close();
-		}
-		catch (Exception x) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "failed to get gzip file length for " + file, x);
-		}
-		return val;
-	}
-
-	private static final double COMPRESSION_RATIO = 3.5;
-	public static long getUriLength(URI uri) {
-		long uriLength = -1;
-		try {
-			uriLength = SeekableStreamFactory.getStreamFor(GeneralUtils.fixFileName(uri.toString())).length();
-			// very gross approximation
-			if (uri.toString().toLowerCase().endsWith(".gz") || uri.toString().toLowerCase().endsWith(".zip")) {
-				uriLength = (long)(uriLength * COMPRESSION_RATIO);
-			}
-		}
-		catch (IOException x) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, "can't get length of uri " + uri);
-		}
-		return uriLength;
 	}
 
 	public static boolean urlExists(String url) {

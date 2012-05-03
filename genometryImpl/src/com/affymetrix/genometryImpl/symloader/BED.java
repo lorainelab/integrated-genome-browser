@@ -116,11 +116,7 @@ public class BED extends SymLoader implements LineProcessor {
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
-		List<SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
@@ -209,41 +205,32 @@ public class BED extends SymLoader implements LineProcessor {
 		boolean use_item_rgb = false;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
-		int sleepCounter = 0;
-		try {
-			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
+		while ((line = it.next()) != null && (!thread.isInterrupted())) {
+			if (line.length() == 0) {
+				continue;
+			}
+			char firstChar = line.charAt(0);
+			if (firstChar == '#') {  // skip comment lines
+				continue;
+			} else if (firstChar == 't' && line.startsWith("track")) {
+				track_line_parser.parseTrackLine(line);
+				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
+				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
+				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+				bedType = track_line_parser.getCurrentTrackHash().get("type");
+				continue;
+			} else if (firstChar == 'b' && line.startsWith("browser")) {
+				// currently take no action for browser lines
+			} else {
+				if (DEBUG) {
+					System.out.println(line);
 				}
-				if (line.length() == 0) {
-					continue;
-				}
-				char firstChar = line.charAt(0);
-				if (firstChar == '#') {  // skip comment lines
-					continue;
-				} else if (firstChar == 't' && line.startsWith("track")) {
-					track_line_parser.parseTrackLine(line);
-					TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
-					type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-					String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
-					use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
-					bedType = track_line_parser.getCurrentTrackHash().get("type");
-					continue;
-				} else if (firstChar == 'b' && line.startsWith("browser")) {
-					// currently take no action for browser lines
-				} else {
-					if (DEBUG) {
-						System.out.println(line);
-					}
-					if (!parseLine(line, gmodel, type, use_item_rgb, min, max, bedType) && isSorted) {
-						break;
-					}
+				if (!parseLine(line, gmodel, type, use_item_rgb, min, max, bedType) && isSorted) {
+					break;
 				}
 			}
 		}
-		catch (InterruptedException x) {}
 	}
 
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
@@ -436,7 +423,6 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		}
 		symlist.add(bedline_sym);
-		notifyAddSymmetry(bedline_sym);
 		if (annotate_seq) {
 			this.annotationParsed(bedline_sym);
 		}
@@ -707,7 +693,6 @@ public class BED extends SymLoader implements LineProcessor {
 
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -720,15 +705,9 @@ public class BED extends SymLoader implements LineProcessor {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
-			int sleepCounter = 0;
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				counter++;
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-				}
-				notifyReadLine(line.length());
+
 				if (line.length() == 0) {
 					continue;
 				}
@@ -791,8 +770,6 @@ public class BED extends SymLoader implements LineProcessor {
 
 			return !thread.isInterrupted();
 
-		} catch (InterruptedException ex) {
-			throw ex;
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
@@ -801,8 +778,6 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
-			parseLinesProgressUpdater.kill();
-			parseLinesProgressUpdater = null;
 		}
 
 	}

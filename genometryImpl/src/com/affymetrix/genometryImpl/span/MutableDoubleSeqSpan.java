@@ -33,22 +33,22 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 	}
 
 	public void set(int start, int end, BioSeq seq) {
-		this.start = (double)start;
-		this.end = (double)end;
+		this.start = start;
+		this.end = end;
 		this.seq = seq;
 	}
 
 	public void setCoords(int start, int end) {
-		this.start = (double)start;
-		this.end = (double)end;
+		this.start = start;
+		this.end = end;
 	}
 
 	public void setStart(int start) {
-		this.start = (double)start;
+		this.start = start;
 	}
 
 	public void setEnd(int end) {
-		this.end = (double)end;
+		this.end = end;
 	}
 
 	public void setBioSeq(BioSeq seq) {

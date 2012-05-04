@@ -352,15 +352,14 @@ public class USeqArchive {
 	}
 
 	/**Loads the zip entries into the chromosomeStrand DataRange[] HashMap*/
-	@SuppressWarnings("unchecked")
 	private void parseZipFile() {
 		InputStream is = null;
 		try {
 			//make ArchiveInfo, it's always the first entry
 			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
 			zipArchive = new ZipFile(zipFile);
-			Enumeration e = zipArchive.entries();
-			archiveReadMeEntry = (ZipEntry) e.nextElement();
+			Enumeration<? extends ZipEntry> e = zipArchive.entries();
+			archiveReadMeEntry = e.nextElement();
 			is = zipArchive.getInputStream(archiveReadMeEntry);
 			archiveInfo = new ArchiveInfo(is, false);
 
@@ -368,7 +367,7 @@ public class USeqArchive {
 			HashMap<String, ArrayList<DataRange>> map = new HashMap<String,ArrayList<DataRange>> ();
 
 			while(e.hasMoreElements()) {
-				ZipEntry zipEntry = (ZipEntry) e.nextElement();
+				ZipEntry zipEntry = e.nextElement();
 				SliceInfo sliceInfo = new SliceInfo(zipEntry.getName());
 				if (binaryDataType == null) binaryDataType = sliceInfo.getBinaryType();
 				//get chromStrand and ranges

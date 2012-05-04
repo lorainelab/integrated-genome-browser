@@ -112,15 +112,14 @@ public class ArchiveInfo {
 	}
 
 	//methods
-	@SuppressWarnings("unchecked")
 	public static ArchiveInfo fetchArchiveInfo(File useqArchive, boolean closeStream) {
 		InputStream is = null;
 		ArchiveInfo ai = null;
 		try {
 			if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) return null;
 			ZipFile zf = new ZipFile(useqArchive);
-			Enumeration e = zf.entries();
-			ZipEntry ze = (ZipEntry) e.nextElement();
+			Enumeration<? extends ZipEntry> e = zf.entries();
+			ZipEntry ze = e.nextElement();
 			is =  zf.getInputStream(ze);
 			ai = new ArchiveInfo(is, closeStream);
 		} catch (Exception e) {

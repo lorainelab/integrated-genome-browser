@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.parsers.useq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
 import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
@@ -142,7 +141,6 @@ public class USeqGraphParser {
 	}
 
 	/** Makes graphs from a USeqData[].  Get this from the USeqArchive.fetch() method.*/
-	@SuppressWarnings("unchecked")
 	public List<GraphSym> parseGraphSyms(USeqArchive useqArchive, USeqData[] useqData, GenometryModel gmodel, String stream_name) {		
 		this.gmodel = gmodel;
 		this.stream_name = stream_name;

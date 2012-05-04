@@ -125,7 +125,7 @@ public class USeqUtilities {
 			String name = txtFile.getName().toLowerCase();
 			if (name.endsWith(".zip")) {
 				ZipFile zf = new ZipFile(txtFile);
-				ZipEntry ze = (ZipEntry) zf.entries().nextElement();
+				ZipEntry ze = zf.entries().nextElement();
 				in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
 			}
 			else if (name.endsWith(".gz")) {

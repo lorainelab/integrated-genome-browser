@@ -69,23 +69,23 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 	}
 
 	public double getStartDouble() {
-		return (double)start;
+		return start;
 	}
 
 	public double getEndDouble() {
-		return (double)end;
+		return end;
 	}
 
 	public double getMinDouble() {
-		return (double)getMin();
+		return getMin();
 	}
 
 	public double getMaxDouble() {
-		return (double)getMax();
+		return getMax();
 	}
 
 	public double getLengthDouble() {
-		return (double)getLength();
+		return getLength();
 	}
 
 	public boolean isIntegral() { return true; }

@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.util;
+package com.affymetrix.igb.action;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -26,6 +26,8 @@ import javax.swing.JProgressBar;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
@@ -37,31 +39,32 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
  *
  * @author hiralv
  */
-@SuppressWarnings("rawtypes")
-public class ThreadHandler implements ActionListener, CThreadListener{
+public class ThreadHandlerAction extends GenericAction implements CThreadListener{
+	private static final long serialVersionUID = 1L;
+	private static final ThreadHandlerAction ACTION = new ThreadHandlerAction();
+	static{
+		GenericActionHolder.getInstance().addGenericAction(ACTION);
+	}
+	public static ThreadHandlerAction getAction() {
+		return ACTION;
+	}
+
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
-	private static ThreadHandler singleton;
 	private final JPopupMenu runningTasks;
 	private final Set<AbstractButton> popupHandler;
 	private JPanel outerBox;
-	private final Map<CThreadWorker, Box> cThreadWorker2Box = new HashMap<CThreadWorker, Box>();
+	private final Map<CThreadWorker<?,?>, Box> cThreadWorker2Box = new HashMap<CThreadWorker<?,?>, Box>();
 	
-	public static ThreadHandler getThreadHandler(){
-		if(singleton == null){
-			singleton = new ThreadHandler();
-		}
-		return singleton;
-	}
-	
-	private ThreadHandler(){
-		super();
+	private ThreadHandlerAction(){
+		super("Handle Threads", "16x16/status/image-loading.png","22x22/status/image-loading.png");
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		popupHandler = new LinkedHashSet<AbstractButton>(1);
 		CThreadHolder.getInstance().addListener(this);
 	}
-	
+
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		int size = setCancelPopup();
 		if(size == 0 )
@@ -73,7 +76,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		runningTasks.show(frame,x,y);
 	}
 
-	public int setCancelPopup() {
+	private int setCancelPopup() {
 		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
 		int size = workers.size();
 		if(size == 0){
@@ -85,7 +88,7 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		outerBox.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		cThreadWorker2Box.clear();
-		for (final CThreadWorker worker : workers) {
+		for (final CThreadWorker<?,?> worker : workers) {
 			final Box box = Box.createHorizontalBox();		
 			//String string = worker.getMessage().substring(0, Math.min(40, worker.getMessage().length()));
 			final JLabel taskName = new JLabel(worker.getMessage());
@@ -135,10 +138,11 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 		return size;
 	}
 
+	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
 		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
 		boolean enabled = workers.size() > 0;
-		CThreadWorker w = (CThreadWorker) cte.getSource();
+		CThreadWorker<?,?> w = (CThreadWorker<?,?>) cte.getSource();
 		if (cte.getState() == CThreadEvent.STARTED) {
 			workers.add(w);
 			Application.getSingleton().addNotLockedUpMsg(w.getMessage());
@@ -164,11 +168,5 @@ public class ThreadHandler implements ActionListener, CThreadListener{
 				button.setEnabled(nowEnabled);
 			}
 		}
-	}
-
-	public void addPopupHandler(AbstractButton button) {
-		button.addActionListener(this);
-		button.setEnabled(false);
-		popupHandler.add(button);
 	}
 }

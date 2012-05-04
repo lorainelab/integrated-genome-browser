@@ -299,6 +299,7 @@ public class Activator implements BundleActivator {
 		ScrollDownAction.getAction();
 		ScrollLeftAction.getAction();
 		ScrollRightAction.getAction();
+		ThreadHandlerAction.getAction();
 	}
 
 	private void initOperators() {

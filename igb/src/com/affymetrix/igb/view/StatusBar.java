@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
-import com.affymetrix.igb.util.ThreadHandler;
+import com.affymetrix.igb.action.ThreadHandlerAction;
 import java.awt.Color;
 import java.util.List;
 import java.util.Timer;
@@ -61,7 +61,7 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		progressBar.addMouseListener(
 			new MouseAdapter() {
 			    public void mouseClicked(MouseEvent e) {
-			    	ThreadHandler.getThreadHandler().actionPerformed(null);
+			    	ThreadHandlerAction.getAction().actionPerformed(null);
 			    }
 			}
 		);

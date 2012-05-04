@@ -19,7 +19,7 @@ import java.util.*;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends TransformViewModeGlyph implements ScrollableViewModeGlyph {
+public class AnnotationGlyph extends TransformViewModeGlyph implements TransformableViewModeGlyph {
 	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;

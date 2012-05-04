@@ -2,7 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
+import com.affymetrix.igb.shared.TransformableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import java.awt.Dimension;
@@ -34,15 +34,15 @@ public class GlyphScroller {
 		
 	AffyLabelledTierMap map;
 	TierLabelGlyph tierlabel;
-	ScrollableViewModeGlyph svmg;
+	TransformableViewModeGlyph svmg;
 	
 	public GlyphScroller(AffyLabelledTierMap map){
 		this.map = map;
 	}
 	
 	public void startscroll(TierLabelGlyph tlg){
-		if(!(tlg.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph)
-				|| !((ScrollableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph()).isScrollingAllowed()){
+		if(!(tlg.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph)
+				|| !((TransformableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph()).isScrollingAllowed()){
 			return;
 		}
 		
@@ -50,7 +50,7 @@ public class GlyphScroller {
 		zoomtrans = new ExponentialTransform(map.getMinZoom(AffyLabelledTierMap.Y),
 				map.getMaxZoom(AffyLabelledTierMap.Y), 1, 100);
 		tierlabel = tlg;
-		svmg = (ScrollableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph();
+		svmg = (TransformableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph();
 		zoomer = getSlider(tlg.getReferenceTier(), (int)zoomtrans.inverseTransform(AffyLabelledTierMap.Y, svmg.getScale()));
 		zoom_window = getWindow(zoomer);
 		scrollbar = getScrollBar(tlg.getReferenceTier(), svmg.getOffset(), svmg.getScale());

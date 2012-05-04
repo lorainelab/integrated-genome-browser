@@ -5,7 +5,7 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
+import com.affymetrix.igb.shared.TransformableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
@@ -211,10 +211,10 @@ public class TierResizer extends MouseInputAdapter {
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(0, height);
-				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
+				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
 					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
+						((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
+							((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
 					}
 				}
 				
@@ -231,10 +231,10 @@ public class TierResizer extends MouseInputAdapter {
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
 				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
-				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
+				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
 					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((ScrollableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
+						((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
+							((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
 					}
 				}
 				

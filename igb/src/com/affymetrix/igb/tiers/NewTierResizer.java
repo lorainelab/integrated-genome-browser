@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.ScrollableViewModeGlyph;
+import com.affymetrix.igb.shared.TransformableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
@@ -144,10 +144,10 @@ public class NewTierResizer extends MouseInputAdapter{
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
 				this.upperGl.getReferenceTier().resizeHeight(-delta, height);
-				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof ScrollableViewModeGlyph){
+				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
 					if(this.upperGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE){
-						((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((ScrollableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
+						((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
+							((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
 					}
 				}
 				

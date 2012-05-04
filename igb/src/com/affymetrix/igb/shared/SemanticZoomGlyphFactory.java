@@ -40,7 +40,7 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		return szg;
 	}
 	// glyph class
-	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements ScrollableViewModeGlyph, NeoRangeListener {
+	public static abstract class SemanticZoomGlyph extends AbstractViewModeGlyph implements TransformableViewModeGlyph, NeoRangeListener {
 		protected Map<String, ViewModeGlyph> viewModeGlyphs;
 		protected ViewModeGlyph lastUsedGlyph;
 		
@@ -485,38 +485,38 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		
 		@Override
 		public void setOffset(int offset){
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				((ScrollableViewModeGlyph)lastUsedGlyph).setOffset(offset);
+			if(lastUsedGlyph instanceof TransformableViewModeGlyph){
+				((TransformableViewModeGlyph)lastUsedGlyph).setOffset(offset);
 			}
 		}
 		
 		@Override
 		public int getOffset(){
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				return ((ScrollableViewModeGlyph)lastUsedGlyph).getOffset();
+			if(lastUsedGlyph instanceof TransformableViewModeGlyph){
+				return ((TransformableViewModeGlyph)lastUsedGlyph).getOffset();
 			}
 			return 0;
 		}
 		
 		@Override
 		public void setScale(float scale) {
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				((ScrollableViewModeGlyph)lastUsedGlyph).setScale(scale);
+			if(lastUsedGlyph instanceof TransformableViewModeGlyph){
+				((TransformableViewModeGlyph)lastUsedGlyph).setScale(scale);
 			}
 		}
 
 		@Override
 		public float getScale() {
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				return ((ScrollableViewModeGlyph)lastUsedGlyph).getScale();
+			if(lastUsedGlyph instanceof TransformableViewModeGlyph){
+				return ((TransformableViewModeGlyph)lastUsedGlyph).getScale();
 			}
 			return 0;
 		}
 		
 		@Override
 		public boolean isScrollingAllowed(){
-			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
-				return ((ScrollableViewModeGlyph)lastUsedGlyph).isScrollingAllowed();
+			if(lastUsedGlyph instanceof TransformableViewModeGlyph){
+				return ((TransformableViewModeGlyph)lastUsedGlyph).isScrollingAllowed();
 			}
 			return false;
 		}

@@ -130,11 +130,18 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	@Override
 	public List<UcscPslSym> getRegion(SeqSpan span)  throws Exception  {
 		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater.start();
+		List<UcscPslSym> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
 	}
 
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)  throws Exception  {
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
+		parseLinesProgressUpdater.start();
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -270,6 +277,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
+			parseLinesProgressUpdater.kill();
+			parseLinesProgressUpdater = null;
 		}
 	}
 

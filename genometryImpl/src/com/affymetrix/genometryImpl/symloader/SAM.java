@@ -143,6 +143,17 @@ public class SAM extends XAM implements LineProcessor{
 		return true;
 	}
 
+	@Override
+	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception  {
+		init();
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater.start();
+		List<SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
+	}
+
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
 		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);

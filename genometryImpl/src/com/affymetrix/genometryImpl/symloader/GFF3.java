@@ -98,7 +98,12 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater.start();
+		List<? extends SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
 	}
 
 	private List<? extends SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
@@ -151,6 +156,8 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)
 			throws Exception {
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
+		parseLinesProgressUpdater.start();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -162,8 +169,15 @@ public class GFF3 extends SymLoader implements LineProcessor {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
+			int sleepCounter = 0;
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				counter++;
+				sleepCounter++;
+				if (sleepCounter >= PROGRESS_FREQUENCY) {
+					sleepCounter = 0;
+					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
+				}
+				notifyReadLine(line.length());
 
 				if (line.length() == 0) {
 					continue;
@@ -219,6 +233,8 @@ public class GFF3 extends SymLoader implements LineProcessor {
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
+			parseLinesProgressUpdater.kill();
+			parseLinesProgressUpdater = null;
 		}
 	}
 

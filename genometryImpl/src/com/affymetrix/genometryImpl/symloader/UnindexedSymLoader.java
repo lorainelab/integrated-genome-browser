@@ -99,7 +99,12 @@ public abstract class UnindexedSymLoader extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		return parse(span.getBioSeq(),span.getMin(),span.getMax());
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater.start();
+		List<? extends SeqSymmetry> results = parse(span.getBioSeq(),span.getMin(),span.getMax());
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
 	}
 
 	protected LineReader getLineReader(final BufferedReader br, final int min, final int max) {
@@ -161,6 +166,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
 	}
 
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
+		parseLinesProgressUpdater.start();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -172,7 +179,14 @@ public abstract class UnindexedSymLoader extends SymLoader {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
+			int sleepCounter = 0;
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+				sleepCounter++;
+				if (sleepCounter >= PROGRESS_FREQUENCY) {
+					sleepCounter = 0;
+					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
+				}
+				notifyReadLine(line.length());
 				
 				ch = line.charAt(0);
 				if (ch == 't' && line.startsWith("track")) {
@@ -220,6 +234,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
+			parseLinesProgressUpdater.kill();
+			parseLinesProgressUpdater = null;
 		}
 	}
 

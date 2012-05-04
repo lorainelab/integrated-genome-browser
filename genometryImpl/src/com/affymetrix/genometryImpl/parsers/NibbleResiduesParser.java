@@ -306,6 +306,7 @@ public final class NibbleResiduesParser implements Parser {
 					}
 				}
 			);
+			progressUpdater.start();
 
 			int sleepCounter = 0;
 			// Only keep BUFSIZE characters in memory at one time

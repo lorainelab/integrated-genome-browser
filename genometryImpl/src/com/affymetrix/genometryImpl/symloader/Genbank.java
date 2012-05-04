@@ -232,11 +232,18 @@ public final class Genbank extends SymLoader {
 
 	@Override
 	public List<GenbankSym> getRegion(SeqSpan span) throws Exception   {
-		return parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater.start();
+		List<GenbankSym> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
 	}
 	
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception   {
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
+		parseLinesProgressUpdater.start();
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		try {
@@ -256,6 +263,8 @@ public final class Genbank extends SymLoader {
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(br);
+			parseLinesProgressUpdater.kill();
+			parseLinesProgressUpdater = null;
 		}
 	}
 	
@@ -281,14 +290,24 @@ public final class Genbank extends SymLoader {
 			length = -1;
 		}
 		
-		while (current_line != null && !done) {
-			getCurrentInput(input);
-			switch (current_line_type) {
-				case FEATURE_HEADER:
-				case FEATURE:
-					readSingleFeature(input, seqName, length, chrLength);
+		int sleepCounter = 0;
+		try {
+			while (current_line != null && !done) {
+				sleepCounter++;
+				if (sleepCounter >= PROGRESS_FREQUENCY) {
+					sleepCounter = 0;
+					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
+				}
+				notifyReadLine(current_line.length());
+				getCurrentInput(input);
+				switch (current_line_type) {
+					case FEATURE_HEADER:
+					case FEATURE:
+						readSingleFeature(input, seqName, length, chrLength);
+				}
 			}
 		}
+		catch(InterruptedException x) { }
 	}
 	
 	private void readSingleFeature(BufferedReader input, String seqName, int length, Map<String, Integer> chrLength) {

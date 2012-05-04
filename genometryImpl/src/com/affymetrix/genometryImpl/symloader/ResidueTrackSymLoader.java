@@ -54,7 +54,12 @@ public class ResidueTrackSymLoader extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
 		init();
-		return getResidueTrack(overlapSpan);
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater(overlapSpan);
+		symLoaderProgressUpdater.start();
+		List<? extends SeqSymmetry> results = getResidueTrack(overlapSpan);
+		symLoaderProgressUpdater.kill();
+		symLoaderProgressUpdater = null;
+		return results;
     }
 	
 	@Override

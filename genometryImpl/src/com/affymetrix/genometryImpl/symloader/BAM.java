@@ -185,6 +185,7 @@ public final class BAM extends XAM {
 						}
 					}
 				);
+				progressUpdater.start();
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					int sleepCounter = 0;

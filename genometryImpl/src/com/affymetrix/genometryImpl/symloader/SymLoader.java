@@ -57,7 +57,7 @@ public abstract class SymLoader {
 	protected SymLoaderProgressUpdater symLoaderProgressUpdater;
 	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
 
-	protected class SymLoaderProgressUpdater extends ProgressUpdater {
+	public class SymLoaderProgressUpdater extends ProgressUpdater {
 		public SymLoaderProgressUpdater(final SeqSpan span) {
 			super(span.getMin(), span.getMax(),
 				new PositionCalculator() {
@@ -288,6 +288,7 @@ public abstract class SymLoader {
      */
     public List<? extends SeqSymmetry> getRegion(final SeqSpan overlapSpan) throws Exception {
 		symLoaderProgressUpdater = new SymLoaderProgressUpdater(overlapSpan);
+		symLoaderProgressUpdater.start();
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
 		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());

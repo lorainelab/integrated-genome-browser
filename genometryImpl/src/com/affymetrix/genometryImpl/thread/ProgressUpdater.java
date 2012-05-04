@@ -12,31 +12,47 @@ public class ProgressUpdater {
 	private static final boolean DONT_INTERRUPT_IF_RUNNING = false;
 	private static final int SECONDS_BETWEEN_UPDATE = 2;
 	private ScheduledFuture<?> progressUpdateFuture;
+	private final long startPosition;
+	private final long endPosition;
+	private final PositionCalculator positionCalculator;
 	private static final class ProgressUpdateTask implements Runnable {
-		private final long startPosition;
-		private final long endPosition;
-		private final PositionCalculator positionCalculator;
+		private final ProgressUpdater progressUpdater;
 		private final CThreadWorker<?,?> ctw;
-		private ProgressUpdateTask(CThreadWorker<?,?> ctw, long startPosition, long endPosition,
-				PositionCalculator positionCalculator) {
+		private ProgressUpdateTask(ProgressUpdater progressUpdater) {
 			super();
-			this.startPosition = startPosition;
-			this.endPosition = endPosition;
-			this.positionCalculator = positionCalculator;
-			this.ctw = ctw;
+			this.progressUpdater = progressUpdater;
+			ctw = CThreadWorker.getCurrentCThreadWorker();
 		}
 		public void run() {
-			double progress = (double)(positionCalculator.getCurrentPosition() - startPosition) / (double)(endPosition - startPosition);
+			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
 			ctw.setProgressAsPercent(progress);
 		}
 	}
 
 	public ProgressUpdater(long startPosition, long endPosition, PositionCalculator positionCalculator) {
 		super();
+		this.startPosition = startPosition;
+		this.endPosition = endPosition;
+		this.positionCalculator = positionCalculator;
+	}
+
+	public long getStartPosition() {
+		return startPosition;
+	}
+
+	public long getEndPosition() {
+		return endPosition;
+	}
+
+	public PositionCalculator getPositionCalculator() {
+		return positionCalculator;
+	}
+
+	public void start() {
 		CThreadWorker<?,?> ctw = CThreadWorker.getCurrentCThreadWorker();
 		if (ctw != null) {
 			ScheduledExecutorService fScheduler = Executors.newScheduledThreadPool(NUM_THREADS);
-			Runnable progressUpdateTask = new ProgressUpdateTask(ctw, startPosition, endPosition, positionCalculator);
+			Runnable progressUpdateTask = new ProgressUpdateTask(this);
 		    progressUpdateFuture = fScheduler.scheduleWithFixedDelay(
 		    	progressUpdateTask, 0, SECONDS_BETWEEN_UPDATE, TimeUnit.SECONDS
 		    );

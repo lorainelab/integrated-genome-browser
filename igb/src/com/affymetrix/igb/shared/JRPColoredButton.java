@@ -13,6 +13,7 @@ import javax.swing.event.ListSelectionListener;
  * @author hiralv
  */
 public class JRPColoredButton extends JRPButton implements ListSelectionListener{
+	private static final long serialVersionUID = 1L;
 	private static final Font background_font = new Font(Font.MONOSPACED, Font.BOLD, 34);
 	private static final Font foreground_font = new Font(Font.MONOSPACED, Font.BOLD, 28);
 	

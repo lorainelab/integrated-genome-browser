@@ -65,7 +65,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
-import java.io.OutputStream;
 import java.net.*;
 import java.util.StringTokenizer;
 import java.util.logging.Level;

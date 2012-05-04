@@ -129,9 +129,9 @@ public final class WebLink {
 	 *  Remove a WebLink from the static list.
 	 */
 	public static void removeLocalWebLink(WebLink link) {
-		Iterator it = local_weblink_list.iterator();
+		Iterator<WebLink> it = local_weblink_list.iterator();
 		while (it.hasNext()) {
-			WebLink item = (WebLink) it.next();
+			WebLink item = it.next();
 			if (link == item) {
 				it.remove();
 			}

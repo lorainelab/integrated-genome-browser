@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.igb.util.ThreadHandler;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 

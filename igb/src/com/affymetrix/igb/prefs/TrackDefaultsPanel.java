@@ -9,7 +9,7 @@ package com.affymetrix.igb.prefs;
  * @author auser
  */
 public class TrackDefaultsPanel extends TrackPreferencesPanel{
-	
+	private static final long serialVersionUID = 1L;
 	public TrackDefaultsPanel(){
 		super("Track Defaults",TrackDefaultView.getSingleton());	
 	}

@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
  * @author Anuj
  */
 public class TierPreferencesPanel extends TrackPreferencesPanel {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Creates new form TierPreferencesPanel
 	 */

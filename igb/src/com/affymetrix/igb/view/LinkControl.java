@@ -158,7 +158,7 @@ final class LinkControl implements ContextualPopupListener {
 
 			//trying to retrieve data from the source. If there
 			//is no connection, this line will fail
-			Object objData = urlConnect.getContent();
+			/*Object objData = */ urlConnect.getContent();
 
 		} catch (UnknownHostException e) {
 			return false;

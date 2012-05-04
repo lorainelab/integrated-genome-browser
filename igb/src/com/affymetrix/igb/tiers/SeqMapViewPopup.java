@@ -73,15 +73,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		gviewer.renameTier(tier, JOptionPane.showInputDialog(BUNDLE.getString("label") + ": ", tier.getAnnotStyle().getTrackName()));
 	}
 	
-	private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
-		for (TierLabelGlyph tlg : tier_labels) {
-			ITrackStyleExtended style = tlg.getReferenceTier().getAnnotStyle();
-			style.setColorByScore(b);
-		}
-
-		refreshMap(false, false);
-	}
-
 	public void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
 		if (gviewer != null) {
 			// if an AnnotatedSeqViewer is being used, ask it to update itself.

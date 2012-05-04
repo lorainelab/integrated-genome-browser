@@ -24,7 +24,7 @@ public class NewTierResizer extends MouseInputAdapter{
 	private AffyLabelledTierMap tiermap;
 	private SeqMapView gviewer = null;
 	private double start;
-	private double ourFloor, ourCeiling;
+	private double ourCeiling;
 	protected static Cursor ourCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
 
 	private List<TierLabelGlyph> fixedInterior;

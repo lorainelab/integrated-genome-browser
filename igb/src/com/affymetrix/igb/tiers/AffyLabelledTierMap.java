@@ -58,6 +58,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void initComponentLayout() {
     labelmap = new AffyTieredMap(false, false, scroller[Y]) {
+		private static final long serialVersionUID = 1L;
 
 			@Override
 			public void select(GlyphI glyph) {

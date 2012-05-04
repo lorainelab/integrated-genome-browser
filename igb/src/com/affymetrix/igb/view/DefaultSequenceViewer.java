@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.util.ThreadHandler;
 
 /**
  *

@@ -199,7 +199,7 @@ public class GeneConfiguration extends Configuration {
 		int g = col.getGreen();
 		int b = col.getBlue();
 		int r = col.getRed();
-		double gray_scale = (double) (g + r + b) / 3.0;
+		double gray_scale = (g + r + b) / 3.0;
 		return gray_scale;
 	}
 }

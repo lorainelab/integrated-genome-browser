@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
  * @author Eric Blossom
  */
 public class ColorSchemeComboBox extends JComboBox implements ListSelectionListener {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * React to a selection change

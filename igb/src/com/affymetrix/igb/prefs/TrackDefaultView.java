@@ -393,7 +393,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 								style.setTrackNameSize((Float) value);
 							}
 							style.setTrackNameSize((Float) value);
-							trackNameSizeComboBox.setSelectedItem((Float) value);
+							trackNameSizeComboBox.setSelectedItem(value);
 							break;
 						case COL_LABEL_FIELD:
 							if (!style.equals(default_annot_style)) {

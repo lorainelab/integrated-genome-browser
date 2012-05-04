@@ -41,8 +41,8 @@ import java.util.logging.Logger;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public static final int PROGRESS_FREQUENCY = 50;
-	public static final int SLEEP_TIME = 20; // in milliseconds
+	public static final int PROGRESS_FREQUENCY = 1000;
+	public static final int SLEEP_TIME = 1; // in milliseconds
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call

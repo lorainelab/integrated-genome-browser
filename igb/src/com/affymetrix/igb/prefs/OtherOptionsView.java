@@ -1,19 +1,15 @@
 package com.affymetrix.igb.prefs;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import javax.swing.JOptionPane;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
@@ -25,7 +21,7 @@ import com.affymetrix.igb.util.ColorUtils;
  *
  * @author nick
  */
-public class OtherOptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener {
+public class OtherOptionsView extends IPrefEditorComponent implements PreferenceChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private final SeqMapView smv;
@@ -102,7 +98,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
             PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
         keepZoomStripeCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe", PreferenceUtils.getTopNode(),
             UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view);
-        clear_prefsB = new javax.swing.JButton();
+        clear_prefsB = new javax.swing.JButton(ClearPreferencesAction.getAction());
         showZoomStripLabelCheckBox = PreferenceUtils.createCheckBox("Show Zoom Stripe Label", PreferenceUtils.getTopNode(),
             UnibrowHairline.PREF_HAIRLINE_LABELED, UnibrowHairline.default_show_hairline_label);
         autoChangeView = PreferenceUtils.createCheckBox("Auto Change to depth Graph or zoom out", PreferenceUtils.getTopNode(),
@@ -408,8 +404,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
                 .add(clear_prefsB)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
-
-        clear_prefsB.addActionListener(this);
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
@@ -503,29 +497,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements ActionList
 					smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
 				}
 			});
-		}
-	}
-
-	public void actionPerformed(ActionEvent evt) {
-		Object src = evt.getSource();
-		if (src == clear_prefsB) {
-			// The option pane used differs from the confirmDialog only in
-			// that "No" is the default choice.
-			String[] options = {"Yes", "No"};
-			if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-					this, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-					options, options[1])) {
-
-				try {
-					XmlStylesheetParser.removeUserStylesheetFile();
-					((IGB) Application.getSingleton()).defaultCloseOperations();
-					PreferenceUtils.clearPreferences();
-					System.exit(0);
-				} catch (Exception e) {
-					ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
-				}
-			}
 		}
 	}
 

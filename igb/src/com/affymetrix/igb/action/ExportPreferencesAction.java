@@ -34,7 +34,7 @@ public class ExportPreferencesAction extends GenericAction {
 	}
 
 	private ExportPreferencesAction() {
-		super(BUNDLE.getString("ExportPreferences"), null, null, null, KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("ExportPreferences"), null, "16x16/actions/document-save.png", "22x22/actions/document-save.png", KeyEvent.VK_E, null, true);
 	}
 
 	@Override

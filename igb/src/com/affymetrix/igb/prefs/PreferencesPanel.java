@@ -16,6 +16,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
+import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.action.ExportPreferencesAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -193,8 +195,10 @@ public final class PreferencesPanel extends JPanel {
 
 		JMenuItem exp = new JMenuItem(ExportPreferencesAction.getAction());
 		JMenuItem imp = new JMenuItem(getImportAction());
+		JMenuItem clr = new JMenuItem(ClearPreferencesAction.getAction());
 		MenuUtil.addToMenu(prefs_menu, exp, PREFERENCES);
 		MenuUtil.addToMenu(prefs_menu, imp, PREFERENCES);
+		MenuUtil.addToMenu(prefs_menu, clr, PREFERENCES);
 
 		menu_bar.add(prefs_menu);
 
@@ -300,7 +304,7 @@ public final class PreferencesPanel extends JPanel {
 
 	private Action getImportAction() {
 		if (import_action == null) {
-			import_action = new GenericAction("Import Preferences", null, null, null, KeyEvent.VK_I, null, true) {
+			import_action = new GenericAction("Import Preferences", null, "16x16/actions/document-open.png", "22x22/actions/document-open.png", KeyEvent.VK_I, null, true) {
 				private static final long serialVersionUID = 1L;
 
 				@Override

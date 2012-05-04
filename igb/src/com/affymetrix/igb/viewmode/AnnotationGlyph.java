@@ -61,6 +61,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	
 	// Variable for scrolling in tier
 	private int offset = 1;
+	private float scale = 1.0f;
 	private Rectangle lower_pixelbox = new Rectangle();
 	private Rectangle upper_pixelbox = new Rectangle();
 	private Rectangle child_temp = new Rectangle();
@@ -214,6 +215,18 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 	}
 	
 	@Override
+	public void setScale(float scale) {
+		this.scale = scale;
+		tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
+			scale, tier_transform.getTranslateX(), tier_transform.getTranslateY());
+	}
+
+	@Override
+	public float getScale() {
+		return scale;
+	}
+	
+	@Override
 	public void setOffset(int offset){
 		this.offset = offset;
 		tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
@@ -282,8 +295,8 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		if (isScrollingAllowed()) {
 			coord_offset = (int) (BUFFER * 1.5);
 			if (getDirection() != TierGlyph.Direction.REVERSE) {
-				if (getStyleDepth() != MAX_EXPAND && getActualSlots() > getStyleDepth()) {
-					coord_offset = (int) getChildHeight() * (getActualSlots() - getStyleDepth() - 1) + coord_offset;
+				if (getInitialRowsToScroll() > 0) {
+					coord_offset = (int) getChildHeight() * (getInitialRowsToScroll() - 1) + coord_offset;
 				}
 				coord_offset = -coord_offset;
 				//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
@@ -292,6 +305,13 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Scrollabl
 		setOffset(coord_offset);
 	}
 
+	private int getInitialRowsToScroll(){
+		if (getStyleDepth() == MAX_EXPAND)
+			return MAX_EXPAND;
+		
+		return getActualSlots() - getStyleDepth();
+	}
+	
 	@Override
 	public void drawChildren(ViewI view) {
 		if (isScrollingAllowed()) {

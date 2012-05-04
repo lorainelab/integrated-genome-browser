@@ -499,6 +499,21 @@ public abstract class SemanticZoomGlyphFactory extends MapViewGlyphFactoryA {
 		}
 		
 		@Override
+		public void setScale(float scale) {
+			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
+				((ScrollableViewModeGlyph)lastUsedGlyph).setScale(scale);
+			}
+		}
+
+		@Override
+		public float getScale() {
+			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
+				return ((ScrollableViewModeGlyph)lastUsedGlyph).getScale();
+			}
+			return 0;
+		}
+		
+		@Override
 		public boolean isScrollingAllowed(){
 			if(lastUsedGlyph instanceof ScrollableViewModeGlyph){
 				return ((ScrollableViewModeGlyph)lastUsedGlyph).isScrollingAllowed();

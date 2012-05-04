@@ -137,7 +137,7 @@ public final class TierLabelManager implements PropertyHolder {
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);
-					scrollTier(gl.getReferenceTier());
+					scrollTier(gl);
 				}
 				tiermap.updateWidget();
 			}
@@ -165,7 +165,7 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
-		private void scrollTier(TierGlyph gl){
+		private void scrollTier(TierLabelGlyph gl){
 			GlyphScroller gs = new GlyphScroller(tiermap);
 			gs.startscroll(gl);
 		}

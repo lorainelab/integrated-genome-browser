@@ -38,6 +38,7 @@ public final class TierLabelManager implements PropertyHolder {
 
 	private final AffyLabelledTierMap tiermap;
 	private final AffyTieredMap labelmap;
+	private final GlyphTransformer gs;
 	private final JPopupMenu popup;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
@@ -137,7 +138,9 @@ public final class TierLabelManager implements PropertyHolder {
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
 					dragLabel(gl, nevt);
-					scrollTier(gl);
+					if(selected.size() == 1){
+						transformTier(gl);
+					}
 				}
 				tiermap.updateWidget();
 			}
@@ -165,8 +168,7 @@ public final class TierLabelManager implements PropertyHolder {
 			}
 		}
 
-		private void scrollTier(TierLabelGlyph gl){
-			GlyphScroller gs = new GlyphScroller(tiermap);
+		private void transformTier(TierLabelGlyph gl){
 			gs.startscroll(gl);
 		}
 		
@@ -205,6 +207,7 @@ public final class TierLabelManager implements PropertyHolder {
 			// Stub out resizing to disable it.
 //		};
 		resizer = new NewTierResizer(this.tiermap);
+		gs = new GlyphTransformer(map);
 //		resizer = new TierResizer(this.tiermap);
 //		resizer = new AccordionTierResizer(this.tiermap);
 

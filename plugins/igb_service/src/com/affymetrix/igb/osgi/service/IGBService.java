@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -19,6 +20,7 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.awt.print.PrinterException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -191,5 +193,11 @@ public interface IGBService {
 	public void discoverServer(final GenericServer server);
 
 	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle);
-	
+
+	public void goToRegion(String region);
+	public GenericFeature findFeatureWithURI(GenericVersion version, URI featureURI);
+	public void print(int pageFormat, boolean noDialog) throws PrinterException;
+	public void refreshDataManagementView();
+	public void loadVisibleFeatures();
+	public void selectFeatureAndCenterZoomStripe(String selectParam);
 }

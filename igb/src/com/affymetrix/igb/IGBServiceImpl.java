@@ -16,12 +16,14 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -51,6 +53,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.awt.print.PrinterException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -437,5 +440,34 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle) {
 		TrackView.getInstance().changeViewMode((SeqMapView)gviewer, style, viewMode, rootSym, comboStyle);
+	}
+
+	@Override
+	public void goToRegion(String region) {
+		((SeqMapView)getSeqMapView()).getMapRangeBox().setRange((SeqMapView)getSeqMapView(), region);
+	}
+
+	@Override
+	public GenericFeature findFeatureWithURI(GenericVersion version, URI featureURI) {
+		return GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
+	}
+
+	@Override
+	public void print(int pageFormat, boolean noDialog) throws PrinterException {
+		Application.getSingleton().getMapView().getSeqMap().print(0, true);
+	}
+
+	@Override
+	public void refreshDataManagementView() {
+		GeneralLoadView.getLoadView().refreshDataManagementView();
+	}
+
+	@Override
+	public void loadVisibleFeatures() {
+		GeneralLoadView.getLoadView().loadVisibleFeatures();
+	}
+
+	public void selectFeatureAndCenterZoomStripe(String selectParam) {
+		UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(selectParam);
 	}
 }

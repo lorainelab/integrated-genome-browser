@@ -124,10 +124,10 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	private JComponent getWidget(String widgetId) {
 		int pos = widgetId.indexOf('.');
 		if (pos == -1) {
-			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(widgetId);
+			return (JComponent) ScriptManager.getInstance().getWidget(widgetId);
 		} else {
 			String mainWidgetId = widgetId.substring(0, pos);
-			return (JComponent) RecordPlaybackHolder.getInstance().getWidget(mainWidgetId);
+			return (JComponent) ScriptManager.getInstance().getWidget(mainWidgetId);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			return false;
 		} else {
 			String waitForItem = step.getWaitFor();
-			JRPWidget widget = RecordPlaybackHolder.getInstance().getWidget(waitForItem);
+			JRPWidget widget = ScriptManager.getInstance().getWidget(waitForItem);
 			if (widget instanceof JRPMenu) {
 				((JRPMenu) widget).addMenuListener(menuListener);
 			} else if (widget instanceof JRPMenuItem) {
@@ -316,11 +316,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 	}
 
 	public void addJComponent(String id, JComponent comp) {
-		RecordPlaybackHolder.getInstance().addWidget(new JRPWrapper(id, comp));
+		ScriptManager.getInstance().addWidget(new JRPWrapper(id, comp));
 	}
 
 	public void removeJComponent(String id) {
-		RecordPlaybackHolder.getInstance().removeWidget(id);
+		ScriptManager.getInstance().removeWidget(id);
 	}
 
 	@Override

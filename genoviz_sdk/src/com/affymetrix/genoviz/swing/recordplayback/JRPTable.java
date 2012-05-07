@@ -70,7 +70,7 @@ public class JRPTable extends JTable implements JRPWidget {
 		);
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		if (getSelectionModel() != null) {
 			addSelectionListener(getSelectionModel());
 		}

@@ -4,7 +4,7 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 /**
  *
@@ -13,6 +13,6 @@ import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 public class IGBScriptAction {
 	
 	public static void executeScriptAction(String tutorialArg) {
-		RecordPlaybackHolder.getInstance().doSingleAction(tutorialArg);
+		ScriptManager.getInstance().doSingleAction(tutorialArg);
 	}
 }

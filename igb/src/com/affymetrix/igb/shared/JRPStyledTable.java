@@ -5,7 +5,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import java.util.Vector;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -88,7 +88,7 @@ public class JRPStyledTable extends StyledJTable implements JRPWidget {
 	}
 
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		if (getSelectionModel() != null) {
 			addSelectionListener(getSelectionModel());
 		}

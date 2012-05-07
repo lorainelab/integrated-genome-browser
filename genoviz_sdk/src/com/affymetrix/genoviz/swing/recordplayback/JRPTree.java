@@ -56,7 +56,7 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 		init();
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
 	        public void valueChanged(TreeSelectionEvent e) {

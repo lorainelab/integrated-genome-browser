@@ -24,16 +24,16 @@ import javax.swing.SwingWorker;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
-public class RecordPlaybackHolder {
-	private static final RecordPlaybackHolder instance = new RecordPlaybackHolder();
+public class ScriptManager {
+	private static final ScriptManager instance = new ScriptManager();
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
 	private Map<String, ScriptEngineFactory> ext2ScriptEngineFactory = new HashMap<String, ScriptEngineFactory>();
 	private boolean mouseDown;
-	public static RecordPlaybackHolder getInstance() {
+	public static ScriptManager getInstance() {
 		return instance;
 	}
-	private RecordPlaybackHolder() {
+	private ScriptManager() {
 		super();
 		mouseDown = false;
 		long eventMask = AWTEvent.MOUSE_EVENT_MASK;
@@ -160,7 +160,7 @@ public class RecordPlaybackHolder {
 
 			@Override
 			protected Void doInBackground() {
-				RecordPlaybackHolder.getInstance().runScript(scriptFileName);
+				ScriptManager.getInstance().runScript(scriptFileName);
 				return null;
 			}
 

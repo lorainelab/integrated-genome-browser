@@ -21,12 +21,12 @@ public class RPAdjustableJSlider extends AdjustableJSlider implements JRPWidget 
 	}
     private void init() {
     	if (id != null) {
-    		RecordPlaybackHolder.getInstance().addWidget(this);
+    		ScriptManager.getInstance().addWidget(this);
     	}
     	addAdjustmentListener(new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(RPAdjustableJSlider.this, "setValue(" + getValue() + ")"));
+				ScriptManager.getInstance().recordOperation(new Operation(RPAdjustableJSlider.this, "setValue(" + getValue() + ")"));
 			}
 		});
     }

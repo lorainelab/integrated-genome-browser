@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessor;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -56,7 +56,7 @@ public class SaveScriptAction extends GenericAction {
 				ScriptProcessor scriptManager = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
 				FileWriter fstream = new FileWriter(f);
 				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(RecordPlaybackHolder.getInstance().getScript(scriptManager));
+				out.write(ScriptManager.getInstance().getScript(scriptManager));
 				out.close();
 			}
 			catch (Exception x) {

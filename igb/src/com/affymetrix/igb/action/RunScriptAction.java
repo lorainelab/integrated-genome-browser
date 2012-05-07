@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.IGB;
 
@@ -109,8 +109,8 @@ public final class RunScriptAction extends GenericAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File file = fileChooser.getSelectedFile();
-		if (RecordPlaybackHolder.getInstance().isScript(file.getAbsolutePath())) {
-			RecordPlaybackHolder.getInstance().runScript(file.getAbsolutePath());
+		if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
+			ScriptManager.getInstance().runScript(file.getAbsolutePath());
 		}
 		else {
 			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file");

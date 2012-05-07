@@ -53,11 +53,11 @@ public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements JRPW
 	}
 
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPRadioButtonMenuItem.this, "doClick()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPRadioButtonMenuItem.this, "doClick()"));
 			}
 		});
     }

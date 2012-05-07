@@ -6,7 +6,7 @@ package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingWorker;
 
@@ -60,7 +60,7 @@ public class VerticalStretchZoomAction extends GenericAction implements IAmount 
 	}
 
 	public void execute() {
-		final RPAdjustableJSlider yzoomer = (RPAdjustableJSlider) RecordPlaybackHolder.getInstance().getWidget("SeqMapView_yzoomer");
+		final RPAdjustableJSlider yzoomer = (RPAdjustableJSlider) ScriptManager.getInstance().getWidget("SeqMapView_yzoomer");
 		int min = yzoomer.getMinimum();
 		int max = yzoomer.getMaximum();
 		int zoomAmount = (int) ((max - min) * amount);

@@ -31,11 +31,11 @@ public class JRPMenu extends JMenu implements JRPWidget {
 		init();
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPMenu.this, "doClick()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPMenu.this, "doClick()"));
 			}
 		});
     }

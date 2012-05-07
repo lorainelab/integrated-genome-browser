@@ -53,19 +53,19 @@ public class JRPCheckBox extends JCheckBox implements JRPWidget {
 	}
     private void init() {
     	if (id != null) {
-    		RecordPlaybackHolder.getInstance().addWidget(this);
+    		ScriptManager.getInstance().addWidget(this);
     	}
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPCheckBox.this, "doClick()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPCheckBox.this, "doClick()"));
 			}
 		});
     }
 	public void setId(String id) {
 		if (this.id == null) {
 			this.id = id;
-			RecordPlaybackHolder.getInstance().addWidget(this);
+			ScriptManager.getInstance().addWidget(this);
 		}
 	}
 	@Override

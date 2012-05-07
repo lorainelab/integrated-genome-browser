@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
@@ -155,12 +155,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void doActions(String batchFileStr) {
-		RecordPlaybackHolder.getInstance().runScript(batchFileStr);
+		ScriptManager.getInstance().runScript(batchFileStr);
 	}
 
 	@Override
 	public void doSingleAction(String line) {
-		RecordPlaybackHolder.getInstance().doSingleAction(line);
+		ScriptManager.getInstance().doSingleAction(line);
 	}
 
 	@Override

@@ -41,11 +41,11 @@ public class JRPSlider extends JSlider implements JRPWidget {
 	}
 
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPSlider.this, "setValue(" + getValue() + ")"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPSlider.this, "setValue(" + getValue() + ")"));
 			}
 		});
     }

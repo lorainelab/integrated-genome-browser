@@ -42,23 +42,23 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 		init();
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
-					RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPFileChooser.this, "cancelSelection()"));
+					ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "cancelSelection()"));
 					return;
 				}
 				if (!JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
 					return;
 				}
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setCurrentDirectory(\"" + getCurrentDirectory() + "\")"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setCurrentDirectory(\"" + getCurrentDirectory() + "\")"));
 				if (getSelectedFiles() == null || getSelectedFiles().length == 0) {
 					if (getSelectedFile() == null) {
 					}
 					else {
-						RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + getSelectedFile() + "\")"));
+						ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + getSelectedFile() + "\")"));
 					}
 				}
 				else {
@@ -75,9 +75,9 @@ public class JRPFileChooser extends JFileChooser implements JRPWidget {
 						selectedFiles.append("new File(\"" + file.getAbsolutePath() + "\")");
 					}
 					selectedFiles.append("}");
-					RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + selectedFiles.toString() + "\")"));
+					ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "setSelectedFiles(\"" + selectedFiles.toString() + "\")"));
 				}
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPFileChooser.this, "approveSelection()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPFileChooser.this, "approveSelection()"));
 			}
 		});
     }

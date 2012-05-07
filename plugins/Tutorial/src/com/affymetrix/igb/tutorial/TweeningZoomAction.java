@@ -2,7 +2,7 @@ package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.RPAdjustableJSlider;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingWorker;
 
@@ -52,7 +52,7 @@ public class TweeningZoomAction extends GenericAction implements IAmount {
 	}
 
 	public void execute() {
-		final RPAdjustableJSlider xzoomer = (RPAdjustableJSlider) RecordPlaybackHolder.getInstance().getWidget("SeqMapView_xzoomer");
+		final RPAdjustableJSlider xzoomer = (RPAdjustableJSlider) ScriptManager.getInstance().getWidget("SeqMapView_xzoomer");
 		int min = xzoomer.getMinimum();
 		int max = xzoomer.getMaximum();
 		int zoomAmount = (int) ((max - min) * amount);

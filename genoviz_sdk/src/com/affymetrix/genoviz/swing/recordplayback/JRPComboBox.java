@@ -32,7 +32,7 @@ public class JRPComboBox extends JComboBox implements JRPWidget {
 		init();
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		// use PopupMenuListener to only get user initiated changes
 		addPopupMenuListener(new PopupMenuListener() {
 			@Override
@@ -41,7 +41,7 @@ public class JRPComboBox extends JComboBox implements JRPWidget {
 			}
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPComboBox.this, "setSelectedItem(\"" + getSelectedItem() + "\")"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPComboBox.this, "setSelectedItem(\"" + getSelectedItem() + "\")"));
 			}
 			@Override
 			public void popupMenuCanceled(PopupMenuEvent e) {}

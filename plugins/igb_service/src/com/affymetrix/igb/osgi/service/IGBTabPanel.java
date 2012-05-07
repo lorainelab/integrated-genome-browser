@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidget;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.util.Idable;
 
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget, Idable {
@@ -107,7 +107,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.focus = focus;
 		this.position = position;
     	this.id = "IGBTabPanel_" + this.getClass().getSimpleName();
-   		RecordPlaybackHolder.getInstance().addWidget(this);
+   		ScriptManager.getInstance().addWidget(this);
    		selectAction = new SelectAction();
 	}
 

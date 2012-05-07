@@ -38,11 +38,11 @@ public class JRPButton extends JButton implements JRPWidget {
 		init();
     }
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPButton.this, "doClick()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPButton.this, "doClick()"));
 			}
 		});
     }

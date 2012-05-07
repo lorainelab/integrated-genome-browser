@@ -304,7 +304,7 @@ public class SeqMapView extends JPanel
 	public SeqMapView(boolean add_popups, String id) {
 		super();
 		this.id = id;
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		seqmap = createAffyTieredMap();
 
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);

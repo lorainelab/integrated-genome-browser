@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
@@ -40,7 +40,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 				gviewer = Application.getSingleton().getMapView();
 			}
 			else {
-				gviewer = (SeqMapView)RecordPlaybackHolder.getInstance().getWidget(id);
+				gviewer = (SeqMapView)ScriptManager.getInstance().getWidget(id);
 			}
 		}
 		return gviewer;

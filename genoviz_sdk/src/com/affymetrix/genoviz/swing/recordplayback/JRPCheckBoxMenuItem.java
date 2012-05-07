@@ -48,11 +48,11 @@ public class JRPCheckBoxMenuItem extends JCheckBoxMenuItem implements JRPWidget 
 	}
 
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPCheckBoxMenuItem.this, "doClick()"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPCheckBoxMenuItem.this, "doClick()"));
 			}
 		});
     }

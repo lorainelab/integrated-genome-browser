@@ -30,12 +30,12 @@ public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget 
 		init();
 	}
     private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if (RecordPlaybackHolder.getInstance().isMouseDown()) {
-					RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
+				if (ScriptManager.getInstance().isMouseDown()) {
+					ScriptManager.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
 				}
 			}
 		});

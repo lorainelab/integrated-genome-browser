@@ -6,7 +6,7 @@ import org.osgi.framework.BundleContext;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPWidgetDecorator;
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 /**
  * OSGi Activator for genoviz bundle
@@ -25,10 +25,10 @@ public class Activator implements BundleActivator {
 			
 			@Override
 			public void addService(JRPWidgetDecorator decorator) {
-				RecordPlaybackHolder.getInstance().addDecorator(decorator);
+				ScriptManager.getInstance().addDecorator(decorator);
 			}
 		});
-		bundleContext.registerService(RecordPlaybackHolder.class, RecordPlaybackHolder.getInstance(), null);
+		bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
 	}
 
 	@Override

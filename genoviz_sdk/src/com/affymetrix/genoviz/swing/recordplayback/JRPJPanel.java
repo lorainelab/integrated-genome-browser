@@ -43,12 +43,12 @@ public class JRPJPanel extends JPanel implements JRPWidget {
 	public void setId(String id) {
 		if (this.id == null) {
 			this.id = id;
-			RecordPlaybackHolder.getInstance().addWidget(this);
+			ScriptManager.getInstance().addWidget(this);
 		}
 	}
 
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 	}
 
 	@Override

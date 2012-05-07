@@ -36,14 +36,14 @@ public class JRPTextField extends JTextField implements JRPWidget {
 		init();
 	}
 	private void init() {
-		RecordPlaybackHolder.getInstance().addWidget(this);
+		ScriptManager.getInstance().addWidget(this);
 		addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTextField.this, "setText(\"" + getText() + "\")"));
+				ScriptManager.getInstance().recordOperation(new Operation(JRPTextField.this, "setText(\"" + getText() + "\")"));
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {}

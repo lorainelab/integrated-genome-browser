@@ -8,7 +8,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 public class Activator implements BundleActivator {
@@ -25,7 +25,7 @@ public class Activator implements BundleActivator {
         	IGBService igbService = bundleContext.getService(igbServiceReference);
     		List<String> extensions = new ArrayList<String>();
     		extensions.add("igb");
-    		RecordPlaybackHolder.getInstance().addScriptEngineFactory(extensions, new IGBScriptEngineFactory(igbService));
+    		ScriptManager.getInstance().addScriptEngineFactory(extensions, new IGBScriptEngineFactory(igbService));
        } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
             ex.printStackTrace(System.out);

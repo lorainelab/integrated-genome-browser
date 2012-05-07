@@ -27,6 +27,7 @@ public class Debug {
 		activators.add(new com.gene.bigbedhandler.Activator());
 		activators.add(new com.gene.bigwighandler.Activator());
 		activators.add(new com.affymetrix.igb.thresholding.Activator());
+		activators.add(new com.gene.igbscript.Activator());
 	}
 
 	/**

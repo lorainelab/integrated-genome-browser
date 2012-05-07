@@ -54,5 +54,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackAdjuster"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackOperations"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tango-icon-theme-0.8.90.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/IGBScript"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

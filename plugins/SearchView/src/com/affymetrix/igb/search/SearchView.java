@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
@@ -144,8 +145,8 @@ public final class SearchView extends IGBTabPanel implements
 						}
 					}
 				};
-				worker.addThreadListener(cancel);
-				ThreadUtils.getPrimaryExecutor(this).execute(worker);
+				CThreadHolder.getInstance().addListener(cancel);
+				CThreadHolder.getInstance().execute(this, worker);
 			}
 			else {
 				ErrorHandler.errorPanel(errorMessage);

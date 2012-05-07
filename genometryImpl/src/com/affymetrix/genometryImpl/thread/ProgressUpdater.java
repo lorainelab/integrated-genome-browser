@@ -21,7 +21,7 @@ public class ProgressUpdater {
 		private ProgressUpdateTask(ProgressUpdater progressUpdater) {
 			super();
 			this.progressUpdater = progressUpdater;
-			ctw = CThreadWorker.getCurrentCThreadWorker();
+			ctw = CThreadHolder.getInstance().getCurrentCThreadWorker();
 		}
 		public void run() {
 			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
@@ -49,7 +49,7 @@ public class ProgressUpdater {
 	}
 
 	public void start() {
-		CThreadWorker<?,?> ctw = CThreadWorker.getCurrentCThreadWorker();
+		CThreadWorker<?,?> ctw = CThreadHolder.getInstance().getCurrentCThreadWorker();
 		if (ctw != null) {
 			ScheduledExecutorService fScheduler = Executors.newScheduledThreadPool(NUM_THREADS);
 			Runnable progressUpdateTask = new ProgressUpdateTask(this);

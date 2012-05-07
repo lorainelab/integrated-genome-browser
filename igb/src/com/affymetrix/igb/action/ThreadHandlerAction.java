@@ -75,7 +75,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	}
 
 	private int setCancelPopup() {
-		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
+		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getAllCThreadWorkers();
 		int size = workers.size();
 		if(size == 0){
 			return 0;
@@ -138,17 +138,14 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 
 	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
-		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
 		CThreadWorker<?,?> w = (CThreadWorker<?,?>) cte.getSource();
 		if (cte.getState() == CThreadEvent.STARTED) {
-			workers.add(w);
 			Application.getSingleton().addNotLockedUpMsg(w.getMessage());
 		} else {
-			workers.remove(w);
 			Application.getSingleton().removeNotLockedUpMsg(w.getMessage());
 		}
 
-		if (workers.size() == 0 || !runningTasks.isShowing()) {
+		if (CThreadHolder.getInstance().getCThreadWorkerCount() == 0 || !runningTasks.isShowing()) {
 			runningTasks.setVisible(false);
 		}
 		else {

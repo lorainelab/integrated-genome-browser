@@ -168,7 +168,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 
 	private void stopSlicingThread() {
 		if (slice_thread != null
-				&& slice_thread != CThreadWorker.getCurrentCThreadWorker()
+				&& slice_thread != CThreadHolder.getInstance().getCurrentCThreadWorker()
 				&& slice_thread.getState() == SwingWorker.StateValue.STARTED) {
 			slice_thread.cancel(true); // TODO: Deprecated, but seems OK here.  Maybe fix later.
 			slice_thread = null;

@@ -92,10 +92,6 @@ public class ScriptFileLoader {
 	public boolean runScript(String fileName) {
 		if (!isScript(fileName)) {
 			return false;
-		} else if (fileName.toLowerCase().endsWith(".igb")) {
-			// response file.  Do its actions and return.
-			// Potential for an infinite loop here, of course.
-			doActions(fileName);
 		} else {
 			executeScript(fileName);
 		}

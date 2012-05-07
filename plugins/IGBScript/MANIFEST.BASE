@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IGBScript
+Bundle-SymbolicName: IGBScript
+Bundle-Version: @appVersion@
+Bundle-Activator: com.gene.igbscript.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Scripting
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: implementation of java ScriptEngine to run IGB scripts
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.genoviz.swing.recordplayback,
+ com.affymetrix.igb.osgi.service,
+ javax.script,
+ org.osgi.framework,
+ org.osgi.util.tracker
+

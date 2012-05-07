@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 
@@ -25,6 +26,7 @@ public class RecordPlaybackHolder {
 	private static final RecordPlaybackHolder instance = new RecordPlaybackHolder();
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
+	private Map<String, ScriptEngineFactory> ext2ScriptEngineFactory = new HashMap<String, ScriptEngineFactory>();
 	private boolean mouseDown;
 	public static RecordPlaybackHolder getInstance() {
 		return instance;
@@ -102,6 +104,9 @@ public class RecordPlaybackHolder {
 			}
 			String extension = fileName.substring(pos + 1);
 			ScriptEngine engine = engineMgr.getEngineByExtension(extension);
+			if (engine == null && ext2ScriptEngineFactory.get(extension) != null) {
+				engine = ext2ScriptEngineFactory.get(extension).getScriptEngine();
+			}
 			if (engine == null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "engine is null for extension " + extension);
 				return;
@@ -122,6 +127,12 @@ public class RecordPlaybackHolder {
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
 		for (JRPWidget widget : widgets.values()) {
 			decorator.widgetAdded(widget);
+		}
+	}
+
+	public void addScriptEngineFactory(List<String> extensions, ScriptEngineFactory scriptEngineFactory) {
+		for (String extension : extensions) {
+			ext2ScriptEngineFactory.put(extension, scriptEngineFactory);
 		}
 	}
 }

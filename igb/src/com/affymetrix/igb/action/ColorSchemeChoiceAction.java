@@ -18,9 +18,11 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
@@ -70,26 +72,18 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 			ltm.addListSelectionListener(picker);
 		}
         picker.addItemListener(this.middleMan);
+		picker.addActionListener(this.actor);
 	}
 
-	/**
-	 * Convert from a CSS color value string into a Java color object.
-	 * @param theValue a CSS color value like "blue" or "#F0F0F0".
-	 *        Note that these are the only formats supported.
-	 *        Formats like "rgb(4, 5, 6)", "hcl()", and "#FFF" are not supported.
-	 * @return the corresponding RGB color.
-	 */
-	private Color newColor(String theEntity) {
-		int i = 0xFFFFFF;
-		if ('#' != theEntity.charAt(0)) {
-			theEntity = ColorScheme.SVGColors.get(theEntity);
+
+	private ActionListener actor = new AbstractAction("ChooseColor") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println(e.getSource());
 		}
-		if ('#' == theEntity.charAt(0)) {
-			i = Integer.parseInt(theEntity.substring(1), 16);
-		}
-		Color c = new Color(i);
-		return c;
-	}
+		
+	};
 
 	/**
 	 * Listens for the choice of a color scheme.
@@ -106,13 +100,18 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
             case ItemEvent.SELECTED:
                 Object o = ie.getItem();
                 ColorScheme s = ColorScheme.ELISE;
-                String str = (String) o;
-                int i = str.lastIndexOf(' ');
-                if (0 < i) {
-                    s = ColorScheme.valueOf(str.substring(i+1));
-                }
+				if (o instanceof ColorScheme) {
+					s = (ColorScheme) o;
+				}
+				else {
+					String str = o.toString();
+					int i = str.lastIndexOf(' ');
+					if (0 < i) {
+						s = ColorScheme.valueOf(str.substring(i + 1));
+					}
+				}
 				ColorSchemeChoiceAction.this.choice = s;
-                break;
+				break;
             default:
                 System.err.println(
 					"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
@@ -133,7 +132,7 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
         case JOptionPane.OK_OPTION:
 			ColorScheme s = this.choice;
             if (null != s) {
-                Color bg = newColor(s.getBackground());
+				Color bg = Color.decode(s.getBackground());
 				List<TierLabelGlyph> l = ltm.getOrderedTierLabels();
 				int j = 0;
 				int colors = s.numberOfForegrounds();
@@ -141,7 +140,7 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 					TierLabelGlyph tlg = l.get(i);
 					TierGlyph g = tlg.getReferenceTier();
 					if (tlg.isSelected()) {
-						Color c = newColor(s.getForeground(j));
+						Color c = Color.decode(s.getForeground(j));
 						g.getAnnotStyle().setBackground(bg);
 						g.getAnnotStyle().setForeground(c);
 						j = (j + 1) % colors;

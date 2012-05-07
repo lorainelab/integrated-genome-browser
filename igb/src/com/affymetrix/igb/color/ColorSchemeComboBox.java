@@ -10,6 +10,7 @@
  */
 package com.affymetrix.igb.color;
 
+import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -25,6 +26,14 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ColorSchemeComboBox extends JComboBox implements ListSelectionListener {
 	private static final long serialVersionUID = 1L;
+
+	private boolean showingNames = true;
+	/**
+	 * Action to automatically invoke upon selection
+	 * so this can be used outside a dialog with an OK button.
+	 */
+	private Action a = null;
+	private int limit = Integer.MAX_VALUE;
 
 	/**
 	 * React to a selection change
@@ -53,6 +62,22 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
 		}
     }
 
+
+	public void setNamesIncluded(boolean theTruth) {
+		this.showingNames = theTruth;
+	}
+
+	/**
+	 * Color schemes with more foreground colors than this are screened out.
+	 * @param theLimit cannot be negative.
+	 */
+	public void setLimit(int theLimit) {
+		if (theLimit < 0) {
+			throw new IllegalArgumentException("The limit cannot be negative.");
+		}
+		this.limit = theLimit;
+	}
+
 	/**
 	 * Restricts choices
 	 * to only those schemes with the given number of foreground colors.
@@ -61,18 +86,10 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
 	 */
     public void setChoices(int theSchemeSize) {
         this.removeAllItems();
+		theSchemeSize = Math.min(theSchemeSize, this.limit);
         for (ColorScheme n: ColorScheme.values()) {
             if (0 == theSchemeSize || theSchemeSize == n.numberOfForegrounds()) {
-                StringBuilder sb = new StringBuilder("<html>");
-                sb.append("<span style=\"background-color: ").append(n.getBackground()).append("\"> &nbsp; ");
-                for (String c: n.getForegroundColors()) {
-                    // http://www.unicode.org/charts/PDF/U2580.pdf
-                    // http://en.wikipedia.org/wiki/Box-drawing_character
-                    // Look for "Block Elements" in the above page.
-                    sb.append("<span style=\"color: ").append(c).append("\"> &#9608; </span>");
-                }
-                sb.append(" &nbsp;</span> ").append(n);
-                this.addItem(sb.toString());
+                this.addItem(n);
             }
         }
         if (1 < this.getItemCount()) {

@@ -69,12 +69,12 @@ public class ScriptManager {
 	public void removeWidget(String id) {
 		widgets.remove(id);
 	}
-	public String getScript(ScriptProcessor scriptManager) {
+	public String getScript(ScriptProcessor scriptProcessor) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(scriptManager.getHeader());
+		sb.append(scriptProcessor.getHeader());
 		sb.append("\n");
 		for (Operation operation : operations) {
-			sb.append(scriptManager.getCommand(operation));
+			sb.append(scriptProcessor.getCommand(operation));
 			sb.append("\n");
 		}
 		return sb.toString();

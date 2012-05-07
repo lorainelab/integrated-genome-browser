@@ -62,7 +62,6 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -1129,11 +1128,6 @@ public final class GeneralLoadUtils {
 	}
 
 	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
-		if (ScriptManager.getInstance().isScript(uri.toString())) {
-			ScriptManager.getInstance().runScript(uri.toString());
-			return;
-		}
-
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {

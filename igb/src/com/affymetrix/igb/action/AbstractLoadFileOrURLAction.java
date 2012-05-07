@@ -30,10 +30,6 @@ public abstract class AbstractLoadFileOrURLAction extends OpenURIAction {
 					nameToExtensionMap.get(name).toArray(new String[]{}),
 					name + " Files"));
 		}
-		
-		chooser.addChoosableFileFilter(new UniFileFilter(
-				new String[]{"igb", "py"},
-				"Script File"));
 	}
 
 	@Override

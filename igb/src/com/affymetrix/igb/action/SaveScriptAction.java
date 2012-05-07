@@ -33,7 +33,7 @@ public class SaveScriptAction extends GenericAction {
 	}
 
 	private SaveScriptAction() {
-		super(BUNDLE.getString("saveScript"), KeyEvent.VK_C);
+		super(BUNDLE.getString("saveScript"), null, null, null, KeyEvent.VK_C, null, true);
 	}
 
 	@Override

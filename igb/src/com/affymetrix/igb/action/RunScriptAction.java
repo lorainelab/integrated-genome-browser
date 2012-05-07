@@ -18,7 +18,6 @@ import java.util.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import java.text.MessageFormat;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
@@ -54,7 +53,7 @@ public final class RunScriptAction extends GenericAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	private RunScriptAction() {
-		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("runScript")), KeyEvent.VK_R);
+		super(BUNDLE.getString("runScript"), null, null, null, KeyEvent.VK_R, null, true);
 
 		this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
 		load_dir_tracker = FileTracker.DATA_DIR_TRACKER;

@@ -33,6 +33,8 @@ import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.PrintAction;
 import com.affymetrix.igb.action.PrintFrameAction;
 import com.affymetrix.igb.action.RequestFeatureAction;
+import com.affymetrix.igb.action.RunScriptAction;
+import com.affymetrix.igb.action.SaveScriptAction;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
@@ -124,8 +126,6 @@ public class IGBUtils {
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_preferences", PreferencesAction.getAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exit", ExitAction.getAction()));
-//		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_runScript", RunScriptAction.getAction()));
-//		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_saveScript", SaveScriptAction.getAction()));
 	}
 
 	private static void editMenu(JMenuBar menuBar, String id) {
@@ -173,6 +173,8 @@ public class IGBUtils {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_runScript", RunScriptAction.getAction()));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_saveScript", SaveScriptAction.getAction()));
 	}
 
 	private static void helpMenu(JMenuBar menuBar, String id) {

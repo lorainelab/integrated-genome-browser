@@ -20,14 +20,13 @@ import java.util.List;
 
 /**
  * For setting a particular color scheme.
- * Usage: <blockquote><code>
- * {@link ColorSchemeComboBox} b = new ColorSchemeComboBox();<br>
- * Action a = new <strong>ColorSchemeAction</strong>();<br>
- * b.addActionListener(a);<br>
- * affyLabelledTierMap.addSelectionListener(b);<br>
- * b.setActionListener(a);<br>
+ * Usage: <blockquote><pre><code>
+ * {@link ColorSchemeComboBox} b = new ColorSchemeComboBox();
+ * Action a = new <strong>ColorSchemeAction</strong>();
+ * b.addActionListener(a);
+ * affyLabelledTierMap.addSelectionListener(b);
  * panel.add(b);
- * </code></blockquote>
+ * </code></pre></blockquote>
  * @author blossome
  */
 public class ColorSchemeAction extends SeqMapViewActionA {

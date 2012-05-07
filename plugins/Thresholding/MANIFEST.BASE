@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Thresholding
 Bundle-SymbolicName: com.affymetrix.igb.Thresholding
-Bundle-Version: 7.0.0
+Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.thresholding.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/Applying+thresholds+to+graphs
 Export-Package: com.affymetrix.igb.thresholding.action
-Import-Package: com.affymetrix.common;version="[7.0.0,7.0.0]",
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.operator,

@@ -11,7 +11,7 @@ public class JavascriptScriptProcessor implements ScriptProcessor {
 	@Override
 	public String getHeader() {
 		return "var bundleContext = com.affymetrix.main.OSGiHandler.getInstance().getBundleContext();\n" +
-			"var serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder\");\n" +
+			"var serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.ScriptManager\");\n" +
 			"var rph = bundleContext.getService(serviceReference);\n";
 	}
 

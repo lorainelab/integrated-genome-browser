@@ -11,7 +11,7 @@ import javax.swing.JTable;
 
 public class JRPTextFieldTableCellRenderer extends DefaultCellEditor
 		implements TableCellRenderer, TableCellEditorRenderer {
-
+	private static final long serialVersionUID = 1L;
 	private JRPTextField jrpTextField;
 
 	public JRPTextFieldTableCellRenderer(String id, String text) {

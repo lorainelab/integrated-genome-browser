@@ -1,8 +1,6 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
 import com.affymetrix.genoviz.swing.StyledJComboBox;
-import java.util.Vector;
-import javax.swing.ComboBoxModel;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 

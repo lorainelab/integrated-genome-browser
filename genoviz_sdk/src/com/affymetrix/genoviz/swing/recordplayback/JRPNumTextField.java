@@ -9,7 +9,7 @@ import javax.swing.text.Document;
  * @author hiralv
  */
 public class JRPNumTextField extends JRPTextField {
-
+	private static final long serialVersionUID = 1L;
 	private static final Pattern NUMBERS = Pattern.compile("[0-9]");
 	
 	public JRPNumTextField(String id) {

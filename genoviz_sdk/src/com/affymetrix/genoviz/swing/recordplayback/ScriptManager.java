@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,10 +105,11 @@ public class ScriptManager {
 		try {
 			ScriptEngine engine = getScriptEngine("x.igb"); // fake file name
 			if (engine == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "IGB script engine is not loaded");
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "igb script engine is not loaded");
 				return;
 			}
-			((SingleActionDoer)engine).doSingleAction(line);
+			Reader reader = new StringReader(line + '\n');
+			engine.eval(reader);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

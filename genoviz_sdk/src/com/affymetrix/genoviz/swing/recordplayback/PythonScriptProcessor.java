@@ -14,7 +14,7 @@ public class PythonScriptProcessor implements ScriptProcessor {
 	public String getHeader() {
 		return "from com.affymetrix.main import OSGiHandler\n" +
 		"bundleContext = OSGiHandler.getInstance().getBundleContext()\n" +
-		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder\")\n" +
+		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.ScriptManager\")\n" +
 		"rph = bundleContext.getService(serviceReference)\n";
 	}
 

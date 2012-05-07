@@ -290,14 +290,9 @@ public final class Genbank extends SymLoader {
 			length = -1;
 		}
 		
-		int sleepCounter = 0;
 		try {
 			while (current_line != null && !done) {
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-				}
+				checkSleep();
 				notifyReadLine(current_line.length());
 				getCurrentInput(input);
 				switch (current_line_type) {

@@ -210,14 +210,9 @@ public class BED extends SymLoader implements LineProcessor {
 		boolean use_item_rgb = false;
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
-		int sleepCounter = 0;
 		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-				}
+				checkSleep();
 				if (line.length() == 0) {
 					continue;
 				}
@@ -717,19 +712,14 @@ public class BED extends SymLoader implements LineProcessor {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		String line, trackLine = null, seq_name = null;
 		String[] fields;
-		int counter = 0;
+		int lineCounter = 0;
 
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
-			int sleepCounter = 0;
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				counter++;
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-				}
+				lineCounter++;
+				checkSleep();
 				notifyReadLine(line.length());
 				if (line.length() == 0) {
 					continue;
@@ -750,7 +740,7 @@ public class BED extends SymLoader implements LineProcessor {
 					fields = line_regex.split(line);
 
 					if (fields.length < 3) {
-						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", counter);
+						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", lineCounter);
 						continue;
 					}
 

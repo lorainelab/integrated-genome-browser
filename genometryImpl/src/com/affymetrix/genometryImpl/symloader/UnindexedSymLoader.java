@@ -179,13 +179,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
-			int sleepCounter = 0;
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				sleepCounter++;
-				if (sleepCounter >= PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
-					Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-				}
+				checkSleep();
 				notifyReadLine(line.length());
 				
 				ch = line.charAt(0);

@@ -188,15 +188,10 @@ public final class BAM extends XAM {
 				progressUpdater.start();
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
-					int sleepCounter = 0;
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
 							sr = iter.next();
-							sleepCounter++;
-							if (sleepCounter >= PROGRESS_FREQUENCY) {
-								sleepCounter = 0;
-								Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
-							}
+							checkSleep();
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {
 								continue;
 							}

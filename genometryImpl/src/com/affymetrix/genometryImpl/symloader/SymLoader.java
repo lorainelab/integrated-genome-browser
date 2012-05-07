@@ -41,8 +41,9 @@ import java.util.logging.Logger;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public static final int PROGRESS_FREQUENCY = 1000;
+	public static final int PROGRESS_INTERVAL_TIME = 1000; // in milliseconds
 	public static final int SLEEP_TIME = 1; // in milliseconds
+	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
 	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call
@@ -496,7 +497,15 @@ public abstract class SymLoader {
 		}
 		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
 	}
-	
+
+	protected void checkSleep() throws InterruptedException {
+		long currentTime = System.nanoTime();
+		if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
+			Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+			lastSleepTime = currentTime;
+		}
+	}
+
 	public static void addNewSymLoadedListener(NewSymLoadedListener listener){
 		new_sym_loaded_listeners.add(listener);
 	}

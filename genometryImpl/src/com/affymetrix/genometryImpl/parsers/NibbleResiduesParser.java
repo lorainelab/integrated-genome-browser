@@ -308,15 +308,15 @@ public final class NibbleResiduesParser implements Parser {
 			);
 			progressUpdater.start();
 
-			int sleepCounter = 0;
+			long lastSleepTime = System.nanoTime();
 			// Only keep BUFSIZE characters in memory at one time
 			for (sequenceLoop.setValue(0);sequenceLoop.longValue()<(end-start) && (!Thread.currentThread().isInterrupted());sequenceLoop.add(BUFSIZE)) {
 				String outString = seq.getResidues((int)sequenceLoop.longValue(), Math.min((int)sequenceLoop.longValue()+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
-				sleepCounter++;
-				if (sleepCounter >= SymLoader.PROGRESS_FREQUENCY) {
-					sleepCounter = 0;
+				long currentTime = System.nanoTime();
+				if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
 					Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+					lastSleepTime = currentTime;
 				}
 			}
 			dos.flush();

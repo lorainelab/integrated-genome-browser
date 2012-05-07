@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -16,7 +15,6 @@ import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,7 +52,6 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
 	
 	private final JPopupMenu runningTasks;
-	private final Set<AbstractButton> popupHandler;
 	private JPanel outerBox;
 	private final Map<CThreadWorker<?,?>, Box> cThreadWorker2Box = new HashMap<CThreadWorker<?,?>, Box>();
 	
@@ -62,7 +59,6 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 		super("Handle Threads", "16x16/status/image-loading.png","22x22/status/image-loading.png");
 		runningTasks = new JPopupMenu();
 		runningTasks.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		popupHandler = new LinkedHashSet<AbstractButton>(1);
 		CThreadHolder.getInstance().addListener(this);
 	}
 
@@ -143,7 +139,6 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
 		Set<CThreadWorker<?,?>> workers = CThreadHolder.getInstance().getWorkers();
-		boolean enabled = workers.size() > 0;
 		CThreadWorker<?,?> w = (CThreadWorker<?,?>) cte.getSource();
 		if (cte.getState() == CThreadEvent.STARTED) {
 			workers.add(w);
@@ -151,24 +146,13 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 		} else {
 			workers.remove(w);
 			Application.getSingleton().removeNotLockedUpMsg(w.getMessage());
-     		if (runningTasks != null && runningTasks.isShowing()) {
-     			Box box = cThreadWorker2Box.get(w);
-     			if (box != null) {
-     				outerBox.remove(box);
-     				cThreadWorker2Box.remove(w);
-     				if (workers.size() == 0) {
-     					runningTasks.setVisible(false);
-     				}
-     				runningTasks.repaint();
-     			}
-     		}
 		}
-		
-		boolean nowEnabled = workers.size() > 0;
-		if(enabled != nowEnabled){
-			for(AbstractButton button : popupHandler){
-				button.setEnabled(nowEnabled);
-			}
+
+		if (workers.size() == 0 || !runningTasks.isShowing()) {
+			runningTasks.setVisible(false);
+		}
+		else {
+			actionPerformed(null);
 		}
 	}
 }

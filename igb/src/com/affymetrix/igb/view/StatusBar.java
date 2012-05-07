@@ -13,6 +13,9 @@ import javax.swing.GroupLayout.Alignment;
 import com.jidesoft.status.MemoryStatusBarItem;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.util.DisplaysError;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.CancelAllAction;
@@ -23,7 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 
-public final class StatusBar extends JPanel implements DisplaysError {
+public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
 	
 //	private static final ImageIcon closeIcon = CommonUtils.getInstance().getIcon("images/stop.png");
@@ -58,6 +61,7 @@ public final class StatusBar extends JPanel implements DisplaysError {
 		mainCancel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 		mainCancel.setHideActionText(true);
 //		ThreadHandler.getThreadHandler().addPopupHandler(mainCancel);
+		CThreadHolder.getInstance().addListener(this);
 		progressBar.addMouseListener(
 			new MouseAdapter() {
 			    public void mouseClicked(MouseEvent e) {
@@ -122,8 +126,9 @@ public final class StatusBar extends JPanel implements DisplaysError {
 	}
 
 	public void displayProgress(boolean b) {
-//		progressBar.setVisible(b);
-		progressBar.setEnabled(b);
+		mainCancel.setVisible(b);
+		progressBar.setVisible(b);
+//		progressBar.setEnabled(b);
 		progressBar.setIndeterminate(b);
 	}
 
@@ -157,5 +162,10 @@ public final class StatusBar extends JPanel implements DisplaysError {
 				timer.cancel();
             }
         }, 5000, 5000);
+	}
+
+	@Override
+	public void heardThreadEvent(CThreadEvent cte) {
+		displayProgress(CThreadHolder.getInstance().getWorkers().size() > 0);
 	}
 }

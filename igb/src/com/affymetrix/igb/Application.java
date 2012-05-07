@@ -74,7 +74,6 @@ public abstract class Application {
 	 */
 	private synchronized void setNotLockedUpStatus(String s) {
 		status_bar.setStatus(s);
-		status_bar.displayProgress(s!=null);
 	}
 	
 	/** Sets the text in the status bar.

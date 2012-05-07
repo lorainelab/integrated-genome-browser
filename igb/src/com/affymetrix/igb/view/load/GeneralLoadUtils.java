@@ -62,13 +62,13 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -1129,8 +1129,8 @@ public final class GeneralLoadUtils {
 	}
 
 	public static void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean loadAsTrack) {
-		if (ScriptFileLoader.getInstance().isScript(uri.toString())) {
-			ScriptFileLoader.getInstance().runScript(uri.toString());
+		if (RecordPlaybackHolder.getInstance().isScript(uri.toString())) {
+			RecordPlaybackHolder.getInstance().runScript(uri.toString());
 			return;
 		}
 

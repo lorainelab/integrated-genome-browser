@@ -66,7 +66,6 @@ import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBUtils;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.tiers.TrackStyle;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
@@ -285,7 +284,6 @@ public final class IGB extends Application
 		});
 
 		WebLink.autoLoad();
-		commandLineBatchFileStr = ScriptFileLoader.getInstance().getScriptFileStr(args);	// potentially used in GeneralLoadView
 
 		GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
 		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);

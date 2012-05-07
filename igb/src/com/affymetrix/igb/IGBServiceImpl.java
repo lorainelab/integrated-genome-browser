@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.action.LoadResidueAction;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
@@ -41,7 +42,6 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -155,12 +155,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void doActions(String batchFileStr) {
-		ScriptFileLoader.getInstance().runScript(batchFileStr);
+		RecordPlaybackHolder.getInstance().runScript(batchFileStr);
 	}
 
 	@Override
 	public void doSingleAction(String line) {
-		ScriptFileLoader.getInstance().doSingleAction(line);
+		RecordPlaybackHolder.getInstance().doSingleAction(line);
 	}
 
 	@Override

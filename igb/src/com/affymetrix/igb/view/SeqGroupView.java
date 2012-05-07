@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -40,7 +41,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
@@ -786,7 +786,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 				IGB.commandLineBatchFileStr = null;	// we're not using this again!
 				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
-				ScriptFileLoader.getInstance().runScript(batchFile);
+				RecordPlaybackHolder.getInstance().runScript(batchFile);
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;

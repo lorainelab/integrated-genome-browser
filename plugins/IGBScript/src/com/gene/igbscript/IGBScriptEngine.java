@@ -28,12 +28,13 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genoviz.swing.recordplayback.SingleActionDoer;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 /**
  * java ScriptEngine to run scripts written in IGB scripting language
  */
-public class IGBScriptEngine implements ScriptEngine {
+public class IGBScriptEngine implements ScriptEngine, SingleActionDoer {
     
     private static final String __ENGINE_VERSION__ = "V0.01a";
     private static final String IGB_NAME = "IGBLanguage";

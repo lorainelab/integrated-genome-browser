@@ -62,7 +62,8 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
  */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
-    String[] args;
+    private String[] args;
+    private String commandLineBatchFileStr;
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
@@ -75,7 +76,7 @@ public class Activator implements BundleActivator {
     			System.out.println(APP_NAME + " " + APP_VERSION_FULL);
 				System.out.println("Options:");
 				System.out.println("-offline - set the URL caching to offline");
-				System.out.println("-scriptfile - load a script file");
+				System.out.println("-" + IGBService.SCRIPTFILETAG + " - load a script file");
 				System.out.println("-convert - convert the fasta file to bnib");
 				System.out.println("-clrprf - clear the preferences");
 				System.out.println("-exit - exit the program after completing above functions");
@@ -129,6 +130,7 @@ public class Activator implements BundleActivator {
     		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
 				System.exit(0);
     		}
+    		commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IGBService.SCRIPTFILETAG, args);
         }
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
@@ -231,7 +233,8 @@ public class Activator implements BundleActivator {
     	);
         IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IGB igb = new IGB();
-		
+        IGB.commandLineBatchFileStr = commandLineBatchFileStr;
+
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		

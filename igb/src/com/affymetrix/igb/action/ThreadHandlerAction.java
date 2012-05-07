@@ -38,6 +38,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 /**
  *
  * @author hiralv
+ * this Action will display a popup menu of all the running threads with a
+ * progress bar and cancel button for each thread.
  */
 public class ThreadHandlerAction extends GenericAction implements CThreadListener{
 	private static final long serialVersionUID = 1L;

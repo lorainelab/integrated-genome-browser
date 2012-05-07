@@ -2,12 +2,10 @@ package com.affymetrix.igb.util;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.ReportBugAction;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.InfoLabel;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -50,49 +48,28 @@ import com.affymetrix.igb.action.WebLinksAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.action.ColorSchemeChoiceAction;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 /**
  *
  * @author hiralv
  */
-public class IGBUtils {
-
-	public static JPanel setInfoLabel(JComponent component, String tooltip){
-		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("images/info.png"));
-		infolabel.setToolTipText(tooltip);
-		
-		JPanel pane = new JPanel();
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		pane.add(component, c);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 0;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.insets = new Insets(0,0,10,0);  
-		pane.add(infolabel, c);
-		
-		return pane;
+public class MainMenuUtil {
+	private static final MainMenuUtil instance = new MainMenuUtil();
+	private MainMenuUtil() {
+		super();
 	}
-
-	public static void loadMenu(JMenuBar menuBar, String id) {
+	public static MainMenuUtil getInstance() {
+		return instance;
+	}
+	public void loadMenu(JMenuBar menuBar, String id) {
 		// load the menu from the Preferences
 
 		Preferences mainMenuPrefs = PreferenceUtils.getAltNode(PreferenceUtils.MENU_NODE_NAME);
@@ -106,11 +83,11 @@ public class IGBUtils {
 				}
 			}
 		} catch (BackingStoreException x) {
-			Logger.getLogger(IGBUtils.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
+			Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
 
-	private static void fileMenu(JMenuBar menuBar, String id) {
+	private void fileMenu(JMenuBar menuBar, String id) {
 		JRPMenu file_menu = MenuUtil.getRPMenu(menuBar, id + "_main_fileMenu", BUNDLE.getString("fileMenu"));
 		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_loadFile", LoadFileAction.getAction()));
@@ -128,7 +105,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exit", ExitAction.getAction()));
 	}
 
-	private static void editMenu(JMenuBar menuBar, String id) {
+	private void editMenu(JMenuBar menuBar, String id) {
 		JRPMenu edit_menu = MenuUtil.getRPMenu(menuBar, id + "_main_editMenu", BUNDLE.getString("editMenu"));
 		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_copyResidues", CopyResiduesAction.getAction()));
@@ -143,7 +120,7 @@ public class IGBUtils {
 		edit_menu.add(select_menu);
 	}
 
-	private static void viewMenu(JMenuBar menuBar, String id) {
+	private void viewMenu(JMenuBar menuBar, String id) {
 		JRPMenu view_menu = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu", BUNDLE.getString("viewMenu"));
 		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
 		JRPMenu strands_menu = new JRPMenu(id + "_main_viewMenu_strands", "Strands");
@@ -169,7 +146,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction()));
 	}
 
-	private static void toolMenu(JMenuBar menuBar, String id) {
+	private void toolMenu(JMenuBar menuBar, String id) {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
@@ -177,7 +154,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_saveScript", SaveScriptAction.getAction()));
 	}
 
-	private static void helpMenu(JMenuBar menuBar, String id) {
+	private void helpMenu(JMenuBar menuBar, String id) {
 		JRPMenu help_menu = MenuUtil.getRPMenu(menuBar, id + "_main_helpMenu", BUNDLE.getString("helpMenu"));
 		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_aboutIGB", AboutIGBAction.getAction()));
@@ -188,7 +165,7 @@ public class IGBUtils {
 		MenuUtil.addToMenu(help_menu, new JRPMenuItem(id + "_main_helpMenu_showConsole", ShowConsoleAction.getAction()));
 	}
 
-	private static void loadDefaultMenu(JMenuBar menuBar, String id) {
+	private void loadDefaultMenu(JMenuBar menuBar, String id) {
 		fileMenu(menuBar, id);
 		editMenu(menuBar, id);
 		viewMenu(menuBar, id);
@@ -196,7 +173,7 @@ public class IGBUtils {
 		helpMenu(menuBar, id);
 	}
 
-	private static void loadTopMenu(JMenuBar menuBar, String id, Preferences menuPrefs) {
+	private void loadTopMenu(JMenuBar menuBar, String id, Preferences menuPrefs) {
 		String key = menuPrefs.get("menu", "???");
 		JRPMenu menu = MenuUtil.getRPMenu(menuBar, id + "_main_" + key, BUNDLE.getString(key));
 		menu.setMnemonic(BUNDLE.getString(key + "Mnemonic").charAt(0));
@@ -205,11 +182,11 @@ public class IGBUtils {
 				loadMenuItem(menu, id, menuPrefs.node(childMenu));
 			}
 		} catch (BackingStoreException x) {
-			Logger.getLogger(IGBUtils.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
+			Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
 
-	private static void loadMenuItem(JRPMenu menu, String id, Preferences menuItemPrefs) {
+	private void loadMenuItem(JRPMenu menu, String id, Preferences menuItemPrefs) {
 		if (menuItemPrefs.get("separator", null) != null) {
 			menu.addSeparator();
 		} else if (menuItemPrefs.get("menu", null) != null) {
@@ -217,11 +194,11 @@ public class IGBUtils {
 		} else if (menuItemPrefs.get("item", null) != null) {
 			loadLeafItem(menu, menuItemPrefs);
 		} else {
-			Logger.getLogger(IGBUtils.class.getName()).log(Level.SEVERE, "error in menu preferences definition");
+			Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error in menu preferences definition");
 		}
 	}
 
-	private static void loadSubMenu(JRPMenu menu, String id, Preferences menuPrefs) {
+	private void loadSubMenu(JRPMenu menu, String id, Preferences menuPrefs) {
 		String key = menuPrefs.get("menu", "???");
 		JRPMenu submenu = new JRPMenu(id + "_main_" + key, BUNDLE.getString(key));
 		menu.add(submenu);
@@ -230,11 +207,11 @@ public class IGBUtils {
 				loadMenuItem(submenu, id, menuPrefs.node(childMenu));
 			}
 		} catch (BackingStoreException x) {
-			Logger.getLogger(IGBUtils.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
+			Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
 
-	private static void loadLeafItem(JRPMenu menu, Preferences menuItemPrefs) {
+	private void loadLeafItem(JRPMenu menu, Preferences menuItemPrefs) {
 		String className = menuItemPrefs.get("item", null);
 		if (className.indexOf('.') == -1) {
 			className = "com.affymetrix.igb.action." + className; // default
@@ -251,7 +228,7 @@ public class IGBUtils {
 				MenuUtil.addToMenu(menu, item);
 			}
 		} catch (Exception x) {
-			Logger.getLogger(IGBUtils.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
+			Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
 		}
 	}
 }

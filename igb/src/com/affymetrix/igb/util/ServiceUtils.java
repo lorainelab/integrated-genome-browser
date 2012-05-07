@@ -32,34 +32,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A way of allowing IGB to be controlled via hyperlinks. (This used to be an
- * implementation of HttpServlet, but it isn't now.)
- * <pre>
- *  Can specify:
- *      genome version
- *      chromosome
- *      start of region in view
- *      end of region in view
- *  and bring up correct version, chromosome, and region with (at least)
- *      annotations that can be loaded via QuickLoaderView
- *  If the currently loaded genome doesn't match the one requested, might
- *      ask the user before switching.
- *
- * @version $Id: UnibrowControlServlet.java 7505 2011-02-10 20:27:35Z hiralv $
- * </pre>
+ * @version $Id: ServiceUtils.java 7505 2011-02-10 20:27:35Z hiralv $
  */
-public final class UnibrowControlServlet {
+public final class ServiceUtils {
 
-	private static final UnibrowControlServlet instance = new UnibrowControlServlet();
+	private static final ServiceUtils instance = new ServiceUtils();
 
-	private UnibrowControlServlet() {
+	private ServiceUtils() {
 		super();
 	}
 
-	public static final UnibrowControlServlet getInstance() {
+	public static final ServiceUtils getInstance() {
 		return instance;
 	}
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
 		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
@@ -68,7 +53,7 @@ public final class UnibrowControlServlet {
 		URI uri = URI.create(feature_url);
 		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
 		if (gVersion == null && gServer.serverType != ServerTypeI.LocalFiles) {
-			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+			Logger.getLogger(ServiceUtils.class.getName()).log(
 					Level.WARNING, "Couldn''t find version {0} in server {1}",
 					new Object[]{seqGroup.getID(), gServer.serverName});
 			return null;
@@ -86,7 +71,7 @@ public final class UnibrowControlServlet {
 
 			if (FileTypeHolder.getInstance().getFileTypeHandler(extension) == null) {
 				ErrorHandler.errorPanel("File type " + extension + " is not supported");
-				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+				Logger.getLogger(ServiceUtils.class.getName()).log(
 						Level.SEVERE, "File type {0} is not supported", extension);
 				return null;
 			}
@@ -109,7 +94,7 @@ public final class UnibrowControlServlet {
 	public GenericServer loadServer(String server_url) {
 		GenericServer gServer = ServerList.getServerInstance().getServer(server_url);
 		if (gServer == null) {
-			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+			Logger.getLogger(ServiceUtils.class.getName()).log(
 					Level.SEVERE, "Couldn''t find server {0}. Creating a local server.", server_url);
 
 			gServer = ServerList.getServerInstance().getLocalFilesServer();
@@ -124,6 +109,7 @@ public final class UnibrowControlServlet {
 
 	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
@@ -164,7 +150,7 @@ public final class UnibrowControlServlet {
 			sym_list.addAll(group.findSyms(id));
 		}
 
-		GenometryModel.getGenometryModel().setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);
+		GenometryModel.getGenometryModel().setSelectedSymmetriesAndSeq(sym_list, ServiceUtils.class);
 	}
 
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {

@@ -43,7 +43,7 @@ import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.shared.TrackUtils;
-import com.affymetrix.igb.util.UnibrowControlServlet;
+import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -165,17 +165,17 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void performSelection(String selectParam) {
-		UnibrowControlServlet.getInstance().performSelection(selectParam);
+		ServiceUtils.getInstance().performSelection(selectParam);
 	}
 
 	@Override
 	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
-		return UnibrowControlServlet.getInstance().getFeature(gServer, feature_url);
+		return ServiceUtils.getInstance().getFeature(gServer, feature_url);
 	}
 
 	@Override
 	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
-		return UnibrowControlServlet.getInstance().determineAndSetGroup(version);
+		return ServiceUtils.getInstance().determineAndSetGroup(version);
 	}
 
 	@Override
@@ -352,7 +352,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public GenericServer loadServer(String server_url) {
-		return UnibrowControlServlet.getInstance().loadServer(server_url);
+		return ServiceUtils.getInstance().loadServer(server_url);
 	}
 
 	@Override
@@ -468,6 +468,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {
-		UnibrowControlServlet.getInstance().selectFeatureAndCenterZoomStripe(selectParam);
+		ServiceUtils.getInstance().selectFeatureAndCenterZoomStripe(selectParam);
 	}
 }

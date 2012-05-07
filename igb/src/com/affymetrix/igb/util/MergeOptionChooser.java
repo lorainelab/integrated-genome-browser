@@ -2,18 +2,24 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genoviz.swing.InfoLabel;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.awt.Insets;
 import java.awt.event.*;
 
 import javax.swing.*;
+
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /** A JFileChooser that has a checkbox for whether you want to merge annotations.
@@ -82,11 +88,32 @@ public final class MergeOptionChooser extends JRPFileChooser {
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
 		box.add(Box.createHorizontalStrut(5));
-		box.add(IGBUtils.setInfoLabel(speciesCB, "Choose or enter species"));
+		box.add(setInfoLabel(speciesCB, "Choose or enter species"));
 	
 		box.add(Box.createHorizontalStrut(5));
-		box.add(IGBUtils.setInfoLabel(versionCB, "Choose or enter version"));
+		box.add(setInfoLabel(versionCB, "Choose or enter version"));
 		
+	}
+
+	private JPanel setInfoLabel(JComponent component, String tooltip){
+		JLabel infolabel = new InfoLabel(CommonUtils.getInstance().getIcon("images/info.png"));
+		infolabel.setToolTipText(tooltip);
+		
+		JPanel pane = new JPanel();
+		pane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		pane.add(component, c);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.insets = new Insets(0,0,10,0);  
+		pane.add(infolabel, c);
+		
+		return pane;
 	}
 
 	@Override

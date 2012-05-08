@@ -54,7 +54,7 @@ public class DASFeatureParserTest {
 		DASFeatureParser parser = new DASFeatureParser();
 		parser.setAnnotateSeq(false);
 
-		Collection<DASSymmetry> results = null;
+		List<DASSymmetry> results = null;
 		try {
 			istr = new FileInputStream(test_file_name_1);
 			assertNotNull(istr);

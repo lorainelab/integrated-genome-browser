@@ -45,6 +45,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
+import java.util.*;
 
 public class Das2ServerType implements ServerTypeI {
 	enum FORMAT {
@@ -275,19 +276,19 @@ public class Das2ServerType implements ServerTypeI {
 	 * @return true or false
 	 */
 	@Override
-	public boolean loadFeatures(SeqSpan span, GenericFeature feature) {
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
 		final Das2Type dtype = (Das2Type) feature.typeObj;
 		final Das2Region region = ((Das2VersionedSource) feature.gVersion.versionSourceObj).getSegment(span.getBioSeq());
 
 		if (dtype == null || region == null) {
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		}
 		
 		return loadSpan(feature, span, region, dtype);
 	}
 
 
-    private boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
+    private List<? extends SeqSymmetry>  loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 
         String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
@@ -308,7 +309,7 @@ public class Das2ServerType implements ServerTypeI {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 		}
 		
-		return false;
+		return Collections.<SeqSymmetry>emptyList();
     }
 
    private String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
@@ -352,7 +353,7 @@ public class Das2ServerType implements ServerTypeI {
 	  return track2Results;
  }
 
-    private boolean LoadFeaturesFromQuery(
+    private List<? extends SeqSymmetry> LoadFeaturesFromQuery(
             GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
         /**
@@ -365,7 +366,7 @@ public class Das2ServerType implements ServerTypeI {
 		Thread thread = Thread.currentThread();
 		
 		if(thread.isInterrupted()){
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		}
 		
         try {
@@ -375,7 +376,7 @@ public class Das2ServerType implements ServerTypeI {
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
-                    return false;
+                    return Collections.<SeqSymmetry>emptyList();
                 }
                 // for now, assume that when caching, content type returned is same as content type requested
                 content_subtype = format;
@@ -395,7 +396,7 @@ public class Das2ServerType implements ServerTypeI {
 
                 if (response_code >= 400 && response_code < 600) {
                     System.out.println("Server returned error code, aborting response parsing!");
-                    return false;
+                    return Collections.<SeqSymmetry>emptyList();
                 }
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
@@ -420,7 +421,7 @@ public class Das2ServerType implements ServerTypeI {
 			if (fileTypeHandler == null) {
 				Logger.getLogger(SymLoader.class.getName()).log(
 					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
-				return false;
+				return Collections.<SeqSymmetry>emptyList();
 			}
 			else {
 				// Create an AnnotStyle so that we can automatically set the
@@ -454,14 +455,14 @@ public class Das2ServerType implements ServerTypeI {
 
 			if(thread.isInterrupted()){
 				feats = null;
-				return false;
+				return Collections.<SeqSymmetry>emptyList();
 			}
 			
             return SymLoader.splitFilterAndAddAnnotation(span, feats, feature);
 			
         } catch (Exception ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		} finally {
             GeneralUtils.safeClose(bis);
             GeneralUtils.safeClose(istr);

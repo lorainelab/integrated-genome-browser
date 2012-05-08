@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -363,7 +364,7 @@ public class QuickloadServerType implements ServerTypeI {
 	}
 
 	@Override
-	public boolean loadFeatures(SeqSpan span, GenericFeature feature) throws IOException {
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws IOException {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}
 

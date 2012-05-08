@@ -6,12 +6,7 @@ import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.io.InputStream;
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +43,7 @@ public final class DASFeatureParser implements Parser {
 		this.annotateSeq = annotateSeq;
 	}
 	
-	public Collection<DASSymmetry> parse(InputStream s, AnnotatedSeqGroup seqGroup) throws XMLStreamException {
+	public List<DASSymmetry> parse(InputStream s, AnnotatedSeqGroup seqGroup) throws XMLStreamException {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLEventReader reader = factory.createXMLEventReader(s);
 		XMLEvent current;
@@ -76,7 +71,7 @@ public final class DASFeatureParser implements Parser {
 			}
 		}
 
-		return groupMap.values();
+		return new ArrayList<DASSymmetry>(groupMap.values());
 	}
 
 	/**

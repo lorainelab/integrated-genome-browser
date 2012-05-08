@@ -39,6 +39,7 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.VersionDiscoverer;
+import java.util.*;
 
 public class DasServerType implements ServerTypeI {
 	/** boolean to indicate should script continue to run if error occurs **/
@@ -260,7 +261,7 @@ public class DasServerType implements ServerTypeI {
 	 * @return true if data was loaded
 	 */
 	@Override
-	public boolean loadFeatures(SeqSpan span, GenericFeature feature) {
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) {
 
 		BioSeq current_seq = span.getBioSeq();
 		Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
@@ -278,27 +279,28 @@ public class DasServerType implements ServerTypeI {
 		//style.setFeature(feature);
 
 		URI uri = builder.build();
-		Collection<DASSymmetry> dassyms = parseData(uri);
+		List<DASSymmetry> dassyms = parseData(uri);
 		// Special case : When a feature make more than one Track, set feature for each track.
 		if (dassyms != null) {
 			if (Thread.currentThread().isInterrupted()) {
 				dassyms = null;
-				return false;
+				return Collections.<SeqSymmetry>emptyList();
 			}
-			SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
+			
+			SymLoader.addAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
 			for (DASSymmetry sym : dassyms) {
 				feature.addMethod(sym.getType());
 			}
 		}
 		
-		return (dassyms != null && !dassyms.isEmpty());
+		return dassyms;
 	}
 
 	/**
 	 *  Opens a binary data stream from the given uri and adds the resulting
 	 *  data.
 	 */
-	private Collection<DASSymmetry> parseData(URI uri) {
+	private List<DASSymmetry> parseData(URI uri) {
 		Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
 		InputStream stream = null;
 		List<String> list;

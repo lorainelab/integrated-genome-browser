@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 /**
  * interface that represents one server type that IGB can
@@ -96,10 +97,10 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
 	/**
 	 * @param span span containing the range for which you want annotations.
 	 * @param feature the generic feature that is to be loaded from the server.
-	 * @return true if data was loaded, false otherwise
+	 * @return List<? extends SeqSymmetry> list of data that were loaded.
 	 * @throws IOException
 	 */
-	public boolean loadFeatures(SeqSpan span, GenericFeature feature) throws IOException;
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature) throws IOException;
 	/**
 	 * if user authorization is optional for this ServerType
 	 * @return if user authorization is optional for this ServerType

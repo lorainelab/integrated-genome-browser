@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,12 +105,12 @@ public class Delegate extends QuickLoadSymLoader {
     }
 	
 	@Override
-	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+	public List<? extends SeqSymmetry> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError, IOException {
 		boolean notUpdatable = false;
 
 		if (dps == null || dps.isEmpty()) {
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		}
 
 		for (DelegateParent dp : dps) {
@@ -124,7 +125,7 @@ public class Delegate extends QuickLoadSymLoader {
 					Thread.sleep(500);
 				} catch (InterruptedException ex) {
 					Logger.getLogger(Delegate.class.getName()).log(Level.SEVERE, null, ex);
-					return false;
+					return Collections.<SeqSymmetry>emptyList();
 				}
 			}
 		}
@@ -137,16 +138,16 @@ public class Delegate extends QuickLoadSymLoader {
 			operator = null;
 			strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
 			feature.setLoadStrategy(LoadUtils.LoadStrategy.NO_LOAD);
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		}
 
 		return super.loadFeatures(overlapSpan, feature);
 	}
 	
 	@Override
-	protected boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+	protected List<? extends SeqSymmetry> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
 		if (results == null || results.isEmpty()) {
-			return false;
+			return  Collections.<SeqSymmetry>emptyList();
 		}
 		
 		if (results.get(0) instanceof GraphSym) {
@@ -167,7 +168,7 @@ public class Delegate extends QuickLoadSymLoader {
 				}
 			}
 			
-			return true;
+			return results;
 		}
 
 		
@@ -183,7 +184,7 @@ public class Delegate extends QuickLoadSymLoader {
 		}
 		
 		feature.addMethod(uri.toString());
-		return true;
+		return results;
 	}
 	
 	public static class DelegateParent{

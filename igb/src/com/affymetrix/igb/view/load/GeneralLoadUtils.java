@@ -831,7 +831,7 @@ public final class GeneralLoadUtils {
 
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 
-			if (feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature)) {
+			if (!feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature).isEmpty()) {
 				result = true;
 			}
 

@@ -3,7 +3,6 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.NewSymLoadedEvent;
 import com.affymetrix.genometryImpl.event.NewSymLoadedListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
@@ -388,32 +387,34 @@ public abstract class SymLoader {
 	  return seq2Results;
   }
 
-	public static boolean splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
+	public static List<? extends SeqSymmetry> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
 		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
+		List<SeqSymmetry> added = new ArrayList<SeqSymmetry>();
+		
 		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
+			
+			SeqSymmetry originalRequestSym = feature.getRequestSym();
+			List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, entry.getValue(), span.getBioSeq());	
+			if (filteredFeats.isEmpty()) {
+				continue;
+			}
+			
+			added.addAll(filteredFeats);
+			SymLoader.addAnnotations(filteredFeats, span, feature.getURI(), feature);
 			// Some format do not annotate. So it might not have method name. e.g bgn
 			if (entry.getKey() != null) {
 				feature.addMethod(entry.getKey());
 			}
 		}
 
-		return (entries != null && !entries.isEmpty());
+		return added;
 	}
 	
-	public static void filterAndAddAnnotations(
-			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
-		if (feats == null || feats.isEmpty()) {
-			return;
-		}
-		SeqSymmetry originalRequestSym = feature.getRequestSym();
-		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());	
-		if (filteredFeats.isEmpty()) {
-			return;
-		}
+	public static void addAnnotations(
+			List<? extends SeqSymmetry> filteredFeats, SeqSpan span, URI uri, GenericFeature feature) {
 		if (filteredFeats.get(0) instanceof GraphSym) {
 			GraphSym graphSym = (GraphSym)filteredFeats.get(0);
 			if (filteredFeats.size() == 1 && graphSym.isSpecialGraph()) {
@@ -438,11 +439,6 @@ public abstract class SymLoader {
 			seq.addAnnotation(feat, feature.getExtension());
 		}
 		
-		// Fire event that new syms were loaded
-		NewSymLoadedEvent nsye = new NewSymLoadedEvent(feature, seq, filteredFeats);
-		for(NewSymLoadedListener listener : new_sym_loaded_listeners){
-			listener.newSymLoaded(nsye);
-		}
 	}
 
 

@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 public class LocalFilesServerType implements ServerTypeI {
 	private static final String name = "Local Files";
@@ -94,7 +94,7 @@ public class LocalFilesServerType implements ServerTypeI {
 	}
 
 	@Override
-	public boolean loadFeatures(SeqSpan span, GenericFeature feature)
+	public List<? extends SeqSymmetry> loadFeatures(SeqSpan span, GenericFeature feature)
 			throws IOException {
 		return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
 	}

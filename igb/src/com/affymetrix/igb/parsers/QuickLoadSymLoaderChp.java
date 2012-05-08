@@ -26,18 +26,17 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 		}
 	}
 	
-	protected boolean loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+	protected List<? extends SeqSymmetry> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 		throws OutOfMemoryError, Exception {
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		addMethodsToFeature(feature, QuickLoadSymLoaderChp.this.getGenome());
-		return true;
+		return QuickLoadSymLoaderChp.this.getGenome();
 	}
 
 	protected void addAllSymmetries(final GenericFeature feature, List<? extends SeqSymmetry> results)
 			throws OutOfMemoryError {
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		addMethodsToFeature(feature, results);
-		return;
 	}
 
 	//Only used for "chp"

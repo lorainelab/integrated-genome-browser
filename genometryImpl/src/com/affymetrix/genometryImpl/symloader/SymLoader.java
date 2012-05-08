@@ -501,7 +501,7 @@ public abstract class SymLoader {
 	protected void checkSleep() throws InterruptedException {
 		long currentTime = System.nanoTime();
 		if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
-			Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+/////			Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
 			lastSleepTime = currentTime;
 		}
 	}

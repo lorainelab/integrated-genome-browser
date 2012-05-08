@@ -321,7 +321,13 @@ public final class TrackAdjusterTab
 					getViewFactory(style.getViewMode());
 			String viewModeName = viewModePrefix + mode.getName();
 			ViewMode viewMode = ViewMode.string2ViewMode.get(viewModeName);
-			setDisplayTypeButton(viewMode2DisplayType.get(viewMode));
+			DisplayType type = viewMode2DisplayType.get(viewMode);
+			if (type == null) {
+				//Should fix a reported bug, but could not reproduce to test.
+				disableDisplayButtons(true, true);
+				return;
+			}
+			setDisplayTypeButton(type);
 			setEnabledDisplayButtonsBySelection();
 
 		} else if (selectedTrackCount > 1) {
@@ -345,6 +351,9 @@ public final class TrackAdjusterTab
 	}
 
 	private void setDisplayTypeButton(DisplayType type) {
+		if (type == null) {
+			return;
+		}
 		switch (type) {
 			case ANNOTATION:
 				annotationB.setSelected(true);

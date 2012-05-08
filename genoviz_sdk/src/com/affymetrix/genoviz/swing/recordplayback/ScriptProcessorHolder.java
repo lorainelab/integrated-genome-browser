@@ -9,8 +9,7 @@ public class ScriptProcessorHolder {
 	private Map<String, ScriptProcessor> scriptProcessors = new HashMap<String, ScriptProcessor>();
 	private ScriptProcessorHolder() {
 		super();
-		addScriptProcessor(new JavascriptScriptProcessor());
-		addScriptProcessor(new PythonScriptProcessor());
+		addScriptProcessor(new JavascriptScriptProcessor()); // guaranteed to be available
 	}
 	public static ScriptProcessorHolder getInstance() {
 		return instance;
@@ -26,8 +25,17 @@ public class ScriptProcessorHolder {
 
 	public String[] getScriptExtensions() {
 		ArrayList<String> scriptExtensions = new ArrayList<String>();
-		scriptExtensions.add("igb");
 		scriptExtensions.addAll(scriptProcessors.keySet());
 		return scriptExtensions.toArray(new String[scriptExtensions.size()]);
+	}
+
+	public String[] getSaveScriptExtensions() {
+		ArrayList<String> saveScriptExtensions = new ArrayList<String>();
+		for (String extension : scriptProcessors.keySet()) {
+			if (scriptProcessors.get(extension).canWriteScript()) {
+				saveScriptExtensions.add(extension);
+			}
+		}
+		return saveScriptExtensions.toArray(new String[saveScriptExtensions.size()]);
 	}
 }

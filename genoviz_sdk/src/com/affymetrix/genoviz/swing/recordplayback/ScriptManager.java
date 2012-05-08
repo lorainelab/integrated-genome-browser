@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -29,7 +28,6 @@ public class ScriptManager {
 	private static final ScriptManager instance = new ScriptManager();
 	private List<Operation> operations = new ArrayList<Operation>();
 	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
-	private Map<String, ScriptEngineFactory> ext2ScriptEngineFactory = new HashMap<String, ScriptEngineFactory>();
 	private boolean mouseDown;
 	public static ScriptManager getInstance() {
 		return instance;
@@ -125,8 +123,9 @@ public class ScriptManager {
 		}
 		String extension = fileName.substring(pos + 1);
 		ScriptEngine engine = engineMgr.getEngineByExtension(extension);
-		if (engine == null && ext2ScriptEngineFactory.get(extension) != null) {
-			engine = ext2ScriptEngineFactory.get(extension).getScriptEngine();
+		ScriptProcessor scriptProcessor = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
+		if (scriptProcessor != null) {
+			engine = scriptProcessor.getScriptEngineFactory().getScriptEngine();
 		}
 		return engine;
 	}
@@ -181,12 +180,6 @@ public class ScriptManager {
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
 		for (JRPWidget widget : widgets.values()) {
 			decorator.widgetAdded(widget);
-		}
-	}
-
-	public void addScriptEngineFactory(List<String> extensions, ScriptEngineFactory scriptEngineFactory) {
-		for (String extension : extensions) {
-			ext2ScriptEngineFactory.put(extension, scriptEngineFactory);
 		}
 	}
 }

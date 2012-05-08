@@ -1,5 +1,8 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+
 public class JavascriptScriptProcessor implements ScriptProcessor {
 	private static final String EXTENSION = "js";
 
@@ -18,5 +21,22 @@ public class JavascriptScriptProcessor implements ScriptProcessor {
 	@Override
 	public String getCommand(Operation operation) {
 		return "sm.getWidget(\"" + operation.getId() + "\")." + operation.toString() + ";";
+	}
+
+	@Override
+	public ScriptEngineFactory getScriptEngineFactory() {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		ScriptEngineManager scriptEngineManager = new ScriptEngineManager(loader);
+		for (ScriptEngineFactory factory : scriptEngineManager.getEngineFactories()) {
+			if (factory.getExtensions().contains("js")) {
+				return factory;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean canWriteScript() {
+		return true;
 	}
 }

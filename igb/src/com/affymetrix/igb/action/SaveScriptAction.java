@@ -42,7 +42,7 @@ public class SaveScriptAction extends GenericAction {
 		JRPFileChooser chooser = new JRPFileChooser("saveScript");
 		chooser.setMultiSelectionEnabled(false);
 		chooser.addChoosableFileFilter(new UniFileFilter(
-				ScriptProcessorHolder.getInstance().getScriptExtensions(),
+				ScriptProcessorHolder.getInstance().getSaveScriptExtensions(),
 				"Script File"));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.rescanCurrentDirectory();

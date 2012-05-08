@@ -19,22 +19,31 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private static Color IGBTrackMakerColor = Color.YELLOW;
 	private int position;
 	private static final int placement = CENTER;
-	private final boolean isIGBTrack;
-	
+	private boolean isIGBTrack;
+	private final TierGlyph reference_tier;
+
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + getCoordBox());
 	}
 
 	/**
-	 *  Constructor.
-	 *  @param reference_tier the tier in the main part of the AffyLabelledTierMap,
-	 *    must not be null
+	 * Constructor.
+	 *
+	 * @param reference_tier the tier in the main part of the
+	 * AffyLabelledTierMap, must not be null
 	 */
-	public TierLabelGlyph(TierGlyph reference_tier, int position) {
-		this.setInfo(reference_tier);
+	public TierLabelGlyph(TierGlyph tier, int position) {
+		reference_tier = tier;
+		setInfo(reference_tier);
 		setPosition(position);
-		isIGBTrack = Delegate.EXT.equalsIgnoreCase(reference_tier.getAnnotStyle().getFileType());
+		isIGBTrack = Delegate.EXT.equalsIgnoreCase(
+				reference_tier.getAnnotStyle().getFileType());
+	}
+
+	public void setShowIGBTrack(boolean b) {
+		isIGBTrack = b && Delegate.EXT.equalsIgnoreCase(
+				reference_tier.getAnnotStyle().getFileType());
 	}
 
 	public void setPosition(int position){

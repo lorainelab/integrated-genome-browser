@@ -11,42 +11,8 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.AboutIGBAction;
-import com.affymetrix.igb.action.AutoLoadThresholdAction;
-import com.affymetrix.igb.action.AutoScrollAction;
-import com.affymetrix.igb.action.ClampViewAction;
-import com.affymetrix.igb.action.CloseTracksAction;
-import com.affymetrix.igb.action.CopyResiduesAction;
-import com.affymetrix.igb.action.DocumentationAction;
-import com.affymetrix.igb.action.DrawCollapseControlAction;
-import com.affymetrix.igb.action.ExitAction;
-import com.affymetrix.igb.action.ExportFileAction;
-import com.affymetrix.igb.action.ExportImageAction;
-import com.affymetrix.igb.action.ForumHelpAction;
-import com.affymetrix.igb.action.LoadFileAction;
-import com.affymetrix.igb.action.LoadRefTrackAction;
-import com.affymetrix.igb.action.LoadURLAction;
-import com.affymetrix.igb.action.NextSearchSpanAction;
-import com.affymetrix.igb.action.PreferencesAction;
-import com.affymetrix.igb.action.PrintAction;
-import com.affymetrix.igb.action.PrintFrameAction;
-import com.affymetrix.igb.action.RequestFeatureAction;
-import com.affymetrix.igb.action.RunScriptAction;
-import com.affymetrix.igb.action.SaveScriptAction;
+import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.SelectAllAction;
-import com.affymetrix.igb.action.ShowConsoleAction;
-import com.affymetrix.igb.action.ShowMinusStrandAction;
-import com.affymetrix.igb.action.ShowMixedStrandAction;
-import com.affymetrix.igb.action.ShowPlusStrandAction;
-import com.affymetrix.igb.action.ShrinkWrapAction;
-import com.affymetrix.igb.action.ToggleHairlineAction;
-import com.affymetrix.igb.action.ToggleHairlineLabelAction;
-import com.affymetrix.igb.action.ToggleToolTipAction;
-import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
-import com.affymetrix.igb.action.ViewAlignmentSequenceInSeqViewerAction;
-import com.affymetrix.igb.action.WebLinksAction;
-import com.affymetrix.igb.action.ZoomingRepackAction;
-import com.affymetrix.igb.action.ColorSchemeChoiceAction;
 
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -144,6 +110,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction()));
+		MenuUtil.addToMenu(view_menu, new JRPCheckBoxMenuItem(id + "_main_viewMenu_showIGBTrackMark", ShowIGBTrackMarkAction.getAction()));
 	}
 
 	private void toolMenu(JMenuBar menuBar, String id) {

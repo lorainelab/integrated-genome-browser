@@ -729,9 +729,11 @@ public final class LocalUrlCacher {
 				conn.setConnectTimeout(CONNECT_TIMEOUT);
 				conn.setReadTimeout(READ_TIMEOUT);
 				istr = conn.getInputStream();
-
-				if(istr != null)
-					return true;
+				if(istr == null) {
+					return false;
+				}
+				final int bytesRead = istr.read(new byte[1]);
+				return (bytesRead != -1);
   
 			}catch(MalformedURLException ex){
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Malformed Invalid uri :{0}", uri.toString());

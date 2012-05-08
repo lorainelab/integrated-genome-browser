@@ -403,7 +403,7 @@ public class QuickloadServerType implements ServerTypeI {
 			String url_path = generateQuickLoadURI(common_url, vPath, format);
 			if (LocalUrlCacher.isValidURL(url_path)) {
 				Logger.getLogger(this.getClass().getName()).log(Level.FINE,
-						"  Quickload location of bnib file: {0}", url_path);
+						"  Quickload location of " + format + " file: {0}", url_path);
 
 				return format;
 			}

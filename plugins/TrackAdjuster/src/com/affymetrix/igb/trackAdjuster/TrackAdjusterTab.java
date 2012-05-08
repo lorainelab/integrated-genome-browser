@@ -312,6 +312,10 @@ public final class TrackAdjusterTab
 		int selectedTrackCount = selectedTiers.size();
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
+			if (style == null) {
+				disableDisplayButtons(true, true);
+				return;
+			}
 			fgColorComboBox.setSelectedColor(style.getForeground());
 			bgColorComboBox.setSelectedColor(style.getBackground());
 			trackName.setText(style.getTrackName());

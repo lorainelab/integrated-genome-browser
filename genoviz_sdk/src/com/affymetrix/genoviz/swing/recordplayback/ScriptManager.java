@@ -98,17 +98,17 @@ public class ScriptManager {
 	}
 
 	/**
-	 * run a single line in the IGB scripting language
+	 * run text lines in the specified scripting language
 	 * @param line the script line
 	 */
-	public void doSingleAction(String line) {
+	public void runScriptString(String scriptText, String extension) {
 		try {
-			ScriptEngine engine = getScriptEngine("x.igb"); // fake file name
+			ScriptEngine engine = getScriptEngine("x." + extension); // fake file name
 			if (engine == null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "igb script engine is not loaded");
 				return;
 			}
-			Reader reader = new StringReader(line + '\n');
+			Reader reader = new StringReader(scriptText + '\n');
 			engine.eval(reader);
 		}
 		catch (Exception ex) {

@@ -15,11 +15,11 @@ public class PythonScriptProcessor implements ScriptProcessor {
 		return "from com.affymetrix.main import OSGiHandler\n" +
 		"bundleContext = OSGiHandler.getInstance().getBundleContext()\n" +
 		"serviceReference = bundleContext.getServiceReference(\"com.affymetrix.genoviz.swing.recordplayback.ScriptManager\")\n" +
-		"rph = bundleContext.getService(serviceReference)\n";
+		"sm = bundleContext.getService(serviceReference)\n";
 	}
 
 	@Override
 	public String getCommand(Operation operation) {
-		return "rph.getWidget(\"" + operation.getId() + "\")." + operation.toString();
+		return "sm.getWidget(\"" + operation.getId() + "\")." + operation.toString();
 	}
 }

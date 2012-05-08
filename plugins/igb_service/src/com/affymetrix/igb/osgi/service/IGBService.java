@@ -96,7 +96,7 @@ public interface IGBService {
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
 	public void doActions(final String batchFileStr);
-	public void doSingleAction(String line);
+	public void runScriptString(String line, String ext);
 	public void performSelection(String selectParam);
 	public GenericFeature getFeature(GenericServer gServer, String feature_url);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);

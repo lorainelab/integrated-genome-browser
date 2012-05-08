@@ -159,8 +159,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public void doSingleAction(String line) {
-		ScriptManager.getInstance().doSingleAction(line);
+	public void runScriptString(String line, String ext) {
+		ScriptManager.getInstance().runScriptString(line, ext);
 	}
 
 	@Override

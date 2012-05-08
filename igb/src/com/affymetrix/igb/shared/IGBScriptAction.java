@@ -13,6 +13,6 @@ import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 public class IGBScriptAction {
 	
 	public static void executeScriptAction(String tutorialArg) {
-		ScriptManager.getInstance().doSingleAction(tutorialArg);
+		ScriptManager.getInstance().runScriptString(tutorialArg, "igb");
 	}
 }

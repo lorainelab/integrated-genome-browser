@@ -33,7 +33,7 @@ public class SaveScriptAction extends GenericAction {
 	}
 
 	private SaveScriptAction() {
-		super(BUNDLE.getString("saveScript"), null, null, null, KeyEvent.VK_C, null, true);
+		super(BUNDLE.getString("saveScript"), null, "16x16/actions/document-save.png", "22x22/actions/document-save.png", KeyEvent.VK_S, null, true);
 	}
 
 	@Override
@@ -53,10 +53,10 @@ public class SaveScriptAction extends GenericAction {
 				String path = f.getAbsolutePath();
 				int pos = path.lastIndexOf('.');
 				String extension = path.substring(pos + 1);
-				ScriptProcessor scriptManager = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
+				ScriptProcessor scriptProcessor = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
 				FileWriter fstream = new FileWriter(f);
 				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(ScriptManager.getInstance().getScript(scriptManager));
+				out.write(ScriptManager.getInstance().getScript(scriptProcessor));
 				out.close();
 			}
 			catch (Exception x) {

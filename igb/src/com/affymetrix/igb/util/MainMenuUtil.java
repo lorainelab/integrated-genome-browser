@@ -119,6 +119,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_runScript", RunScriptAction.getAction()));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_saveScript", SaveScriptAction.getAction()));
+		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_clearScript", ClearScriptAction.getAction()));
 	}
 
 	private void helpMenu(JMenuBar menuBar, String id) {

@@ -81,6 +81,10 @@ public class ScriptManager {
 		return widgets.get(id);
 	}
 
+	public void clearScript() {
+		operations.clear();
+	}
+
 	public void recordOperation(Operation operation) {
 		if (!operation.getWidget().consecutiveOK()) {
 			int lastIndex = operations.size() - 1;

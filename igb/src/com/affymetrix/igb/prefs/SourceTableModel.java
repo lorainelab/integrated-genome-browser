@@ -132,6 +132,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Refresh:
+				// Plugin is used as a Server Object and its serverType is null
 				if (server.serverType != null) {
 					if (!server.isEnabled()
 							|| DataLoadPrefsView.getSingleton().confirmRefresh()) {

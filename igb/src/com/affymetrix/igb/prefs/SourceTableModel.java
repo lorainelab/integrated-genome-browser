@@ -132,20 +132,27 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		final GenericServer server = servers.get(row);
 		switch (tableColumns.get(col)) {
 			case Refresh:
-				if (!server.isEnabled()
-						|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
-					DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
-							server.serverType, server.serverName, server.URL);
+				if (server.serverType != null) {
+					if (!server.isEnabled()
+							|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
+						DataLoadPrefsView.getSingleton().updateDataSource(server.URL,
+								server.serverType, server.serverName, server.URL);
+					}
+				} else {
+					BundleRepositoryPrefsView.getSingleton().updatePluginRepository(server.URL,
+							server.serverType, server.serverName);
 				}
 				break;
 			case Enabled:
-				server.setEnabled((Boolean) value);
 				if (((Boolean) value).booleanValue()) {
 					discoverServer(server);
+					server.setEnabled(true);
 				} else {
-					if (DataLoadPrefsView.getSingleton().confirmDelete()) {
+					if (server.serverType == null || 
+							DataLoadPrefsView.getSingleton().confirmDelete()) {
 						serverList.fireServerInitEvent(server,
 								LoadUtils.ServerStatus.NotResponding);
+						server.setEnabled(false);
 					}
 				}
 				break;

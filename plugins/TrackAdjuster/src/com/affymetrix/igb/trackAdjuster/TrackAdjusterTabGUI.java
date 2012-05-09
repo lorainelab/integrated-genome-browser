@@ -549,6 +549,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         jLabel1.setText("Height:");
 
         selectAllB.setText("Select All   ");
+        selectAllB.setFocusable(false);
         selectAllB.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         selectAllB.setIcon(MenuUtil.getIcon("images/arrow_down.png"));
         selectAllB.addMouseListener(new java.awt.event.MouseAdapter() {

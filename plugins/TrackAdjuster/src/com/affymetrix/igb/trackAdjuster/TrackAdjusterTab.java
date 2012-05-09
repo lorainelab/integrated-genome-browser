@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.trackAdjuster;
 
-import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
@@ -24,6 +23,8 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.color.ColorScheme;
+import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
@@ -179,6 +180,7 @@ public final class TrackAdjusterTab
 	public JPanel graphPanel = new javax.swing.JPanel();
 	public com.jidesoft.combobox.ColorComboBox fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
 	public com.jidesoft.combobox.ColorComboBox bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+	public final ColorSchemeComboBox colorSchemeBox;
 	public JRPTextField maxStackDepthTextField = new JRPNumTextField("SimpleGraphTab_max_depth_text_field");
 	public JRPTextField trackName = new JRPTextField("SimpleGraphTab_track_name");
 	public static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
@@ -233,6 +235,42 @@ public final class TrackAdjusterTab
 		displayGroup.add(autoB);
 		displayGroup.add(pluginB);
 
+
+		final ItemListener itemListener = new ItemListener() {
+
+			public void itemStateChanged(ItemEvent ie) {
+				switch (ie.getStateChange()) {
+					case ItemEvent.DESELECTED:
+						break;
+					case ItemEvent.SELECTED:
+						Object o = ie.getSource();
+						if (o instanceof ColorSchemeComboBox) {
+							ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
+							ColorScheme s = (ColorScheme) csb.getSelectedItem();
+							ColorSchemeAction.getAction().tempAction(s);
+						}
+						break;
+					default:
+						System.err.println(
+								"SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
+								+ ie.getStateChange());
+				}
+			}
+		};
+		colorSchemeBox = new ColorSchemeComboBox(){
+			
+			@Override
+			public void setChoices(int i){
+				this.removeItemListener(itemListener);
+				super.setChoices(i);
+				this.addItemListener(itemListener);
+			}
+			
+		};
+		colorSchemeBox.addItemListener(itemListener);
+		colorSchemeBox.setChoices(0);
+		igbS.addListSelectionListener(colorSchemeBox);
+		
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
@@ -344,6 +382,7 @@ public final class TrackAdjusterTab
 		floatCB.setEnabled(b);
 		fgColorComboBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
+		colorSchemeBox.setEnabled(b);
 		trackName.setEnabled(b);
 		maxStackDepthTextField.setEnabled(b);
 		trackNameSizeComboBox.setEnabled(b);
@@ -541,6 +580,7 @@ public final class TrackAdjusterTab
 
 		fgColorComboBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
+		colorSchemeBox.setEnabled(b);
 		trackName.setEnabled(b);
 
 		combineB.setEnabled(!all_are_combined && grafs.size() > 1);

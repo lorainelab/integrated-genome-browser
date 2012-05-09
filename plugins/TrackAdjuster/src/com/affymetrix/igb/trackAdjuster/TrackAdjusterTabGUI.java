@@ -10,6 +10,7 @@ import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.trackAdjuster.TrackAdjusterTab.DisplayType;
+import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -22,6 +23,13 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	public TrackAdjusterTab sgt;
 	private static TrackAdjusterTabGUI singleton;
 	private RepackTiersAction repackStub;
+	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+
+	static {
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+	}
 
 	/**
 	 * Creates new form SimpleGraphTab1
@@ -67,6 +75,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         nameSizeLabel = new javax.swing.JLabel();
         nameSizeComboBox = sgt.trackNameSizeComboBox;
         jLabel3 = new javax.swing.JLabel();
+        colorSchemeChooser = sgt.colorSchemeBox;
         AnnotationPanel = sgt.annotationPanel;
         jLabel6 = new javax.swing.JLabel();
         maxStackDepthTextField = sgt.maxStackDepthTextField;
@@ -116,6 +125,11 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 StylePanelMouseClicked(evt);
             }
         });
+        StylePanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                StylePanelMouseMoved(evt);
+            }
+        });
 
         fgLabel.setText("Foreground:");
 
@@ -161,21 +175,27 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         StylePanelLayout.setHorizontalGroup(
             StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(StylePanelLayout.createSequentialGroup()
-                .add(5, 5, 5)
-                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(nameSizeLabel)
+                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(StylePanelLayout.createSequentialGroup()
-                        .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(bgLabel)
-                            .add(fgLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(5, 5, 5)
+                        .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(nameSizeLabel)
+                            .add(StylePanelLayout.createSequentialGroup()
+                                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(bgLabel)
+                                    .add(fgLabel))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(StylePanelLayout.createSequentialGroup()
+                                .add(jLabel3)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(nameSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(0, 0, Short.MAX_VALUE))
                     .add(StylePanelLayout.createSequentialGroup()
-                        .add(jLabel3)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(nameSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap()
+                        .add(colorSchemeChooser, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         StylePanelLayout.setVerticalGroup(
@@ -198,13 +218,20 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel3))
-                .add(0, 33, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(colorSchemeChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 6, Short.MAX_VALUE))
         );
 
         AnnotationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Annotation")));
         AnnotationPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 AnnotationPanelMouseClicked(evt);
+            }
+        });
+        AnnotationPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                AnnotationPanelMouseMoved(evt);
             }
         });
 
@@ -269,13 +296,18 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(AnnotationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(fitViewButton)
                     .add(collapseButton))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
         graphPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 graphPanelMouseClicked(evt);
+            }
+        });
+        graphPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                graphPanelMouseMoved(evt);
             }
         });
 
@@ -353,6 +385,11 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 RangePanelMouseClicked(evt);
             }
         });
+        RangePanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                RangePanelMouseMoved(evt);
+            }
+        });
 
         jLabel2.setText("Set By:");
 
@@ -406,21 +443,18 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                         .add(minValLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(minText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 48, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(maxValLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 4, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, RangePanelLayout.createSequentialGroup()
-                        .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(RangePanelLayout.createSequentialGroup()
-                                .add(jLabel2)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(by_valRB_val)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(by_percentileRB_val))
-                            .add(rangeSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.CENTER, RangePanelLayout.createSequentialGroup()
+                        .add(jLabel2)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(by_valRB_val)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(by_percentileRB_val))
+                    .add(org.jdesktop.layout.GroupLayout.CENTER, rangeSlider, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         RangePanelLayout.linkSize(new java.awt.Component[] {maxText, minText}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -440,7 +474,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                     .add(jLabel2)
                     .add(by_valRB_val)
                     .add(by_percentileRB_val))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         RangePanelLayout.linkSize(new java.awt.Component[] {maxText, minText}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -507,17 +541,17 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .add(AnnotationButton)
                 .add(5, 5, 5)
                 .add(GraphButton)
-                .add(5, 5, 5)
+                .add(9, 9, 9)
                 .add(AutoButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(PluginButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jComboBox2, 0, 328, Short.MAX_VALUE)
+                .add(jComboBox2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 341, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(pluginPrefButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 42, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(floatingCheckBox)
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -577,7 +611,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel8)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(trackNameTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
+                .add(trackNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 425, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         TopPanelLayout.setVerticalGroup(
             TopPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -596,14 +630,15 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
             .add(TopPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                    .add(layout.createSequentialGroup()
                         .add(StylePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 124, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(3, 3, 3)
                         .add(AnnotationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(3, 3, 3)
-                        .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(RangePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(3, 3, 3)
-                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, Short.MAX_VALUE))
                     .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -757,7 +792,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
 	private void AnnotationPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AnnotationPanelMouseClicked
 		Rectangle bounds = new Rectangle(85, 5, 55, 13);
-
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
 			pp.setTab(TrackAdjusterPreferences.TAB_ANNOTATION);
@@ -768,7 +802,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
 	private void RangePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RangePanelMouseClicked
 		Rectangle bounds = new Rectangle(100, 5, 53, 13);
-
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
 			pp.setTab(TrackAdjusterPreferences.TAB_VISIBLE_RANGE);
@@ -779,7 +812,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
 	private void graphPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseClicked
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);
-
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
 			pp.setTab(TrackAdjusterPreferences.TAB_GRAPH);
@@ -810,6 +842,42 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void selectAllBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllBMouseClicked
 		sgt.selectAllBMouseClicked(selectAllB, evt);
 	}//GEN-LAST:event_selectAllBMouseClicked
+
+	private void StylePanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseMoved
+		Rectangle bounds = new Rectangle(43, 5, 57, 13);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_StylePanelMouseMoved
+
+	private void AnnotationPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AnnotationPanelMouseMoved
+		Rectangle bounds = new Rectangle(85, 5, 55, 13);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_AnnotationPanelMouseMoved
+
+	private void RangePanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RangePanelMouseMoved
+		Rectangle bounds = new Rectangle(100, 5, 53, 13);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_RangePanelMouseMoved
+
+	private void graphPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseMoved
+		Rectangle bounds = new Rectangle(50, 5, 60, 13);
+		if (bounds.contains(evt.getX(), evt.getY())) {
+			this.setCursor(openHandCursor);
+		} else {
+			this.setCursor(defaultCursor);
+		}
+	}//GEN-LAST:event_graphPanelMouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton AnnotationButton;
     private javax.swing.JPanel AnnotationPanel;
@@ -830,6 +898,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.JRadioButton by_percentileRB_val;
     private javax.swing.JRadioButton by_valRB_val;
     private javax.swing.JButton collapseButton;
+    private javax.swing.JComboBox colorSchemeChooser;
     private javax.swing.JRadioButton dotB;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;

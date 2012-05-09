@@ -10,8 +10,8 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.color.ColorScheme;
-import com.affymetrix.igb.color.ColorSchemeComboBox;
+import com.affymetrix.genoviz.color.ColorScheme;
+import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;

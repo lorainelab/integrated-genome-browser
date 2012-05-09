@@ -38,6 +38,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.*;
 
 /**
@@ -179,14 +181,15 @@ public class AffyTieredMap extends NeoMap {
 	private void packTiers(boolean full_repack, boolean stretch_map) {
 		fixed_pixel_height = 0;
 		fixed_coord_height = 0;
+		List<TierGlyph> tiersCopy = new CopyOnWriteArrayList<TierGlyph>(tiers);
 		if (full_repack) {
-			for (TierGlyph mtg : tiers) {
+			for (TierGlyph mtg : tiersCopy) {
 				mtg.pack(getView());
 			}
 		}
 
 		// Now hide or show tiers based on which checkboxes are selected
-		for (TierGlyph mtg : tiers) {
+		for (TierGlyph mtg : tiersCopy) {
 			if (mtg.isGarbage()) {
 				mtg.setVisibility(false);
 			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
@@ -206,7 +209,7 @@ public class AffyTieredMap extends NeoMap {
 		//   com.affymetrix.genoviz. widget. TieredNeoMap
 		double offset = 0;
 		double height = mbox.height;
-		for (TierGlyph mtg : tiers) {
+		for (TierGlyph mtg : tiersCopy) {
 			// don't make room if tier isn't visible
 			if (!mtg.isVisible()) {
 				continue;
@@ -228,7 +231,7 @@ public class AffyTieredMap extends NeoMap {
 		if (stretch_map) {
 			Rectangle2D.Double pbox = getCoordBounds();
 			Rectangle2D.Double newbox = null;
-			for (TierGlyph mtg : tiers) {
+			for (TierGlyph mtg : tiersCopy) {
 				if (!mtg.isVisible()) {
 					continue;
 				}

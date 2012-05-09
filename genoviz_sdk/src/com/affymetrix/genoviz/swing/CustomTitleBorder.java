@@ -4,28 +4,22 @@ package com.affymetrix.genoviz.swing;
  *
  * @author dcnorris
  */
-import java.awt.FontMetrics;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.UIManager;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
 
 /**
- * The source code is the same as TitledBorder in JDK 1.4.2 with some small changes to 
- * customize the paint method to allow hyper link styled text to be appended to end.
+ * The source code is the same as TitledBorder in JDK 1.4.2 with some small
+ * changes to customize the paint method to allow hyper link styled text to be
+ * appended to end.
  */
 public class CustomTitleBorder extends AbstractBorder {
+
 	private static final long serialVersionUID = 1L;
 	protected String title;
 	protected String linkText;
@@ -51,7 +45,7 @@ public class CustomTitleBorder extends AbstractBorder {
 	static protected final int EDGE_SPACING = 2;
 	static protected final int TITLE_MARGIN = 5;
 	static protected final int TEXT_SPACING = 2;
-	static protected final int TEXT_INSET_H = 0;
+	static protected final int TEXT_INSET_H = 5;
 
 	public CustomTitleBorder(String title, String link) {
 		this(null, title, link, LEADING, TOP, null, null);
@@ -65,7 +59,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		this.border = border;
 		this.titleFont = titleFont;
 		this.titleColor = titleColor;
-		this.linkText = link;
+		this.linkText = " " + link + " "; //add spacing
 		setTitleJustification(titleJustification);
 		setTitlePosition(titlePosition);
 	}
@@ -73,14 +67,19 @@ public class CustomTitleBorder extends AbstractBorder {
 	@Override
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 		Border border = getBorder();
+		String title = getTitle();
+		String link = getLink();
+		String emptyTitle = "TEMP";
 
-		if (getTitle() == null || getTitle().equals("")) {
+		if (title == null || title.equals("") && link.equals("")) {
 			if (border != null) {
 				border.paintBorder(c, g, x, y, width, height);
 			}
 			return;
 		}
-
+		if (title.equals("") || title.equals(" ")) {
+			title = emptyTitle;
+		}
 		Rectangle grooveRect = new Rectangle(x + EDGE_SPACING, y
 				+ EDGE_SPACING, width - (EDGE_SPACING << 1), height
 				- (EDGE_SPACING << 1));
@@ -94,7 +93,12 @@ public class CustomTitleBorder extends AbstractBorder {
 		int descent = fm.getDescent();
 		int ascent = fm.getAscent();
 		int diff;
-		int stringWidth = fm.stringWidth(getTitle() + linkText);
+		int stringWidth;
+		if (title.equals(emptyTitle)) {
+			stringWidth = fm.stringWidth(linkText);
+		} else {
+			stringWidth = fm.stringWidth(title + linkText);
+		}
 		Insets insets;
 
 		if (border != null) {
@@ -173,64 +177,61 @@ public class CustomTitleBorder extends AbstractBorder {
 				break;
 		}
 
+		// If title is positioned in middle of border AND its fontsize
+		// is greater than the border's thickness, we'll need to paint 
+		// the border in sections to leave space for the component's background 
+		// to show through the title.
+		//
 		if (border != null) {
-			if (((titlePos == TOP || titlePos == DEFAULT_POSITION) && (grooveRect.y > textLoc.y
-					- ascent))
-					|| (titlePos == BOTTOM && (grooveRect.y
-					+ grooveRect.height < textLoc.y + descent))) {
+			if (((titlePos == TOP || titlePos == DEFAULT_POSITION)
+					&& (grooveRect.y > textLoc.y - ascent))
+					|| (titlePos == BOTTOM
+					&& (grooveRect.y + grooveRect.height < textLoc.y + descent))) {
 
 				Rectangle clipRect = new Rectangle();
 
-
+				// save original clip
 				Rectangle saveClip = g.getClipBounds();
 
-
+				// paint strip left of text
 				clipRect.setBounds(saveClip);
-				if (computeIntersection(clipRect, x, y, textLoc.x
-						- TITLE_MARGIN - x, height)) {
+				if (computeIntersection(clipRect, x, y, textLoc.x - 1 - x, height)) {
 					g.setClip(clipRect);
-					border.paintBorder(c, g, grooveRect.x,
-							grooveRect.y, grooveRect.width,
-							grooveRect.height);
+					border.paintBorder(c, g, grooveRect.x, grooveRect.y,
+							grooveRect.width - 5, grooveRect.height);
 				}
 
-
+				// paint strip right of text
 				clipRect.setBounds(saveClip);
-				if (computeIntersection(clipRect, textLoc.x
-						+ stringWidth + TITLE_MARGIN, y, x + width
-						- (textLoc.x + stringWidth + TITLE_MARGIN),
-						height)) {
+				if (computeIntersection(clipRect, textLoc.x + stringWidth + 1, y,
+						x + width - (textLoc.x + stringWidth + 1), height)) {
 					g.setClip(clipRect);
-					border.paintBorder(c, g, grooveRect.x,
-							grooveRect.y, grooveRect.width,
-							grooveRect.height);
+					border.paintBorder(c, g, grooveRect.x, grooveRect.y,
+							grooveRect.width, grooveRect.height);
 				}
 
 				if (titlePos == TOP || titlePos == DEFAULT_POSITION) {
-
+					// paint strip below text
 					clipRect.setBounds(saveClip);
-					if (computeIntersection(clipRect, textLoc.x
-							- TITLE_MARGIN, textLoc.y + descent,
-							stringWidth + 2 * TITLE_MARGIN, y + height
-							- textLoc.y - descent)) {
+					if (computeIntersection(clipRect, textLoc.x - 1, textLoc.y + descent,
+							stringWidth + 2, y + height - textLoc.y - descent)) {
 						g.setClip(clipRect);
-						border.paintBorder(c, g, grooveRect.x,
-								grooveRect.y, grooveRect.width,
-								grooveRect.height);
+						border.paintBorder(c, g, grooveRect.x, grooveRect.y,
+								grooveRect.width, grooveRect.height);
 					}
 
-				} else {
+				} else { // titlePos == BOTTOM
+					// paint strip above text
 					clipRect.setBounds(saveClip);
-					if (computeIntersection(clipRect, textLoc.x
-							- TITLE_MARGIN, y, stringWidth + 2
-							* TITLE_MARGIN, textLoc.y - ascent - y)) {
+					if (computeIntersection(clipRect, textLoc.x - 1, y,
+							stringWidth + 2, textLoc.y - ascent - y)) {
 						g.setClip(clipRect);
-						border.paintBorder(c, g, grooveRect.x,
-								grooveRect.y, grooveRect.width,
-								grooveRect.height);
+						border.paintBorder(c, g, grooveRect.x, grooveRect.y,
+								grooveRect.width, grooveRect.height);
 					}
 				}
 
+				// restore clip
 				g.setClip(saveClip);
 
 			} else {
@@ -238,17 +239,22 @@ public class CustomTitleBorder extends AbstractBorder {
 						grooveRect.width, grooveRect.height);
 			}
 		}
+		if (title.equals(emptyTitle)) {
+			title=""; //set back to empty string
+		}
 		Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
 		fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		Font boldUnderline = new Font("SansSerif", Font.BOLD, 13).deriveFont(fontAttributes);
 		Font plainFont = new Font("SansSerif", Font.PLAIN, 13);
-		AttributedString as = new AttributedString(getTitle() + getLink());
-		as.addAttribute(TextAttribute.FONT, plainFont, 1,
-				getTitle().length());
-		as.addAttribute(TextAttribute.FONT, boldUnderline, getTitle().length(), getTitle().length() + getLink().length());
-		as.addAttribute(TextAttribute.FOREGROUND, Color.blue, getTitle().length(), getTitle().length() + getLink().length());
+		AttributedString as = new AttributedString(title + link);
+		if (!title.equals("")) {
+			as.addAttribute(TextAttribute.FONT, plainFont, 1,
+					title.length());
+		}
+		as.addAttribute(TextAttribute.FONT, boldUnderline, title.length(), title.length() + link.length());
+		as.addAttribute(TextAttribute.FOREGROUND, Color.blue, title.length(), title.length() + link.length());
 		as.addAttribute(TextAttribute.UNDERLINE,
-				TextAttribute.UNDERLINE_ON, getTitle().length(), getTitle().length() + getLink().length());
+				TextAttribute.UNDERLINE_ON, title.length() + 1, title.length() + link.length() - 1);
 
 		g.setColor(getTitleColor());
 		g.drawString(as.getIterator(), textLoc.x, textLoc.y);
@@ -269,7 +275,7 @@ public class CustomTitleBorder extends AbstractBorder {
 	/**
 	 * Reinitialize the insets parameter with this Border's current Insets.
 	 *
-	 * @param c      the component for which this border insets value applies
+	 * @param c the component for which this border insets value applies
 	 * @param insets the object to be reinitialized
 	 */
 	@Override
@@ -305,7 +311,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		insets.bottom += EDGE_SPACING
 				+ (insets.bottom > 0 ? TEXT_SPACING : 0);
 
-		if (c == null || getTitle() == null || getTitle().equals("")) {
+		if (c == null || getTitle() == null || (getTitle().equals("") && getLink().equals(""))) {
 			return insets;
 		}
 		Font font = getFont(c);
@@ -488,8 +494,8 @@ public class CustomTitleBorder extends AbstractBorder {
 	}
 
 	/**
-	 * Returns the minimum dimensions this border requires in order to fully display the border and
-	 * title.
+	 * Returns the minimum dimensions this border requires in order to fully
+	 * display the border and title.
 	 *
 	 * @param c the component where this border will be drawn
 	 */

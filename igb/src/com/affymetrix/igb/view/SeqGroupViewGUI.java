@@ -87,7 +87,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSequenceTable = seqtable;
         speciesPanel = new javax.swing.JPanel();
-        speciesCB = seqGroupModel.getSpeciesCB();
+        speciesCB = speciesCB = seqGroupModel.getSpeciesCB();
         genomeVersionPanel = new javax.swing.JPanel();
         versionCB = seqGroupModel.getVersionCB();
 
@@ -161,7 +161,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
         );
 
-        speciesPanel.setBorder(new CustomTitleBorder("  ", "Species"));
+        speciesPanel.setBorder(new CustomTitleBorder("", "Species"));
     }// </editor-fold>//GEN-END:initComponents
 
 	private void speciesPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMousePressed

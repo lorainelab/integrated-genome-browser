@@ -72,7 +72,7 @@
         <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="speciesPanelMouseMoved"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="speciesPanel.setBorder(new CustomTitleBorder(&quot;  &quot;, &quot;Species&quot;));"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="speciesPanel.setBorder(new CustomTitleBorder(&quot;&quot;, &quot;Species&quot;));"/>
       </AuxValues>
 
       <Layout>

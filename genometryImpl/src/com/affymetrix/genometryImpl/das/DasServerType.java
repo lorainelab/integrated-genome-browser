@@ -287,7 +287,7 @@ public class DasServerType implements ServerTypeI {
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			
-			SymLoader.addAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
+			SymLoader.addAnnotations(dassyms, span, uri, feature);
 			for (DASSymmetry sym : dassyms) {
 				feature.addMethod(sym.getType());
 			}

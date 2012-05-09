@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.filter.SymmetryFilterIntersecting;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
@@ -378,7 +379,7 @@ public abstract class SymLoader {
 		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
-			}
+			}	
 			
 			SeqSymmetry originalRequestSym = feature.getRequestSym();
 			List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, entry.getValue(), span.getBioSeq());	
@@ -427,29 +428,17 @@ public abstract class SymLoader {
 
 
 	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
-		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
-		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
+		List<SeqSymmetry> filteredFeats = new ArrayList<SeqSymmetry>(syms.size());
+		SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
+		filter.setParam(original_sym);
+		
 		for (SeqSymmetry sym : syms) {
-
-			/**
-			 * Since GraphSym is only SeqSymmetry containing all points.
-			 * The intersection may find some points intersecting and
-			 * thus not add whole GraphSym at all. So if GraphSym is encountered
-			 * the it's not checked if it is intersecting. 
-			 */
-			if (sym instanceof GraphSym) {
-				// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
-				return syms;
+			if (filter.filterSymmetry(seq, sym)) {
+				filteredFeats.add(sym);
 			}
-
-			dummySym.clear();
-			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
-				// There is an intersection with previous requests.  Ignore this symmetry
-				continue;
-			}
-			newSyms.add(sym);
 		}
-		return newSyms;
+		
+		return filteredFeats;
 	}
 
 	public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID) throws Exception {

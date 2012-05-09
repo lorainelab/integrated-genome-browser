@@ -375,14 +375,15 @@ public abstract class SymLoader {
 	public static List<? extends SeqSymmetry> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature){
 		Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
 		List<SeqSymmetry> added = new ArrayList<SeqSymmetry>();
+		SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
+		filter.setParam(feature.getRequestSym());
 		
 		for (Entry<String, List<SeqSymmetry>> entry : entries.entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}	
 			
-			SeqSymmetry originalRequestSym = feature.getRequestSym();
-			List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, entry.getValue(), span.getBioSeq());	
+			List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(span.getBioSeq(), entry.getValue(), filter);	
 			if (filteredFeats.isEmpty()) {
 				continue;
 			}
@@ -427,10 +428,8 @@ public abstract class SymLoader {
 	}
 
 
-	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
+	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(BioSeq seq, List<? extends SeqSymmetry> syms, SymmetryFilterIntersecting filter) {
 		List<SeqSymmetry> filteredFeats = new ArrayList<SeqSymmetry>(syms.size());
-		SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
-		filter.setParam(original_sym);
 		
 		for (SeqSymmetry sym : syms) {
 			if (filter.filterSymmetry(seq, sym)) {

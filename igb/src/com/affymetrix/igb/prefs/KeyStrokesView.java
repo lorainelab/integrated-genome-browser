@@ -34,10 +34,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 	public final KeyStrokeViewTable table = new KeyStrokeViewTable();
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
-	;
-	public static final int KeyStrokeColumn = 1;
-	public static final int ToolbarColumn = 2;
-	public static final int IdColumn = 3; // not displayed in table
+	public static final int IconColumn = 0;
+	public static final int ActionColumn = 1;
+	public static final int KeyStrokeColumn = 2;
+	public static final int ToolbarColumn = 3;
+	public static final int IdColumn = 4; // not displayed in table
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
@@ -59,6 +60,20 @@ public final class KeyStrokesView implements ListSelectionListener,
 
 		table.setModel(model);
 		table.setRowHeight(20);
+
+		table.getColumnModel().getColumn(IconColumn).setPreferredWidth(25);
+		table.getColumnModel().getColumn(IconColumn).setMinWidth(25);
+		table.getColumnModel().getColumn(IconColumn).setMaxWidth(25);
+
+		table.getColumnModel().getColumn(ActionColumn).setPreferredWidth(150);
+		table.getColumnModel().getColumn(ActionColumn).setMinWidth(100);
+		
+		table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(150);
+		table.getColumnModel().getColumn(KeyStrokeColumn).setMinWidth(100);
+
+		table.getColumnModel().getColumn(ToolbarColumn).setPreferredWidth(70);
+		table.getColumnModel().getColumn(ToolbarColumn).setMinWidth(70);
+		table.getColumnModel().getColumn(ToolbarColumn).setMaxWidth(70);
 
 		edit_panel = new KeyStrokeEditPanel();
 		edit_panel.setEnabled(false);
@@ -83,15 +98,18 @@ public final class KeyStrokesView implements ListSelectionListener,
 		// this still throws ConcurrentModificationException
 		Set<String> keys = new CopyOnWriteArraySet<String>(GenericActionHolder.getInstance().getGenericActionIds());
 		TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
+
 			@Override
 			public int compare(String o1, String o2) {
 				GenericAction ga1 = GenericActionHolder.getInstance().getGenericAction(o1);
 				if (ga1 == null) {
-					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no GenericAction found for \"" + o1 + "\"");
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+							"no GenericAction found for \"" + o1 + "\"");
 				}
 				GenericAction ga2 = GenericActionHolder.getInstance().getGenericAction(o2);
 				if (ga2 == null) {
-					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no GenericAction found for \"" + o2 + "\"");
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+							"no GenericAction found for \"" + o2 + "\"");
 				}
 				return getSortField(ga1).compareTo(getSortField(ga2));
 			}
@@ -103,8 +121,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 				Class<?> actionClass = genericAction.getClass();
 				actionClass.getMethod("getAction");
 				hasGetAction = true;
-			}
-			catch (NoSuchMethodException x) {
+			} catch (NoSuchMethodException x) {
 				hasGetAction = false;
 			}
 			if (hasGetAction && genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
@@ -114,20 +131,21 @@ public final class KeyStrokesView implements ListSelectionListener,
 		return actions;
 	}
 
-    /**
-     * build the underlying data array - there is a fourth column, not shown in the
-     * table, but needed by the seetValue() method
-     * @param keystroke_node
-     * @param toolbar_node
-     * @return
-     */
-    private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-    	TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
+	/**
+	 * build the underlying data array - there is a fourth column, not shown in
+	 * the table, but needed by the seetValue() method
+	 *
+	 * @param keystroke_node
+	 * @param toolbar_node
+	 * @return
+	 */
+	private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
+		TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
 		Object[][] rows;
 
 		synchronized (keys) {
 			int num_rows = keys.size();
-			int num_cols = 4;
+			int num_cols = 5;
 			rows = new Object[num_rows][num_cols];
 			Iterator<String> iter = keys.iterator();
 			for (int i = 0; iter.hasNext(); i++) {
@@ -136,10 +154,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 				if (genericAction == null) {
 					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, "!!! no GenericAction for key = " + key);
 				}
-				rows[i][0] = (genericAction == null) ? "???" : genericAction.getDisplay();
-				rows[i][1] = keystroke_node.get(key, "");
-				rows[i][2] = toolbar_node.getBoolean(key, false);
-				rows[i][3] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
+				rows[i][0] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
+				rows[i][1] = (genericAction == null) ? "???" : genericAction.getDisplay();
+				rows[i][2] = keystroke_node.get(key, "");
+				rows[i][3] = toolbar_node.getBoolean(key, false);
+				rows[i][4] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
 			}
 		}
 		return rows;
@@ -175,7 +194,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 			int srow = table.getSelectedRow();
 			if (srow >= 0) {
-				String id = (String) table.getModel().getValueAt(srow, 0);
+				String id = (String) table.getModel().getValueAt(srow, 1);
 				editKeystroke(id);
 			} else {
 				edit_panel.setPreferenceKey(null, null, null, null);
@@ -199,8 +218,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 	/*
 	 * public void destroy() { removeAll(); if (lsm != null)
 	 * {lsm.removeListSelectionListener(this);}
-	 * PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this);
-	}
+	 * PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this); }
 	 */
 	class KeyStrokeViewTable extends StyledJTable {
 
@@ -221,8 +239,8 @@ public final class KeyStrokesView implements ListSelectionListener,
 			TableCellRenderer renderer = super.getCellRenderer(row, col);
 			if (col == ToolbarColumn) {
 				((JCheckBox) renderer).setHorizontalAlignment(SwingConstants.CENTER);
-			}
-			else {
+			} else if (col == IconColumn) {
+			} else {
 				((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.LEFT);
 			}
 			return renderer;

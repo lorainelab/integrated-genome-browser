@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
-import com.jidesoft.swing.JideSplitButton;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.*;
@@ -192,7 +191,6 @@ public final class TrackAdjusterTab
 	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
-	public final JideSplitButton selectAllB = createSelectAllMenuButton("Select All");
 	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
 	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
@@ -263,27 +261,6 @@ public final class TrackAdjusterTab
 		} else {
 			SelectAllAction.getAction().execute();
 		}
-	}
-
-	private JideSplitButton createSelectAllMenuButton(String name) {
-		final JideSplitButton button = new JideSplitButton("");
-		//	button.setSelected(true);
-		//button.setButtonStyle(JideSplitButton.TOOLBAR_STYLE);
-		//button.setIcon(MenuUtil.getIcon("images/select.png"));
-		button.setSize(0, 5);
-		button.add(SelectAllAction.getAction());
-		for (FileTypeCategory category : FileTypeCategory.values()) {
-			JRPMenuItem item = new JRPMenuItem("Track_Adjuster_Select_Menu_" + category.name(), SelectAllAction.getAction(category));
-			button.add(item);
-		}
-		button.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				SelectAllAction.getAction().actionPerformed(e);
-			}
-		});
-		button.setFocusable(false);
-		return button;
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {

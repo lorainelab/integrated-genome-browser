@@ -35,7 +35,6 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  javax.swing.plaf.basic,
  org.jdesktop.layout,
  com.jidesoft.combobox,
- com.jidesoft.swing,
  org.osgi.framework;version="1.5.0"
 Bundle-ClassPath: .,
  resources/

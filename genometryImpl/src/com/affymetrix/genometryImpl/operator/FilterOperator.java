@@ -37,7 +37,7 @@ public class FilterOperator implements Operator {
 		SimpleSymWithProps sym = new SimpleSymWithProps();
 		for (int i = 0; i < symList.get(0).getChildCount(); i++) {
 			SeqSymmetry child = symList.get(0).getChild(i);
-			if (filter.filterSymmetry(child)) {
+			if (filter.filterSymmetry(aseq, child)) {
 				sym.addChild(child);
 			}
 		}

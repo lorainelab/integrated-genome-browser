@@ -94,7 +94,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 
 	private List<SeqSymmetry> searchSym(SeqSymmetry sym) {
 		List<SeqSymmetry> searchResults = new ArrayList<SeqSymmetry>();
-		if (filter.filterSymmetry(sym)) {
+		if (filter.filterSymmetry(null, sym)) {
 			searchResults.add(sym);
 		}
 		int childCount = sym.getChildCount();

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.filter;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -33,7 +34,7 @@ public class SymmetryFilterId implements SymmetryFilterI {
 	}
 
 	@Override
-	public boolean filterSymmetry(SeqSymmetry sym) {
+	public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym) {
 		boolean passes = false;
 		if (regex == null) {
 			throw new IllegalStateException("invalid filter");

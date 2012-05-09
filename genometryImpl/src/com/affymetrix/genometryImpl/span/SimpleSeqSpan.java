@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.span;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
 
-public class SimpleSeqSpan implements SeqSpan, Cloneable {
+public class SimpleSeqSpan implements SeqSpan, Cloneable, Comparable<SimpleSeqSpan> {
 	protected int start;
 	protected int end;
 	protected BioSeq seq;
@@ -123,6 +123,21 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 
 	public String toString() {
 		return seq.toString() + ":" + start + "-" + end;
+	}
+
+	@Override
+	public int compareTo(SimpleSeqSpan o) {
+		int result = seq.getID().compareTo(o.getBioSeq().getID());
+		if (result == 0) {
+			result = (isForward() ? 0 : 1) - (o.isForward() ? 0 : 1);
+		}
+		if (result == 0) {
+			result = isForward() ? (start - o.getStart()) : (o.getStart() - start);
+		}
+		if (result == 0) {
+			result = isForward() ? (end - o.getEnd()) : (o.getEnd() - end);
+		}
+		return result;
 	}
 }
 

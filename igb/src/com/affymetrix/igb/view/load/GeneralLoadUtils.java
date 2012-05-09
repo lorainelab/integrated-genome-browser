@@ -753,16 +753,6 @@ public final class GeneralLoadUtils {
 			@Override
 			protected Boolean runInBackground() {
 				try {
-//					temp_listener = new NewSymLoadedListener() {
-//
-//						public void newSymLoaded(NewSymLoadedEvent e) {
-//							if(e.getSource() == feature){
-//								temp.addAll(e.getNewSyms());
-//							}
-//						}
-//					};
-//					
-//					SymLoader.addNewSymLoadedListener(temp_listener);
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -772,7 +762,6 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected void finished() {
-//				SymLoader.removeNewSymLoadedListener(temp_listener);
 				
 				BioSeq aseq = gmodel.getSelectedSeq();
 
@@ -790,15 +779,7 @@ public final class GeneralLoadUtils {
 				}
 
 				GeneralLoadView.getLoadView().refreshDataManagementView();
-				
-//				if(!temp.isEmpty() && gviewer.getVisibleSpan().getMin() == aseq.getMin() &&
-//						gviewer.getVisibleSpan().getMax() == aseq.getMax()){
-//					SeqSpan span = regionFinder.findInterestingRegion(aseq, temp);
-//					if(span != null){
-//						gviewer.zoomTo(span);
-//					}
-//				}
-				
+								
 				if (this.isCancelled()) {
 					return;
 				}

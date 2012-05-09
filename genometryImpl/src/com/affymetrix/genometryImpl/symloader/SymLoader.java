@@ -1,38 +1,23 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.NewSymLoadedListener;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.UcscPslSym;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ParserController;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.SortTabFile;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.*;
 
 /**
  *
@@ -53,7 +38,6 @@ public abstract class SymLoader {
 	protected final Map<BioSeq,Boolean> chrSort = new HashMap<BioSeq,Boolean>();
 	protected final AnnotatedSeqGroup group;
 	public final String featureName;
-	private static Set<NewSymLoadedListener> new_sym_loaded_listeners = new CopyOnWriteArraySet<NewSymLoadedListener>();
 	protected SymLoaderProgressUpdater symLoaderProgressUpdater;
 	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
 
@@ -502,11 +486,4 @@ public abstract class SymLoader {
 		}
 	}
 
-	public static void addNewSymLoadedListener(NewSymLoadedListener listener){
-		new_sym_loaded_listeners.add(listener);
-	}
-	
-	public static void removeNewSymLoadedListener(NewSymLoadedListener listener){
-		new_sym_loaded_listeners.remove(listener);
-	}
 }

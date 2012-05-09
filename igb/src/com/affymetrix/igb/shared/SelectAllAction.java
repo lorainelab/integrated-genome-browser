@@ -9,16 +9,17 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 
 public class SelectAllAction extends SeqMapViewActionA {
+
 	private static final long serialVersionUID = 1L;
 	private static SelectAllAction ACTION = new SelectAllAction(null);
-	private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION = 
-		new HashMap<FileTypeCategory, SelectAllAction>();
+	private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION =
+			new HashMap<FileTypeCategory, SelectAllAction>();
 	private FileTypeCategory category;
 
-	static{
+	static {
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
-	
+
 	public static SelectAllAction getAction() {
 		return ACTION;
 	}
@@ -33,13 +34,17 @@ public class SelectAllAction extends SeqMapViewActionA {
 	}
 
 	protected SelectAllAction(FileTypeCategory category) {
-		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null, null) ;
+		super(((category == null ? "" : (category.toString() + " ")) + "Tracks"), null, null);
 		this.category = category;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		execute();
+	}
+
+	public void execute() {
 		getSeqMapView().selectAll(category);
 	}
 }

@@ -30,10 +30,7 @@ import com.affymetrix.igb.shared.*;
 import com.jidesoft.swing.JideSplitButton;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import javax.swing.*;
@@ -48,6 +45,9 @@ public final class TrackAdjusterTab
 	private static TrackAdjusterTab singleton;
 	private static final Map<GraphType, String> graphType2ViewMode = new EnumMap<GraphType, String>(GraphType.class);
 	private static final String viewModePrefix = "viewmode_";
+	private final static int xoffset_pop = 0;
+	private final static int yoffset_pop = 30;
+	private final static JPopupMenu popup = new JPopupMenu();
 
 	static {
 		graphType2ViewMode.put(GraphType.BAR_GRAPH, "bargraph");
@@ -247,11 +247,30 @@ public final class TrackAdjusterTab
 		gmodel.addSymSelectionListener(this);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		igbService.addListSelectionListener(this);
+
+		for (FileTypeCategory category : FileTypeCategory.values()) {
+			JRPMenuItem item = new JRPMenuItem("Track_Adjuster_Select_Menu_"
+					+ category.name(), SelectAllAction.getAction(category));
+			popup.add(item);
+		}
+	}
+
+	public void selectAllBMouseClicked(JComponent c, MouseEvent e) {
+		if (c.getWidth() * 0.75 - e.getX() < 0) {
+			if (popup.getComponentCount() > 0) {
+				popup.show(c, xoffset_pop, yoffset_pop);
+			}
+		} else {
+			SelectAllAction.getAction().execute();
+		}
 	}
 
 	private JideSplitButton createSelectAllMenuButton(String name) {
-		final JideSplitButton button = new JideSplitButton(name);
-		button.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+		final JideSplitButton button = new JideSplitButton("");
+		//	button.setSelected(true);
+		//button.setButtonStyle(JideSplitButton.TOOLBAR_STYLE);
+		//button.setIcon(MenuUtil.getIcon("images/select.png"));
+		button.setSize(0, 5);
 		button.add(SelectAllAction.getAction());
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			JRPMenuItem item = new JRPMenuItem("Track_Adjuster_Select_Menu_" + category.name(), SelectAllAction.getAction(category));

@@ -3,6 +3,7 @@ package com.affymetrix.igb.trackAdjuster;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.CollapseExpandAction;
@@ -23,7 +24,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private RepackTiersAction repackStub;
 
 	/**
-	 * Creates new form SimpleGraphTab1 
+	 * Creates new form SimpleGraphTab1
 	 */
 	public TrackAdjusterTabGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
@@ -34,7 +35,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 			private static final long serialVersionUID = 1L;
 		};
 		initComponents();
-		replaceSelectAllButton();
 	}
 
 	public static void init(IGBService igbService) {
@@ -548,7 +548,14 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         jLabel1.setText("Height:");
 
-        selectAllB.setText("Select All");
+        selectAllB.setText("Select All   ");
+        selectAllB.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        selectAllB.setIcon(MenuUtil.getIcon("images/arrow_down.png"));
+        selectAllB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                selectAllBMouseClicked(evt);
+            }
+        });
 
         trackNameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -593,7 +600,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                         .add(3, 3, 3)
                         .add(AnnotationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(3, 3, 3)
-                        .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                        .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(3, 3, 3)
                         .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 210, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -614,7 +621,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                         .add(8, 8, 8))
                     .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE))))
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         layout.linkSize(new java.awt.Component[] {AnnotationPanel, RangePanel, StylePanel, graphPanel}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -650,7 +657,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_nameSizeComboBoxtrackNameSizeComboBoxActionPerformed
 
 	private void rangeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rangeSliderStateChanged
-		// TODO add your handling code here:
 	}//GEN-LAST:event_rangeSliderStateChanged
 
 	private void minTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minTextActionPerformed
@@ -682,7 +688,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_maxTextActionPerformed
 
 	private void pluginPrefButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pluginPrefButtonActionPerformed
-		// TODO add your handling code here:		
 		TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
 		pp.setTab(TrackAdjusterPreferences.TAB_DISPLAY_PLUGIN);
 		javax.swing.JFrame f = pp.getFrame();
@@ -694,28 +699,24 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_by_valRB_valActionPerformed
 
 	private void trackNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameTextFieldActionPerformed
-		// TODO add your handling code here:
 		if (sgt.is_listening) {
 			sgt.setTrackName(trackNameTextField.getText());
 		}
 	}//GEN-LAST:event_trackNameTextFieldActionPerformed
 
 	private void maxStackDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxStackDepthTextFieldActionPerformed
-		// TODO add your handling code here:		
 		if (sgt.is_listening) {
 			sgt.setMaxDepth(maxStackDepthTextField.getText());
 		}
 	}//GEN-LAST:event_maxStackDepthTextFieldActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-		// TODO add your handling code here:
 		if (sgt.is_listening) {
 			maxStackDepthTextFieldActionPerformed(evt);
 		}
 	}//GEN-LAST:event_jButton2ActionPerformed
 
 	private void AnnotationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnnotationButtonActionPerformed
-		// TODO add your handling code here:
 		if (sgt.is_listening) {
 			sgt.setViewMode(DisplayType.ANNOTATION);
 		}
@@ -734,18 +735,15 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_AutoButtonActionPerformed
 
 	private void PluginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PluginButtonActionPerformed
-		// TODO add your handling code here:
 		if (sgt.is_listening) {
 			sgt.setViewMode(DisplayType.PLUGIN);
 		}
 	}//GEN-LAST:event_PluginButtonActionPerformed
 
 	private void floatingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_floatingCheckBoxActionPerformed
-		// TODO add your handling code here:
 	}//GEN-LAST:event_floatingCheckBoxActionPerformed
 
 	private void StylePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseClicked
-		// TODO add your handling code here:
 		Rectangle bounds = new Rectangle(43, 5, 57, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
 			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
@@ -757,7 +755,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_StylePanelMouseClicked
 
 	private void AnnotationPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AnnotationPanelMouseClicked
-		// TODO add your handling code here:
 		Rectangle bounds = new Rectangle(85, 5, 55, 13);
 
 		if (bounds.contains(evt.getX(), evt.getY())) {
@@ -769,7 +766,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_AnnotationPanelMouseClicked
 
 	private void RangePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RangePanelMouseClicked
-		// TODO add your handling code here:
 		Rectangle bounds = new Rectangle(100, 5, 53, 13);
 
 		if (bounds.contains(evt.getX(), evt.getY())) {
@@ -781,7 +777,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_RangePanelMouseClicked
 
 	private void graphPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseClicked
-		// TODO add your handling code here:
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);
 
 		if (bounds.contains(evt.getX(), evt.getY())) {
@@ -800,7 +795,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_height_sliderStateChanged
 
 	private void fitViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fitViewButtonActionPerformed
-		// TODO add your handling code here:
 		int ourOptimum = 1;
 		for (TierGlyph tg : sgt.selectedTiers) {
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(igbService.getSeqMapView().getSeqMap().getView()));
@@ -811,6 +805,10 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void collapseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapseButtonActionPerformed
 		CollapseExpandAction.getAction().actionPerformed(evt);
 	}//GEN-LAST:event_collapseButtonActionPerformed
+
+	private void selectAllBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllBMouseClicked
+		sgt.selectAllBMouseClicked(selectAllB, evt);
+	}//GEN-LAST:event_selectAllBMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton AnnotationButton;
     private javax.swing.JPanel AnnotationPanel;
@@ -899,11 +897,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 			maxText = sgt.vis_bounds_setter.max_valT;
 			rangeSlider = sgt.vis_bounds_setter.ValueSlider;
 		}
-	}
-
-	private void replaceSelectAllButton() {
-		org.jdesktop.layout.GroupLayout layout = (org.jdesktop.layout.GroupLayout) TopPanel.getLayout();
-		layout.replace(selectAllB, sgt.selectAllB);
 	}
 
 	private void changeMaxExpand(List<TierGlyph> selectedTiers, int max) {

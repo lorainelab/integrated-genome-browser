@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
@@ -376,7 +377,7 @@ public class SeqMapView extends JPanel
 
 		// A "Smart" rubber band is necessary becaus we don't want our attempts
 		// to drag the graph handles to also cause rubber-banding
-		SmartRubberBand srb = new SmartRubberBand(seqmap);
+		RubberBand srb = new RubberBand(seqmap);
 		seqmap.setRubberBand(srb);
 		seqmap.addRubberBandListener(mouse_listener);
 		srb.setColor(new Color(100, 100, 255));

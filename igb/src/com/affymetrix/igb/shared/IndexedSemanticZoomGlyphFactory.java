@@ -96,16 +96,28 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 
 		protected ViewModeGlyph getDetailGlyph(SeqMapViewExtendedI smv) throws Exception {
 			GenericFeature feature = style.getFeature();
-			SeqSymmetry optimized_sym = feature.optimizeRequest(smv.getVisibleSpan());	
+			SeqSymmetry optimized_sym = feature.optimizeRequest(smv.getVisibleSpan());
+			List<SeqSymmetry> syms = null;
 			if (optimized_sym != null) {
-				GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
+				syms = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 			}
-			SymWithProps rootSym = getRootSym();
-			if (rootSym == null) {
+			
+			if (getRootSym() == null) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "getDetailGlyph() rootSym is null");
 				return null;
 			}
-			return defaultGlyphFactory.getViewModeGlyph(rootSym, style, Direction.BOTH, smv);
+				
+			if(saveDetailGlyph == null){
+				saveDetailGlyph = defaultGlyphFactory.getViewModeGlyph(getRootSym(), style, Direction.BOTH, smv);
+			}else if(syms != null && !syms.isEmpty()){
+				TypeContainerAnnot detailSym = new TypeContainerAnnot(style.getMethodName());
+				for(SeqSymmetry sym : syms){
+					detailSym.addChild(sym);
+				}
+				saveDetailGlyph.copyChildren(defaultGlyphFactory.getViewModeGlyph(detailSym, style, Direction.BOTH, smv));
+			}
+			
+			return saveDetailGlyph;
 		}
 
 		protected ViewModeGlyph getSummaryGlyph(SeqMapViewExtendedI smv) throws Exception {

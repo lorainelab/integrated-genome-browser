@@ -287,7 +287,12 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 		
 	@Override
 	protected void setModifiedViewCoords(ViewI view){
-		view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
+		Rectangle temp_width = new Rectangle();
+		view.transformToPixels(new Rectangle2D.Double(0, 0, 0, BUFFER), temp_width);
+		Rectangle temp = new Rectangle(this.getPixelBox().x, 
+				this.getPixelBox().y  + temp_width.height, this.getPixelBox().width, 
+				this.getPixelBox().height - 2*temp_width.height);
+		view.transformToCoords(temp, modified_view_coordbox);
 	}
 	
 	private void setInitialOffset() {

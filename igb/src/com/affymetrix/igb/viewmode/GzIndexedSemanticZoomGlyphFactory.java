@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
@@ -48,7 +47,7 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 	protected abstract SymLoader createSummarySymLoader(URI uri, String featureName, AnnotatedSeqGroup group);
 
 	// glyph class
-	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph implements SeqSelectionListener{
+	public class GzIndexedSemanticZoomGlyph extends IndexedSemanticZoomGlyphFactory.IndexedSemanticZoomGlyph{
 //		private static final double ZOOM_X_SCALE = 0.002;
 		private AutoLoadThresholdAction autoLoadThresholdAction;
 		private ViewModeGlyph saveSummaryGlyph;
@@ -92,10 +91,6 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			return saveSummaryGlyph;
 		}
 
-		@Override
-		public void seqSelectionChanged(SeqSelectionEvent evt) {
-			saveSummaryGlyph = null;
-		}
 	}
 	// end glyph class
 }

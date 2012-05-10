@@ -91,6 +91,10 @@ public abstract class GzIndexedSemanticZoomGlyphFactory extends IndexedSemanticZ
 			return saveSummaryGlyph;
 		}
 
+		@Override
+		public void seqSelectionChanged(SeqSelectionEvent evt) {
+			saveSummaryGlyph = null;
+		}
 	}
 	// end glyph class
 }

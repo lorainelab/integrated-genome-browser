@@ -6,14 +6,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
@@ -69,8 +68,8 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 		return szg;
 	}
 	// glyph class
-	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph {
-		protected ViewModeGlyph defaultGlyph; 
+	public abstract class IndexedSemanticZoomGlyph extends SemanticZoomGlyphFactory.SemanticZoomGlyph implements SeqSelectionListener {
+		protected ViewModeGlyph defaultGlyph, saveDetailGlyph;
 //		protected final SeqMapViewExtendedI smv;
 		protected SymLoader detailSymL;
 		protected SymLoader summarySymL;
@@ -99,10 +98,7 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 			GenericFeature feature = style.getFeature();
 			SeqSymmetry optimized_sym = feature.optimizeRequest(smv.getVisibleSpan());	
 			if (optimized_sym != null) {
-				boolean result = GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
-				if (!result) {
-				//	Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "getDetailGlyph() result is false");
-				}
+				GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
 			}
 			SymWithProps rootSym = getRootSym();
 			if (rootSym == null) {
@@ -201,6 +197,11 @@ public abstract class IndexedSemanticZoomGlyphFactory extends SemanticZoomGlyphF
 				};
 			};
 			return rootSym;
+		}
+		
+		@Override
+		public void seqSelectionChanged(SeqSelectionEvent evt) {
+			saveDetailGlyph = null;
 		}
 	}
 	// end glyph class

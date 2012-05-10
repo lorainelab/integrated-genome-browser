@@ -748,16 +748,16 @@ public final class GeneralLoadUtils {
 		}
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
-		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>("Loading feature " + feature.featureName) {
+		final CThreadWorker<List<SeqSymmetry>, Object> worker = new CThreadWorker<List<SeqSymmetry>, Object>("Loading feature " + feature.featureName) {
 			
 			@Override
-			protected Boolean runInBackground() {
+			protected List<SeqSymmetry> runInBackground() {
 				try {
 					return loadFeaturesForSym(feature, optimized_sym);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				return false;
+				return Collections.<SeqSymmetry>emptyList();
 			}
 
 			@Override
@@ -785,8 +785,8 @@ public final class GeneralLoadUtils {
 				}
 
 				try {
-					boolean result = get();
-					setLastRefreshStatus(feature, result);
+					List<SeqSymmetry> result = get();
+					setLastRefreshStatus(feature, result.size() > 0);
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 							Level.SEVERE, "Unable to get refresh action result.", ex);
@@ -798,24 +798,23 @@ public final class GeneralLoadUtils {
 	}
 
 	//TO DO: Make this private again.
-	public static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
+	public static List<SeqSymmetry> loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
+		List<SeqSymmetry> loaded = new ArrayList<SeqSymmetry>();
 		convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
 		if (feature.gVersion.gServer.serverType == null) {
-			return false;
+			return Collections.<SeqSymmetry>emptyList();
 		}
 		Thread thread = Thread.currentThread();
-		boolean result = false;
+		
 		for (SeqSpan optimized_span : optimized_spans) {
 
 			feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 
-			if (!feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature).isEmpty()) {
-				result = true;
-			}
-
+			loaded.addAll(feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature));
+				
 			if (thread.isInterrupted()) {
 				feature.removeCurrentRequest(optimized_span);
 				break;
@@ -824,7 +823,7 @@ public final class GeneralLoadUtils {
 			feature.addLoadedSpanRequest(optimized_span);
 		}
 
-		return result;
+		return loaded;
 	}
 
 	private static boolean checkBamAndSamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {

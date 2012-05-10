@@ -51,16 +51,16 @@ public class GlyphTransformer {
 		tierlabel = tlg;
 		svmg = (TransformableViewModeGlyph)tlg.getReferenceTier().getViewModeGlyph();
 
-		scrollbar = getScrollBar(tlg.getReferenceTier(), svmg.getOffset(), svmg.getScale());
-		scroll_window = getWindow(scrollbar);
+//		scrollbar = getScrollBar(tlg.getReferenceTier(), svmg.getOffset(), svmg.getScale());
+//		scroll_window = getWindow(scrollbar);
 		
 		// Add listeners
 		addListeners();
 		
 		// Set scroll window properties
-		resizeWindow();
-		repositionWindow();
-		scroll_window.setVisible(true);
+//		resizeWindow();
+//		repositionWindow();
+//		scroll_window.setVisible(true);
 	}
 
 	private void scroll(int i){
@@ -72,11 +72,11 @@ public class GlyphTransformer {
 		svmg.setScale(scale);
 		
 		// Update scrollbar
-		scrollbar.removeAdjustmentListener(listener);
-		scrollbar.setMaximum((int)(scrollbar.getMaximum() * scale));
-		scrollbar.setMinimum((int)(scrollbar.getMinimum() * scale));
-		scrollbar.repaint();
-		scrollbar.addAdjustmentListener(listener);
+//		scrollbar.removeAdjustmentListener(listener);
+//		scrollbar.setMaximum((int)(scrollbar.getMaximum() * scale));
+//		scrollbar.setMinimum((int)(scrollbar.getMinimum() * scale));
+//		scrollbar.repaint();
+//		scrollbar.addAdjustmentListener(listener);
 		
 		map.updateWidget(true);
 	}
@@ -86,10 +86,10 @@ public class GlyphTransformer {
 		removeListners(true);
 		
 		// Dispose window
-		scroll_window.dispose();
+//		scroll_window.dispose();
 		
 		// Helps with garbage collection
-		scrollbar = null;
+//		scrollbar = null;
 		tierlabel = null;
 		svmg = null;
 	}
@@ -126,8 +126,8 @@ public class GlyphTransformer {
 		// Add this as zoom listener
 		map.getZoomer(AffyLabelledTierMap.Y).addAdjustmentListener(listener);
 		
-		scrollbar.addAdjustmentListener(listener);
-		Application.getSingleton().getFrame().addComponentListener(listener);
+//		scrollbar.addAdjustmentListener(listener);
+//		Application.getSingleton().getFrame().addComponentListener(listener);
 		
 		// Set value for the glyph
 		map.getZoomer(AffyLabelledTierMap.Y).setValue((int)zoomtrans.inverseTransform(AffyLabelledTierMap.Y, svmg.getScale()));
@@ -145,8 +145,8 @@ public class GlyphTransformer {
 			map.getZoomer(AffyLabelledTierMap.Y).addAdjustmentListener(map.getLabelMap());
 		}
 		
-		scrollbar.removeAdjustmentListener(listener);
-		Application.getSingleton().getFrame().removeComponentListener(listener);
+//		scrollbar.removeAdjustmentListener(listener);
+//		Application.getSingleton().getFrame().removeComponentListener(listener);
 		
 		// Restore value
 		map.getZoomer(AffyLabelledTierMap.Y).setValue(zoom_pos);
@@ -186,7 +186,8 @@ public class GlyphTransformer {
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			scrollbar.setValue(svmg.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
+//			scrollbar.setValue(svmg.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
+			scroll(svmg.getOffset() + (e.getWheelRotation() * e.getScrollAmount() * SPEED));
 		}
 
 		@Override

@@ -601,7 +601,7 @@ public final class GeneralLoadView {
 
 	public static void addFeatureTier(final GenericFeature feature) {
 
-		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading feature " + feature.featureName) {
+		CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("Loading feature " + feature.featureName, Thread.MIN_PRIORITY) {
 
 			@Override
 			protected Object runInBackground() {

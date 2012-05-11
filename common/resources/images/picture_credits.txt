@@ -1,5 +1,0 @@
-Picture Credits
-m_musculus.png				| http://www.flickr.com/photos/hthg1983/2237614948/
-h_sapiens.png  				| public domain
-a_thaliana.png 				| http://commons.wikimedia.org/wiki/File:Arabidopsis_thaliana-flower.jpg
-d_melanogaster.png			| http://eol.org/data_objects/9676872

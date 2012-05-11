@@ -58,6 +58,7 @@ public class FastaSequenceParser implements ContentParser {
 	 * @param theInput from whence the data come.
 	 * @return a {@link Sequence} or a Vector of them.
 	 */
+	@Override
 	public Object importContent( InputStream theInput ) throws IOException {
 		BufferedReader in;
 		in = new BufferedReader( new InputStreamReader( theInput ) );
@@ -78,10 +79,11 @@ public class FastaSequenceParser implements ContentParser {
 		String line;
 
 		try {
-			while ( null != ( line = in.readLine() )
-					&& !line.startsWith( ">" ) ) {
+			line = in.readLine();
+			while ( null != line && !line.startsWith( ">" ) ) {
 				// Skip to header.
-					}
+				line = in.readLine();
+			}
 			while ( null != line ) {
 				SequenceI seq = new Sequence();
 				if ( line.startsWith( ">" ) ) {
@@ -96,14 +98,15 @@ public class FastaSequenceParser implements ContentParser {
 						}
 					}
 				}
-				while ( null != ( line = in.readLine() )
-						&& !line.startsWith( ">" ) ) {
+				line = in.readLine();
+				while ( null != line && !line.startsWith( ">" ) ) {
 					char[] l = line.toCharArray();
 					for ( int i = 0; i < l.length; i++ ) {
 						if ( ';' == l[i] ) break; // the rest of the line is a comment.
 						if ( ' ' < l[i] ) out.append( l[i] );
 					}
-						}
+					line = in.readLine();
+				}
 				seq.setResidues(out.toString());
 				v.add( seq );
 				out = new StringBuffer();
@@ -126,6 +129,7 @@ public class FastaSequenceParser implements ContentParser {
 	 * @param theOutput where the fasta format data are written.
 	 * @param o a {@link Sequence} or Vector of them.
 	 */
+	@Override
 	public void exportContent( OutputStream theOutput, Object o )
 		throws IOException
 	{

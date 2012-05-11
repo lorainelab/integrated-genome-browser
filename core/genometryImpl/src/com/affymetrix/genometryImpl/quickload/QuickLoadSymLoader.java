@@ -138,7 +138,6 @@ public class QuickLoadSymLoader extends SymLoader {
 			return Collections.<SeqSymmetry>emptyList();
 		}
 
-		boolean ret = false;
 		if (results != null) {
 			return addSymmtries(span, results, feature);
 		}

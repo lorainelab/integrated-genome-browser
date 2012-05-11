@@ -23,12 +23,17 @@ import java.util.logging.Logger;
 public final class AffyGenericChpFile {
 
 	private int magic; // magic number.  Always 59.
+	@SuppressWarnings("unused")
 	private int version; // version number.  Always 1.
 	private int num_groups;
+	@SuppressWarnings("unused")
 	private int group_0_pos;
+	@SuppressWarnings("unused")
 	private Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
+	@SuppressWarnings("unused")
 	private AffyGenericDataHeader header;
 	List<AffyDataGroup> groups;
+	@SuppressWarnings("unused")
 	private final File file;
 	private final ChromLoadPolicy loadPolicy;
 

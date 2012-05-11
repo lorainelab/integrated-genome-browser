@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
@@ -16,6 +14,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
+@SuppressWarnings("rawtypes")
 public class DummyBundle implements Bundle {
 	private final BundleContext bundleContext;
 	public DummyBundle(BundleContext bundleContext) {
@@ -23,7 +22,7 @@ public class DummyBundle implements Bundle {
 		this.bundleContext = bundleContext;
 	}
 
-	private static final Dictionary<String, String> DummyDictionary = new Dictionary<String, String>() {
+	private static final Dictionary DummyDictionary = new Dictionary() {
 
 	@Override
 	public int size() {
@@ -38,31 +37,31 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Enumeration<String> keys() {
+	public Enumeration keys() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Enumeration<String> elements() {
+	public Enumeration elements() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String get(Object key) {
+	public Object get(Object key) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String put(String key, String value) {
+	public Object put(Object key, Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String remove(Object key) {
+	public Object remove(Object key) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -117,7 +116,7 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Dictionary<String, String> getHeaders() {
+	public Dictionary getHeaders() {
 		return DummyDictionary;
 	}
 
@@ -134,13 +133,13 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public ServiceReference<?>[] getRegisteredServices() {
+	public ServiceReference[] getRegisteredServices() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceReference<?>[] getServicesInUse() {
+	public ServiceReference[] getServicesInUse() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -158,7 +157,7 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Dictionary<String, String> getHeaders(String locale) {
+	public Dictionary getHeaders(String locale) {
 		return DummyDictionary;
 	}
 
@@ -169,19 +168,19 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
+	public Class loadClass(String name) throws ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Enumeration<URL> getResources(String name) throws IOException {
+	public Enumeration getResources(String name) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Enumeration<String> getEntryPaths(String path) {
+	public Enumeration getEntryPaths(String path) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -199,7 +198,7 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Enumeration<URL> findEntries(String path, String filePattern,
+	public Enumeration findEntries(String path, String filePattern,
 			boolean recurse) {
 		// TODO Auto-generated method stub
 		return null;
@@ -211,7 +210,7 @@ public class DummyBundle implements Bundle {
 	}
 
 	@Override
-	public Map<X509Certificate,List<X509Certificate>> getSignerCertificates(int signersType) {
+	public Map getSignerCertificates(int signersType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

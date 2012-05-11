@@ -393,11 +393,11 @@ public final class IndexingUtils {
 	 * @return - sorted list of annotations
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List<? extends SeqSymmetry> syms, BioSeq seq, Comparator<? extends SeqSymmetry> comp) {
+	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(10000);
 		int symSize = syms.size();
 		for (int i = 0; i < symSize; i++) {
-			SeqSymmetry sym = syms.get(i);
+			SeqSymmetry sym = (SeqSymmetry) syms.get(i);
 			if (sym instanceof UcscPslSym) {
 				// add the lines specifically with Target seq == seq.
 				if (((UcscPslSym)sym).getTargetSeq() == seq) {
@@ -412,7 +412,7 @@ public final class IndexingUtils {
 			}
 		}
 
-		Collections.sort(results, (Comparator<SeqSymmetry>)comp);
+		Collections.sort(results, comp);
 
 		return results;
 	}

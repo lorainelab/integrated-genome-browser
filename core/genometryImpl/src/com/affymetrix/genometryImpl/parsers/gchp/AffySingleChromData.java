@@ -94,7 +94,7 @@ final class AffySingleChromData {
 	public List<SeqSymmetry> makeGraphs(BioSeq seq) throws IOException {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(columns.size());
 
-		ArrayList<?> probeSetNames = (ArrayList<?>) columns.get(0).getData();
+		ArrayList probeSetNames = (ArrayList) columns.get(0).getData();
 		probeSetNames.trimToSize();
 
 		// column 2 contains chromosome number, but we already know that information so ignore it.

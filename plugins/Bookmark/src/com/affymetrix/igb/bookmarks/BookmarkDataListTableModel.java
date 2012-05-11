@@ -8,6 +8,7 @@ import java.util.Map;
  * @author nick
  */
 public class BookmarkDataListTableModel extends BookmarkInfoTableModel {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Save all the bookmark data that are not contained in info_list.

@@ -8,6 +8,7 @@ import javax.swing.table.AbstractTableModel;
  * @author nick
  */
 public class BookmarkPropertyTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * A silly little helper class that holds two strings. A String[2] array

@@ -9,7 +9,7 @@ import java.util.Map;
  * @author nick
  */
 public class BookmarkInfoTableModel extends BookmarkPropertyTableModel {
-
+	private static final long serialVersionUID = 1L;
 	// A list to determine what bookmark data should be listed in table.
 	static final List<String> info_list = getInfoList();
 

@@ -13,7 +13,7 @@ import java.awt.event.KeyListener;
  * @author lorainelab
  */
 public class BookmarkTree extends DragDropTree implements KeyListener {
-
+	private static final long serialVersionUID = 1L;
 	private BookmarkManagerView bookmarkManagerView;
 
 	public BookmarkTree(BookmarkManagerView bmv) {

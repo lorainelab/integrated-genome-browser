@@ -1,6 +1,5 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.shared.StyledJTable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,9 +10,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 

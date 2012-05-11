@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.*;

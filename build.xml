@@ -15,16 +15,16 @@
 		<property name="name" value="Integrated Genome Browser" />
 
 		<!-- Locations of subprojects -->
-		<property name="main"                value="${basedir}/main" />
-		<property name="common"              value="${basedir}/common" />
-		<property name="genoviz"             value="${basedir}/genoviz_sdk" />
-		<property name="genometry"           value="${basedir}/genometryImpl" />
-		<property name="igb"                 value="${basedir}/igb" />
-		<property name="igb-18n"             value="${basedir}/igb-i18n" />
+		<property name="main"                value="${basedir}/core/main" />
+		<property name="common"              value="${basedir}/core/common" />
+		<property name="genoviz"             value="${basedir}/core/genoviz_sdk" />
+		<property name="genometry"           value="${basedir}/core/genometryImpl" />
+		<property name="igb"                 value="${basedir}/core/igb" />
+		<property name="igb-18n"             value="${basedir}/core/igb-i18n" />
 		<property name="das2server"          value="${basedir}/das2_server" />
 		<property name="protannot"           value="${basedir}/protannot" />
-		<property name="igb_service"         value="${basedir}/plugins/igb_service" />
-		<property name="window_service"      value="${basedir}/plugins/window_service" />
+		<property name="igb_service"         value="${basedir}/core/igb_service" />
+		<property name="window_service"      value="${basedir}/core/window_service" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 
 		<!-- Locations of optional bundle subprojects -->
@@ -287,22 +287,22 @@
 				<include name="sam.jar" />
 				<include name="picard.jar" />
 				<include name="HCIDictionary.jar" />
-   		        <include name="Hibernate3Utils.jar" />
+				<include name="Hibernate3Utils.jar" />
 				<include name="hci_utils.jar" />
 				<include name="hci_framework.jar" />
 				<include name="hibernate3.jar" />
 				<include name="gnomex.jar" />
 				<include name="jdom.jar"/>
 			</fileset>
-    </copy>
+		</copy>
 	</target>
 
 	<target name="cbc" depends="compiler-def-args,init" description="clear bundle cache">
 		<mkdir dir="${bundle.dir}" />
 		<subant target="compile" genericantfile="generic.xml" inheritall="true">
 			<dirset dir="${basedir}">
-				<include name="common" />
-				<include name="main" />
+				<include name="core/common" />
+				<include name="core/main" />
 			</dirset>
 		</subant>
 		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build:${common}/build"/>
@@ -687,16 +687,16 @@
 			</subant>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
-				<dirset dir="${basedir}">
+				<dirset dir="${basedir}/core">
 					<include name="common" />
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 				</dirset>
-				<dirset dir="${basedir}/plugins">
+				<dirset dir="${basedir}/core">
 					<include name="igb_service" />
 					<include name="window_service" />
 				</dirset>
-				<dirset dir="${basedir}">
+				<dirset dir="${basedir}/core">
 					<include name="igb" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">
@@ -709,7 +709,7 @@
 					<include name="protannot" />
 					<include name="das2_server" />
 				</dirset>
-				<dirset dir="${basedir}">
+				<dirset dir="${basedir}/core">
 					<include name="main" />
 					<include name="igb-i18n" unless="findbugs" />
 				</dirset>

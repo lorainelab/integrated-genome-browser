@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -170,45 +171,68 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 	}
 
 	private static final int MAX_PROGRESS_BARS = 5;
-	private void rebuildProgress(int workerCount) {
-		int barCount = Math.min(workerCount, MAX_PROGRESS_BARS);
-		progressPanel.removeAll();
-		GridLayout progressLayout = new GridLayout(1, barCount);
-		progressPanel.setLayout(progressLayout);
-		int width = progressPanel.getWidth() / barCount;
-		int count = 0;
-		for (CThreadWorker<?, ?> worker : new CopyOnWriteArraySet<CThreadWorker<?, ?>>(CThreadHolder.getInstance().getAllCThreadWorkers())) {
-			if (count > barCount) {
-				break;
+	private void rebuildProgress() {
+		synchronized(progressPanel) {
+			Set<CThreadWorker<?, ?>> workers = new CopyOnWriteArraySet<CThreadWorker<?, ?>>(CThreadHolder.getInstance().getAllCThreadWorkers());
+			int workerCount = workers.size();
+			boolean workerInProgress = workerCount > 0;
+			displayProgress(workerInProgress);
+			if (workerInProgress) {
+				int barCount = Math.min(workerCount, MAX_PROGRESS_BARS);
+				progressPanel.removeAll();
+				GridLayout progressLayout = new GridLayout(1, barCount);
+				progressPanel.setLayout(progressLayout);
+				int width = progressPanel.getWidth() / barCount;
+				int count = 0;
+				for (CThreadWorker<?, ?> worker : workers) {
+					count++;
+					if (count > barCount) {
+						break;
+					}
+					else if (count == MAX_PROGRESS_BARS && workerCount > MAX_PROGRESS_BARS) {
+						JLabel moreLabel = getMoreLabel(width);
+						progressPanel.add(moreLabel);
+						moreLabel.repaint();
+					}
+					else {
+						JProgressBar progressBar = getProgressBar(worker, width);
+						progressPanel.add(progressBar);
+						progressBar.repaint();
+					}
+				}
+				progressPanel.repaint();
 			}
-			final JProgressBar progressBar = new JProgressBar(0, 100);
-			progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-			progressBar.setMaximumSize(new Dimension(width, 25));
-			worker.addPropertyChangeListener(
-			     new PropertyChangeListener() {
-			         public void propertyChange(PropertyChangeEvent evt) {
-			             if ("progress".equals(evt.getPropertyName())) {
-			         		if (progressPanel.isShowing()) {
-			        			progressBar.setValue((Integer)evt.getNewValue());
-			                	progressBar.repaint();
-			        		}
-			             }
-			         }
-			     }
-			);
-			progressPanel.add(progressBar);
-        	progressBar.repaint();
-			count++;
 		}
-		progressPanel.validate();
+	}
+
+	private JLabel getMoreLabel(int width) {
+		JLabel moreLabel = new JLabel(". . .", SwingConstants.CENTER);
+		moreLabel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		moreLabel.setMaximumSize(new Dimension(width, 25));
+		return moreLabel;
+	}
+
+	private JProgressBar getProgressBar(CThreadWorker<?, ?> worker, int width) {
+		final JProgressBar progressBar = new JProgressBar(0, 100);
+		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		progressBar.setMaximumSize(new Dimension(width, 25));
+		worker.addPropertyChangeListener(
+		     new PropertyChangeListener() {
+		         public void propertyChange(PropertyChangeEvent evt) {
+		             if ("progress".equals(evt.getPropertyName())) {
+		         		if (progressPanel.isShowing()) {
+		        			progressBar.setValue((Integer)evt.getNewValue());
+		                	progressBar.repaint();
+		        		}
+		             }
+		         }
+		     }
+		);
+		return progressBar;
 	}
 
 	@Override
 	public void heardThreadEvent(CThreadEvent cte) {
-		int workerCount = CThreadHolder.getInstance().getCThreadWorkerCount();
-		displayProgress(workerCount > 0);
-		if (workerCount > 0) {
-			rebuildProgress(workerCount);
-		}
+		rebuildProgress();
 	}
 }

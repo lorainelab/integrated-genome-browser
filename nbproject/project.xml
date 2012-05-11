@@ -22,45 +22,45 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>common/src</label>
+                    <label>core/common/src</label>
                     <type>java</type>
-                    <location>common/src</location>
+                    <location>core/common/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genometryImpl/src</label>
+                    <label>core/genometryImpl/src</label>
                     <type>java</type>
-                    <location>genometryImpl/src</location>
+                    <location>core/genometryImpl/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genoviz_sdk/src</label>
+                    <label>core/genoviz_sdk/src</label>
                     <type>java</type>
-                    <location>genoviz_sdk/src</location>
+                    <location>core/genoviz_sdk/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>main/src</label>
+                    <label>core/main/src</label>
                     <type>java</type>
-                    <location>main/src</location>
+                    <location>core/main/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>igb/src</label>
+                    <label>core/igb/src</label>
                     <type>java</type>
-                    <location>igb/src</location>
+                    <location>core/igb/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/igb_service/src</label>
+                    <label>core/igb_service/src</label>
                     <type>java</type>
-                    <location>plugins/igb_service/src</location>
+                    <location>core/igb_service/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/window_service/src</label>
+                    <label>core/window_service/src</label>
                     <type>java</type>
-                    <location>plugins/window_service/src</location>
+                    <location>core/window_service/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -190,9 +190,9 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genoviz_sdk/demo/src</label>
+                    <label>core/genoviz_sdk/demo/src</label>
                     <type>java</type>
-                    <location>genoviz_sdk/demo/src</location>
+                    <location>core/genoviz_sdk/demo/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -202,21 +202,21 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genometryImpl/test</label>
+                    <label>core/genometryImpl/test</label>
                     <type>java</type>
-                    <location>genometryImpl/test</location>
+                    <location>core/genometryImpl/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genoviz_sdk/test</label>
+                    <label>core/genoviz_sdk/test</label>
                     <type>java</type>
-                    <location>genoviz_sdk/test</location>
+                    <location>core/genoviz_sdk/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>igb/test</label>
+                    <label>core/igb/test</label>
                     <type>java</type>
-                    <location>igb/test</location>
+                    <location>core/igb/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -267,7 +267,7 @@
                     <target>run-selected-file-in-src</target>
                     <context>
                         <property>run.class</property>
-                        <folder>genoviz_sdk/demo/src</folder>
+                        <folder>core/genoviz_sdk/demo/src</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
@@ -280,7 +280,7 @@
                     <target>run-selected-file-in-src</target>
                     <context>
                         <property>run.class</property>
-                        <folder>igb/src</folder>
+                        <folder>core/igb/src</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
                         <arity>
@@ -293,7 +293,7 @@
                     <target>compile-selected-files-in-src</target>
                     <context>
                         <property>files</property>
-                        <folder>igb/src</folder>
+                        <folder>core/igb/src</folder>
                         <pattern>\.java$</pattern>
                         <format>relative-path</format>
                         <arity>
@@ -309,32 +309,32 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>genometryImpl/build</location>
+                <location>core/genometryImpl/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>genoviz_sdk/build</location>
+                <location>core/genoviz_sdk/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>igb/build</location>
+                <location>core/igb/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>genoviz_sdk/demo</location>
+                <location>core/genoviz_sdk/demo</location>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>main/build</location>
+                <location>core/main/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
                 <type>folder</type>
-                <location>common/build</location>
+                <location>core/common/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
@@ -344,7 +344,7 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>plugins/igb_service/build</location>
+                <location>core/igb_service/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
@@ -359,7 +359,7 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>plugins/window_service/build</location>
+                <location>core/window_service/build</location>
                 <build-target>compile</build-target>
             </export>
             <export>
@@ -399,32 +399,32 @@
                         <location>das2_server/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>common/src</label>
-                        <location>common/src</location>
+                        <label>core/common/src</label>
+                        <location>core/common/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genometryImpl/src</label>
-                        <location>genometryImpl/src</location>
+                        <label>core/genometryImpl/src</label>
+                        <location>core/genometryImpl/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genoviz_sdk/src</label>
-                        <location>genoviz_sdk/src</location>
+                        <label>core/genoviz_sdk/src</label>
+                        <location>core/genoviz_sdk/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>main/src</label>
-                        <location>main/src</location>
+                        <label>core/main/src</label>
+                        <location>core/main/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>igb/src</label>
-                        <location>igb/src</location>
+                        <label>core/igb/src</label>
+                        <location>core/igb/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/igb_service/src</label>
-                        <location>plugins/igb_service/src</location>
+                        <label>core/igb_service/src</label>
+                        <location>core/igb_service/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/window_service/src</label>
-                        <location>plugins/window_service/src</location>
+                        <label>core/window_service/src</label>
+                        <location>core/window_service/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/window_service_def/src</label>
@@ -511,24 +511,24 @@
                         <location>igb_server/web</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genoviz_sdk/demo/src</label>
-                        <location>genoviz_sdk/demo/src</location>
+                        <label>core/genoviz_sdk/demo/src</label>
+                        <location>core/genoviz_sdk/demo/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>das2_server/test</label>
                         <location>das2_server/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genometryImpl/test</label>
-                        <location>genometryImpl/test</location>
+                        <label>core/genometryImpl/test</label>
+                        <location>core/genometryImpl/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genoviz_sdk/test</label>
-                        <location>genoviz_sdk/test</location>
+                        <label>core/genoviz_sdk/test</label>
+                        <location>core/genoviz_sdk/test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>igb/test</label>
-                        <location>igb/test</location>
+                        <label>core/igb/test</label>
+                        <location>core/igb/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>protannot/src</label>
@@ -577,13 +577,13 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
-                <package-root>common/src</package-root>
-                <package-root>genometryImpl/src</package-root>
-                <package-root>genoviz_sdk/src</package-root>
-                <package-root>main/src</package-root>
-                <package-root>igb/src</package-root>
-                <package-root>plugins/igb_service/src</package-root>
-                <package-root>plugins/window_service/src</package-root>
+                <package-root>core/common/src</package-root>
+                <package-root>core/genometryImpl/src</package-root>
+                <package-root>core/genoviz_sdk/src</package-root>
+                <package-root>core/main/src</package-root>
+                <package-root>core/igb/src</package-root>
+                <package-root>core/igb_service/src</package-root>
+                <package-root>core/window_service/src</package-root>
                 <package-root>plugins/window_service_def/src</package-root>
                 <package-root>plugins/Bookmark/src</package-root>
                 <package-root>plugins/PropertyView/src</package-root>
@@ -596,11 +596,11 @@
                 <package-root>plugins/Tutorial/src</package-root>
                 <package-root>igb_server/src</package-root>
                 <package-root>igb_server/web</package-root>
-                <package-root>genoviz_sdk/demo/src</package-root>
+                <package-root>core/genoviz_sdk/demo/src</package-root>
                 <package-root>das2_server/test</package-root>
-                <package-root>genometryImpl/test</package-root>
-                <package-root>genoviz_sdk/test</package-root>
-                <package-root>igb/test</package-root>
+                <package-root>core/genometryImpl/test</package-root>
+                <package-root>core/genoviz_sdk/test</package-root>
+                <package-root>core/igb/test</package-root>
                 <package-root>protannot/src</package-root>
                 <package-root>plugins/SearchModeIdOrProps/src</package-root>
                 <package-root>plugins/BigBedHandler/src</package-root>
@@ -612,19 +612,19 @@
                 <package-root>plugins/TrackOperations/src</package-root>
                 <package-root>plugins/TrackAdjuster/src</package-root>
                 <package-root>plugins/IGBScript/src</package-root>
-                <classpath mode="compile">genometryImpl/src:genoviz_sdk/src:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble-0.2.jar:ext/jdom.jar:genoviz_sdk/lib/batik-awt-util.jar:ext/HCIDictionary.jar:genoviz_sdk/lib/batik-dom.jar:ext/gnomex.jar:genoviz_sdk/lib/batik-svggen.jar:ext/hci_framework.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:genoviz_sdk/lib/batik-util.jar</classpath>
+                <classpath mode="compile">core/genometryImpl/src:core/genoviz_sdk/src:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble-0.2.jar:ext/jdom.jar:core/genoviz_sdk/lib/batik-awt-util.jar:ext/HCIDictionary.jar:core/genoviz_sdk/lib/batik-dom.jar:ext/gnomex.jar:core/genoviz_sdk/lib/batik-svggen.jar:ext/hci_framework.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:core/genoviz_sdk/lib/batik-util.jar</classpath>
                 <built-to>das2_server/build</built-to>
-                <built-to>genometryImpl/build</built-to>
-                <built-to>genoviz_sdk/build</built-to>
-                <built-to>igb/build</built-to>
-                <built-to>genoviz_sdk/demo</built-to>
-                <built-to>main/build</built-to>
-                <built-to>common/build</built-to>
+                <built-to>core/genometryImpl/build</built-to>
+                <built-to>core/genoviz_sdk/build</built-to>
+                <built-to>core/igb/build</built-to>
+                <built-to>core/genoviz_sdk/demo</built-to>
+                <built-to>core/main/build</built-to>
+                <built-to>core/common/build</built-to>
                 <built-to>plugins/ExternalView/build</built-to>
-                <built-to>plugins/igb_service/build</built-to>
+                <built-to>core/igb_service/build</built-to>
                 <built-to>plugins/plugins_page/build</built-to>
                 <built-to>plugins/RestrictionSites/build</built-to>
-                <built-to>plugins/window_service/build</built-to>
+                <built-to>core/window_service/build</built-to>
                 <built-to>plugins/window_service_def/build</built-to>
                 <built-to>plugins/PropertyView/build</built-to>
                 <built-to>plugins/SearchView/build</built-to>

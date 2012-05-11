@@ -40,21 +40,23 @@
 	<classpathentry kind="lib" path="plugins/ant/lib/ant.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
-	<classpathentry kind="src" path="common/resources"/>
+	<classpathentry kind="src" path="core/common/resources"/>
+	<classpathentry kind="src" path="plugins/IGBScript/src"/>
+	<classpathentry kind="src" path="plugins/IGBScript/resources"/>
 	<classpathentry kind="src" path="plugins/TrackOperations/src"/>
 	<classpathentry kind="src" path="plugins/TrackAdjuster/src"/>
 	<classpathentry kind="src" path="plugins/Thresholding/src"/>
-	<classpathentry kind="src" path="common/src"/>
+	<classpathentry kind="src" path="core/common/src"/>
 	<classpathentry kind="src" path="das2_server/src"/>
 	<classpathentry kind="src" path="debug/src"/>
-	<classpathentry kind="src" path="genometryImpl/src"/>
-	<classpathentry kind="src" path="genometryImpl/test"/>
-	<classpathentry kind="src" path="genoviz_sdk/src"/>
-	<classpathentry kind="src" path="igb-i18n/src"/>
-	<classpathentry kind="src" path="igb/resources"/>
-	<classpathentry kind="src" path="igb/src"/>
-	<classpathentry kind="src" path="main/resources"/>
-	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="core/genometryImpl/src"/>
+	<classpathentry kind="src" path="core/genometryImpl/test"/>
+	<classpathentry kind="src" path="core/genoviz_sdk/src"/>
+	<classpathentry kind="src" path="core/igb-i18n/src"/>
+	<classpathentry kind="src" path="core/igb/resources"/>
+	<classpathentry kind="src" path="core/igb/src"/>
+	<classpathentry kind="src" path="core/main/resources"/>
+	<classpathentry kind="src" path="core/main/src"/>
 	<classpathentry kind="src" path="plugins/BigBedHandler/src"/>
 	<classpathentry kind="src" path="plugins/BigWigHandler/src"/>
 	<classpathentry kind="src" path="plugins/Bookmark/resources"/>
@@ -73,11 +75,11 @@
 	<classpathentry kind="src" path="plugins/SearchView/src"/>
 	<classpathentry kind="src" path="plugins/Tutorial/src"/>
 	<classpathentry kind="src" path="plugins/ant/src"/>
-	<classpathentry kind="src" path="plugins/igb_service/src"/>
+	<classpathentry kind="src" path="core/igb_service/src"/>
 	<classpathentry kind="src" path="plugins/plugins_page/resources"/>
 	<classpathentry kind="src" path="plugins/plugins_page/src"/>
-	<classpathentry kind="src" path="plugins/window_service/resources"/>
-	<classpathentry kind="src" path="plugins/window_service/src"/>
+	<classpathentry kind="src" path="core/window_service/resources"/>
+	<classpathentry kind="src" path="core/window_service/src"/>
 	<classpathentry kind="src" path="plugins/window_service_def/resources"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="protannot/src"/>

@@ -748,7 +748,7 @@ public final class GeneralLoadUtils {
 		}
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();		
-		final CThreadWorker<List<SeqSymmetry>, Object> worker = new CThreadWorker<List<SeqSymmetry>, Object>("Loading feature " + feature.featureName) {
+		final CThreadWorker<List<SeqSymmetry>, Object> worker = new CThreadWorker<List<SeqSymmetry>, Object>("Loading feature " + feature.featureName, Thread.MIN_PRIORITY) {
 			
 			@Override
 			protected List<SeqSymmetry> runInBackground() {

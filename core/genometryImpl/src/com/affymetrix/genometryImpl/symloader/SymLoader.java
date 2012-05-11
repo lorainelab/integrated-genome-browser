@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.*;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -467,10 +468,12 @@ public abstract class SymLoader {
 	}
 
 	protected void checkSleep() throws InterruptedException {
-		long currentTime = System.nanoTime();
-		if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
-/////			Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
-			lastSleepTime = currentTime;
+		if (CThreadWorker.allowThreadSleep()) {
+			long currentTime = System.nanoTime();
+			if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
+				Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+				lastSleepTime = currentTime;
+			}
 		}
 	}
 

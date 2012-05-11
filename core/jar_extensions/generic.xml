@@ -1,5 +1,5 @@
 <project>
-	<import file="../generic.xml" />
+	<import file="../../generic.xml" />
 	
 	<target name="extra-init">
 		<property name="proj.dist"	value="${basedir}/dist"/>

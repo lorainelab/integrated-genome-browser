@@ -96,6 +96,7 @@ public final class TrackAdjusterTab
 		viewmode_semantic_zoom_annotation(viewModePrefix + "semantic_zoom_annotation"),
 		viewmode_semantic_zoom_alignment(viewModePrefix + "semantic_zoom_alignment"),
 		viewmode_bai_semantic_zoom(viewModePrefix + "bai_semantic_zoom"),
+		viewmode_tbi_semantic_zoom(viewModePrefix + "tbi_semantic_zoom"),
 		//None
 		viewmode_unloaded("unloaded");
 		String stringValue;
@@ -153,6 +154,7 @@ public final class TrackAdjusterTab
 		viewMode2DisplayType.put(ViewMode.viewmode_semantic_zoom_annotation, DisplayType.AUTO);
 		viewMode2DisplayType.put(ViewMode.viewmode_semantic_zoom_alignment, DisplayType.AUTO);
 		viewMode2DisplayType.put(ViewMode.viewmode_bai_semantic_zoom, DisplayType.AUTO);
+		viewMode2DisplayType.put(ViewMode.viewmode_tbi_semantic_zoom, DisplayType.AUTO);
 		//NONE
 		viewMode2DisplayType.put(ViewMode.viewmode_unloaded, DisplayType.NONE);
 	}

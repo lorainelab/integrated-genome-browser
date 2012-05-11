@@ -16,12 +16,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>das2_server/src</label>
-                    <type>java</type>
-                    <location>das2_server/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>core/common/src</label>
                     <type>java</type>
                     <location>core/common/src</location>
@@ -61,6 +55,18 @@
                     <label>core/window_service/src</label>
                     <type>java</type>
                     <location>core/window_service/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>core/jar_extensions/sam/src</label>
+                    <type>java</type>
+                    <location>core/jar_extensions/sam/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>core/jar_extensions/tribble-0.2/src</label>
+                    <type>java</type>
+                    <location>core/jar_extensions/tribble-0.2/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -178,18 +184,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>jar_extensions/sam/src</label>
-                    <type>java</type>
-                    <location>jar_extensions/sam/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>jar_extensions/tribble-0.2/src</label>
-                    <type>java</type>
-                    <location>jar_extensions/tribble-0.2/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>igb_server/src</label>
                     <type>java</type>
                     <location>igb_server/src</location>
@@ -202,6 +196,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>das2_server/src</label>
+                    <type>java</type>
+                    <location>das2_server/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>protannot/src</label>
                     <type>java</type>
                     <location>protannot/src</location>
@@ -211,12 +211,6 @@
                     <label>core/genoviz_sdk/demo/src</label>
                     <type>java</type>
                     <location>core/genoviz_sdk/demo/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>das2_server/test</label>
-                    <type>java</type>
-                    <location>das2_server/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -235,6 +229,12 @@
                     <label>core/igb/test</label>
                     <type>java</type>
                     <location>core/igb/test</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>das2_server/test</label>
+                    <type>java</type>
+                    <location>das2_server/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -395,10 +395,6 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>das2_server/src</label>
-                        <location>das2_server/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>core/common/src</label>
                         <location>core/common/src</location>
                     </source-folder>
@@ -425,6 +421,14 @@
                     <source-folder style="packages">
                         <label>core/window_service/src</label>
                         <location>core/window_service/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>core/jar_extensions/sam/src</label>
+                        <location>core/jar_extensions/sam/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>core/jar_extensions/tribble-0.2/src</label>
+                        <location>core/jar_extensions/tribble-0.2/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/window_service_def/src</label>
@@ -503,14 +507,6 @@
                         <location>plugins/Tutorial/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>jar_extensions/sam/src</label>
-                        <location>jar_extensions/sam/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>jar_extensions/tribble-0.2/src</label>
-                        <location>jar_extensions/tribble-0.2/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>igb_server/src</label>
                         <location>igb_server/src</location>
                     </source-folder>
@@ -519,16 +515,16 @@
                         <location>igb_server/web</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>das2_server/src</label>
+                        <location>das2_server/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>protannot/src</label>
                         <location>protannot/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>core/genoviz_sdk/demo/src</label>
                         <location>core/genoviz_sdk/demo/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>das2_server/test</label>
-                        <location>das2_server/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>core/genometryImpl/test</label>
@@ -541,6 +537,10 @@
                     <source-folder style="packages">
                         <label>core/igb/test</label>
                         <location>core/igb/test</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>das2_server/test</label>
+                        <location>das2_server/test</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -606,12 +606,12 @@
                 <package-root>plugins/BigBedHandler/src</package-root>
                 <package-root>plugins/BigWigHandler/src</package-root>
                 <package-root>plugins/SearchModeSymmetryFilter/src</package-root>
-                <package-root>jar_extensions/sam/src</package-root>
-                <package-root>jar_extensions/tribble-0.2/src</package-root>
                 <package-root>plugins/Thresholding/src</package-root>
                 <package-root>plugins/TrackOperations/src</package-root>
                 <package-root>plugins/TrackAdjuster/src</package-root>
                 <package-root>plugins/IGBScript/src</package-root>
+                <package-root>core/jar_extensions/sam/src</package-root>
+                <package-root>core/jar_extensions/tribble-0.2/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:ext/commons-compress-1.0.jar:ext/commons-lang3-3.1.jar:ext/commons-net-2.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:ext/jython.jar:ext/swing-layout.jar:ext/BigWig.jar:ext/be.pwnt.jflow_1.0.0.jar:ext/jdom-1.1.3.jar:ext/tribble-0.2.jar:ext/jdom.jar:ext/HCIDictionary.jar:ext/gnomex.jar:ext/hci_framework.jar:ext/Hibernate3Utils.jar:ext/gnomex_realm.jar:ext/hci_utils.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:plugins/Tutorial/lib/furbelow.jar:plugins/Tutorial/lib/jackson-all-1.7.9.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>core/genometryImpl/build</built-to>

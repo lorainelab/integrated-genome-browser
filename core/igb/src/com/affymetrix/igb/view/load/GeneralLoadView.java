@@ -191,7 +191,7 @@ public final class GeneralLoadView {
 		final BioSeq seq = gmodel.getSelectedSeq();
 		final boolean partial = src == partial_residuesB;
 
-		CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>("load " + (partial ? "partial" : "all") + " residues for " + seq) {
+		CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>("load " + (partial ? "partial" : "all") + " residues for " + seq, Thread.MIN_PRIORITY) {
 
 			public Boolean runInBackground() {
 				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);

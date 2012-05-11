@@ -178,6 +178,18 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>jar_extensions/sam/src</label>
+                    <type>java</type>
+                    <location>jar_extensions/sam/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>jar_extensions/tribble-0.2/src</label>
+                    <type>java</type>
+                    <location>jar_extensions/tribble-0.2/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>igb_server/src</label>
                     <type>java</type>
                     <location>igb_server/src</location>
@@ -187,6 +199,12 @@
                     <label>igb_server/web</label>
                     <type>java</type>
                     <location>igb_server/web</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>protannot/src</label>
+                    <type>java</type>
+                    <location>protannot/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -217,24 +235,6 @@
                     <label>core/igb/test</label>
                     <type>java</type>
                     <location>core/igb/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>protannot/src</label>
-                    <type>java</type>
-                    <location>protannot/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>jar_extensions/sam/src</label>
-                    <type>java</type>
-                    <location>jar_extensions/sam/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>jar_extensions/tribble-0.2/src</label>
-                    <type>java</type>
-                    <location>jar_extensions/tribble-0.2/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -503,12 +503,24 @@
                         <location>plugins/Tutorial/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>jar_extensions/sam/src</label>
+                        <location>jar_extensions/sam/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>jar_extensions/tribble-0.2/src</label>
+                        <location>jar_extensions/tribble-0.2/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>igb_server/src</label>
                         <location>igb_server/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>igb_server/web</label>
                         <location>igb_server/web</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>protannot/src</label>
+                        <location>protannot/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>core/genoviz_sdk/demo/src</label>
@@ -529,18 +541,6 @@
                     <source-folder style="packages">
                         <label>core/igb/test</label>
                         <location>core/igb/test</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>protannot/src</label>
-                        <location>protannot/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>jar_extensions/sam/src</label>
-                        <location>jar_extensions/sam/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>jar_extensions/tribble-0.2/src</label>
-                        <location>jar_extensions/tribble-0.2/src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>

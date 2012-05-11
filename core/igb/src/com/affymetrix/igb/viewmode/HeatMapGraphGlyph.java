@@ -60,7 +60,8 @@ public class HeatMapGraphGlyph extends AbstractGraphGlyph {
 			heatmap_scaling = (double) (heatmap_colors.length - 1) / (-plot_top_ypixel + plot_bottom_ypixel);
 		}
 		g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-		drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
+		//drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
+		drawRectOrLine(g, prev_point.x, getPixelBox().y, 1, getPixelBox().height + 1);
 	}
 
 	@Override

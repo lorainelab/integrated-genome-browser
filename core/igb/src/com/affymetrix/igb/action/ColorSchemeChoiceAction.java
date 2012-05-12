@@ -77,6 +77,7 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 
 
 	private ActionListener actor = new AbstractAction("ChooseColor") {
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {

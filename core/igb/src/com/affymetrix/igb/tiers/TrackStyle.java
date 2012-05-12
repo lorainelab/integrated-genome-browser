@@ -78,7 +78,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private GenericFeature feature = null;
 	private int colorIntervals = 255;
 	public boolean customise = false;
-	private Color customColors[] = new Color[10];
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
 	private boolean float_graph = false;

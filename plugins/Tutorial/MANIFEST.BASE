@@ -25,4 +25,6 @@ Bundle-ClassPath: .,
  lib/jackson-all-1.7.9.jar,
  lib/furbelow.jar
 Bundle-Description: Plugin to run IGB tutorials
+Bundle-Vendor: Genentech
+
 

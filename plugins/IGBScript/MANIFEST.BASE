@@ -8,6 +8,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-DocURL: https://wiki.transvar.org/confluence/display/igbman/Scripting
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Description: implementation of java ScriptEngine to run IGB scripts
+Bundle-Vendor: Genentech
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.general,

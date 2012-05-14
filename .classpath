@@ -62,8 +62,6 @@
 	<classpathentry kind="src" path="plugins/Bookmark/src"/>
 	<classpathentry kind="src" path="plugins/ExternalView/resources"/>
 	<classpathentry kind="src" path="plugins/ExternalView/src"/>
-	<classpathentry kind="src" path="plugins/GraphAdjuster/resources"/>
-	<classpathentry kind="src" path="plugins/GraphAdjuster/src"/>
 	<classpathentry kind="src" path="plugins/PropertyView/resources"/>
 	<classpathentry kind="src" path="plugins/PropertyView/src"/>
 	<classpathentry kind="src" path="plugins/RestrictionSites/resources"/>

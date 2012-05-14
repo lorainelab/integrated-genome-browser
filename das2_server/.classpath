@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/javax.servlet.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/sam.jar"/>
@@ -14,5 +13,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/gnomex.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/hci_framework.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/hci_utils.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

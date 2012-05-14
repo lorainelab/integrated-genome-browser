@@ -46,8 +46,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/etc"/>
 	<classpathentry kind="lib" path="lib/org.osgi.core-4.3.0.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/jdom-1.1.3.jar"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/core/jar_extensions/sam/build"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/core/jar_extensions/tribble-0.2/build"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Thresholding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackAdjuster"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrackOperations"/>

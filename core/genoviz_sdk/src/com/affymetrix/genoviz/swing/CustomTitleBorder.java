@@ -59,7 +59,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		this.border = border;
 		this.titleFont = titleFont;
 		this.titleColor = titleColor;
-		this.linkText = " " + link + " "; //add spacing
+		this.linkText = " " + link + "  "; //add spacing
 		setTitleJustification(titleJustification);
 		setTitlePosition(titlePosition);
 	}
@@ -254,7 +254,7 @@ public class CustomTitleBorder extends AbstractBorder {
 		as.addAttribute(TextAttribute.FONT, boldUnderline, title.length(), title.length() + link.length());
 		as.addAttribute(TextAttribute.FOREGROUND, Color.blue, title.length(), title.length() + link.length());
 		as.addAttribute(TextAttribute.UNDERLINE,
-				TextAttribute.UNDERLINE_ON, title.length() + 1, title.length() + link.length() - 1);
+				TextAttribute.UNDERLINE_ON, title.length() + 1, title.length() + link.length() - 2);
 
 		g.setColor(getTitleColor());
 		g.drawString(as.getIterator(), textLoc.x, textLoc.y);

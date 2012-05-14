@@ -53,12 +53,12 @@ public class Activator implements BundleActivator {
 		ExtensionPointHandler<GenericAction> extensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GenericAction.class);
 		extensionPoint.addListener(new ExtensionPointListener<GenericAction>() {
 			@Override
-			public void removeService(GenericAction genericAction) {
+			public void addService(GenericAction genericAction) {
 				GenericActionHolder.getInstance().addGenericAction(genericAction);
 			}
 			
 			@Override
-			public void addService(GenericAction genericAction) {
+			public void removeService(GenericAction genericAction) {
 				GenericActionHolder.getInstance().removeGenericAction(genericAction);
 			}
 		});

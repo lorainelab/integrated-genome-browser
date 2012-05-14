@@ -275,7 +275,7 @@ public final class WebLinksView implements ListSelectionListener {
 		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
 		if (localTable.getRowCount() == 0) {
-			ErrorHandler.errorPanel("Error", "No web links to save", frame);
+			ErrorHandler.errorPanel("Error", "No web links to save", frame, Level.WARNING);
 			return;
 		}
 
@@ -293,8 +293,8 @@ public final class WebLinksView implements ListSelectionListener {
 				}
 				WebLink.exportWebLinks(fil, false);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error exporting web links",
-						frame, ex);
+				ErrorHandler.errorPanel("Error", "Error exporting web links", 
+						frame, ex, Level.SEVERE);
 			}
 		}
 	}

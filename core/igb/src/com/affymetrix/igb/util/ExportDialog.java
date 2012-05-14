@@ -327,9 +327,6 @@ public class ExportDialog implements ExportConstants {
 			imageInfo.setWidth(component.getWidth());
 			imageInfo.setHeight(component.getHeight());
 		}
-
-		widthSpinner.setValue(imageInfo.getWidth());
-		heightSpinner.setValue(imageInfo.getHeight());
 	}
 
 	/**

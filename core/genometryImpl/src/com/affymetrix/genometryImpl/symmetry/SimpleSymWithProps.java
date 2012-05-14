@@ -132,8 +132,4 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + ";props:" + props.toString();
-	}
 }

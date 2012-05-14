@@ -124,10 +124,5 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "children:" + (children == null ? "null" : Arrays.toString(children.toArray())) + ";spans:" + (spans == null ? "null" : Arrays.toString(spans.toArray()));
-	}
 }
 

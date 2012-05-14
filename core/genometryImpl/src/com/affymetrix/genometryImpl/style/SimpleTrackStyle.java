@@ -15,7 +15,6 @@ package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-
 import java.awt.Color;
 
 public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleExtended {
@@ -164,6 +163,22 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	}
 
 	public float getTrackNameSize() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Color getLabelForeground() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Color getLabelBackground() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setLabelForeground(Color c) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setLabelBackground(Color c) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

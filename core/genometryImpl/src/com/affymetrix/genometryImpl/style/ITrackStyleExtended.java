@@ -82,4 +82,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setFloatGraph(boolean b);
 	public void setTrackNameSize(float font_size);
 	public float getTrackNameSize();
+	public Color getLabelForeground();
+	public Color getLabelBackground();
+	public void setLabelForeground(Color c);
+	public void setLabelBackground(Color c);
 }

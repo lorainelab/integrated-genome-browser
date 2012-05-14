@@ -1,29 +1,24 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.HeatMap;
-import java.awt.Color;
-import java.util.*;
-import java.util.prefs.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.stylesheet.AssociationElement;
-import com.affymetrix.igb.stylesheet.PropertyConstants;
-import com.affymetrix.igb.stylesheet.PropertyMap;
-import com.affymetrix.igb.stylesheet.Stylesheet;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.shared.MapViewModeHolder;
-
+import com.affymetrix.igb.stylesheet.*;
+import com.affymetrix.igb.view.SeqMapView;
+import java.awt.Color;
 import java.io.File;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 /**
  * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
@@ -49,6 +44,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private int max_depth = default_max_depth;
 	private Color foreground = default_foreground;
 	private Color background = default_background;
+	private Color labelForeground;
+	private Color labelBackground;
 	private String label_field = default_label_field;
 	private DIRECTION_TYPE direction_type = default_direction_type;
 	private int glyph_depth = default_glyphDepth;
@@ -1246,5 +1243,35 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	public final void setFloatGraph(boolean b) {
 		float_graph = b;
+	}
+
+	public Color getLabelForeground() {
+		if (labelForeground == null) {
+			//edge case hack fix for coordinate track 
+			if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {				
+				return CoordinateStyle.default_coordinate_color;
+			}
+			return foreground;
+		}
+		return labelForeground;
+	}
+
+	public Color getLabelBackground() {
+		if (labelBackground == null) {
+			//edge case hack fix for coordinate track 
+			if (track_name.equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {				
+				return CoordinateStyle.default_coordinate_background;
+			}
+			return background;
+		}
+		return labelBackground;
+	}
+
+	public void setLabelForeground(Color c) {
+		labelForeground = c;
+	}
+
+	public void setLabelBackground(Color c) {
+		labelBackground = c;
 	}
 }

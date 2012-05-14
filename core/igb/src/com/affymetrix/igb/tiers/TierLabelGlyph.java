@@ -15,6 +15,7 @@ import java.awt.geom.Rectangle2D;
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
+
 	private static int pbBuffer_x = 5;
 	private static Color IGBTrackMakerColor = Color.YELLOW;
 	private int position;
@@ -46,16 +47,16 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				reference_tier.getAnnotStyle().getFileType());
 	}
 
-	public void setPosition(int position){
+	public void setPosition(int position) {
 		this.position = position;
 	}
 
-	public int getPosition(){
+	public int getPosition() {
 		return position;
 	}
 
 	@Override
-	public void drawTraversal(ViewI view)  {
+	public void drawTraversal(ViewI view) {
 		super.drawTraversal(view);
 	}
 
@@ -64,14 +65,15 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		super.setSelected(selected);
 	}
 
-	/** Overridden such that the info must be of type TierGlyph.  It is used
-	 *  to store the reference tier that will be returned by getReferenceTier().
+	/**
+	 * Overridden such that the info must be of type TierGlyph. It is used to
+	 * store the reference tier that will be returned by getReferenceTier().
 	 */
 	@Override
 	public void setInfo(Object o) {
 		if (o == null) {
 			throw new IllegalArgumentException("Null input parameter to setInfo() method in TierLabelGlyph found.");
-	}
+		}
 		if (!(o instanceof TierGlyph)) {
 			String msg = "Invalid type " + o.getClass().getName() + " found in input parameter ";
 			msg += "for setInfo() method in TierLabelGlyph.  Type TierGlyph required.";
@@ -80,8 +82,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		super.setInfo(o);
 	}
 
-	/** Returns the reference tier from the main map in AffyLabelledTierMap.
-	 *  Equivalent to value returned by getInfo().  Will not be null.
+	/**
+	 * Returns the reference tier from the main map in AffyLabelledTierMap.
+	 * Equivalent to value returned by getInfo(). Will not be null.
 	 */
 	public TierGlyph getReferenceTier() {
 		return (TierGlyph) getInfo();
@@ -91,7 +94,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		return getDirectionSymbol(tg.getDirection());
 	}
 
-	public static String getDirectionSymbol(Direction direction){
+	public static String getDirectionSymbol(Direction direction) {
 		switch (direction) {
 			case FORWARD:
 				return " (+)";
@@ -105,7 +108,9 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	/**
-	 * Returns the label of the reference tier, or some default string if there isn't one.
+	 * Returns the label of the reference tier, or some default string if there
+	 * isn't one.
+	 *
 	 * @return string
 	 */
 	private String getLabelString() {
@@ -126,8 +131,10 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
 
-		if(reftier.getAnnotStyle() instanceof TrackStyle){
+		if (reftier.getAnnotStyle() instanceof TrackStyle) {
 			TrackStyle trackStyle = (TrackStyle) reftier.getAnnotStyle();
+			fgcolor = trackStyle.getLabelForeground();
+			bgcolor = trackStyle.getLabelBackground();
 			Font newfnt = g.getFont().deriveFont(trackStyle.getTrackNameSize());
 			g.setFont(newfnt);
 		}
@@ -142,22 +149,21 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		g.setColor(fgcolor);
 		g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height);
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
-		
-		if(isIGBTrack){
+
+		if (isIGBTrack) {
 			g.setColor(IGBTrackMakerColor);
 			g.fillRect(pixelbox.x + 1, pixelbox.y + 1, pbBuffer_x, pixelbox.height - 3);
 			g.setColor(fgcolor);
 		}
-		
+
 		drawLabel(g, view.getPixelBox(), pixelbox);
 		this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 
 		super.draw(view);
 	}
-
 	private int textPixelHeight;
 	private double textCoordHeight;
-	
+
 	private void drawLabel(Graphics g, Rectangle boundingPixelBox, Rectangle pixelbox) {
 		// assumes that pixelbox coordinates are already computed
 
@@ -180,7 +186,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				boundingPixelBox.y + boundingPixelBox.height);
 
 		int text_width = fm.stringWidth(label);
-		Direction direction = getReferenceTier() != null? getReferenceTier().getDirection(): Direction.NONE;
+		Direction direction = getReferenceTier() != null ? getReferenceTier().getDirection() : Direction.NONE;
 		if (text_width + (pbBuffer_x * 2) > pixelbox.width) {
 			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox, direction);
 		} else {
@@ -189,7 +195,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 			g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
 		}
 	}
-
 
 	@SuppressWarnings("unused")
 	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, Direction direction) {
@@ -218,11 +223,13 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		}
 	}
 
-	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
-	 *  the outline is usually drawn a pixel or two larger than the glyph.
-	 *  With TierGlyphs, it is better to draw the outline inside of or contiguous
-	 *  with the glyph's borders.
-	 **/
+	/**
+	 * Draws the outline in a way that looks good for tiers. With other glyphs,
+	 * the outline is usually drawn a pixel or two larger than the glyph. With
+	 * TierGlyphs, it is better to draw the outline inside of or contiguous with
+	 * the glyph's borders.
+	 *
+	 */
 	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
@@ -238,7 +245,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				pixelbox.width - 3, pixelbox.height - 3);
 	}
 
-	public boolean isManuallyResizable()  {
+	public boolean isManuallyResizable() {
 		Object o = getInfo();
 		if (o instanceof ViewModeGlyph) {
 			ViewModeGlyph t = (ViewModeGlyph) o;
@@ -255,27 +262,26 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Rectangle2D.Double cbox = getCoordBox();
 		setCoords(cbox.x, top, cbox.width, height);
 	}
-	
+
 	/**
-	 * How small can this tier label be made?
-	 * We still want to be able to see the beginning of the text.
-	 * - elb
+	 * How small can this tier label be made? We still want to be able to see
+	 * the beginning of the text. - elb
+	 *
 	 * @return size in pixels like a JComponent would.
 	 */
 	public Dimension getMinimumSize() {
 		Dimension answer = new Dimension(0, this.textPixelHeight);
 		return answer;
 	}
-	
+
 	/**
-	 * How short can this tier label be made?
-	 * We still want to be able to see the beginning of the text.
-	 * - elb
+	 * How short can this tier label be made? We still want to be able to see
+	 * the beginning of the text. - elb
+	 *
 	 * @return height in coordinate space.
 	 */
 	public Double getMinimumHeight() {
 		Double answer = this.textCoordHeight;
 		return answer;
 	}
-	
 }

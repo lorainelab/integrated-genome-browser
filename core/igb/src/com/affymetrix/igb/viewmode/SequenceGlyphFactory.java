@@ -20,6 +20,11 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style,
 		Direction direction, SeqMapViewExtendedI smv) {
 		ViewModeGlyph viewModeGlyph = new SequenceGlyph(style);
+		
+		if(sym == null){
+			return viewModeGlyph;
+		}
+		
 		SimpleSymWithResidues childSym = (SimpleSymWithResidues)sym.getChild(0);
 		SeqSpan pspan = smv.getViewSeqSpan(childSym);
 		if (pspan == null || pspan.getLength() == 0) {
@@ -28,14 +33,11 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 		viewModeGlyph.setDirection(direction);
 		viewModeGlyph.setInfo(sym);
 		FillRectGlyph childGlyph = new FillRectGlyph();
-		double pheight = style.getHeight() + 0.0001;
-		childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
+		childGlyph.setCoords(pspan.getMin(), 0, pspan.getLength(), style.getHeight() + 0.0001);
 		childGlyph.setColor(style.getForeground());
 		smv.setDataModelFromOriginalSym(childGlyph, childSym);
 		BioSeq annotseq = smv.getAnnotatedSeq();
-		GlyphI alignResidueGlyph = handleAlignedResidues(childSym, annotseq);
-		alignResidueGlyph.setCoordBox(childGlyph.getCoordBox());
-		childGlyph.addChild(alignResidueGlyph);
+		addAlignedResidues(childSym, annotseq, childGlyph);
 		viewModeGlyph.addChild(childGlyph);
 		return viewModeGlyph;
 	}
@@ -46,30 +48,32 @@ public class SequenceGlyphFactory extends MapViewGlyphFactoryA {
 	 * @param annotseq
 	 * @return GlyphI
 	 */
-	private GlyphI handleAlignedResidues(SeqSymmetry sym, BioSeq annotseq) {
+	private static void addAlignedResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI childGlyph) {
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
-			return null;
+			return;
 		}
 
 		String residueStr = ((SymWithResidues) sym).getResidues();
 
 		if (residueStr == null || residueStr.length() == 0) {
-			return null;
+			return;
 		}
 		
 		AlignedResidueGlyph csg = new AlignedResidueGlyph();
 		csg.setResidues(residueStr);
-		String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
+		csg.setHitable(false);
+		// Do not set residue mask
+		/*String bioSeqResidue = annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length());
 		if (bioSeqResidue != null) {
 			csg.setResidueMask(bioSeqResidue);
-		}
-		csg.setHitable(false);
-		
-		return csg;
-		
+		}*/
+		csg.setDefaultShowMask(false);
+		csg.setCoordBox(childGlyph.getCoordBox());
+		childGlyph.addChild(csg);
+			
 		// SEQ array has unexpected behavior;  commenting out for now.
-			/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
+		/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
 		byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
 		for (int i = 0; i < seqArr.length; i++) {
 		System.out.print((char) seqArr[i]);

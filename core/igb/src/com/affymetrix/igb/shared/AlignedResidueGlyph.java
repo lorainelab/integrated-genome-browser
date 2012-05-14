@@ -20,10 +20,14 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
  */
 public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 	//By default mask the residues.
-	public static final boolean DEFAULT_SHOWMASK = true;
+	private boolean defaultShowMask = true;
 	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
 
 
+	public void setDefaultShowMask(boolean show){
+		defaultShowMask = show;
+	}
+	
 	@Override
 	protected boolean getShowMask(){
 		Object mod = this.getInfo();
@@ -34,7 +38,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 				return Boolean.parseBoolean(show_mask.toString());
 			}
 		}
-		return DEFAULT_SHOWMASK;
+		return defaultShowMask;
 	}
 
 	@Override

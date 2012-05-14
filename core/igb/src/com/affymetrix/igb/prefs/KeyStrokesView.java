@@ -194,7 +194,7 @@ public final class KeyStrokesView implements ListSelectionListener,
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 			int srow = table.getSelectedRow();
 			if (srow >= 0) {
-				String id = (String) table.getModel().getValueAt(srow, 1);
+				String id = (String) table.getModel().getValueAt(srow, IdColumn);
 				editKeystroke(id);
 			} else {
 				edit_panel.setPreferenceKey(null, null, null, null);

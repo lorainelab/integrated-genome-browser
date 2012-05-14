@@ -152,7 +152,7 @@ public final class BookmarkActionManager implements ActionListener, MenuListener
 			try {
 				BookmarkController.viewBookmark(igbService, bm);
 			} catch (Exception e) {
-				ErrorHandler.errorPanel("Problem viewing bookmark", e);
+				ErrorHandler.errorPanel("Problem viewing bookmark", e, Level.WARNING);
 			}
 		} else if (DEBUG) {
 			System.out.println("Got an action event from an unknown source: " + src);

@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.view.DefaultSequenceViewer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.logging.Level;
 
 /**
  *
@@ -51,7 +52,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 			DefaultSequenceViewer sv = new DefaultSequenceViewer();
 			sv.startSequenceViewer();
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
+			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex, Level.WARNING);
 		}
 	}
 	

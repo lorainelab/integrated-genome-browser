@@ -380,7 +380,7 @@ public abstract class BookmarkController {
 		if (!unfound_labels.isEmpty()) {
 			ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
 					"Warning: could not bookmark some graphs.\n"
-					+ "No source URL was available for: " + unfound_labels.toString());
+					+ "No source URL was available for: " + unfound_labels.toString(), Level.WARNING);
 		}
 
 	}

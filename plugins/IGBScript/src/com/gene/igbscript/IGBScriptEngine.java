@@ -222,7 +222,7 @@ public class IGBScriptEngine implements ScriptEngine {
 				try {
 					igbService.print(0, true);
 				} catch (Exception ex) {
-					ErrorHandler.errorPanel("Problem trying to print.", ex);
+					ErrorHandler.errorPanel("Problem trying to print.", ex, Level.SEVERE);
 				}
 				return;
 			}

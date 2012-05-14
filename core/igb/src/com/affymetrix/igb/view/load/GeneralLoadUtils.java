@@ -1111,7 +1111,7 @@ public final class GeneralLoadUtils {
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if (!LocalUrlCacher.isValidURI(uri)) {
-			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ");
+			ErrorHandler.errorPanel("UNABLE TO FIND URL", uri + "\n URL provided not found or times out: ",Level.WARNING);
 			return;
 		}
 
@@ -1245,7 +1245,7 @@ public final class GeneralLoadUtils {
 			GeneralLoadView.addFeatureTier(gFeature);
 		} else {
 			ErrorHandler.errorPanel("Cannot add same feature",
-					"The feature " + uri + " has already been added.");
+					"The feature " + uri + " has already been added.",Level.WARNING);
 		}
 
 		return gFeature;
@@ -1265,7 +1265,7 @@ public final class GeneralLoadUtils {
 
 		if (extension.equals(".bam")) {
 			if (!handleBam(uri)) {
-				ErrorHandler.errorPanel("Cannot open file", "Could not find index file");
+				ErrorHandler.errorPanel("Cannot open file", "Could not find index file", Level.WARNING);
 				version = null;
 			}
 		} else if (extension.equals(".useq")) {

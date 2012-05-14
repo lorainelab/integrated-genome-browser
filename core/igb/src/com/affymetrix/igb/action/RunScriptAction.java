@@ -31,6 +31,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.logging.Level;
 
 public final class RunScriptAction extends GenericAction {
 
@@ -113,7 +114,7 @@ public final class RunScriptAction extends GenericAction {
 			ScriptManager.getInstance().runScript(file.getAbsolutePath());
 		}
 		else {
-			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file");
+			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
 		}
 
 	}

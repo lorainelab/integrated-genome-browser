@@ -684,14 +684,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
 									&& !isURLReachable(feature.getURI())) {
 								message = "The feature " + feature.getURI() + " is not reachable.";
-								ErrorHandler.errorPanel("Cannot load feature", message);
+								ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
 								tn.setChecked(false);
 								return;
 							}
 
 							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
 								message = "The feature " + feature.getURI() + " has already been added.";
-								ErrorHandler.errorPanel("Cannot add same feature", message);
+								ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
 								tn.setChecked(false);
 							} else {
 								GeneralLoadView.getLoadView().addFeature(feature);

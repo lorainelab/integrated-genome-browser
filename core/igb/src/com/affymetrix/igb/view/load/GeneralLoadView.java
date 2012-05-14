@@ -236,14 +236,14 @@ public final class GeneralLoadView {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
 					if (!tryFull) {
 						if (show_error_panel) {
-							ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.");
+							ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.", Level.INFO);
 						}
 						Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING, "Unable to load partial sequence");
 						return false;
 					} else {
 						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
 							if (show_error_panel) {
-								ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.");
+								ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.", Level.SEVERE);
 							}
 							Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING,
 									"Couldn't load partial or full sequence. Couldn't locate the sequence.");
@@ -254,7 +254,7 @@ public final class GeneralLoadView {
 			} else {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
 					if (show_error_panel) {
-						ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.");
+						ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.", Level.SEVERE);
 					}
 					Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING,
 							"Couldn't load full sequence. Couldn't locate the sequence.");

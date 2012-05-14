@@ -10,6 +10,7 @@ import java.util.prefs.BackingStoreException;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.util.logging.Level;
 
 /**
  *  Used to cache info on current directory.
@@ -63,7 +64,7 @@ public final class FileTracker {
       String path = f.getCanonicalPath();
       PreferenceUtils.getTopNode().put(name, path);
     } catch (IOException ioe) {
-      ErrorHandler.errorPanel("Can't resolve file path", ioe);
+      ErrorHandler.errorPanel("Can't resolve file path", ioe, Level.SEVERE);
     } catch (Exception e) {
       e.printStackTrace(System.out);
     }

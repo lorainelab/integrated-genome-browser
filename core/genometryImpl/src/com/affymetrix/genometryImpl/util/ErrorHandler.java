@@ -46,7 +46,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * Error panel with default title.
 	 */
 	public static void errorPanel(String message) {
-		errorPanel("ERROR", message);
+		errorPanel("ERROR", message, Level.SEVERE);
 	}
 
 	/**
@@ -55,12 +55,12 @@ public abstract class ErrorHandler implements DisplaysError{
 	 * @param message
 	 * @param e
 	 */
-	public static void errorPanel(String message, Throwable e) {
-		errorPanel("ERROR", message, e, Level.SEVERE);
+	public static void errorPanel(String message, Throwable e, Level level) {
+		errorPanel("ERROR", message, e, level);
 	}
 
-	public static void errorPanel(String title, String message) {
-		errorPanel(title, message, (Throwable) null, Level.INFO);
+	public static void errorPanel(String title, String message, Level level) {
+		errorPanel(title, message, (Throwable) null, level);
 	}
 
 	public static void errorPanel(String title, String message, Component c, Throwable e) {

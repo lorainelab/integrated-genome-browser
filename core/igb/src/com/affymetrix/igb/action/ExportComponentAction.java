@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.util.ExportDialog;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
 
 /**
  *
@@ -32,7 +33,7 @@ public abstract class ExportComponentAction extends GenericAction {
 			ExportDialog.getSingleton().initSeqViewListener(component);
 			ExportDialog.getSingleton().display(true);
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem during output.", ex);
+			ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
 		}
 	}
 

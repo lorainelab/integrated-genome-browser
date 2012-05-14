@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.util.ExportDialog;
+import java.util.logging.Level;
 
 /**
  *
@@ -37,7 +38,7 @@ public class ExportImageAction extends GenericAction {
 		try {
 			ExportDialog.getSingleton().display(false);
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem during output.", ex);
+			ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
 		}
 	}
 }

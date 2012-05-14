@@ -4,6 +4,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.JTextButtonCellRenderer;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
@@ -27,6 +28,6 @@ public class ErrorNotificationCellRenderer extends JTextButtonCellRenderer {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ErrorHandler.errorPanel(vFeature.getFeature().featureName, vFeature.getLastRefreshStatus().toString());
+		ErrorHandler.errorPanel(vFeature.getFeature().featureName, vFeature.getLastRefreshStatus().toString(),Level.WARNING);
 	}
 }

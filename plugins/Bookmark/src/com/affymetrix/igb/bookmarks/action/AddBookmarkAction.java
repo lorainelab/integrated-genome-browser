@@ -9,6 +9,7 @@ import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.bookmarks.Separator;
+import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -38,11 +39,11 @@ public abstract class AddBookmarkAction extends GenericAction {
 		try {
 			bookmark = BookmarkController.getCurrentBookmark(false, BookmarkActionManager.getInstance().getVisibleSpan());
 		} catch (MalformedURLException m) {
-			ErrorHandler.errorPanel("Couldn't add bookmark", m);
+			ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
 			return;
 		}
 		if (bookmark == null) {
-			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
+			ErrorHandler.errorPanel("Error", "Nothing to bookmark", Level.INFO);
 			return;
 		}
 

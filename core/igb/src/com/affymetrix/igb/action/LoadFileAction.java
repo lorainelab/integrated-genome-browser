@@ -60,7 +60,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 			for (File f : files) {
 				URI uri = f.toURI();
 				if (!openURI(uri, loadGroup, speciesName)) {
-					ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName());
+					ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), Level.WARNING);
 				}
 			}
 		}
@@ -81,11 +81,11 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 					AnnotatedSeqGroup loadGroup = getloadGroup();
 					String speciesName = getSpeciesName();
 					if (!openURI(uri, loadGroup, speciesName)) {
-						ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
+						ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
 					}
 				} catch (URISyntaxException ex) {
 					ex.printStackTrace();
-					ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ");
+					ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
 				}
 			}
 		}

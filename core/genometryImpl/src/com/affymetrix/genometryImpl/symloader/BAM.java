@@ -70,7 +70,7 @@ public final class BAM extends XAM {
 			// Guess at the location of the .bai URL as BAM URL + ".bai"	
 			if (baiUriStr == null) {
 				ErrorHandler.errorPanel("No BAM index file",
-						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
+						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
 				this.isInitialized = false;
 				return null;
 			}
@@ -82,7 +82,7 @@ public final class BAM extends XAM {
 			// Guess at the location of the .bai URL as BAM URL + ".bai"	
 			if (baiUriStr == null) {
 				ErrorHandler.errorPanel("No BAM index file",
-						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
+						"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
 				this.isInitialized = false;
 				return null;
 			}
@@ -114,7 +114,7 @@ public final class BAM extends XAM {
 		} catch (SAMFormatException ex) {
 			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n" +
 					"Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). " +
-					"See console for the details of the exception.\n");
+					"See console for the details of the exception.\n", Level.SEVERE);
 			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();

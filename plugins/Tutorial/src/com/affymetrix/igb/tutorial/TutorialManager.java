@@ -141,7 +141,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 			return null;
 		}
 		if (!(mainWidget instanceof JRPHierarchicalWidget)) {
-			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, widget " + widgetId + " is incorrect, not hierarchical.");
+			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, widget " + widgetId + " is incorrect, not hierarchical.", Level.WARNING);
 			return null;
 		}
 		String subId = widgetId.substring(pos + 1);
@@ -203,7 +203,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		}
 		if (step.getHighlight() != null) {
 			if (!highlightWidget(step.getHighlight())) {
-				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, unable to find widget " + step.getHighlight());
+				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, unable to find widget " + step.getHighlight(), Level.SEVERE);
 			}
 		}
 		if (step.getExecute() != null) {
@@ -216,7 +216,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 		}
 		if (step.getTrigger() != null) {
 			if (step.getSubTutorial() == null) {
-				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, no sub tutorial for trigger " + step.getTrigger());
+				ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, no sub tutorial for trigger " + step.getTrigger(), Level.WARNING);
 			} else {
 				triggers.put(step.getTrigger(), step.getSubTutorial());
 			}
@@ -385,7 +385,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 					return true;
 				}
 			}
-			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, could not find " + serverName + " in serves.");
+			ErrorHandler.errorPanel("Tutorial Error", "error in tutorial, could not find " + serverName + " in serves.", Level.SEVERE);
 		}
 		return false;
 	}

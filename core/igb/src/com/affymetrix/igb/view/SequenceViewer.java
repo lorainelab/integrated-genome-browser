@@ -43,6 +43,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.logging.Level;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -191,7 +192,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			}
 		} finally {
 			if (errorMessage != null) {
-				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage);
+				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage, Level.SEVERE);
 
 			}
 		}
@@ -506,7 +507,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 					fw.flush();
 					fw.close();
 				} catch (Exception ex) {
-					ErrorHandler.errorPanel("Problem saving file", ex);
+					ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
 				}
 			}
 		}
@@ -606,7 +607,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		} else {
 			ErrorHandler.errorPanel("Missing Sequence Residues",
 					"Don't have all the needed residues, can't copy to clipboard.\n"
-					+ "Please load sequence residues for this region.");
+					+ "Please load sequence residues for this region.", Level.WARNING);
 		}
 	}
 

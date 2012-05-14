@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPJPanel;
 import com.affymetrix.igb.Application;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
 
 /**
  * This class manages the cover flow visualization.  It has a card layout where
@@ -90,7 +91,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 					if(group == null || group.getEnabledVersions().isEmpty()){
 						Application.getSingleton().setStatus(groupStr+" Not Available", true);
 						ErrorHandler.errorPanel("NOTICE", groupStr + " not available at this time. "
-								+ "Please check that the appropriate data source is available.");
+								+ "Please check that the appropriate data source is available.", Level.WARNING);
 						return;
 					}
 

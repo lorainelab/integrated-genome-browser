@@ -269,7 +269,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		} catch (Throwable t) {
 			// some out-of-memory errors could happen during this code, so
 			// this catch block will report that to the user.
-			ErrorHandler.errorPanel("Error ", t);
+			ErrorHandler.errorPanel("Error ", t, Level.SEVERE);
 		}
 	}
 

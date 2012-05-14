@@ -122,13 +122,13 @@ public final class DasSource {
 			NodeList segments = doc.getElementsByTagName("SEGMENT");
 			addSegments(segments);
 		} catch (MalformedURLException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
 		} catch (ParserConfigurationException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
 		} catch (SAXException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
 		} catch (IOException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
 		} finally {
 			GeneralUtils.safeClose(stream);
 			synchronized(this) {
@@ -206,16 +206,16 @@ public final class DasSource {
 				}
 			}
 		} catch (MalformedURLException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex, Level.SEVERE);
 			return false;
 		} catch (ParserConfigurationException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex, Level.SEVERE);
 			return false;
 		} catch (SAXException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex, Level.SEVERE);
 			return false;
 		} catch (IOException ex) {
-			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex, Level.SEVERE);
 			return false;
 		} finally {
 			GeneralUtils.safeClose(stream);

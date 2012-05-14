@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.logging.Level;
 
 /**
  *
@@ -70,14 +71,14 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 			uri = url.toURI();
 		} catch (Exception ex) {
 			// verify these are valid
-			ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL");
+			ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL", Level.SEVERE);
 			return;
 		}
 		
 		String friendlyName = getFriendlyName(urlStr);
 		
 		if (!checkFriendlyName(friendlyName)) {
-			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
+			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
 			return;
 		}
 		

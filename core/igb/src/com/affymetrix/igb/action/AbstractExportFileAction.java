@@ -32,6 +32,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import java.util.logging.Level;
 
 public abstract class AbstractExportFileAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
@@ -85,7 +86,7 @@ public abstract class AbstractExportFileAction extends GenericAction {
 				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
 				exportFile(fileExporter, dos, aseq, atier);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Problem saving file", ex);
+				ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
 			} finally {
 				GeneralUtils.safeClose(dos);
 			}

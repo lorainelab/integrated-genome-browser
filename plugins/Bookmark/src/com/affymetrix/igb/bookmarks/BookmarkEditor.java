@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
 import javax.swing.*;
 
 /**
@@ -107,7 +108,7 @@ public class BookmarkEditor {
 					bookmark = BookmarkController.getCurrentBookmark(true,
 							BookmarkActionManager.getInstance().getVisibleSpan());
 				} catch (MalformedURLException m) {
-					ErrorHandler.errorPanel("Couldn't add bookmark", m);
+					ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
 					return;
 				}
 			}

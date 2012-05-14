@@ -81,7 +81,7 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getSource());
+			System.out.println("Color scheme choice action source: "+e.getSource());
 		}
 		
 	};

@@ -48,6 +48,7 @@ import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
@@ -228,9 +229,9 @@ public abstract class BookmarkController {
 			}
 
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", ex);
+			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", ex, Level.WARNING);
 		} catch (Error er) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", er);
+			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", er, Level.WARNING);
 		}
 	}
 

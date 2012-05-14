@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -260,9 +261,9 @@ public final class WebLinksView implements ListSelectionListener {
 				WebLink.importWebLinks(fil);
 			} catch (FileNotFoundException fe) {
 				ErrorHandler.errorPanel("Importing web links: File Not Found "
-						+ fil.getAbsolutePath(), null, fe);
+						+ fil.getAbsolutePath(), null, fe, Level.SEVERE);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Importing web links", null, ex);
+				ErrorHandler.errorPanel("Importing web links", null, ex, Level.SEVERE);
 			}
 		}
 

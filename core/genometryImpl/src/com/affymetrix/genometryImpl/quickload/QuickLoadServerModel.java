@@ -370,7 +370,7 @@ public final class QuickLoadServerModel {
 				success = true;
 			} 
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error loading data for genome '" + genome_name + "'", ex);
+			ErrorHandler.errorPanel("ERROR", "Error loading data for genome '" + genome_name + "'", ex, Level.SEVERE);
 		} finally {
 			GeneralUtils.safeClose(lift_stream);
 			GeneralUtils.safeClose(ginfo_stream);
@@ -438,7 +438,7 @@ public final class QuickLoadServerModel {
 			}
 
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
+			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex, Level.SEVERE);
 		} finally {
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(ireader);

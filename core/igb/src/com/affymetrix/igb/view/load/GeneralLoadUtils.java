@@ -1027,7 +1027,7 @@ public final class GeneralLoadUtils {
 				}
 			}
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error loading server mapping", ex);
+			ErrorHandler.errorPanel("ERROR", "Error loading server mapping", ex, Level.SEVERE);
 		} finally {
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(ireader);

@@ -50,7 +50,7 @@ public class ChangeTierLabelColorPopupAction extends SeqMapViewActionA {
 
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				SelectAllAction.getAction().actionPerformed(evt);
-				if (!getTierManager().getSelectedTierLabels().isEmpty()) {
+				if (!getTierManager().getSelectedTierLabels().isEmpty() && !syncColors.isSelected()) {
 					background.setEnabled(true);
 					foreground.setEnabled(true);
 				}

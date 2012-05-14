@@ -536,7 +536,7 @@ public final class ServerList {
 				} else {
 					String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
 					errorText = MessageFormat.format(IGBConstants.BUNDLE.getString("connectError"), superType, server.serverName);
-					ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, null);
+					ErrorHandler.errorPanel((JFrame) null, server.serverName, errorText, null, Level.SEVERE);
 				}
 			}
 			if (server.serverType != ServerTypeI.LocalFiles) {

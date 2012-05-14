@@ -14,13 +14,12 @@ import java.awt.Toolkit;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Level;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.OKAction;
 import com.affymetrix.genometryImpl.event.ReportBugAction;
-import java.util.logging.Level;
 
 /**
  * Simple routines for bringing-up an error message panel and also logging the
@@ -66,7 +65,7 @@ public abstract class ErrorHandler implements DisplaysError{
 
 	public static void errorPanel(String title, String message, Component c, Throwable e) {
 		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
-		errorPanel(frame, title, message, e);
+		errorPanel(frame, title, message, e, Level.SEVERE);
 	}
 
 	public static void errorPanel(final String title, String message, final List<Throwable> errs) {
@@ -92,26 +91,19 @@ public abstract class ErrorHandler implements DisplaysError{
 		}
 		errorPanel((JFrame) null, title, message, errs, null,level);
 	}
-	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
-		List<Throwable> errs = new ArrayList<Throwable>();
-		if (e != null) {
-			errs.add(e);
-		}
-		errorPanel((JFrame) null, title, message, errs, null,Level.SEVERE);
-	}
-
+	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {
 		List<GenericAction> actions = new ArrayList<GenericAction>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
-		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
+		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, level);
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message) {
 		List<GenericAction> actions = new ArrayList<GenericAction>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
-		ErrorHandler.errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, Level.SEVERE);
+		errorPanel((JFrame) null, title, message, new ArrayList<Throwable>(), actions, Level.SEVERE);
 	}
 
 	/**

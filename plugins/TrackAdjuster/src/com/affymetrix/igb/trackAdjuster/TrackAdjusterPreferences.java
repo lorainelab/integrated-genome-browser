@@ -107,7 +107,7 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
                 .add(0, 378, Short.MAX_VALUE))
         );
 
-        mainPane.addTab("Display", displayTab);
+        mainPane.addTab("Track Style", displayTab);
         TAB_STYLE = mainPane.indexOfComponent(displayTab);
 
         jLabel5.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N

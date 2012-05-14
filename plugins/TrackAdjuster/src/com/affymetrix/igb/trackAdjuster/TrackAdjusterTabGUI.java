@@ -118,7 +118,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         jMenu1.setText("jMenu1");
 
-        StylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Style"));
+        StylePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Style"));
         StylePanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 StylePanelMouseClicked(evt);
@@ -366,16 +366,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         );
 
         RangePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Y Axis Scale (Graph)"));
-        RangePanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                RangePanelMouseClicked(evt);
-            }
-        });
-        RangePanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                RangePanelMouseMoved(evt);
-            }
-        });
 
         jLabel2.setText("Set By:");
 
@@ -393,12 +383,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         by_percentileRB_val.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 by_percentileRB_valActionPerformed(evt);
-            }
-        });
-
-        rangeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                rangeSliderStateChanged(evt);
             }
         });
 
@@ -514,11 +498,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         });
 
         floatingCheckBox.setText("Floating");
-        floatingCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                floatingCheckBoxActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -680,9 +659,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_nameSizeComboBoxtrackNameSizeComboBoxActionPerformed
 
-	private void rangeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rangeSliderStateChanged
-	}//GEN-LAST:event_rangeSliderStateChanged
-
 	private void minTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minTextActionPerformed
 		if (sgt.is_listening) {
 			int min;
@@ -764,9 +740,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_PluginButtonActionPerformed
 
-	private void floatingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_floatingCheckBoxActionPerformed
-	}//GEN-LAST:event_floatingCheckBoxActionPerformed
-
 	private void StylePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseClicked
 		Rectangle bounds = new Rectangle(43, 5, 57, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
@@ -787,16 +760,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 			f.setVisible(true);
 		}
 	}//GEN-LAST:event_AnnotationPanelMouseClicked
-
-	private void RangePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RangePanelMouseClicked
-		Rectangle bounds = new Rectangle(100, 5, 53, 13);
-		if (bounds.contains(evt.getX(), evt.getY())) {
-			TrackAdjusterPreferences pp = TrackAdjusterPreferences.getSingleton(igbService);
-			pp.setTab(TrackAdjusterPreferences.TAB_VISIBLE_RANGE);
-			javax.swing.JFrame f = pp.getFrame();
-			f.setVisible(true);
-		}
-	}//GEN-LAST:event_RangePanelMouseClicked
 
 	private void graphPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseClicked
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);
@@ -848,15 +811,6 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 			this.setCursor(defaultCursor);
 		}
 	}//GEN-LAST:event_AnnotationPanelMouseMoved
-
-	private void RangePanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RangePanelMouseMoved
-		Rectangle bounds = new Rectangle(100, 5, 53, 13);
-		if (bounds.contains(evt.getX(), evt.getY())) {
-			this.setCursor(openHandCursor);
-		} else {
-			this.setCursor(defaultCursor);
-		}
-	}//GEN-LAST:event_RangePanelMouseMoved
 
 	private void graphPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseMoved
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);

@@ -83,7 +83,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Track Style"/>
+            <TitledBorder title="Style"/>
           </Border>
         </Property>
       </Properties>
@@ -504,10 +504,6 @@
           </Border>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RangePanelMouseClicked"/>
-        <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="RangePanelMouseMoved"/>
-      </Events>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -600,9 +596,6 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSlider" name="rangeSlider">
-          <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="rangeSliderStateChanged"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.ValueSlider"/>
           </AuxValues>
@@ -765,9 +758,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Floating"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="floatingCheckBoxActionPerformed"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.floatCB"/>
           </AuxValues>

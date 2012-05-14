@@ -121,6 +121,7 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable, Comparable<SimpleSeqSp
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return seq.toString() + ":" + start + "-" + end;
 	}

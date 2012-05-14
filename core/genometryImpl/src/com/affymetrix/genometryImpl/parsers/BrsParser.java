@@ -118,79 +118,69 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 
 
 		try {
-			/*if (blength > 0) {
-				byte[] bytebuf = new byte[(int)blength];
-				bis.read(bytebuf);
-				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-				dis = new DataInputStream(bytestream);
-			}
-			else {*/
-				dis = new DataInputStream(bis);
-			//}
-			if (true) {
-				// just keep looping till hitting end-of-file throws an EOFException
-				Thread thread = Thread.currentThread();
-				while (! thread.isInterrupted()) {
-					String geneName = dis.readUTF();
-					String name = dis.readUTF();
-					String chrom_name = dis.readUTF();
+			dis = new DataInputStream(bis);
+			// just keep looping till hitting end-of-file throws an EOFException
+			Thread thread = Thread.currentThread();
+			while (! thread.isInterrupted()) {
+				String geneName = dis.readUTF();
+				String name = dis.readUTF();
+				String chrom_name = dis.readUTF();
 
-					String strand = dis.readUTF();
-					boolean forward = (strand.equals("+") || (strand.equals("++")));
-					int tmin = dis.readInt();
-					int tmax = dis.readInt();
-					int cmin = dis.readInt();
-					int cmax = dis.readInt();
-					int ecount = dis.readInt();
-					int[] emins = new int[ecount];
-					int[] emaxs = new int[ecount];
-					for (int i=0; i<ecount; i++) {
-						emins[i] = dis.readInt();
-					}
-					for (int i=0; i<ecount; i++) {
-						emaxs[i] = dis.readInt();
-					}
-
-					BioSeq chromseq = seq_group.getSeq(chrom_name);
-					if (chromseq == null) {
-						chromseq = seq_group.addSeq(chrom_name, tmax, annot_type);
-					}
-
-					if(name.length() == 0 && geneName.length() == 0){
-						name = seq_group.getID();
-					}
-					
-					UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
-							tmin, tmax, cmin, cmax, emins, emaxs);
-
-					if (geneName.length() != 0) {
-						seq_group.addToIndex(geneName, sym);
-					}
-					if (name.length() != 0) {
-						seq_group.addToIndex(name, sym);
-					}
-
-					results.add(sym);
-					if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
-
-					if (annotate_seq) {
-						SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-						if (parent_sym == null) {
-							parent_sym = new SimpleSymWithProps();
-							parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-							parent_sym.setProperty("method", annot_type);
-							parent_sym.setProperty("preferred_formats", pref_list);
-							parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-							annots.add(parent_sym);
-							chrom2sym.put(chrom_name, parent_sym);
-						}
-						parent_sym.addChild(sym);
-					}
-
-
-					total_exon_count += ecount;
-					count++;
+				String strand = dis.readUTF();
+				boolean forward = (strand.equals("+") || (strand.equals("++")));
+				int tmin = dis.readInt();
+				int tmax = dis.readInt();
+				int cmin = dis.readInt();
+				int cmax = dis.readInt();
+				int ecount = dis.readInt();
+				int[] emins = new int[ecount];
+				int[] emaxs = new int[ecount];
+				for (int i=0; i<ecount; i++) {
+					emins[i] = dis.readInt();
 				}
+				for (int i=0; i<ecount; i++) {
+					emaxs[i] = dis.readInt();
+				}
+
+				BioSeq chromseq = seq_group.getSeq(chrom_name);
+				if (chromseq == null) {
+					chromseq = seq_group.addSeq(chrom_name, tmax, annot_type);
+				}
+
+				if(name.length() == 0 && geneName.length() == 0){
+					name = seq_group.getID();
+				}
+
+				UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
+						tmin, tmax, cmin, cmax, emins, emaxs);
+
+				if (geneName.length() != 0) {
+					seq_group.addToIndex(geneName, sym);
+				}
+				if (name.length() != 0) {
+					seq_group.addToIndex(name, sym);
+				}
+
+				results.add(sym);
+				if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
+
+				if (annotate_seq) {
+					SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+					if (parent_sym == null) {
+						parent_sym = new SimpleSymWithProps();
+						parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+						parent_sym.setProperty("method", annot_type);
+						parent_sym.setProperty("preferred_formats", pref_list);
+						parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+						annots.add(parent_sym);
+						chrom2sym.put(chrom_name, parent_sym);
+					}
+					parent_sym.addChild(sym);
+				}
+
+
+				total_exon_count += ecount;
+				count++;
 			}
 		}
 		catch (EOFException ex) {

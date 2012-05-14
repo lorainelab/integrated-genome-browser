@@ -80,8 +80,6 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         annotationTab = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        visibleRangeTab = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
         graphTab = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jComboBox1 = sgt.heat_mapCB;
@@ -119,10 +117,10 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         annotationTab.setLayout(annotationTabLayout);
         annotationTabLayout.setHorizontalGroup(
             annotationTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, annotationTabLayout.createSequentialGroup()
-                .addContainerGap(240, Short.MAX_VALUE)
+            .add(annotationTabLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(jLabel5)
-                .addContainerGap())
+                .addContainerGap(240, Short.MAX_VALUE))
         );
         annotationTabLayout.setVerticalGroup(
             annotationTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -133,29 +131,6 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
 
         mainPane.addTab("Annotation", annotationTab);
         TAB_ANNOTATION = mainPane.indexOfComponent(annotationTab);
-
-        jLabel6.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel6.setText("Not implemented yet");
-
-        org.jdesktop.layout.GroupLayout visibleRangeTabLayout = new org.jdesktop.layout.GroupLayout(visibleRangeTab);
-        visibleRangeTab.setLayout(visibleRangeTabLayout);
-        visibleRangeTabLayout.setHorizontalGroup(
-            visibleRangeTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(visibleRangeTabLayout.createSequentialGroup()
-                .add(116, 116, 116)
-                .add(jLabel6)
-                .addContainerGap(130, Short.MAX_VALUE))
-        );
-        visibleRangeTabLayout.setVerticalGroup(
-            visibleRangeTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(visibleRangeTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jLabel6)
-                .addContainerGap(372, Short.MAX_VALUE))
-        );
-
-        mainPane.addTab("Visible Range", visibleRangeTab);
-        TAB_VISIBLE_RANGE = mainPane.indexOfComponent(visibleRangeTab);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Heat Map"));
 
@@ -177,16 +152,15 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         graphTabLayout.setHorizontalGroup(
             graphTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(graphTabLayout.createSequentialGroup()
-                .add(150, 150, 150)
+                .addContainerGap()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
         graphTabLayout.setVerticalGroup(
             graphTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(graphTabLayout.createSequentialGroup()
-                .add(58, 58, 58)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(277, Short.MAX_VALUE))
+                .add(0, 335, Short.MAX_VALUE))
         );
 
         mainPane.addTab("Graph", graphTab);
@@ -199,21 +173,16 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         pluginTab.setLayout(pluginTabLayout);
         pluginTabLayout.setHorizontalGroup(
             pluginTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 440, Short.MAX_VALUE)
-            .add(pluginTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(pluginTabLayout.createSequentialGroup()
-                    .add(123, 123, 123)
-                    .add(jLabel7)
-                    .addContainerGap(123, Short.MAX_VALUE)))
+            .add(pluginTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jLabel7)
+                .addContainerGap(240, Short.MAX_VALUE))
         );
         pluginTabLayout.setVerticalGroup(
             pluginTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
-            .add(pluginTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(pluginTabLayout.createSequentialGroup()
-                    .add(189, 189, 189)
-                    .add(jLabel7)
-                    .addContainerGap(189, Short.MAX_VALUE)))
+            .add(pluginTabLayout.createSequentialGroup()
+                .add(jLabel7)
+                .add(0, 378, Short.MAX_VALUE))
         );
 
         mainPane.addTab("Plugin", pluginTab);
@@ -239,12 +208,10 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane mainPane;
     private javax.swing.JPanel pluginTab;
-    private javax.swing.JPanel visibleRangeTab;
     // End of variables declaration//GEN-END:variables
 
 	/**

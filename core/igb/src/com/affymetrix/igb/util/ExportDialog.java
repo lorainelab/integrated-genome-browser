@@ -666,11 +666,10 @@ public class ExportDialog implements ExportConstants {
 		Graphics g = exportImage.createGraphics();
 		component.printAll(g);
 
-		exportImage = GraphicsUtil.resizeImage(exportImage,
+		Image previewImage = GraphicsUtil.resizeImage(exportImage,
 				previewLabel.getWidth(), previewLabel.getHeight());
 
-		ImageIcon icon = new ImageIcon(exportImage);
-		previewLabel.setIcon(icon);
+		previewLabel.setIcon(new ImageIcon(previewImage));
 	}
 
 	/**

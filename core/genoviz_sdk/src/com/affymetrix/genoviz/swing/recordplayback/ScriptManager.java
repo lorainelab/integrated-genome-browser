@@ -64,9 +64,11 @@ public class ScriptManager {
 			}
 		}
 	}
+
 	public void removeWidget(String id) {
 		widgets.remove(id);
 	}
+
 	public String getScript(ScriptProcessor scriptProcessor) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(scriptProcessor.getHeader());
@@ -77,6 +79,7 @@ public class ScriptManager {
 		}
 		return sb.toString();
 	}
+
 	public JRPWidget getWidget(String id) {
 		return widgets.get(id);
 	}

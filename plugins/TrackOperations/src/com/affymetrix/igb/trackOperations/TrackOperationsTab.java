@@ -4,7 +4,6 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -49,9 +48,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	boolean DEBUG_EVENTS = false;
 	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
 	public final List<AbstractGraphGlyph> glyphs = new ArrayList<AbstractGraphGlyph>();
-	public final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
-	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
-	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	public final JRPButton threshB = new JRPButton("SimpleGraphTab_threshB");
 	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));

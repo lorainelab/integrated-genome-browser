@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -30,6 +31,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -196,8 +198,6 @@ public final class TrackAdjusterTab
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
 	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
-	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
-	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
 	public JRPComboBox heat_mapCB;
 	public JPanel annotationPanel = new JPanel();
 
@@ -259,20 +259,19 @@ public final class TrackAdjusterTab
 				}
 			}
 		};
-		colorSchemeBox = new ColorSchemeComboBox(){
-			
+		colorSchemeBox = new ColorSchemeComboBox() {
+
 			@Override
-			public void setChoices(int i){
+			public void setChoices(int i) {
 				this.removeItemListener(itemListener);
 				super.setChoices(i);
 				this.addItemListener(itemListener);
 			}
-			
 		};
 		colorSchemeBox.addItemListener(itemListener);
 		colorSchemeBox.setChoices(0);
 		igbS.addListSelectionListener(colorSchemeBox);
-		
+
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
@@ -291,6 +290,27 @@ public final class TrackAdjusterTab
 					+ category.name(), SelectAllAction.getAction(category));
 			popup.add(item);
 		}
+
+		floatCB.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				floatGraphs(floatCB.isSelected());
+			}
+		});
+
+		labelCB.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				setShowLabels(labelCB.isSelected());
+			}
+		});
+
+		yaxisCB.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				setShowAxis(yaxisCB.isSelected());
+			}
+		});
 	}
 
 	public void selectAllBMouseClicked(JComponent c, MouseEvent e) {
@@ -584,9 +604,6 @@ public final class TrackAdjusterTab
 		bgColorComboBox.setEnabled(b);
 		colorSchemeBox.setEnabled(b);
 		trackName.setEnabled(b);
-
-		combineB.setEnabled(!all_are_combined && grafs.size() > 1);
-		splitB.setEnabled(any_are_combined);
 
 		is_listening = true; // turn back on GUI events
 	}
@@ -884,5 +901,73 @@ public final class TrackAdjusterTab
 
 		igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, false, false);
 		is_listening = true;
+	}
+
+	private void floatGraphs(boolean do_float) {
+		boolean something_changed = false;
+		for (AbstractGraphGlyph gl : glyphs) {
+			GraphState gstate = gl.getGraphState();
+//				if (gstate.getComboStyle() != null) {
+//					gstate.setComboStyle(null);
+//					something_changed = true;
+//				}
+			boolean is_floating = gstate.getTierStyle().getFloatGraph();
+			if (do_float && (!is_floating)) {
+				//GraphGlyphUtils.floatGraph(gl, gviewer);
+
+				// figure out correct height
+				Rectangle2D.Double coordbox = gl.getCoordBox();
+				Rectangle pixbox = new Rectangle();
+				igbService.getView().transformToPixels(coordbox, pixbox);
+				gstate.getTierStyle().setY(pixbox.y);
+				gstate.getTierStyle().setHeight(pixbox.height);
+
+				gstate.getTierStyle().setFloatGraph(true);
+				something_changed = true;
+			} else if ((!do_float) && is_floating) {
+				//GraphGlyphUtils.attachGraph(gl, gviewer);
+
+				// figure out correct height
+				Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
+				Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
+				Rectangle2D.Double coordbox = new Rectangle2D.Double();
+				igbService.getView().transformToCoords(pixbox, coordbox);
+				gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
+				gstate.getTierStyle().setHeight(coordbox.height);
+
+				gstate.getTierStyle().setFloatGraph(false);
+				something_changed = true;
+			}
+		}
+		if (something_changed) {
+			updateViewer();
+		}
+	}
+
+	private void setShowAxis(boolean b) {
+		for (AbstractGraphGlyph gl : glyphs) {
+			gl.setShowAxis(b);
+		}
+		igbService.getSeqMap().updateWidget();
+	}
+
+	private void setShowLabels(boolean b) {
+		for (AbstractGraphGlyph gl : glyphs) {
+			gl.setShowLabel(b);
+		}
+		igbService.getSeqMap().updateWidget();
+	}
+
+	private void updateViewer() {
+		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
+		// set selections to empty so that options get turned off
+		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			public void run() {
+				igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+				resetSelectedGraphGlyphs(previous_graph_syms);
+			}
+		});
 	}
 }

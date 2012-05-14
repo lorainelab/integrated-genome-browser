@@ -820,6 +820,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 			this.setCursor(defaultCursor);
 		}
 	}//GEN-LAST:event_graphPanelMouseMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton AnnotationButton;
     private javax.swing.JPanel AnnotationPanel;

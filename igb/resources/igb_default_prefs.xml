@@ -172,7 +172,13 @@
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
 	type="default"
   />
-
+  
+  <!-- Shows how to make a new web link for gene searching at NCBI. -->
+  <annotation_url annot_type_regex="(?i).*gene.*"
+    name="GenBank gene search"
+    url="http://www.ncbi.nlm.nih.gov/gene?term=$$"
+	type="default"
+  />
 
   <!-- db_xref linkouts -->
   <!-- see http://www.ncbi.nlm.nih.gov/projects/collab/db_xref.html to support more --> 

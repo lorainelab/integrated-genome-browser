@@ -41,6 +41,9 @@
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.6.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
 	<classpathentry kind="src" path="core/common/resources"/>
+	<classpathentry kind="src" path="plugins/TrackOperations/resources"/>
+	<classpathentry kind="src" path="plugins/TrackAdjuster/resources"/>
+	<classpathentry kind="src" path="plugins/Thresholding/resources"/>
 	<classpathentry kind="src" path="plugins/IGBScript/src"/>
 	<classpathentry kind="src" path="plugins/IGBScript/resources"/>
 	<classpathentry kind="src" path="plugins/TrackOperations/src"/>

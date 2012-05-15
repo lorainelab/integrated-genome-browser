@@ -9,22 +9,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genoviz.swing.MenuUtil;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.action.AutoLoadFeatureAction;
-import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.IGBAuthenticator;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +27,20 @@ import javax.swing.GroupLayout.Group;
 import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
+import com.affymetrix.genometryImpl.util.*;
+
+import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+
+import com.affymetrix.igb.action.AutoLoadFeatureAction;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.util.IGBAuthenticator;
 
 /**
  *
@@ -218,7 +216,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				} else {
 					ErrorHandler.errorPanel(
 							"Unable to Load Version Synonyms",
-							"Unable to load personal synonyms from " + vsynonymFile.getText() + ".");
+							"Unable to load personal synonyms from " + vsynonymFile.getText() + ".", Level.SEVERE);
 				}
 			}
 		};
@@ -242,7 +240,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 				} else {
 					ErrorHandler.errorPanel(
 							"Unable to Load Chromosome Synonyms",
-							"Unable to load personal synonyms from " + csynonymFile.getText() + ".");
+							"Unable to load personal synonyms from " + csynonymFile.getText() + ".", Level.SEVERE);
 				}
 			}
 		};

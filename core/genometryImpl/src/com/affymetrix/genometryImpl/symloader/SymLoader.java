@@ -26,8 +26,8 @@ import com.affymetrix.genometryImpl.util.*;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public static final int PROGRESS_INTERVAL_TIME = 30; // in seconds - any shorter may slow down application
-	public static final long PROGRESS_INTERVAL_TIME_NANO = (long)PROGRESS_INTERVAL_TIME * (long)1000000000; // in nanoseconds
+	public static final int SLEEP_INTERVAL_TIME = 30; // in seconds - any shorter may slow down application
+	public static final long SLEEP_INTERVAL_TIME_NANO = (long)SLEEP_INTERVAL_TIME * (long)1000000000; // in nanoseconds
 	public static final int SLEEP_TIME = 1; // in milliseconds
 	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
@@ -469,7 +469,7 @@ public abstract class SymLoader {
 
 	protected void checkSleep() throws InterruptedException {
 		long currentTime = System.nanoTime();
-		if (currentTime - lastSleepTime >= PROGRESS_INTERVAL_TIME_NANO) {
+		if (currentTime - lastSleepTime >= SLEEP_INTERVAL_TIME_NANO) {
 			Thread.sleep(SLEEP_TIME); // so that thread does not monopolize cpu
 			lastSleepTime = currentTime;
 		}

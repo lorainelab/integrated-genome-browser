@@ -314,8 +314,8 @@ public final class NibbleResiduesParser implements Parser {
 				String outString = seq.getResidues((int)sequenceLoop.longValue(), Math.min((int)sequenceLoop.longValue()+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
 				long currentTime = System.nanoTime();
-				if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
-/////					Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+				if (currentTime - lastSleepTime >= SymLoader.SLEEP_INTERVAL_TIME_NANO) {
+					Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
 					lastSleepTime = currentTime;
 				}
 			}

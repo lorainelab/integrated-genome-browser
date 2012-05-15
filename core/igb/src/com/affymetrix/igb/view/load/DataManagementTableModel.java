@@ -91,6 +91,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		fireTableDataChanged();
 	}
 
+	/*
+	 * Some file formats might have multiple tracks, try load GFF1_example.gff
+	 */
 	void createPrimaryVirtualFeatures(GenericFeature gFeature) {
 		VirtualFeature vFeature = new VirtualFeature(gFeature, null);
 		virtualFeatures.add(vFeature);
@@ -115,6 +118,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		for (ITrackStyleExtended style : currentStyles) {
 			if (style.getFeature() == vFeature.getFeature()) {
 				subVfeature = new VirtualFeature(vFeature.getFeature(), style);
+				// The first tract will be removed and added back again as a primary track
 				if (isPrimary) {
 					virtualFeatures.remove(vFeature);
 					isPrimary = false;

@@ -52,6 +52,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 /**
+ * a class for initializing components and background methods implementation.
  *
  * @author nick & david
  */
@@ -97,13 +98,13 @@ public final class GeneralLoadView {
 	private void initComponents() {
 		feature_tree_view = new FeatureTreeView();
 		tree = feature_tree_view.getTree();
-		
+
 		tableModel = new DataManagementTableModel(this);
 		tableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
 		table = new JTableX(tableModel);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		initDataManagementTable();
-		
+
 		refreshDataAction = gviewer.getRefreshDataAction();
 		refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		all_residuesB = new JRPButton("DataAccess_allSequence", LoadWholeSequenceAction.getAction());
@@ -451,8 +452,8 @@ public final class GeneralLoadView {
 		});
 	}
 
-	private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures){
-		
+	private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures) {
+
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
@@ -462,11 +463,11 @@ public final class GeneralLoadView {
 			}
 		});
 	}
-	
+
 	public void refreshDataManagementView() {
 		final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
 		refreshDataManagementTable(visibleFeatures);
-		
+
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(visibleFeatures);
 	}

@@ -680,7 +680,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					if (tn.genericObject instanceof GenericFeature) {
 						GenericFeature feature = (GenericFeature) tn.genericObject;
 						String message;
-						if (checkbox.isSelected()) {							
+						if (checkbox.isSelected()) {
+							// check whether the selected feature url is reachable or not
 							if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad
 									&& !isURLReachable(feature.getURI())) {
 								message = "The feature " + feature.getURI() + " is not reachable.";
@@ -689,6 +690,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 								return;
 							}
 
+							// prevent from adding duplicated features
 							if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
 								message = "The feature " + feature.getURI() + " has already been added.";
 								ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
@@ -712,7 +714,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 
 		private boolean isURLReachable(URI uri) {
-			try {				
+			try {
 				if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
 					return false;
 				}

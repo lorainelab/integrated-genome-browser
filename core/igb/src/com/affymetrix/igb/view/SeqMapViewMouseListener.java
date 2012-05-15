@@ -394,7 +394,16 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			Rectangle2D.Double cbox = new Rectangle2D.Double();
 			Rectangle pbox = evt.getPixelBox();
 			map.getView().transformToCoords(pbox, cbox);
-
+			
+			// If either width or height is zero then no selection is made.
+			if(cbox.width == 0){
+				cbox.width = 1;
+			}
+			
+			if(cbox.height == 0){
+				cbox.height = 1;
+			}
+			
 			// setZoomSpot is best if done before updateWidget
 			smv.setZoomSpotX(cbox.x + cbox.width);
 			smv.setZoomSpotY(cbox.y + cbox.height);

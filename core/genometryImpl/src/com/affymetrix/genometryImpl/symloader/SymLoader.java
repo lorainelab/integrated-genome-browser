@@ -43,6 +43,12 @@ public abstract class SymLoader {
 	protected SymLoaderProgressUpdater symLoaderProgressUpdater;
 	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
 
+	/**
+	 * Implementation of the ProgressUpdater for use in methods that load a data
+	 * source and return a List&lt;SeqSymmetry&gt;, like getRegion()
+	 * The progress calculation takes the SeqSymmetry span min position as the
+	 * position within the passed SeqSpan.
+	 */
 	public class SymLoaderProgressUpdater extends ProgressUpdater {
 		public SymLoaderProgressUpdater(String name, final SeqSpan span) {
 			super(name, span.getMin(), span.getMax(),
@@ -73,6 +79,13 @@ public abstract class SymLoader {
 		}
 	};
 
+	/**
+	 * Implementation of the ProgressUpdater for use in the parseLines method.
+	 * The progress calculation accumulates the line length (assuming LF, not CRLF)
+	 * and using that position within the entire file length. Note - for compressed
+	 * files the compressed file length is known the uncompressed file length is
+	 * needed, but only approximated.
+	 */
 	protected class ParseLinesProgressUpdater extends ProgressUpdater {
 		public ParseLinesProgressUpdater(String name) throws Exception {
 			super(name, 0, GeneralUtils.getUriLength(uri),

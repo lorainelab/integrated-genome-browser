@@ -291,6 +291,7 @@ public final class Genbank extends SymLoader {
 		}
 		
 		try {
+			lastSleepTime = System.nanoTime();
 			while (current_line != null && !done) {
 				checkSleep();
 				notifyReadLine(current_line.length());

@@ -169,6 +169,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
+			lastSleepTime = System.nanoTime();
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				counter++;
 				checkSleep();

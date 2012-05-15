@@ -188,6 +188,7 @@ public final class BAM extends XAM {
 				progressUpdater.start();
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
+					lastSleepTime = System.nanoTime();
 					while (iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try {
 							sr = iter.next();

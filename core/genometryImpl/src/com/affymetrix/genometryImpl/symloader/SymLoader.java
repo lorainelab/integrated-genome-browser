@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.*;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.thread.PositionCalculator;
 import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -27,7 +26,7 @@ import com.affymetrix.genometryImpl.util.*;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public static final int PROGRESS_INTERVAL_TIME = 1000; // in milliseconds
+	public static final int PROGRESS_INTERVAL_TIME = 30000; // in milliseconds, 30 seconds - any shorter may slow down application
 	public static final int SLEEP_TIME = 1; // in milliseconds
 	protected long lastSleepTime;
 	public static final String FILE_PREFIX = "file:";
@@ -468,13 +467,10 @@ public abstract class SymLoader {
 	}
 
 	protected void checkSleep() throws InterruptedException {
-		if (CThreadWorker.allowThreadSleep()) {
-			long currentTime = System.nanoTime();
-			if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
-				Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
-				lastSleepTime = currentTime;
-			}
+		long currentTime = System.nanoTime();
+		if (currentTime - lastSleepTime >= SymLoader.PROGRESS_INTERVAL_TIME) {
+			Thread.sleep(SymLoader.SLEEP_TIME); // so that thread does not monopolize cpu
+			lastSleepTime = currentTime;
 		}
 	}
-
 }

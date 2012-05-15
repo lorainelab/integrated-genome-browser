@@ -10,14 +10,6 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	private final String message;
 	private final int priority;
 
-	/**
-	 * @return if Threads can sleep periodically to share cpu time.
-	 * note - this can cause some Threads to take much longer to finish.
-	 */
-	public static boolean allowThreadSleep() {
-		return false;
-	}
-
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
 	}

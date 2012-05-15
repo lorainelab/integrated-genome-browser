@@ -298,7 +298,7 @@ public final class NibbleResiduesParser implements Parser {
 			final long saveStart = start;
 			// need to use MutableLong since sequenceLoop must be final to be used in inner class
 			final MutableLong sequenceLoop = new MutableLong();
-			ProgressUpdater progressUpdater = new ProgressUpdater(start, end,
+			ProgressUpdater progressUpdater = new ProgressUpdater("NibbleResiduesParser ", start, end,
 				new PositionCalculator() {
 					@Override
 					public long getCurrentPosition() {

@@ -170,7 +170,7 @@ public final class BAM extends XAM {
 				long endPosition = getEndPosition(seq, max, contained);
 				iter = reader.query(seqs.get(seq), min, max, contained);
 				final long startPosition = getCompressedInputStreamPosition(reader).getApproximatePosition();
-				ProgressUpdater progressUpdater = new ProgressUpdater(startPosition, endPosition,
+				ProgressUpdater progressUpdater = new ProgressUpdater("BAM parse " + uri + " - " + seq + ":" + min + "-" + max, startPosition, endPosition,
 					new PositionCalculator() {
 						@Override
 						public long getCurrentPosition() {

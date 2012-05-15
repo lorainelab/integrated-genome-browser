@@ -98,7 +98,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater(span);
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater("GFF3 SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
 		symLoaderProgressUpdater.start();
 		List<? extends SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
 		symLoaderProgressUpdater.kill();
@@ -156,7 +156,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles)
 			throws Exception {
-		parseLinesProgressUpdater = new ParseLinesProgressUpdater();
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater("GFF3 parse lines " + uri);
 		parseLinesProgressUpdater.start();
 		BufferedReader br = null;
 		BufferedWriter bw = null;

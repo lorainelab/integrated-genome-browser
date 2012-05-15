@@ -1,6 +1,8 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -13,6 +15,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
+import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -108,6 +113,45 @@ public class SymLoaderTabix extends SymLoader {
 		return lineProcessor.getFormatPrefList();
 	}
 
+
+	/**
+	 * @return current CompressedStreamPosition for TabixLineReader
+	 * @throws Exception
+	 */
+	private BlockCompressedStreamPosition getCompressedInputStreamPosition(LineReader reader) throws Exception {
+		Field privateReaderField = reader.getClass().getDeclaredField("reader");
+		privateReaderField.setAccessible(true);
+		Object mReaderValue = privateReaderField.get(reader);
+		Field privateCompressedInputStreamField = mReaderValue.getClass().getDeclaredField("mFp");
+		privateCompressedInputStreamField.setAccessible(true);
+		Object compressedInputStreamValue = privateCompressedInputStreamField.get(mReaderValue);
+		Field privateBlockAddressField = compressedInputStreamValue.getClass().getDeclaredField("mBlockAddress");
+		privateBlockAddressField.setAccessible(true);
+		long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
+		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
+		privateCurrentOffsetField.setAccessible(true);
+		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
+		return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
+	}
+
+	private long getEndPosition(String seqID, int max) throws Exception {
+		String uriString = uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uri.getPath();
+		}
+		TabixLineReader tabixLineReaderTemp = new TabixLineReader(uriString);
+		LineReader lineReaderTemp = tabixLineReaderTemp.query(seqID, max - 1, max);
+		String line;
+		try {
+			do {
+				line = lineReaderTemp.readLine();
+			}
+			while (line != null);
+		}
+		catch (IOException x) {}
+		return getCompressedInputStreamPosition(lineReaderTemp).getApproximatePosition();
+	}
+
 	@Override
 	public List<BioSeq> getChromosomeList() throws Exception  {		
 		init();
@@ -136,11 +180,32 @@ public class SymLoaderTabix extends SymLoader {
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception  {
 		init();
 		String seqID = seqs.get(overlapSpan.getBioSeq());
-		LineReader lineReader = tabixLineReader.query(seqID, (overlapSpan.getStart() + 1), + overlapSpan.getEnd());
+		final LineReader lineReader = tabixLineReader.query(seqID, (overlapSpan.getStart() + 1), + overlapSpan.getEnd());
 		if (lineReader == null) {
 			return new ArrayList<SeqSymmetry>();
 		}
-		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
+		final long endPosition = getEndPosition(seqID, overlapSpan.getMax());
+		final long startPosition = getCompressedInputStreamPosition(lineReader).getApproximatePosition();
+/*
+		ProgressUpdater progressUpdater = new ProgressUpdater(startPosition, endPosition,
+			new PositionCalculator() {
+				@Override
+				public long getCurrentPosition() {
+					long currentPosition = startPosition;
+					try {
+						currentPosition = getCompressedInputStreamPosition(lineReader).getApproximatePosition();
+					}
+					catch (Exception x) {
+						// log error here
+					}
+					return currentPosition;
+				}
+			}
+		);
+*/
+		List<? extends SeqSymmetry> region = lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
+//		progressUpdater.kill();
+		return region;
     }
 	
     /**

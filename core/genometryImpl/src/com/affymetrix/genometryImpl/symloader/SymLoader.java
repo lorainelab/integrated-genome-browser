@@ -44,8 +44,8 @@ public abstract class SymLoader {
 	protected ParseLinesProgressUpdater parseLinesProgressUpdater;
 
 	public class SymLoaderProgressUpdater extends ProgressUpdater {
-		public SymLoaderProgressUpdater(final SeqSpan span) {
-			super(span.getMin(), span.getMax(),
+		public SymLoaderProgressUpdater(String name, final SeqSpan span) {
+			super(name, span.getMin(), span.getMax(),
 				new PositionCalculator() {
 					@Override
 					public long getCurrentPosition() {
@@ -73,8 +73,8 @@ public abstract class SymLoader {
 	};
 
 	protected class ParseLinesProgressUpdater extends ProgressUpdater {
-		public ParseLinesProgressUpdater() throws Exception {
-			super(0, GeneralUtils.getUriLength(uri),
+		public ParseLinesProgressUpdater(String name) throws Exception {
+			super(name, 0, GeneralUtils.getUriLength(uri),
 				new PositionCalculator() {
 					@Override
 					public long getCurrentPosition() {
@@ -273,7 +273,7 @@ public abstract class SymLoader {
      * @return List of symmetries satisfying requirements
      */
     public List<? extends SeqSymmetry> getRegion(final SeqSpan overlapSpan) throws Exception {
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater(overlapSpan);
+		symLoaderProgressUpdater = new SymLoaderProgressUpdater("SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, overlapSpan);
 		symLoaderProgressUpdater.start();
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");

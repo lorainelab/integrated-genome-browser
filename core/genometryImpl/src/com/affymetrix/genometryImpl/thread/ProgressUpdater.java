@@ -4,8 +4,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
@@ -28,7 +26,7 @@ public class ProgressUpdater {
 		}
 		public void run() {
 			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
+//			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
 			ctw.setProgressAsPercent(progress);
 		}
 	}

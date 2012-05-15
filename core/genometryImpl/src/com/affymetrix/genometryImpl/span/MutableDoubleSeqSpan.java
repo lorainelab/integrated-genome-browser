@@ -142,7 +142,11 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 	public double getLengthDouble() {
 		return (end > start ? end-start : start-end);
 	}
-
+	 
+	@Override
+	public String toString() {
+		return (seq == null ? "null" : seq.toString()) + ":" + start + "-" + end;
+	}
 }
 
 

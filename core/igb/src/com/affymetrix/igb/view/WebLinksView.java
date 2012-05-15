@@ -25,7 +25,7 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * All the function codes for web links panel are implemented in this class.
- * 
+ *
  * @modified by nick
  */
 public final class WebLinksView implements ListSelectionListener {
@@ -138,6 +138,9 @@ public final class WebLinksView implements ListSelectionListener {
 		}
 	}
 
+	/*
+	 * A confirmation window for delete operation
+	 */
 	public boolean confirmDelete() {
 		String message = "Delete these " + selectedRows.length
 				+ " selected link(s)?\n";
@@ -148,6 +151,9 @@ public final class WebLinksView implements ListSelectionListener {
 				PreferenceUtils.default_confirm_before_delete);
 	}
 
+	/*
+	 * Create a new weblink by default values
+	 */
 	public void add() {
 		WebLink link = new WebLink();
 		link.setName(BUNDLE.getString("default_name"));
@@ -167,6 +173,7 @@ public final class WebLinksView implements ListSelectionListener {
 			row++;
 		}
 
+		// Highlight row of created web link
 		resetRow(row);
 
 		setEnabled(true);
@@ -293,7 +300,7 @@ public final class WebLinksView implements ListSelectionListener {
 				}
 				WebLink.exportWebLinks(fil, false);
 			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Error", "Error exporting web links", 
+				ErrorHandler.errorPanel("Error", "Error exporting web links",
 						frame, ex, Level.SEVERE);
 			}
 		}

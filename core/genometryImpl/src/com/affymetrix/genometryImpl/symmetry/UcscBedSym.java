@@ -339,6 +339,18 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithPr
 	}
 
 	protected void outputAdditional(DataOutputStream out) throws IOException  {}
+
+	@Override
+	public String toString() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			outputBedFormat(new DataOutputStream(baos));
+		}
+		catch (IOException x) {
+			return x.getMessage();
+		}
+		return baos.toString();
+	}
 }
 
 

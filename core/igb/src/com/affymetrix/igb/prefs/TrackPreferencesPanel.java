@@ -64,6 +64,9 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         table = dtable;
         selectAndAddButton = new javax.swing.JButton();
         deleteAndRestoreButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        viewModePanel = new javax.swing.JPanel();
+        viewModeComboBox = tdv.viewModeCB;
         propertiesPanel = new javax.swing.JPanel();
         trackTypeNameLabel = new javax.swing.JLabel();
         trackNameTypeTextField = tracknametype;
@@ -83,6 +86,9 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         connectedCheckBox = tdv.connectedCheckBox;
         collapsedCheckBox = tdv.collapsedCheckBox;
         labelFieldComboBox = tdv.labelFieldComboBox;
+        jPanel1 = new javax.swing.JPanel();
+        refreshButton = tdv.refreshButton;
+        autoRefreshCheckBox = tdv.autoRefreshCheckBox;
         showStrandPanel = new javax.swing.JPanel();
         arrowCheckBox = tdv.arrowCheckBox;
         colorCheckBox = tdv.colorCheckBox;
@@ -90,10 +96,6 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         positiveColorComboBox = tdv.possitiveColorComboBox;
         jLabel9 = new javax.swing.JLabel();
         negativeColorComboBox = tdv.negativeColorComboBox;
-        viewModePanel = new javax.swing.JPanel();
-        viewModeComboBox = tdv.viewModeCB;
-        autoRefreshCheckBox = tdv.autoRefreshCheckBox;
-        refreshButton = tdv.refreshButton;
 
         jButton2.setText("jButton2");
 
@@ -146,10 +148,35 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(tablePanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
                 .add(tablePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(selectAndAddButton)
                     .add(deleteAndRestoreButton)))
+        );
+
+        viewModePanel.setVisible(false);
+        viewModePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
+
+        viewModeComboBox.setVisible(false);
+        viewModeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewModeComboBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout viewModePanelLayout = new org.jdesktop.layout.GroupLayout(viewModePanel);
+        viewModePanel.setLayout(viewModePanelLayout);
+        viewModePanelLayout.setHorizontalGroup(
+            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
+                .add(0, 0, Short.MAX_VALUE)
+                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+        viewModePanelLayout.setVerticalGroup(
+            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
+                .add(0, 0, Short.MAX_VALUE)
+                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
@@ -242,86 +269,111 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, propertiesPanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator1)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator2)
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(show2TracksCheckBox)
+                .add(10, 10, 10)
+                .add(connectedCheckBox)
+                .add(10, 10, 10)
+                .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, Short.MAX_VALUE))
+            .add(propertiesPanelLayout.createSequentialGroup()
+                .add(8, 8, 8)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(jLabel6)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(maxStackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                .add(applyButton))
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(bgColorLabel)
-                                    .add(fgColorLabel))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
-                                .add(21, 21, 21)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(nameSizeLabel)
-                                    .add(FieldLabel))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap())
+                            .add(bgColorLabel)
+                            .add(fgColorLabel))
+                        .add(15, 15, 15)
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(21, 21, 21)
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(nameSizeLabel)
+                            .add(FieldLabel))
+                        .add(10, 10, 10)
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(labelFieldComboBox, 0, 111, Short.MAX_VALUE)
+                            .add(nameSizeComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(show2TracksCheckBox)
+                        .add(jLabel6)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(connectedCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(collapsedCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, Short.MAX_VALUE))))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator2)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(trackTypeNameLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(trackNameTypeTextField)
-                .add(13, 13, 13))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator1)
+                        .add(maxStackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(applyButton))
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .add(trackTypeNameLabel)
+                        .add(10, 10, 10)
+                        .add(trackNameTypeTextField)))
+                .addContainerGap())
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(trackTypeNameLabel)
                     .add(trackNameTypeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(bgColorLabel)
                     .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(nameSizeLabel)
                     .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(fgColorLabel)
-                        .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(3, 3, 3)
-                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(FieldLabel)
-                            .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(10, 10, 10)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(fgColorLabel)
+                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(FieldLabel))
+                .add(12, 12, 12)
                 .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(5, 5, 5)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(applyButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(maxStackDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(applyButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(5, 5, 5)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(collapsedCheckBox)
                     .add(show2TracksCheckBox)
-                    .add(connectedCheckBox)
-                    .add(collapsedCheckBox))
-                .add(103, 103, 103))
+                    .add(connectedCheckBox))
+                .addContainerGap(7, Short.MAX_VALUE))
+        );
+
+        refreshButton = new javax.swing.JButton();
+        refreshButton.setVisible(false);
+        refreshButton.setText("Refresh");
+
+        autoRefreshCheckBox.setVisible(false);
+        autoRefreshCheckBox.setText("Auto Refresh");
+        autoRefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoRefreshCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(autoRefreshCheckBox)
+                .add(0, 0, Short.MAX_VALUE))
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(refreshButton)
+                .add(8, 8, 8))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(autoRefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
@@ -396,45 +448,36 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                     .add(jLabel9)
                     .add(positiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel8))
-                .add(12, 12, 12))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        viewModePanel.setVisible(false);
-        viewModePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("View Mode"));
-
-        viewModeComboBox.setVisible(false);
-        viewModeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                viewModeComboBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout viewModePanelLayout = new org.jdesktop.layout.GroupLayout(viewModePanel);
-        viewModePanel.setLayout(viewModePanelLayout);
-        viewModePanelLayout.setHorizontalGroup(
-            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(15, 15, 15)
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(viewModePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
-        viewModePanelLayout.setVerticalGroup(
-            viewModePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, viewModePanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(viewModeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(5, 5, 5)
+                .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
-
-        autoRefreshCheckBox.setVisible(false);
-        autoRefreshCheckBox.setText("Auto Refresh");
-        autoRefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                autoRefreshCheckBoxActionPerformed(evt);
-            }
-        });
-
-        refreshButton = new javax.swing.JButton();
-        refreshButton.setVisible(false);
-        refreshButton.setText("Refresh");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -443,39 +486,18 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
             .add(layout.createSequentialGroup()
                 .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(propertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(18, 18, 18)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(viewModePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(layout.createSequentialGroup()
-                                .add(6, 6, 6)
-                                .add(autoRefreshCheckBox))
-                            .add(layout.createSequentialGroup()
-                                .add(16, 16, 16)
-                                .add(refreshButton))
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .add(5, 5, 5))
-                    .add(tablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(7, 7, 7))
+                    .add(tablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(15, 15, 15)
+                .add(10, 10, 10)
                 .add(tablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(15, 15, 15)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 237, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createSequentialGroup()
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(viewModePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(5, 5, 5)
-                        .add(autoRefreshCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(18, 18, 18))
+                .add(10, 10, 10)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -571,6 +593,8 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

@@ -12,7 +12,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 /**
- *
+ * A customized table for IGB.
+ * 
  * @author david, modified by nick
  */
 public class StyledJTable extends JideTable {

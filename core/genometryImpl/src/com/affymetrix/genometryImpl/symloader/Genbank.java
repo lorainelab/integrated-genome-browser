@@ -345,8 +345,8 @@ public final class Genbank extends SymLoader {
 							seq = this.group.getSeq(value);
 							if (seq == null) {
 								seq = new BioSeq(value,"",length);
-								chrLength.put(value, length);
 							}
+							chrLength.put(value, length);
 							chrFound = true;
 						} else if (tag.equals("organism")) {
 							//   seq.setOrganism (value);

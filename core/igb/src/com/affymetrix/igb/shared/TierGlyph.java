@@ -402,13 +402,9 @@ public class TierGlyph extends SolidGlyph {
 		}
 		Glyph glyph = null;
 		if (viewModeGlyph.getChildCount() == 0) {
-			double height = style.getHeight();
-			if(!style.isGraphTier()){
-				height = style.getLabelField() == null || style.getLabelField().isEmpty() ? height : height * 2;
-			}
 			// Add empty child.
 			glyph = new Glyph() {};
-			glyph.setCoords(0, 0, 0, height);
+			glyph.setCoords(0, 0, 0, viewModeGlyph.getChildHeight());
 			viewModeGlyph.addChild(glyph);
 		}
 		viewModeGlyph.pack(view);

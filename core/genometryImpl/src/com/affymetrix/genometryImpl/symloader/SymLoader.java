@@ -50,6 +50,7 @@ public abstract class SymLoader {
 					@Override
 					public long getCurrentPosition() {
 						if (symLoaderProgressUpdater == null) {
+							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "symLoaderProgressUpdater == null in SymLoaderProgressUpdater constructor");
 							return span.getMin();
 						}
 						else {

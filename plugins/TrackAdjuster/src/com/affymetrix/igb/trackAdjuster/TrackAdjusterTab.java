@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
+import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -180,10 +181,11 @@ public final class TrackAdjusterTab
 	public JRPRadioButton graphPluginB = new JRPRadioButton(BUNDLE.getString("GraphPluginButton"));
 	public ButtonGroup stylegroup = new ButtonGroup();
 	public ButtonGroup displayGroup = new ButtonGroup();
-	public JPanel rangePanel = new javax.swing.JPanel();
-	public JPanel graphPanel = new javax.swing.JPanel();
-	public com.jidesoft.combobox.ColorComboBox fgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-	public com.jidesoft.combobox.ColorComboBox bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+	public JPanel rangePanel = new JPanel();
+	public JPanel graphPanel = new JPanel();
+	public ColorComboBox fgColorComboBox = new ColorComboBox();
+	public ColorComboBox bgColorComboBox = new ColorComboBox();
+	public ColorComboBox labelFGComboBox = new ColorComboBox();
 	public final ColorSchemeComboBox colorSchemeBox;
 	public JRPTextField maxStackDepthTextField = new JRPNumTextField("SimpleGraphTab_max_depth_text_field");
 	public JRPTextField trackName = new JRPTextField("SimpleGraphTab_track_name");
@@ -211,7 +213,7 @@ public final class TrackAdjusterTab
 
 	public TrackAdjusterTab(IGBService igbS) {
 		igbService = igbS;
-
+		
 		heat_mapCB = new JRPComboBox("SimpleGraphTab_heat_mapCB", HeatMap.getStandardNames());
 		trackNameSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
 		heat_mapCB.addItemListener(new HeatMapItemListener());
@@ -374,6 +376,7 @@ public final class TrackAdjusterTab
 			}
 			fgColorComboBox.setSelectedColor(style.getForeground());
 			bgColorComboBox.setSelectedColor(style.getBackground());
+			labelFGComboBox.setSelectedColor(style.getLabelForeground());
 			trackName.setText(style.getTrackName());
 			maxStackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
 			trackNameSizeComboBox.setSelectedItem((int) style.getTrackNameSize());
@@ -392,6 +395,7 @@ public final class TrackAdjusterTab
 
 		} else if (selectedTrackCount > 1) {
 			fgColorComboBox.setSelectedColor(null);
+			labelFGComboBox.setSelectedColor(null);
 			bgColorComboBox.setSelectedColor(null);
 			trackNameSizeComboBox.setSelectedItem(null);
 			trackName.setText("");
@@ -403,6 +407,7 @@ public final class TrackAdjusterTab
 		boolean b = !(selectedTiers.isEmpty());
 		floatCB.setEnabled(b);
 		fgColorComboBox.setEnabled(b);
+		labelFGComboBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
 		colorSchemeBox.setEnabled(b);
 		trackName.setEnabled(b);
@@ -601,6 +606,7 @@ public final class TrackAdjusterTab
 		labelCB.setEnabled(b);
 
 		fgColorComboBox.setEnabled(b);
+		labelFGComboBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
 		colorSchemeBox.setEnabled(b);
 		trackName.setEnabled(b);
@@ -697,11 +703,15 @@ public final class TrackAdjusterTab
 			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			Color color = gl.getGraphState().getTierStyle().getBackground();
 			bgColorComboBox.setSelectedColor(color);
+			color = gl.getGraphState().getTierStyle().getLabelBackground();
 			color = gl.getGraphState().getTierStyle().getForeground();
 			fgColorComboBox.setSelectedColor(color);
+			color = gl.getGraphState().getTierStyle().getLabelForeground();
+			labelFGComboBox.setSelectedColor(color);
 			trackName.setText(gl.getGraphState().getTierStyle().getTrackName());
 		} else {
 			fgColorComboBox.setSelectedColor(null);
+			labelFGComboBox.setSelectedColor(null);
 			bgColorComboBox.setSelectedColor(null);
 			trackName.setText("");
 		}
@@ -806,6 +816,19 @@ public final class TrackAdjusterTab
 		if (color != null) {
 			for (TierGlyph tier : selectedTiers) {
 				tier.getAnnotStyle().setForeground(color);
+			}
+		}
+		igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
+	}
+
+	public void labelFGCBActionPerformed() {
+		if (igbService.getSeqMap() == null) {
+			return;
+		}
+		Color color = labelFGComboBox.getSelectedColor();
+		if (color != null) {
+			for (TierGlyph tier : selectedTiers) {
+				tier.getAnnotStyle().setLabelForeground(color);
 			}
 		}
 		igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);

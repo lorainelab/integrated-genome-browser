@@ -6,9 +6,7 @@ import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.shared.CollapseExpandAction;
-import com.affymetrix.igb.shared.RepackTiersAction;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.trackAdjuster.TrackAdjusterTab.DisplayType;
 import java.awt.Cursor;
 import java.awt.Rectangle;
@@ -74,6 +72,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         bgColorComboBox = sgt.bgColorComboBox;
         nameSizeComboBox = sgt.trackNameSizeComboBox;
         jLabel3 = new javax.swing.JLabel();
+        fgLabel1 = new javax.swing.JLabel();
+        labelFGComboBox = sgt.labelFGComboBox;
         colorSchemeChooser = sgt.colorSchemeBox;
         AnnotationPanel = sgt.annotationPanel;
         jLabel6 = new javax.swing.JLabel();
@@ -167,48 +167,66 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         jLabel3.setText("Name Size:");
 
+        fgLabel1.setText("Label Foreground:");
+
+        labelFGComboBox.setBackground(new java.awt.Color(255, 255, 255));
+        labelFGComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        labelFGComboBox.setButtonVisible(false);
+        labelFGComboBox.setColorValueVisible(false);
+        labelFGComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
+        labelFGComboBox.setStretchToFit(true);
+        labelFGComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                labelFGComboBoxActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout StylePanelLayout = new org.jdesktop.layout.GroupLayout(StylePanel);
         StylePanel.setLayout(StylePanelLayout);
         StylePanelLayout.setHorizontalGroup(
             StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(StylePanelLayout.createSequentialGroup()
-                .add(5, 5, 5)
                 .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(StylePanelLayout.createSequentialGroup()
-                        .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(bgLabel)
-                            .add(fgLabel))
                         .add(5, 5, 5)
                         .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(0, 0, Short.MAX_VALUE))
-                    .add(StylePanelLayout.createSequentialGroup()
-                        .add(jLabel3)
-                        .add(5, 5, 5)
-                        .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 68, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
-            .add(StylePanelLayout.createSequentialGroup()
-                .add(colorSchemeChooser, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                            .add(StylePanelLayout.createSequentialGroup()
+                                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(fgLabel)
+                                    .add(bgLabel)
+                                    .add(fgLabel1))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(labelFGComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(StylePanelLayout.createSequentialGroup()
+                                .add(jLabel3)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                    .add(colorSchemeChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 149, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         StylePanelLayout.setVerticalGroup(
             StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(StylePanelLayout.createSequentialGroup()
-                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(bgLabel)
                     .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(10, 10, 10)
                 .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(fgLabel))
-                .add(8, 8, 8)
+                .add(10, 10, 10)
+                .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(fgLabel1)
+                    .add(labelFGComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(StylePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel3))
-                .add(8, 8, 8)
-                .add(colorSchemeChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(colorSchemeChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         AnnotationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Annotation")));
@@ -624,7 +642,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
                             .add(org.jdesktop.layout.GroupLayout.LEADING, graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(RangePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
-                        .add(5, 5, 5)
+                        .add(0, 0, 0)
                         .add(StylePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
@@ -821,6 +839,12 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 		}
 	}//GEN-LAST:event_graphPanelMouseMoved
 
+	private void labelFGComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFGComboBoxActionPerformed
+		if (sgt.is_listening) {
+			sgt.labelFGCBActionPerformed();
+			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
+		}
+	}//GEN-LAST:event_labelFGComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton AnnotationButton;
     private javax.swing.JPanel AnnotationPanel;
@@ -845,6 +869,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.JRadioButton dotB;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
+    private javax.swing.JLabel fgLabel1;
     private javax.swing.JButton fitViewButton;
     private javax.swing.JCheckBox floatingCheckBox;
     private javax.swing.JPanel graphPanel;
@@ -861,6 +886,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JCheckBox labelCB;
+    private com.jidesoft.combobox.ColorComboBox labelFGComboBox;
     private javax.swing.JRadioButton lineB;
     private javax.swing.JTextField maxStackDepthTextField;
     private javax.swing.JTextField maxText;

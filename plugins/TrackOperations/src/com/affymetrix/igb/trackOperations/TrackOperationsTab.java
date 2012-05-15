@@ -1,18 +1,17 @@
 package com.affymetrix.igb.trackOperations;
 
+import java.awt.Color;
+import java.awt.event.*;
+import java.util.Map.Entry;
+import java.util.*;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
@@ -27,23 +26,23 @@ import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
+
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
+
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.*;
-import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.util.*;
-import java.util.Map.Entry;
-import javax.swing.*;
 
 public final class TrackOperationsTab implements SeqSelectionListener, SymSelectionListener {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	private static TrackOperationsTab singleton;
 	private BioSeq current_seq;
-	private GenometryModel gmodel;
+	private static GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	boolean DEBUG_EVENTS = false;
 	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
@@ -53,7 +52,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final JRPButton combineB = new JRPButton("SimpleGraphTab_combineB", BUNDLE.getString("combineButton"));
 	public final JRPButton splitB = new JRPButton("SimpleGraphTab_splitB", BUNDLE.getString("splitButton"));
 	private IGBService igbService;
-	public AdvancedGraphPanel advanced_panel;
+	AdvancedGraphPanel advanced_panel;
 
 	public void setThresholdAction(GenericAction thresholdAction) {
 		threshB.setAction(thresholdAction);
@@ -61,6 +60,9 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackOperationsTab(igbService);
+		gmodel = GenometryModel.getGenometryModel();
+		gmodel.addSeqSelectionListener(singleton);
+		gmodel.addSymSelectionListener(singleton);
 	}
 
 	public static synchronized TrackOperationsTab getSingleton() {
@@ -71,9 +73,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		igbService = igbS;
 		advanced_panel = new TrackOperationsTab.AdvancedGraphPanel();
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
-		gmodel = GenometryModel.getGenometryModel();
-		gmodel.addSeqSelectionListener(this);
-		gmodel.addSymSelectionListener(this);
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {
@@ -189,10 +188,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		}
 		current_seq = evt.getSelectedSeq();
 		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
-	}
-
-	public AdvancedGraphPanel getAdvancedPanel() {
-		return advanced_panel;
 	}
 
 	private void updateViewer() {
@@ -485,47 +480,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				gstate.getTierStyle().setFloatGraph(false); // for simplicity
 			}
 			updateViewer();
-		}
-
-		private void floatGraphs(boolean do_float) {
-			boolean something_changed = false;
-			for (AbstractGraphGlyph gl : glyphs) {
-				GraphState gstate = gl.getGraphState();
-//				if (gstate.getComboStyle() != null) {
-//					gstate.setComboStyle(null);
-//					something_changed = true;
-//				}
-				boolean is_floating = gstate.getTierStyle().getFloatGraph();
-				if (do_float && (!is_floating)) {
-					//GraphGlyphUtils.floatGraph(gl, gviewer);
-
-					// figure out correct height
-					Rectangle2D.Double coordbox = gl.getCoordBox();
-					Rectangle pixbox = new Rectangle();
-					igbService.getView().transformToPixels(coordbox, pixbox);
-					gstate.getTierStyle().setY(pixbox.y);
-					gstate.getTierStyle().setHeight(pixbox.height);
-
-					gstate.getTierStyle().setFloatGraph(true);
-					something_changed = true;
-				} else if ((!do_float) && is_floating) {
-					//GraphGlyphUtils.attachGraph(gl, gviewer);
-
-					// figure out correct height
-					Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
-					Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
-					Rectangle2D.Double coordbox = new Rectangle2D.Double();
-					igbService.getView().transformToCoords(pixbox, coordbox);
-					gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
-					gstate.getTierStyle().setHeight(coordbox.height);
-
-					gstate.getTierStyle().setFloatGraph(false);
-					something_changed = true;
-				}
-			}
-			if (something_changed) {
-				updateViewer();
-			}
 		}
 
 		public void setPanelEnabled() {

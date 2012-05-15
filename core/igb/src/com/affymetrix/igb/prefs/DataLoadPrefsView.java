@@ -21,12 +21,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.GroupLayout.Alignment.LEADING;
 import javax.swing.GroupLayout.Group;
-import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;

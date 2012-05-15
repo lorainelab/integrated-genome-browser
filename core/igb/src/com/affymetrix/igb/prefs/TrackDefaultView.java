@@ -180,6 +180,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		selectedRows = table.getSelectedRows();
 		if (selectedRows.length > 0) {
 			initializationDetector = true;
+			applyChanged = false;
 
 			setEnabled(true);
 
@@ -239,6 +240,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				}
 			}
 
+			applyChanged = true;
 			initializationDetector = false;
 		}
 	}

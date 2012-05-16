@@ -50,7 +50,7 @@ import org.freehep.graphicsio.svg.SVGGraphics2D;
  * @author nick
  */
 public class ExportDialog implements ExportConstants {
-
+	private static float FONT_SIZE = 13.0f;
 	private static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 	private static ExportDialog singleton;
 	private static JFrame static_frame = null;
@@ -110,14 +110,9 @@ public class ExportDialog implements ExportConstants {
 			}
 		}
 
-		public void componentMoved(ComponentEvent ce) {
-		}
-
-		public void componentShown(ComponentEvent ce) {
-		}
-
-		public void componentHidden(ComponentEvent ce) {
-		}
+		public void componentMoved(ComponentEvent ce) {}
+		public void componentShown(ComponentEvent ce) {}
+		public void componentHidden(ComponentEvent ce) {}
 	};
 	// detect export view range changed and activate refresh button.
 	private static final NeoRangeListener rangeListener = new NeoRangeListener() {
@@ -221,7 +216,7 @@ public class ExportDialog implements ExportConstants {
 			seqMap.addComponentListener(resizelistener);
 			((NeoMap) seqMap).addRangeListener(rangeListener);
 
-			wholeFrame = IGB.getSingleton().getFrame().getContentPane();
+			wholeFrame = IGB.getSingleton().getFrame();
 
 			mainView = seqMap.getNeoCanvas();
 
@@ -660,7 +655,10 @@ public class ExportDialog implements ExportConstants {
 	public void previewImage() {
 		exportImage = GraphicsUtil.getDeviceCompatibleImage(
 				component.getWidth(), component.getHeight());
-		Graphics g = exportImage.createGraphics();
+		Graphics2D g = exportImage.createGraphics();
+		if(component instanceof JFrame){
+			drawTitleBar( g);
+		}
 		component.printAll(g);
 
 		Image previewImage = GraphicsUtil.resizeImage(exportImage,
@@ -669,6 +667,26 @@ public class ExportDialog implements ExportConstants {
 		previewLabel.setIcon(new ImageIcon(previewImage));
 	}
 
+	/**
+	 * A hack to force export to draw title bar
+	 * @param g 
+	 */
+	private void drawTitleBar(Graphics2D g) {
+		// Draw Background
+		g.setColor(component.getBackground().darker());
+		g.fillRect(0, 0, component.getWidth(), component.getHeight());
+		
+		// Draw Border
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 20, component.getWidth(), 2);
+		
+		// Draw Title
+		g.setFont(g.getFont().deriveFont(FONT_SIZE));
+		int x_offset = (component.getWidth() - g.getFontMetrics().stringWidth(((JFrame)component).getTitle()))/2;
+		int y_offset = 14;
+		g.drawString(((JFrame)component).getTitle(), x_offset, y_offset);
+	}
+		
 	/**
 	 * Return whether the passed extention is contained in IGB support image
 	 * extention list or not.

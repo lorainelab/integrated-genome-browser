@@ -186,8 +186,8 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		final long endPosition = getEndPosition(seqID, overlapSpan.getMax());
 		final long startPosition = getCompressedInputStreamPosition(lineReader).getApproximatePosition();
-/*
-		ProgressUpdater progressUpdater = new ProgressUpdater(startPosition, endPosition,
+
+		ProgressUpdater progressUpdater = new ProgressUpdater("SymLoaderTabix SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, startPosition, endPosition,
 			new PositionCalculator() {
 				@Override
 				public long getCurrentPosition() {
@@ -202,9 +202,9 @@ public class SymLoaderTabix extends SymLoader {
 				}
 			}
 		);
-*/
+
 		List<? extends SeqSymmetry> region = lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
-//		progressUpdater.kill();
+		progressUpdater.kill();
 		return region;
     }
 	

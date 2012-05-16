@@ -3,9 +3,6 @@
 	<property name="compiler.args" value="-Xlint:all,-serial,-path -Werror"/>
 	<target name="all" description="compile all">
 		<antcall target="compile">
-    			<param name="jar_name" value="tribble-0.2"/>
-		</antcall>
-		<antcall target="compile">
     			<param name="jar_name" value="sam"/>
 		</antcall>
 	</target>

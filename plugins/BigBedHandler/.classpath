@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/felix.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/BigWig.jar"/>
-	<classpathentry kind="lib" path="/Integrated_Genome_Browser/ext/tribble-0.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tribble-0.1"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

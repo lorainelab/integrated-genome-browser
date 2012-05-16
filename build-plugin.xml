@@ -28,7 +28,7 @@
 			<classpath location="${workspace}/Integrated_Genome_Browser/plugins/SearchModeSymmetryFilter/build" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/colt.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/felix.jar" />
-			<classpath location="${workspace}/Integrated_Genome_Browser/ext/tribble-0.2.jar" />
+			<classpath location="${workspace}/Integrated_Genome_Browser/ext/tribble-0.1.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/BigWig.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/sam.jar" />
 			<classpath location="${workspace}/Integrated_Genome_Browser/ext/commons-lang3-3.1.jar" />

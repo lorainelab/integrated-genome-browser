@@ -396,36 +396,30 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			map.getView().transformToCoords(pbox, cbox);
 			
 			// If either width or height is zero then no selection is made.
-			if(cbox.width == 0){
-				cbox.width = 1;
-			}
-			
-			if(cbox.height == 0){
-				cbox.height = 1;
-			}
-			
-			// setZoomSpot is best if done before updateWidget
-			smv.setZoomSpotX(cbox.x + cbox.width);
-			smv.setZoomSpotY(cbox.y + cbox.height);
+			if (cbox.width != 0 && cbox.height != 0) {
+				// setZoomSpot is best if done before updateWidget
+				smv.setZoomSpotX(cbox.x + cbox.width);
+				smv.setZoomSpotY(cbox.y + cbox.height);
 
-			if (startedInAxisTier()) {
-				// started in axis tier: user is trying to select sequence residues
+				if (startedInAxisTier()) {
+					// started in axis tier: user is trying to select sequence residues
 
-				if (pbox.width >= 2 && pbox.height >= 2) {
-					int seq_select_start = (int) cbox.x;
-					// add 1 for interbase.  But don't go past end of sequence.
-					int seq_select_end = Math.min(smv.getAnnotatedSeq().getLength(), (int) (cbox.x + cbox.width + 1));
+					if (pbox.width >= 2 && pbox.height >= 2) {
+						int seq_select_start = (int) cbox.x;
+						// add 1 for interbase.  But don't go past end of sequence.
+						int seq_select_end = Math.min(smv.getAnnotatedSeq().getLength(), (int) (cbox.x + cbox.width + 1));
 
-					SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.getAnnotatedSeq());
-					smv.setSelectedRegion(new_region, true);
+						SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.getAnnotatedSeq());
+						smv.setSelectedRegion(new_region, true);
+					} else {
+						// This is optional: clear selected region if drag is very small distance
+						smv.setSelectedRegion(null, true);
+					}
+
 				} else {
-					// This is optional: clear selected region if drag is very small distance
-					smv.setSelectedRegion(null, true);
+					// started outside axis tier: user is trying to select glyphs
+					doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
 				}
-
-			} else {
-				// started outside axis tier: user is trying to select glyphs
-				doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
 			}
 
 			rubber_band_start = null; // for garbage collection

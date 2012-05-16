@@ -89,5 +89,6 @@
 	<classpathentry kind="lib" path="ext/hci_utils.jar"/>
 	<classpathentry kind="lib" path="core/jar_extensions/sam/dist/sam--igbext.jar"/>
 	<classpathentry kind="lib" path="ext/jide.jar"/>
+	<classpathentry kind="lib" path="ext/tribble-0.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

@@ -549,7 +549,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
 		fileMenu.addSeparator();
-		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(seqview)));
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(dock, seqview.getScroller())));
 		fileMenu.addSeparator();
 		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));

@@ -119,7 +119,7 @@ public class SeqMapView extends JPanel
 	private static final boolean DEBUG_TIERS = false;
 	private final static String SEQ_MODE = "SEQ_MODE";
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
-	boolean show_edge_matches = true;
+	boolean show_edge_matches = false;
 	protected boolean coord_shift = false;
 	private boolean show_prop_tooltip = true;
 	private MapMode mapMode;

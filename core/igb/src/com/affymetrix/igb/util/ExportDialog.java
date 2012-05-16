@@ -271,9 +271,9 @@ public class ExportDialog implements ExportConstants {
 	 *
 	 * @param seqView
 	 */
-	public void initSeqViewListener(Component seqView) {
+	public void initSeqViewListener(Component seqView, Adjustable scroller) {
 		seqView.addComponentListener(resizelistener);
-		((NeoSeq) seqView).getScroller().addAdjustmentListener(adjustmentlistener);
+		scroller.addAdjustmentListener(adjustmentlistener);
 	}
 
 	public static FileFilter[] getAllExportFileFilters() {

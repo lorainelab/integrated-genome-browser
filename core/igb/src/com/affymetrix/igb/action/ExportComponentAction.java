@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.util.ExportDialog;
+import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
@@ -30,7 +31,7 @@ public abstract class ExportComponentAction extends GenericAction {
 		try {
 			ExportDialog.setComponent(component);
 			ExportDialog.initImageInfo();
-			ExportDialog.getSingleton().initSeqViewListener(component);
+			ExportDialog.getSingleton().initSeqViewListener(component, getScroller());
 			ExportDialog.getSingleton().display(true);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
@@ -38,4 +39,6 @@ public abstract class ExportComponentAction extends GenericAction {
 	}
 
 	public abstract Component determineSlicedComponent();
+	
+	public abstract Adjustable getScroller();
 }

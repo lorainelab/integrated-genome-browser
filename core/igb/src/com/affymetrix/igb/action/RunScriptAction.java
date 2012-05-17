@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.util.*;
@@ -26,7 +28,9 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.recordplayback.JRPFileChooser;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
 
 import com.affymetrix.igb.shared.FileTracker;
 
@@ -110,16 +114,30 @@ public final class RunScriptAction extends GenericAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File file = fileChooser.getSelectedFile();
-		Thread th = new Thread() {
-			@Override
-			public void run() {
-				if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
-					ScriptManager.getInstance().runScript(file.getAbsolutePath());
-				} else {
-					ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
+		if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
+			final IGB igb = ((IGB)Application.getSingleton());
+			synchronized(igb) {
+				if (igb.getScriptWorker() != null) {
+					ErrorHandler.errorPanel("script error", "another script is running, only one can run at a time", Level.SEVERE);
+				}
+				else {
+					CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(IGBConstants.SCRIPTING) {
+						@Override
+						protected Void runInBackground() {
+							ScriptManager.getInstance().runScript(file.getAbsolutePath());
+							return null;
+						}
+						@Override
+						protected void finished() {
+							igb.setScriptWorker(null);
+						}
+					};
+					igb.setScriptWorker(worker);
+					CThreadHolder.getInstance().execute(igb, worker);
 				}
 			}
-		};
-		th.start();
+		} else {
+			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
+		}
 	}
 }

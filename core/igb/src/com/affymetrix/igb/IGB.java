@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -92,6 +93,7 @@ public final class IGB extends Application
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	private IWindowService windowService;
 	private HashSet<IStopRoutine> stopRoutines;
+	private CThreadWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
 
 	public IGB() {
 		super();
@@ -489,5 +491,13 @@ public final class IGB extends Application
 		}
 		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
 		return null;
+	}
+
+	public CThreadWorker<Void, Void> getScriptWorker() {
+		return scriptWorker;
+	}
+
+	public void setScriptWorker(CThreadWorker<Void, Void> scriptWorker) {
+		this.scriptWorker = scriptWorker;
 	}
 }

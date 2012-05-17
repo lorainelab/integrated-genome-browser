@@ -13,14 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
 
 import com.affymetrix.common.ExtensionPointHandler;
 
@@ -155,29 +153,6 @@ public class ScriptManager {
 		catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	/**
-	 * Done in a thread to avoid GUI lockup.
-	 *
-	 * @param batchFileStr
-	 */
-	public void executeScript(String fileName) {
-		final String scriptFileName = fileName.startsWith("file:") ? fileName.substring("file:".length()) : fileName;
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-			@Override
-			protected Void doInBackground() {
-				ScriptManager.getInstance().runScript(scriptFileName);
-				return null;
-			}
-
-			@Override
-			protected void done() {
-			}
-		};
-		Executors.newSingleThreadExecutor().execute(worker);
-		return;
 	}
 
 	public void pause() {

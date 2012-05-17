@@ -13,10 +13,8 @@ import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -26,12 +24,9 @@ import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.view.NoneOperator;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.*;
@@ -115,21 +110,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 			final RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
-			final boolean isSeparate = style.getSeparate();
 			for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-				Action action = new GenericAction(mode.getDisplayName(), null, null) {
-					private static final long serialVersionUID = 1L;
-	
-					@Override
-					public void actionPerformed(ActionEvent ae) {
-						if (isSeparate && ! mode.supportsTwoTrack()) {
-							setTwoTiers(handler.getSelectedTierLabels(), false);
-						}
-						ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph)glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-						TrackView.getInstance().changeViewMode(gviewer, style, mode.getName(), rootSym, comboStyle);
-						refreshMap(false, false);
-					}
-				};
+				Action action = new ChangeViewModeAction(mode);
 				if(mode.getName().equals(style.getViewMode())){
 					action.putValue(Action.SELECTED_KEY, true);
 				}

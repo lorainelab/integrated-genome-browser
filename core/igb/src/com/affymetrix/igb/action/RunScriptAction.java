@@ -110,12 +110,16 @@ public final class RunScriptAction extends GenericAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File file = fileChooser.getSelectedFile();
-		if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
-			ScriptManager.getInstance().runScript(file.getAbsolutePath());
-		}
-		else {
-			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
-		}
-
+		Thread th = new Thread() {
+			@Override
+			public void run() {
+				if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
+					ScriptManager.getInstance().runScript(file.getAbsolutePath());
+				} else {
+					ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
+				}
+			}
+		};
+		th.start();
 	}
 }

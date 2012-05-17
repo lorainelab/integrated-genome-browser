@@ -7,13 +7,14 @@ import javax.swing.SwingWorker;
  * @author hiralv
  */
 public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
+	private static final boolean DEBUG = false;
 	private final String message;
 	private final int priority;
 
 	public CThreadWorker(String msg){
 		this(msg, Thread.NORM_PRIORITY);
 	}
-	
+
 	public CThreadWorker(String msg, int priority){
 		super();
 		if(msg == null || msg.length() == 0){
@@ -25,17 +26,18 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 		}
 		this.priority = priority;
 	}
-	
+
 	public String getMessage(){
 		return message;
 	}
-	
+
 	public int getPriority() {
 		return priority;
 	}
 
 	@Override
 	public final void done() {
+		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " done");
 		finished();
 		CThreadHolder.getInstance().notifyEndThread(this);
 	}
@@ -53,17 +55,20 @@ public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	@Override
 	protected final T doInBackground() throws Exception {
 		CThreadHolder.getInstance().notifyStartThread(this);
-		return runInBackground();
+		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " started");
+		T t = runInBackground();
+		if (DEBUG) System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");
+		return t;
 	}
-	
+
 	protected abstract T runInBackground();
-	
+
 	protected abstract void finished();
 
 	protected boolean showCancelConfirmation(){
 		return true;
 	}
-	
+
 	public void cancelThread(boolean b){
 		if(!showCancelConfirmation()){
 			return;

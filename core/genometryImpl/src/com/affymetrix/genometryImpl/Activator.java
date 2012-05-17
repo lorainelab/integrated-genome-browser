@@ -12,6 +12,8 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.thread.CThreadHolder;
+import com.affymetrix.genometryImpl.thread.WaitHelperI;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 
 /**
@@ -23,6 +25,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
+		bundleContext.registerService(WaitHelperI.class, CThreadHolder.getInstance(), null);
 		initFileTypeHandlers();
 		initGenericActions();
 		initServerTypes();

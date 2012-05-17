@@ -19,7 +19,8 @@ Import-Package: com.affymetrix.common,
  javax.swing.table,
  javax.swing.tree,
  javax.swing,
- org.osgi.framework
+ org.osgi.framework,
+ org.osgi.util.tracker
 Export-Package: com.affymetrix.genoviz.awt,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.comparator,

@@ -89,7 +89,7 @@ public class MainMenuUtil {
 	private void viewMenu(JMenuBar menuBar, String id) {
 		JRPMenu view_menu = MenuUtil.getRPMenu(menuBar, id + "_main_viewMenu", BUNDLE.getString("viewMenu"));
 		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-		JRPMenu strands_menu = new JRPMenu(id + "_main_viewMenu_strands", "Strands");
+		JRPMenu strands_menu = new JRPMenu(id + "_main_viewMenu_strands", BUNDLE.getString("strands"));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showPlus", ShowPlusStrandAction.getAction()));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showMinus", ShowMinusStrandAction.getAction()));
 		strands_menu.add(new JRPCheckBoxMenuItem(id + "_main_viewMenu_strands_showMixed", ShowMixedStrandAction.getAction()));
@@ -117,10 +117,12 @@ public class MainMenuUtil {
 		JRPMenu tools_menu = MenuUtil.getRPMenu(menuBar, id + "_main_toolsMenu", BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_webLinks", WebLinksAction.getAction()));
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_runScript", RunScriptAction.getAction()));
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_saveScript", SaveScriptAction.getAction()));
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_cancelScript", CancelScriptAction.getAction()));
-		MenuUtil.addToMenu(tools_menu, new JRPMenuItem(id + "_main_toolsMenu_clearScript", ClearScriptAction.getAction()));
+		JRPMenu scripts_menu = new JRPMenu(id + "_main_toolsMenu_scripts", BUNDLE.getString("scripts"));
+		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_runScript", RunScriptAction.getAction()));
+		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_saveScript", SaveScriptAction.getAction()));
+		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));
+		MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(id + "_main_toolsMenu_scripts_clearScript", ClearScriptAction.getAction()));
+		tools_menu.add(scripts_menu);
 	}
 
 	private void helpMenu(JMenuBar menuBar, String id) {

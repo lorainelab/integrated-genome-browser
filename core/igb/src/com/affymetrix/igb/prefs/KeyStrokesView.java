@@ -21,7 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.igb.shared.JRPStyledTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -32,7 +32,7 @@ import javax.swing.table.TableCellRenderer;
 public final class KeyStrokesView implements ListSelectionListener,
 		PreferenceChangeListener {
 
-	public final KeyStrokeViewTable table = new KeyStrokeViewTable();
+	public final KeyStrokeViewTable table = new KeyStrokeViewTable("KeyStrokesView");
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
 	public static final int IconColumn = 0;
 	public static final int ActionColumn = 1;
@@ -220,7 +220,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 	 * {lsm.removeListSelectionListener(this);}
 	 * PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this); }
 	 */
-	class KeyStrokeViewTable extends StyledJTable {
+	class KeyStrokeViewTable extends JRPStyledTable {
+
+		public KeyStrokeViewTable(String id) {
+			super(id);
+		}
 
 		private static final long serialVersionUID = 1L;
 

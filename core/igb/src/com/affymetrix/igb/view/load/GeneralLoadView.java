@@ -101,7 +101,7 @@ public final class GeneralLoadView {
 
 		tableModel = new DataManagementTableModel(this);
 		tableModel.addTableModelListener(TrackstylePropertyMonitor.getPropertyTracker());
-		table = new JTableX(tableModel);
+		table = new JTableX("GeneralLoadView_DataManagementTable", tableModel);
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(table);
 		initDataManagementTable();
 

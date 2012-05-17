@@ -6,11 +6,11 @@ import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.igb.shared.StyledJTable;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
@@ -174,7 +174,7 @@ public final class DataManagementTable {
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends StyledJTable implements TrackStylePropertyListener {
+class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 
 	private static final long serialVersionUID = 1L;
 	protected String[] columnToolTips = {
@@ -192,8 +192,8 @@ class JTableX extends StyledJTable implements TrackStylePropertyListener {
 	private List<TierGlyph> currentTiers;
 	private SeqMapView smv;
 
-	public JTableX(TableModel tm) {
-		super(tm);
+	public JTableX(String id, TableModel tm) {
+		super(id, tm);
 
 		super.list.add(DataManagementTableModel.BACKGROUND_COLUMN);
 		super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);

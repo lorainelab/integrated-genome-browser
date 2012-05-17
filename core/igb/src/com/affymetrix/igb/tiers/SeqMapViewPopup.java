@@ -16,6 +16,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -25,10 +26,12 @@ import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.view.NoneOperator;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.viewmode.TransformHolder;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.*;
@@ -142,21 +145,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (glyph != null && glyph.getInfo() != null && glyph.getInfo() instanceof RootSeqSymmetry) {
 			final ITrackStyleExtended style = glyph.getAnnotStyle();
 			if (style instanceof TrackStyle) {
-				for (final Object transform : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
-					Operator operator = TransformHolder.getInstance().getOperator(transform.toString());
-					final String text = (operator == null) ? transform.toString() : operator.getDisplay();
-					Action action = new GenericAction(text, null, null) {
-
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void actionPerformed(ActionEvent ae) {
-							style.setOperator(transform.toString());
-							//gviewer.addAnnotationTrackFor(style);
-							refreshMap(false, false);
-						}
-					};
-					if(transform.toString().equals(style.getOperator())){
+				for (final Operator operator : TransformHolder.getInstance().getAllTransformFor(((TrackStyle) style).getFileTypeCategory())) {
+					Action action = new TransformAction(operator);
+					if (operator.getName().equals(style.getOperator())) {
 						action.putValue(Action.SELECTED_KEY, true);
 					}
 					transformMenu.add(new JCheckBoxMenuItem(action));

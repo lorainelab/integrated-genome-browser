@@ -12,24 +12,27 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Logger;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.TransferHandler;
 
-import com.affymetrix.genometryImpl.util.FileDropHandler;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+
+import com.affymetrix.genoviz.swing.recordplayback.ScriptManager;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -58,10 +61,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 			AnnotatedSeqGroup loadGroup = getloadGroup();
 			String speciesName = getSpeciesName();
 			for (File f : files) {
-				URI uri = f.toURI();
-				if (!openURI(uri, loadGroup, speciesName)) {
-					ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), Level.WARNING);
-				}
+				openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getAbsolutePath(), f.getName());
 			}
 		}
 
@@ -77,12 +77,7 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 				}
 			} else {
 				try {
-					URI uri = new URI(url.trim());
-					AnnotatedSeqGroup loadGroup = getloadGroup();
-					String speciesName = getSpeciesName();
-					if (!openURI(uri, loadGroup, speciesName)) {
-						ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
-					}
+					openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, url);
 				} catch (URISyntaxException ex) {
 					ex.printStackTrace();
 					ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
@@ -90,6 +85,23 @@ public final class LoadFileAction extends AbstractLoadFileAction {
 			}
 		}
 	};
+	
+	private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String path, String name){
+		
+		if (openURI(uri, loadGroup, speciesName)) {
+			return;
+		}
+		
+		if(ScriptManager.getInstance().isScript(path)){
+			int result = JOptionPane.showConfirmDialog(gviewerFrame, "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
+			if(result == JOptionPane.YES_OPTION){
+				RunScriptAction.getAction().runScript(path);
+			}
+			return;
+		}
+		
+		ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + name, Level.WARNING);
+	}
 	
 	private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName) {
 		getFileChooser(getId());

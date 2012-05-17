@@ -115,29 +115,34 @@ public final class RunScriptAction extends GenericAction {
 
 		final File file = fileChooser.getSelectedFile();
 		if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
-			final IGB igb = ((IGB)Application.getSingleton());
-			synchronized(igb) {
-				if (igb.getScriptWorker() != null) {
-					ErrorHandler.errorPanel("script error", "another script is running, only one can run at a time", Level.SEVERE);
-				}
-				else {
-					CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(IGBConstants.SCRIPTING) {
-						@Override
-						protected Void runInBackground() {
-							ScriptManager.getInstance().runScript(file.getAbsolutePath());
-							return null;
-						}
-						@Override
-						protected void finished() {
-							igb.setScriptWorker(null);
-						}
-					};
-					igb.setScriptWorker(worker);
-					CThreadHolder.getInstance().execute(igb, worker);
-				}
-			}
+			runScript(file.getAbsolutePath());
 		} else {
 			ErrorHandler.errorPanel("script error", file.getAbsolutePath() + " is not a valid script file", Level.SEVERE);
+		}
+	}
+	
+	public void runScript(final String filePath) {
+		final IGB igb = ((IGB) Application.getSingleton());
+		synchronized (igb) {
+			if (igb.getScriptWorker() != null) {
+				ErrorHandler.errorPanel("script error", "another script is running, only one can run at a time", Level.SEVERE);
+			} else {
+				CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(IGBConstants.SCRIPTING) {
+
+					@Override
+					protected Void runInBackground() {
+						ScriptManager.getInstance().runScript(filePath);
+						return null;
+					}
+
+					@Override
+					protected void finished() {
+						igb.setScriptWorker(null);
+					}
+				};
+				igb.setScriptWorker(worker);
+				CThreadHolder.getInstance().execute(igb, worker);
+			}
 		}
 	}
 }

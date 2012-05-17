@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.Operator.Order;
+import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -366,32 +367,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			name2transform.clear();
 			operationCB.removeAllItems();
 			name2operator.clear();
-			TreeSet<Operator> operators = new TreeSet<Operator>(
-					new Comparator<Operator>() {
-
-						@Override
-						public int compare(Operator o1, Operator o2) {
-							if (o1 instanceof Order && o2 instanceof Order) {
-								if (((Order) o1).getOrder() == ((Order) o2).getOrder()) {
-									return 0;
-								} else if (((Order) o1).getOrder() > ((Order) o2).getOrder()) {
-									return 1;
-								}
-
-								return -1;
-							}
-
-							if (o1 instanceof Order && !(o2 instanceof Order)) {
-								return -1;
-							}
-
-							if (!(o1 instanceof Order) && o2 instanceof Order) {
-								return 1;
-							}
-
-							return o1.getDisplay().compareTo(o2.getDisplay());
-						}
-					});
+			TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
 			operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 			for (Operator operator : operators) {
 				if (AbstractGraphOperator.isGraphOperator(operator)) {

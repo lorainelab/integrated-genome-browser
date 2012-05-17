@@ -89,9 +89,15 @@ public class TrackUtils {
 	}
 
 	public boolean checkCompatible(List<SeqSymmetry> syms, Operator operator) {
-		if (operator.getParameters() != null) {
-			return false;
+		
+		// Why are we excluding operators that have parameters?
+		Map<String, Class<?>> params = operator.getParameters();
+		if (null != params) {
+			if (0 < params.size()) {
+				return false;
+			}
 		}
+
 		Map<FileTypeCategory, Integer> trackCounts = getTrackCounts(syms);
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			int count = (trackCounts.get(category) == null) ? 0 : trackCounts.get(category);

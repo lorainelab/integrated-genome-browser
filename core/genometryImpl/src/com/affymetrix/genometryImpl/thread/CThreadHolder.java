@@ -111,6 +111,12 @@ public class CThreadHolder implements WaitHelperI {
 	public Boolean waitForAll() {
 		if (DEBUG) System.out.println("))))) get wait helper Thread = " + Thread.currentThread());
 		if (DEBUG) System.out.println("))))) get wait helper run() Thread = " + Thread.currentThread());
+		
+		if(getCThreadWorkerCount() == 0){
+			if (DEBUG) System.out.println("))))) no active thread.");
+			return Boolean.TRUE;
+		}
+		
 		synchronized (threadLatchLock) {
 			if (threadLatch == null) {
 				threadLatch = new CountDownLatch(1);

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.genometryImpl.symloader;
 
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -18,7 +18,6 @@ import org.broad.tribble.source.tabix.TabixReader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public class TbiZoomSymLoader extends IndexZoomSymLoader {

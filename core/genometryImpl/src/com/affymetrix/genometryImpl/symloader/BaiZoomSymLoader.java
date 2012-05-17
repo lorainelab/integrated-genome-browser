@@ -1,4 +1,4 @@
-package com.affymetrix.igb.viewmode;
+package com.affymetrix.genometryImpl.symloader;
 
 import java.io.File;
 import java.net.URI;
@@ -19,10 +19,9 @@ import net.sf.samtools.util.SeekableStream;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.symloader.IndexZoomSymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.viewmode.IndexZoomSymLoader;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
 

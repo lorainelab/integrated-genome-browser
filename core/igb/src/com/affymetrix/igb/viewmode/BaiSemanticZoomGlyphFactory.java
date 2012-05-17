@@ -4,6 +4,7 @@ import java.net.URI;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometryImpl.symloader.BaiZoomSymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 

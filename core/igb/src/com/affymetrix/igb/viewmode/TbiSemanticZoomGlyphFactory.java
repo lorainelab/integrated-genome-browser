@@ -5,6 +5,7 @@ import java.net.URI;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometryImpl.symloader.TbiZoomSymLoader;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
 
 public class TbiSemanticZoomGlyphFactory extends GzIndexedSemanticZoomGlyphFactory {

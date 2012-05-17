@@ -19,13 +19,58 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 
+/**
+ * Factory to create a specific type of ViewModeGlyph. MapViewGlyphFactoryI
+ * instances can be registered in the igb bundle Activator
+ * initMapViewGlyphFactorys() method.
+ */
 public interface MapViewGlyphFactoryI  {
+	/**
+	 * initialize the factory
+	 * @param options - any options appropriate to the factory
+	 */
 	public void init(Map<String, Object> options);
+	/**
+	 * create a ViewModeGlyph for the SeqSymmetry
+	 * @param sym - The SeqSymmetry (object model) for the TierGlyph
+	 * @param style - track style
+	 * @param tier_direction - the direction of the Tier
+	 * @param smv - reference to the SeqMapView parent of the Tier
+	 * @return the ViewModeGlyph
+	 */
 	public ViewModeGlyph getViewModeGlyph(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction, SeqMapViewExtendedI smv);
+	/**
+	 * unique identifier
+	 * @return name of the factory
+	 */
 	public String getName();
+	/**
+	 * name that will be displayed to the user
+	 * @return display name
+	 */
 	public String getDisplayName();
+	/**
+	 * if this view mode glyph supports two (forward and reverse) tracks
+	 * @return supports two track
+	 */
 	public boolean supportsTwoTrack();
+	/**
+	 * specifies if this view mode glyph supports the specified category
+	 * @param category - the FileTypeCategory to test
+	 * @return if the category is supported
+	 */
 	public boolean isCategorySupported(FileTypeCategory category);
+	/**
+	 * specifies if this view mode glyph supports the specified uri
+	 * @param uri - the uri to test
+	 * @return if the uri is supported
+	 */
 	public boolean isURISupported(String uri);
+	/**
+	 * specifies if the uri can be autoloaded vs. waiting for the Load Data
+	 *   button to be pressed
+	 * @param uri - the uri to test
+	 * @return if the uri can be autoloaded
+	 */
 	public boolean canAutoLoad(String uri);
 }

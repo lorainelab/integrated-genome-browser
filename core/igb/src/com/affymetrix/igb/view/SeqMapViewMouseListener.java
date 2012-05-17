@@ -127,7 +127,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			// Still need to call processSelections, though, to set
 			// the zoom point and to select the items under the current mouse point.
 			if (sub_sel_glyph == null) {
-				processSelections(evt, rubber_band_start == null);
+				//processSelections(evt, rubber_band_start == null);
+				processSelections(evt, true);
 			}
 		}
 

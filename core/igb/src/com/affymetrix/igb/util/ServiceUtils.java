@@ -46,8 +46,7 @@ public final class ServiceUtils {
 		return instance;
 	}
 
-	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
-		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url) {
 		GenericFeature feature = null;
 
 		URI uri = URI.create(feature_url);

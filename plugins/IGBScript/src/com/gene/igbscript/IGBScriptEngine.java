@@ -277,7 +277,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
 	private void loadData(String serverURIorName, String feature_url) {
 		GenericServer server = igbService.loadServer(serverURIorName);
-		GenericFeature feature = igbService.getFeature(server, feature_url);
+		GenericFeature feature = igbService.getFeature(GenometryModel.getGenometryModel().getSelectedSeqGroup(), server, feature_url);
 
 		if (feature != null) {
 			feature.setVisible();

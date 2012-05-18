@@ -1121,19 +1121,25 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
+		if (gFeature != null) {
+			addFeature(gFeature);
+		}
+	}
+	
+	public static void addFeature(GenericFeature gFeature){
 		if (gFeature.symL != null) {
-			addChromosomesForUnknownGroup(fileName, gFeature);
+			addChromosomesForUnknownGroup(gFeature);
 		}
 
-		// force a refresh of this server
+		// force a refresh of this server		
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
 
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 	}
-
-	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
+	
+	private static void addChromosomesForUnknownGroup(final GenericFeature gFeature) {
 		if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			loadAllSymmetriesThread(gFeature);
 			// force a refresh of this server. This forces creation of 'genome' sequence.
@@ -1142,7 +1148,7 @@ public final class GeneralLoadUtils {
 		}
 
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
-		final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), fileName);
+		final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), gFeature.featureName);
 		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
 
 			@Override

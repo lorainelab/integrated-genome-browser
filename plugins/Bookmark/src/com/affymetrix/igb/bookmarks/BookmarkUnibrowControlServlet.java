@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
@@ -200,11 +201,18 @@ public final class BookmarkUnibrowControlServlet {
 				final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
 				if (null == seq) {
+					if(loaddata){
+						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
+						if(!seqGroup.isSynonymous(version)){
+							seqGroup = gmodel.addSeqGroup(version);
+						}
+						loadChromosomesFor(igbService, seqGroup, gServers, query_urls);
+					}
 					return null; /* user cancelled the change of genome, or something like that */
 				}
 
 				if (loaddata) {
-					GenericFeature[] gFeatures = loadData(igbService, gServers, query_urls, start, end);
+					GenericFeature[] gFeatures = loadData(igbService, gmodel.getSelectedSeqGroup(), gServers, query_urls, start, end);
 
 					if (has_properties) {
 						List<String> graph_urls = getGraphUrls(parameters);
@@ -315,7 +323,7 @@ public final class BookmarkUnibrowControlServlet {
 				continue;
 			}
 
-			GenericFeature feature = getFeature(igbService, gServers[i], type_uri);
+			GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers[i], type_uri);
 			if (feature != null) {
 				BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 				loadFeature(igbService, feature, seq, start, end);
@@ -331,11 +339,11 @@ public final class BookmarkUnibrowControlServlet {
 		}
 	}
 
-	private GenericFeature[] loadData(final IGBService igbService, final GenericServer[] gServers, final String[] query_urls, int start, int end) {
+	private GenericFeature[] loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
 		for (int i = 0; i < query_urls.length; i++) {
-			gFeatures[i] = getFeature(igbService, gServers[i], query_urls[i]);
+			gFeatures[i] = getFeature(igbService, seqGroup, gServers[i], query_urls[i]);
 		}
 
 		for (int i = 0; i < gFeatures.length; i++) {
@@ -349,7 +357,43 @@ public final class BookmarkUnibrowControlServlet {
 		return gFeatures;
 	}
 
-	private GenericFeature getFeature(IGBService igbService, final GenericServer gServer, final String query_url) {
+	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls){
+		GenericFeature[] gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
+		for (int i = 0; i < gFeatures.length; i++) {
+			GenericFeature gFeature = gFeatures[i];
+			if (gFeature != null) {
+				igbService.loadChromosomes(gFeature);
+			}
+		}
+	}
+	
+	private GenericFeature[] getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer[] gServers, final String[] query_urls){
+		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
+		boolean show_message = false;
+		for (int i = 0; i < query_urls.length; i++) {
+			gFeatures[i] = getFeature(igbService, seqGroup, gServers[i], query_urls[i]);
+			if(gFeatures[i] != null){
+				gFeatures[i].setVisible();
+				gFeatures[i].setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+				if(gFeatures[i].getLoadStrategy() == LoadStrategy.VISIBLE ||
+					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME){
+					show_message = true;
+				}	
+			}
+		}
+
+		igbService.updateGeneralLoadView();
+		
+		// Show message on how to load
+		if(show_message){
+			igbService.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
+				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+		}
+		
+		return gFeatures;
+	}
+	
+	private GenericFeature getFeature(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
 
 		if (gServer == null) {
 			return null;
@@ -362,7 +406,7 @@ public final class BookmarkUnibrowControlServlet {
 		//	return null;
 		//}
 
-		GenericFeature feature = igbService.getFeature(gServer, query_url);
+		GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url);
 
 		if (feature == null) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(

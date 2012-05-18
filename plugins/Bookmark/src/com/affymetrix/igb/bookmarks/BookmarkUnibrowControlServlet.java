@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
@@ -270,17 +271,33 @@ public final class BookmarkUnibrowControlServlet {
 	private GenericFeature[] loadData(final IGBService igbService, final GenericServer[] gServers, final String[] query_urls, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
+		boolean show_message = false;
 		for (int i = 0; i < query_urls.length; i++) {
 			gFeatures[i] = getFeature(igbService, gServers[i], query_urls[i]);
+			if(gFeatures[i] != null){
+				gFeatures[i].setVisible();
+				gFeatures[i].setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+				if(gFeatures[i].getLoadStrategy() == LoadStrategy.VISIBLE ||
+					gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME){
+					show_message = true;
+				}	
+			}
 		}
 
+		igbService.updateGeneralLoadView();
+		
+		// Show message on how to load
+		if(show_message){
+			igbService.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
+				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+		}
+		
 		for (int i = 0; i < gFeatures.length; i++) {
 			GenericFeature gFeature = gFeatures[i];
 			if (gFeature != null) {
 				loadFeature(igbService, gFeature, seq, start, end);
 			}
 		}
-		igbService.updateGeneralLoadView();
 
 		return gFeatures;
 	}
@@ -309,9 +326,9 @@ public final class BookmarkUnibrowControlServlet {
 	}
 
 	private void loadFeature(IGBService igbService, GenericFeature gFeature, BioSeq seq, int start, int end) {
-		gFeature.setVisible();
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-		if (!gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE)) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE ||
+					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME) {
 			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		}
 		igbService.loadAndDisplaySpan(overlap, gFeature);

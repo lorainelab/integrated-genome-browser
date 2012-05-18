@@ -37,6 +37,10 @@ import java.util.logging.Logger;
  */
 public final class GenericFeature {
 
+	public static final String howtoloadmsg = "To display your data, zoom in and click Load Data.";
+	public static final String show_how_to_load = "Show how to load";
+	public static final boolean default_show_how_to_load = true;
+
 	public final String featureName;      // friendly name of the feature.
 	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.

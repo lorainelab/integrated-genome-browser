@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,9 +13,8 @@ import java.util.Map;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
-import com.affymetrix.genometryImpl.thread.PositionCalculator;
-import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -35,7 +33,6 @@ import org.broad.tribble.util.BlockCompressedInputStream;
  * from the Broad Institute
  */
 public class SymLoaderTabix extends SymLoader {
-
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 	private TabixLineReader tabixLineReader;
 	private final LineProcessor lineProcessor;
@@ -113,45 +110,6 @@ public class SymLoaderTabix extends SymLoader {
 		return lineProcessor.getFormatPrefList();
 	}
 
-
-	/**
-	 * @return current CompressedStreamPosition for TabixLineReader
-	 * @throws Exception
-	 */
-	private BlockCompressedStreamPosition getCompressedInputStreamPosition(LineReader reader) throws Exception {
-		Field privateReaderField = reader.getClass().getDeclaredField("reader");
-		privateReaderField.setAccessible(true);
-		Object mReaderValue = privateReaderField.get(reader);
-		Field privateCompressedInputStreamField = mReaderValue.getClass().getDeclaredField("mFp");
-		privateCompressedInputStreamField.setAccessible(true);
-		Object compressedInputStreamValue = privateCompressedInputStreamField.get(mReaderValue);
-		Field privateBlockAddressField = compressedInputStreamValue.getClass().getDeclaredField("mBlockAddress");
-		privateBlockAddressField.setAccessible(true);
-		long blockAddressValue = ((Long)privateBlockAddressField.get(compressedInputStreamValue)).longValue();
-		Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
-		privateCurrentOffsetField.setAccessible(true);
-		int currentOffsetValue =  ((Integer)privateCurrentOffsetField.get(compressedInputStreamValue)).intValue();;
-		return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
-	}
-
-	private long getEndPosition(String seqID, int max) throws Exception {
-		String uriString = uri.toString();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uri.getPath();
-		}
-		TabixLineReader tabixLineReaderTemp = new TabixLineReader(uriString);
-		LineReader lineReaderTemp = tabixLineReaderTemp.query(seqID, max - 1, max);
-		String line;
-		try {
-			do {
-				line = lineReaderTemp.readLine();
-			}
-			while (line != null);
-		}
-		catch (IOException x) {}
-		return getCompressedInputStreamPosition(lineReaderTemp).getApproximatePosition();
-	}
-
 	@Override
 	public List<BioSeq> getChromosomeList() throws Exception  {		
 		init();
@@ -171,9 +129,7 @@ public class SymLoaderTabix extends SymLoader {
 
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) throws Exception  {
-		init();
-		String seqID = seqs.get(seq);
-		return lineProcessor.processLines(seq, tabixLineReader.query(seqID, 1, Integer.MAX_VALUE / 2));
+		return getRegion(new SimpleSeqSpan(0, Integer.MAX_VALUE / 2, seq)); // end faked
 	}
 
 	@Override
@@ -184,30 +140,43 @@ public class SymLoaderTabix extends SymLoader {
 		if (lineReader == null) {
 			return new ArrayList<SeqSymmetry>();
 		}
-		final long endPosition = getEndPosition(seqID, overlapSpan.getMax());
-		final long startPosition = getCompressedInputStreamPosition(lineReader).getApproximatePosition();
-
-		ProgressUpdater progressUpdater = new ProgressUpdater("SymLoaderTabix SymLoaderProgressUpdater getRegion for " + uri + " - " + overlapSpan, startPosition, endPosition,
-			new PositionCalculator() {
-				@Override
-				public long getCurrentPosition() {
-					long currentPosition = startPosition;
-					try {
-						currentPosition = getCompressedInputStreamPosition(lineReader).getApproximatePosition();
-					}
-					catch (Exception x) {
-						// log error here
-					}
-					return currentPosition;
-				}
-			}
-		);
-
-		List<? extends SeqSymmetry> region = lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
-		progressUpdater.kill();
+		long[] startEnd = getStartEnd(lineReader);
+		System.out.println("***** " + startEnd[0] + ":" + startEnd[1]);
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater("Tabix process lines " + uri, startEnd[0], startEnd[1]);
+		parseLinesProgressUpdater.start();
+		List<? extends SeqSymmetry> region = lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader, this);
+		parseLinesProgressUpdater.kill();
+		parseLinesProgressUpdater = null;
 		return region;
     }
-	
+
+	private long[] getStartEnd(LineReader lineReader) {
+		long[] startEnd = new long[2];
+		try {
+			Field field = lineReader.getClass().getDeclaredField("it");
+			field.setAccessible(true);
+			Object it = field.get(lineReader);
+			field = it.getClass().getDeclaredField("off");
+			field.setAccessible(true);
+			Object[] off = (Object[])field.get(it);
+			field = off[0].getClass().getDeclaredField("u");
+			field.setAccessible(true);
+			long startPos = (Long)field.get(off[0]);
+			startEnd[0] = new BlockCompressedStreamPosition(startPos).getApproximatePosition();
+			field = off[off.length - 1].getClass().getDeclaredField("v");
+			field.setAccessible(true);
+			long endPos = (Long)field.get(off[0]);
+			startEnd[1] = new BlockCompressedStreamPosition(endPos).getApproximatePosition();
+		}
+		catch(IllegalAccessException x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "unable to display progress for " + uri, x);
+		}
+		catch(NoSuchFieldException x) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "unable to display progress for " + uri, x);
+		}
+		return startEnd;
+	}
+
     /**
      * copied from the igv 1.5.64 source
      * @param path path of data source

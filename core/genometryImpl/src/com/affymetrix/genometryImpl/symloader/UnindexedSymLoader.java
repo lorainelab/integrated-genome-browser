@@ -99,12 +99,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("Unindexed SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
-		List<? extends SeqSymmetry> results = parse(span.getBioSeq(),span.getMin(),span.getMax());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
-		return results;
+		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
 	protected LineReader getLineReader(final BufferedReader br, final int min, final int max) {
@@ -142,7 +137,12 @@ public abstract class UnindexedSymLoader extends SymLoader {
 			
 			LineReader lineReader = getLineReader(br, min, max);
 				
-			return lineProcessor.processLines(seq, lineReader);
+			parseLinesProgressUpdater = new ParseLinesProgressUpdater("Unindexed process lines " + uri, 0, file.length());
+			parseLinesProgressUpdater.start();
+			List<? extends SeqSymmetry> results = lineProcessor.processLines(seq, lineReader, this);
+			parseLinesProgressUpdater.kill();
+			parseLinesProgressUpdater = null;
+			return results;
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}

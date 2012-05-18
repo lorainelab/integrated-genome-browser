@@ -116,11 +116,11 @@ public class BED extends SymLoader implements LineProcessor {
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) throws Exception {
 		init();
-		symLoaderProgressUpdater = new SymLoaderProgressUpdater("BED SymLoaderProgressUpdater getRegion for " + uri + " - " + span, span);
-		symLoaderProgressUpdater.start();
+		parseLinesProgressUpdater = new ParseLinesProgressUpdater("BED parse lines " + uri);
+		parseLinesProgressUpdater.start();
 		List<SeqSymmetry> results = parse(span.getBioSeq(), span.getMin(), span.getMax());
-		symLoaderProgressUpdater.kill();
-		symLoaderProgressUpdater = null;
+		parseLinesProgressUpdater.kill();
+		parseLinesProgressUpdater = null;
 		return results;
 	}
 
@@ -198,10 +198,10 @@ public class BED extends SymLoader implements LineProcessor {
 			}
 		};
 
-		parse(it, isSorted, min, max);
+		parse(it, isSorted, min, max, this);
 	}
 
-	private void parse(Iterator<String> it, boolean isSorted, int min, int max) {
+	private void parse(Iterator<String> it, boolean isSorted, int min, int max, LineTrackerI lineTracker) {
 		seq2types.clear();
 		symlist.clear();
 		String line;
@@ -214,6 +214,9 @@ public class BED extends SymLoader implements LineProcessor {
 			lastSleepTime = System.nanoTime();
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
 				checkSleep();
+				if (lineTracker != null) {
+					lineTracker.notifyReadLine(line.length());
+				}
 				if (line.length() == 0) {
 					continue;
 				}
@@ -244,7 +247,7 @@ public class BED extends SymLoader implements LineProcessor {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override
@@ -270,7 +273,7 @@ public class BED extends SymLoader implements LineProcessor {
 				throw new UnsupportedOperationException();
 			}
 		};
-		parse(it, true, 0, Integer.MAX_VALUE);
+		parse(it, true, 0, Integer.MAX_VALUE, lineTracker);
 		return symlist;
 	}
 

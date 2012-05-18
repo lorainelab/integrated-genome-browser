@@ -180,7 +180,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

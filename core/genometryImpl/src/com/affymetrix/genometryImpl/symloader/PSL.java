@@ -365,7 +365,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader, LineTrackerI lineTracker) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override
@@ -458,6 +458,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		Thread thread = Thread.currentThread();
 //		try {
 			while ((line = it.next()) != null && (!thread.isInterrupted())) {
+				notifyReadLine(line.length());
 //				line_count++;
 				// Ignore psl header lines
 				if(line.trim().length() == 0)

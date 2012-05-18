@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.*;
  * @author jnicol
  * Could be improved with iterators.  But for now this should be fine.
  */
-public abstract class SymLoader {
+public abstract class SymLoader implements LineTrackerI {
 	public static final int SLEEP_INTERVAL_TIME = 30; // in seconds - any shorter may slow down application
 	public static final long SLEEP_INTERVAL_TIME_NANO = (long)SLEEP_INTERVAL_TIME * (long)1000000000; // in nanoseconds
 	public static final int SLEEP_TIME = 1; // in milliseconds
@@ -87,8 +87,11 @@ public abstract class SymLoader {
 	 * needed, but only approximated.
 	 */
 	protected class ParseLinesProgressUpdater extends ProgressUpdater {
-		public ParseLinesProgressUpdater(String name) throws Exception {
-			super(name, 0, GeneralUtils.getUriLength(uri),
+		public ParseLinesProgressUpdater(String name) {
+			this(name, 0, GeneralUtils.getUriLength(uri));
+		}
+		public ParseLinesProgressUpdater(String name, long startPosition, long endPosition) {
+			super(name, startPosition, endPosition,
 				new PositionCalculator() {
 					@Override
 					public long getCurrentPosition() {
@@ -274,9 +277,9 @@ public abstract class SymLoader {
 	 * used by the progress updater to show the progress of the parseLines()
 	 * @param sym the last line read during the parseLines()
 	 */
-	protected void notifyReadLine(int lineLength) {
+	public void notifyReadLine(int lineLength) {
 		if (parseLinesProgressUpdater != null) {
-			parseLinesProgressUpdater.lineRead(lineLength);
+			parseLinesProgressUpdater.lineRead(lineLength + 1);
 		}
 	}
 

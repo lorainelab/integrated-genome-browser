@@ -131,6 +131,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 		return null;
 	}
 
+	@Override
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		return parse(lineReader, false, false);
 	}

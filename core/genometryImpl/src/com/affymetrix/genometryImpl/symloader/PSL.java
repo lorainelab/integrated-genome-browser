@@ -363,7 +363,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
 		return parse(it, annot_type, min, max, query_group, target_group, other_group);
 	}
-	
+
+	@Override
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 

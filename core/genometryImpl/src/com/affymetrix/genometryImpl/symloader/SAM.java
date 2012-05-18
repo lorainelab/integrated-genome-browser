@@ -154,6 +154,7 @@ public class SAM extends XAM implements LineProcessor{
 		return results;
 	}
 
+	@Override
 	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
 		return parse(str.queryUnmapped(), seq, seq.getMin(), seq.getMax(), true, false, false);

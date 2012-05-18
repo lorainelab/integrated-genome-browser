@@ -56,7 +56,7 @@ public abstract class SymLoader implements LineTrackerI {
 					@Override
 					public long getCurrentPosition() {
 						if (symLoaderProgressUpdater == null) {
-							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "symLoaderProgressUpdater == null in SymLoaderProgressUpdater constructor");
+//							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "symLoaderProgressUpdater == null in SymLoaderProgressUpdater constructor");
 							return span.getMin();
 						}
 						else {

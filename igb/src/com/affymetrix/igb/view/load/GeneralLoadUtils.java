@@ -1207,13 +1207,15 @@ public final class GeneralLoadUtils {
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
-
-		if (gFeature == null) {
-			return;
+		if (gFeature != null) {
+			addFeature(gFeature);
 		}
 
+	}
+
+	public static void addFeature(GenericFeature gFeature){
 		if (gFeature.symL != null) {
-			addChromosomesForUnknownGroup(fileName, gFeature);
+			addChromosomesForUnknownGroup(gFeature);
 		}
 
 		// force a refresh of this server		
@@ -1223,8 +1225,8 @@ public final class GeneralLoadUtils {
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
-
-	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
+	
+	private static void addChromosomesForUnknownGroup(final GenericFeature gFeature) {
 		if (((QuickLoad) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
 			// force a refresh of this server. This forces creation of 'genome' sequence.
@@ -1233,7 +1235,7 @@ public final class GeneralLoadUtils {
 		}
 
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
-		final String message = "Retrieving chromosomes for " + fileName;
+		final String message = "Retrieving chromosomes for " + gFeature.featureName;
 		final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
 
 			@Override

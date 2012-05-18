@@ -148,6 +148,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
+	public void loadChromosomes(GenericFeature gFeature) {
+		GeneralLoadUtils.addFeature(gFeature);
+	}
+	
+	@Override
 	public void updateGeneralLoadView() {
 		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
@@ -174,8 +179,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	}
 
 	@Override
-	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
-		return UnibrowControlServlet.getInstance().getFeature(gServer, feature_url);
+	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url) {
+		return UnibrowControlServlet.getInstance().getFeature(seqGroup, gServer, feature_url);
 	}
 
 	@Override

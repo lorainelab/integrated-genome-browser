@@ -101,12 +101,13 @@ public interface IGBService {
 	public JRPMenu addTopMenu(String id, String text);
 
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
+	public void loadChromosomes(GenericFeature gFeature);
 	public void updateGeneralLoadView();
 	public void updateDependentData();
 	public void doActions(final String batchFileStr);
 	public void doSingleAction(String line);
 	public void performSelection(String selectParam);
-	public GenericFeature getFeature(GenericServer gServer, String feature_url);
+	public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	public Color getDefaultBackgroundColor();
 	public Color getDefaultForegroundColor();

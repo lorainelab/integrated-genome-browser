@@ -373,7 +373,7 @@ public class ScriptFileLoader {
 
 	private static void loadData(String serverURIorName, String feature_url) {
 		GenericServer server = UnibrowControlServlet.getInstance().loadServer(serverURIorName);
-		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(server, feature_url);
+		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(GenometryModel.getGenometryModel().getSelectedSeqGroup(), server, feature_url);
 
 		if (feature != null) {
 			feature.setVisible();

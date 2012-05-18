@@ -152,4 +152,32 @@ public abstract class Application {
 		return false;
 	}
 	
+	public static void infoPanel(final String message, final Preferences node,
+			final String check, final boolean def_val) {
+	
+		Application app = getSingleton();
+		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		
+		if(node == null){
+			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+		Object[] params = new Object[]{message, checkbox};
+		
+		//If all parameters are provided then look up for boolean value from preference.
+		final boolean b = node.getBoolean(check, def_val);
+
+		//If user has already set preference then return true.
+		if (b != def_val) {
+			return;
+		}
+
+		JOptionPane.showMessageDialog(comp, params, "IGB", JOptionPane.INFORMATION_MESSAGE);
+		
+		if(checkbox.isSelected()){
+			node.putBoolean(check, checkbox.isSelected() != b);
+		}		
+	}
 }

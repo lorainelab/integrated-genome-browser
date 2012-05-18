@@ -76,6 +76,18 @@ public interface IGBService {
 	public boolean confirmPanel(final String message, final Preferences node,
 			final String check, final boolean def_val);
 	/**
+	 * Shows a info panel to the user.
+	 * 
+	 * @param message
+	 * @param node
+	 * @param check
+	 * @param def_val
+	 * @param option
+	 * @return 
+	 */
+	public void infoPanel(final String message, final Preferences node,
+			final String check, final boolean def_val);
+	/**
 	 * get the specified icon
 	 * @param name of the icon
 	 * @return the specified icon

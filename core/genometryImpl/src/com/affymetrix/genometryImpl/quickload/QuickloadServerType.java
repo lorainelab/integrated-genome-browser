@@ -266,7 +266,7 @@ public class QuickloadServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		// Discover feature names from QuickLoad
-
+		ProgressUpdater progressUpdater = null;
 		try {
 			URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
 			if (DEBUG) {
@@ -281,7 +281,7 @@ public class QuickloadServerType implements ServerTypeI {
 				return;
 			}
 			final MutableInt nameLoop = new MutableInt(0);
-			ProgressUpdater progressUpdater = new ProgressUpdater("Quickload discover features", 0, typeNames.size(), 
+			progressUpdater = new ProgressUpdater("Quickload discover features", 0, typeNames.size(), 
 				new PositionCalculator() {
 					@Override
 					public long getCurrentPosition() {
@@ -304,9 +304,11 @@ public class QuickloadServerType implements ServerTypeI {
 						new GenericFeature(
 						type_name, type_props, gVersion, getQuickLoad(gVersion, type_name), null, autoload));
 			}
-			progressUpdater.kill();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+		if (progressUpdater != null) {
+			progressUpdater.kill();
 		}
 	}
 

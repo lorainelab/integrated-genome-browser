@@ -152,12 +152,13 @@ public final class BookmarkUnibrowControlServlet {
 
 		final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
 
+		// BioSeq or AnnotatedSeqGroup not found.
 		if (null == seq) {
 			if(loaddata){
 				AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
 				if(!seqGroup.isSynonymous(version)){
 					Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
-					"Bookmark genome version seq group ''{0}" + "'' crated.", version);
+					"Bookmark genome version seq group ''{0}" + "'' created.", version);
 					seqGroup = gmodel.addSeqGroup(version);
 				}
 				loadChromosomesFor(igbService, seqGroup, gServers, query_urls);

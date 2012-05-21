@@ -906,7 +906,7 @@ public final class GeneralLoadUtils {
 				continue;
 			}
 			String serverDescription = server.serverName + " " + server.serverType;
-			String msg = "Loading sequence for " + seq_name + " from " + serverDescription;
+			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
 			Application.getSingleton().addNotLockedUpMsg(msg);
 			if (server.serverType != null && server.serverType.getResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 				residuesLoaded = true;

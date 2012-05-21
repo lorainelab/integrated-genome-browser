@@ -27,28 +27,32 @@ public abstract class AddBookmarkAction extends GenericAction {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}
 
-	/**
-	 * Generate a bookmark editor panel for adding a new bookmark.
-	 */
-	protected void bookmarkCurrentPosition() {
+	protected Bookmark getCurrentPosition() {
 		if (!BookmarkController.hasSymmetriesOrGraphs()) {
 			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
-			return;
+			return null;
 		}
 		Bookmark bookmark = null;
 		try {
 			bookmark = BookmarkController.getCurrentBookmark(false, BookmarkActionManager.getInstance().getVisibleSpan());
 		} catch (MalformedURLException m) {
 			ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
-			return;
 		}
 		if (bookmark == null) {
 			ErrorHandler.errorPanel("Error", "Nothing to bookmark", Level.INFO);
-			return;
 		}
+		return bookmark;
+	}
 
-		BookmarkEditor.init(bookmark);
-		BookmarkEditor.run();
+	/**
+	 * Generate a bookmark editor panel for adding a new bookmark.
+	 */
+	protected void bookmarkCurrentPosition() {
+		Bookmark bookmark = getCurrentPosition();
+		if (bookmark != null) {
+			BookmarkEditor.init(bookmark);
+			BookmarkEditor.run();
+		}
 	}
 
 	/**

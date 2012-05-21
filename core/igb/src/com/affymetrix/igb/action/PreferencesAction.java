@@ -33,7 +33,7 @@ public class PreferencesAction extends GenericAction {
 	}
 
 	private PreferencesAction() {
-		super(BUNDLE.getString("preferences"), null, "16x16/categories/preferences-system.png", "22x22/categories/preferences-system.png", KeyEvent.VK_E, null, true);
+		super(BUNDLE.getString("Preferences"), null, "16x16/categories/preferences-system.png", "22x22/categories/preferences-system.png", KeyEvent.VK_E, null, true);
 	}
 
 	@Override

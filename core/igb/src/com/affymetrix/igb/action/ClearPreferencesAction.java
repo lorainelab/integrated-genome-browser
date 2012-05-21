@@ -1,5 +1,7 @@
 package com.affymetrix.igb.action;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
@@ -25,7 +27,7 @@ public class ClearPreferencesAction extends GenericAction {
 	}
 
 	private ClearPreferencesAction() {
-		super("Reset preference to defaults", "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png");
+		super(BUNDLE.getString("ClearPreferences"), "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png");
 	}
 
 	public void actionPerformed(ActionEvent e) {

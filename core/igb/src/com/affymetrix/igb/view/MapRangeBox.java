@@ -304,8 +304,8 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		range_box.setPreferredSize(d);
 		range_box.setMaximumSize(d);
 
-		range_box.setToolTipText("<html>Enter a coordinate range here.<br>"
-				+ "Use the format 'start : end' or 'start + width' or 'center',<br>"
+		range_box.setToolTipText("<html>Enter a coordinate range, gene name or attribute here.<br>"
+				+ "Coordinates - use the format 'start : end' or 'start + width' or 'center',<br>"
 				+ "or use the UCSC browser format 'chrom:start-end'.<html>");
 
 		range_box.setEditable(true);

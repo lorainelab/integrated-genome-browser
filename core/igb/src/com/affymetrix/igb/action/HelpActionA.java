@@ -28,17 +28,16 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public abstract class HelpActionA extends GenericAction {
 	private static final long serialVersionUID = 1L;
-	private static final String HELP_WINDOW_NAME = "Preferences Help Window";
+	private static final String HELP_WINDOW_NAME = " Help Window";
 
 	public HelpActionA(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic,Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}
 
-	protected void showHelp(String s) {
+	protected void showHelp(final JPanel parentPanel, String s) {
 		JEditorPane text = new JEditorPane();
 		text.setContentType("text/html");
 		text.setText(s);
@@ -47,7 +46,7 @@ public abstract class HelpActionA extends GenericAction {
 		JScrollPane scroller = new JScrollPane(text);
 		scroller.setPreferredSize(new java.awt.Dimension(300, 400));
 
-		JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, PreferencesPanel.getSingleton());
+		JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, parentPanel);
 		final JDialog dialog = new JDialog(frameAncestor, BUNDLE.getString("helpMenu"), true);
 		dialog.getContentPane().add(scroller, "Center");
 		Action close_action = new GenericAction("OK", null, null) {
@@ -58,15 +57,15 @@ public abstract class HelpActionA extends GenericAction {
 				dialog.dispose();
 			}
 		};
-		JRPButton close = new JRPButton("PreferencesPanel_close", close_action);
+		JRPButton close = new JRPButton("HelpActionA_close", close_action);
 		Box button_box = new Box(BoxLayout.X_AXIS);
 		button_box.add(Box.createHorizontalGlue());
 		button_box.add(close);
 		button_box.add(Box.createHorizontalGlue());
 		dialog.getContentPane().add(button_box, "South");
 		dialog.pack();
-		dialog.setLocationRelativeTo(PreferencesPanel.getSingleton());
-		Rectangle pos = PreferenceUtils.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
+		dialog.setLocationRelativeTo(parentPanel);
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation(parentPanel.getClass().getName() + HELP_WINDOW_NAME, new Rectangle(400, 400));
 		if (pos != null) {
 			PreferenceUtils.setWindowSize(dialog, pos);
 		}
@@ -75,7 +74,7 @@ public abstract class HelpActionA extends GenericAction {
 
 			@Override
 			public void windowClosing(WindowEvent evt) {
-				PreferenceUtils.saveWindowLocation(dialog, HELP_WINDOW_NAME);
+				PreferenceUtils.saveWindowLocation(dialog, parentPanel.getClass().getName() + HELP_WINDOW_NAME);
 				dialog.dispose();
 			}
 		});
@@ -84,15 +83,16 @@ public abstract class HelpActionA extends GenericAction {
 	}
 
 	/**
-	 *  Gives help text explaining the function of this preferences editor component.
+	 *  Gives help text explaining the function of this panel.
 	 *  If no help is available, should return null rather than an empty String.
-	 *  The help text should describe what effect changes in the preferences
+	 *  The help text should describe what effect changes
 	 *  in the panel will have, how to make the changes (if it isn't obvious),
 	 *  and whether the changes are expected to take effect immediately or only
 	 *  after a re-start.
+	 *  @param the parent of the panel to display text for
 	 *  @param the panel to display text for
 	 */
-	protected void showHelpForPanel(JPanel panel) {
+	protected void showHelpForPanel(JPanel parentPanel, JPanel panel) {
 		StringBuilder builder = new StringBuilder();
 		char buffer[] = new char[4096];
 		InputStream stream = null;
@@ -108,7 +108,7 @@ public abstract class HelpActionA extends GenericAction {
 				builder.append(buffer);
 			}
 			String text = builder.toString();
-			showHelp(text);
+			showHelp(parentPanel, text);
 
 		} catch (UnsupportedEncodingException ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,

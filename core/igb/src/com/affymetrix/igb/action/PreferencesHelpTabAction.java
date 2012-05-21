@@ -40,7 +40,7 @@ public class PreferencesHelpTabAction extends HelpActionA {
 		Component c = PreferencesPanel.getSingleton().getSelectedTabComponent();
 		if (c instanceof IPrefEditorComponent) {
 			IPrefEditorComponent pec = (IPrefEditorComponent) c;
-			showHelpForPanel(pec);
+			showHelpForPanel(PreferencesPanel.getSingleton(), pec);
 		}
 		else {
 			JOptionPane.showMessageDialog(PreferencesPanel.getSingleton(), "No help available for this tab",

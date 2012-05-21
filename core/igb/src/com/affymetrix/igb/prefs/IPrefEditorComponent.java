@@ -13,14 +13,6 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 /**
@@ -31,41 +23,6 @@ import javax.swing.JPanel;
  */
 public abstract class IPrefEditorComponent extends JPanel {
   private static final long serialVersionUID = 1L;
-
-  /**
-   *  Gives help text explaining the function of this preferences editor component.
-   *  If no help is available, should return null rather than an empty String.
-   *  The help text should describe what effect changes in the preferences
-   *  in the panel will have, how to make the changes (if it isn't obvious),
-   *  and whether the changes are expected to take effect immediately or only
-   *  after a re-start.
-   *  @return Text in HTML format, or null
-   */
-  public String getHelpTextHTML() {
-		StringBuilder builder = new StringBuilder();
-		char buffer[] = new char[4096];
-		InputStream stream = null;
-		Reader reader = null;
-
-		try {
-			stream = this.getClass().getResourceAsStream("/help/" + this.getClass().getName() + ".html");
-			reader = new InputStreamReader(stream, "UTF-8");
-
-			for (int read = reader.read(buffer, 0, buffer.length); read >0; read = reader.read(buffer, 0, buffer.length)) {
-				builder.append(buffer);
-			}
-
-		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "UTF-8 is not a supported encoding?!", ex);
-		} catch (IOException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load help file for " + this.getClass().getName(), ex);
-		} finally {
-			GeneralUtils.safeClose(reader);
-			GeneralUtils.safeClose(stream);
-		}
-
-		return builder.toString();
-	}
 
   /**
    *  Causes the JComponent to update its fields

@@ -29,6 +29,6 @@ public class PreferencesHelpAction extends HelpActionA {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		super.actionPerformed(ae);
-		showHelpForPanel(PreferencesPanel.getSingleton());
+		showHelpForPanel(PreferencesPanel.getSingleton(), PreferencesPanel.getSingleton());
 	}
 }

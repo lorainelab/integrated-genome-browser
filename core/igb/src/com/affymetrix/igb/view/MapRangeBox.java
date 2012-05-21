@@ -30,6 +30,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.NextSearchSpanAction;
 import com.affymetrix.igb.shared.DummyStatus;
 import com.affymetrix.igb.shared.ISearchModeSym;
@@ -56,7 +57,7 @@ import java.util.regex.Pattern;
  * 
  * @version $Id: MapRangeBox.java 10972 2012-04-05 17:00:51Z lfrohman $
  */
-public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
+public final class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
 	public static final int NO_ZOOM_SPOT = -1;
 
 	private final NeoMap map;
@@ -304,16 +305,22 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		range_box.setPreferredSize(d);
 		range_box.setMaximumSize(d);
 
-		range_box.setToolTipText("<html>Enter a coordinate range, gene name or attribute here.<br>"
-				+ "Coordinates - use the format 'start : end' or 'start + width' or 'center',<br>"
-				+ "or use the UCSC browser format 'chrom:start-end'.<html>");
+		range_box.setToolTipText(IGBConstants.BUNDLE.getString("goToRegionToolTip"));
 
 		range_box.setEditable(true);
-		range_box.addActionListener(action_listener);
+		range_box.addActionListener(this);
 		range_box.addFocusListener(focus_listener);
 		map.addViewBoxListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
+	}
+
+	public String getText() {
+		return range_box.getText();
+	}
+
+	public void setText(String text) {
+		range_box.setText(text);
 	}
 
 	public void viewBoxChanged(NeoViewBoxChangeEvent e) {
@@ -332,26 +339,24 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		resetSearch();
 	}
 
-	void setRangeText(double start, double end) {
+	public void setRangeText(double start, double end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		range_box.setText((seq == null ? "" : seq.getID() + " : ") + nformat.format(start) + " - " + nformat.format(end));
 	}
-	ActionListener action_listener = new ActionListener() {
 
-		public void actionPerformed(ActionEvent evt) {
-			setRange(gview, range_box.getText());
-			// But if the user tries to zoom to something illogical, this can be helpful
-			// generally this is redundant, because zooming the view will make
-			// a call back to change this text.
-			// But if the user tries to zoom to something illogical, this can be helpful
-			SeqSpan span = gview.getVisibleSpan();
-			if (span == null) {
-				range_box.setText("");
-			} else {
-				setRangeText(span.getStart(), span.getEnd());
-			}
+	public void actionPerformed(ActionEvent evt) {
+		setRange(range_box.getText());
+		// But if the user tries to zoom to something illogical, this can be helpful
+		// generally this is redundant, because zooming the view will make
+		// a call back to change this text.
+		// But if the user tries to zoom to something illogical, this can be helpful
+		SeqSpan span = gview.getVisibleSpan();
+		if (span == null) {
+			range_box.setText("");
+		} else {
+			setRangeText(span.getStart(), span.getEnd());
 		}
-	};
+	}
 
 	FocusListener focus_listener = new FocusListener() {
 
@@ -458,7 +463,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 * @param range - any search string like "chr1: 40000 - 60000",
 	 * or "ADAR" (a gene name)
 	 */
-	public void setRange(SeqMapView gview, String search_text) {
+	public void setRange(String search_text) {
 		List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
 		if (mergedSpans != null && mergedSpans.size() > 0) {
 			foundSpans = mergedSpans;

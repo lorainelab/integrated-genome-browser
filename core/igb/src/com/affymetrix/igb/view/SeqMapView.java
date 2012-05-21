@@ -390,11 +390,19 @@ public class SeqMapView extends JPanel
 		this.setLayout(new BorderLayout());
 
 		xzoombox = Box.createHorizontalBox();
-		ImageIcon searchIcon = MenuUtil.getIcon("16x16/actions/system-search.png");
-		JLabel searchLabel = new JLabel(searchIcon);
-		xzoombox.add(searchLabel);
-
 		map_range_box = new MapRangeBox(this);
+		JRPButton searchButton = new JRPButton(id + "_search_button",
+			new GenericAction(null, BUNDLE.getString("goToRegionToolTip"), "16x16/actions/system-search.png", "22x22/actions/system-search.png", KeyEvent.VK_UNDEFINED) {
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					super.actionPerformed(e);
+					map_range_box.actionPerformed(e);
+				}
+			}
+		);
+		xzoombox.add(searchButton);
+
 		xzoombox.add(map_range_box.range_box);
 
 		select_mode_button = new JRPToggleButton(id + "_select_mode_button", new MapModeSelectAction(getId()));

@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -47,6 +48,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -65,6 +68,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	public final JRPTextField range_box;
 	private List<SeqSpan> foundSpans;
 	private int spanPointer;
+	private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
 
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
@@ -429,7 +433,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 					if (errorMessage == null) {
 						searchResults = searchMode.searchTrack(search_text, null, trackSym, DummyStatus.getInstance(), false);
 					}
-					if (searchResults != null) {
+					if (searchResults != null && searchResults.size() > 0) {
+						fireSearchResult(search_text, searchResults);
 						List<SeqSpan> rawSpans = findSpansFromSyms(searchResults);
 						if (rawSpans.size() > 0) {
 							zoomToSeqAndSpan(gview, rawSpans.get(0));
@@ -536,5 +541,19 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		}
 
 		gview.setRegion(start, end, newSeq);
+	}
+
+	public void addSearchListener(SearchListener listener) {
+		search_listeners.add(listener);
+	}
+
+	public void removeSearchListener(SearchListener listener) {
+		search_listeners.remove(listener);
+	}
+
+	private void fireSearchResult(String searchText, List<SeqSymmetry> spanList) {
+		for (SearchListener listener : search_listeners) {
+			listener.searchResults(searchText, spanList);
+		}
 	}
 }

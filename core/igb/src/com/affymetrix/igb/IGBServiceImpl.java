@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -382,6 +383,17 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@Override
 	public GenericServer getServer(String URLorName) {
 		return ServerList.getServerInstance().getServer(URLorName);
+	}
+
+
+	@Override
+	public void addSearchListener(SearchListener listener) {
+		((SeqMapView)getSeqMapView()).getMapRangeBox().addSearchListener(listener);
+	}
+
+	@Override
+	public void removeSearchListener(SearchListener listener) {
+		((SeqMapView)getSeqMapView()).getMapRangeBox().removeSearchListener(listener);
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.event.SearchListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -50,7 +51,7 @@ import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 
 public final class SearchView extends IGBTabPanel implements
-		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, IStatus {
+		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
 
 	private static final long serialVersionUID = 0;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
@@ -262,6 +263,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchButton.addActionListener(searchAction);
 		clearButton.addActionListener(clearAction);
 		igbService.addServerInitListener(this);
+		igbService.addSearchListener(this);
 	}
 
 	private void initOptionCheckBox() {
@@ -571,5 +573,12 @@ public final class SearchView extends IGBTabPanel implements
 				worker.cancel(true);
 			}
 		}
+	}
+
+	@Override
+	public void searchResults(String searchText, List<SeqSymmetry> symList) {
+		searchTF.setText(searchText);
+		setModel(new SymSearchResultsTableModel(symList));
+		select();
 	}
 }

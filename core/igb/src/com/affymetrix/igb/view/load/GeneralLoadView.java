@@ -161,11 +161,11 @@ public final class GeneralLoadView {
 	}
 
 	public void initVersion(String versionName) {
-		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
+		igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 		try {
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 		} finally {
-			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 		}
 	}
 

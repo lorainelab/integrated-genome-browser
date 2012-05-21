@@ -47,6 +47,7 @@ import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.Locale;
@@ -770,11 +771,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	}
 
 	public void initVersion(String versionName) {
-		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
+		igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 		try {
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 		} finally {
-			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 		}
 	}
 
@@ -910,14 +911,14 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		@Override
 		public Void runInBackground() {
-			igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 			return null;
 		}
 
 		@Override
 		protected void finished() {
-			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
 			if ((curGroup != null || group != null) && curGroup != group) {

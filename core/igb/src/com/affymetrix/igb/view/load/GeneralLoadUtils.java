@@ -668,7 +668,7 @@ public final class GeneralLoadUtils {
 
 	static void iterateSeqList(final GenericFeature feature) {
 
-		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>("Loading whole feature " + feature.featureName) {
+		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(MessageFormat.format(IGBConstants.BUNDLE.getString("loadFeature"), feature.featureName)) {
 
 			@Override
 			protected Void runInBackground() {

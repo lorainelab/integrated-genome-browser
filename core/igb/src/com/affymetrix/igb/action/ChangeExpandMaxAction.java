@@ -23,6 +23,7 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 		super(BUNDLE.getString("changeExpandMaxAction"), null, null);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		changeExpandMax(getTierManager().getSelectedTierLabels());

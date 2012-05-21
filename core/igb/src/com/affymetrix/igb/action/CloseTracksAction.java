@@ -26,6 +26,7 @@ public class CloseTracksAction extends SeqMapViewActionA {
 		super(IGBConstants.BUNDLE.getString("closeTracksAction"), "16x16/status/user-trash-full.png", "22x22/status/user-trash-full.png");
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		List<TierLabelGlyph> tiers = getTierManager().getSelectedTierLabels();

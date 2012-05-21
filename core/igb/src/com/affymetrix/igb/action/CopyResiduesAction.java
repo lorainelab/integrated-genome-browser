@@ -35,6 +35,7 @@ public class CopyResiduesAction extends GenericAction {
 		super(text, null, "16x16/actions/edit-copy.png", "22x22/actions/edit-copy.png", KeyEvent.VK_C);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		IGB.getSingleton().getMapView().copySelectedResidues(false);

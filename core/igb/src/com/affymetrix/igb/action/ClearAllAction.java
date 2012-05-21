@@ -31,6 +31,7 @@ public class ClearAllAction extends GenericAction {
 		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("clearAll")), KeyEvent.VK_C);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear entire view?")) {

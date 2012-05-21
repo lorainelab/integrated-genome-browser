@@ -51,6 +51,7 @@ public class AboutIGBAction extends GenericAction {
 		super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null, "16x16/status/dialog-information.png", "22x22/status/dialog-information.png", KeyEvent.VK_A, null, true);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		JPanel message_pane = new JPanel();

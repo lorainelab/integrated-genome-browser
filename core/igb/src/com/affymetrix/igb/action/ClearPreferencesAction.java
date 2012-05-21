@@ -30,6 +30,7 @@ public class ClearPreferencesAction extends GenericAction {
 		super(BUNDLE.getString("ClearPreferences"), "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png");
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		// The option pane used differs from the confirmDialog only in

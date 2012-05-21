@@ -17,6 +17,7 @@ public class CopyFromSeqViewerAction extends GenericAction {
 		this.sv=sv;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		sv.copyAction();

@@ -30,6 +30,7 @@ public class AdjustEdgeMatchAction extends GenericAction {
 		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("adjustEdgeMatchFuzziness")), null, null, null, KeyEvent.VK_F);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		SeqMapView map_view = IGB.getSingleton().getMapView();

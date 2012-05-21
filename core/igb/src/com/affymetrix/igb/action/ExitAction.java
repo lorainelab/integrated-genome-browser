@@ -32,6 +32,7 @@ public class ExitAction extends GenericAction {
 		super(BUNDLE.getString("exit"), null, "16x16/actions/process-stop.png", "22x22/actions/process-stop.png", KeyEvent.VK_X);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(

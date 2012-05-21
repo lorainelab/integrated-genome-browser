@@ -41,6 +41,7 @@ public final class LoadURLAction extends AbstractLoadFileOrURLAction {
 		this.gviewerFrame = ((IGB)IGB.getSingleton()).getFrame();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		loadURL();

@@ -36,6 +36,7 @@ public class AutoLoadFeatureAction extends GenericAction {
 		return ACTION.autoloadCB;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		GeneralLoadUtils.setFeatureAutoLoad(autoloadCB.isSelected());

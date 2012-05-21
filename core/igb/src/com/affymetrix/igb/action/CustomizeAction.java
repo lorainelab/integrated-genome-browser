@@ -49,6 +49,7 @@ public class CustomizeAction extends SeqMapViewActionA {
 		f.setVisible(true);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		showCustomizer();

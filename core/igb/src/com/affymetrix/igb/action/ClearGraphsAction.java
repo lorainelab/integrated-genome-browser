@@ -31,6 +31,7 @@ public class ClearGraphsAction extends GenericAction {
 		super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("clearGraphs")), KeyEvent.VK_L);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if (IGB.confirmPanel("Really clear graphs?")) {

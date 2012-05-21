@@ -3,6 +3,8 @@ package com.affymetrix.igb.view;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 //import java.util.concurrent.Executor;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingWorker;
@@ -41,7 +43,8 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	 */
 	private SeqSymmetry slice_symmetry;
 	private CThreadWorker<Void, Void> slice_thread = null;
-
+	private Map<ITrackStyleExtended, ITrackStyleExtended> style2Style;
+	
 	AltSpliceSeqMapView(boolean b) {
 		super(b, "AltSpliceSeqMapView");
 		if (tier_manager != null) {
@@ -67,14 +70,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 
 	@Override
 	public TierGlyph getTrack(final SeqSymmetry sym, final ITrackStyleExtended style, final TierGlyph.Direction tier_direction) {
-		TrackStyle style_copy = new TrackStyle(){
-			@Override
-			public String getMethodName(){
-				return style.getMethodName();
-			}
-		};
-		style_copy.copyPropertiesFrom(style);
-		style_copy.setMaxDepth(0);
+		ITrackStyleExtended style_copy = getStyle(style);
 		// super.getTrack() may have created a brand new tier, in which case
 		// the style is already set to "style_copy", or it may have re-used
 		// a tier, in which case it may still have an old copy of the style
@@ -84,7 +80,39 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 		
 		return tierGlyph;
 	}
+	
+	private ITrackStyleExtended getStyle(final ITrackStyleExtended style){
+		// Lazy initialization
+		if(style2Style == null){
+			style2Style = new HashMap<ITrackStyleExtended, ITrackStyleExtended>();
+		}
 		
+		ITrackStyleExtended style_copy = style2Style.get(style);
+		if (style_copy == null) {
+			style_copy = new TrackStyle() {
+
+				@Override
+				public String getMethodName() {
+					return style.getMethodName();
+				}
+			};
+			style_copy.copyPropertiesFrom(style);
+			style_copy.setMaxDepth(0);
+			style2Style.put(style, style_copy);
+		}else{
+			// Properties that needs to be retained.
+			boolean show = style_copy.getShow();
+			
+			// Apply all properties.
+			style_copy.copyPropertiesFrom(style);
+			
+			// Apply retained properties.
+			style_copy.setShow(show);
+		}
+		
+		return style_copy;
+	}
+	
 	@Override
 	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		popup.add(CenterAtHairlineAction.getAction());

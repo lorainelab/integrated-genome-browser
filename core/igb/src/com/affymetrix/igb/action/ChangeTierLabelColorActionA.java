@@ -20,6 +20,7 @@ import javax.swing.JDialog;
  * @author dcnorris
  */
 public class ChangeTierLabelColorActionA extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
 
 	protected ChangeTierLabelColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);

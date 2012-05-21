@@ -15,6 +15,8 @@ public final class LocalUrlCacher {
 	private static final String cache_content_root = PreferenceUtils.getAppDataDirectory() + "cache/";
 	private static final String cache_header_root = cache_content_root + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
+	private static final String HTTP_LOCATION_HEADER = "Location";
+	private static final int HTTP_TEMP_REDIRECT = 307;
 	private static boolean DEBUG_CONNECTION = false;
 	private static boolean CACHE_FILE_URLS = false;
 	public static final int IGNORE_CACHE = 100;
@@ -38,7 +40,7 @@ public final class LocalUrlCacher {
 		ONLY,
 		NORMAL;
 	}
-
+	
 	// the "quickload" part of the constant value is there for historical reasons
 	public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
 	public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
@@ -204,6 +206,13 @@ public final class LocalUrlCacher {
 					HttpURLConnection hcon = (HttpURLConnection) conn;
 					http_status = hcon.getResponseCode();
 					
+					//Handle one redirect
+					if(http_status == HTTP_TEMP_REDIRECT){
+						conn = handleTemporaryRedirect(conn, url, sessionId, local_timestamp);
+						hcon = (HttpURLConnection) conn;
+						http_status = hcon.getResponseCode();
+					}
+							
 					// Status codes:
 					//     1xx Informational
 					//     2xx Success
@@ -265,6 +274,21 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
+	private static URLConnection handleTemporaryRedirect(URLConnection conn, String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException{
+		
+		String redirect_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
+		if(redirect_url == null){
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
+					"Url {0} moved temporarily. But no redirect url provided", url);
+			return conn;
+		}
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
+					"Url {0} moved temporarily. \n Using redirect \nurl {1}", new Object[]{url, redirect_url});
+		
+		conn = connectToUrl(redirect_url, sessionId, local_timestamp);
+		
+		return conn;
+	}
 
 	public static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
 		URL theurl = new URL(url);

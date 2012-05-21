@@ -24,6 +24,7 @@ public class ShowMinusStrandAction extends GenericAction {
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMinus());
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMinus(!AffyTieredMap.isShowMinus());

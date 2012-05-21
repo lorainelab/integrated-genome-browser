@@ -33,6 +33,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
 		super(IGBConstants.BUNDLE.getString("deleteAction"), null, "16x16/actions/edit-clear.png", "22x22/actions/edit-clear.png", KeyEvent.VK_UNDEFINED);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();

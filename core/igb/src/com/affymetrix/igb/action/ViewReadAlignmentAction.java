@@ -43,6 +43,7 @@ public class ViewReadAlignmentAction extends SeqMapViewActionA {
 		return action;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 

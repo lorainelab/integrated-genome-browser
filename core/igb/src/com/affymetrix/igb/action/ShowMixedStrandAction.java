@@ -24,6 +24,7 @@ public class ShowMixedStrandAction extends GenericAction {
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowMixed());
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowMixed(!AffyTieredMap.isShowMixed());

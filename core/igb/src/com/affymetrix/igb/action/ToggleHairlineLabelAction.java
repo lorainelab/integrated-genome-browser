@@ -37,6 +37,7 @@ public class ToggleHairlineLabelAction extends GenericAction implements Preferen
 		return ACTION;
 	}
 
+	@Override
 	public void actionPerformed(java.awt.event.ActionEvent e) {
 		super.actionPerformed(e);
 		PreferenceUtils.getTopNode().putBoolean(

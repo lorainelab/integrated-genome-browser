@@ -24,6 +24,7 @@ public class ShowPlusStrandAction extends GenericAction {
 		this.putValue(SELECTED_KEY, AffyTieredMap.isShowPlus());
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		AffyTieredMap.setShowPlus(!AffyTieredMap.isShowPlus());

@@ -44,6 +44,7 @@ public class RenameAction extends SeqMapViewActionA {
 		getSeqMapView().getSeqMap().updateWidget();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		List<TierGlyph> current_tiers = getTierManager().getSelectedTiers();

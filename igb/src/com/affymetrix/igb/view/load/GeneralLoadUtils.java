@@ -1209,6 +1209,12 @@ public final class GeneralLoadUtils {
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, loadAsTrack);
 		if (gFeature != null) {
 			addFeature(gFeature);
+			
+			if(gFeature.getLoadStrategy() == LoadStrategy.VISIBLE ||
+					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME){
+				Application.infoPanel(GenericFeature.howtoloadmsg, PreferenceUtils.getTopNode(), 
+				GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+			}
 		}
 
 	}

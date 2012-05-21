@@ -156,6 +156,8 @@ public final class BookmarkUnibrowControlServlet {
 			if(loaddata){
 				AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
 				if(!seqGroup.isSynonymous(version)){
+					Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
+					"Bookmark genome version seq group ''{0}" + "'' crated.", version);
 					seqGroup = gmodel.addSeqGroup(version);
 				}
 				loadChromosomesFor(igbService, seqGroup, gServers, query_urls);
@@ -425,6 +427,8 @@ public final class BookmarkUnibrowControlServlet {
 	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
 		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
 		if (book_group == null) {
+			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
+					"Bookmark genome version seq group ''{0}" + "'' not found.", version);
 			//ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n"
 			//		+ "You may need to choose a different server.");
 			return null; // cancel

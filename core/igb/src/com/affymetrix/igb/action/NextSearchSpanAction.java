@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
 
 public class NextSearchSpanAction extends GenericAction {
 	private static final long serialVersionUID = 1L;
@@ -19,7 +20,7 @@ public class NextSearchSpanAction extends GenericAction {
 	}
 
 	private NextSearchSpanAction() {
-		super("Next Search Span", "16x16/actions/go-next.png","22x22/actions/go-next.png");
+		super(IGBConstants.BUNDLE.getString("nextSearchSpan"), "16x16/actions/go-next.png","22x22/actions/go-next.png");
 		setEnabled(false);
 	}
 

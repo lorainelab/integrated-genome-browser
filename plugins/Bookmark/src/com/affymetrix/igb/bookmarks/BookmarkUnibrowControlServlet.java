@@ -203,7 +203,7 @@ public final class BookmarkUnibrowControlServlet {
 				if (null == seq) {
 					if(loaddata){
 						AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
-						if(!seqGroup.isSynonymous(version)){
+						if(seqGroup == null || !seqGroup.isSynonymous(version)){
 							seqGroup = gmodel.addSeqGroup(version);
 						}
 						loadChromosomesFor(igbService, seqGroup, gServers, query_urls);

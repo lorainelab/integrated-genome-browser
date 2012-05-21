@@ -34,7 +34,7 @@ public class ChangeViewModeAction extends SeqMapViewActionA {
 			}
 			
 			ITrackStyleExtended comboStyle = (glyph.getViewModeGlyph() instanceof AbstractGraphGlyph) ? ((AbstractGraphGlyph) glyph.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-			TrackView.getInstance().changeViewMode(gviewer, style, mode.getName(), rootSym, comboStyle);
+			TrackView.getInstance().changeViewMode(getSeqMapView(), style, mode.getName(), rootSym, comboStyle);
 		}
 
 		refreshMap(false, false);

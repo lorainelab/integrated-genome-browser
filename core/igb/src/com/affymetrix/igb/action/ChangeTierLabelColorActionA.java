@@ -78,6 +78,6 @@ public class ChangeTierLabelColorActionA extends SeqMapViewActionA {
 				null); //no CANCEL button handler
 
 		dialog.setVisible(true);
-		gviewer.getSeqMap().updateWidget();
+		getSeqMapView().getSeqMap().updateWidget();
 	}
 }

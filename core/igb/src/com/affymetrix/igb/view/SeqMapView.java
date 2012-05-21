@@ -57,7 +57,6 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.shared.MapViewModeHolder;

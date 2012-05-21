@@ -156,7 +156,7 @@ public final class BookmarkUnibrowControlServlet {
 		if (null == seq) {
 			if(loaddata){
 				AnnotatedSeqGroup seqGroup = gmodel.getSelectedSeqGroup();
-				if(!seqGroup.isSynonymous(version)){
+				if(seqGroup == null || !seqGroup.isSynonymous(version)){
 					Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING,
 					"Bookmark genome version seq group ''{0}" + "'' created.", version);
 					seqGroup = gmodel.addSeqGroup(version);

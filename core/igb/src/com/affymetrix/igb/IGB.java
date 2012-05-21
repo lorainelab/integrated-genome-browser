@@ -83,6 +83,7 @@ public final class IGB extends Application
 		implements GroupSelectionListener, SeqSelectionListener {
 
 	private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
+	private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
 	public static final String NODE_PLUGINS = "plugins";
 	private JFrame frm;
 	private JMenuBar mbar;
@@ -291,8 +292,13 @@ public final class IGB extends Application
 		MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
 		SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
 		checkInternetConnection();
+			notifyCounter();
 	}
 
+	private void notifyCounter(){
+		LocalUrlCacher.isValidURL(COUNTER_URL);
+	}
+	
 	private void checkInternetConnection() {
 		boolean connected = LocalUrlCacher.isValidURL(GUARANTEED_URL);
 		if (!connected) {

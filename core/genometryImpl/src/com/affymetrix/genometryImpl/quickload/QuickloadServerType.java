@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -27,6 +29,8 @@ import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -276,7 +280,18 @@ public class QuickloadServerType implements ServerTypeI {
 				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
 				return;
 			}
-			for (String type_name : typeNames) {
+			final MutableInt nameLoop = new MutableInt(0);
+			ProgressUpdater progressUpdater = new ProgressUpdater("Quickload discover features", 0, typeNames.size(), 
+				new PositionCalculator() {
+					@Override
+					public long getCurrentPosition() {
+						return nameLoop.intValue();
+					}
+				}
+			);
+			progressUpdater.start();
+			for (; nameLoop.intValue() < typeNames.size(); nameLoop.increment()) {
+				String type_name = typeNames.get(nameLoop.intValue());
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
@@ -289,6 +304,7 @@ public class QuickloadServerType implements ServerTypeI {
 						new GenericFeature(
 						type_name, type_props, gVersion, getQuickLoad(gVersion, type_name), null, autoload));
 			}
+			progressUpdater.kill();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

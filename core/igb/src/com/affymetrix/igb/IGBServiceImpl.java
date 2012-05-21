@@ -453,7 +453,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void goToRegion(String region) {
-		((SeqMapView)getSeqMapView()).getMapRangeBox().setRange((SeqMapView)getSeqMapView(), region);
+		((SeqMapView)getSeqMapView()).getMapRangeBox().setRange(region);
 	}
 
 	@Override

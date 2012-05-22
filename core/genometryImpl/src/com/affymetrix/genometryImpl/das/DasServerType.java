@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -31,6 +32,8 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.thread.PositionCalculator;
+import com.affymetrix.genometryImpl.thread.ProgressUpdater;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -193,7 +196,19 @@ public class DasServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		DasSource version = (DasSource) gVersion.versionSourceObj;
-		for (Entry<String,String> type : version.getTypes().entrySet()) {
+		List<Entry<String, String>> types = new ArrayList<Entry<String, String>>(version.getTypes().entrySet());
+		final MutableInt nameLoop = new MutableInt(0);
+		ProgressUpdater progressUpdater = new ProgressUpdater("DAS2 discover features", 0, types.size(), 
+			new PositionCalculator() {
+				@Override
+				public long getCurrentPosition() {
+					return nameLoop.intValue();
+				}
+			}
+		);
+		progressUpdater.start();
+		for (; nameLoop.intValue() < types.size(); nameLoop.increment()) {
+			Entry<String,String> type = types.get(nameLoop.intValue());
 			String type_name = type.getKey();
 			if (type_name == null || type_name.length() == 0) {
 				System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
@@ -201,6 +216,7 @@ public class DasServerType implements ServerTypeI {
 			}
 			gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
 		}
+		progressUpdater.kill();
 	}
 
 	@Override

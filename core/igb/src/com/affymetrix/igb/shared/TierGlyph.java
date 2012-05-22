@@ -86,11 +86,9 @@ public class TierGlyph extends SolidGlyph {
 	private void setViewModeGlyph(ITrackStyleExtended style) {
 		if (isSymLoaded()) {
 			MapViewGlyphFactoryI factory = getViewGlyphFactory(style.getViewMode());
-			Rectangle2D.Double savedCoordBox = null;
 			if (factory != null) {
 				Operator operator = getOperator(style.getOperator());
 				if (operator != null) {
-					savedCoordBox = getCoordBox();
 					factory = new OperatorGlyphFactory(operator, factory);
 					style.setViewMode(((OperatorGlyphFactory)factory).getActualFactoryName());
 				} else {
@@ -103,9 +101,6 @@ public class TierGlyph extends SolidGlyph {
 				}
 			}
 			setViewModeGlyph(factory.getViewModeGlyph(modelSym, style, getDirection(), smv));
-			if(savedCoordBox != null){
-				setCoordBox(savedCoordBox);
-			}
 		}
 		this.style = style;
 	}

@@ -734,7 +734,7 @@ public final class LocalUrlCacher {
 		
 		return false;
 	}
-	
+
 	public static boolean isValidURI(URI uri){
 
 		String scheme = uri.getScheme().toLowerCase();
@@ -771,5 +771,54 @@ public final class LocalUrlCacher {
 		}
 
 		return false;
+	}
+	
+	public static String getReachableUrl(String urlString) {
+		if (urlString.startsWith("file")) {
+			File f = new File(urlString);
+			if (f != null && f.exists()) {
+				return urlString;
+			}
+		}
+
+		if (urlString.startsWith("http") || urlString.startsWith("ftp")) {
+			InputStream istr = null;
+			URLConnection conn = null;
+			try {
+
+				conn = connectToUrl(urlString, null, -1);
+
+
+				if (conn instanceof HttpURLConnection) {
+					String reachable_url = urlString;
+					HttpURLConnection hcon = (HttpURLConnection) conn;
+					int http_status = hcon.getResponseCode();
+
+					//Handle one redirect
+					if (http_status == HTTP_TEMP_REDIRECT) {
+						reachable_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
+						conn = handleTemporaryRedirect(conn, urlString, null, -1);
+						hcon = (HttpURLConnection) conn;
+						http_status = hcon.getResponseCode();
+					}
+
+					//  So only consider URL reachable if 2xx or 3xx 
+					boolean url_reachable = ((http_status >= 200) && (http_status < 400));
+
+					if (url_reachable) {
+						return reachable_url;
+					}
+				}else{
+					return urlString;
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} finally {
+				GeneralUtils.safeClose(istr);
+			}
+		}
+
+		return null;
 	}
 }

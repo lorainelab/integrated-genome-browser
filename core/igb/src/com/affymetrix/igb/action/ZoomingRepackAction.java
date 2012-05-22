@@ -46,7 +46,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 	 * Create an action for the given tiered map.
 	 */
 	public ZoomingRepackAction() {
-		super("Optimize All Tracks", "16x16/places/user-desktop.png", "22x22/places/user-desktop.png");
+		super("Optimize All Tracks", null, null);
 		putValue(Action.SHORT_DESCRIPTION, "Optimize track stack heights for the region in view.");
 	}
 

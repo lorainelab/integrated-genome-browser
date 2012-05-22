@@ -12,7 +12,7 @@ public class RepackSelectedTiersAction extends RepackTiersAction {
 	private static RepackSelectedTiersAction ACTION = new RepackSelectedTiersAction();
 
 	public RepackSelectedTiersAction() {
-		super(IGBConstants.BUNDLE.getString("repackSelectedTracksAction"), "16x16/actions/view-refresh.png", "22x22/actions/view-refresh.png");
+		super(IGBConstants.BUNDLE.getString("repackSelectedTracksAction"), "16x16/places/user-desktop.png", "22x22/places/user-desktop.png");
 	}
 
 	static{

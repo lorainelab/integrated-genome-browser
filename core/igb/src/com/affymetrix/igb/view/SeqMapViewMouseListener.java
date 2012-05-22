@@ -405,17 +405,17 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 				if (startedInAxisTier()) {
 					// started in axis tier: user is trying to select sequence residues
 
-					if (pbox.width >= 2 && pbox.height >= 2) {
-						int seq_select_start = (int) cbox.x;
-						// add 1 for interbase.  But don't go past end of sequence.
-						int seq_select_end = Math.min(smv.getAnnotatedSeq().getLength(), (int) (cbox.x + cbox.width + 1));
-
-						SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.getAnnotatedSeq());
-						smv.setSelectedRegion(new_region, true);
-					} else {
-						// This is optional: clear selected region if drag is very small distance
-						smv.setSelectedRegion(null, true);
-					}
+//					if (pbox.width >= 2 && pbox.height >= 2) {
+//						int seq_select_start = (int) cbox.x;
+//						// add 1 for interbase.  But don't go past end of sequence.
+//						int seq_select_end = Math.min(smv.getAnnotatedSeq().getLength(), (int) (cbox.x + cbox.width + 1));
+//
+//						SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.getAnnotatedSeq());
+//						smv.setSelectedRegion(new_region, true);
+//					} else {
+//						// This is optional: clear selected region if drag is very small distance
+//						smv.setSelectedRegion(null, true);
+//					}
 
 				} else {
 					// started outside axis tier: user is trying to select glyphs
@@ -531,8 +531,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	private void processSubSelection(MouseEvent evt) {
-		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null
-				|| (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode) || is_graph_dragging) {
+		if (!(evt instanceof NeoMouseEvent) || 
+				(smv.getMapMode() != SeqMapView.MapMode.MapSelectMode) || is_graph_dragging) {
 			return;
 		}
 

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -51,7 +52,6 @@ public class QuickloadServerType implements ServerTypeI {
 		FA
 	};
 	private static final boolean DEBUG = false;
-	private static final String quickloadGenomeError = "QuickLoad site {0} does not have a genome description file (genome.txt) for {1} genome version {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
 	private static final String name = "Quickload";
 	public static final int ordinal = 20;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -276,7 +276,7 @@ public class QuickloadServerType implements ServerTypeI {
 			QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 			List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
 			if (typeNames == null) {
-				String errorText = MessageFormat.format(quickloadGenomeError, gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
+				String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
 				ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText);
 				return;
 			}

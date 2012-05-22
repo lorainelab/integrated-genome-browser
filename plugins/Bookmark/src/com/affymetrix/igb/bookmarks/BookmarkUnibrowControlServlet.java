@@ -325,8 +325,7 @@ public final class BookmarkUnibrowControlServlet {
 
 			GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers[i], type_uri);
 			if (feature != null) {
-				BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-				loadFeature(igbService, feature, seq, start, end);
+				loadFeature(igbService, feature, start, end);
 			}
 		}
 
@@ -349,7 +348,7 @@ public final class BookmarkUnibrowControlServlet {
 		for (int i = 0; i < gFeatures.length; i++) {
 			GenericFeature gFeature = gFeatures[i];
 			if (gFeature != null) {
-				loadFeature(igbService, gFeature, seq, start, end);
+				loadFeature(igbService, gFeature, start, end);
 			}
 		}
 		igbService.updateGeneralLoadView();
@@ -416,10 +415,10 @@ public final class BookmarkUnibrowControlServlet {
 		return feature;
 	}
 
-	private void loadFeature(IGBService igbService, GenericFeature gFeature, BioSeq seq, int start, int end) {
-		gFeature.setVisible();
+	private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-		if (!gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE)) {
+		if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
 			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		}
 		igbService.loadAndDisplaySpan(overlap, gFeature);

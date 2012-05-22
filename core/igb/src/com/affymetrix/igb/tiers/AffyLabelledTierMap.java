@@ -175,6 +175,14 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     ordered_glyphs = null;
   }
 
+	/**
+	 * An incomplete selection list model to support resizing and coloring.
+	 * This is just a hack at this point.
+	 * A more complete implementation might help.
+	 * It was added to support (vertical) resizing of tiers
+	 * taking selection into account.
+	 * It also supports color scheme choices.
+	 */
 	private class TierSelectionModel extends DefaultListSelectionModel
 	implements ActionListener {
 		private static final long serialVersionUID = 1L;
@@ -183,7 +191,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		public void actionPerformed(ActionEvent e) {
 			List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
 			this.setSelectionInterval(0, l.size()-1);
-			//throw new UnsupportedOperationException("Not supported yet.");
 			// Perhaps, here we should find out what the selection really is
 			// instead of leaving it up to the listeners.
 			// Soon...

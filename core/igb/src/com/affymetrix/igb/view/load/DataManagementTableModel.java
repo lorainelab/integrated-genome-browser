@@ -389,7 +389,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 			}
 
 			smv.getSeqMap().updateWidget();
-		} else {
+		} else if (col == HIDE_FEATURE_COLUMN){
+			smv.getSeqMap().repackTheTiers(false, true);
+		} else if (col == FOREGROUND_COLUMN) {
 			refreshSeqMapView();
 		}
 	}

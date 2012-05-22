@@ -33,6 +33,7 @@ import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.util.CloseableIterator;
 import net.sf.samtools.util.SeekableBufferedStream;
+import net.sf.samtools.util.SeekableHTTPStream;
 
 /**
  * @author jnicol
@@ -84,7 +85,7 @@ public final class BAM extends XAM {
 				return null;
 			}
 			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-			samFileReader = new SAMFileReader(new URL(reachable_url), indexFile, false);
+			samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url))), indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
 		} else if(scheme.startsWith("ftp")){
 			String baiUriStr = findIndexFile(uri.toString());

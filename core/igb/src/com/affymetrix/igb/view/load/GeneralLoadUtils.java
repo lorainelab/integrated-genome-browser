@@ -906,16 +906,15 @@ public final class GeneralLoadUtils {
 				continue;
 			}
 			String serverDescription = server.serverName + " " + server.serverType;
-			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
-			Application.getSingleton().addNotLockedUpMsg(msg);
+//			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
+//			Application.getSingleton().addNotLockedUpMsg(msg);
 			if (server.serverType != null && server.serverType.getResidues(server, versions, genomeVersionName, aseq, min, max, span)) {
 				residuesLoaded = true;
 			}
-			Application.getSingleton().removeNotLockedUpMsg(msg);
+//			Application.getSingleton().removeNotLockedUpMsg(msg);
 			if (residuesLoaded) {
-				Application.getSingleton().setStatus(MessageFormat.format(
-						"Completed loading sequence for {0} : {1} - {2} from {3}",
-						new Object[]{seq_name, min, max, serverDescription}));
+				Application.getSingleton().setStatus(MessageFormat.format(IGBConstants.BUNDLE.getString("completedLoadingSequence"),
+					seq_name, min, max, serverDescription));
 				return true;
 			}
 		}

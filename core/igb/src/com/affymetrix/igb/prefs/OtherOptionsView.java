@@ -106,11 +106,12 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
         edgeMatchPanel = new javax.swing.JPanel();
         edgeMatchColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, this);
         edgeMatchLabel = new javax.swing.JLabel();
-        showCollapseOptionCheckBox = new javax.swing.JCheckBox();
+        showCollapseOptionCheckBox = PreferenceUtils.createCheckBox("Show Collapse Option", PreferenceUtils.getTopNode(),     PreferenceUtils.SHOW_COLLAPSE_OPTION, TrackStyle.getDrawCollapseState());
         confirmBeforeLoadCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
             PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
         displayOption = PreferenceUtils.createCheckBox("Display Errors on Status Bar", PreferenceUtils.getTopNode(),
             PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors);
+        autoloadSequenceCheckBox = PreferenceUtils.createCheckBox("Autoload Sequence", PreferenceUtils.getTopNode(),       PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence);
 
         coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
 
@@ -150,7 +151,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                         .add(10, 10, 10)
                         .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(10, 10, 10))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -193,7 +194,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                         .add(10, 10, 10)
                         .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(bgComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -276,7 +277,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(otherLabel)
                 .add(10, 10, 10)
                 .add(OtherColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(10, 10, 10))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         residueColorPanelLayout.setVerticalGroup(
             residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -312,7 +313,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchLabel)
                 .add(10, 10, 10)
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(230, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         edgeMatchPanelLayout.setVerticalGroup(
             edgeMatchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -321,8 +322,6 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                 .add(edgeMatchColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
-        showCollapseOptionCheckBox.setText("Show Collapse Option");
-        showCollapseOptionCheckBox.setSelected(TrackStyle.getDrawCollapseState());
         showCollapseOptionCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showCollapseOptionCheckBoxActionPerformed(evt);
@@ -346,33 +345,29 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
             .add(layout.createSequentialGroup()
                 .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, edgeMatchPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(confirmBeforeDeleteCheckBox)
-                            .add(keepZoomStripeCheckBox)
-                            .add(showZoomStripLabelCheckBox)
-                            .add(autoChangeView)
-                            .add(showCollapseOptionCheckBox)
-                            .add(confirmBeforeLoadCheckBox)
-                            .add(edgeMatchPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 320, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, keepZoomStripeCheckBox)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, showZoomStripLabelCheckBox)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, autoChangeView)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, showCollapseOptionCheckBox)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, confirmBeforeLoadCheckBox)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(askBeforeExitCheckBox)
+                                    .add(confirmBeforeDeleteCheckBox))
+                                .add(101, 101, 101)
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(autoloadSequenceCheckBox)
+                                    .add(displayOption)))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .add(0, 0, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(askBeforeExitCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(displayOption)
-                        .add(110, 110, 110)))
-                .add(15, 15, 15))
-            .add(layout.createSequentialGroup()
-                .add(28, 28, 28)
-                .add(clear_prefsB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(clear_prefsB, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        layout.linkSize(new java.awt.Component[] {coordinatePanel, edgeMatchPanel, orfAnalyzerPanel, residueColorPanel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -389,13 +384,16 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
                     .add(askBeforeExitCheckBox)
                     .add(displayOption))
                 .add(5, 5, 5)
-                .add(confirmBeforeDeleteCheckBox)
-                .add(5, 5, 5)
-                .add(confirmBeforeLoadCheckBox)
-                .add(5, 5, 5)
-                .add(showZoomStripLabelCheckBox)
-                .add(5, 5, 5)
-                .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(confirmBeforeDeleteCheckBox)
+                        .add(5, 5, 5)
+                        .add(confirmBeforeLoadCheckBox)
+                        .add(5, 5, 5)
+                        .add(showZoomStripLabelCheckBox)
+                        .add(5, 5, 5)
+                        .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(autoloadSequenceCheckBox))
                 .add(5, 5, 5)
                 .add(showCollapseOptionCheckBox)
                 .add(5, 5, 5)
@@ -456,6 +454,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JLabel aLabel;
     private javax.swing.JCheckBox askBeforeExitCheckBox;
     private javax.swing.JCheckBox autoChangeView;
+    private javax.swing.JCheckBox autoloadSequenceCheckBox;
     private javax.swing.JLabel backgroundLabel;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private com.jidesoft.combobox.ColorComboBox bgComboBox;

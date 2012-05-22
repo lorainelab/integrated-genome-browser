@@ -405,7 +405,7 @@ public final class TrackAdjusterTab
 		}
 
 		boolean b = !(selectedTiers.isEmpty());
-		floatCB.setEnabled(b);
+		
 		fgColorComboBox.setEnabled(b);
 		labelFGComboBox.setEnabled(b);
 		bgColorComboBox.setEnabled(b);
@@ -576,7 +576,8 @@ public final class TrackAdjusterTab
 		vis_bounds_setter.setGraphs(glyphs);
 
 		if (!glyphs.isEmpty()) {
-			floatCB.setSelected(all_are_floating);
+			//floatCB.setSelected(all_are_floating);
+			floatCB.setEnabled(num_glyphs > 0);
 			yaxisCB.setSelected(all_show_axis);
 			labelCB.setSelected(all_show_label);
 		}
@@ -632,16 +633,29 @@ public final class TrackAdjusterTab
 				}
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-				for (Glyph g : igbService.getVisibleTierGlyphs()) {
-					ViewModeGlyph vg = ((TierGlyph) g).getViewModeGlyph();
-					if (vg instanceof MultiGraphGlyph) {
-						for (GlyphI child : vg.getChildren()) {
+//				for (Glyph g : igbService.getVisibleTierGlyphs()) {
+//					ViewModeGlyph vg = ((TierGlyph) g).getViewModeGlyph();
+//					if (vg instanceof MultiGraphGlyph) {
+//						for (GlyphI child : vg.getChildren()) {
+//							if (grafs.contains(child.getInfo())) {
+//								glyphs.add((AbstractGraphGlyph) child);
+//							}
+//						}
+//					} else if (grafs.contains(vg.getInfo())) {
+//						glyphs.add((AbstractGraphGlyph) vg);
+//					}
+//				}
+				
+				Glyph glyph = igbService.getSeqMap().getItem(graf);
+				if (glyph != null && glyph instanceof AbstractGraphGlyph) {
+					if (glyph instanceof MultiGraphGlyph) {
+						for (GlyphI child : glyph.getChildren()) {
 							if (grafs.contains(child.getInfo())) {
 								glyphs.add((AbstractGraphGlyph) child);
 							}
 						}
-					} else if (grafs.contains(vg.getInfo())) {
-						glyphs.add((AbstractGraphGlyph) vg);
+					}else if (!glyphs.contains(glyph)) {
+						glyphs.add((AbstractGraphGlyph)glyph);
 					}
 				}
 			}

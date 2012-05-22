@@ -352,8 +352,7 @@ public final class BookmarkUnibrowControlServlet {
 	private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE ||
-					gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME) {
+		if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
 			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		}
 		igbService.loadAndDisplaySpan(overlap, gFeature);

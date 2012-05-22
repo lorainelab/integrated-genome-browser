@@ -72,19 +72,7 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
 			ltm.addListSelectionListener(picker);
 		}
         picker.addItemListener(this.middleMan);
-		picker.addActionListener(this.actor);
 	}
-
-
-	private ActionListener actor = new AbstractAction("ChooseColor") {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// System.out.println("Color scheme choice action source: "+e.getSource());
-		}
-		
-	};
 
 	/**
 	 * Listens for the choice of a color scheme.

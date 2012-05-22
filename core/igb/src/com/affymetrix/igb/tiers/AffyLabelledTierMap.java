@@ -181,14 +181,22 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+			List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+			this.setSelectionInterval(0, l.size()-1);
 			//throw new UnsupportedOperationException("Not supported yet.");
 			// Perhaps, here we should find out what the selection really is
 			// instead of leaving it up to the listeners.
 			// Soon...
 			this.fireValueChanged(0, 1, false);
 		}
-		
+
+		@Override
+		public boolean isSelectedIndex(int theIndex) {
+			List<TierLabelGlyph> l = AffyLabelledTierMap.this.getOrderedTierLabels();
+			TierLabelGlyph tlg = l.get(theIndex);
+			return tlg.isSelected();
+		}
+
 		@Override
 		public void setSelectionMode(int theMode) {
 			if (ListSelectionModel.MULTIPLE_INTERVAL_SELECTION != theMode) {

@@ -57,6 +57,7 @@ import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory;
 import com.affymetrix.igb.viewmode.ComboGlyphFactory.ComboGlyph;
 import com.affymetrix.igb.shared.MapViewModeHolder;
@@ -297,6 +298,9 @@ public class SeqMapView extends JPanel
 				if (tier.getViewModeGlyph() instanceof SeqSelectionListener) {
 					((SeqSelectionListener) tier.getViewModeGlyph()).seqSelectionChanged(evt);
 				}
+			}
+			if (PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD_SEQUENCE, PreferenceUtils.default_auto_load_sequence)) {
+				GeneralLoadView.getLoadView().loadResidues(false);
 			}
 		}
 	};

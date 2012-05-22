@@ -175,22 +175,9 @@ public final class GeneralLoadView {
 	 *
 	 * @param evt
 	 */
-	public void loadResidues(GenericAction action) {
-		Object src = null;
-
-		if (action.equals(partial_residuesB.getAction())) {
-			src = partial_residuesB;
-		} else if (action.equals(all_residuesB.getAction())) {
-			src = all_residuesB;
-		}
-
-		if (src != partial_residuesB && src != all_residuesB) {
-			return;
-		}
-
+	public void loadResidues(final boolean partial) {
 		final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
 		final BioSeq seq = gmodel.getSelectedSeq();
-		final boolean partial = src == partial_residuesB;
 
 		CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>(MessageFormat.format(BUNDLE.getString(partial ? "loadPartialResidues" : "loadAllResidues"), seq.getID()), Thread.MIN_PRIORITY) {
 
@@ -213,7 +200,7 @@ public final class GeneralLoadView {
 		};
 
 		// Use a SwingWorker to avoid locking up the GUI.
-		CThreadHolder.getInstance().execute(src, worker);
+		CThreadHolder.getInstance().execute(this, worker);
 	}
 
 	public boolean loadResiduesInView(boolean tryFull) {

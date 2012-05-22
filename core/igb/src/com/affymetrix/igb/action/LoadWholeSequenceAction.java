@@ -31,6 +31,6 @@ public class LoadWholeSequenceAction extends GenericAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		GeneralLoadView.getLoadView().loadResidues(this);
+		GeneralLoadView.getLoadView().loadResidues(false);
 	}
 }

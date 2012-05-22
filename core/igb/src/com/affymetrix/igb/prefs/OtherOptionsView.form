@@ -409,7 +409,7 @@
         <Property name="text" type="java.lang.String" value="Reset preference to defaults"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="clear_prefsB.addActionListener(this);"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton(ClearPreferencesAction.getAction())"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="showZoomStripLabelCheckBox">

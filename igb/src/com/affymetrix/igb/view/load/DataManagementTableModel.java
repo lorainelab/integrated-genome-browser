@@ -367,11 +367,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setBackground((Color) value);
 				}
+				smv.getSeqMap().updateWidget();
 				break;
 			case FOREGROUND_COLUMN:
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setForeground((Color) value);
 				}
+				refreshSeqMapView();
 				break;
 			case SEPARATE_COLUMN:
 				if (vFeature.getStyle() != null) {
@@ -384,32 +386,25 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (vFeature.getStyle() != null) {
 					vFeature.getStyle().setTrackName((String) value);
 				}
+				smv.getSeqMap().setTierLabels();
+				smv.getSeqMap().updateWidget();
 				break;
 			default:
 				System.out.println("Unknown column selected: " + col);
 		}
 
 		fireTableCellUpdated(row, col);
-		if (col != LOAD_STRATEGY_COLUMN && col != DELETE_FEATURE_COLUMN
-				&& col != INFO_FEATURE_COLUMN
-				&& col != FEATURE_NAME_COLUMN
-				&& col != REFRESH_FEATURE_COLUMN && col != SEPARATE_COLUMN && col != TRACK_NAME_COLUMN) {
-			refreshSeqMapView();
-		}
-		if (col == TRACK_NAME_COLUMN) {
-			smv.getSeqMap().setTierLabels();
-			smv.getSeqMap().updateWidget();
-		}
-
 		TierPrefsView.getSingleton().updateTable();
 		TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
 	}
 
 	private void setVisibleTracks(ITrackStyle style) {
-		String trackName = style.getTrackName();
+		boolean update = false;
 		if (style.getShow()) {
 			smv.getPopup().hideOneTier(style);
+			update = true;
 		} else {
+			String trackName = style.getTrackName();
 			for (int i = 0; i < smv.getPopup().getShowMenu().getItemCount(); i++) {
 				String text = smv.getPopup().getShowMenu().getItem(i).getText();
 				if (text.length() > 29) {
@@ -421,10 +416,17 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 				if (text.equalsIgnoreCase(trackName)) {
 					style.setShow(true);
 					smv.getPopup().getShowMenu().remove(smv.getPopup().getShowMenu().getItem(i));
-					smv.getPopup().getHandler().sortTiers();
-					smv.getPopup().repack(false);
+					update = true;
 				}
 			}
+			
+			if(update){
+				smv.getPopup().getHandler().sortTiers();
+			}
+		}
+		
+		if (update) {
+			smv.getPopup().repack(false);
 		}
 	}
 

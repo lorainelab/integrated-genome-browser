@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -65,6 +66,14 @@ public final class BAM extends XAM {
 			samFileReader = new SAMFileReader(f, indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
 		} else if (scheme.startsWith("http")) {
+			String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
+				
+			if(reachable_url == null){
+				ErrorHandler.errorPanel("Url cannot be reached");
+				this.isInitialized = false;
+				return null;
+			}
+			
 			// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
 			String baiUriStr = findIndexFile(uri.toString());
 			// Guess at the location of the .bai URL as BAM URL + ".bai"	
@@ -75,7 +84,7 @@ public final class BAM extends XAM {
 				return null;
 			}
 			indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-			samFileReader = new SAMFileReader(uri.toURL(), indexFile, false);
+			samFileReader = new SAMFileReader(new URL(reachable_url), indexFile, false);
 			samFileReader.setValidationStringency(ValidationStringency.SILENT);
 		} else if(scheme.startsWith("ftp")){
 			String baiUriStr = findIndexFile(uri.toString());

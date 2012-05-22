@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
 public class ProgressUpdater {
+	private static final boolean DEBUG = false;
 	private static final int NUM_THREADS = 1;
 	private static final boolean DONT_INTERRUPT_IF_RUNNING = false;
 	private static final int SECONDS_BETWEEN_UPDATE = 1;
@@ -28,7 +29,7 @@ public class ProgressUpdater {
 		}
 		public void run() {
 			double progress = (double)(progressUpdater.getPositionCalculator().getCurrentPosition() - progressUpdater.getStartPosition()) / (double)(progressUpdater.getEndPosition() - progressUpdater.getStartPosition());
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
+			if (DEBUG) Logger.getLogger(this.getClass().getName()).log(Level.INFO, "called Progress Updater for " + progressUpdater.getName() + " with progress " + progress);
 			ctw.setProgressAsPercent(progress);
 		}
 	}

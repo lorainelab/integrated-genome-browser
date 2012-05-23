@@ -12,40 +12,36 @@
  */
 package com.affymetrix.igb;
 
-import java.util.Map.Entry;
-import com.jidesoft.plaf.LookAndFeelFactory;
-import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
-import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.util.Map.Entry;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import com.jidesoft.plaf.LookAndFeelFactory;
 
 import com.affymetrix.common.CommonUtils;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -53,30 +49,27 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 
-import com.affymetrix.genometryImpl.util.ConsoleView;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.view.*;
-import com.affymetrix.igb.window.service.IMenuCreator;
-import com.affymetrix.igb.window.service.IWindowService;
+import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
-import com.affymetrix.igb.prefs.*;
-import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.prefs.PrefsLoader;
+import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.view.AltSpliceView;
+import com.affymetrix.igb.view.SeqGroupViewGUI;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
+import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
+import com.affymetrix.igb.window.service.IMenuCreator;
+import com.affymetrix.igb.window.service.IWindowService;
+import static com.affymetrix.igb.IGBConstants.*;
 
-import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION;
-import static com.affymetrix.igb.IGBConstants.USER_AGENT;
-import com.affymetrix.igb.util.IGBTrustManager;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -185,7 +178,7 @@ public final class IGB extends Application
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates
 		// when connecting to server over HTTPS
-		initCustomTrustManager();
+		IGBTrustManager.installTrustManager();
 
 		// Configure HTTP User agent
 		System.setProperty("http.agent", USER_AGENT);
@@ -216,9 +209,6 @@ public final class IGB extends Application
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default
 		Authenticator.setDefault(new IGBAuthenticator(frm));
-
-		// Install trust manager
-		IGBTrustManager.installTrustManager();
 				
 		// force loading of prefs if hasn't happened yet
 		// usually since IGB.main() is called first, prefs will have already been loaded
@@ -320,44 +310,6 @@ public final class IGB extends Application
 		for (IStopRoutine stopRoutine : stopRoutines) {
 			stopRoutine.stop();
 		}
-	}
-
-	/**
-	 * This will instantiate a custom trust manager to handle untrusted
-	 * certificates when connecting to a DAS/2 server over HTTPS.  (In
-	 * normal situations where the server has a trusted certificate,
-	 * this code is not invoked.)
-	 */
-	private void initCustomTrustManager() {
-		TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-
-		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			return null;
-		}
-
-		public void checkClientTrusted(
-				java.security.cert.X509Certificate[] certs, String authType) {
-		}
-
-		public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-			for (int i = 0; i < certs.length; i++) {
-				int response = JOptionPane.showConfirmDialog(null, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?");
-				if (response != JOptionPane.OK_OPTION) {
-					throw new RuntimeException("Untrusted certificate.");
-				}
-			}
-		}
-	}};
-
-		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-
 	}
 
 	public IGBTabPanel[] setWindowService(final IWindowService windowService) {

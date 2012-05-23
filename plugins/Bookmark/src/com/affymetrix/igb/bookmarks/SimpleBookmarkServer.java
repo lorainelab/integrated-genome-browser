@@ -13,11 +13,10 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.osgi.service.IGBService;
-
-import java.net.*;
-import java.io.*;
+import com.affymetrix.igb.shared.IGBServerSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,97 +26,32 @@ import java.util.logging.Logger;
  *  ignores all other input, returns no output, and closes the connection.
  */
 public final class SimpleBookmarkServer {
-  private static final int default_server_port = 7085;
+	final static String http_response = IGBServerSocket.http_response;
+	final static String SERVLET_NAME_OLD = IGBServerSocket.SERVLET_NAME_OLD;
+	final static String SERVLET_NAME = IGBServerSocket.SERVLET_NAME;
+	final static String DEFAULT_SERVLET_URL = IGBServerSocket.DEFAULT_SERVLET_URL;
+	
+	public SimpleBookmarkServer(IGBService igbService) {
+		try {
 
-  /** The OLD name of the IGB servlet, "UnibrowControl". */
-  final static String SERVLET_NAME_OLD = "UnibrowControl";
+			if (IGBServerSocket.getServerSocket() == null) {
+				Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE,
+						"Couldn't find an available port for IGB to listen to control requests!\n"
+						+ "Turning off IGB's URL-based control features");
+			} else {
+				ServerSocket server = IGBServerSocket.getServerSocket();
 
-  /** The current name of the IGB servlet, "IGBControl". Current versions of
-   *  IGB will respond to both this and {@link #SERVLET_NAME_OLD}, but versions
-   *  up to and including 4.56 will respond ONLY to the old name.
-   */
-  final static String SERVLET_NAME = "IGBControl";
-  private static int ports_to_try = 5;
-  private int server_port;
-  final static byte[] prompt = "igb >>> ".getBytes();
-  final static String http_response = 
-		  "HTTP/1.1 204 No Content\n\n";
-
-  /** The basic localhost URL that starts a call to IGB; for backwards-compatibility
-   *  with versions of IGB 4.56 and earlier, the old name {@link #SERVLET_NAME_OLD}
-   *  is used.
-   */
-  static final String DEFAULT_SERVLET_URL = "http://localhost:"
-      + default_server_port + "/" + SERVLET_NAME_OLD;
-
-  public SimpleBookmarkServer(IGBService igbService) {
-    try {
-
-      server_port = findAvailablePort();
-
-      if (server_port == -1) {
-		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE,
-            "Couldn't find an available port for IGB to listen to control requests!\n"
-        + "Turning off IGB's URL-based control features");
-      }
-      else {
-        ServerSocket server = new ServerSocket(server_port);
-
-
-        while (true) {
-          Socket socket = server.accept();
-		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.FINE,
-			"Connection accepted " +
-                  socket.getInetAddress() +
-                  ":" + socket.getPort());
-          BookmarkHttpRequestHandler request = new BookmarkHttpRequestHandler(igbService, socket);
-          Thread thread = new Thread(request);
-          thread.start();
-        }
-      }
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-
-  private int findAvailablePort() {
-    // find an available port, starting with the default_server_point and
-      //   incrementing up from there...
-    int ports_tried = 0;
-    server_port = default_server_port - 1;
-    boolean available_port_found = false;
-    while ((!available_port_found) && (ports_tried < ports_to_try)) {
-      server_port++;
-      URL test_url;
-      try {
-        test_url = new URL("http://localhost:" + server_port +
-                "/" + SERVLET_NAME + "?ping=yes");
-      } catch (MalformedURLException mfe) {
-        return -1;
-      }
-
-
-      try {
-        // try and find an open port...
-        URLConnection conn = test_url.openConnection();
-				conn.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-				conn.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-        conn.connect();
-        // if connection is successful, that means we cannot use that port
-        // and must try another one.
-        ports_tried++;
-      } catch (IOException ex) {
-		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.INFO,
-				  "Found available port for bookmark server: " + server_port);
-        available_port_found = true;
-      }
-    }
-
-    if (available_port_found) {
-      return server_port;
-    } else {
-      return -1;
-    }
-  }
+				while (true) {
+					Socket socket = server.accept();
+					Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.FINE, "Connection accepted {0}:{1}",
+							new Object[]{socket.getInetAddress(), socket.getPort()});
+					BookmarkHttpRequestHandler request = new BookmarkHttpRequestHandler(igbService, socket);
+					Thread thread = new Thread(request);
+					thread.start();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 }

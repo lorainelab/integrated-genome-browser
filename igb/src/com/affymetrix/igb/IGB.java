@@ -76,6 +76,7 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
+import com.affymetrix.igb.util.IGBTrustManager;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -216,7 +217,9 @@ public final class IGB extends Application
 		//    be called on the authenticator set as the default
 		Authenticator.setDefault(new IGBAuthenticator(frm));
 
-
+		// Install trust manager
+		IGBTrustManager.installTrustManager();
+				
 		// force loading of prefs if hasn't happened yet
 		// usually since IGB.main() is called first, prefs will have already been loaded
 		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance

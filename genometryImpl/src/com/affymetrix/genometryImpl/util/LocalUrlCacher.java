@@ -2,9 +2,14 @@ package com.affymetrix.genometryImpl.util;
 
 import java.io.*;
 import java.net.*;
+import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import net.sf.samtools.util.SeekableStream;
 import net.sf.samtools.util.SeekableFileStream;
@@ -51,6 +56,35 @@ public final class LocalUrlCacher {
 
 	private static boolean offline = false;
 
+	// Ref : http://stackoverflow.com/questions/2893819/telling-java-to-accept-self-signed-ssl-certificate
+	static {
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[]{
+			new X509TrustManager() {
+
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+
+				public void checkClientTrusted(
+						java.security.cert.X509Certificate[] certs, String authType) {
+				}
+
+				public void checkServerTrusted(
+						java.security.cert.X509Certificate[] certs, String authType) {
+				}
+			}
+		};
+
+		// Install the all-trusting trust manager
+		try {
+			SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (GeneralSecurityException e) {
+		}
+	}
+	
 	/** Sets the cacher to off-line mode, in which case only cached data will
 	 *  be used, will never try to get data from the web.
 	 *

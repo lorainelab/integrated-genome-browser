@@ -134,6 +134,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("export");
 	}
 
+	public static Preferences getCertificatePrefsNode(){
+		return PreferenceUtils.getTopNode().node("certificate");
+	}
+	
 	public static void saveIntParam(String param_name, int param) {
 		try {
 			getTopNode().putInt(param_name, param);

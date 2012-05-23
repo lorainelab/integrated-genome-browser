@@ -1,12 +1,13 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.Application;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.JOptionPane;
 
 /**
  * This will instantiate a custom trust manager to handle untrusted
@@ -37,8 +38,10 @@ public class IGBTrustManager implements X509TrustManager {
 
 	public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 		for (int i = 0; i < certs.length; i++) {
-			int response = JOptionPane.showConfirmDialog(null, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?");
-			if (response != JOptionPane.OK_OPTION) {
+			boolean response = Application.confirmPanel("Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?", 
+					PreferenceUtils.getCertificatePrefsNode(), certs[i].getIssuerX500Principal().getName(), true);
+			 
+			if (!response) {
 				throw new RuntimeException("Untrusted certificate.");
 			}
 		}

@@ -48,8 +48,9 @@ import org.broad.tribble.readers.LineReader;
  *
  * @author hiralv
  */
-public final class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor {
+public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor {
 	private static final String TRACK = "track type={0}_{1} name=\"{2}_{3}\"";
+	private static final String TRACK_TYPE = "wiggle_0";
 	private int TRACK_COUNTER = 0;
 	
 	private static enum WigFormat {
@@ -473,11 +474,15 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 					+ ' ' + graf.getGraphYCoord(i) + '\n');
 		}
 	}
-	
+
+	protected String getTrackType() {
+		return TRACK_TYPE;
+	}
+
 	/** Writes the given GraphIntervalSym in wiggle-BED format.
 	 *  Also writes a track line as a header.
 	 */
-	public static void writeBedFormat(GraphSym graf, String genome_version, OutputStream outstream) throws IOException {
+	public void writeBedFormat(GraphSym graf, String genome_version, OutputStream outstream) throws IOException {
 		BioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getTrackName();
@@ -491,7 +496,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 			if (genome_version != null && genome_version.length() > 0) {
 				bw.write("# genome_version = " + genome_version + '\n');
 			}
-			bw.write("track type=wiggle_0 name=\"" + gname + "\"");
+			bw.write("track type=" + getTrackType() + " name=\"" + gname + "\"");
 			bw.write(" description=\"" + human_name + "\"");
 			bw.write(" visibility=full");
 			bw.write(" color=" + color.getRed() + "," + color.getGreen() + "," + color.getBlue());
@@ -653,11 +658,12 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		}
 	}
 
+	@Override
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) throws IOException {
 		return writeAnnotations(syms, seq, outstream);
 	}
 	
-	public static boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, OutputStream ostr) throws IOException {
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, OutputStream ostr) throws IOException {
 		try {
 
 			Iterator<? extends SeqSymmetry> iter = syms.iterator();

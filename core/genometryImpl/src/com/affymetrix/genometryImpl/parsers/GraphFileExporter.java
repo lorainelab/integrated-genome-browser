@@ -21,7 +21,7 @@ public class GraphFileExporter implements FileExporterI {
 
 	@Override
 	public void exportFile(DataOutputStream dos, List<SeqSymmetry> syms, BioSeq aseq) throws IOException {
-		Wiggle.writeAnnotations(syms,aseq,dos);
+		new Wiggle(null, null, null).writeAnnotations(syms,aseq,dos);
 	}
 	
 	@Override

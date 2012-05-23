@@ -16,8 +16,13 @@ import javax.swing.ImageIcon;
 public class KeyStrokeViewTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-	private final static String[] columnNames = {" ", "Action", "Key Stroke "
-		+ "(Double Click to Edit)", "Toolbar ?"};
+	private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
+	static {
+		columnNames[KeyStrokesView.IconColumn] = "";
+		columnNames[KeyStrokesView.ToolbarColumn] = "Toolbar ?";
+		columnNames[KeyStrokesView.ActionColumn] = "Action";
+		columnNames[KeyStrokesView.KeyStrokeColumn] = "Key Stroke (Double Click to Edit)";
+	}
 	private Object[][] rows;
 
 	@Override
@@ -27,7 +32,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return (columnNames == null) ? 0 : columnNames.length;
+		return KeyStrokesView.ColumnCount;
 	}
 
 	@Override

@@ -35,10 +35,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 	public final KeyStrokeViewTable table = new KeyStrokeViewTable("KeyStrokesView");
 	public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
 	public static final int IconColumn = 0;
-	public static final int ActionColumn = 1;
-	public static final int KeyStrokeColumn = 2;
-	public static final int ToolbarColumn = 3;
+	public static final int ToolbarColumn = 1;
+	public static final int ActionColumn = 2;
+	public static final int KeyStrokeColumn = 3;
 	public static final int IdColumn = 4; // not displayed in table
+	public static final int ColumnCount = 4;
 	private final ListSelectionModel lsm;
 	// private final TableRowSorter<DefaultTableModel> sorter;
 	public KeyStrokeEditPanel edit_panel = null;
@@ -154,11 +155,11 @@ public final class KeyStrokesView implements ListSelectionListener,
 				if (genericAction == null) {
 					Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, "!!! no GenericAction for key = " + key);
 				}
-				rows[i][0] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
-				rows[i][1] = (genericAction == null) ? "???" : genericAction.getDisplay();
-				rows[i][2] = keystroke_node.get(key, "");
-				rows[i][3] = toolbar_node.getBoolean(key, false);
-				rows[i][4] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
+				rows[i][IconColumn] = genericAction == null ? null : genericAction.getValue(Action.SMALL_ICON);
+				rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
+				rows[i][KeyStrokeColumn] = keystroke_node.get(key, "");
+				rows[i][ToolbarColumn] = toolbar_node.getBoolean(key, false);
+				rows[i][IdColumn] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
 			}
 		}
 		return rows;

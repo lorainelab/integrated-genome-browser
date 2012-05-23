@@ -239,6 +239,12 @@ public class AnnotatedSeqGroup {
 				}
 			}
 		}
+		if(removed && getSeqCount() == 1){
+			BioSeq seq = getSeq(0);
+			if(seq.getID().equals("genome")){
+				seqlist.remove(seq);
+			}
+		}
 		return removed;
 	}
 

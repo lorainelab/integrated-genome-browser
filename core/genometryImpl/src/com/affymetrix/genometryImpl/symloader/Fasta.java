@@ -3,12 +3,20 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSymWithResidues;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +24,10 @@ import java.util.regex.Pattern;
  *
  * @author jnicol
  */
-public class Fasta extends FastaCommon {
+public class Fasta extends FastaCommon implements AnnotationWriter {
 	private static final Pattern header_regex = 
 			Pattern.compile("^\\s*>\\s*(.+)");
+	private static final int COLUMNS = 50;
 
 	public Fasta(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
@@ -181,5 +190,34 @@ public class Fasta extends FastaCommon {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bis);
 		}
+	}
+
+	// only one sym in sym array
+	@Override
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms,
+			BioSeq seq, String type, OutputStream outstream) throws IOException {
+		if (syms == null || syms.size() != 1) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "bad symList in FastaAnnotationWriter");
+			return false;
+		}
+		SeqSymmetry sym = syms.iterator().next();
+		SimpleSymWithResidues residuesSym = (SimpleSymWithResidues)sym.getChild(0);
+		String residues = residuesSym.getResidues();
+		outstream.write('>');
+		outstream.write(seq.toString().getBytes());
+		outstream.write('\n');
+		int pointer = 0;
+		while (pointer < residues.length()) {
+			int end = Math.min(pointer + COLUMNS, residues.length());
+			outstream.write(residues.substring(pointer, end).getBytes());
+			outstream.write('\n');
+			pointer += COLUMNS;
+		}
+		return true;
+	}
+
+	@Override
+	public String getMimeType() {
+		return "text/fasta";
 	}
 }

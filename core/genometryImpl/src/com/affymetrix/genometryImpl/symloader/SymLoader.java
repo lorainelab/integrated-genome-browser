@@ -229,6 +229,9 @@ public abstract class SymLoader implements LineTrackerI {
 	}
 
 	public static String getExtension(URI uri){
+		if (uri == null) {
+			return null;
+		}
 		return getExtension(uri.toASCIIString().toLowerCase());
 	}
 	

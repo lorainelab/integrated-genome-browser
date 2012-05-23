@@ -313,7 +313,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		try {
 			File file = chrList.get(seq);
 			if (file == null) {
-				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+				Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
 				return Collections.<UcscPslSym>emptyList();
 			}
 			istr = new FileInputStream(file);

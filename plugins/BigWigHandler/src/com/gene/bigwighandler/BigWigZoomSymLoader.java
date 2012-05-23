@@ -182,22 +182,24 @@ public class BigWigZoomSymLoader extends SymLoader {
         int endBase = span.getMax();
         BioSeq igbSeq = span.getBioSeq();
         String bwSeq = igbSeq2bwSeq.get(igbSeq.getID());
-        ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(level,
-        		bwSeq, startBase, bwSeq, endBase, true);
-        while (zoomIterator.hasNext()) {
-            nextRecord = zoomIterator.next();
-            if (nextRecord == null) {
-                break;
-            }
-            if (nextStart != -1 && nextStart != nextRecord.getChromStart()) {
-                xList.add(nextStart);
-                wList.add(nextRecord.getChromStart() - nextStart);
-                yList.add(0.0f);
-            }
-            xList.add(nextRecord.getChromStart());
-            wList.add(nextRecord.getChromEnd() - nextRecord.getChromStart());
-            yList.add(nextRecord.getSumData() / (nextRecord.getChromEnd() - nextRecord.getChromStart()));
-            nextStart = nextRecord.getChromEnd();
+        if (bwSeq != null) {
+	        ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(level,
+	        		bwSeq, startBase, bwSeq, endBase, true);
+	        while (zoomIterator.hasNext()) {
+	            nextRecord = zoomIterator.next();
+	            if (nextRecord == null) {
+	                break;
+	            }
+	            if (nextStart != -1 && nextStart != nextRecord.getChromStart()) {
+	                xList.add(nextStart);
+	                wList.add(nextRecord.getChromStart() - nextStart);
+	                yList.add(0.0f);
+	            }
+	            xList.add(nextRecord.getChromStart());
+	            wList.add(nextRecord.getChromEnd() - nextRecord.getChromStart());
+	            yList.add(nextRecord.getSumData() / (nextRecord.getChromEnd() - nextRecord.getChromStart()));
+	            nextStart = nextRecord.getChromEnd();
+	        }
         }
 		int[] x = new int[xList.size()];
 		for (int i = 0; i < xList.size(); i++) {

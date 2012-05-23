@@ -14,14 +14,13 @@ import javax.swing.JFileChooser;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.parsers.AlignmentFileExporter;
-import com.affymetrix.genometryImpl.parsers.AnnotationFileExporter;
-import com.affymetrix.genometryImpl.parsers.FileExporterI;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.parsers.GraphFileExporter;
-import com.affymetrix.genometryImpl.parsers.SequenceFileExporter;
+import com.affymetrix.genometryImpl.symloader.Fasta;
+import com.affymetrix.genometryImpl.symloader.BedGraph;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -36,18 +35,25 @@ import java.util.logging.Level;
 
 public abstract class AbstractExportFileAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
+	private static final String MIME_TYPE_PREFIX = "text/";
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	
-	private static final Map<FileTypeCategory, FileExporterI> fileExporters = new HashMap<FileTypeCategory, FileExporterI>();
-	static {
-		fileExporters.put(FileTypeCategory.Annotation, new AnnotationFileExporter());
-		fileExporters.put(FileTypeCategory.Alignment, new AlignmentFileExporter());
-		fileExporters.put(FileTypeCategory.Graph, new GraphFileExporter());
-		fileExporters.put(FileTypeCategory.Sequence, new SequenceFileExporter());
-//		fileExporters.put(FileTypeCategory.Variant, null); // vcf ???
-//		fileExporters.put(FileTypeCategory.Mismatch, new MismatchFileExporter()); // wait until tally format is finalized
+	private interface AnnotationWriterCreator {
+		public AnnotationWriter getAnnotationWriter();
 	}
 
+	private static final Map<FileTypeCategory, AnnotationWriterCreator> annotationWriters = new HashMap<FileTypeCategory, AnnotationWriterCreator>();
+	static {
+		annotationWriters.put(FileTypeCategory.Annotation, new AnnotationWriterCreator() {
+			public AnnotationWriter getAnnotationWriter() {return new BedParser();}
+		});
+		annotationWriters.put(FileTypeCategory.Graph, new AnnotationWriterCreator() {
+			public AnnotationWriter getAnnotationWriter() {return new BedGraph(null, null, null);}
+		});
+		annotationWriters.put(FileTypeCategory.Sequence, new AnnotationWriterCreator() {
+			public AnnotationWriter getAnnotationWriter() {return new Fasta(null, null, null);}
+		});
+	}
+	
 	protected AbstractExportFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
 		super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
 	}
@@ -70,8 +76,16 @@ public abstract class AbstractExportFileAction extends GenericAction {
 
 	private void saveAsFile(TierGlyph atier) {
 		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
-		FileExporterI fileExporter = fileExporters.get(rootSym.getCategory());
-		String extension = fileExporter.getFileExtension();
+		AnnotationWriterCreator annotationWriterCreator = annotationWriters.get(rootSym.getCategory());
+		if (annotationWriterCreator == null) {
+			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name());
+		}
+		AnnotationWriter annotationWriter = annotationWriters.get(rootSym.getCategory()).getAnnotationWriter();
+		String mimeType = annotationWriter.getMimeType();
+		if (!mimeType.startsWith(MIME_TYPE_PREFIX)) {
+			throw new UnsupportedOperationException("Export file can't handle mime type " + mimeType);
+		}
+		String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
 		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 		JFileChooser chooser = UniFileChooser.getFileChooser(fth.getName(), extension);
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -84,7 +98,7 @@ public abstract class AbstractExportFileAction extends GenericAction {
 			try {
 				File fil = chooser.getSelectedFile();
 				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
-				exportFile(fileExporter, dos, aseq, atier);
+				exportFile(annotationWriter, dos, aseq, atier);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
 			} finally {
@@ -93,6 +107,6 @@ public abstract class AbstractExportFileAction extends GenericAction {
 		}
 	}
 
-	protected abstract void exportFile(FileExporterI fileExporter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
+	protected abstract void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
 	
 }

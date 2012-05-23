@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.parsers.FileExporterI;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.igb.shared.TierGlyph;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -27,7 +27,7 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 	}
 
 	@Override
-	protected void exportFile(FileExporterI fileExporter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
-		fileExporter.exportFile(dos, atier.getViewModeGlyph().getSelected(), aseq);
+	protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException{
+		annotationWriter.writeAnnotations(atier.getViewModeGlyph().getSelected(), aseq, "", dos);
 	}
 }

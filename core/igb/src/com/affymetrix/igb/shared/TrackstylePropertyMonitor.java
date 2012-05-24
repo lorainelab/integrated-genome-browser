@@ -24,10 +24,12 @@ public class TrackstylePropertyMonitor implements TableModelListener, ActionList
 		return singleton;
 	}
 
+	@Override
 	public void tableChanged(TableModelEvent e) {
 		firePropertyChanged(e);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		firePropertyChanged(e);
 	}

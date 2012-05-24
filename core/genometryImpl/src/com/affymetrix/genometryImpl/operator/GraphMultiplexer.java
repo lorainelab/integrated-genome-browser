@@ -79,7 +79,6 @@ public class GraphMultiplexer implements Operator {
 			newParent.addChild(s);
 		}
 		return newParent;
-		//throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**

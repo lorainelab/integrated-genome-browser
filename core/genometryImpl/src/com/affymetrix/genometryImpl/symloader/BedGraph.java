@@ -8,6 +8,10 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 public class BedGraph extends Wiggle implements AnnotationWriter {
 	private static final String TRACK_TYPE = "bedgraph";
 
+	public BedGraph() {
+		this(null, null, null);
+	}
+
 	public BedGraph(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri, featureName, seq_group);
 	}

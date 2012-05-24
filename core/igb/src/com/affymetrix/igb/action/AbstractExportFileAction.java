@@ -37,21 +37,12 @@ public abstract class AbstractExportFileAction extends GenericAction {
 	private static final long serialVersionUID = 1l;
 	private static final String MIME_TYPE_PREFIX = "text/";
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private interface AnnotationWriterCreator {
-		public AnnotationWriter getAnnotationWriter();
-	}
 
-	private static final Map<FileTypeCategory, AnnotationWriterCreator> annotationWriters = new HashMap<FileTypeCategory, AnnotationWriterCreator>();
+	private static final Map<FileTypeCategory, Class<? extends AnnotationWriter>> annotationWriters = new HashMap<FileTypeCategory, Class<? extends AnnotationWriter>>();
 	static {
-		annotationWriters.put(FileTypeCategory.Annotation, new AnnotationWriterCreator() {
-			public AnnotationWriter getAnnotationWriter() {return new BedParser();}
-		});
-		annotationWriters.put(FileTypeCategory.Graph, new AnnotationWriterCreator() {
-			public AnnotationWriter getAnnotationWriter() {return new BedGraph(null, null, null);}
-		});
-		annotationWriters.put(FileTypeCategory.Sequence, new AnnotationWriterCreator() {
-			public AnnotationWriter getAnnotationWriter() {return new Fasta(null, null, null);}
-		});
+		annotationWriters.put(FileTypeCategory.Annotation, BedParser.class);
+		annotationWriters.put(FileTypeCategory.Graph, BedGraph.class);
+		annotationWriters.put(FileTypeCategory.Sequence, Fasta.class);
 	}
 	
 	protected AbstractExportFileAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
@@ -76,11 +67,16 @@ public abstract class AbstractExportFileAction extends GenericAction {
 
 	private void saveAsFile(TierGlyph atier) {
 		RootSeqSymmetry rootSym = (RootSeqSymmetry)atier.getViewModeGlyph().getInfo();
-		AnnotationWriterCreator annotationWriterCreator = annotationWriters.get(rootSym.getCategory());
-		if (annotationWriterCreator == null) {
+		AnnotationWriter annotationWriter = null;
+		try {
+			annotationWriter = annotationWriters.get(rootSym.getCategory()).newInstance();
+		}
+		catch (Exception x) {
+			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name(), x);
+		}
+		if (annotationWriter == null) {
 			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name());
 		}
-		AnnotationWriter annotationWriter = annotationWriters.get(rootSym.getCategory()).getAnnotationWriter();
 		String mimeType = annotationWriter.getMimeType();
 		if (!mimeType.startsWith(MIME_TYPE_PREFIX)) {
 			throw new UnsupportedOperationException("Export file can't handle mime type " + mimeType);

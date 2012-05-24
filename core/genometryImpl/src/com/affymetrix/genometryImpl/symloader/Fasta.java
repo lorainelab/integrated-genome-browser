@@ -29,6 +29,10 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
 			Pattern.compile("^\\s*>\\s*(.+)");
 	private static final int COLUMNS = 50;
 
+	public Fasta() {
+		this(null, null, null);
+	}
+
 	public Fasta(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
 	}

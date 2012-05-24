@@ -49,9 +49,8 @@ public class GraphMultiplexer implements Operator {
 
 	@Override
 	public String getDisplay() {
-		String display/* = GenometryConstants.BUNDLE.getString("operator_" + getName())*/;
-		display = "Multiplex";
-		return display;
+		//return GenometryConstants.BUNDLE.getString("operator_" + getName());
+		return "Multiplex";
 	}
 
 	@Override
@@ -69,18 +68,22 @@ public class GraphMultiplexer implements Operator {
 		GraphSym paradigm = (GraphSym) firstOne;
 		GraphSym newParent;
 		// As a first pass let's assume that all the input graphs have the same domain.
-		int[] x = new int[10];
-		float[] y = new float[10];
+		int[] x = new int[paradigm.getGraphXCoords().length];
+		System.arraycopy(paradigm.getGraphXCoords(), 0, x, 0, x.length);
+		float[] y = new float[paradigm.getGraphYCoords().length];
+		// For now just copy the y values.
+		System.arraycopy(paradigm.getGraphYCoords(), 0, y, 0, y.length);
 		newParent = new GraphSym(x, y, "newguy", aseq); // This aint right?
+		newParent.setProperties(paradigm.cloneProperties());
 		for (SeqSymmetry s: symList) {
 			newParent.addChild(s);
 		}
-		//return newParent;
-		throw new UnsupportedOperationException("Not supported yet.");
+		return newParent;
+		//throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**
-	 * Don't think this makes sense for less than two graphs.
+	 * Don't think this makes sense for fewer than two graphs.
 	 * @return 2
 	 */
 	@Override

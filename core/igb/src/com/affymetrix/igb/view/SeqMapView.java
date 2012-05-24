@@ -1113,7 +1113,7 @@ public class SeqMapView extends JPanel
 		if (pixel_floater_glyph.getChildren() != null) {
 			for (GlyphI glyph : new ArrayList<GlyphI>(pixel_floater_glyph.getChildren())) {
 				ViewModeGlyph vg = (ViewModeGlyph) glyph;
-				if (!vg.getAnnotStyle().getFloatGraph()) {
+				if (!vg.getAnnotStyle().getFloatTier()) {
 					vg.getTierGlyph().defloat(pixel_floater_glyph, vg);
 				}
 			}
@@ -1127,7 +1127,7 @@ public class SeqMapView extends JPanel
 	 */
 	private void moveFloatingTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
-			if (tg.getViewModeGlyph().getAnnotStyle().getFloatGraph()) {
+			if (tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
 				tg.enfloat(pixel_floater_glyph, getSeqMap());
 			}
 		}

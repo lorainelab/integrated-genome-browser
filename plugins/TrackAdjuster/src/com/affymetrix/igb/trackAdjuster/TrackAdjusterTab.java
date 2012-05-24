@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -32,7 +31,6 @@ import com.affymetrix.igb.shared.*;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -262,6 +260,7 @@ public final class TrackAdjusterTab
 			}
 		};
 		colorSchemeBox = new ColorSchemeComboBox() {
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void setChoices(int i) {
@@ -294,9 +293,19 @@ public final class TrackAdjusterTab
 		}
 
 		floatCB.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
-				floatGraphs(floatCB.isSelected());
+				if (floatCB.isSelected()) {
+					GenericAction floatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.FloatTiersAction");
+					if (floatAction != null) {
+						floatAction.actionPerformed(null);
+					}
+				}
+				else {
+					GenericAction unFloatAction = GenericActionHolder.getInstance().getGenericAction("com.affymetrix.igb.action.UnFloatTiersAction");
+					if (unFloatAction != null) {
+						unFloatAction.actionPerformed(null);
+					}
+				}
 			}
 		});
 
@@ -522,7 +531,7 @@ public final class TrackAdjusterTab
 				hm = first_glyph.getHeatMap();
 			}
 			the_height = first_glyph.getGraphState().getTierStyle().getHeight();
-			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatGraph();
+			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = first_glyph.getGraphState().getShowAxis();
 			all_show_label = first_glyph.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
@@ -533,7 +542,7 @@ public final class TrackAdjusterTab
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (AbstractGraphGlyph gl : glyphs) {
-			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatGraph();
+			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
@@ -940,47 +949,6 @@ public final class TrackAdjusterTab
 		is_listening = true;
 	}
 
-	private void floatGraphs(boolean do_float) {
-		boolean something_changed = false;
-		for (AbstractGraphGlyph gl : glyphs) {
-			GraphState gstate = gl.getGraphState();
-//				if (gstate.getComboStyle() != null) {
-//					gstate.setComboStyle(null);
-//					something_changed = true;
-//				}
-			boolean is_floating = gstate.getTierStyle().getFloatGraph();
-			if (do_float && (!is_floating)) {
-				//GraphGlyphUtils.floatGraph(gl, gviewer);
-
-				// figure out correct height
-				Rectangle2D.Double coordbox = gl.getCoordBox();
-				Rectangle pixbox = new Rectangle();
-				igbService.getView().transformToPixels(coordbox, pixbox);
-				gstate.getTierStyle().setY(pixbox.y);
-				gstate.getTierStyle().setHeight(pixbox.height);
-
-				gstate.getTierStyle().setFloatGraph(true);
-				something_changed = true;
-			} else if ((!do_float) && is_floating) {
-				//GraphGlyphUtils.attachGraph(gl, gviewer);
-
-				// figure out correct height
-				Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
-				Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
-				Rectangle2D.Double coordbox = new Rectangle2D.Double();
-				igbService.getView().transformToCoords(pixbox, coordbox);
-				gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
-				gstate.getTierStyle().setHeight(coordbox.height);
-
-				gstate.getTierStyle().setFloatGraph(false);
-				something_changed = true;
-			}
-		}
-		if (something_changed) {
-			updateViewer();
-		}
-	}
-
 	private void setShowAxis(boolean b) {
 		for (AbstractGraphGlyph gl : glyphs) {
 			gl.setShowAxis(b);
@@ -993,18 +961,5 @@ public final class TrackAdjusterTab
 			gl.setShowLabel(b);
 		}
 		igbService.getSeqMap().updateWidget();
-	}
-
-	private void updateViewer() {
-		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
-		// set selections to empty so that options get turned off
-		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-				resetSelectedGraphGlyphs(previous_graph_syms);
-			}
-		});
 	}
 }

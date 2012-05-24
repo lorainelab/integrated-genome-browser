@@ -78,8 +78,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setReverseMaxDepth(int theNewDepth);
 	int getReverseMaxDepth();
 
-	boolean getFloatGraph();
-	void setFloatGraph(boolean b);
+	boolean getFloatTier();
+	void setFloatTier(boolean b);
 	public void setTrackNameSize(float font_size);
 	public float getTrackNameSize();
 	public Color getLabelForeground();

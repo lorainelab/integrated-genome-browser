@@ -74,7 +74,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
 			graph_style = first_glyph.getGraphStyle();
-			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatGraph();
+			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = first_glyph.getGraphState().getShowAxis();
 			all_show_label = first_glyph.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
@@ -85,7 +85,7 @@ public class SelectionListener implements SeqSelectionListener, SymSelectionList
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (AbstractGraphGlyph gl : glyphs) {
-			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatGraph();
+			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);

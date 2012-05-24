@@ -385,7 +385,7 @@ public class TrackView {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
 					method, feature.featureName, feature.getExtension());
 			
-			if(state.getTierStyle().getFloatGraph())
+			if(state.getTierStyle().getFloatTier())
 				return null;
 			
 			return state.getTierStyle();

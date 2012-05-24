@@ -41,7 +41,7 @@ public final class GraphGlyphUtils {
 	 *   the glyph's coord box is also its pixel box.
 	 */
 	public static void checkPixelBounds(ViewModeGlyph gl, NeoMap map) {
-		if (gl.getAnnotStyle().getFloatGraph()) {
+		if (gl.getAnnotStyle().getFloatTier()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();
 			if (gbox.y < mapbox.y) {

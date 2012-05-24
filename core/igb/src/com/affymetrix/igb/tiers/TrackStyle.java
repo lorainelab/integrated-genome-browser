@@ -1237,11 +1237,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		return this.max_depth;
 	}
 
-	public final boolean getFloatGraph() {
+	public final boolean getFloatTier() {
 		return float_graph;
 	}
 
-	public final void setFloatGraph(boolean b) {
+	public final void setFloatTier(boolean b) {
 		float_graph = b;
 	}
 

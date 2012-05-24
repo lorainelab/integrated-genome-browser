@@ -151,10 +151,10 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public final boolean getFloatGraph() {
+	public final boolean getFloatTier() {
 		return false;
 	}
-	public final void setFloatGraph(boolean b) {
+	public final void setFloatTier(boolean b) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

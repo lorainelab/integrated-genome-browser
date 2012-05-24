@@ -260,7 +260,7 @@ public abstract class BookmarkController {
 			}
 		}
 
-		gstate.getTierStyle().setFloatGraph(use_floating_graphs);
+		gstate.getTierStyle().setFloatTier(use_floating_graphs);
 		gstate.setShowLabel(show_label);
 		gstate.setShowAxis(show_axis);
 		gstate.setVisibleMinY((float) minvis);

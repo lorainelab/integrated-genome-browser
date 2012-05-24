@@ -303,6 +303,8 @@ public class Activator implements BundleActivator {
 		ScrollLeftAction.getAction();
 		ScrollRightAction.getAction();
 		ThreadHandlerAction.getAction();
+		FloatTiersAction.getAction();
+		UnFloatTiersAction.getAction();
 	}
 
 	private void initOperators() {

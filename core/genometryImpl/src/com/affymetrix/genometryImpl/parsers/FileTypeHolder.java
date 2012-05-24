@@ -426,9 +426,6 @@ public class FileTypeHolder {
 				}
 			}
 		}
-		if (getFileTypeHandler(extension) == null) {
-			extension = null;
-		}
 		return extension;
 	}
 

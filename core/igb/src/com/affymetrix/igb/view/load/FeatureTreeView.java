@@ -1,12 +1,14 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
-import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTree;
 import com.affymetrix.genoviz.util.Idable;
 import com.affymetrix.igb.Application;
@@ -41,13 +43,16 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,6 +61,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -79,9 +85,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private final JRPButton serverPrefsB;
-	private static final String path_separator = "/";
-	private final TreeCellRenderer tcr;
-	private final TreeCellEditor tce;
+	public static final String path_separator = "/";
 
 	public FeatureTreeView() {
 		this.setLayout(new BorderLayout());
@@ -108,10 +112,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		//Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
-		tcr = new FeatureTreeCellRenderer();
+		TreeCellRenderer tcr = new FeatureTreeCellRenderer();
 		tree.setCellRenderer(tcr);
 
-		tce = new FeatureTreeCellEditor();
+		TreeCellEditor tce = new FeatureTreeCellEditor();
 		tree.setCellEditor(tce);
 
 		tree.setEditable(true);
@@ -531,25 +535,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 	private final static class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		private static final Insets insets = new Insets(0, 0, 0, 0);
-		private final JRPCheckBox leafCheckBox = new JRPCheckBox("FeatureTreeView_FeatureTreeCellRenderer") {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Insets getInsets() {
-				return insets;
-			}
-		};
+		private final Font fontValue;
+		private final boolean focusPainted;
+		private final boolean borderPaintedFlat;
+		private final Border border;
+		private final Map<GenericFeature, FeatureCheckBox> leafCheckBoxes = new HashMap<GenericFeature, FeatureCheckBox>();
 		private final Color selectionBorderColor, selectionForeground;
 		private final Color selectionBackground, textForeground, textBackground;
 
 		public FeatureTreeCellRenderer() {
-			Font fontValue;
 			fontValue = UIManager.getFont("Tree.font");
-			if (fontValue != null) {
-				leafCheckBox.setFont(fontValue);
-			}
 
 			setLeafIcon(null);
 
@@ -560,17 +555,31 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 			textBackground = UIManager.getColor("Tree.textBackground");
 
 			Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
-			leafCheckBox.setFocusPainted((drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue()));
+			focusPainted = (drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue());
 
 			String osName = System.getProperty("os.name");
 			if (osName != null && osName.indexOf("Windows") != -1) {
-				leafCheckBox.setBorderPaintedFlat(true);
-				leafCheckBox.setBorder(new DashedBorder(selectionBorderColor));
+				borderPaintedFlat = true;
+				border = new DashedBorder(selectionBorderColor);
 			}
-
+			else {
+				borderPaintedFlat = false;
+				border = null;
+			}
 		}
 
-		public JRPCheckBox getLeafFeatureRenderer() {
+		private FeatureCheckBox getLeafCheckBox(GenericFeature gFeature) {
+			FeatureCheckBox leafCheckBox = leafCheckBoxes.get(gFeature);
+			if (leafCheckBox == null) {
+				leafCheckBox = new FeatureCheckBox(gFeature);
+				leafCheckBox.setFont(fontValue);
+				leafCheckBox.setFocusPainted(focusPainted);
+				leafCheckBox.setBorderPaintedFlat(borderPaintedFlat);
+				if (border != null) {
+					leafCheckBox.setBorder(border);
+				}
+				leafCheckBoxes.put(gFeature, leafCheckBox);
+			}
 			return leafCheckBox;
 		}
 
@@ -607,9 +616,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, GenericFeature gFeature, Object nodeUObject) {
 			// You must call super before each return.
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
-			leafCheckBox.setId("FeatureTreeView_" + featureText.replaceAll(" ", "_"));
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
 				ImageIcon infoIcon = CommonUtils.getInstance().getIcon("images/info.png");
@@ -654,7 +663,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		}
 	}
 
-	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+	public final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
 		private static final long serialVersionUID = 1L;
 		FeatureTreeCellRenderer renderer;
@@ -663,9 +672,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		public class FeatureLoadAction extends GenericAction {
 
 			private static final long serialVersionUID = 1L;
-			private final JRPCheckBox checkbox;
+			private final FeatureCheckBox checkbox;
 
-			private FeatureLoadAction(JRPCheckBox checkbox, Object extraInfo) {
+			private FeatureLoadAction(FeatureCheckBox checkbox, Object extraInfo) {
 				super(null, null, null, null, KeyEvent.VK_UNDEFINED, extraInfo, false);
 				this.checkbox = checkbox;
 			}
@@ -679,6 +688,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 					TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
 					if (tn.genericObject instanceof GenericFeature) {
 						GenericFeature feature = (GenericFeature) tn.genericObject;
+						if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+							String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
+							FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+							if (fth == null) {
+								ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
+								return;
+							}
+						}
 						String message;
 						if (checkbox.isSelected()) {
 							// check whether the selected feature url is reachable or not
@@ -759,13 +776,20 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 						Rectangle r = thetree.getPathBounds(path);
 						int x = mouseEvent.getX() - r.x;
 
-						if (renderer == null) {
-							renderer = new FeatureTreeCellRenderer();
-							final JRPCheckBox checkbox = renderer.getLeafFeatureRenderer();
-							checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
+						FeatureCheckBox checkbox = null;
+						if (nodeData instanceof GenericFeature) {
+							if (renderer == null) {
+								renderer = new FeatureTreeCellRenderer();
+							}
+							checkbox = renderer.getLeafCheckBox((GenericFeature)nodeData);
+							if (!checkbox.isFeatureLoadActionSet()) {
+								checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
+							}
+							checkbox.setText("");
 						}
-						JCheckBox checkbox = renderer.getLeafFeatureRenderer();
-						checkbox.setText("");
+						else {
+							throw new UnsupportedOperationException("isCellEditable with bad data");
+						}
 
 						returnValue = editedNode.isLeaf() && nodeData instanceof GenericFeature && x > 0 && x < checkbox.getPreferredSize().width;
 					}
@@ -787,8 +811,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 				}
 			};
 
-			if (editor instanceof JCheckBox) {
-				((JCheckBox) editor).addItemListener(itemListener);
+			if (editor instanceof FeatureCheckBox) {
+				((FeatureCheckBox) editor).addItemListener(itemListener);
 			}
 			return editor;
 		}
@@ -812,7 +836,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 		return null;
 	}
 
-	private final static class TreeNodeUserInfo implements Idable {
+	public final static class TreeNodeUserInfo implements Idable {
 
 		private final Object genericObject;
 		private boolean checked;
@@ -833,6 +857,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener,
 
 		public void setChecked(boolean newValue) {
 			checked = newValue;
+		}
+
+		public Object getGenericObject() {
+			return genericObject;
 		}
 
 		public String getId() {

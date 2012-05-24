@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.symloader;
 
 import java.io.*;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -9,6 +10,7 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterIntersecting;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -481,8 +483,8 @@ public abstract class SymLoader implements LineTrackerI {
 		throws Exception {
 		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 		if (fileTypeHandler == null) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "no handler for file type " + extension);
-			return new ArrayList<SeqSymmetry>();
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension));
+			return null;
 		}
 		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
 	}

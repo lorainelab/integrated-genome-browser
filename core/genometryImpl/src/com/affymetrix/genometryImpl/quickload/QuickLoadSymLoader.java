@@ -158,7 +158,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
 		List<? extends SeqSymmetry> results = this.getGenome();
 
-		if (Thread.currentThread().isInterrupted()) {
+		if (Thread.currentThread().isInterrupted() || results == null) {
 			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
 			//LoadModeTable.updateVirtualFeatureList();
 			results = null;

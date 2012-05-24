@@ -14,7 +14,8 @@ package com.affymetrix.genometryImpl.util;
 public class BlockCompressedStreamPosition {
 	private static final long COMPRESSED_BLOCK_SIZE = (2 << 15);
 //	private static final double APPROXIMATE_UNCOMPRESSED_BLOCK_SIZE = COMPRESSED_BLOCK_SIZE * APPROXIMATE_COMPRESS_RATIO;
-	private static final double APPROXIMATE_COMPRESS_RATIO = COMPRESSED_BLOCK_SIZE / 22000; // 64K to about 22.0K
+	public static final double APPROXIMATE_COMPRESS_RATIO = COMPRESSED_BLOCK_SIZE / 22000; // 64K to about 22.0K
+	public static final int CHUNK_SIZE = 2 >> 16;
 	private final long blockAddress;
 	private final int currentOffset;
 	public BlockCompressedStreamPosition(long pos) { // pos is virtual position

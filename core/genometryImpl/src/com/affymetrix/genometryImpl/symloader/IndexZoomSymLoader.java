@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public abstract class IndexZoomSymLoader extends SymLoader {
@@ -119,19 +120,10 @@ public abstract class IndexZoomSymLoader extends SymLoader {
 		return symList;
 	}
 
-	private static final int CHUNK_SIZE = 2 >> 16;
-	private static final double COMPRESS_RATIO = 64.0 / 22.0; // 64K to about 19.5K
 	private static long getUncompressedLength(long chunkStart, long chunkEnd) {
-		long blockAddressStart = BlockCompressedFilePointerUtil.getBlockAddress(chunkStart);
-		long blockAddressEnd = BlockCompressedFilePointerUtil.getBlockAddress(chunkEnd);
-		long blockOffsetStart = BlockCompressedFilePointerUtil.getBlockOffset(chunkStart);
-		long blockOffsetEnd = BlockCompressedFilePointerUtil.getBlockOffset(chunkEnd);
-		if (blockAddressStart == blockAddressEnd) {
-			return blockOffsetEnd - blockOffsetStart;
-		}
-		else {
-			return Math.round((blockAddressEnd - blockAddressStart) * COMPRESS_RATIO + (CHUNK_SIZE - blockOffsetStart) + blockOffsetEnd);
-		}
+		BlockCompressedStreamPosition start = new BlockCompressedStreamPosition(BlockCompressedFilePointerUtil.getBlockAddress(chunkStart), BlockCompressedFilePointerUtil.getBlockOffset(chunkStart));
+		BlockCompressedStreamPosition end = new BlockCompressedStreamPosition(BlockCompressedFilePointerUtil.getBlockAddress(chunkEnd), BlockCompressedFilePointerUtil.getBlockOffset(chunkEnd));
+		return end.getApproximatePosition() - start.getApproximatePosition();
 	}
 
 	private static int[] getRegion(int binno) {

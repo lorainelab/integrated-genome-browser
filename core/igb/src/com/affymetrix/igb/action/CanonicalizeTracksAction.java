@@ -110,14 +110,12 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 		}
 		double maxHeight = 0;
 		float maxMax = Float.MIN_VALUE;
-		for (GlyphI g: this.graphTracks) {
-			double h = g.getCoordBox().height;
-			TierGlyph tg = (TierGlyph) g;
-			Object info = tg.getInfo();
+		for (TierGlyph tg: this.graphTracks) {
+			double h = tg.getCoordBox().height;
 			if (tg.isManuallyResizable() && maxHeight < h) {
 				maxHeight = h;
 			}
-			GraphSym graph = (GraphSym) info;
+			GraphSym graph = (GraphSym) tg.getInfo();
 			float[] y = graph.getGraphYCoords();
 			float m = Float.MIN_VALUE;
 			for (int i = 0; i < y.length; i++) {
@@ -127,8 +125,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 			}
 			maxMax = Math.max(maxMax, m);
 		}
-		for (GlyphI g: this.graphTracks) {
-			TierGlyph tg = (TierGlyph) g;
+		for (TierGlyph tg: this.graphTracks) {
 			if (tg.isManuallyResizable()) {
 				tg.setPreferredHeight(
 						maxHeight,

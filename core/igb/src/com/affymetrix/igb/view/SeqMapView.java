@@ -2146,6 +2146,7 @@ public class SeqMapView extends JPanel
 		floater.addChild(glyph);
 	}
 
+	@Override
 	public PixelFloaterGlyph getPixelFloater() {
 		return pixel_floater_glyph;
 	}

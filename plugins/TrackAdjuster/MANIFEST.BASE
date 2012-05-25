@@ -8,6 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-TrackAdjusterPanel
 Bundle-Category: IGBTabPanel-com.affymetrix.igb.trackAdjuster.TrackAdjusterTabGUI
+Bundle-ClassPath: .,
+ resources/
+Bundle-Description: Adjust the properties of tracks.
 Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
@@ -20,6 +23,7 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  com.affymetrix.genoviz.util,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.event,
+ com.affymetrix.genoviz.glyph,
  com.affymetrix.genoviz.swing,
  com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.widget,
@@ -37,7 +41,4 @@ Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
  org.jdesktop.layout,
  com.jidesoft.combobox,
  org.osgi.framework;version="1.5.0"
-Bundle-ClassPath: .,
- resources/
-Bundle-Description: Adjust the properties of graphs.
 

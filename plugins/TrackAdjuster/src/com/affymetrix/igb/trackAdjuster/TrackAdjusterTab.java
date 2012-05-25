@@ -422,6 +422,27 @@ public final class TrackAdjusterTab
 		trackName.setEnabled(b);
 		maxStackDepthTextField.setEnabled(b);
 		trackNameSizeComboBox.setEnabled(b);
+		boolean isFloat = true;
+		boolean anySelected = false;
+		for (TierGlyph tg : selectedTiers) {
+			anySelected = true;
+			if (!tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
+				isFloat = false;
+			}
+		}
+		if (igbService.getSeqMapView().getPixelFloater().getChildren() != null) {
+			for (GlyphI gl : igbService.getSeqMapView().getPixelFloater().getChildren()) {
+				ViewModeGlyph vg = (ViewModeGlyph)gl;
+				if (vg.isSelected()) {
+					anySelected = true;
+					if (!((ViewModeGlyph)gl).getAnnotStyle().getFloatTier()) {
+						isFloat = false;
+					}
+				}
+			}
+		}
+		floatCB.setEnabled(anySelected);
+		floatCB.setSelected(anySelected && isFloat);
 		is_listening = true; // turn back on GUI events
 	}
 

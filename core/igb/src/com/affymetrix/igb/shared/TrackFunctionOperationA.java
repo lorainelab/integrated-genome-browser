@@ -126,7 +126,9 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		
 		if(preferredStyle != null){
-			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).copyPropertiesFrom(preferredStyle);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+			style.copyPropertiesFrom(preferredStyle);
+			style.setTrackName(featureName);
 		}
 		
 		return feature;

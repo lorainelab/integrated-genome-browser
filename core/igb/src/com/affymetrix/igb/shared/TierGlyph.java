@@ -168,6 +168,7 @@ public class TierGlyph extends SolidGlyph {
 		viewModeGlyph.setTierGlyph(this);
 		viewModeGlyph.setCoordBox(super.getCoordBox());
 		setVisibility(false);
+		setUnloadedOK(false);
 	}
 
 	/**

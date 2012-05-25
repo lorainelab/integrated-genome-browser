@@ -742,7 +742,7 @@ public final class TrackAdjusterTab
 
 		if (num_glyphs == 0) {
 			// Do Nothing
-		} else if (num_glyphs == 1) {
+		} else if (num_glyphs == 1 && igbService.getSeqMap().getItem(grafs.get(0)) != null) {
 			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
 			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			Color color = gl.getGraphState().getTierStyle().getBackground();

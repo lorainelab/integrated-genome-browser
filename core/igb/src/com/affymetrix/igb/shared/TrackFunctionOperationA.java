@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.Delegate;
@@ -125,11 +126,11 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 		
 		GeneralLoadView.getLoadView().refreshDataManagementView();
 		
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 		if(preferredStyle != null){
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 			style.copyPropertiesFrom(preferredStyle);
-			style.setTrackName(featureName);
 		}
+		style.setTrackName(featureName);
 		
 		return feature;
 	}

@@ -105,11 +105,11 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 		for (GlyphI g: l) {
 			double h = g.getCoordBox().height;
 			TierGlyph tg = (TierGlyph) g;
-			if (tg.isManuallyResizable() && maxHeight < h) {
-				maxHeight = h;
-			}
 			Object info = tg.getInfo();
 			if (info instanceof GraphSym) {
+				if (tg.isManuallyResizable() && maxHeight < h) {
+					maxHeight = h;
+				}
 				GraphSym graph = (GraphSym) info;
 				float[] y = graph.getGraphYCoords();
 				float m = Float.MIN_VALUE;
@@ -121,10 +121,6 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				maxMax = Math.max(maxMax, m);
 			}
 		}
-		JOptionPane.showMessageDialog(null,
-				"Thank you for your interest. Setting heights to " + maxMax,
-				this.getClass().getSimpleName(),
-				JOptionPane.INFORMATION_MESSAGE);
 		for (GlyphI g: l) {
 			Rectangle2D.Double b = g.getCoordBox();
 			TierGlyph tg = (TierGlyph) g;

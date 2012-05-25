@@ -15,13 +15,15 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * Make all the selected tracks easy to compare
@@ -39,13 +41,41 @@ import javax.swing.JOptionPane;
  * @author blossome
  */
 public class CanonicalizeTracksAction extends SeqMapViewActionA {
+	private static final long serialVersionUID = 1L;
+	private static CanonicalizeTracksAction ACTION;
 
-	public CanonicalizeTracksAction() {
+	/**
+	 * Get an (the) instance of a canonicalizer.
+	 * @return the same static instance every time.
+	 */
+	public static CanonicalizeTracksAction getAction() {
+		if (ACTION == null) {
+			ACTION = new CanonicalizeTracksAction();
+			AffyTieredMap m = ACTION.getSeqMapView().getSeqMap();
+			if (m instanceof AffyLabelledTierMap) {
+				AffyLabelledTierMap ltm = (AffyLabelledTierMap) m;
+				ltm.addListSelectionListener(new Enabler(ACTION));
+			}
+		}
+		return ACTION;
+	}
+
+	private CanonicalizeTracksAction() {
 		super("Canonicalize Tracks...",
 				"16x16/actions/equalizer.png",
 				"22x22/actions/equalizer.png");
 		putValue(Action.SHORT_DESCRIPTION,
-				"Make the scales of the selected tracks match.");
+			"Make the scales of the selected tracks match so they can be readily compared.");
+	}
+
+	/**
+	 * Enabled only if we can do something.
+	 * Over simplified to try out strategy.
+	 * Just check that a track (any track) is selected.
+	 */
+	public boolean shouldBeEnabled() {
+		List<? extends GlyphI> l = this.getSeqMapView().getSelectedTiers();
+		return (1 != l.size());
 	}
 
 	/**
@@ -80,7 +110,6 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 			}
 			Object info = tg.getInfo();
 			if (info instanceof GraphSym) {
-				System.out.println("   We gots a graph!");
 				GraphSym graph = (GraphSym) info;
 				float[] y = graph.getGraphYCoords();
 				float m = Float.MIN_VALUE;
@@ -91,9 +120,6 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				}
 				maxMax = Math.max(maxMax, m);
 			}
-			ViewModeGlyph vg = tg.getViewModeGlyph();
-			System.out.println(this.getClass().getName() + ": " + info.toString());
-			System.out.println(this.getClass().getName() + ": " + vg.toString());
 		}
 		JOptionPane.showMessageDialog(null,
 				"Thank you for your interest. Setting heights to " + maxMax,
@@ -101,7 +127,6 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 				JOptionPane.INFORMATION_MESSAGE);
 		for (GlyphI g: l) {
 			Rectangle2D.Double b = g.getCoordBox();
-			System.out.println("Glyph: " + g.getClass().getName());
 			TierGlyph tg = (TierGlyph) g;
 			if (tg.isManuallyResizable()) {
 				tg.setPreferredHeight(
@@ -118,6 +143,21 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 			}
 		}
 		this.refreshMap(true, false);
+	}
+
+	private static class Enabler implements ListSelectionListener {
+
+		private CanonicalizeTracksAction client;
+
+		Enabler(CanonicalizeTracksAction a) {
+			this.client = a;
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			this.client.setEnabled(this.client.shouldBeEnabled());
+		}
+		
 	}
 
 }

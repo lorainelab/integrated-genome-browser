@@ -18,7 +18,7 @@ import com.affymetrix.igb.shared.ViewModeGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
@@ -30,15 +30,10 @@ import javax.swing.event.ListSelectionListener;
  * by giving them the same size and scale.
  * When no tracks are selected, do them all.
  * Scale selected graphs to the smallest scale (largest MaxY).
- * <p> TODO
- * </p>
- * <ol>
- * <li> What's the correct way to resize? setPreferredHeight?
- * <li> Set the same stack depth for selected annotation tracks?
- * <li> Listen to ListSelectionModel to setEnabled depending on selection.
+ * Listen to ListSelectionModel to setEnabled depending on selection.
  * This last could get a bit complicated with numbers and types of tracks to consider.
- * </ol>
- * @author blossome
+ * <p> TODOSet the same stack depth for selected annotation tracks?
+ * @author Eric Blossom
  */
 public class CanonicalizeTracksAction extends SeqMapViewActionA {
 	private static final long serialVersionUID = 1L;
@@ -68,30 +63,43 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 			"Make the scales of the selected tracks match so they can be readily compared.");
 	}
 
+	private List<TierGlyph> graphTracks = new ArrayList<TierGlyph>();
 	/**
-	 * Enabled only if we can do something.
-	 * Over simplified to try out strategy.
-	 * Just check that a track (any track) is selected.
+	 * Should be enabled only if we can do something.
+	 * Check that more than one graph track is selected
+	 * or that no tracks are selected.
 	 */
 	public boolean shouldBeEnabled() {
 		List<? extends GlyphI> l = this.getSeqMapView().getSelectedTiers();
-		return (1 != l.size());
-	}
-
-	/**
-	 * Set the heights of selected graph tiers to the max of selected graph tiers.
-	 * Make sure selected graph tiers are all to the same scale.
-	 * Set same stack depth for all selected annotation tiers.
-	 * Pops up a dialog.
-	 */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-		List<? extends GlyphI> l = this.getSeqMapView().getSelectedTiers();
-		if (l.isEmpty()) { // then no tracks are selected.
-			// Canonicalize all the tracks.
+		if (0 == l.size()) {
 			l = this.getSeqMapView().getTierManager().getAllTierGlyphs();
 		}
 		if (1 == l.size()) {
+			return false;
+		}
+		this.graphTracks.clear();
+		for (GlyphI g: l) {
+			TierGlyph tg = (TierGlyph) g;
+			Object info = tg.getInfo();
+			if (info instanceof GraphSym) { // then we have a graph.
+				this.graphTracks.add(tg);
+			}
+		
+		}
+		return (1 < this.graphTracks.size());
+	}
+
+	/**
+	 * Set the heights and scales of selected (graph) tracks
+	 * to match each other.
+	 * Set the heights to that of the tallest tier.
+	 * Set the max y of each graph tier to the largest max y of all the graph tiers.
+	 * This should make them all the same scale.
+	 * TODO Set same stack depth for all selected annotation tiers.
+	 */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+		if (1 == this.graphTracks.size()) {
 			JOptionPane.showMessageDialog(null,
 					"Select more (or fewer) than one track.\n" +
 					"Actually you shouldn't be able to get here.\n" +
@@ -102,27 +110,24 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
 		}
 		double maxHeight = 0;
 		float maxMax = Float.MIN_VALUE;
-		for (GlyphI g: l) {
+		for (GlyphI g: this.graphTracks) {
 			double h = g.getCoordBox().height;
 			TierGlyph tg = (TierGlyph) g;
 			Object info = tg.getInfo();
-			if (info instanceof GraphSym) {
-				if (tg.isManuallyResizable() && maxHeight < h) {
-					maxHeight = h;
-				}
-				GraphSym graph = (GraphSym) info;
-				float[] y = graph.getGraphYCoords();
-				float m = Float.MIN_VALUE;
-				for (int i = 0; i < y.length; i++) {
-					if (m < y[i]) {
-						m = y[i];
-					}
-				}
-				maxMax = Math.max(maxMax, m);
+			if (tg.isManuallyResizable() && maxHeight < h) {
+				maxHeight = h;
 			}
+			GraphSym graph = (GraphSym) info;
+			float[] y = graph.getGraphYCoords();
+			float m = Float.MIN_VALUE;
+			for (int i = 0; i < y.length; i++) {
+				if (m < y[i]) {
+					m = y[i];
+				}
+			}
+			maxMax = Math.max(maxMax, m);
 		}
-		for (GlyphI g: l) {
-			Rectangle2D.Double b = g.getCoordBox();
+		for (GlyphI g: this.graphTracks) {
 			TierGlyph tg = (TierGlyph) g;
 			if (tg.isManuallyResizable()) {
 				tg.setPreferredHeight(

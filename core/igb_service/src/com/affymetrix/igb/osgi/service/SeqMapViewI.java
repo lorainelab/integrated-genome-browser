@@ -1,7 +1,5 @@
 package com.affymetrix.igb.osgi.service;
 
-import java.util.List;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -12,6 +10,7 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import java.util.List;
 
 /**
  *
@@ -106,4 +105,14 @@ public interface SeqMapViewI {
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically);
 	public void setZoomSpotX(double x);
 	public void setZoomSpotY(double y);
+
+	/**
+	 * Update the widget in this panel.
+	 */
+	public void updatePanel();
+	/**
+	 * Update the widget in this panel.
+	 */
+	public void updatePanel(boolean preserveViewX, boolean preserveViewY);
+
 }

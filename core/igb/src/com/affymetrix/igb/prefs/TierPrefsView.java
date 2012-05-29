@@ -6,9 +6,12 @@ import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.recordplayback.*;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPStyledJComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.MapViewGlyphFactoryI;
+import com.affymetrix.igb.shared.MapViewModeHolder;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
@@ -18,7 +21,6 @@ import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.shared.MapViewModeHolder;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -112,6 +114,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		if (smv != null) {
 			refreshButton.addActionListener(new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					refreshSeqMapViewAndSlicedView();
 				}
@@ -122,6 +125,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 					default_auto_refresh);
 			autoRefreshCheckBox.addActionListener(new ActionListener() {
 
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					if (refreshButton != null) {
 						refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
@@ -183,7 +187,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
 	public void refreshSeqMapView() {
 		if (smv != null) {
-			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
+			smv.updatePanel();
 		}
 	}
 
@@ -631,6 +635,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		if (!autoApplyChanges()) {
 			SwingUtilities.invokeLater(new Runnable() {
 
+				@Override
 				public void run() {
 					refreshSeqMapViewAndSlicedView();
 				}

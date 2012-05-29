@@ -1,8 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import java.awt.BorderLayout;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.igb.Application;
@@ -12,10 +9,13 @@ import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
-import com.affymetrix.igb.util.ColorUtils;
+import java.awt.BorderLayout;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  *
@@ -484,6 +484,7 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
     private javax.swing.JLabel tLabel;
     // End of variables declaration//GEN-END:variables
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
 		if (!pce.getNode().equals(PreferenceUtils.getTopNode()) || smv == null) {
 			return;
@@ -492,13 +493,15 @@ public class OtherOptionsView extends IPrefEditorComponent implements Preference
 		if (pce.getKey().equals(SeqMapView.PREF_AUTO_CHANGE_VIEW)) {
 			ThreadUtils.runOnEventQueue(new Runnable() {
 
+				@Override
 				public void run() {
-					smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
+					smv.updatePanel();
 				}
 			});
 		}
 	}
 
+	@Override
 	public void refresh() {
 		//Update Coordinate Track Colors
 		bgColorComboBox.setSelectedColor(CoordinateStyle.coordinate_annot_style.getBackground());

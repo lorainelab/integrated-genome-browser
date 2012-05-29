@@ -89,6 +89,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 		}
 
 		fireTableDataChanged();
+		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
 	}
 
 	/*
@@ -410,7 +411,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
 	private void refreshSeqMapView() {
 		if (smv != null) {
-			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
+			smv.updatePanel();
 		}
 	}
 

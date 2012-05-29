@@ -401,7 +401,7 @@ public final class GeneralLoadView {
 
 					@Override
 					protected void finished() {
-						gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+						gviewer.updatePanel();
 					}
 				};
 

@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -64,8 +65,8 @@ import com.affymetrix.igb.shared.MapViewModeHolder;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
- *
- * @version $Id: SeqMapView.java 11497 2012-05-10 19:48:51Z hiralv $
+ * A panel hosting a labeled tier map.
+ * Despite it's name this is actually a panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
 		implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
@@ -2540,4 +2541,23 @@ public class SeqMapView extends JPanel
 	public boolean consecutiveOK() {
 		return true;
 	}
+
+	/**
+	 * Update the widget in this panel.
+	 * Putting this awkward idiom here to try to contain its spread.
+	 * It is here for backward compatability.
+	 */
+	@Override
+	public void updatePanel(boolean preserveViewX, boolean preserveViewY) {
+		this.setAnnotatedSeq(this.getAnnotatedSeq(), true, preserveViewX, preserveViewY);
+	}
+
+	/**
+	 * Update the widget in this panel.
+	 */
+	@Override
+	public void updatePanel() {
+		this.updatePanel(true, true);
+	}
+
 }

@@ -113,7 +113,7 @@ public class SearchModeResidue implements ISearchMode,
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
 			glyphs.clear();
-			igbService.getSeqMapView().setAnnotatedSeq(igbService.getSeqMapView().getAnnotatedSeq(), true, true, true);
+			igbService.getSeqMapView().updatePanel();
 		}
 		color = 0;
 	}

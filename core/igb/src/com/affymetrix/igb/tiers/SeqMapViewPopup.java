@@ -9,9 +9,6 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.igb.shared.RepackTiersAction;
-import com.affymetrix.igb.action.ChangeExpandMaxAction;
-import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.operator.Operator;
@@ -77,7 +74,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			// later this can be made more specific to just update the tiers that changed
 			boolean preserve_view_x = !stretch_vertically;
 			boolean preserve_view_y = !stretch_horizonatally;
-			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view_x, preserve_view_y);
+			gviewer.updatePanel(preserve_view_x, preserve_view_y);
 		} else {
 			// if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
 			handler.repackTheTiers(false, stretch_vertically);

@@ -5,11 +5,9 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import java.util.List;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -37,8 +35,9 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 		setLocationRelativeTo(IGB.getSingleton().getFrame());
 		init();
 	}
-	public void init(){
+	private void init(){
 		SwingUtilities.invokeLater(new Runnable(){
+			@Override
 			public void run(){
 				setLocationRelativeTo(IGB.getSingleton().getFrame());
 				initComponents();
@@ -66,7 +65,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         message = new javax.swing.JLabel();
-        maxSlots = this.maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat("###0"));
+        maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat("###0"));
 
         Unlimitter.setText("Unlimited");
         Unlimitter.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -167,7 +166,7 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 97, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -223,7 +222,6 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
 			ErrorHandler.errorPanel(e.getLocalizedMessage()
 							+ " Maximum must be an integer: "
 							+ this.toString());
-					return;
 		}
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables

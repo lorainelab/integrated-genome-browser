@@ -139,7 +139,7 @@
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="maxSlotsKeyPressed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="this.maxSlots = new javax.swing.JFormattedTextField(new java.text.DecimalFormat(&quot;###0&quot;));"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JFormattedTextField(new java.text.DecimalFormat(&quot;###0&quot;));"/>
           </AuxValues>
         </Component>
       </SubComponents>

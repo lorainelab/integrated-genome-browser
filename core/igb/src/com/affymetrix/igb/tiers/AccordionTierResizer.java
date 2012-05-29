@@ -198,9 +198,11 @@ public class AccordionTierResizer extends MouseInputAdapter {
 			this.resizeRegion = consideringSelection(this.atBorder, orderedGlyphs);
 			this.atBorder = this.resizeRegion.indexOf(tierMouseIsAbove);
 			this.resizeRegion = pertinentTiers(this.atBorder, resizeRegion);
-			this.atBorder = this.resizeRegion.indexOf(tierMouseIsAbove);
-			if (null != this.resizeRegion && 1 < this.resizeRegion.size()) {
-				startDrag(this.resizeRegion, nevt);
+			if (null != this.resizeRegion) {
+				this.atBorder = this.resizeRegion.indexOf(tierMouseIsAbove);
+				if (1 < this.resizeRegion.size()) {
+					startDrag(this.resizeRegion, nevt);
+				}
 			}
 		}
 	}

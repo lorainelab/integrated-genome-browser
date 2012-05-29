@@ -14,7 +14,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.IGBServerSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;

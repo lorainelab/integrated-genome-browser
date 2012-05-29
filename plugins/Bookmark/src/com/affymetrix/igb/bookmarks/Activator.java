@@ -47,6 +47,15 @@ public class Activator extends WindowActivator implements BundleActivator {
 					new BookMarkCommandLine(igbService, url, false);
 				}
 			}
+    		String port = CommonUtils.getInstance().getArg("-port", args);
+    		if (port != null) {
+    			try {
+    				IGBServerSocket.setDefaultServePort(Integer.parseInt(port));
+    			}
+    			catch (NumberFormatException x) {
+    				Logger.getLogger(IGBServerSocket.class.getName()).log(Level.SEVERE, "Invalid number " + port + " for -port in command line arguments");
+    			}
+    		}
 		}
 
 		// assuming last file menu item is Exit, leave it there

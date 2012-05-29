@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,8 +17,21 @@ import java.util.logging.Logger;
  */
 public class IGBServerSocket {
 	// Declare constants
-	public static final int default_server_port = 7085;
+	public static int default_server_port = 0;
+	static {
+		try {
+			default_server_port = Integer.parseInt(ResourceBundle.getBundle("sockets").getString("default_server_port"));
+		}
+		catch (MissingResourceException x) {}
+		catch (NumberFormatException x) {
+			Logger.getLogger(IGBServerSocket.class.getName()).log(Level.SEVERE, "Invalid number " + ResourceBundle.getBundle("sockets").getString("default_server_port") + " for default_server_port in sockets.properties");
+		}
+	}
 	
+	public static void setDefaultServePort(int _default_server_port) {
+		default_server_port = _default_server_port;
+	}
+
 	/** The OLD name of the IGB servlet, "UnibrowControl". */
 	public final static String SERVLET_NAME_OLD = "UnibrowControl";
 	
@@ -35,8 +50,6 @@ public class IGBServerSocket {
 	*/
 	public static final String DEFAULT_SERVLET_URL = "http://localhost:"
       + default_server_port + "/" + SERVLET_NAME_OLD;
-	
-	
 	
 	private static final int ports_to_try = 5;
 	private static boolean tried = false;

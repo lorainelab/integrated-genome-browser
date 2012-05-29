@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -6,8 +5,8 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.TransformableViewModeGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TransformableViewModeGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
@@ -25,7 +24,8 @@ public class NewTierResizer extends MouseInputAdapter{
 	private SeqMapView gviewer = null;
 	private double start;
 	private double ourCeiling;
-	protected static Cursor ourCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+	protected static final Cursor ourCursor =
+			Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
 
 	private List<TierLabelGlyph> fixedInterior;
 	private TierLabelGlyph upperGl;

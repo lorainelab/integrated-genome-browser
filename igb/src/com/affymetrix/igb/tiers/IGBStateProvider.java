@@ -23,11 +23,6 @@ public final class IGBStateProvider extends DefaultStateProvider {
   }
 
   @Override
-  public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type) {
-	 return TrackStyle.getInstance(name,human_name,file_type);
-  }
-
-  @Override
   public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, java.util.Map<String, String> props) {
 	 return TrackStyle.getInstance(name,human_name,file_type,props);
   }

@@ -50,6 +50,10 @@ public class DefaultStateProvider implements StateProvider {
 		return style;
 	}
 
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String, String> props) {
+		return getAnnotStyle(name);
+	}
+		
 	public GraphState getGraphState(String id) {
 		return getGraphState(id, null, null, null);
 	}
@@ -62,13 +66,4 @@ public class DefaultStateProvider implements StateProvider {
 		}
 		return state;
 	}
-
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type) {
-		return getAnnotStyle(name);
-	}
-	
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String, String> props) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 }

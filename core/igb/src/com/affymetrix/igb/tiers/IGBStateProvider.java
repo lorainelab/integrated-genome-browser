@@ -7,24 +7,19 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class IGBStateProvider extends DefaultStateProvider {
-
+ 
   @Override
-  public GraphState getGraphState(String id, String human_name, String extension) {
+  public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String, String> props) {
 	if(human_name == null){
 		String unzippedName = GeneralUtils.getUnzippedName(id);
 		human_name = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 	}
-	return super.getGraphState(id, human_name, extension);
+	return super.getGraphState(id, human_name, extension, props);
   }
-	
+  	
   @Override
   public ITrackStyleExtended getAnnotStyle(String name) {
     return TrackStyle.getInstance(name,true);
-  }
-
-  @Override
-  public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type) {
-	 return TrackStyle.getInstance(name,human_name,file_type);
   }
 
   @Override

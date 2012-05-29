@@ -135,7 +135,7 @@ public final class TrackLineParser {
 		String human_name = appendTrackName(track_hash, default_track_name);
 		String name = track_hash.get(NAME);
 		
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type);
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, null);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}
@@ -250,7 +250,7 @@ public final class TrackLineParser {
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
 	public static void createGraphStyle(Map<String,String> track_hash, String graph_id, String graph_name, String extension) {
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_id, graph_name), extension);
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_id, graph_name), extension, null);
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

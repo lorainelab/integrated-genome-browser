@@ -52,7 +52,7 @@ public class Delegate extends QuickLoadSymLoader {
 			this.extension = "";
 			strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
 		}
-		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), featureName, extension).setViewMode("default");
+		DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), featureName, extension, null).setViewMode("default");
 	}
 	
 	/**

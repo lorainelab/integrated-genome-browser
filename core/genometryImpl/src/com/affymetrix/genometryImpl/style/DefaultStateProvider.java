@@ -51,22 +51,18 @@ public class DefaultStateProvider implements StateProvider {
 	}
 
 	public GraphState getGraphState(String id) {
-		return getGraphState(id, null, null);
+		return getGraphState(id, null, null, null);
 	}
 
-	public GraphState getGraphState(String id, String human_name, String extension) {
+	public GraphState getGraphState(String id, String human_name, String extension, Map<String, String> props) {
 		GraphState state = id2graphState.get(id);
 		if (state == null) {
-			state = new GraphState(id, human_name, extension);
+			state = new GraphState(id, human_name, extension, props);
 			id2graphState.put(id, state);
 		}
 		return state;
 	}
-
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type) {
-		return getAnnotStyle(name);
-	}
-	
+		
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String, String> props) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

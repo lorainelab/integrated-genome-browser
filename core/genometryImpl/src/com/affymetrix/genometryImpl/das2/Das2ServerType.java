@@ -443,7 +443,7 @@ public class Das2ServerType implements ServerTypeI {
 			else {
 				// Create an AnnotStyle so that we can automatically set the
 				// human-readable name to the DAS2 name, rather than the ID, which is a URI
-				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, format);
+				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, format, feature.featureProps);
 				ts.setFeature(feature);
 
 				//TODO: Probably not necessary.

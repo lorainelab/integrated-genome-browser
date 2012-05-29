@@ -287,7 +287,7 @@ public class DasServerType implements ServerTypeI {
 		builder.add("segment", segment);
 		builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.typeObj.toString(), feature.featureName, "das1");
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.typeObj.toString(), feature.featureName, "das1", feature.featureProps);
 		style.setFeature(feature);
 
 		// TODO - probably not necessary

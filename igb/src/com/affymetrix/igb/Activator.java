@@ -58,6 +58,7 @@ public class Activator implements BundleActivator {
     			System.out.println(APP_NAME + " " + APP_VERSION_FULL);
 				System.out.println("Options:");
 				System.out.println("-offline - set the URL caching to offline");
+				System.out.println("-port - bookmarks use the port specified");
 				System.out.println("-scriptfile - load a script file");
 				System.out.println("-convert - convert the fasta file to bnib");
 				System.out.println("-clrprf - clear the preferences");

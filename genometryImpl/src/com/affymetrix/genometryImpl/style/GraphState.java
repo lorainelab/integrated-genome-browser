@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.util.Map;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
@@ -98,8 +99,8 @@ public final class GraphState {
 	 *  an initial IAnnotStyle for the tier_style, but you can replace that style if
 	 *  necessary.
 	 */
-	public GraphState(String id, String human_name, String extension) {
-		this(DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, human_name, extension));
+	public GraphState(String id, String human_name, String extension, Map<String,String> props) {
+		this(DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, human_name, extension, props));
 		tier_style.setHeight(default_graph_height);
 		tier_style.setGraphTier(true);
 

@@ -61,7 +61,7 @@ public class EmptyTierGlyphFactory {
 	private static ITrackStyleExtended getStyle(String method, GenericFeature feature) {
 		if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
 			GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
-					method, feature.featureName, feature.getExtension());
+					method, feature.featureName, feature.getExtension(), feature.featureProps);
 			
 			if(state.getFloatGraph())
 				return null;

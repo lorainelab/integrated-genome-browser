@@ -9,12 +9,12 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 public final class IGBStateProvider extends DefaultStateProvider {
 
   @Override
-  public GraphState getGraphState(String id, String human_name, String extension) {
+  public GraphState getGraphState(String id, String human_name, String extension, java.util.Map<String,String> props) {
 	if(human_name == null){
 		String unzippedName = GeneralUtils.getUnzippedName(id);
 		human_name = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
 	}
-	return super.getGraphState(id, human_name, extension);
+	return super.getGraphState(id, human_name, extension, props);
   }
 	
   @Override

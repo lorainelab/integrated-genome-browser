@@ -740,7 +740,10 @@ public class SeqMapView extends JPanel
 				old_selections = Collections.<SeqSymmetry>emptyList();
 			}
 		}
-
+		
+		// Save selected tiers
+		List<TierGlyph> old_tier_selections = getTierManager().getSelectedTiers();
+		
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
@@ -800,6 +803,15 @@ public class SeqMapView extends JPanel
 			setStatus(getSelectionTitle(seqmap.getSelected()));
 		}
 
+		// Restore selected tiers
+		if(old_tier_selections != null){
+			for(TierLabelGlyph tierLabelGlyph : getTierManager().getAllTierLabels()){
+				if(old_tier_selections.contains(tierLabelGlyph.getReferenceTier())){
+					((AffyLabelledTierMap)getSeqMap()).getLabelMap().select(tierLabelGlyph);
+				}
+			}
+		}
+		
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), false);
 		}

@@ -62,8 +62,9 @@ public final class GFF3Parser implements Parser {
 	private final TrackLineParser track_line_parser = new TrackLineParser();
 	private static final Set<String> IGNORABLE_TYPES;
 	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
+	private final Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
 	public final List<GFF3Sym> symlist = new ArrayList<GFF3Sym>();
-
+	
 	//override the source in the GFF line and use default source
 	boolean useDefaultSource = true;
 	
@@ -145,7 +146,6 @@ public final class GFF3Parser implements Parser {
 
 		String line = null;
 
-		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
 		List<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
 		String track_name = null;
 		
@@ -273,9 +273,6 @@ public final class GFF3Parser implements Parser {
 		}
 
 		addToParent(all_syms, seq_group, symlist, annot_seq, id2sym);
-
-		// hashtable no longer needed
-		id2sym.clear();
 
 		System.out.print("Finished parsing GFF3.");
 		System.out.print("  line count: " + line_count);
@@ -446,5 +443,12 @@ public final class GFF3Parser implements Parser {
 			throws Exception {
 		parse(is, uri, group, true);
 		return null;
+	}
+	
+	public void clear(){
+		id2sym.clear();
+		seenTypes.clear();
+		symlist.clear();
+		IGNORABLE_TYPES.clear();
 	}
 }

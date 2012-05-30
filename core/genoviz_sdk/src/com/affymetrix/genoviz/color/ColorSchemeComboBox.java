@@ -27,7 +27,6 @@ import javax.swing.event.ListSelectionListener;
 public class ColorSchemeComboBox extends JComboBox implements ListSelectionListener {
 	private static final long serialVersionUID = 1L;
 
-	private boolean showingNames = true;
 	/**
 	 * Action to automatically invoke upon selection
 	 * so this can be used outside a dialog with an OK button.
@@ -61,11 +60,6 @@ public class ColorSchemeComboBox extends JComboBox implements ListSelectionListe
 			setChoices(count);
 		}
     }
-
-
-	public void setNamesIncluded(boolean theTruth) {
-		this.showingNames = theTruth;
-	}
 
 	/**
 	 * Color schemes with more foreground colors than this are screened out.

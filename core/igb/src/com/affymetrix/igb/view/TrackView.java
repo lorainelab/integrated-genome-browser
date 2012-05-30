@@ -192,9 +192,10 @@ public class TrackView {
 		
 		if(rootSym != null){
 			// kludge to get GraphAdjuster tab to update Style box (graph type)
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-			syms.add(rootSym);
-			GenometryModel.getGenometryModel().setSelectedSymmetries(syms, gviewer);
+			List<SeqSymmetry> all_syms = new ArrayList<SeqSymmetry>();
+			List<SeqSymmetry> graph_syms = new ArrayList<SeqSymmetry>();
+			graph_syms.add(rootSym);
+			GenometryModel.getGenometryModel().setSelectedSymmetries(all_syms, graph_syms, gviewer);
 		}
 	}
 

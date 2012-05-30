@@ -37,7 +37,7 @@ public final class GenometryModel {
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
 	// maps sequences to lists of selected symmetries
-	private final Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
+	private final Map<BioSeq,List<SeqSymmetry>> seq2selectedGraphSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
 	private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
 	private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
@@ -59,7 +59,7 @@ public final class GenometryModel {
 	 */
 	public void resetGenometryModel() {
 		this.seq_groups.clear();
-		this.seq2selectedSymsHash.clear();
+		this.seq2selectedGraphSymsHash.clear();
 		
 		this.seq_selection_listeners.clear();
 		group_selection_listeners.clear();
@@ -216,11 +216,11 @@ public final class GenometryModel {
 		sym_selection_listeners.remove(listener);
 	}
 	
-	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
+	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
 		if (DEBUG) {
-			System.out.println("Firing event: " + syms.size());
+			System.out.println("Firing event: " + all_syms.size() + " " + graph_syms.size());
 		}
-		SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
+		SymSelectionEvent sevt = new SymSelectionEvent(src, all_syms, graph_syms);
 		for (SymSelectionListener listener : sym_selection_listeners) {
 			listener.symSelectionChanged(sevt);
 		}
@@ -231,15 +231,17 @@ public final class GenometryModel {
 	 *  The symmetries can be on multiple sequences, and selecting
 	 *  them will not automatically change the selected sequence.
 	 *  All the SymSelectionListener's will be notified.
-	 *  @param syms A List of SeqSymmetry objects to select.
+	 *  @param all_syms A List of SeqSymmetry objects to select.
+	 *  @param graph_syms A List of Graph SeqSymmetry objects to select.
 	 *  @param src The object responsible for selecting the sequences.
 	 */
-	public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src)  {
-		setSelectedSymmetries(syms);
-		fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
+	public void setSelectedSymmetries(List<SeqSymmetry> all_syms, List<SeqSymmetry> graph_syms, Object src)  {
+		setSelectedSymmetries(graph_syms);
+		fireSymSelectionEvent(src, all_syms, graph_syms); // Note this is the complete list of selections
 	}
 
 	/**
+	 *  NOTE - legacy code, this is only used by the IGBScript language
 	 *  Sets the selected symmetries AND selects one of the sequences that they lie on.
 	 *  The symmetries can be on multiple sequences.
 	 *  If the current bio seq contains one of the symmetries, the seq will not
@@ -247,11 +249,11 @@ public final class GenometryModel {
 	 *  has a selected symmetry.
 	 *  The SeqSelectionListener's will be notified first (only if the seq changes),
 	 *  and then the SymSelectionListener's will be notified.
-	 *  @param syms A List of SeqSymmetry objects to select.
+	 *  @param graph_syms A List of SeqSymmetry objects to select.
 	 *  @param src The object responsible for selecting the sequences.
 	 */
-	public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> syms, Object src) {
-		List<BioSeq> seqs_with_selections = setSelectedSymmetries(syms);
+	public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> graph_syms, Object src) {
+		List<BioSeq> seqs_with_selections = setSelectedSymmetries(graph_syms);
 		if (! seqs_with_selections.contains(getSelectedSeq())) {
 			if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
 				BioSeq seq = null;
@@ -261,7 +263,8 @@ public final class GenometryModel {
 				setSelectedSeq(seq, src);
 			}
 		}
-		fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
+		List<SeqSymmetry> all_syms = Collections.<SeqSymmetry>emptyList();
+		fireSymSelectionEvent(src, all_syms, graph_syms); // Note this is the complete list of selections
 	}
 
 	/**
@@ -278,7 +281,7 @@ public final class GenometryModel {
 			System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
 		}
 
-		HashMap<BioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
+		HashMap<BioSeq,List<SeqSymmetry>> seq2GraphSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
 		// for each ID found in the ID2sym hash, add it to the owning sequences
 		// list of selected symmetries
@@ -295,10 +298,10 @@ public final class GenometryModel {
 				continue;
 			}
 			// prepare the list to add the sym to based on the seq ID
-			List<SeqSymmetry> symlist = seq2SymsHash.get(seq);
+			List<SeqSymmetry> symlist = seq2GraphSymsHash.get(seq);
 			if (symlist == null) {
 				symlist = new ArrayList<SeqSymmetry>();
-				seq2SymsHash.put(seq, symlist);
+				seq2GraphSymsHash.put(seq, symlist);
 			}
 			// add the sym to the list for the correct seq ID
 			symlist.add(sym);
@@ -309,7 +312,7 @@ public final class GenometryModel {
 		clearSelectedSymmetries(); // do not send an event yet
 
 		// now perform the selections for each sequence that was matched
-		for(Map.Entry<BioSeq,List<SeqSymmetry>> entry : seq2SymsHash.entrySet()) {
+		for(Map.Entry<BioSeq,List<SeqSymmetry>> entry : seq2GraphSymsHash.entrySet()) {
 			if (DEBUG) {
 				System.out.println("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
 			}
@@ -332,9 +335,9 @@ public final class GenometryModel {
 		}
 		// set the selected syms for the sequence
 		if (syms != null && ! syms.isEmpty()) {
-			seq2selectedSymsHash.put(seq, syms);
+			seq2selectedGraphSymsHash.put(seq, syms);
 		} else {
-			seq2selectedSymsHash.remove(seq); // to avoid memory leaks when a seq is deleted
+			seq2selectedGraphSymsHash.remove(seq); // to avoid memory leaks when a seq is deleted
 		}
 	}
 
@@ -343,7 +346,7 @@ public final class GenometryModel {
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
 	public final List<SeqSymmetry> getSelectedSymmetries(BioSeq seq) {
-		List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
+		List<SeqSymmetry> selections = seq2selectedGraphSymsHash.get(seq);
 		if (selections == null) {
 			selections = new ArrayList<SeqSymmetry>();
 			// NO:  This is a memory leak: seq2selectedSymsHash.put(seq, selections);
@@ -357,7 +360,7 @@ public final class GenometryModel {
 	 */
 	public void clearSelectedSymmetries(Object src) {
 		clearSelectedSymmetries();
-		fireSymSelectionEvent(src, Collections.<SeqSymmetry>emptyList());
+		fireSymSelectionEvent(src, Collections.<SeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList());
 	}
 
 	/**
@@ -365,9 +368,9 @@ public final class GenometryModel {
 	 *  Does not notifies the selection listeners.
 	 */
 	private void clearSelectedSymmetries() {
-		for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
+		for (List<SeqSymmetry> list : seq2selectedGraphSymsHash.values()) {
 			list.clear();
 		}
-		seq2selectedSymsHash.clear();
+		seq2selectedGraphSymsHash.clear();
 	}
 }

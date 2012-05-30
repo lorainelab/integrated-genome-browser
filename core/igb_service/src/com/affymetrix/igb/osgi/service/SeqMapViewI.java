@@ -91,7 +91,7 @@ public interface SeqMapViewI {
 	public void addToRefreshList(SeqMapRefreshed smr);
 	/**
 	 *  Figures out which symmetries are currently selected and then calls
-	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
+	 *  {@link GenometryModel#setSelectedSymmetries(List, List, Object)}.
 	 */
 	public void postSelections();
 	public void setPropertyHandler(PropertyHandler propertyHandler);

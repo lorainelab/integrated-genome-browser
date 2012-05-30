@@ -343,11 +343,12 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		Set<SeqSymmetry> symmetries = new LinkedHashSet<SeqSymmetry>();
-		symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
+		Set<SeqSymmetry> graph_symmetries = new LinkedHashSet<SeqSymmetry>();
+		Set<SeqSymmetry> all_symmetries = new HashSet<SeqSymmetry>();
+		graph_symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
 
 		if(!preserve_selection){
-			symmetries.clear();
+			graph_symmetries.clear();
 		}
 		
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
@@ -374,9 +375,10 @@ public final class TierLabelManager implements PropertyHolder {
 						SeqSymmetry sym = (SeqSymmetry) ob.getInfo();
 						// sym will be a GraphSym, but we don't need to cast it
 						if (tierlabel.isSelected()) {
-							symmetries.add(sym);
-						} else if (symmetries.contains(sym)) {
-							symmetries.remove(sym);
+							graph_symmetries.add(sym);
+							all_symmetries.add(sym);
+						} else if (graph_symmetries.contains(sym)) {
+							graph_symmetries.remove(sym);
 						}
 					}
 				}
@@ -384,15 +386,22 @@ public final class TierLabelManager implements PropertyHolder {
 					SeqSymmetry sym = (SeqSymmetry) tg.getViewModeGlyph().getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
-						symmetries.add(sym);
-					} else if (symmetries.contains(sym)) {
-						symmetries.remove(sym);
+						graph_symmetries.add(sym);
+						all_symmetries.add(sym);
+					} else if (graph_symmetries.contains(sym)) {
+						graph_symmetries.remove(sym);
+					}
+				}
+				else {
+					SeqSymmetry sym = (SeqSymmetry) tg.getViewModeGlyph().getInfo();
+					if (tierlabel.isSelected()) {
+						all_symmetries.add(sym);
 					}
 				}
 			}
 		}
 
-		gmodel.setSelectedSymmetries(new ArrayList<SeqSymmetry>(symmetries), this);
+		gmodel.setSelectedSymmetries(new ArrayList<SeqSymmetry>(all_symmetries), new ArrayList<SeqSymmetry>(graph_symmetries), this);
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */

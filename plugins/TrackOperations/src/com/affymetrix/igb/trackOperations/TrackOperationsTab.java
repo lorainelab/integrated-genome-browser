@@ -71,7 +71,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public TrackOperationsTab(IGBService igbS) {
 		igbService = igbS;
 		advanced_panel = new TrackOperationsTab.AdvancedGraphPanel();
-		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
+		resetSelectedGlyphs(Collections.EMPTY_LIST);
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {
@@ -94,10 +94,10 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		if (!(src == igbService.getSeqMapView() || src == igbService.getSeqMap())) {
 			return;
 		}
-		resetSelectedGraphGlyphs(selected_syms);
+		resetSelectedGlyphs(selected_syms);
 	}
 
-	private void resetSelectedGraphGlyphs(List<?> selected_syms) {
+	private void resetSelectedGlyphs(List<?> selected_syms) {
 		int symcount = selected_syms.size();
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		collectGraphsAndGlyphs(selected_syms, symcount);
@@ -185,18 +185,18 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
 		}
 		current_seq = evt.getSelectedSeq();
-		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
+		resetSelectedGlyphs(gmodel.getSelectedSymmetries(current_seq));
 	}
 
 	private void updateViewer() {
 		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
 		// set selections to empty so that options get turned off
-		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
+		resetSelectedGlyphs(Collections.EMPTY_LIST);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				igbService.getSeqMapView().setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-				resetSelectedGraphGlyphs(previous_graph_syms);
+				resetSelectedGlyphs(previous_graph_syms);
 			}
 		});
 	}

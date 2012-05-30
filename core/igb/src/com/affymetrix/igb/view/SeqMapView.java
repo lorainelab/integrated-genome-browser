@@ -6,7 +6,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.EventObject;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.*;
@@ -1428,12 +1427,13 @@ public class SeqMapView extends JPanel
 
 	/**
 	 * Figures out which symmetries are currently selected and then calls
-	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
+	 *  {@link GenometryModel#setSelectedSymmetries(List, List, Object)}.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
+		gmodel.setSelectedSymmetries(glyphsToSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {

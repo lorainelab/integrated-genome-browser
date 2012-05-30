@@ -18,7 +18,7 @@ public class ChangeBackgroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeBackgroundColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeBGColorAction"), "16x16/categories/applications-graphics.png", "22x22/categories/applications-graphics.png");
+		super(IGBConstants.BUNDLE.getString("changeBGColorAction"), "16x16/actions/applications-graphics-5.png", "22x22/actions/applications-graphics-5.png");
 	}
 
 	@Override

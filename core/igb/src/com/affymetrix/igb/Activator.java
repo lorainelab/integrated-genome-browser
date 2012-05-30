@@ -197,14 +197,7 @@ public class Activator implements BundleActivator {
 					if (genericAction.getText() != null) {//genericAction.getValue(javax.swing.Action.NAME)
 						boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
 						if (isToolbar) {
-							JRPButton button; 
-							if(genericAction instanceof ChangeColorActionA){
-								button = new JRPColoredButton("Toolbar_" + genericAction.getId(), (ChangeColorActionA)genericAction);
-								IGBServiceImpl.getInstance().addListSelectionListener((JRPColoredButton)button);
-							}else{
-								button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
-							}
-							
+							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
 							button.setHideActionText(true);
 							((IGB)Application.getSingleton()).addToolbarButton(button);
 						}

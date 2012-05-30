@@ -47,7 +47,7 @@ public class Activator implements BundleActivator {
 			public void removeService(FileTypeHandler fileTypeHandler) {
 				FileTypeHolder.getInstance().removeFileTypeHandler(fileTypeHandler);
 			}
-			
+
 			@Override
 			public void addService(FileTypeHandler fileTypeHandler) {
 				FileTypeHolder.getInstance().addFileTypeHandler(fileTypeHandler);
@@ -63,7 +63,7 @@ public class Activator implements BundleActivator {
 			public void addService(GenericAction genericAction) {
 				GenericActionHolder.getInstance().addGenericAction(genericAction);
 			}
-			
+
 			@Override
 			public void removeService(GenericAction genericAction) {
 				GenericActionHolder.getInstance().removeGenericAction(genericAction);

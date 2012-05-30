@@ -75,14 +75,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 	}
 
 	@Override
-	public void start(BundleContext _bundleContext) throws Exception {
-        if (CommonUtils.getInstance().isHelp(_bundleContext)) {
-			System.out.println("-port - bookmarks use the port specified");
-        }
-		super.start(_bundleContext);
-	}
-
-	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {
 		super.stop(_bundleContext);
 		if (bmark_action != null) {

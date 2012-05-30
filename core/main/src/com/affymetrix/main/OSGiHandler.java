@@ -103,7 +103,7 @@ public class OSGiHandler {
 		return it.next();
 	}
 
-	private final boolean loadFramework(String argArray) {
+	private final void loadFramework(String argArray) {
 		try
 	    {
 			Map<String, String> configProps = new HashMap<String, String>();
@@ -115,17 +115,8 @@ public class OSGiHandler {
 			FrameworkFactory factory = getFrameworkFactory();
 	        m_fwk = factory.newFramework(configProps);
 	        m_fwk.init();
-	        if (CommonUtils.getInstance().isHelp(m_fwk.getBundleContext())) {
-    			System.out.println(CommonUtils.getInstance().getAppName() + " " + CommonUtils.getInstance().getAppVersion());
-				System.out.println("Options:");
-				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
-				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
-				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
-				return false;
-	        }
-	        else {
-	        	return true;
-	        }
+//	        AutoProcessor.process(configProps, m_fwk.getBundleContext());
+	        m_fwk.start();
 	    }
 	    catch (Exception ex)
 	    {
@@ -133,7 +124,6 @@ public class OSGiHandler {
 	        ex.printStackTrace();
 	        System.exit(0);
 	    }
-		return false;
 	}
 
 	/**
@@ -150,9 +140,7 @@ public class OSGiHandler {
 		setLaf();
 
 		String argArray = Arrays.toString(args);
-		if (!loadFramework(argArray.substring(1, argArray.length() - 1))) {
-			return;
-		}
+		loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try
         {

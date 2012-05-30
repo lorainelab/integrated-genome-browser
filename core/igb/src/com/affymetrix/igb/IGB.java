@@ -49,6 +49,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -150,7 +151,25 @@ public final class IGB extends Application
 		}
 	}
 
-	public void init() {
+	private void printDetails(String[] args) {
+		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("UserAgent: " + USER_AGENT);
+		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		Runtime runtime = Runtime.getRuntime();
+		System.out.println("Locale: " + Locale.getDefault());
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
+		if (args != null) {
+			System.out.print("arguments: ");
+			for (String arg : args) {
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}
+
+		System.out.println();
+	}
+
+	public void init(String[] args) {
 		setLaf();
 
 		// Set up a custom trust manager so that user is prompted
@@ -166,7 +185,12 @@ public final class IGB extends Application
 		ConsoleView.init(APP_NAME);
 
 
+		printDetails(args);
 
+		String offline = CommonUtils.getInstance().getArg("-offline", args);
+		if (offline != null) {
+			LocalUrlCacher.setOffLine("true".equals(offline));
+		}
 
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
@@ -184,6 +208,12 @@ public final class IGB extends Application
 		//    be called on the authenticator set as the default
 		Authenticator.setDefault(new IGBAuthenticator(frm));
 		
+		// force loading of prefs if hasn't happened yet
+		// usually since IGB.main() is called first, prefs will have already been loaded
+		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
+		//   is created without call to main(), will force loading of prefs here...
+		PrefsLoader.loadIGBPrefs(args);
+
 		StateProvider stateProvider = new IGBStateProvider();
 		DefaultStateProvider.setGlobalStateProvider(stateProvider);
 
@@ -201,19 +231,18 @@ public final class IGB extends Application
 		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
 		MenuUtil.setAccelerators(
-			new AbstractMap<String, KeyStroke>() {
+				new AbstractMap<String, KeyStroke>() {
 
-				@Override
-				public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
-					return null;
-				}
+					@Override
+					public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
+						return null;
+					}
 
-				@Override
-				public KeyStroke get(Object action_command) {
-					return PreferenceUtils.getAccelerator((String) action_command);
-				}
-			}
-		);
+					@Override
+					public KeyStroke get(Object action_command) {
+						return PreferenceUtils.getAccelerator((String) action_command);
+					}
+				});
 		map_view = new SeqMapView(true, "SeqMapView");
 		gmodel.addSeqSelectionListener(map_view);
 		gmodel.addGroupSelectionListener(map_view);

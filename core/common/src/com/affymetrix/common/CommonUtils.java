@@ -116,7 +116,6 @@ public class CommonUtils {
 		return (getArg("-h", args) != null ||
 				getArg("-help", args) != null ||
 				getArg("-exit", args) != null ||
-				getArg("-convert", args) != null ||
 				getArg("-cbc", args) != null
 		); // exit program
 	}

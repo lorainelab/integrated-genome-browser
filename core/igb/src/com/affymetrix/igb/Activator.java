@@ -2,12 +2,14 @@ package com.affymetrix.igb;
 
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
+import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -25,6 +27,7 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.action.*;
@@ -34,6 +37,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -62,35 +66,24 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
  */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
-    private String[] args;
     private String commandLineBatchFileStr;
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-        args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
-        	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
-    		if (CommonUtils.getInstance().getArg("-h", args) != null ||
-    			CommonUtils.getInstance().getArg("-help", args) != null) { // display all command options
-    			System.out.println(APP_NAME + " " + APP_VERSION_FULL);
-				System.out.println("Options:");
+        	String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+    		if (CommonUtils.getInstance().isHelp(bundleContext)) { // display all command options
 				System.out.println("-offline - set the URL caching to offline");
-				System.out.println("-port - bookmarks use the port specified");
 				System.out.println("-" + IGBService.SCRIPTFILETAG + " - load a script file");
 				System.out.println("-convert - convert the fasta file to bnib");
 				System.out.println("-clrprf - clear the preferences");
-				System.out.println("-exit - exit the program after completing above functions");
 				System.out.println("-single_instance - exits if a running instance of IGB is found");
-				System.out.println("Advanced options:");
 				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
 				System.out.println("-clrallprf - clear all the preferences for all preferences modes");
 				System.out.println("-pntprf - print the preferences for this preferences mode in xml format");
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
-				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
-				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
-				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
-				System.exit(0);
+				return;
     		}
     		//single instance?
     		if (CommonUtils.getInstance().getArg("-single_instance", args) != null) {
@@ -100,6 +93,7 @@ public class Activator implements BundleActivator {
     			}
     		}
     		
+    		printDetails(args);
     		String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
     		if (prefsMode != null) {
     			PreferenceUtils.setPrefsMode(prefsMode);
@@ -107,7 +101,7 @@ public class Activator implements BundleActivator {
     		if (CommonUtils.getInstance().getArg("-convert", args) != null) {
 				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
 				NibbleResiduesParser.main(runArgs);
-				System.exit(0);
+				return;
     		}
     		if (CommonUtils.getInstance().getArg("-clrprf", args) != null) {
 				PreferenceUtils.clearPreferences();
@@ -128,10 +122,19 @@ public class Activator implements BundleActivator {
 			if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
 				CommonUtils.getInstance().setUpdateAvailable(true);
     		}
-	    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+			String offline = CommonUtils.getInstance().getArg("-offline", args);
+			if (offline != null) {
+				LocalUrlCacher.setOffLine("true".equals(offline));
+			}
+			if (CommonUtils.getInstance().isExit(bundleContext)) {
 	    		return;
 	    	}
     		commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IGBService.SCRIPTFILETAG, args);
+    		// force loading of prefs if hasn't happened yet
+    		// usually since IGB.main() is called first, prefs will have already been loaded
+    		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
+    		//   is created without call to main(), will force loading of prefs here...
+    		PrefsLoader.loadIGBPrefs(args);
         }
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
@@ -170,7 +173,24 @@ public class Activator implements BundleActivator {
 		initOperators();
 	}
 
-	
+	private void printDetails(String[] args) {
+		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("UserAgent: " + USER_AGENT);
+		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		Runtime runtime = Runtime.getRuntime();
+		System.out.println("Locale: " + Locale.getDefault());
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
+		if (args != null) {
+			System.out.print("arguments: ");
+			for (String arg : args) {
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}
+
+		System.out.println();
+	}
+
 	/**Check to see if port 7085, the default IGB bookmarks port is open.  
 	 * If so returns true AND send IGBControl a message to bring IGB's JFrame to the front.
 	 * If not returns false.
@@ -239,7 +259,7 @@ public class Activator implements BundleActivator {
 		// To avoid race condition on startup
 		initMapViewGlyphFactorys();
 		
-        igb.init(args);
+        igb.init();
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
 		bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);

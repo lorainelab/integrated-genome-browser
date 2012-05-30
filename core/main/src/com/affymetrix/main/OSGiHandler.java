@@ -56,7 +56,7 @@ public class OSGiHandler {
 	private String getCacheFolder(){
 		return CommonUtils.getInstance().getAppDataDirectory() + "bundles/";
 	}
-	
+
 	/**
 	 * get the OSGi cache directory
 	 * @return the OSGi cache directory
@@ -115,8 +115,14 @@ public class OSGiHandler {
 			FrameworkFactory factory = getFrameworkFactory();
 	        m_fwk = factory.newFramework(configProps);
 	        m_fwk.init();
-//	        AutoProcessor.process(configProps, m_fwk.getBundleContext());
-	        m_fwk.start();
+	        if (CommonUtils.getInstance().isHelp(m_fwk.getBundleContext())) {
+    			System.out.println(CommonUtils.getInstance().getAppName() + " " + CommonUtils.getInstance().getAppVersion());
+				System.out.println("Options:");
+				System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
+				System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
+				System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
+	        }
+            m_fwk.start();
 	    }
 	    catch (Exception ex)
 	    {
@@ -144,7 +150,6 @@ public class OSGiHandler {
 
         try
         {
-            m_fwk.start();
             BundleContext bundleContext = m_fwk.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
             	loadEmbeddedBundles(bundleContext);
@@ -225,8 +230,8 @@ public class OSGiHandler {
 	    	ZipInputStream zipinputstream = null;
 	        zipinputstream = new ZipInputStream(codesource.openStream());
 	        ZipEntry zipentry = zipinputstream.getNextEntry();
-	        while (zipentry != null) 
-	        { 
+	        while (zipentry != null)
+	        {
 	            //for each entry to be extracted
 	            String entryName = zipentry.getName();
 	            if (entryName.endsWith(".jar")) {
@@ -234,7 +239,7 @@ public class OSGiHandler {
 	            }
 	            File newFile = new File(entryName);
 	            String directory = newFile.getParent();
-	            
+
 	            if(directory == null)
 	            {
 	                if(newFile.isDirectory())

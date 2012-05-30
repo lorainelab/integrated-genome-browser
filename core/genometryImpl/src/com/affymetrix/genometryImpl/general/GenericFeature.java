@@ -241,6 +241,9 @@ public final class GenericFeature {
 			currentRequestSym.removeChildren();
 		}
 		methods.clear();
+		if(symL != null){
+			symL.clear();
+		}
 		setInvisible();
 		setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
 	}

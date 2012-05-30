@@ -291,4 +291,9 @@ public class GFF3 extends SymLoader implements LineProcessor {
 	public boolean processInfoLine(String line, List<String> infoLines) {
 		return false; // not used yet
 	}
+	
+	@Override
+	public void clear(){
+		parser.clear();
+	}
 }

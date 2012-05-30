@@ -496,4 +496,6 @@ public abstract class SymLoader implements LineTrackerI {
 			lastSleepTime = currentTime;
 		}
 	}
+	
+	public void clear(){}
 }

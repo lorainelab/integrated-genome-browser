@@ -14,20 +14,23 @@ import javax.swing.JButton;
  */
 public class ErrorNotificationCellRenderer extends JTextButtonCellRenderer {
 	private static final long serialVersionUID = 1L;
-	static final Icon info_icon = CommonUtils.getInstance().getIcon("images/stop.png");
-	private VirtualFeature vFeature;
-
-	public ErrorNotificationCellRenderer(VirtualFeature vFeature) {
-		this.vFeature = vFeature;
+	private final String title;
+	private final Icon icon;
+	private final String message;
+	
+	public ErrorNotificationCellRenderer(String title, String message, Icon icon) {
+		this.title = title;
+		this.message = message;
+		this.icon = icon;
 	}
 
 	@Override
 	protected JButton getButton() {
-		return new JButton(info_icon);
+		return new JButton(icon);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ErrorHandler.errorPanel(vFeature.getFeature().featureName, vFeature.getLastRefreshStatus().toString(),Level.WARNING);
+		ErrorHandler.errorPanel(title , message ,Level.WARNING);
 	}
 }

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -50,6 +51,8 @@ public final class DataManagementTable {
 	static final Icon delete_icon = CommonUtils.getInstance().getIcon("images/delete.gif");
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
+	static final Icon error_icon = CommonUtils.getInstance().getIcon("images/stop.png");
+	
 	//public static boolean iconTest;
 
 	/**
@@ -205,7 +208,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			smv = igb.getMapView();
 		}
 	}
-
+	
 	void setRowEditorModel(int column, RowEditorModel rm) {
 		this.rmMap.put(column, rm);
 	}
@@ -217,7 +220,8 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			if (isCellEditable(row, col)) {
 				DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 				VirtualFeature vFeature = ftm.getFeature(row);
-				return new ErrorNotificationCellRenderer(vFeature);
+				return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
 			}
 		}
 
@@ -249,7 +253,8 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 		} else if (column == DataManagementTableModel.FEATURE_NAME_COLUMN) {
 			switch (vFeature.getLastRefreshStatus()) {
 				case NO_DATA_LOADED: {
-					return new ErrorNotificationCellRenderer(vFeature);
+					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
 				}
 			}
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {

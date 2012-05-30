@@ -126,7 +126,7 @@ public class AltSpliceView extends IGBTabPanel
 		if ((src != this) && (src != spliced_view)) {
 			// catching spliced_view as source of event because currently sym selection events actually originating
 			//    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
-			last_selected_syms = evt.getSelectedSyms();
+			last_selected_syms = evt.getSelectedGraphSyms();
 			last_selected_syms = removeGraphs(last_selected_syms);
 			if (last_selected_syms.size() > 0) {
 				if (!this.isShowing()) {

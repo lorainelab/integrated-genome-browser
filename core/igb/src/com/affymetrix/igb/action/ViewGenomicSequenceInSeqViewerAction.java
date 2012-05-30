@@ -57,7 +57,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
 	}
 	
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		if (!evt.getSelectedSyms().isEmpty() && evt.getSelectedSyms().get(0) instanceof GraphSym) {
+		if (!evt.getSelectedGraphSyms().isEmpty() && evt.getSelectedGraphSyms().get(0) instanceof GraphSym) {
 			setEnabled(false);
 		} else {
 			setEnabled(true);

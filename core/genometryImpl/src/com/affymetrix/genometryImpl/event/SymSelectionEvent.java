@@ -7,7 +7,7 @@ import java.util.EventObject;
 import java.util.List;
 
 public final class SymSelectionEvent extends EventObject {
-	private final List<SeqSymmetry> selected_syms;
+	private final List<SeqSymmetry> selected_graph_syms;
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -16,19 +16,19 @@ public final class SymSelectionEvent extends EventObject {
 	 *  @param syms a List of SeqSymmetry's.  Can be empty, but should not be null.
 	 *   (If null, will default to {@link Collections#EMPTY_LIST}.)
 	 */
-	public SymSelectionEvent(Object src, List<SeqSymmetry> syms) {
+	public SymSelectionEvent(Object src, List<SeqSymmetry> graph_syms) {
 		super(src);
-		if (syms == null) {
-			this.selected_syms = Collections.<SeqSymmetry>emptyList();
+		if (graph_syms == null) {
+			this.selected_graph_syms = Collections.<SeqSymmetry>emptyList();
 		} else {
-			this.selected_syms = syms;
+			this.selected_graph_syms = graph_syms;
 		}
 	}
 
-	/** @return a List of SeqSymmetry's.  May be empty, but will not be null.
+	/** @return a List of selected GraphSymmetry's.  May be empty, but will not be null.
 	*/
-	public List<SeqSymmetry> getSelectedSyms() {
-		return selected_syms;
+	public List<SeqSymmetry> getSelectedGraphSyms() {
+		return selected_graph_syms;
 	}
 
 }

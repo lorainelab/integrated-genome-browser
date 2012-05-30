@@ -1785,7 +1785,7 @@ public class SeqMapView extends JPanel
 			// catching SeqMapView as source of event because currently sym selection events actually originating
 			//    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
 		} else {
-			List<SeqSymmetry> symlist = evt.getSelectedSyms();
+			List<SeqSymmetry> symlist = evt.getSelectedGraphSyms();
 			// select:
 			//   add_to_previous ==> false
 			//   call_listeners ==> false

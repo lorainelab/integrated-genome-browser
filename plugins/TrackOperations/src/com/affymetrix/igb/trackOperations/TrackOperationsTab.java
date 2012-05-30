@@ -15,11 +15,9 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.operator.AbstractFloatTransformer;
 import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.operator.Operator.Order;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
@@ -89,7 +87,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
+		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 		Object src = evt.getSource();
@@ -112,7 +110,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		// Take the first glyph in the list as a prototype
 		AbstractGraphGlyph first_glyph = null;
-		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
 			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();

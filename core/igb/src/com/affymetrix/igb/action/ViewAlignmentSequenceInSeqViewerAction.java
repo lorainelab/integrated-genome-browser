@@ -54,8 +54,8 @@ public class ViewAlignmentSequenceInSeqViewerAction extends GenericAction implem
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		if (!evt.getSelectedSyms().isEmpty() && !(evt.getSelectedSyms().get(0) instanceof GraphSym)) {
-			if(evt.getSelectedSyms().get(0) instanceof SymWithResidues){
+		if (!evt.getSelectedGraphSyms().isEmpty() && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
+			if(evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues){
 				setEnabled(true);
 			}else{
 				setEnabled(false);

@@ -117,7 +117,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			return;
 		}
 
-		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
+		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		if (src instanceof PropertyHolder) {
 			PropertyHolder propertyHolder = (PropertyHolder)src;

@@ -352,7 +352,7 @@ public final class TrackAdjusterTab
 
 	@SuppressWarnings("unchecked")
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
+		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 

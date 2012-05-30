@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -28,6 +27,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.Icon;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -257,6 +258,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
 				}
 			}
+			TableCellRenderer renderer = super.getCellRenderer(row, column);
+			((DefaultTableCellRenderer) renderer).setHorizontalAlignment(SwingConstants.RIGHT);
+			return renderer;
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
 				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());

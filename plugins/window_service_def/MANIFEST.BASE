@@ -5,7 +5,8 @@ Bundle-SymbolicName: com.affymetrix.igb.WindowServiceDefaultImpl
 Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.window.service.def.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: com.affymetrix.igb.window.service,
+Import-Package: com.affymetrix.common;version="[@appVersion@,@appVersion@]",
+ com.affymetrix.igb.window.service,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.shared,
  com.affymetrix.genometryImpl.event,

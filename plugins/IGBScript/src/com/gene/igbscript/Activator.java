@@ -8,6 +8,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.recordplayback.ScriptProcessorHolder;
 import com.affymetrix.igb.osgi.service.IGBService;
 
@@ -37,6 +38,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
     	this.bundleContext = bundleContext;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
     	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)

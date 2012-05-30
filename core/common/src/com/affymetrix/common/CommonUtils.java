@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.osgi.framework.BundleContext;
+
 /**
  * utilities used by both the main, starting class, and the
  * bundles. Singleton pattern.
@@ -96,6 +98,26 @@ public class CommonUtils {
 			to_return = "true";
 		}
 		return to_return;
+	}
+
+	public boolean isHelp(BundleContext bundleContext) {
+        if (bundleContext.getProperty("args") == null) {
+        	return false;
+        }
+        String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+ 		return (getArg("-h", args) != null || getArg("-help", args) != null); // display all command options
+	}
+
+	public boolean isExit(BundleContext bundleContext) {
+        if (bundleContext.getProperty("args") == null) {
+        	return false;
+        }
+        String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+		return (getArg("-h", args) != null ||
+				getArg("-help", args) != null ||
+				getArg("-exit", args) != null ||
+				getArg("-cbc", args) != null
+		); // exit program
 	}
 
 	/**

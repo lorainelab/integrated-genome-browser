@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genoviz"/>
 	<classpathentry kind="lib" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

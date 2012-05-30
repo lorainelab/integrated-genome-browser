@@ -6,6 +6,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 
@@ -30,6 +31,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
     	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)

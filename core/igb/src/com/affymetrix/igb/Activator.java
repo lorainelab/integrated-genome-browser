@@ -128,9 +128,9 @@ public class Activator implements BundleActivator {
 			if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
 				CommonUtils.getInstance().setUpdateAvailable(true);
     		}
-    		if (CommonUtils.getInstance().getArg("-exit", args) != null) {
-				System.exit(0);
-    		}
+	    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+	    		return;
+	    	}
     		commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IGBService.SCRIPTFILETAG, args);
         }
 		// Verify jidesoft license.

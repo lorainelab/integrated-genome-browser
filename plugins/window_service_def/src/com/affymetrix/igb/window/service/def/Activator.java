@@ -13,6 +13,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -20,15 +21,7 @@ import com.affymetrix.igb.window.service.IWindowService;
 public class Activator implements BundleActivator {
 	private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
-	private static BundleContext bundleContext;
-
-	/**
-	 * standard getter
-	 * @return the bundle context
-	 */
-	static BundleContext getContext() {
-		return bundleContext;
-	}
+	private BundleContext bundleContext;
 
 	private void addTab(ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl, List<String> tabPanels) {
 		IGBTabPanel panel = bundleContext.getService(serviceReference);
@@ -41,7 +34,10 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
-		Activator.bundleContext = _bundleContext;
+		bundleContext = _bundleContext;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
 		final List<String> tabPanels = new ArrayList<String>();
 		Enumeration<String> bundleKeys = WindowServiceDefaultImpl.BUNDLE.getKeys();
 		while (bundleKeys.hasMoreElements()) {
@@ -99,6 +95,6 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.bundleContext = null;
+		bundleContext = null;
 	}
 }

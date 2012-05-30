@@ -6,6 +6,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -79,6 +80,9 @@ public abstract class WindowActivator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception
 	{
     	bundleContext = _bundleContext;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
     	processCreatePage();
 	}
 

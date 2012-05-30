@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tutorial;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
@@ -90,6 +91,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.bundleContext = bundleContext;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
 		ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
 		if (igbServiceReference != null) {

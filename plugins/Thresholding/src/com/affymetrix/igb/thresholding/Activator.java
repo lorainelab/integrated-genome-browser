@@ -6,6 +6,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.MenuUtil;
@@ -31,6 +32,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext_) throws Exception {
 		this.bundleContext = bundleContext_;
+    	if (CommonUtils.getInstance().isExit(bundleContext)) {
+    		return;
+    	}
     	ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
 
         if (igbServiceReference != null)

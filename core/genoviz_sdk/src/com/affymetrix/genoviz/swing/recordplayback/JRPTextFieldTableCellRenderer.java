@@ -17,9 +17,9 @@ public class JRPTextFieldTableCellRenderer extends DefaultCellEditor
 	public JRPTextFieldTableCellRenderer(String id, String text) {
 		super(new JRPTextField(id,text));
 		this.jrpTextField = new JRPTextField(id,text);
-		this.jrpTextField.setBackground(Color.white);
-		this.jrpTextField.setHorizontalAlignment(JRPTextField.CENTER);
 		this.jrpTextField = ((JRPTextField) this.editorComponent);
+		this.jrpTextField.setBackground(Color.white);
+		this.jrpTextField.setHorizontalAlignment(JRPTextField.RIGHT);
 
 		this.jrpTextField.addActionListener(new ActionListener() {
 

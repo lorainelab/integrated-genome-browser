@@ -12,7 +12,10 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext_) throws Exception {
 		this.bundleContext = bundleContext_;
-        if (CommonUtils.getInstance().isExit(bundleContext_)) {
+        if (CommonUtils.getInstance().isHelp(bundleContext)) {
+        	System.out.println("-exit - exit the program after completing above functions");
+        }
+        if (CommonUtils.getInstance().isExit(bundleContext)) {
 			bundleContext.addBundleListener(
 				new BundleListener() {
 					@Override

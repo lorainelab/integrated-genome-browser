@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 public final class SimpleBookmarkServer {
 	public static final String http_response = "HTTP/1.1 204 No Content\n\n";
 	private static final int NO_PORT = -1;
-	private static final int default_server_port = 7085;
+	public static final int default_server_port = 7085;
 	private static final int ports_to_try = 5;
 	/** The OLD name of the IGB servlet, "UnibrowControl". */
 	public final static String SERVLET_NAME_OLD = "UnibrowControl";

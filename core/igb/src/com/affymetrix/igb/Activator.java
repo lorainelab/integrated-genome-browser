@@ -4,10 +4,6 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -71,26 +67,18 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-        if (bundleContext.getProperty("args") != null) {
-        	String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+        String[] args = CommonUtils.getInstance().getArgs(bundleContext);
+        if (args != null) {
     		if (CommonUtils.getInstance().isHelp(bundleContext)) { // display all command options
 				System.out.println("-offline - set the URL caching to offline");
 				System.out.println("-" + IGBService.SCRIPTFILETAG + " - load a script file");
 				System.out.println("-convert - convert the fasta file to bnib");
 				System.out.println("-clrprf - clear the preferences");
-				System.out.println("-single_instance - exits if a running instance of IGB is found");
 				System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
 				System.out.println("-clrallprf - clear all the preferences for all preferences modes");
 				System.out.println("-pntprf - print the preferences for this preferences mode in xml format");
 				System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
 				return;
-    		}
-    		//single instance?
-    		if (CommonUtils.getInstance().getArg("-single_instance", args) != null) {
-    			if (isIGBRunning()) {
-    				System.out.println("\nPort "+CommonUtils.default_server_port+" is in use! An IGB instance is likely running. Sending command to bring IGB to front. Aborting startup.\n");
-    				System.exit(0);
-    			}
     		}
     		
     		printDetails(args);
@@ -189,32 +177,6 @@ public class Activator implements BundleActivator {
 		}
 
 		System.out.println();
-	}
-
-	/**Check to see if port 7085, the default IGB bookmarks port is open.  
-	 * If so returns true AND send IGBControl a message to bring IGB's JFrame to the front.
-	 * If not returns false.
-	 * @author davidnix*/
-	public boolean isIGBRunning(){
-		Socket sock = null;
-		int port = CommonUtils.default_server_port;
-		try {
-		    sock = new Socket("localhost", port);
-		    if (sock.isBound()) {
-		    	//try to bring to front
-		    	URL toSend = new URL ("http://localhost:"+port+"/IGBControl?bringIGBToFront=true");
-		    	HttpURLConnection conn = (HttpURLConnection)toSend.openConnection();
-		        conn.getResponseMessage();
-		    	return true;
-		    }
-		} catch (Exception e) {
-			//Don't do anything. isBound() throws an error when trying to bind a bound port
-		} finally {
-			try {
-				if (sock != null) sock.close();
-			} catch (IOException e) {}
-		}
-		return false;
 	}
 
 	@Override

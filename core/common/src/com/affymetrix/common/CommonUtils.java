@@ -18,7 +18,6 @@ public class CommonUtils {
 	private static final CommonUtils instance = new CommonUtils();
 	private boolean updateAvailable = false;
 	private String app_dir = null;
-	public static final int default_server_port = 7085;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
 
 	private static final String APP_NAME            = BUNDLE.getString("appName");
@@ -100,19 +99,17 @@ public class CommonUtils {
 		return to_return;
 	}
 
+	public String[] getArgs(BundleContext bundleContext) {
+		return bundleContext.getProperty("args").split(", ");
+	}
+
 	public boolean isHelp(BundleContext bundleContext) {
-        if (bundleContext.getProperty("args") == null) {
-        	return false;
-        }
-        String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+        String[] args = getArgs(bundleContext);
  		return (getArg("-h", args) != null || getArg("-help", args) != null); // display all command options
 	}
 
 	public boolean isExit(BundleContext bundleContext) {
-        if (bundleContext.getProperty("args") == null) {
-        	return false;
-        }
-        String[] args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+        String[] args = getArgs(bundleContext);
 		return (getArg("-h", args) != null ||
 				getArg("-help", args) != null ||
 				getArg("-exit", args) != null ||

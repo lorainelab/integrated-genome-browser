@@ -20,7 +20,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -465,26 +464,6 @@ public final class GeneralUtils {
 		}
 	}
 
-
-	/**
-	 * get the error message text for an attempted graph/annotation operation
-	 * @param graphCount the number of graph glyphs
-	 * @param minCount the minimum graphs for the operator
-	 * @param maxCount the maximum graphs for the operator
-	 * @return the error message text
-	 */
-	private static final String selectExactGraphsMessage = "Select exactly {0} {1}s";
-	private static final String selectMinGraphsMessage = "Select at least {0} {1}s";
-	private static final String selectRangeGraphsMessage = "Select between {0} and {1} {2}s";
-	public static String getOperandMessage(int tierCount, int minCount, int maxCount, String type) {
-		if (minCount == maxCount) {
-			return MessageFormat.format(selectExactGraphsMessage, minCount, type);
-		}
-		if (maxCount == Integer.MAX_VALUE) {
-			return MessageFormat.format(selectMinGraphsMessage, minCount, type);
-		}
-		return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount, type);
-	}
 
 	/* from http://stackoverflow.com/questions/4596447/java-check-if-file-exists-on-remote-server-using-its-url */
 	private static boolean httpExists(String URLName) {

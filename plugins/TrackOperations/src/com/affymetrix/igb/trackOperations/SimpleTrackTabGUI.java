@@ -39,11 +39,11 @@ public class SimpleTrackTabGUI extends IGBTabPanel {
 
         manipulationsPanel = new javax.swing.JPanel();
         transformLabel = new javax.swing.JLabel();
-        transformationCB = trackOpTab.advanced_panel.transformationCB;
+        transformationCB = trackOpTab.transformationCB;
         operationLabel = new javax.swing.JLabel();
-        operationCB = trackOpTab.advanced_panel.operationCB;
-        transformationGoB = trackOpTab.advanced_panel.transformationGoB;
-        operationGoB = trackOpTab.advanced_panel.operationGoB;
+        operationCB = trackOpTab.operationCB;
+        transformationGoB = trackOpTab.transformationGoB;
+        operationGoB = trackOpTab.operationGoB;
         combineB = trackOpTab.combineB;
         splitB = trackOpTab.splitB;
         baseTextBox = trackOpTab.paramT;

@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.util.ArrayList;
@@ -216,7 +217,7 @@ public final class GenometryModel {
 		sym_selection_listeners.remove(listener);
 	}
 	
-	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
+	private void fireSymSelectionEvent(Object src, List<RootSeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
 		if (DEBUG) {
 			System.out.println("Firing event: " + all_syms.size() + " " + graph_syms.size());
 		}
@@ -235,7 +236,7 @@ public final class GenometryModel {
 	 *  @param graph_syms A List of Graph SeqSymmetry objects to select.
 	 *  @param src The object responsible for selecting the sequences.
 	 */
-	public void setSelectedSymmetries(List<SeqSymmetry> all_syms, List<SeqSymmetry> graph_syms, Object src)  {
+	public void setSelectedSymmetries(List<RootSeqSymmetry> all_syms, List<SeqSymmetry> graph_syms, Object src)  {
 		setSelectedSymmetries(graph_syms);
 		fireSymSelectionEvent(src, all_syms, graph_syms); // Note this is the complete list of selections
 	}
@@ -263,7 +264,7 @@ public final class GenometryModel {
 				setSelectedSeq(seq, src);
 			}
 		}
-		List<SeqSymmetry> all_syms = Collections.<SeqSymmetry>emptyList();
+		List<RootSeqSymmetry> all_syms = Collections.<RootSeqSymmetry>emptyList();
 		fireSymSelectionEvent(src, all_syms, graph_syms); // Note this is the complete list of selections
 	}
 
@@ -360,7 +361,7 @@ public final class GenometryModel {
 	 */
 	public void clearSelectedSymmetries(Object src) {
 		clearSelectedSymmetries();
-		fireSymSelectionEvent(src, Collections.<SeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList());
+		fireSymSelectionEvent(src, Collections.<RootSeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList());
 	}
 
 	/**

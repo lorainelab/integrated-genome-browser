@@ -1433,7 +1433,7 @@ public class SeqMapView extends JPanel
 	@Override
 	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		gmodel.setSelectedSymmetries(glyphsToSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
+		gmodel.setSelectedSymmetries(glyphsToRootSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {
@@ -1559,6 +1559,20 @@ public class SeqMapView extends JPanel
 			}
 		}
 		return new ArrayList<SeqSymmetry>(symSet);
+	}
+
+	/**
+	 * Given a list of glyphs, returns a list of root syms that those glyphs
+	 * represent.
+	 */
+	public static List<RootSeqSymmetry> glyphsToRootSyms(List<GlyphI> glyphs) {
+		Set<RootSeqSymmetry> symSet = new LinkedHashSet<RootSeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+		for (GlyphI gl : glyphs) {
+			if (gl.getInfo() instanceof RootSeqSymmetry) {
+				symSet.add((RootSeqSymmetry) gl.getInfo());
+			}
+		}
+		return new ArrayList<RootSeqSymmetry>(symSet);
 	}
 
 	@Override

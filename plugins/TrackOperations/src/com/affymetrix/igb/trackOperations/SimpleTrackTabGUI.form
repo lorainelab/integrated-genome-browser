@@ -115,7 +115,7 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="transformationCB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.advanced_panel.transformationCB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationCB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="operationLabel">
@@ -125,7 +125,7 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="operationCB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.advanced_panel.operationCB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.operationCB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="transformationGoB">
@@ -133,7 +133,7 @@
             <Property name="text" type="java.lang.String" value="Go"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.advanced_panel.transformationGoB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.transformationGoB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="operationGoB">
@@ -141,7 +141,7 @@
             <Property name="text" type="java.lang.String" value="Go"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.advanced_panel.operationGoB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="trackOpTab.operationGoB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="combineB">

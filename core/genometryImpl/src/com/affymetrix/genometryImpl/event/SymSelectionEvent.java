@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.event;
 
+import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 
 import java.util.Collections;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public final class SymSelectionEvent extends EventObject {
 	private final List<SeqSymmetry> selected_graph_syms;
-	private final List<SeqSymmetry> all_selected_syms;
+	private final List<RootSeqSymmetry> all_selected_syms;
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -18,10 +19,10 @@ public final class SymSelectionEvent extends EventObject {
 	 *  @param graph_syms a List of SeqSymmetry's.  Can be empty, but should not be null.
 	 *   (If null, will default to {@link Collections#EMPTY_LIST}.)
 	 */
-	public SymSelectionEvent(Object src, List<SeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
+	public SymSelectionEvent(Object src, List<RootSeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
 		super(src);
 		if (all_syms == null) {
-			this.all_selected_syms = Collections.<SeqSymmetry>emptyList();
+			this.all_selected_syms = Collections.<RootSeqSymmetry>emptyList();
 		} else {
 			this.all_selected_syms = all_syms;
 		}
@@ -34,7 +35,7 @@ public final class SymSelectionEvent extends EventObject {
 
 	/** @return a List of all selected Symmetry's.  May be empty, but will not be null.
 	*/
-	public List<SeqSymmetry> getAllSelectedSyms() {
+	public List<RootSeqSymmetry> getAllSelectedSyms() {
 		return all_selected_syms;
 	}
 

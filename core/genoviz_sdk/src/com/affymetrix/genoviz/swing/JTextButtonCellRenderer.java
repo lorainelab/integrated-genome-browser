@@ -14,7 +14,7 @@ import javax.swing.table.TableCellRenderer;
  * @author hiralv
  */
 public abstract class JTextButtonCellRenderer extends AbstractCellEditor implements
-		TableCellEditor, ActionListener, TableCellRenderer, UIResource, MouseListener {
+		TableCellEditor, TableCellRenderer {
 
 	public static final long serialVersionUID = 1l;
 	private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
@@ -23,14 +23,22 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 	public final JPanel panel;
 	protected String temp;
 
-	public JTextButtonCellRenderer() {
+	public JTextButtonCellRenderer(Object icon) {
 		super();
 		panel = new JPanel();
 		field = new JLabel();
-		button = getButton();
-		button.addActionListener(this);
-		field.addMouseListener(this);
-		panel.addMouseListener(this);
+		if(icon instanceof Icon){
+			button = new JButton((Icon)icon);
+		}else if (icon instanceof String){
+			button = new JButton((String)icon);
+		}else{
+			button = new JButton();
+		}
+		Listeners listener = new Listeners();
+		
+		button.addActionListener(listener);
+		field.addMouseListener(listener);
+		panel.addMouseListener(listener);
 
 		field.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		button.setMargin(new Insets(0, 0, 0, 0));
@@ -52,8 +60,6 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 		panel.add(button, c);
 	}
 
-	protected abstract JButton getButton();
-
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
@@ -73,9 +79,7 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 	public Object getCellEditorValue() {
 		return temp;
 	}
-
-	public abstract void actionPerformed(ActionEvent e);
-
+	
 	//Implement the one method defined by TableCellEditor.
 	public Component getTableCellEditorComponent(JTable table,
 			Object value,
@@ -86,20 +90,29 @@ public abstract class JTextButtonCellRenderer extends AbstractCellEditor impleme
 		return panel;
 	}
 
-	public void mouseReleased(MouseEvent e) {
-		fireEditingCanceled();
-		panel.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
-	}
+	public abstract void actionPerformed(ActionEvent e);
+	
+	private class Listeners implements ActionListener, MouseListener, UIResource {
 
-	public void mouseClicked(MouseEvent e) {
-	}
+		public void actionPerformed(ActionEvent e) {
+			JTextButtonCellRenderer.this.actionPerformed(e);
+		}
 
-	public void mousePressed(MouseEvent e) {
-	}
+		public void mouseReleased(MouseEvent e) {
+			fireEditingCanceled();
+			panel.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
+		}
 
-	public void mouseEntered(MouseEvent e) {
-	}
+		public void mouseClicked(MouseEvent e) {
+		}
 
-	public void mouseExited(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 }

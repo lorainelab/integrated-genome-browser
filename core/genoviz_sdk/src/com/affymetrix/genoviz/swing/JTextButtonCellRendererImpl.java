@@ -15,14 +15,10 @@ public class JTextButtonCellRendererImpl extends JTextButtonCellRenderer {
 	private final JFrame frame;
 	
 	public JTextButtonCellRendererImpl(JFrame frame) {
+		super("...");
 		this.frame = frame;
 	}
 
-	@Override
-	protected JButton getButton() {
-		return new JButton("...");
-	}
-	
 	protected final void copyAction()
 	{
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

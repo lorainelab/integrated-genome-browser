@@ -42,7 +42,8 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
 	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB", CombineGraphsAction.getAction());
 	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", SplitGraphsAction.getAction());
-	private IGBService igbService;
+	private final IGBService igbService;
+	private final ThresholdingAction thresholdingAction;
 	private final HoverEffect hovereffect;
 
 	private final Map<String, Operator> name2transformation;
@@ -111,7 +112,8 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				new TrackOperationAction(gviewer, operator).actionPerformed(e);
 			}
 		});
-		threshB.setAction(ThresholdingAction.createThresholdingAction(igbS));
+		thresholdingAction = ThresholdingAction.createThresholdingAction(igbService);
+		threshB.setAction(thresholdingAction);
 		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
 	}
 
@@ -156,6 +158,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			rootSyms.clear();
 		}
 		glyphs.clear();
+		List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
 		// First loop through and collect syms and glyphs
 		for (int i = 0; i < symcount; i++) {
 			RootSeqSymmetry sym = selected_syms.get(i);
@@ -175,9 +178,13 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 					}
 				} else if (rootSyms.contains(vg.getInfo())) {
 					glyphs.add(vg);
+					if (vg instanceof AbstractGraphGlyph) {
+						graphGlyphs.add((AbstractGraphGlyph)vg);
+					}
 				}
 			}
 		}
+		thresholdingAction.setGraphs(graphGlyphs);
 		categoryCounts = getCategoryCounts();
 	}
 

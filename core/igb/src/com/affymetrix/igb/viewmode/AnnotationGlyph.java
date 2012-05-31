@@ -19,7 +19,7 @@ import java.util.*;
 /**
  *  copy / modification of TierGlyph for ViewModeGlyph for annotations
  */
-public class AnnotationGlyph extends TransformViewModeGlyph implements TransformableViewModeGlyph {
+public class AnnotationGlyph extends AbstractViewModeGlyph {
 	private static final int MAX_EXPAND = 0;
 	// extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
 	private static final Map<String,Class<?>> PREFERENCES;
@@ -54,18 +54,11 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 
 	private static final int BUFFER = 50;
 	private static final Font default_font = NeoConstants.default_plain_font;
-	private FasterExpandPacker expand_packer = new ScrollableFasterExpandPacker();
+	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
-	
-	// Variable for scrolling in tier
-	private int offset = 1;
-	private float scale = 1.0f;
-	private Rectangle lower_pixelbox = new Rectangle();
-	private Rectangle upper_pixelbox = new Rectangle();
-	private Rectangle child_temp = new Rectangle();
-	 
+		 
 	public AnnotationGlyph(ITrackStyleExtended style) {
 		super();
 		setHitable(false);
@@ -190,7 +183,6 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 		} else {
 			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
 		}
-		setInitialOffset();
 	}
 
 	/**
@@ -213,31 +205,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 
 		super.draw(view);
 	}
-	
-	@Override
-	public void setScale(float scale) {
-		this.scale = scale;
-		tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
-			scale, tier_transform.getTranslateX(), tier_transform.getTranslateY());
-	}
-
-	@Override
-	public float getScale() {
-		return scale;
-	}
-	
-	@Override
-	public void setOffset(int offset){
-		this.offset = offset;
-		tier_transform.setTransform(tier_transform.getScaleX(), 0, 0,
-			tier_transform.getScaleY(), tier_transform.getTranslateX(), offset);
-	}
-	
-	@Override
-	public int getOffset(){
-		return offset;
-	}
-	
+		
 	@Override
 	public double getChildHeight(){
 		double child_height = 0;
@@ -263,15 +231,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 		
 		return child_height;
 	}
-	
-	@Override
-	public boolean isScrollingAllowed(){
-		if(getPacker() != expand_packer)
-			return false;
 		
-		return true;
-	}
-	
 	private int getStyleDepth(){
 		switch(getDirection()){
 			case REVERSE:
@@ -284,61 +244,9 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 				return getAnnotStyle().getMaxDepth();
 		}
 	}
-		
-	@Override
-	protected void setModifiedViewCoords(ViewI view){
-		Rectangle temp_width = new Rectangle();
-		view.transformToPixels(new Rectangle2D.Double(0, 0, 0, BUFFER), temp_width);
-		Rectangle temp = new Rectangle(this.getPixelBox().x, 
-				this.getPixelBox().y  + temp_width.height, this.getPixelBox().width, 
-				this.getPixelBox().height - 2*temp_width.height);
-		view.transformToCoords(temp, modified_view_coordbox);
-	}
-	
-	private void setInitialOffset() {
-		int coord_offset = 0;
-		if (isScrollingAllowed()) {
-			coord_offset = (int) (BUFFER * 1.5);
-			if (getDirection() != TierGlyph.Direction.REVERSE) {
-				if (getInitialRowsToScroll() > 0) {
-					coord_offset = (int) getChildHeight() * (getInitialRowsToScroll() - 1) + coord_offset;
-				}
-				coord_offset = -coord_offset;
-				//int pixel_offset = (int) (view.getTransform().getScaleY() * coord_offset);
-			}
-		}
-		setOffset(coord_offset);
-	}
-
-	private int getInitialRowsToScroll(){
-		if (getStyleDepth() == MAX_EXPAND)
-			return MAX_EXPAND;
-		
-		return getActualSlots() - getStyleDepth();
-	}
-	
+			
 	@Override
 	public void drawChildren(ViewI view) {
-		if (isScrollingAllowed()) {
-			// Convert the upper and lower coords to pixelbox before modifying the view
-			view.transformToPixels(new Rectangle2D.Double(getCoordBox().x, 
-					getCoordBox().y, getCoordBox().width, BUFFER), upper_pixelbox);
-			view.transformToPixels(new Rectangle2D.Double(getCoordBox().x, 
-					getCoordBox().y + getCoordBox().height - BUFFER, 
-					getCoordBox().width, BUFFER), lower_pixelbox);
-
-			// Find the intersection
-			upper_pixelbox = upper_pixelbox.intersection(view.getPixelBox());
-			lower_pixelbox = lower_pixelbox.intersection(view.getPixelBox());
-		}else{
-			upper_pixelbox.setBounds(0, 0, 0, 0);
-			lower_pixelbox.setBounds(0, 0, 0, 0);
-		}
-		super.drawChildren(view);
-	}
-	
-	@Override
-	protected void modifiedDrawChildren(ViewI view) {
 		try {
 			if (getChildren() != null) {
 				GlyphI child;
@@ -347,11 +255,7 @@ public class AnnotationGlyph extends TransformViewModeGlyph implements Transform
 					child = getChildren().get(i);
 					// TransientGlyphs are usually NOT drawn in standard drawTraversal
 					if (!(child instanceof TransientGlyph) || drawTransients()) {
-						view.transformToPixels(child.getCoordBox(), child_temp);
-						if (child_temp.width == 0) {
-							child_temp.width = 1;
-						}
-						if (child_temp.intersects(lower_pixelbox) || child_temp.intersects(upper_pixelbox)) {
+						if (child.isOverlapped()) {
 							Graphics2D g = view.getGraphics();
 							Composite dac = g.getComposite();
 							g.setComposite(ac);

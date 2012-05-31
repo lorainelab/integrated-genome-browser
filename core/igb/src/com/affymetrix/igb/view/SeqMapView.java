@@ -2138,6 +2138,12 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
+	public void deselectAll() {
+		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
+		labelmap.clearSelected();
+		seqmap.updateWidget();
+	}
+
 	/**
 	 * Recurse through glyphs and collect those that are instances of
 	 * GraphGlyph.

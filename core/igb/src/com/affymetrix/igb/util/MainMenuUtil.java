@@ -12,6 +12,7 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.shared.DeselectAllAction;
 import com.affymetrix.igb.shared.SelectAllAction;
 
 import java.lang.reflect.Method;
@@ -80,6 +81,7 @@ public class MainMenuUtil {
 		MenuUtil.addToMenu(edit_menu, new JRPMenuItem(id + "_main_editMenu_canonicalize", CanonicalizeTracksAction.getAction()));
 		JRPMenu select_menu = new JRPMenu(id + "_main_editMenu_select", IGBConstants.BUNDLE.getString("selectAllAction"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
+		select_menu.add(new JRPMenuItem(id + "_main_editMenu_deselect_all", DeselectAllAction.getAction()));
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.name(), SelectAllAction.getAction(category));
 			select_menu.add(item);

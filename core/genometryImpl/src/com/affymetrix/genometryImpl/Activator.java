@@ -92,7 +92,7 @@ public class Activator implements BundleActivator {
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.DiffOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveAOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.ExclusiveBOperator(), null);
-		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FilterOperator(FileTypeCategory.Annotation, new SymmetryFilterProps()), null);
+		//bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.FilterOperator(FileTypeCategory.Annotation, new SymmetryFilterProps()), null);
 		//bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IdentityTransform(), null); //Same as copy graph operator
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.IntersectionOperator(), null);
 		bundleContext.registerService(Operator.class, new com.affymetrix.genometryImpl.operator.InverseLogTransform(), null);

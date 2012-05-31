@@ -6,7 +6,7 @@ import com.affymetrix.igb.IGBConstants;
 
 public class ExpandAction extends CollapseExpandActionA implements SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static ExpandAction ACTION = new ExpandAction();
+	private static final ExpandAction ACTION = new ExpandAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -17,7 +17,7 @@ public class ExpandAction extends CollapseExpandActionA implements SymSelectionL
 	}
 
 	protected ExpandAction() {
-		super(IGBConstants.BUNDLE.getString("expandAction"), "16x16/actions/view-fullscreen.png",  "22x22/actions/view-fullscreen.png");
+		super(IGBConstants.BUNDLE.getString("expandAction"), "16x16/actions/view-fullscreen.png", "22x22/actions/expand.png");
 		collapsedTracks = false;
 	}
 

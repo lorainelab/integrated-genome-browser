@@ -23,7 +23,7 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 	}
 
 	protected CollapseExpandAction() {
-		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png", null);
+		super(IGBConstants.BUNDLE.getString("collapseAction"), "images/collapse.png", "22x22/actions/collapse.png");
 	}
 
 	@Override
@@ -37,13 +37,13 @@ public class CollapseExpandAction extends CollapseExpandActionA implements SymSe
 		String text = collapsedTracks ? IGBConstants.BUNDLE.getString("collapseAction") : IGBConstants.BUNDLE.getString("expandAction") ;
 		putValue(Action.NAME, text);
 		putValue(SHORT_DESCRIPTION, text);
-		String iconPath = collapsedTracks ? "images/collapse.png" : "images/expand.png";
+		String iconPath = collapsedTracks ? "22x22/actions/collapse.png" : "22x22/actions/expand.png";
 		ImageIcon icon = CommonUtils.getInstance().getIcon(iconPath);
 		if (icon == null) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "icon " + iconPath + " returned null");
 		}
 		else {
-			putValue(Action.SMALL_ICON, icon);
+			putValue(Action.LARGE_ICON_KEY, icon);
 		}
 	}
 }

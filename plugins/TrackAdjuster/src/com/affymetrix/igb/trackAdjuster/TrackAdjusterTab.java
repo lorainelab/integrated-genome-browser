@@ -860,7 +860,7 @@ public final class TrackAdjusterTab
 		ViewI v = igbService.getView();
 		if (color != null) {
 			for (TierGlyph tier : selectedTiers) {
-				System.out.println(this.getClass().getName() + ": tier: " + tier);
+//				System.out.println(this.getClass().getName() + ": tier: " + tier);
 				tier.getAnnotStyle().setForeground(color);
 			}
 		}

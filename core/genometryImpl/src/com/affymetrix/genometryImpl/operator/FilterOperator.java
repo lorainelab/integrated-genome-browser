@@ -27,7 +27,7 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public String getDisplay() {
-		return getName();
+		return "filter " + category.toString() + " by " + filter.getName();
 	}
 
 	@Override

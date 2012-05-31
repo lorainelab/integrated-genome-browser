@@ -37,25 +37,28 @@ public class SimpleTrackTabGUI extends IGBTabPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        manipulationsPanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         transformLabel = new javax.swing.JLabel();
         transformationCB = trackOpTab.transformationCB;
+        transformationGoB = trackOpTab.transformationGoB;
         operationLabel = new javax.swing.JLabel();
         operationCB = trackOpTab.operationCB;
-        transformationGoB = trackOpTab.transformationGoB;
         operationGoB = trackOpTab.operationGoB;
         combineB = trackOpTab.combineB;
         splitB = trackOpTab.splitB;
-        baseTextBox = trackOpTab.paramT;
-        baseLabel = new javax.swing.JLabel();
+        transformationParamLabel = trackOpTab.transformationParamLabel;
+        operationParamLabel = trackOpTab.operationParamLabel;
+        transformationParam = trackOpTab.transformationParam;
+        operationParam = trackOpTab.operationParam;
+        threshholdB = trackOpTab.threshB;
 
-        manipulationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Manipulations"));
+        jLabel2.setText("jLabel2");
 
         transformLabel.setText("Transform");
 
-        operationLabel.setText("Operation");
-
         transformationGoB.setText("Go");
+
+        operationLabel.setText("Operation");
 
         operationGoB.setText("Go");
 
@@ -63,96 +66,98 @@ public class SimpleTrackTabGUI extends IGBTabPanel {
 
         splitB.setText("Split");
 
-        baseLabel.setText("Base:");
+        transformationParamLabel.setText(" ");
 
-        org.jdesktop.layout.GroupLayout manipulationsPanelLayout = new org.jdesktop.layout.GroupLayout(manipulationsPanel);
-        manipulationsPanel.setLayout(manipulationsPanelLayout);
-        manipulationsPanelLayout.setHorizontalGroup(
-            manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(manipulationsPanelLayout.createSequentialGroup()
-                .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(transformLabel)
-                    .add(manipulationsPanelLayout.createSequentialGroup()
-                        .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 153, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(5, 5, 5)
-                        .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(operationGoB, 0, 0, Short.MAX_VALUE)))
-                    .add(operationLabel)
-                    .add(manipulationsPanelLayout.createSequentialGroup()
-                        .add(combineB)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(splitB))
-                    .add(manipulationsPanelLayout.createSequentialGroup()
-                        .add(8, 8, 8)
-                        .add(baseLabel)
-                        .add(5, 5, 5)
-                        .add(baseTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 44, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .add(1, 1, 1))
-        );
+        operationParamLabel.setText(" ");
 
-        manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationGoB, transformationGoB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        manipulationsPanelLayout.setVerticalGroup(
-            manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(manipulationsPanelLayout.createSequentialGroup()
-                .add(transformLabel)
-                .add(1, 1, 1)
-                .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(transformationGoB))
-                .add(2, 2, 2)
-                .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(baseLabel)
-                    .add(baseTextBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(2, 2, 2)
-                .add(operationLabel)
-                .add(3, 3, 3)
-                .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(operationGoB))
-                .add(1, 1, 1)
-                .add(manipulationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(combineB)
-                    .add(splitB))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        manipulationsPanelLayout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        threshholdB.setText("Threshhold");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(manipulationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(628, Short.MAX_VALUE))
+                .add(10, 10, 10)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(operationLabel)
+                    .add(transformLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 153, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(9, 9, 9)
+                        .add(transformationGoB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 61, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(operationGoB, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .add(23, 23, 23)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(operationParamLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE))
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(transformationParam)
+                    .add(operationParam, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                .add(261, 261, 261))
+            .add(layout.createSequentialGroup()
+                .add(37, 37, 37)
+                .add(combineB)
+                .add(26, 26, 26)
+                .add(splitB)
+                .add(31, 31, 31)
+                .add(threshholdB)
+                .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        layout.linkSize(new java.awt.Component[] {operationGoB, transformationGoB}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(manipulationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 192, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .add(6, 6, 6)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(transformationGoB)
+                    .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(transformLabel)
+                    .add(transformationParamLabel)
+                    .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(operationLabel)
+                    .add(operationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(operationGoB)
+                    .add(operationParamLabel)
+                    .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(combineB)
+                    .add(splitB)
+                    .add(threshholdB))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(new java.awt.Component[] {operationCB, transformationCB}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel baseLabel;
-    private javax.swing.JTextField baseTextBox;
     private javax.swing.JButton combineB;
-    private javax.swing.JPanel manipulationsPanel;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JComboBox operationCB;
     private javax.swing.JButton operationGoB;
     private javax.swing.JLabel operationLabel;
+    private javax.swing.JTextField operationParam;
+    private javax.swing.JLabel operationParamLabel;
     private javax.swing.JButton splitB;
+    private javax.swing.JButton threshholdB;
     private javax.swing.JLabel transformLabel;
     private javax.swing.JComboBox transformationCB;
     private javax.swing.JButton transformationGoB;
+    private javax.swing.JTextField transformationParam;
+    private javax.swing.JLabel transformationParamLabel;
     // End of variables declaration//GEN-END:variables
 
 	@Override

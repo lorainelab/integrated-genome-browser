@@ -1,12 +1,11 @@
 package com.affymetrix.igb.trackOperations;
 
-import java.awt.Color;
 import java.awt.event.*;
 import java.text.MessageFormat;
-import java.util.Map.Entry;
 import java.util.*;
 
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.common.ExtensionPointHandler;
@@ -16,23 +15,19 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.operator.OperatorComparator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
-import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
 public final class TrackOperationsTab implements SeqSelectionListener, SymSelectionListener {
 
@@ -45,30 +40,36 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	public final List<ViewModeGlyph> glyphs = new ArrayList<ViewModeGlyph>();
 	private Map<FileTypeCategory, Integer> categoryCounts;
 	public final JRPButton threshB = new JRPButton("TrackOperationsTab_threshB");
-	public final JRPTextField paramT = new JRPTextField("TrackOperationsTab_paramT", "", 2);
-	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB", BUNDLE.getString("combineButton"));
-	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", BUNDLE.getString("splitButton"));
+	public final JRPButton combineB = new JRPButton("TrackOperationsTab_combineB", CombineGraphsAction.getAction());
+	public final JRPButton splitB = new JRPButton("TrackOperationsTab_splitB", SplitGraphsAction.getAction());
 	private IGBService igbService;
-	private final Map<String, Operator> name2transform;
-	private final Map<String, Operator> name2operator;
-	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB", BUNDLE.getString("goButton"));
+	private final HoverEffect hovereffect;
+
+	private final Map<String, Operator> name2transformation;
 	public final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
 	public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
-	public final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
-	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
-	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB", BUNDLE.getString("goButton"));
-	private final HoverEffect hovereffect;
-	private final ItemListener operationListener = new ItemListener() {
-
+	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB", BUNDLE.getString("goButton"));
+	public final JLabel transformationParamLabel = new JLabel();
+	public final JTextField transformationParam = new JTextField();
+	private final ItemListener transformationListener = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			setOperatorTooltip();
+			setTransformationDisplay();
 		}
 	};
 
-	public void setThresholdAction(GenericAction thresholdAction) {
-		threshB.setAction(thresholdAction);
-	}
+	private final Map<String, Operator> name2operation;
+	public final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
+	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
+	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB", BUNDLE.getString("goButton"));
+	public final JLabel operationParamLabel = new JLabel();
+	public final JTextField operationParam = new JTextField();
+	private final ItemListener operationListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			setOperationDisplay();
+		}
+	};
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackOperationsTab(igbService);
@@ -83,30 +84,10 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 	public TrackOperationsTab(IGBService igbS) {
 		igbService = igbS;
-		name2transform = new HashMap<String, Operator>();
-		name2operator = new HashMap<String, Operator>();
+		name2transformation = new HashMap<String, Operator>();
+		name2operation = new HashMap<String, Operator>();
 		hovereffect = new HoverEffect();
-		paramT.setText("");
-		paramT.setEditable(false);
-
-		transformationCB.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String selection = (String) transformationCB.getSelectedItem();
-				if (selection == null) {
-					paramT.setEditable(false);
-				} else {
-					Operator trans = name2transform.get(selection);
-					Map<String, Class<?>> params = trans.getParameters();
-					if (params == null) {
-						paramT.setEditable(false);
-					} else {
-						paramT.setEditable(true);
-					}
-				}
-			}
-		});
+		transformationCB.addItemListener(transformationListener);
 
 		operationCB.addMouseListener(hovereffect);
 		operationCB.addItemListener(operationListener);
@@ -115,7 +96,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 			public void actionPerformed(ActionEvent e) {
 				String selection = (String) transformationCB.getSelectedItem();
-				Operator operator = name2transform.get(selection);
+				Operator operator = name2transformation.get(selection);
 				SeqMapViewI gviewer = igbService.getSeqMapView();
 				new TrackTransformAction(gviewer, operator).actionPerformed(e);
 			}
@@ -125,26 +106,12 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 			public void actionPerformed(ActionEvent e) {
 				String selection = (String) operationCB.getSelectedItem();
-				Operator operator = name2operator.get(selection);
+				Operator operator = name2operation.get(selection);
 				SeqMapViewI gviewer = igbService.getSeqMapView();
 				new TrackOperationAction(gviewer, operator).actionPerformed(e);
 			}
 		});
-
-
-
-		combineB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				combineGraphs();
-			}
-		});
-		splitB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				splitGraphs();
-			}
-		});
+		threshB.setAction(ThresholdingAction.createThresholdingAction(igbS));
 		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
 	}
 
@@ -177,7 +144,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		collectGraphsAndGlyphs(selected_syms, symcount);
 		loadOperators();
 		setPanelEnabled();
-		setOperatorTooltip();
+		setOperationDisplay();
 		is_listening = true; // turn back on GUI events
 	}
 
@@ -223,7 +190,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
 	}
 
-	private void updateViewer() {
+	public void updateViewer() {
 		final List<RootSeqSymmetry> previous_syms = new ArrayList<RootSeqSymmetry>(rootSyms);
 		// set selections to empty so that options get turned off
 		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
@@ -253,6 +220,13 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	}
 
 	private void loadOperators() {
+		transformationCB.removeAllItems();
+		name2transformation.clear();
+		operationCB.removeAllItems();
+		name2operation.clear();
+		if (rootSyms.size() == 0) {
+			return;
+		}
 		FileTypeCategory transformCategory = null;
 		FileTypeCategory testTransformCategory = null;
 		for (FileTypeCategory category : FileTypeCategory.values()) {
@@ -266,10 +240,6 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				}
 			}
 		}
-		transformationCB.removeAllItems();
-		name2transform.clear();
-		operationCB.removeAllItems();
-		name2operator.clear();
 		TreeSet<Operator> operators = new TreeSet<Operator>(new OperatorComparator());
 		operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
 		for (Operator operator : operators) {
@@ -291,100 +261,15 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 					}
 				}
 			}
-			if (operatorOK) {
-				name2operator.put(operator.getDisplay(), operator);
-				operationCB.addItem(operator.getDisplay());
-			}
 			if (transformOK) {
-				name2transform.put(operator.getDisplay(), operator);
+				name2transformation.put(operator.getDisplay(), operator);
 				transformationCB.addItem(operator.getDisplay());
 			}
-		}
-	}
-
-	/**
-	 *  Puts all selected graphs in the same tier.
-	 *  Current glyph factories do not support floating the combined graphs.
-	 */
-	private void combineGraphs() {
-		int gcount = rootSyms.size();
-		float height = 0;
-
-		// Note that the combo_style does not implement IFloatableTierStyle
-		// because the glyph factory doesn't support floating combo graphs anyway.
-		ITrackStyleExtended combo_style = null;
-		String viewMode = "combo";
-
-		Map<Color, Integer> colorMap = new HashMap<Color, Integer>();
-		// If any of them already has a combo style, use that one
-		for (int i = 0; i < gcount && combo_style == null; i++) {
-			if (rootSyms.get(i) instanceof GraphSym) {
-				GraphSym gsym = (GraphSym)rootSyms.get(i);
-				combo_style = gsym.getGraphState().getComboStyle();
-				Color col = gsym.getGraphState().getTierStyle().getBackground();
-				int c = 0;
-				if (colorMap.containsKey(col)) {
-					c = colorMap.get(col) + 1;
-				}
-				colorMap.put(col, c);
+			if (operatorOK) {
+				name2operation.put(operator.getDisplay(), operator);
+				operationCB.addItem(operator.getDisplay());
 			}
 		}
-
-		// otherwise, construct a new combo style
-		if (combo_style == null) {
-			combo_style = new SimpleTrackStyle("Joined Graphs", true);
-			combo_style.setTrackName("Joined Graphs");
-			combo_style.setExpandable(true);
-			//	combo_style.setCollapsed(true);
-			combo_style.setForeground(igbService.getDefaultForegroundColor());
-			Color background = igbService.getDefaultBackgroundColor();
-			int c = -1;
-			for (Entry<Color, Integer> color : colorMap.entrySet()) {
-				if (color.getValue() > c) {
-					background = color.getKey();
-				}
-			}
-			combo_style.setBackground(background);
-			combo_style.setViewMode(viewMode);
-		}
-
-		// Now apply that combo style to all the selected graphs
-		int i = 0;
-		for (SeqSymmetry sym : rootSyms) {
-			if (sym instanceof GraphSym) {
-				GraphSym gsym = (GraphSym)sym;
-				GraphState gstate = gsym.getGraphState();
-				gstate.setComboStyle(combo_style, i++);
-				gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
-				height += gsym.getGraphState().getTierStyle().getHeight();
-			}
-		}
-		combo_style.setHeight(height / i);
-
-		updateViewer();
-	}
-
-	/**
-	 *  Puts all selected graphs in separate tiers by setting the
-	 *  combo state of each graph's state to null.
-	 */
-	private void splitGraphs() {
-		if (rootSyms.isEmpty()) {
-			return;
-		}
-
-		for (SeqSymmetry sym : rootSyms) {
-			if (sym instanceof GraphSym) {
-				GraphSym gsym = (GraphSym)sym;
-				GraphState gstate = gsym.getGraphState();
-				gstate.setComboStyle(null, 0);
-
-				// For simplicity, set the floating state of all new tiers to false.
-				// Otherwise, have to calculate valid, non-overlapping y-positions and heights.
-				gstate.getTierStyle().setFloatTier(false); // for simplicity
-			}
-		}
-		updateViewer();
 	}
 
 	public void setPanelEnabled() {
@@ -417,23 +302,47 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 
 		combineB.setEnabled(!all_are_combined && any_graphs);
 		splitB.setEnabled(any_are_combined);
-		int operatorCount = name2operator.size();
+		threshB.setEnabled(any_graphs);
+		int operatorCount = name2operation.size();
 		transformationCB.setEnabled(all_same && operatorCount > 0);
 		transformationGoB.setEnabled(all_same && operatorCount > 0);
 		operationCB.setEnabled(operatorCount > 0);
 		operationGoB.setEnabled(operatorCount > 0);
 
-		paramT.setEnabled(transformationGoB.isEnabled());
 		is_listening = true; // turn back on GUI events
 	}
 
-	private void setOperatorTooltip() {
-		String selection = (String) operationCB.getSelectedItem();
-		Operator operator = name2operator.get(selection);
-		if (operator == null) {
-			operationGoB.setToolTipText(null);
+	private void setTransformationDisplay() {
+		set___AtionDisplay(transformationCB, transformationParamLabel, transformationParam, name2transformation, transformationGoB);
+	}
+
+	private void setOperationDisplay() {
+		set___AtionDisplay(operationCB, operationParamLabel, operationParam, name2operation, operationGoB);
+	}
+
+	private void set___AtionDisplay(
+		JRPComboBoxWithSingleListener ationCB,
+		JLabel ationLabel,
+		JTextField ationParam,
+		Map<String, Operator> name2ation,
+		JRPButton ationGoB
+		) {
+		String selection = (String) ationCB.getSelectedItem();
+		if (selection == null) {
+			ationLabel.setText("");
+			ationParam.setVisible(false);
 		} else {
-			operationGoB.setToolTipText(getTooltipMessage(operator));
+			Operator operator = name2ation.get(selection);
+			ationGoB.setToolTipText(getTooltipMessage(operator));
+			Map<String, Class<?>> params = operator.getParameters();
+			if (params == null || params.size() == 0) {
+				ationLabel.setText("");
+				ationParam.setVisible(false);
+			} else {
+				ationLabel.setText(params.keySet().iterator().next());
+				ationParam.setText("");
+				ationParam.setVisible(true);
+			}
 		}
 	}
 
@@ -449,6 +358,9 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	private static final String selectMaxGraphsMessage = BUNDLE.getString("operatorMaxTooltip");
 	private static final String selectRangeGraphsMessage = BUNDLE.getString("operatorRangeTooltip");
 	public static String getTooltipMessage(Operator operator) {
+		if (operator == null) {
+			return null;
+		}
 		StringBuffer sb = new StringBuffer();
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			int minCount = operator.getOperandCountMin(category);
@@ -459,20 +371,28 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 					sb.append(", ");
 				}
 				if (minCount == maxCount) {
-					return MessageFormat.format(selectExactGraphsMessage, minCount, categoryName);
+					sb.append(MessageFormat.format(selectExactGraphsMessage, minCount, categoryName));
 				}
 				else if (minCount == 0) {
-					return MessageFormat.format(selectMaxGraphsMessage, maxCount, categoryName);
+					sb.append(MessageFormat.format(selectMaxGraphsMessage, maxCount, categoryName));
 				}
 				else if (maxCount == Integer.MAX_VALUE) {
-					return MessageFormat.format(selectMinGraphsMessage, minCount, categoryName);
+					sb.append(MessageFormat.format(selectMinGraphsMessage, minCount, categoryName));
 				}
 				else {
-					return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount, categoryName);
+					sb.append(MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount, categoryName));
 				}
 			}
 		}
 		return sb.toString();
+	}
+
+	public List<RootSeqSymmetry> getRootSyms() {
+		return rootSyms;
+	}
+
+	public IGBService getIgbService() {
+		return igbService;
 	}
 
 	private class HoverEffect implements MouseListener {
@@ -492,7 +412,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		public void mouseEntered(MouseEvent e) {
 			JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 			String selection = (String) comp.getSelectedItem();
-			Operator operator = name2operator.get(selection);
+			Operator operator = name2operation.get(selection);
 
 			if (rootSyms.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
 					&& rootSyms.size() <= operator.getOperandCountMax(FileTypeCategory.Graph)) {
@@ -505,7 +425,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		public void mouseExited(MouseEvent e) {
 			JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 			String selection = (String) comp.getSelectedItem();
-			unsetGraphName(name2operator.get(selection));
+			unsetGraphName(name2operation.get(selection));
 		}
 
 		public void setGraphName(JRPComboBoxWithSingleListener comp, Operator operator) {

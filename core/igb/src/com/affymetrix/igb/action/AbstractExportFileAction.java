@@ -72,10 +72,14 @@ public abstract class AbstractExportFileAction extends GenericAction {
 			annotationWriter = annotationWriters.get(rootSym.getCategory()).newInstance();
 		}
 		catch (Exception x) {
-			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name(), x);
+			ErrorHandler.errorPanel("not supported yet", "cannot export files of type " + rootSym.getCategory().name(), Level.WARNING);
+			return;
+//			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name(), x);
 		}
 		if (annotationWriter == null) {
-			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name());
+			ErrorHandler.errorPanel("not supported yet", "cannot export files of type " + rootSym.getCategory().name(), Level.WARNING);
+			return;
+//			throw new UnsupportedOperationException("cannot export files of type " + rootSym.getCategory().name());
 		}
 		String mimeType = annotationWriter.getMimeType();
 		if (!mimeType.startsWith(MIME_TYPE_PREFIX)) {

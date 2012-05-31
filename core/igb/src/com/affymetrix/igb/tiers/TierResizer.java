@@ -5,14 +5,14 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.TransformableViewModeGlyph;
-import com.affymetrix.igb.shared.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.swing.event.MouseInputAdapter;
+
+// @revison 11200 HV 05/31/12
 
 /**
  * A class to handle resizing the tiers on a labeled tiered map.
@@ -210,34 +210,23 @@ public class TierResizer extends MouseInputAdapter {
 				double inital_height = this.upperGl.getCoordBox().getHeight();
 				double height = inital_height + delta;
 				this.upperGl.resizeHeight(y, height);
-				this.upperGl.getReferenceTier().resizeHeight(0, height);
-				if(this.upperGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
-					if(this.upperGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((TransformableViewModeGlyph)this.upperGl.getReferenceTier().getViewModeGlyph()).getOffset() + (int)delta);
-					}
-				}
-				
+//				this.upperGl.getReferenceTier().resizeHeight(y, height);
+
 				// Move the fixed height glyphs in the middle,
 				// assuming that the list is sorted top to bottom.
 				height = this.upperGl.getCoordBox().getHeight();
 				y = this.upperGl.getCoordBox().getY() + height;
 				for (TierLabelGlyph g: this.fixedInterior) {
 					g.resizeHeight(y, g.getCoordBox().getHeight());
-					g.getReferenceTier().resizeHeight(delta, g.getCoordBox().getHeight());
+//					g.getReferenceTier().resizeHeight(y, g.getCoordBox().getHeight());
+					y += g.getCoordBox().getHeight();
 				}
 
 				y = this.lowerGl.getCoordBox().getY() + delta;
 				height = this.lowerGl.getCoordBox().getHeight() - delta;
 				this.lowerGl.resizeHeight(y, height);
-				this.lowerGl.getReferenceTier().resizeHeight(delta, height);
-				if(this.lowerGl.getReferenceTier().getViewModeGlyph() instanceof TransformableViewModeGlyph){
-					if(this.lowerGl.getReferenceTier().getDirection() != Direction.REVERSE){
-						((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).setOffset(
-							((TransformableViewModeGlyph)this.lowerGl.getReferenceTier().getViewModeGlyph()).getOffset() - (int)delta);
-					}
-				}
-				
+//				this.lowerGl.getReferenceTier().resizeHeight(y, height);
+
 				this.gviewer.getSeqMap().updateWidget();
 			}
 			else { // then we're out of bounds.
@@ -254,6 +243,68 @@ public class TierResizer extends MouseInputAdapter {
 	 */
 	@Override
 	public void mouseReleased(MouseEvent evt) {
+
+		if (!this.dragStarted) {
+			return;
+		}
+		this.dragStarted = false;
+		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
+
+		if (this.upperGl != null) {
+			com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
+			gl.setPreferredHeight(
+					this.upperGl.getCoordBox().getHeight(),
+					this.gviewer.getSeqMap().getView()
+					);
+		}
+
+		if (this.lowerGl != null) {
+			com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
+			gl.setPreferredHeight(
+					this.lowerGl.getCoordBox().getHeight(),
+					this.gviewer.getSeqMap().getView()
+					);
+		}
+
+		if (needRepacking) {
+
+			// This is pretty good now. Tiers jump just a bit after resizing.
+			// Mostly in one direction. Maybe can get to the bottom of this.
+			// The border width of 2 pixels looks suspicious both here
+			// and when moving the lower split pane.
+			// - elb
+			com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
+			com.affymetrix.igb.tiers.AffyLabelledTierMap lm
+					= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
+			boolean full_repack = true, stretch_vertically = true;
+			lm.repackTheTiers(full_repack, stretch_vertically);
+			//lm.repackTiersToLabels();
+			// The above repack (either one I think)
+			// changes (enlarges) the tier map's bounds.
+			// This probably affects the tiers' spacing. - elb 2012-02-21
+
+			// Vanilla repack seems to have worse symptoms.
+			//m.repack();
+			//m.packTiers(true, false, false, true);
+
+			// This was also commented out.
+			// From the name "kludgeRepackingTheTiers"
+			// it looks like someone tried a specialized repack.
+			// Don't know who or how far they got.
+			//com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
+			//if (m instanceof com.affymetrix.igb.tiers.AffyLabelledTierMap) {
+			//	com.affymetrix.igb.tiers.AffyLabelledTierMap lm
+			//			= (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
+			//	lm.kludgeRepackingTheTiers(needRepacking, needRepacking, needRepacking);
+			//}
+			// The above may not have worked,
+			// but it would seem we need something to repack the tiers
+			// based on the label glyphs' height and position.
+			// Would have thought
+			// that's what the last paramater in repackTheTiers was for.
+
+		}
+
 		this.upperGl = null; // helps with garbage collection
 		this.lowerGl = null; // helps with garbage collection
 	}

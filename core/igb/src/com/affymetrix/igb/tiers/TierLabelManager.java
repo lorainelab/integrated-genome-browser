@@ -137,10 +137,10 @@ public final class TierLabelManager implements PropertyHolder {
 					tiermap.clearSelected();
 					TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size() - 1);
 					labelmap.toFront(gl);
-					dragLabel(gl, nevt);
+					dragLabel(gl, nevt);					
 					if(selected.size() == 1){
 						transformTier(gl);
-					}
+					}			
 				}
 				tiermap.updateWidget();
 			}
@@ -169,7 +169,7 @@ public final class TierLabelManager implements PropertyHolder {
 		}
 
 		private void transformTier(TierLabelGlyph gl){
-			gs.startscroll(gl);
+			// gs.startscroll(gl);
 		}
 		
 		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
@@ -206,9 +206,9 @@ public final class TierLabelManager implements PropertyHolder {
 //		resizer = new MouseInputAdapter() {
 			// Stub out resizing to disable it.
 //		};
-		resizer = new NewTierResizer(this.tiermap);
+//		resizer = new NewTierResizer(this.tiermap);
 		gs = new GlyphTransformer(map);
-//		resizer = new TierResizer(this.tiermap);
+		resizer = new TierResizer(this.tiermap);
 //		resizer = new AccordionTierResizer(this.tiermap);
 
 		labelmap.addMouseListener(resizer);

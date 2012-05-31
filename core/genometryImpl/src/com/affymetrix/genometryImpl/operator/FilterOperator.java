@@ -11,17 +11,18 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 
 public class FilterOperator implements Operator {
-	private static final String PARM_NAME = "parameter";
+	private final FileTypeCategory category;
 	private final SymmetryFilterI filter;
 
-	public FilterOperator(SymmetryFilterI filter) {
+	public FilterOperator(FileTypeCategory category, SymmetryFilterI filter) {
 		super();
+		this.category = category;
 		this.filter = filter;
 	}
 
 	@Override
 	public String getName() {
-		return "filter_operator_" + filter.getName();
+		return "filter_operator_" + category.toString() + "_" + filter.getName();
 	}
 
 	@Override
@@ -51,20 +52,20 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public int getOperandCountMax(FileTypeCategory category) {
-		return 1;
+		return category == this.category ? Integer.MAX_VALUE : 0;
 	}
 
 	@Override
 	public Map<String, Class<?>> getParameters() {
 		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
-		parameters.put(PARM_NAME, String.class);
+		parameters.put(filter.getName(), String.class);
 		return parameters;
 	}
 
 	@Override
 	public boolean setParameters(Map<String, Object> parms) {
-		if (parms.size() == 1 && parms.get(PARM_NAME) instanceof String) {
-			filter.setParam(parms.get(PARM_NAME));
+		if (parms.size() == 1 && parms.get(filter.getName()) instanceof String) {
+			filter.setParam(parms.get(filter.getName()));
 			return true;
 		}
 		return false;
@@ -77,6 +78,6 @@ public class FilterOperator implements Operator {
 
 	@Override
 	public FileTypeCategory getOutputCategory() {
-		return null;
+		return category;
 	}
 }

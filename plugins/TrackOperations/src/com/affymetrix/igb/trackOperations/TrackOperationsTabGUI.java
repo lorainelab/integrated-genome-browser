@@ -4,15 +4,15 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import java.util.ResourceBundle;
 
-public class SimpleTrackTabGUI extends IGBTabPanel {
+public class TrackOperationsTabGUI extends IGBTabPanel {
 
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackOperations");
 	private static final int TAB_POSITION = 4;
 	public TrackOperationsTab trackOpTab;
-	private static SimpleTrackTabGUI singleton;
+	private static TrackOperationsTabGUI singleton;
 
-	public SimpleTrackTabGUI(IGBService _igbService) {
+	public TrackOperationsTabGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackOperationsTab"), BUNDLE.getString("trackOperationsTab"), false, TAB_POSITION);
 
 		TrackOperationsTab.init(igbService);
@@ -21,10 +21,10 @@ public class SimpleTrackTabGUI extends IGBTabPanel {
 	}
 
 	public static void init(IGBService igbService) {
-		singleton = new SimpleTrackTabGUI(igbService);
+		singleton = new TrackOperationsTabGUI(igbService);
 	}
 
-	public static synchronized SimpleTrackTabGUI getSingleton() {
+	public static synchronized TrackOperationsTabGUI getSingleton() {
 		return singleton;
 	}
 

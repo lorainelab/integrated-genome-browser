@@ -24,5 +24,6 @@ public class ErrorNotificationCellRenderer extends JTextButtonCellRenderer {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ErrorHandler.errorPanel(title , message ,Level.WARNING);
+		fireEditingCanceled();
 	}
 }

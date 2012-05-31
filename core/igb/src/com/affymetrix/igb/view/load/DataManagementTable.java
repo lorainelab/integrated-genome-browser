@@ -1,13 +1,26 @@
 package com.affymetrix.igb.view.load;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import javax.swing.table.*;
+import com.jidesoft.combobox.ColorExComboBox;
+
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometryImpl.symloader.Delegate;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
-import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
-import com.affymetrix.genoviz.swing.ComboBoxRenderer;
-import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+
+import com.affymetrix.genoviz.swing.*;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.swing.recordplayback.JRPTextFieldTableCellRenderer;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.JRPStyledTable;
@@ -15,29 +28,7 @@ import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import com.jidesoft.combobox.ColorExComboBox;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.Icon;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import java.awt.Color;
-import java.util.EventObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  * A table with two customizations: 1. An always-visible combo box. For a user,
@@ -53,6 +44,7 @@ public final class DataManagementTable {
 	static final Icon invisible_icon = CommonUtils.getInstance().getIcon("images/invisible.gif");
 	static final Icon visible_icon = CommonUtils.getInstance().getIcon("images/visible.gif");
 	static final Icon error_icon = CommonUtils.getInstance().getIcon("images/stop.png");
+	static final Icon igb_icon = CommonUtils.getInstance().getIcon("images/warning.png");
 	
 	//public static boolean iconTest;
 
@@ -221,7 +213,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			if (isCellEditable(row, col)) {
 				DataManagementTableModel ftm = (DataManagementTableModel) getModel();
 				VirtualFeature vFeature = ftm.getFeature(row);
-				return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+				return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName,
 						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
 			}
 		}
@@ -255,7 +247,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			switch (vFeature.getLastRefreshStatus()) {
 				case NO_DATA_LOADED: {
 					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
-						vFeature.getFeature().getLastRefreshStatus().toString(), DataManagementTable.error_icon);
+						vFeature.getLastRefreshStatus().toString(), DataManagementTable.error_icon);
 				}
 			}
 			TableCellRenderer renderer = super.getCellRenderer(row, column);
@@ -263,6 +255,10 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 			return renderer;
 		} else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
 			if (vFeature.getStyle() != null) {
+				if(Delegate.EXT.equalsIgnoreCase(vFeature.getStyle().getFileType())){
+					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
+				}
 				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName());
 			} else {
 				return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName);

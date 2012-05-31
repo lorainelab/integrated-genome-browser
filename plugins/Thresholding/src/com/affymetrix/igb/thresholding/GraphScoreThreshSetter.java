@@ -58,6 +58,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		@Override
 		protected String getMethod(List<? extends GlyphI> tiers) {
 			StringBuilder meth = new StringBuilder();
+			Operator operator = getOperator();
 			meth.append(operator.getDisplay()).append(": ");
 			
 			String description =

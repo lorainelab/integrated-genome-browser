@@ -25,7 +25,6 @@ import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
@@ -49,7 +48,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	private final Map<String, Operator> name2transformation;
 	public final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
 	public final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_transformation");
-	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB", BUNDLE.getString("goButton"));
+	public final JRPButton transformationGoB = new JRPButton("TrackOperationsTab_transformationGoB");
 	public final JLabel transformationParamLabel = new JLabel();
 	public final JTextField transformationParam = new JTextField();
 	private final ItemListener transformationListener = new ItemListener() {
@@ -62,7 +61,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 	private final Map<String, Operator> name2operation;
 	public final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
 	public final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("TrackOperationsTab_operation");
-	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB", BUNDLE.getString("goButton"));
+	public final JRPButton operationGoB = new JRPButton("TrackOperationsTab_operationGoB");
 	public final JLabel operationParamLabel = new JLabel();
 	public final JTextField operationParam = new JTextField();
 	private final ItemListener operationListener = new ItemListener() {
@@ -93,32 +92,26 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		operationCB.addMouseListener(hovereffect);
 		operationCB.addItemListener(operationListener);
 
-		transformationGoB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
+		transformationGoB.setAction(new TrackTransformAction(igbService) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			protected Operator getOperator() {
 				String selection = (String) transformationCB.getSelectedItem();
-				Operator operator = name2transformation.get(selection);
-				SeqMapViewI gviewer = igbService.getSeqMapView();
-				new TrackTransformAction(gviewer, operator).actionPerformed(e);
+				return name2transformation.get(selection);
 			}
 		});
 
-		operationGoB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
+		operationGoB.setAction(new TrackOperationAction(igbService.getSeqMapView(), null) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			protected Operator getOperator() {
 				String selection = (String) operationCB.getSelectedItem();
-				Operator operator = name2operation.get(selection);
-				SeqMapViewI gviewer = igbService.getSeqMapView();
-				new TrackOperationAction(gviewer, operator).actionPerformed(e);
+				return name2operation.get(selection);
 			}
 		});
 		thresholdingAction = ThresholdingAction.createThresholdingAction(igbService);
 		threshB.setAction(thresholdingAction);
 		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
-	}
-
-	public boolean isTierGlyph(GlyphI glyph) {
-		return glyph instanceof TierGlyph;
 	}
 
 	public void addOperator(Operator operator) {
@@ -347,8 +340,8 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				ationParam.setVisible(false);
 			} else {
 				ationLabel.setText(params.keySet().iterator().next());
-				ationParam.setText("");
 				ationParam.setVisible(true);
+				ationParam.setText("");
 			}
 		}
 	}

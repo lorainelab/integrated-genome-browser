@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.Delegate;
@@ -30,12 +29,16 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 public abstract class TrackFunctionOperationA extends GenericAction {
 	private static final long serialVersionUID = 1L;
 	protected final SeqMapViewI gviewer;
-	protected final Operator operator;
+	private final Operator mOperator;
 	
-	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator) {
-		super(null, null, null);
+	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator, String text) {
+		super(text, null, null);
 		this.gviewer = gviewer;
-		this.operator = operator;
+		this.mOperator = operator;
+	}
+
+	protected TrackFunctionOperationA(SeqMapViewI gviewer, Operator operator) {
+		this(gviewer, operator, null);
 	}
 
 	protected void addTier(List<? extends GlyphI> tiers) {
@@ -53,13 +56,17 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 			
 		}
 
-		GenericFeature feature = createFeature(getMethod(tiers), operator, dps, ((TierGlyph)tiers.get(0)).getAnnotStyle());
+		GenericFeature feature = createFeature(getMethod(tiers), getOperator(), dps, ((TierGlyph)tiers.get(0)).getAnnotStyle());
 		GeneralLoadUtils.loadAndDisplayAnnotations(feature);
+	}
+
+	protected Operator getOperator() {
+		return mOperator;
 	}
 
 	protected String getMethod(List<? extends GlyphI> tiers) {
 		StringBuilder meth = new StringBuilder();
-		meth.append(operator.getDisplay()).append(": ");
+		meth.append(getOperator().getDisplay()).append(": ");
 		for (GlyphI tier : tiers) {			
 			meth.append(((TierGlyph)tier).getAnnotStyle().getTrackName()).append(", ");
 		}
@@ -82,6 +89,7 @@ public abstract class TrackFunctionOperationA extends GenericAction {
 				}
 			}
 		}
+		Operator operator = getOperator();
 		SeqSymmetry result_sym = operator.operate(aseq, seqSymList);
 		if (result_sym != null) {
 			StringBuilder meth = new StringBuilder();

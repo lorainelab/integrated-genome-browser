@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -380,7 +381,7 @@ public final class TrackAdjusterTab
 		int selectedTrackCount = selectedTiers.size();
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
-			if (style == null) {
+			if (style == null || style instanceof SimpleTrackStyle) {
 				disableDisplayButtons(true, true);
 				return;
 			}

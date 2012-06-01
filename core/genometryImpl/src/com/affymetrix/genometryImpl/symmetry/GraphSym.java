@@ -36,6 +36,9 @@ public class GraphSym extends RootSeqSymmetry {
 	private float yFirst = 0;		// Y value at 0th coord
 
 	private boolean hasWidth = false;
+	// to prevent NPE when xCoords is null - after clear() -
+	// use validData to indicate that xCoords would have been null
+	private boolean validData = true;
 
 	private final BioSeq graph_original_seq;
 	private String gid;
@@ -85,6 +88,7 @@ public class GraphSym extends RootSeqSymmetry {
 
 		// initialize xCoords
 		xCoords = new int[this.pointCount];
+		validData = true;
 		yBuf = new float[BUFSIZE];
 		wBuf = new int[BUFSIZE];
 		System.arraycopy(x, 0, this.xCoords, 0, this.pointCount);
@@ -331,6 +335,9 @@ public class GraphSym extends RootSeqSymmetry {
 		return hasWidth;
 	}
 
+	public boolean isValid() {
+		return validData;
+	}
 
 	/**
 	 * Find last point with value <= xmin.
@@ -394,7 +401,7 @@ public class GraphSym extends RootSeqSymmetry {
 	 * @param x
 	 * @return y coord. -1 indicates not found.
 	 */
-	public float getYCoordFromX(int x) {
+	protected float getYCoordFromX(int x) {
 		int leftBound = this.determineBegIndex(x);
 		if (this.getGraphXCoord(leftBound) == x || (this.hasWidth && this.getGraphXCoord(leftBound) + this.getGraphWidthCoord(leftBound) >= x)) {
 			// Right on the point or in a region bound by its width
@@ -412,6 +419,7 @@ public class GraphSym extends RootSeqSymmetry {
 
 		// initialize xCoords
 		this.xCoords = new int[this.pointCount];
+		validData = true;
 		System.arraycopy(x, 0, this.xCoords, 0, this.pointCount);
 
 		// initialize buffers.
@@ -540,22 +548,24 @@ public class GraphSym extends RootSeqSymmetry {
 		Map<String, Object> locprops = new HashMap<String, Object>();
 
 		locprops.put("x coord", x);
-		float y = getYCoordFromX(x);
-		if (y < 0) {
-			locprops.put("y coord", "no point");
-		} else {
-			locprops.put("y coord", y);
+		if (isValid()) {
+			float y = getYCoordFromX(x);
+			if (y < 0) {
+				locprops.put("y coord", "no point");
+			} else {
+				locprops.put("y coord", y);
+			}
 		}
-
 		return locprops;
 	}
 	
 	@Override
 	public void clear(){
 		super.clear();
-		yBuf = null;
+		validData = false;
+		yBuf = new float[]{};//null; to avoid NPE
 		wBuf = null;
-		xCoords = null;
+		xCoords = new int[]{};//null; to avoid NPE
 		bufFile = null;
 	}
 

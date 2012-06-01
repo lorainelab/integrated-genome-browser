@@ -1265,6 +1265,9 @@ public abstract class AbstractGraphGlyph extends AbstractViewModeGlyph {
 
 	@Override
 	public void draw(ViewI view) {
+		if (getInfo() != null && getInfo() instanceof GraphSym && !((GraphSym)getInfo()).isValid()) {
+			return;
+		}
 		// GAH 9-13-2002
 		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
 		//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...

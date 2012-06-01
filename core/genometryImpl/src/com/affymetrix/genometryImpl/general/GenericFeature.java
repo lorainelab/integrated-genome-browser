@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
@@ -36,8 +37,8 @@ import java.util.logging.Logger;
  * @version $Id: GenericFeature.java 10112 2012-02-02 16:24:42Z imnick $
  */
 public final class GenericFeature {
-	public static final String howtoloadmsg = "To display your data, zoom in and click Load Data.";
-	public static final String show_how_to_load = "Show how to load";
+	public static final String howtoloadmsg = GenometryConstants.BUNDLE.getString("howtoloadmessage");
+	public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
 	public static final boolean default_show_how_to_load = true;
 	
 	public final String featureName;      // friendly name of the feature.

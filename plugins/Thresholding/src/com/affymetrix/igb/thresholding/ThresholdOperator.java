@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.thresholding;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.operator.Operator;
@@ -9,16 +9,18 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *
  * @author hiralv
  */
 public class ThresholdOperator implements Operator{
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
 	final public AbstractGraphGlyph sgg;
 	final ViewI view;
 	
@@ -33,7 +35,7 @@ public class ThresholdOperator implements Operator{
 
 	@Override
 	public String getDisplay() {
-		return IGBConstants.BUNDLE.getString("operator_" + getName());
+		return BUNDLE.getString("thresholding");
 	}
 
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
@@ -51,11 +53,11 @@ public class ThresholdOperator implements Operator{
 	}
 
 	public int getOperandCountMin(FileTypeCategory category) {
-		return 1;
+		return category == FileTypeCategory.Graph ? 1 : 0;
 	}
 
 	public int getOperandCountMax(FileTypeCategory category) {
-		return 1;
+		return category == FileTypeCategory.Graph ? 1 : 0;
 	}
 
 	public Map<String, Class<?>> getParameters() {

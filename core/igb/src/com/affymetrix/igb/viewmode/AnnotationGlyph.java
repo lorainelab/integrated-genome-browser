@@ -56,7 +56,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 	private static final Font default_font = NeoConstants.default_plain_font;
 	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
-	private List<GlyphI> max_child_sofar = null;
+	//private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 		 
 	public AnnotationGlyph(ITrackStyleExtended style) {
@@ -87,7 +87,7 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 			//   for each entry in min sorted children list, the maximum max
 			//     value up to (and including) that position
 			// could do max list as int array or as symmetry list, for now doing symmetry list
-			max_child_sofar = new ArrayList<GlyphI>(child_count);
+			//max_child_sofar = new ArrayList<GlyphI>(child_count);
 			GlyphI curMaxChild = getChild(0);
 			Rectangle2D.Double curbox = curMaxChild.getCoordBox();
 			double max = curbox.x + curbox.width;
@@ -99,10 +99,10 @@ public class AnnotationGlyph extends AbstractViewModeGlyph {
 					curMaxChild = child;
 					max = newmax;
 				}
-				max_child_sofar.add(curMaxChild);
+				//max_child_sofar.add(curMaxChild);
 			}
 		} else {
-			max_child_sofar = null;
+			//max_child_sofar = null;
 		}
 
 	}

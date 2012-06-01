@@ -177,6 +177,12 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 				}
 			}
 		}
+		for (Glyph glyph : igbService.getSelectedTierGlyphs()) { // should not have to do this
+			ViewModeGlyph vg = ((TierGlyph) glyph).getViewModeGlyph();
+			if (vg instanceof MultiGraphGlyph) {
+				glyphs.add(vg);
+			}
+		}
 		thresholdingAction.setGraphs(graphGlyphs);
 		categoryCounts = getCategoryCounts();
 	}
@@ -277,26 +283,31 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		FileTypeCategory saveCategory = null;
 
 		boolean any_are_combined = false; // are any selections inside a combined tier
-		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
+		boolean all_are_combined = true;  // are all selections inside (a) combined tier(s)
 		boolean any_graphs = false;       // are any selections graph tracks
-		boolean all_same = true;         // all tracks are the same type
+		boolean all_same = true;          // all tracks are the same type
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
 		for (ViewModeGlyph gl : glyphs) {
-			if (gl instanceof AbstractGraphGlyph) {
+			boolean this_one_is_combined = gl instanceof MultiGraphGlyph;
+			any_are_combined = any_are_combined || this_one_is_combined;
+			all_are_combined = all_are_combined && this_one_is_combined;
+			if (gl instanceof AbstractGraphGlyph && !(gl instanceof MultiGraphGlyph)) {
 				any_graphs = true;
-				boolean this_one_is_combined = (((AbstractGraphGlyph)gl).getGraphState().getComboStyle() != null);
-				any_are_combined = any_are_combined || this_one_is_combined;
-				all_are_combined = all_are_combined && this_one_is_combined;
 			}
 			RootSeqSymmetry rootSym = (RootSeqSymmetry)gl.getInfo();
-			FileTypeCategory category = rootSym.getCategory();
-			if (saveCategory == null) {
-				saveCategory = category;
+			if (rootSym == null) {
+				all_same = false;
 			}
 			else {
-				all_same &= (saveCategory == category);
+				FileTypeCategory category = rootSym.getCategory();
+				if (saveCategory == null) {
+					saveCategory = category;
+				}
+				else {
+					all_same &= (saveCategory == category);
+				}
 			}
 		}
 
@@ -391,6 +402,10 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		return rootSyms;
 	}
 
+	public List<ViewModeGlyph> getSelectedGlyphss() {
+		return glyphs;
+	}
+
 	public IGBService getIgbService() {
 		return igbService;
 	}
@@ -413,6 +428,9 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 			JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 			String selection = (String) comp.getSelectedItem();
 			Operator operator = name2operation.get(selection);
+			if (operator == null) {
+				return;
+			}
 
 			if (rootSyms.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
 					&& rootSyms.size() <= operator.getOperandCountMax(FileTypeCategory.Graph)) {
@@ -429,7 +447,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		}
 
 		public void setGraphName(JRPComboBoxWithSingleListener comp, Operator operator) {
-			if (operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
+			if (operator != null && operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
 				A = ((GraphSym)rootSyms.get(0)).getGraphName();
 				B = ((GraphSym)rootSyms.get(1)).getGraphName();
 
@@ -447,7 +465,7 @@ public final class TrackOperationsTab implements SeqSelectionListener, SymSelect
 		}
 
 		public void unsetGraphName(Operator operator) {
-			if (operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
+			if (operator != null && operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
 				if (A != null && B != null && rootSyms.size() > 1) {
 					((GraphSym)rootSyms.get(0)).setGraphName(A);
 					((GraphSym)rootSyms.get(1)).setGraphName(B);

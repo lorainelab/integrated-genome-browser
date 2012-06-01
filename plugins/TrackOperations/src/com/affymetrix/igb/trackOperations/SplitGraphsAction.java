@@ -7,15 +7,14 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symmetry.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.shared.ViewModeGlyph;
 
 /**
- *  Puts all selected graphs in the same tier.
- *  Current glyph factories do not support floating the combined graphs.
+ *  Puts all selected graphs in separate tiers by setting the
+ *  combo state of each graph's state to null.
  */
 public class SplitGraphsAction extends GenericAction {
-
 	private static final long serialVersionUID = 1l;
 	private static final SplitGraphsAction ACTION = new SplitGraphsAction();
 	static{
@@ -32,14 +31,10 @@ public class SplitGraphsAction extends GenericAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		List<RootSeqSymmetry> rootSyms = TrackOperationsTab.getSingleton().getRootSyms();
-		if (rootSyms.isEmpty()) {
-			return;
-		}
-
-		for (SeqSymmetry sym : rootSyms) {
-			if (sym instanceof GraphSym) {
-				GraphSym gsym = (GraphSym)sym;
+		List<ViewModeGlyph> selectedGlyphs = TrackOperationsTab.getSingleton().getSelectedGlyphss();
+		for (ViewModeGlyph vg : selectedGlyphs) {
+			for (GlyphI gl : vg.getChildren()) {
+				GraphSym gsym = (GraphSym)gl.getInfo();
 				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(null, 0);
 

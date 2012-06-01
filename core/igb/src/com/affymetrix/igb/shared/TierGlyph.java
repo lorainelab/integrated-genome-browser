@@ -382,6 +382,9 @@ public class TierGlyph extends SolidGlyph {
 	}
 	@Override
 	public void drawTraversal(ViewI view)  {
+		if(!isVisible())
+			return;
+		
 		viewModeGlyph.drawMiddle(view);
 		viewModeGlyph.drawTraversal(view);
 	}

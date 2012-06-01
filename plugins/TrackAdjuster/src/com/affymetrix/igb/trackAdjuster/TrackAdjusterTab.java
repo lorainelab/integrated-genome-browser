@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
@@ -858,10 +857,8 @@ public final class TrackAdjusterTab
 			return;
 		}
 		Color color = fgColorComboBox.getSelectedColor();
-		ViewI v = igbService.getView();
 		if (color != null) {
 			for (TierGlyph tier : selectedTiers) {
-//				System.out.println(this.getClass().getName() + ": tier: " + tier);
 				tier.getAnnotStyle().setForeground(color);
 			}
 		}

@@ -46,11 +46,11 @@
                   <Group type="102" attributes="0">
                       <Component id="AnnotationPanel" min="-2" pref="239" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                      <Component id="graphPanel" min="-2" pref="196" max="-2" attributes="1"/>
+                      <Component id="graphPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                       <Component id="RangePanel" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jPanel3" pref="0" max="32767" attributes="0"/>
+                  <Component id="jPanel3" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -69,10 +69,7 @@
                           <Component id="RangePanel" linkSize="53" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="StylePanel" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="StylePanel" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -93,6 +90,7 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="StylePanel.setBorder(new CustomTitleBorder(&quot;Style -&quot;, &quot;Configure&quot;));"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.stylePanel"/>
       </AuxValues>
 
       <Layout>
@@ -165,9 +163,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -196,9 +191,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -245,9 +237,6 @@
         </Component>
         <Component class="com.jidesoft.combobox.ColorComboBox" name="labelFGComboBox">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -397,6 +386,7 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="graphPanel.setBorder(new CustomTitleBorder(&quot;Graph -&quot;, &quot;Configure&quot;));"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphPanel"/>
       </AuxValues>
 
       <Layout>
@@ -541,6 +531,9 @@
           </Border>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.rangePanel"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">

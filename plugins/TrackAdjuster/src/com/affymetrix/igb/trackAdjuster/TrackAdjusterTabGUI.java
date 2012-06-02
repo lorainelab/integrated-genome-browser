@@ -18,7 +18,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackAdjuster");
 	private static final int TAB_POSITION = 3;
-	public TrackAdjusterTab sgt;
+	public TrackAdjusterTab tat;
 	private static TrackAdjusterTabGUI singleton;
 	private RepackTiersAction repackStub;
 	static final Cursor defaultCursor, openHandCursor, closedHandCursor;
@@ -35,7 +35,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	public TrackAdjusterTabGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
 		TrackAdjusterTab.init(igbService);
-		sgt = TrackAdjusterTab.getSingleton();
+		tat = TrackAdjusterTab.getSingleton();
 		repackStub = new RepackTiersAction(null, null, null) {
 
 			private static final long serialVersionUID = 1L;
@@ -60,61 +60,61 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        stylegroup = sgt.stylegroup;
+        stylegroup = tat.stylegroup;
         DisplayModeButtonGroup = new javax.swing.ButtonGroup();
         VisibleRangeButtonGroup = new javax.swing.ButtonGroup();
         jMenu1 = new javax.swing.JMenu();
         DisplayButtonGroup = new javax.swing.ButtonGroup();
-        StylePanel = new javax.swing.JPanel();
+        StylePanel = tat.stylePanel;
         fgLabel = new javax.swing.JLabel();
-        fgColorComboBox = sgt.styleP_fgColorComboBox;
+        fgColorComboBox = tat.styleP_fgColorComboBox;
         bgLabel = new javax.swing.JLabel();
-        bgColorComboBox = sgt.styleP_bgColorComboBox;
-        nameSizeComboBox = sgt.styleP_trackNameSizeComboBox;
+        bgColorComboBox = tat.styleP_bgColorComboBox;
+        nameSizeComboBox = tat.styleP_trackNameSizeComboBox;
         jLabel3 = new javax.swing.JLabel();
         fgLabel1 = new javax.swing.JLabel();
-        labelFGComboBox = sgt.styleP_labelFGComboBox;
-        colorSchemeChooser = sgt.styleP_colorSchemeBox;
-        AnnotationPanel = sgt.annotationPanel;
+        labelFGComboBox = tat.styleP_labelFGComboBox;
+        colorSchemeChooser = tat.styleP_colorSchemeBox;
+        AnnotationPanel = tat.annotationPanel;
         jLabel6 = new javax.swing.JLabel();
-        maxStackDepthTextField = sgt.annotP_maxStackDepthTextField;
+        maxStackDepthTextField = tat.annotP_maxStackDepthTextField;
         fitViewButton = new javax.swing.JButton();
         collapseButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        graphPanel = new javax.swing.JPanel();
-        barB = sgt.graphP_barB;
-        lineB = sgt.graphP_lineB;
-        mmavgB = sgt.graphP_mmavgB;
-        dotB = sgt.graphP_dotB;
-        PluginRadioButton = sgt.graphP_hmapB;
+        graphPanel = tat.graphPanel;
+        barB = tat.graphP_barB;
+        lineB = tat.graphP_lineB;
+        mmavgB = tat.graphP_mmavgB;
+        dotB = tat.graphP_dotB;
+        PluginRadioButton = tat.graphP_hmapB;
         PluginComboBox = new javax.swing.JComboBox();
         jLabel7 = new javax.swing.JLabel();
-        labelCB = sgt.graphP_labelCB;
-        yaxisCB = sgt.graphP_yaxisCB;
-        RangePanel = new javax.swing.JPanel();
+        labelCB = tat.graphP_labelCB;
+        yaxisCB = tat.graphP_yaxisCB;
+        RangePanel = tat.rangePanel;
         jLabel2 = new javax.swing.JLabel();
-        by_valRB_val = sgt.vis_bounds_setter.by_valRB;
-        by_percentileRB_val = sgt.vis_bounds_setter.by_percentileRB;
-        rangeSlider = sgt.vis_bounds_setter.ValueSlider;
+        by_valRB_val = tat.vis_bounds_setter.by_valRB;
+        by_percentileRB_val = tat.vis_bounds_setter.by_percentileRB;
+        rangeSlider = tat.vis_bounds_setter.ValueSlider;
         minValLabel = new javax.swing.JLabel();
-        minText = sgt.vis_bounds_setter.min_valT;
-        maxText = sgt.vis_bounds_setter.max_valT;
+        minText = tat.vis_bounds_setter.min_valT;
+        maxText = tat.vis_bounds_setter.max_valT;
         maxValLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         pluginPrefButton = new javax.swing.JButton();
-        PluginButton = sgt.pluginDisplayAsB;
+        PluginButton = tat.pluginDisplayAsB;
         jLabel5 = new javax.swing.JLabel();
-        AnnotationButton = sgt.annotationDisplayAsB;
-        AutoButton = sgt.autoDisplayAsB;
+        AnnotationButton = tat.annotationDisplayAsB;
+        AutoButton = tat.autoDisplayAsB;
         jComboBox2 = new javax.swing.JComboBox();
-        GraphButton = sgt.graphDisplayAsB;
-        floatingCheckBox = sgt.floatCB;
+        GraphButton = tat.graphDisplayAsB;
+        floatingCheckBox = tat.floatCB;
         TopPanel = new javax.swing.JPanel();
-        height_slider = sgt.height_slider;
+        height_slider = tat.height_slider;
         jLabel8 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         selectAllB = new javax.swing.JButton();
-        trackNameTextField = sgt.trackName;
+        trackNameTextField = tat.trackName;
 
         jMenu1.setText("jMenu1");
 
@@ -158,7 +158,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
             }
         });
 
-        nameSizeComboBox.setModel(sgt.styleP_trackNameSizeComboBox.getModel());
+        nameSizeComboBox.setModel(tat.styleP_trackNameSizeComboBox.getModel());
         nameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameSizeComboBoxtrackNameSizeComboBoxActionPerformed(evt);
@@ -555,9 +555,9 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         //This allows the Bundle String to be applied,
         //and also the String to appear in the GUI during design.
-        AnnotationButton.setText(sgt.annotationDisplayAsB.getText());
-        AutoButton.setText(sgt.autoDisplayAsB.getText());
-        GraphButton.setText(sgt.graphDisplayAsB.getText());
+        AnnotationButton.setText(tat.annotationDisplayAsB.getText());
+        AutoButton.setText(tat.autoDisplayAsB.getText());
+        GraphButton.setText(tat.graphDisplayAsB.getText());
 
         height_slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -654,31 +654,31 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void by_percentileRB_valActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_by_percentileRB_valActionPerformed
-		if (sgt.is_listening) {
+		if (tat.is_listening) {
 			switchView(true);
 		}
 	}//GEN-LAST:event_by_percentileRB_valActionPerformed
 
 	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		if (sgt.is_listening) {
-			sgt.fgColorComboBoxActionPerformed();
+		if (tat.is_listening) {
+			tat.fgColorComboBoxActionPerformed();
 		}
 }//GEN-LAST:event_fgColorComboBoxActionPerformed
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		if (sgt.is_listening) {
-			sgt.bgColorComboBoxActionPerformed();
+		if (tat.is_listening) {
+			tat.bgColorComboBoxActionPerformed();
 		}
 	}//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void nameSizeComboBoxtrackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameSizeComboBoxtrackNameSizeComboBoxActionPerformed
-		if (sgt.is_listening) {
-			sgt.setNameSize(nameSizeComboBox.getSelectedItem().toString());
+		if (tat.is_listening) {
+			tat.setNameSize(nameSizeComboBox.getSelectedItem().toString());
 		}
 	}//GEN-LAST:event_nameSizeComboBoxtrackNameSizeComboBoxActionPerformed
 
 	private void minTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minTextActionPerformed
-		if (sgt.is_listening) {
+		if (tat.is_listening) {
 			int min;
 			int max;
 			try {
@@ -692,7 +692,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_minTextActionPerformed
 
 	private void maxTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxTextActionPerformed
-		if (sgt.is_listening) {
+		if (tat.is_listening) {
 			int min;
 			int max;
 			try {
@@ -717,44 +717,44 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_by_valRB_valActionPerformed
 
 	private void trackNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameTextFieldActionPerformed
-		if (sgt.is_listening) {
-			sgt.setTrackName(trackNameTextField.getText());
+		if (tat.is_listening) {
+			tat.setTrackName(trackNameTextField.getText());
 		}
 	}//GEN-LAST:event_trackNameTextFieldActionPerformed
 
 	private void maxStackDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxStackDepthTextFieldActionPerformed
-		if (sgt.is_listening) {
-			sgt.setMaxDepth(maxStackDepthTextField.getText());
+		if (tat.is_listening) {
+			tat.setMaxDepth(maxStackDepthTextField.getText());
 		}
 	}//GEN-LAST:event_maxStackDepthTextFieldActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-		if (sgt.is_listening) {
+		if (tat.is_listening) {
 			maxStackDepthTextFieldActionPerformed(evt);
 		}
 	}//GEN-LAST:event_jButton2ActionPerformed
 
 	private void AnnotationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnnotationButtonActionPerformed
-		if (sgt.is_listening) {
-			sgt.setViewMode(DisplayType.ANNOTATION);
+		if (tat.is_listening) {
+			tat.setViewMode(DisplayType.ANNOTATION);
 		}
 	}//GEN-LAST:event_AnnotationButtonActionPerformed
 
 	private void GraphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GraphButtonActionPerformed
-		if (sgt.is_listening) {
-			sgt.setViewMode(DisplayType.GRAPH);
+		if (tat.is_listening) {
+			tat.setViewMode(DisplayType.GRAPH);
 		}
 	}//GEN-LAST:event_GraphButtonActionPerformed
 
 	private void AutoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AutoButtonActionPerformed
-		if (sgt.is_listening) {
-			sgt.setViewMode(DisplayType.AUTO);
+		if (tat.is_listening) {
+			tat.setViewMode(DisplayType.AUTO);
 		}
 	}//GEN-LAST:event_AutoButtonActionPerformed
 
 	private void PluginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PluginButtonActionPerformed
-		if (sgt.is_listening) {
-			sgt.setViewMode(DisplayType.PLUGIN);
+		if (tat.is_listening) {
+			tat.setViewMode(DisplayType.PLUGIN);
 		}
 	}//GEN-LAST:event_PluginButtonActionPerformed
 
@@ -790,18 +790,18 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_graphPanelMouseClicked
 
 	private void height_sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_height_sliderStateChanged
-		if (sgt.graphGlyphs.isEmpty() || !sgt.is_listening) {
+		if (tat.graphGlyphs.isEmpty() || !tat.is_listening) {
 			return;
 		}
-		sgt.setGraphHeight(height_slider.getValue());
+		tat.setGraphHeight(height_slider.getValue());
 	}//GEN-LAST:event_height_sliderStateChanged
 
 	private void fitViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fitViewButtonActionPerformed
 		int ourOptimum = 1;
-		for (TierGlyph tg : sgt.selectedTiers) {
+		for (TierGlyph tg : tat.selectedTiers) {
 			ourOptimum = Math.max(ourOptimum, tg.getSlotsNeeded(igbService.getSeqMapView().getSeqMap().getView()));
 		}
-		changeMaxExpand(sgt.selectedTiers, ourOptimum);
+		changeMaxExpand(tat.selectedTiers, ourOptimum);
 	}//GEN-LAST:event_fitViewButtonActionPerformed
 
 	private void collapseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapseButtonActionPerformed
@@ -809,7 +809,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_collapseButtonActionPerformed
 
 	private void selectAllBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllBMouseClicked
-		sgt.selectAllBMouseClicked(selectAllB, evt);
+		tat.selectAllBMouseClicked(selectAllB, evt);
 	}//GEN-LAST:event_selectAllBMouseClicked
 
 	private void StylePanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseMoved
@@ -840,8 +840,8 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_graphPanelMouseMoved
 
 	private void labelFGComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFGComboBoxActionPerformed
-		if (sgt.is_listening) {
-			sgt.labelFGCBActionPerformed();
+		if (tat.is_listening) {
+			tat.labelFGCBActionPerformed();
 			TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(evt);
 		}
 	}//GEN-LAST:event_labelFGComboBoxActionPerformed
@@ -920,20 +920,20 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void switchView(boolean b) {
 		if (b) {
 			org.jdesktop.layout.GroupLayout layout = (org.jdesktop.layout.GroupLayout) RangePanel.getLayout();
-			layout.replace(minText, sgt.vis_bounds_setter.min_perT);
-			layout.replace(maxText, sgt.vis_bounds_setter.max_perT);
-			layout.replace(rangeSlider, sgt.vis_bounds_setter.PercentSlider);
-			minText = sgt.vis_bounds_setter.min_perT;
-			maxText = sgt.vis_bounds_setter.max_perT;
-			rangeSlider = sgt.vis_bounds_setter.PercentSlider;
+			layout.replace(minText, tat.vis_bounds_setter.min_perT);
+			layout.replace(maxText, tat.vis_bounds_setter.max_perT);
+			layout.replace(rangeSlider, tat.vis_bounds_setter.PercentSlider);
+			minText = tat.vis_bounds_setter.min_perT;
+			maxText = tat.vis_bounds_setter.max_perT;
+			rangeSlider = tat.vis_bounds_setter.PercentSlider;
 		} else {
 			org.jdesktop.layout.GroupLayout layout = (org.jdesktop.layout.GroupLayout) RangePanel.getLayout();
-			layout.replace(minText, sgt.vis_bounds_setter.min_valT);
-			layout.replace(maxText, sgt.vis_bounds_setter.max_valT);
-			layout.replace(rangeSlider, sgt.vis_bounds_setter.ValueSlider);
-			minText = sgt.vis_bounds_setter.min_valT;
-			maxText = sgt.vis_bounds_setter.max_valT;
-			rangeSlider = sgt.vis_bounds_setter.ValueSlider;
+			layout.replace(minText, tat.vis_bounds_setter.min_valT);
+			layout.replace(maxText, tat.vis_bounds_setter.max_valT);
+			layout.replace(rangeSlider, tat.vis_bounds_setter.ValueSlider);
+			minText = tat.vis_bounds_setter.min_valT;
+			maxText = tat.vis_bounds_setter.max_valT;
+			rangeSlider = tat.vis_bounds_setter.ValueSlider;
 		}
 	}
 

@@ -178,6 +178,7 @@ public final class TrackAdjusterTab
 	public JRPRadioButton pluginDisplayAsB = new JRPRadioButton("TrackAdjusterTab_pluginDisplayAsB");
 	public ButtonGroup stylegroup = new ButtonGroup();
 	public ButtonGroup displayGroup = new ButtonGroup();
+	public JPanel stylePanel = new JPanel();
 	public JPanel rangePanel = new JPanel();
 	public JPanel graphPanel = new JPanel();
 	public JPanel annotationPanel = new JPanel();
@@ -185,10 +186,10 @@ public final class TrackAdjusterTab
 	public ColorComboBox styleP_bgColorComboBox = new ColorComboBox();
 	public ColorComboBox styleP_labelFGComboBox = new ColorComboBox();
 	public final ColorSchemeComboBox styleP_colorSchemeBox;
-	public JRPTextField annotP_maxStackDepthTextField = new JRPNumTextField("TrackAdjusterTab_max_depth_text_field");
+	public JRPTextField annotP_maxStackDepthTextField = new JRPNumTextField("TrackAdjusterTab_annotP_maxStackDepthTextField");
 	public JRPTextField trackName = new JRPTextField("TrackAdjusterTab_track_name");
 	public static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-	public JRPComboBox styleP_trackNameSizeComboBox = new JRPComboBox("TrackAdjusterTab_track_name_size");
+	public JRPComboBox styleP_trackNameSizeComboBox = new JRPComboBox("TrackAdjusterTab_styleP_trackNameSizeComboBox");
 	public JRPSlider height_slider = new JRPSlider("TrackAdjusterTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 	public final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();

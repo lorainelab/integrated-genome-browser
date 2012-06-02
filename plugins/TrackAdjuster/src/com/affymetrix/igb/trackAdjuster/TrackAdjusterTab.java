@@ -17,10 +17,8 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
-import com.affymetrix.genometryImpl.symmetry.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -29,12 +27,15 @@ import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
+import com.affymetrix.igb.viewmode.AnnotationGlyph;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -160,8 +161,8 @@ public final class TrackAdjusterTab
 		//NONE
 		viewMode2DisplayType.put(ViewMode.viewmode_unloaded, DisplayType.NONE);
 	}
-	BioSeq current_seq;
-	GenometryModel gmodel;
+//	private BioSeq current_seq;
+	private GenometryModel gmodel;
 	public boolean is_listening = true; // used to turn on and off listening to GUI events
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
@@ -182,6 +183,7 @@ public final class TrackAdjusterTab
 	public ButtonGroup displayGroup = new ButtonGroup();
 	public JPanel rangePanel = new JPanel();
 	public JPanel graphPanel = new JPanel();
+	public JPanel annotationPanel = new JPanel();
 	public ColorComboBox fgColorComboBox = new ColorComboBox();
 	public ColorComboBox bgColorComboBox = new ColorComboBox();
 	public ColorComboBox labelFGComboBox = new ColorComboBox();
@@ -191,16 +193,17 @@ public final class TrackAdjusterTab
 	public static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 	public JRPComboBox trackNameSizeComboBox = new JRPComboBox("SimpleGraphTab_track_name_size");
 	public JRPSlider height_slider = new JRPSlider("SimpleGraphTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
-	public final List<GraphSym> grafs = new ArrayList<GraphSym>();
+	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
 	public final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
-	public final List<AbstractGraphGlyph> glyphs = new ArrayList<AbstractGraphGlyph>();
+	public final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
+	public final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
+	public final List<AnnotationGlyph> annotationGlyphs = new ArrayList<AnnotationGlyph>();
+	public final List<ViewModeGlyph> otherGlyphs = new ArrayList<ViewModeGlyph>();
 	public final JRPCheckBox labelCB = new JRPCheckBox("SimpleGraphTab_hidden_labelCB", BUNDLE.getString("labelCheckBox"));
 	public final JRPCheckBox yaxisCB = new JRPCheckBox("SimpleGraphTab_hidden_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("SimpleGraphTab_hidden_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
-	public final JRPTextField paramT = new JRPTextField("SimpleGraphTab_paramT", "", 2);
 	public JRPComboBox heat_mapCB;
-	public JPanel annotationPanel = new JPanel();
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackAdjusterTab(igbService);
@@ -279,7 +282,7 @@ public final class TrackAdjusterTab
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 
 
-		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
+		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
 
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
@@ -352,7 +355,7 @@ public final class TrackAdjusterTab
 
 	@SuppressWarnings("unchecked")
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List<SeqSymmetry> selected_syms = evt.getSelectedGraphSyms();
+		List<RootSeqSymmetry> selected_syms = evt.getAllSelectedSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 
@@ -363,7 +366,7 @@ public final class TrackAdjusterTab
 		}
 
 		List<TierGlyph> tierList = (List<TierGlyph>) igbService.getSeqMapView().getSelectedTiers();
-		resetSelectedGraphGlyphs(selected_syms);
+		resetSelectedGlyphs(selected_syms);
 		refreshSelection(tierList);
 	}
 
@@ -527,27 +530,23 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	private void resetSelectedGraphGlyphs(List<?> selected_syms) {
+	private void resetSelectedGlyphs(List<RootSeqSymmetry> selected_syms) {
 		int symcount = selected_syms.size();
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		collectGraphsAndGlyphs(selected_syms, symcount);
+		collectSymsAndGlyphs(selected_syms, symcount);
 
-		int num_glyphs = glyphs.size();
-		//    System.out.println("number of selected graphs: " + num_glyphs);
 		double the_height = -1; // -1 indicates unknown height
 
 		boolean all_are_floating = false;
 		boolean all_show_axis = false;
 		boolean all_show_label = false;
-		boolean any_are_combined = false; // are any selections inside a combined tier
-		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
 
 		// Take the first glyph in the list as a prototype
 		AbstractGraphGlyph first_glyph = null;
 		GraphType graph_style = GraphType.LINE_GRAPH;
 		HeatMap hm = null;
-		if (!glyphs.isEmpty()) {
-			first_glyph = glyphs.get(0);
+		if (!graphGlyphs.isEmpty()) {
+			first_glyph = graphGlyphs.get(0);
 			graph_style = first_glyph.getGraphStyle();
 			if (graph_style == GraphType.HEAT_MAP) {
 				hm = first_glyph.getHeatMap();
@@ -556,21 +555,14 @@ public final class TrackAdjusterTab
 			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = first_glyph.getGraphState().getShowAxis();
 			all_show_label = first_glyph.getGraphState().getShowLabel();
-			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
-			any_are_combined = this_one_is_combined;
-			all_are_combined = this_one_is_combined;
 		}
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (AbstractGraphGlyph gl : glyphs) {
+		for (AbstractGraphGlyph gl : graphGlyphs) {
 			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
-			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
-			any_are_combined = any_are_combined || this_one_is_combined;
-			all_are_combined = all_are_combined && this_one_is_combined;
-
 			if (graph_style == null) {
 				graph_style = GraphType.LINE_GRAPH;
 			} else if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
@@ -604,19 +596,19 @@ public final class TrackAdjusterTab
 		if (the_height != -1) {
 			height_slider.setValue((int) the_height);
 		}
-		vis_bounds_setter.setGraphs(glyphs);
+		vis_bounds_setter.setGraphs(graphGlyphs);
 
-		if (!glyphs.isEmpty()) {
+		if (!graphGlyphs.isEmpty()) {
 			//floatCB.setSelected(all_are_floating);
-			floatCB.setEnabled(num_glyphs > 0);
+			floatCB.setEnabled(graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size());
 			yaxisCB.setSelected(all_show_axis);
 			labelCB.setSelected(all_show_label);
 		}
 
-		boolean b = !(grafs.isEmpty());
+		boolean b = !(rootSyms.isEmpty());
 		height_slider.setEnabled(b);
 		boolean type = b;
-		for (GraphSym graf : grafs) {
+		for (RootSeqSymmetry graf : rootSyms) {
 			type = !(graf instanceof MisMatchGraphSym);
 			if (type) {
 				break;
@@ -646,24 +638,26 @@ public final class TrackAdjusterTab
 		is_listening = true; // turn back on GUI events
 	}
 
-	private void collectGraphsAndGlyphs(List<?> selected_syms, int symcount) {
-		if (grafs != selected_syms) {
+	private void collectSymsAndGlyphs(List<RootSeqSymmetry> selected_syms, int symcount) {
+		if (rootSyms != selected_syms) {
 			// in certain cases selected_syms arg and grafs list may be same, for example when method is being
 			//     called to catch changes in glyphs representing selected sym, not the syms themselves)
 			//     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
-			grafs.clear();
+			rootSyms.clear();
 		}
-		glyphs.clear();
+		allGlyphs.clear();
+		graphGlyphs.clear();
+		annotationGlyphs.clear();
+		otherGlyphs.clear();
 		// First loop through and collect graphs and glyphs
 		for (int i = 0; i < symcount; i++) {
-			if (selected_syms.get(i) instanceof GraphSym) {
-				GraphSym graf = (GraphSym) selected_syms.get(i);
-				// only add to grafs if list is not identical to selected_syms arg
-				if (grafs != selected_syms) {
-					grafs.add(graf);
-				}
-				// add all graph glyphs representing graph sym
-				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
+			RootSeqSymmetry rootSym = selected_syms.get(i);
+			// only add to grafs if list is not identical to selected_syms arg
+			if (rootSyms != selected_syms) {
+				rootSyms.add(rootSym);
+			}
+			// add all graph glyphs representing graph sym
+			//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 //				for (Glyph g : igbService.getVisibleTierGlyphs()) {
 //					ViewModeGlyph vg = ((TierGlyph) g).getViewModeGlyph();
 //					if (vg instanceof MultiGraphGlyph) {
@@ -676,19 +670,27 @@ public final class TrackAdjusterTab
 //						glyphs.add((AbstractGraphGlyph) vg);
 //					}
 //				}
-				
-				Glyph glyph = igbService.getSeqMap().getItem(graf);
-				if (glyph != null && glyph instanceof AbstractGraphGlyph) {
+			
+			Glyph glyph = igbService.getSeqMap().getItem(rootSym);
+			if (glyph != null) {
+				if (glyph instanceof AbstractGraphGlyph) {
 					if (glyph instanceof MultiGraphGlyph) {
 						for (GlyphI child : glyph.getChildren()) {
-							if (grafs.contains(child.getInfo())) {
-								glyphs.add((AbstractGraphGlyph) child);
+							if (rootSyms.contains(child.getInfo())) {
+								graphGlyphs.add((AbstractGraphGlyph) child);
 							}
 						}
-					}else if (!glyphs.contains(glyph)) {
-						glyphs.add((AbstractGraphGlyph)glyph);
+					}else if (!graphGlyphs.contains(glyph)) {
+						graphGlyphs.add((AbstractGraphGlyph)glyph);
 					}
 				}
+				else if (glyph instanceof AnnotationGlyph) {
+					annotationGlyphs.add((AnnotationGlyph)glyph);
+				}
+				else {
+					otherGlyphs.add((ViewModeGlyph)glyph);
+				}
+				allGlyphs.add((ViewModeGlyph)glyph);
 			}
 		}
 	}
@@ -724,8 +726,9 @@ public final class TrackAdjusterTab
 		if (DEBUG_EVENTS) {
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
 		}
-		current_seq = evt.getSelectedSeq();
-		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
+//		current_seq = evt.getSelectedSeq();
+//		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
+		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
 	}
 
 	private static void enableButtons(ButtonGroup g, boolean b) {
@@ -739,12 +742,12 @@ public final class TrackAdjusterTab
 		if (igbService.getSeqMap() == null) {
 			return;
 		}
-		int num_glyphs = glyphs.size();
+		int num_glyphs = allGlyphs.size();
 
 		if (num_glyphs == 0) {
 			// Do Nothing
-		} else if (num_glyphs == 1 && igbService.getSeqMap().getItem(grafs.get(0)) != null) {
-			GlyphI g = igbService.getSeqMap().getItem(grafs.get(0));
+		} else if (num_glyphs == 1 && igbService.getSeqMap().getItem(rootSyms.get(0)) != null) {
+			GlyphI g = igbService.getSeqMap().getItem(rootSyms.get(0));
 			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
 			Color color = gl.getGraphState().getTierStyle().getBackground();
 			bgColorComboBox.setSelectedColor(color);
@@ -778,7 +781,7 @@ public final class TrackAdjusterTab
 			if (DEBUG_EVENTS) {
 				System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
 			}
-			if (glyphs.isEmpty() || !is_listening) {
+			if (graphGlyphs.isEmpty() || !is_listening) {
 				return;
 			}
 
@@ -786,8 +789,8 @@ public final class TrackAdjusterTab
 
 				public void run() {
 					String viewMode = graphType2ViewMode.get(graphType);
-					HeatMap hm = (glyphs.get(0)).getHeatMap();
-					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(glyphs)) {
+					HeatMap hm = (graphGlyphs.get(0)).getHeatMap();
+					for (AbstractGraphGlyph sggl : new ArrayList<AbstractGraphGlyph>(graphGlyphs)) {
 						sggl.setShowGraph(true);
 						igbService.changeViewMode(igbService.getSeqMapView(), sggl.getAnnotStyle(), viewMode, (RootSeqSymmetry) sggl.getInfo(), sggl.getGraphState().getComboStyle());
 						if ((graphType == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -817,7 +820,7 @@ public final class TrackAdjusterTab
 	private final class HeatMapItemListener implements ItemListener {
 
 		public void itemStateChanged(ItemEvent e) {
-			if (glyphs.isEmpty() || !is_listening) {
+			if (graphGlyphs.isEmpty() || !is_listening) {
 				return;
 			}
 
@@ -826,7 +829,7 @@ public final class TrackAdjusterTab
 				HeatMap hm = HeatMap.getStandardHeatMap(name);
 
 				if (hm != null) {
-					for (AbstractGraphGlyph gl : glyphs) {
+					for (AbstractGraphGlyph gl : graphGlyphs) {
 						if ("heatmapgraph".equals(gl.getName())) {
 							gl.setShowGraph(true);
 							gl.setHeatMap(hm);
@@ -839,7 +842,7 @@ public final class TrackAdjusterTab
 	}
 
 	public void setGraphHeight(double height) {
-		for (AbstractGraphGlyph gl : glyphs) {
+		for (AbstractGraphGlyph gl : graphGlyphs) {
 			Rectangle2D.Double cbox = gl.getCoordBox();
 			gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
@@ -947,7 +950,7 @@ public final class TrackAdjusterTab
 			return;
 		}
 		is_listening = false;
-		for (GlyphI g : selectedTiers) {
+		for (GlyphI g : new CopyOnWriteArrayList<TierGlyph>(selectedTiers)) {
 			final TierGlyph tier = (TierGlyph) g;
 			final RootSeqSymmetry rootSym = (RootSeqSymmetry) tier.getInfo();
 			final ITrackStyleExtended style = tier.getAnnotStyle();
@@ -971,14 +974,14 @@ public final class TrackAdjusterTab
 	}
 
 	private void setShowAxis(boolean b) {
-		for (AbstractGraphGlyph gl : glyphs) {
+		for (AbstractGraphGlyph gl : graphGlyphs) {
 			gl.setShowAxis(b);
 		}
 		igbService.getSeqMap().updateWidget();
 	}
 
 	private void setShowLabels(boolean b) {
-		for (AbstractGraphGlyph gl : glyphs) {
+		for (AbstractGraphGlyph gl : graphGlyphs) {
 			gl.setShowLabel(b);
 		}
 		igbService.getSeqMap().updateWidget();

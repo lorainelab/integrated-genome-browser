@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.ViewModeGlyph;
 
@@ -39,18 +40,20 @@ public class FloatTiersAction extends SeqMapViewActionA {
 		List<? extends GlyphI> selectedTiers = getSeqMapView().getSelectedTiers();
 		for (GlyphI tg : selectedTiers) {
 			ViewModeGlyph gl = ((TierGlyph)tg).getViewModeGlyph();
-			ITrackStyleExtended style = gl.getAnnotStyle();
-			boolean is_floating = style.getFloatTier();
-			if (!is_floating) {
-				// figure out correct height
-				Rectangle2D.Double coordbox = gl.getCoordBox();
-				Rectangle pixbox = new Rectangle();
-				getSeqMapView().getSeqMap().getView().transformToPixels(coordbox, pixbox);
-				style.setY(pixbox.y);
-				style.setHeight(pixbox.height);
-
-				style.setFloatTier(true);
-				something_changed = true;
+			if (gl instanceof AbstractGraphGlyph) { // for now, eventually all tracks should float
+				ITrackStyleExtended style = gl.getAnnotStyle();
+				boolean is_floating = style.getFloatTier();
+				if (!is_floating) {
+					// figure out correct height
+					Rectangle2D.Double coordbox = gl.getCoordBox();
+					Rectangle pixbox = new Rectangle();
+					getSeqMapView().getSeqMap().getView().transformToPixels(coordbox, pixbox);
+					style.setY(pixbox.y);
+					style.setHeight(pixbox.height);
+	
+					style.setFloatTier(true);
+					something_changed = true;
+				}
 			}
 		}
 		if (something_changed) {

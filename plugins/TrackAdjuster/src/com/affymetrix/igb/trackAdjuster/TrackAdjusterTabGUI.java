@@ -30,7 +30,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}
 
 	/**
-	 * Creates new form SimpleGraphTab1
+	 * Creates new form TrackAdjusterTab
 	 */
 	public TrackAdjusterTabGUI(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("trackAdjusterTab"), BUNDLE.getString("trackAdjusterTab"), false, TAB_POSITION);
@@ -67,30 +67,30 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         DisplayButtonGroup = new javax.swing.ButtonGroup();
         StylePanel = new javax.swing.JPanel();
         fgLabel = new javax.swing.JLabel();
-        fgColorComboBox = sgt.fgColorComboBox;
+        fgColorComboBox = sgt.styleP_fgColorComboBox;
         bgLabel = new javax.swing.JLabel();
-        bgColorComboBox = sgt.bgColorComboBox;
-        nameSizeComboBox = sgt.trackNameSizeComboBox;
+        bgColorComboBox = sgt.styleP_bgColorComboBox;
+        nameSizeComboBox = sgt.styleP_trackNameSizeComboBox;
         jLabel3 = new javax.swing.JLabel();
         fgLabel1 = new javax.swing.JLabel();
-        labelFGComboBox = sgt.labelFGComboBox;
-        colorSchemeChooser = sgt.colorSchemeBox;
+        labelFGComboBox = sgt.styleP_labelFGComboBox;
+        colorSchemeChooser = sgt.styleP_colorSchemeBox;
         AnnotationPanel = sgt.annotationPanel;
         jLabel6 = new javax.swing.JLabel();
-        maxStackDepthTextField = sgt.maxStackDepthTextField;
+        maxStackDepthTextField = sgt.annotP_maxStackDepthTextField;
         fitViewButton = new javax.swing.JButton();
         collapseButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         graphPanel = new javax.swing.JPanel();
-        barB = sgt.barB;
-        lineB = sgt.lineB;
-        mmavgB = sgt.mmavgB;
-        dotB = sgt.dotB;
-        PluginRadioButton = sgt.graphPluginB;
+        barB = sgt.graphP_barB;
+        lineB = sgt.graphP_lineB;
+        mmavgB = sgt.graphP_mmavgB;
+        dotB = sgt.graphP_dotB;
+        PluginRadioButton = sgt.graphP_hmapB;
         PluginComboBox = new javax.swing.JComboBox();
         jLabel7 = new javax.swing.JLabel();
-        labelCB = sgt.labelCB;
-        yaxisCB = sgt.yaxisCB;
+        labelCB = sgt.graphP_labelCB;
+        yaxisCB = sgt.graphP_yaxisCB;
         RangePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         by_valRB_val = sgt.vis_bounds_setter.by_valRB;
@@ -102,12 +102,12 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         maxValLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         pluginPrefButton = new javax.swing.JButton();
-        PluginButton = sgt.pluginB;
+        PluginButton = sgt.pluginDisplayAsB;
         jLabel5 = new javax.swing.JLabel();
-        AnnotationButton = sgt.annotationB;
-        AutoButton = sgt.autoB;
+        AnnotationButton = sgt.annotationDisplayAsB;
+        AutoButton = sgt.autoDisplayAsB;
         jComboBox2 = new javax.swing.JComboBox();
-        GraphButton = sgt.graphB;
+        GraphButton = sgt.graphDisplayAsB;
         floatingCheckBox = sgt.floatCB;
         TopPanel = new javax.swing.JPanel();
         height_slider = sgt.height_slider;
@@ -158,7 +158,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
             }
         });
 
-        nameSizeComboBox.setModel(sgt.trackNameSizeComboBox.getModel());
+        nameSizeComboBox.setModel(sgt.styleP_trackNameSizeComboBox.getModel());
         nameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameSizeComboBoxtrackNameSizeComboBoxActionPerformed(evt);
@@ -555,9 +555,9 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 
         //This allows the Bundle String to be applied,
         //and also the String to appear in the GUI during design.
-        AnnotationButton.setText(sgt.annotationB.getText());
-        AutoButton.setText(sgt.autoB.getText());
-        GraphButton.setText(sgt.graphB.getText());
+        AnnotationButton.setText(sgt.annotationDisplayAsB.getText());
+        AutoButton.setText(sgt.autoDisplayAsB.getText());
+        GraphButton.setText(sgt.graphDisplayAsB.getText());
 
         height_slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {

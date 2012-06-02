@@ -10,7 +10,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		TrackAdjusterTabGUI.init(igbService);
-		final TrackAdjusterTabGUI simpleGraphTabGUI = TrackAdjusterTabGUI.getSingleton();
-		return simpleGraphTabGUI;
+		final TrackAdjusterTabGUI trackAdjusterTabGUI = TrackAdjusterTabGUI.getSingleton();
+		return trackAdjusterTabGUI;
 	}
 }

@@ -185,7 +185,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.heat_mapCB"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.heat_mapCB"/>
                   </AuxValues>
                 </Component>
               </SubComponents>

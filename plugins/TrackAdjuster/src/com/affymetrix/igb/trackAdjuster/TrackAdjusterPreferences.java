@@ -24,7 +24,7 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
 	public static int TAB_VISIBLE_RANGE = -1;
 	public static int TAB_GRAPH = -1;
 	public static int TAB_DISPLAY_PLUGIN = -1;
-	private TrackAdjusterTab sgt;
+	private TrackAdjusterTab tat;
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackAdjuster");
 	private static final String WINDOW_NAME = BUNDLE.getString("preferenceWindow");
@@ -34,7 +34,7 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
 
 	public TrackAdjusterPreferences(IGBService igbS) {
 		igbService = igbS;
-		sgt = TrackAdjusterTab.getSingleton();
+		tat = TrackAdjusterTab.getSingleton();
 		initComponents();
 		
 		this.setDefaultCloseOperation(javax.swing.JFrame.DO_NOTHING_ON_CLOSE);
@@ -82,7 +82,7 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         graphTab = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = sgt.heat_mapCB;
+        jComboBox1 = tat.heat_mapCB;
         pluginTab = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
 

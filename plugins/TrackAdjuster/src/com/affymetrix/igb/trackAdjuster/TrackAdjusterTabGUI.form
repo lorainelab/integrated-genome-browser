@@ -4,7 +4,7 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="stylegroup">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.stylegroup"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.stylegroup"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.ButtonGroup" name="DisplayModeButtonGroup">
@@ -186,7 +186,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fgColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.fgColorComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.styleP_fgColorComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">
@@ -217,20 +217,20 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgColorComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.bgColorComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.styleP_bgColorComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="nameSizeComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="sgt.trackNameSizeComboBox.getModel()" type="code"/>
+              <Connection code="tat.trackNameSizeComboBox.getModel()" type="code"/>
             </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nameSizeComboBoxtrackNameSizeComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.trackNameSizeComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.styleP_trackNameSizeComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
@@ -266,7 +266,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFGComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.labelFGComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.styleP_labelFGComboBox"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="colorSchemeChooser">
@@ -276,7 +276,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.colorSchemeBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.styleP_colorSchemeBox"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -299,7 +299,7 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="AnnotationPanel.setBorder(new CustomTitleBorder(&quot;Annotation -&quot;, &quot;Configure&quot;));"/>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.annotationPanel"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.annotationPanel"/>
       </AuxValues>
 
       <Layout>
@@ -354,7 +354,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxStackDepthTextFieldActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.maxStackDepthTextField"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.annotP_maxStackDepthTextField"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="fitViewButton">
@@ -463,7 +463,7 @@
             <Property name="text" type="java.lang.String" value="Bar"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.barB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_barB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="lineB">
@@ -471,7 +471,7 @@
             <Property name="text" type="java.lang.String" value="Line"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.lineB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_lineB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="mmavgB">
@@ -479,7 +479,7 @@
             <Property name="text" type="java.lang.String" value="Min/Max/Avg"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.mmavgB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_mmavgB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="dotB">
@@ -487,7 +487,7 @@
             <Property name="text" type="java.lang.String" value="Dot"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.dotB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_dotB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="PluginRadioButton">
@@ -497,7 +497,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.graphPluginB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_hmapB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="PluginComboBox">
@@ -520,7 +520,7 @@
             <Property name="text" type="java.lang.String" value="Label"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.labelCB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_labelCB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="yaxisCB">
@@ -528,7 +528,7 @@
             <Property name="text" type="java.lang.String" value="Y Axis"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.yaxisCB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphP_yaxisCB"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -615,7 +615,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="by_valRB_valActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.by_valRB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.vis_bounds_setter.by_valRB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="by_percentileRB_val">
@@ -629,12 +629,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="by_percentileRB_valActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.by_percentileRB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.vis_bounds_setter.by_percentileRB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSlider" name="rangeSlider">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.ValueSlider"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.vis_bounds_setter.ValueSlider"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="minValLabel">
@@ -647,7 +647,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="minTextActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.min_valT"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.vis_bounds_setter.min_valT"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="maxText">
@@ -655,7 +655,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxTextActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.vis_bounds_setter.max_valT"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.vis_bounds_setter.max_valT"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="maxValLabel">
@@ -728,7 +728,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="PluginButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.pluginB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.pluginDisplayAsB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
@@ -747,8 +747,8 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AnnotationButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="//This allows the Bundle String to be applied, &#xa;//and also the String to appear in the GUI during design.&#xa;AnnotationButton.setText(sgt.annotationB.getText());"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.annotationB"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="//This allows the Bundle String to be applied, &#xa;//and also the String to appear in the GUI during design.&#xa;AnnotationButton.setText(tat.annotationDisplayAsB.getText());"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.annotationDisplayAsB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="AutoButton">
@@ -762,8 +762,8 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AutoButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="AutoButton.setText(sgt.autoB.getText());"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.autoB"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="AutoButton.setText(tat.autoDisplayAsB.getText());"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.autoDisplayAsB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="jComboBox2">
@@ -787,8 +787,8 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GraphButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="GraphButton.setText(sgt.graphB.getText());"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.graphB"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="GraphButton.setText(tat.graphDisplayAsB.getText());"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.graphDisplayAsB"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JCheckBox" name="floatingCheckBox">
@@ -796,7 +796,7 @@
             <Property name="text" type="java.lang.String" value="Floating"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.floatCB"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.floatCB"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -838,7 +838,7 @@
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="height_sliderStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.height_slider"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.height_slider"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
@@ -874,7 +874,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackNameTextFieldActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="sgt.trackName"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.trackName"/>
           </AuxValues>
         </Component>
       </SubComponents>

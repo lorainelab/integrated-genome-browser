@@ -2141,6 +2141,8 @@ public class SeqMapView extends JPanel
 	}
 
 	public void deselectAll() {
+		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
+		labelmap.clearSelected();
 		gmodel.setSelectedSymmetries(Collections.<RootSeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList(), this);
 	}
 

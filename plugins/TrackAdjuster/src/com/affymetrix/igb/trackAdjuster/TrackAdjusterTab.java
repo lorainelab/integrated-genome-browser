@@ -693,7 +693,7 @@ public final class TrackAdjusterTab
 				if (rootSym.getCategory() == FileTypeCategory.Annotation || rootSym.getCategory() == FileTypeCategory.Alignment) {
 					annotSyms.add(rootSym);
 				}
-				if (rootSym.getCategory() == FileTypeCategory.Graph) {
+				if (rootSym.getCategory() == FileTypeCategory.Graph || rootSym.getCategory() == FileTypeCategory.ScoredContainer) {
 					graphSyms.add(rootSym);
 				}
 			}

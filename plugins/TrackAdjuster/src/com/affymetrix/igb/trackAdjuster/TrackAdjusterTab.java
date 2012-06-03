@@ -48,7 +48,7 @@ public final class TrackAdjusterTab
 	private static final String viewModePrefix = "viewmode_";
 	private final static int xoffset_pop = 0;
 	private final static int yoffset_pop = 30;
-	private final static JPopupMenu popup = new JPopupMenu();
+	private final static JPopupMenu selectAllPopup = new JPopupMenu();
 
 	static {
 		graphType2ViewMode.put(GraphType.BAR_GRAPH, "bargraph");
@@ -164,6 +164,7 @@ public final class TrackAdjusterTab
 	public boolean is_listening = true; // used to turn on and off listening to GUI events
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
+	public JRPButton selectAllB = new JRPButton("TrackAdjusterTab_selectAllB");
 	public JRPRadioButton graphP_mmavgB = new JRPRadioButton("TrackAdjusterTab_graphP_mmavgB", BUNDLE.getString("minMaxAvgButton"));
 	public JRPRadioButton graphP_lineB = new JRPRadioButton("TrackAdjusterTab_graphP_lineB", BUNDLE.getString("lineButton"));
 	public JRPRadioButton graphP_barB = new JRPRadioButton("TrackAdjusterTab_graphP_barB", BUNDLE.getString("barButton"));
@@ -289,7 +290,7 @@ public final class TrackAdjusterTab
 		for (FileTypeCategory category : FileTypeCategory.values()) {
 			JRPMenuItem item = new JRPMenuItem("Track_Adjuster_Select_Menu_"
 					+ category.name(), SelectAllAction.getAction(category));
-			popup.add(item);
+			selectAllPopup.add(item);
 		}
 
 		floatCB.addActionListener(new ActionListener() {
@@ -326,8 +327,8 @@ public final class TrackAdjusterTab
 
 	public void selectAllBMouseClicked(JComponent c, MouseEvent e) {
 		if (c.getWidth() * 0.75 - e.getX() < 0) {
-			if (popup.getComponentCount() > 0) {
-				popup.show(c, xoffset_pop, yoffset_pop);
+			if (selectAllPopup.getComponentCount() > 0) {
+				selectAllPopup.show(c, xoffset_pop, yoffset_pop);
 			}
 		} else {
 			SelectAllAction.getAction().execute();
@@ -377,7 +378,7 @@ public final class TrackAdjusterTab
 				}
 			}
 		}
-		resetAll();
+		resetMainPanel();
 		resetStylePanel();
 		resetAnnotationPanel();
 		resetGraphAndRangePanel();
@@ -391,7 +392,7 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	private void resetAll() {
+	private void resetMainPanel() {
 		// track name, view mode
 		int selectedTrackCount = selectedTiers.size();
 		boolean select = selectedTrackCount > 0;
@@ -401,8 +402,7 @@ public final class TrackAdjusterTab
 				disableDisplayButtons(true, true);
 				return;
 			}
-			MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().
-					getViewFactory(style.getViewMode());
+			MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().getViewFactory(style.getViewMode());
 			String viewModeName = viewModePrefix + mode.getName();
 			ViewMode viewMode = ViewMode.string2ViewMode.get(viewModeName);
 			DisplayType type = viewMode2DisplayType.get(viewMode);
@@ -423,6 +423,11 @@ public final class TrackAdjusterTab
 			double the_height = allGlyphs.get(0).getAnnotStyle().getHeight();
 			height_slider.setValue((int) the_height);
 		}
+		else {
+			height_slider.setValue(0);
+			disableDisplayButtons(true, true);
+		}
+		selectAllB.setEnabled(select);
 		trackName.setEnabled(select);
 		height_slider.setEnabled(select);
 	}

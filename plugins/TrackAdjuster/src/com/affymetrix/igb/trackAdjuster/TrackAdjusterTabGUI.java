@@ -113,7 +113,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         height_slider = tat.height_slider;
         jLabel8 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        selectAllB = new javax.swing.JButton();
+        selectAllB = tat.selectAllB;
         trackNameTextField = tat.trackName;
 
         jMenu1.setText("jMenu1");

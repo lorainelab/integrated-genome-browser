@@ -26,7 +26,6 @@ import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.swing.recordplayback.*;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
-import com.affymetrix.igb.viewmode.AnnotationGlyph;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Component;
@@ -192,16 +191,16 @@ public final class TrackAdjusterTab
 	public JRPComboBox styleP_trackNameSizeComboBox = new JRPComboBox("TrackAdjusterTab_styleP_trackNameSizeComboBox");
 	public JRPSlider height_slider = new JRPSlider("TrackAdjusterTab_height_slider", JSlider.HORIZONTAL, 10, 500, 50);
 	public final List<RootSeqSymmetry> rootSyms = new ArrayList<RootSeqSymmetry>();
+	public final List<RootSeqSymmetry> graphSyms = new ArrayList<RootSeqSymmetry>();
+	public final List<RootSeqSymmetry> annotSyms = new ArrayList<RootSeqSymmetry>();
 	public final List<TierGlyph> selectedTiers = new ArrayList<TierGlyph>();
 	public final List<ViewModeGlyph> allGlyphs = new ArrayList<ViewModeGlyph>();
 	public final List<AbstractGraphGlyph> graphGlyphs = new ArrayList<AbstractGraphGlyph>();
-	public final List<AnnotationGlyph> annotationGlyphs = new ArrayList<AnnotationGlyph>();
-	public final List<ViewModeGlyph> otherGlyphs = new ArrayList<ViewModeGlyph>();
 	public final JRPCheckBox graphP_labelCB = new JRPCheckBox("TrackAdjusterTab_graphP_labelCB", BUNDLE.getString("labelCheckBox"));
 	public final JRPCheckBox graphP_yaxisCB = new JRPCheckBox("TrackAdjusterTab_graphP_yaxisCB", BUNDLE.getString("yAxisCheckBox"));
 	public final JRPCheckBox floatCB = new JRPCheckBox("TrackAdjusterTab_floatCB", BUNDLE.getString("floatingCheckBox"));
 	private IGBService igbService;
-	public JRPComboBox heat_mapCB;
+	public JRPComboBox graphP_heat_mapCB;
 
 	public static void init(IGBService igbService) {
 		singleton = new TrackAdjusterTab(igbService);
@@ -214,9 +213,9 @@ public final class TrackAdjusterTab
 	public TrackAdjusterTab(IGBService igbS) {
 		igbService = igbS;
 		
-		heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB", HeatMap.getStandardNames());
+		graphP_heat_mapCB = new JRPComboBox("TrackAdjusterTab_heat_mapCB", HeatMap.getStandardNames());
 		styleP_trackNameSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
-		heat_mapCB.addItemListener(new HeatMapItemListener());
+		graphP_heat_mapCB.addItemListener(new HeatMapItemListener());
 
 		graphP_barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
 		graphP_dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
@@ -279,7 +278,7 @@ public final class TrackAdjusterTab
 		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
 
 
-		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
+		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
 
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
@@ -350,7 +349,6 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List<RootSeqSymmetry> selected_syms = evt.getAllSelectedSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
@@ -362,13 +360,15 @@ public final class TrackAdjusterTab
 			return;
 		}
 
-		List<TierGlyph> tierList = (List<TierGlyph>) igbService.getSeqMapView().getSelectedTiers();
-		resetSelectedGlyphs(selected_syms);
-		refreshSelection(tierList);
+		refreshSelection(selected_syms);
 	}
 
-	private void refreshSelection(List<TierGlyph> tierList) {
+	private void refreshSelection(List<RootSeqSymmetry> selected_syms) {
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
+		int symcount = selected_syms.size();
+		collectSymsAndGlyphs(selected_syms, symcount);
+		@SuppressWarnings("unchecked")
+		List<TierGlyph> tierList = (List<TierGlyph>) igbService.getSeqMapView().getSelectedTiers();
 		if (selectedTiers != tierList) {
 			selectedTiers.clear();
 			for (TierGlyph tier : tierList) {
@@ -377,19 +377,30 @@ public final class TrackAdjusterTab
 				}
 			}
 		}
+		resetAll();
+		resetStylePanel();
+		resetAnnotationPanel();
+		resetGraphAndRangePanel();
+		is_listening = true; // turn back on GUI events
+	}
+
+	private void enablePanel(JPanel panel, boolean enabled) {
+		panel.setEnabled(enabled);
+		for (Component c : panel.getComponents()) {
+			c.setEnabled(enabled);
+		}
+	}
+
+	private void resetAll() {
+		// track name, view mode
 		int selectedTrackCount = selectedTiers.size();
+		boolean select = selectedTrackCount > 0;
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
-			if (style == null || style instanceof SimpleTrackStyle) {
+			if (style == null) {
 				disableDisplayButtons(true, true);
 				return;
 			}
-			styleP_fgColorComboBox.setSelectedColor(style.getForeground());
-			styleP_bgColorComboBox.setSelectedColor(style.getBackground());
-			styleP_labelFGComboBox.setSelectedColor(style.getLabelForeground());
-			trackName.setText(style.getTrackName());
-			annotP_maxStackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
-			styleP_trackNameSizeComboBox.setSelectedItem((int) style.getTrackNameSize());
 			MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().
 					getViewFactory(style.getViewMode());
 			String viewModeName = viewModePrefix + mode.getName();
@@ -402,33 +413,75 @@ public final class TrackAdjusterTab
 			}
 			setDisplayTypeButton(type);
 			setEnabledDisplayButtonsBySelection();
+			trackName.setText(style.getTrackName());
+		}
+		else {
+			trackName.setText("");
+		}
 
-		} else if (selectedTrackCount > 1) {
+		if (select) {
+			double the_height = allGlyphs.get(0).getAnnotStyle().getHeight();
+			height_slider.setValue((int) the_height);
+		}
+		trackName.setEnabled(select);
+		height_slider.setEnabled(select);
+	}
+
+	private void resetStylePanel() {
+		int selectedTrackCount = selectedTiers.size();
+		boolean select = selectedTrackCount > 0;
+		if (selectedTrackCount == 1) {
+			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
+			if (style == null || style instanceof SimpleTrackStyle) {
+				return;
+			}
+			styleP_fgColorComboBox.setSelectedColor(style.getForeground());
+			styleP_bgColorComboBox.setSelectedColor(style.getBackground());
+			styleP_labelFGComboBox.setSelectedColor(style.getLabelForeground());
+			styleP_trackNameSizeComboBox.setSelectedItem((int) style.getTrackNameSize());
+		}
+		else {
 			styleP_fgColorComboBox.setSelectedColor(null);
 			styleP_labelFGComboBox.setSelectedColor(null);
 			styleP_bgColorComboBox.setSelectedColor(null);
 			styleP_trackNameSizeComboBox.setSelectedItem(null);
-			trackName.setText("");
-			annotP_maxStackDepthTextField.setText("");
-			disableDisplayButtons(true, true);
-			setEnabledDisplayButtonsBySelection();
 		}
+		enablePanel(stylePanel, select);
+	}
 
-		boolean b = !(selectedTiers.isEmpty());
-		
-		styleP_fgColorComboBox.setEnabled(b);
-		styleP_labelFGComboBox.setEnabled(b);
-		styleP_bgColorComboBox.setEnabled(b);
-		styleP_colorSchemeBox.setEnabled(b);
-		trackName.setEnabled(b);
-		annotP_maxStackDepthTextField.setEnabled(b);
-		styleP_trackNameSizeComboBox.setEnabled(b);
-		boolean isFloat = true;
+	private ITrackStyleExtended getStyle(RootSeqSymmetry rootSym) {
+		ITrackStyleExtended style = null;
+		for (ViewModeGlyph vg : allGlyphs) {
+			if (vg.getInfo() == rootSym) {
+				style = vg.getAnnotStyle();
+			}
+		}
+		return style;
+	}
+
+	private void resetAnnotationPanel() {
+		int selectedTrackCount = annotSyms.size();
+		boolean select = selectedTrackCount > 0;
+		if (selectedTrackCount == 1) {
+			ITrackStyleExtended style = getStyle(annotSyms.get(0));
+			if (style == null) {
+				return;
+			}
+			annotP_maxStackDepthTextField.setText(Integer.toString(style.getMaxDepth()));
+		} else {
+			annotP_maxStackDepthTextField.setText("");
+		}
+		enablePanel(annotationPanel, select);
+	}
+
+	private void resetGraphAndRangePanel() {
+		// float check box, not in graph panels
+		boolean allFloat = true;
 		boolean anySelected = false;
-		for (TierGlyph tg : selectedTiers) {
+		for (AbstractGraphGlyph gg : graphGlyphs) {
 			anySelected = true;
-			if (!tg.getViewModeGlyph().getAnnotStyle().getFloatTier()) {
-				isFloat = false;
+			if (!gg.getAnnotStyle().getFloatTier()) {
+				allFloat = false;
 			}
 		}
 		if (igbService.getSeqMapView().getPixelFloater().getChildren() != null) {
@@ -437,14 +490,88 @@ public final class TrackAdjusterTab
 				if (vg.isSelected()) {
 					anySelected = true;
 					if (!((ViewModeGlyph)gl).getAnnotStyle().getFloatTier()) {
-						isFloat = false;
+						allFloat = false;
 					}
 				}
 			}
 		}
 		floatCB.setEnabled(anySelected);
-		floatCB.setSelected(anySelected && isFloat);
-		is_listening = true; // turn back on GUI events
+		floatCB.setSelected(anySelected && allFloat);
+		// graph and range panels
+		boolean select = graphGlyphs.size() > 0;
+
+		boolean all_are_floating = false;
+		boolean all_show_axis = false;
+		boolean all_show_label = false;
+
+		// Take the first glyph in the list as a prototype
+		AbstractGraphGlyph first_glyph = null;
+		GraphType graph_style = GraphType.LINE_GRAPH;
+		HeatMap hm = null;
+		if (select) {
+			first_glyph = graphGlyphs.get(0);
+			graph_style = first_glyph.getGraphStyle();
+			if (graph_style == GraphType.HEAT_MAP) {
+				hm = first_glyph.getHeatMap();
+			}
+			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
+			all_show_axis = first_glyph.getGraphState().getShowAxis();
+			all_show_label = first_glyph.getGraphState().getShowLabel();
+		}
+
+		// Now loop through other glyphs if there are more than one
+		// and see if the graph_style and heatmap are the same in all selections
+		for (AbstractGraphGlyph gl : graphGlyphs) {
+			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
+			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
+			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
+			if (graph_style == null) {
+				graph_style = GraphType.LINE_GRAPH;
+			} else if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+				graph_style = GraphType.LINE_GRAPH;
+			}
+			if (graph_style == GraphType.HEAT_MAP) {
+				if (first_glyph.getHeatMap() != gl.getHeatMap()) {
+					hm = null;
+				}
+			} else {
+				hm = null;
+			}
+		}
+
+		setColorCombobox();
+		selectButtonBasedOnGraphStyle(graph_style);
+
+		if (graph_style == GraphType.HEAT_MAP) {
+			graphP_heat_mapCB.setEnabled(true);
+			graphP_hmapB.setSelected(true);
+			if (hm == null) {
+				graphP_heat_mapCB.setSelectedIndex(-1);
+			} else {
+				graphP_heat_mapCB.setSelectedItem(hm.getName());
+			}
+		} else {
+			graphP_heat_mapCB.setEnabled(false);
+			graphP_hmapB.setSelected(false);
+		}
+		vis_bounds_setter.setGraphs(graphGlyphs);
+
+		boolean type = select;
+		for (AbstractGraphGlyph graf : graphGlyphs) {
+			type = !(graf.getInfo() != null && graf.getInfo() instanceof MisMatchGraphSym);
+			if (type) {
+				break;
+			}
+		}
+
+		enablePanel(graphPanel, select);
+		enablePanel(rangePanel, select);
+		enableButtons(stylegroup, type);
+		if (select) {
+			graphP_yaxisCB.setSelected(all_show_axis);
+			graphP_labelCB.setSelected(all_show_label);
+		}
+
 	}
 
 	private void setDisplayTypeButton(DisplayType type) {
@@ -527,131 +654,44 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	private void resetSelectedGlyphs(List<RootSeqSymmetry> selected_syms) {
-		int symcount = selected_syms.size();
-		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		collectSymsAndGlyphs(selected_syms, symcount);
-
-		double the_height = -1; // -1 indicates unknown height
-
-		boolean all_are_floating = false;
-		boolean all_show_axis = false;
-		boolean all_show_label = false;
-
-		// Take the first glyph in the list as a prototype
-		AbstractGraphGlyph first_glyph = null;
-		GraphType graph_style = GraphType.LINE_GRAPH;
-		HeatMap hm = null;
-		if (!graphGlyphs.isEmpty()) {
-			first_glyph = graphGlyphs.get(0);
-			graph_style = first_glyph.getGraphStyle();
-			if (graph_style == GraphType.HEAT_MAP) {
-				hm = first_glyph.getHeatMap();
-			}
-			the_height = first_glyph.getGraphState().getTierStyle().getHeight();
-			all_are_floating = first_glyph.getGraphState().getTierStyle().getFloatTier();
-			all_show_axis = first_glyph.getGraphState().getShowAxis();
-			all_show_label = first_glyph.getGraphState().getShowLabel();
-		}
-
-		// Now loop through other glyphs if there are more than one
-		// and see if the graph_style and heatmap are the same in all selections
-		for (AbstractGraphGlyph gl : graphGlyphs) {
-			all_are_floating = all_are_floating && gl.getGraphState().getTierStyle().getFloatTier();
-			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
-			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
-			if (graph_style == null) {
-				graph_style = GraphType.LINE_GRAPH;
-			} else if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
-				graph_style = GraphType.LINE_GRAPH;
-			}
-			if (graph_style == GraphType.HEAT_MAP) {
-				if (first_glyph.getHeatMap() != gl.getHeatMap()) {
-					hm = null;
-				}
-			} else {
-				hm = null;
-			}
-		}
-
-		setColorCombobox();
-		selectButtonBasedOnGraphStyle(graph_style);
-
-		if (graph_style == GraphType.HEAT_MAP) {
-			heat_mapCB.setEnabled(true);
-			graphP_hmapB.setSelected(true);
-			if (hm == null) {
-				heat_mapCB.setSelectedIndex(-1);
-			} else {
-				heat_mapCB.setSelectedItem(hm.getName());
-			}
-		} else {
-			heat_mapCB.setEnabled(false);
-			graphP_hmapB.setSelected(false);
-		}
-
-		if (the_height != -1) {
-			height_slider.setValue((int) the_height);
-		}
-		vis_bounds_setter.setGraphs(graphGlyphs);
-
-		if (!graphGlyphs.isEmpty()) {
-			//floatCB.setSelected(all_are_floating);
-			floatCB.setEnabled(graphGlyphs.size() > 0 && graphGlyphs.size() == allGlyphs.size());
-			graphP_yaxisCB.setSelected(all_show_axis);
-			graphP_labelCB.setSelected(all_show_label);
-		}
-
-		boolean b = !(rootSyms.isEmpty());
-		height_slider.setEnabled(b);
-		boolean type = b;
-		for (RootSeqSymmetry graf : rootSyms) {
-			type = !(graf instanceof MisMatchGraphSym);
-			if (type) {
-				break;
-			}
-		}
-
-		enableButtons(stylegroup, type);
-		for (Component c : annotationPanel.getComponents()) {
-			if (c instanceof JRPTextField) {
-				JRPTextField textField = (JRPTextField) c;
-				textField.setText("");
-				textField.setEditable(!type);
-			} else {
-				c.setEnabled(!type);
-			}
-		}
-
-		graphP_yaxisCB.setEnabled(b);
-		graphP_labelCB.setEnabled(b);
-
-		styleP_fgColorComboBox.setEnabled(b);
-		styleP_labelFGComboBox.setEnabled(b);
-		styleP_bgColorComboBox.setEnabled(b);
-		styleP_colorSchemeBox.setEnabled(b);
-		trackName.setEnabled(b);
-
-		is_listening = true; // turn back on GUI events
-	}
-
 	private void collectSymsAndGlyphs(List<RootSeqSymmetry> selected_syms, int symcount) {
 		if (rootSyms != selected_syms) {
 			// in certain cases selected_syms arg and grafs list may be same, for example when method is being
 			//     called to catch changes in glyphs representing selected sym, not the syms themselves)
 			//     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
 			rootSyms.clear();
+			annotSyms.clear();
+			graphSyms.clear();
 		}
 		allGlyphs.clear();
 		graphGlyphs.clear();
-		annotationGlyphs.clear();
-		otherGlyphs.clear();
+		for (Glyph glyph : igbService.getSelectedTierGlyphs()) {
+			ViewModeGlyph vg = ((TierGlyph)glyph).getViewModeGlyph();
+			allGlyphs.add(vg);
+			if (vg instanceof AbstractGraphGlyph) {
+				if (vg instanceof MultiGraphGlyph) {
+					for (GlyphI child : vg.getChildren()) {
+						if (rootSyms.contains(child.getInfo())) {
+							graphGlyphs.add((AbstractGraphGlyph) child);
+						}
+					}
+				}else if (!graphGlyphs.contains(vg)) {
+					graphGlyphs.add((AbstractGraphGlyph)vg);
+				}
+			}
+		}
 		// First loop through and collect graphs and glyphs
 		for (int i = 0; i < symcount; i++) {
 			RootSeqSymmetry rootSym = selected_syms.get(i);
 			// only add to grafs if list is not identical to selected_syms arg
 			if (rootSyms != selected_syms) {
 				rootSyms.add(rootSym);
+				if (rootSym.getCategory() == FileTypeCategory.Annotation || rootSym.getCategory() == FileTypeCategory.Alignment) {
+					annotSyms.add(rootSym);
+				}
+				if (rootSym.getCategory() == FileTypeCategory.Graph) {
+					graphSyms.add(rootSym);
+				}
 			}
 			// add all graph glyphs representing graph sym
 			//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
@@ -681,13 +721,6 @@ public final class TrackAdjusterTab
 						graphGlyphs.add((AbstractGraphGlyph)glyph);
 					}
 				}
-				else if (glyph instanceof AnnotationGlyph) {
-					annotationGlyphs.add((AnnotationGlyph)glyph);
-				}
-				else {
-					otherGlyphs.add((ViewModeGlyph)glyph);
-				}
-				allGlyphs.add((ViewModeGlyph)glyph);
 			}
 		}
 	}
@@ -724,8 +757,8 @@ public final class TrackAdjusterTab
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
 		}
 //		current_seq = evt.getSelectedSeq();
-//		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
-		resetSelectedGlyphs(Collections.<RootSeqSymmetry>emptyList());
+//		refreshSelection(gmodel.getSelectedSymmetries(current_seq));
+		refreshSelection(Collections.<RootSeqSymmetry>emptyList());
 	}
 
 	private static void enableButtons(ButtonGroup g, boolean b) {
@@ -795,15 +828,15 @@ public final class TrackAdjusterTab
 						}
 					}
 					if (graphType == GraphType.HEAT_MAP) {
-						heat_mapCB.setEnabled(true);
+						graphP_heat_mapCB.setEnabled(true);
 						graphP_hmapB.setSelected(true);
 						if (hm == null) {
-							heat_mapCB.setSelectedIndex(-1);
+							graphP_heat_mapCB.setSelectedIndex(-1);
 						} else {
-							heat_mapCB.setSelectedItem(hm.getName());
+							graphP_heat_mapCB.setSelectedItem(hm.getName());
 						}
 					} else {
-						heat_mapCB.setEnabled(false);
+						graphP_heat_mapCB.setEnabled(false);
 						graphP_hmapB.setSelected(false);
 						// don't bother to change the displayed heat map name
 					}
@@ -838,8 +871,8 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	public void setGraphHeight(double height) {
-		for (AbstractGraphGlyph gl : graphGlyphs) {
+	public void setTrackHeight(double height) {
+		for (ViewModeGlyph gl : allGlyphs) {
 			Rectangle2D.Double cbox = gl.getCoordBox();
 			gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 

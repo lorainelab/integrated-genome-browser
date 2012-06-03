@@ -790,10 +790,10 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	}//GEN-LAST:event_graphPanelMouseClicked
 
 	private void height_sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_height_sliderStateChanged
-		if (tat.graphGlyphs.isEmpty() || !tat.is_listening) {
+		if (!tat.is_listening) {
 			return;
 		}
-		tat.setGraphHeight(height_slider.getValue());
+		tat.setTrackHeight(height_slider.getValue());
 	}//GEN-LAST:event_height_sliderStateChanged
 
 	private void fitViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fitViewButtonActionPerformed

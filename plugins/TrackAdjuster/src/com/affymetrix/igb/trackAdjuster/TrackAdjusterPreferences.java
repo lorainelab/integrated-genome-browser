@@ -82,7 +82,7 @@ public class TrackAdjusterPreferences extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         graphTab = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = tat.heat_mapCB;
+        jComboBox1 = tat.graphP_heat_mapCB;
         pluginTab = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
 

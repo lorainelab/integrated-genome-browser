@@ -430,6 +430,7 @@ public final class TrackAdjusterTab
 	private void resetStylePanel() {
 		int selectedTrackCount = selectedTiers.size();
 		boolean select = selectedTrackCount > 0;
+		enablePanel(stylePanel, select);
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
 			if (style == null || style instanceof SimpleTrackStyle) {
@@ -446,7 +447,6 @@ public final class TrackAdjusterTab
 			styleP_bgColorComboBox.setSelectedColor(null);
 			styleP_trackNameSizeComboBox.setSelectedItem(null);
 		}
-		enablePanel(stylePanel, select);
 	}
 
 	private ITrackStyleExtended getStyle(RootSeqSymmetry rootSym) {
@@ -462,6 +462,7 @@ public final class TrackAdjusterTab
 	private void resetAnnotationPanel() {
 		int selectedTrackCount = annotSyms.size();
 		boolean select = selectedTrackCount > 0;
+		enablePanel(annotationPanel, select);
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = getStyle(annotSyms.get(0));
 			if (style == null) {
@@ -471,10 +472,12 @@ public final class TrackAdjusterTab
 		} else {
 			annotP_maxStackDepthTextField.setText("");
 		}
-		enablePanel(annotationPanel, select);
 	}
 
 	private void resetGraphAndRangePanel() {
+		boolean select = graphGlyphs.size() > 0;
+		enablePanel(graphPanel, select);
+		enablePanel(rangePanel, select);
 		// float check box, not in graph panels
 		boolean allFloat = true;
 		boolean anySelected = false;
@@ -498,7 +501,6 @@ public final class TrackAdjusterTab
 		floatCB.setEnabled(anySelected);
 		floatCB.setSelected(anySelected && allFloat);
 		// graph and range panels
-		boolean select = graphGlyphs.size() > 0;
 
 		boolean all_are_floating = false;
 		boolean all_show_axis = false;
@@ -539,7 +541,6 @@ public final class TrackAdjusterTab
 			}
 		}
 
-		setColorCombobox();
 		selectButtonBasedOnGraphStyle(graph_style);
 
 		if (graph_style == GraphType.HEAT_MAP) {
@@ -564,8 +565,6 @@ public final class TrackAdjusterTab
 			}
 		}
 
-		enablePanel(graphPanel, select);
-		enablePanel(rangePanel, select);
 		enableButtons(stylegroup, type);
 		if (select) {
 			graphP_yaxisCB.setSelected(all_show_axis);
@@ -768,33 +767,6 @@ public final class TrackAdjusterTab
 		}
 	}
 
-	private void setColorCombobox() {
-		if (igbService.getSeqMap() == null) {
-			return;
-		}
-		int num_glyphs = allGlyphs.size();
-
-		if (num_glyphs == 0) {
-			// Do Nothing
-		} else if (num_glyphs == 1 && igbService.getSeqMap().getItem(rootSyms.get(0)) != null) {
-			GlyphI g = igbService.getSeqMap().getItem(rootSyms.get(0));
-			AbstractGraphGlyph gl = (AbstractGraphGlyph) g;
-			Color color = gl.getGraphState().getTierStyle().getBackground();
-			styleP_bgColorComboBox.setSelectedColor(color);
-			color = gl.getGraphState().getTierStyle().getLabelBackground();
-			color = gl.getGraphState().getTierStyle().getForeground();
-			styleP_fgColorComboBox.setSelectedColor(color);
-			color = gl.getGraphState().getTierStyle().getLabelForeground();
-			styleP_labelFGComboBox.setSelectedColor(color);
-			trackName.setText(gl.getGraphState().getTierStyle().getTrackName());
-		} else {
-			styleP_fgColorComboBox.setSelectedColor(null);
-			styleP_labelFGComboBox.setSelectedColor(null);
-			styleP_bgColorComboBox.setSelectedColor(null);
-			trackName.setText("");
-		}
-	}
-
 	private final class GraphStyleSetter extends GenericAction implements ActionListener {
 
 		private static final long serialVersionUID = 1L;
@@ -972,7 +944,7 @@ public final class TrackAdjusterTab
 	}
 
 	public void trackstylePropertyChanged(EventObject eo) {
-		setColorCombobox();
+		refreshSelection(rootSyms);
 	}
 
 	public void setViewMode(DisplayType displayType) {

@@ -2120,6 +2120,7 @@ public class SeqMapView extends JPanel
 		return rootSeqSymmetry.getCategory() == category || category == null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void selectAll(FileTypeCategory category) {
 		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
 		labelmap.clearSelected();
@@ -2135,13 +2136,12 @@ public class SeqMapView extends JPanel
 				}
 			}
 		}
-		seqmap.updateWidget();
+		gmodel.setSelectedSymmetries(glyphsToRootSyms((List<GlyphI>)getSelectedTiers()), getSelectedSyms(), this);
+
 	}
 
 	public void deselectAll() {
-		AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
-		labelmap.clearSelected();
-		seqmap.updateWidget();
+		gmodel.setSelectedSymmetries(Collections.<RootSeqSymmetry>emptyList(), Collections.<SeqSymmetry>emptyList(), this);
 	}
 
 	/**

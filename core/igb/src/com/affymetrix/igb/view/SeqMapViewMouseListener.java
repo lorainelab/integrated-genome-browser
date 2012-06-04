@@ -205,6 +205,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	public void heardGlyphDrag(NeoGlyphDragEvent evt) {
 		if (evt.getID() == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
 			is_graph_dragging = true;
+			rubber_band_start = null;
 		} else if (evt.getID() == NeoGlyphDragEvent.DRAG_ENDED) {
 			is_graph_dragging = false;
 		}
@@ -417,7 +418,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 //						smv.setSelectedRegion(null, true);
 //					}
 
-				} else {
+				} else if (rubber_band_start != null) {
 					// started outside axis tier: user is trying to select glyphs
 					doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
 				}

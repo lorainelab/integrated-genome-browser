@@ -43,6 +43,7 @@ import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TransformTierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -488,7 +489,24 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
 	}
 
+	@Override
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {
 		ServiceUtils.getInstance().selectFeatureAndCenterZoomStripe(selectParam);
+	}
+
+	@Override
+	public void openPreferencesTrackPanel() {
+		PreferencesPanel pp = PreferencesPanel.getSingleton();
+		pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
+		javax.swing.JFrame f = pp.getFrame();
+		f.setVisible(true);
+	}
+
+	@Override
+	public void openPreferencesOtherPanel() {
+		PreferencesPanel pp = PreferencesPanel.getSingleton();
+		pp.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
+		javax.swing.JFrame f = pp.getFrame();
+		f.setVisible(true);
 	}
 }

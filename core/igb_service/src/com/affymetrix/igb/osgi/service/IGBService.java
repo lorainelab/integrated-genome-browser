@@ -216,4 +216,6 @@ public interface IGBService {
 	public void refreshDataManagementView();
 	public void loadVisibleFeatures();
 	public void selectFeatureAndCenterZoomStripe(String selectParam);
+	public void openPreferencesTrackPanel();
+	public void openPreferencesOtherPanel();
 }

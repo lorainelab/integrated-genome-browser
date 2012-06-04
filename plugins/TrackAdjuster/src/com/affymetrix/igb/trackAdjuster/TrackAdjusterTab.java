@@ -873,4 +873,8 @@ public final class TrackAdjusterTab
 		}
 		igbService.getSeqMap().updateWidget();
 	}
+
+	public IGBService getIgbService() {
+		return igbService;
+	}
 }

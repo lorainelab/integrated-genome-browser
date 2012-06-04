@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.*;
 import com.affymetrix.igb.trackAdjuster.TrackAdjusterTab.DisplayType;
 import java.awt.Cursor;
@@ -719,10 +718,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void StylePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StylePanelMouseClicked
 		Rectangle bounds = new Rectangle(43, 5, 57, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			PreferencesPanel pp = PreferencesPanel.getSingleton();
-			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-			javax.swing.JFrame f = pp.getFrame();
-			f.setVisible(true);
+			tat.getIgbService().openPreferencesTrackPanel();
 		}
 
 	}//GEN-LAST:event_StylePanelMouseClicked
@@ -730,20 +726,14 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
 	private void AnnotationPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AnnotationPanelMouseClicked
 		Rectangle bounds = new Rectangle(85, 5, 55, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			PreferencesPanel pp = PreferencesPanel.getSingleton();
-			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-			javax.swing.JFrame f = pp.getFrame();
-			f.setVisible(true);
+			tat.getIgbService().openPreferencesTrackPanel();
 		}
 	}//GEN-LAST:event_AnnotationPanelMouseClicked
 
 	private void graphPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMouseClicked
 		Rectangle bounds = new Rectangle(50, 5, 60, 13);
 		if (bounds.contains(evt.getX(), evt.getY())) {
-			PreferencesPanel pp = PreferencesPanel.getSingleton();
-			pp.setTab(PreferencesPanel.TAB_TIER_PREFS_VIEW);
-			javax.swing.JFrame f = pp.getFrame();
-			f.setVisible(true);
+			tat.getIgbService().openPreferencesTrackPanel();
 		}
 	}//GEN-LAST:event_graphPanelMouseClicked
 
@@ -804,10 +794,7 @@ public class TrackAdjusterTabGUI extends IGBTabPanel {
         tat.selectAllCBSelected();	}//GEN-LAST:event_selectAllCBActionPerformed
 
 	private void configureOtherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureOtherButtonActionPerformed
-		PreferencesPanel pp = PreferencesPanel.getSingleton();
-		pp.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);
-		javax.swing.JFrame f = pp.getFrame();
-		f.setVisible(true);
+		tat.getIgbService().openPreferencesOtherPanel();
 	}//GEN-LAST:event_configureOtherButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

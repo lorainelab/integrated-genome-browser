@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.swing.JDialog;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.AbstractGraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
@@ -25,9 +27,19 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 	protected ChangeColorActionA(String text, String iconPath, String largeIconPath) {
 		super(text, iconPath, largeIconPath);
 	}
-	public abstract java.awt.Color getBackgroundColor();
-	public abstract java.awt.Color getForegroundColor();
-	protected void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		super.actionPerformed(e);
+		changeColor(getTierManager().getSelectedTierLabels());
+		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	}
+
+	protected abstract void setChooserColor(JColorChooser chooser, ITrackStyleExtended style);
+	protected abstract void setStyleColor(JColorChooser chooser, ITrackStyleExtended style);
+	protected void setGraphColor(AbstractGraphGlyph gg, Color color) { }
+
+	private void changeColor(final List<TierLabelGlyph> tier_label_glyphs) {
 		if (tier_label_glyphs.isEmpty()) {
 			return;
 		}
@@ -38,11 +50,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 		TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
 		ITrackStyleExtended style_0 = tier_0.getAnnotStyle();
 		if (style_0 != null) {
-			if (fg) {
-				chooser.setColor(style_0.getForeground());
-			} else {
-				chooser.setColor(style_0.getBackground());
-			}
+			setChooserColor(chooser, style_0);
 		}
 
 		ActionListener al = new ActionListener() {
@@ -54,19 +62,11 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA {
 					ITrackStyleExtended style = tier.getAnnotStyle();
 
 					if (style != null) {
-						if (fg) {
-							style.setForeground(chooser.getColor());
-						} else {
-							style.setBackground(chooser.getColor());
-						}
+						setStyleColor(chooser, style);
 					}
 					for (AbstractGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-						if (fg) {
-							gg.setColor(chooser.getColor());
-							gg.getGraphState().getTierStyle().setForeground(chooser.getColor());
-						} else {
-							gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
-						}
+						setStyleColor(chooser, gg.getGraphState().getTierStyle());
+						setGraphColor(gg, chooser.getColor());
 					}
 				}
 			}

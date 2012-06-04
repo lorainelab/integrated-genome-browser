@@ -7,28 +7,28 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.IGBConstants;
 
-public class ChangeBackgroundColorAction extends ChangeColorActionA {
+public class ChangeLabelColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
-	private static final ChangeBackgroundColorAction ACTION = new ChangeBackgroundColorAction();
+	private static final ChangeLabelColorAction ACTION = new ChangeLabelColorAction();
 
 	static{
 		GenericActionHolder.getInstance().addGenericAction(ACTION);
 	}
-	public static ChangeBackgroundColorAction getAction() {
+	public static ChangeLabelColorAction getAction() {
 		return ACTION;
 	}
 
-	public ChangeBackgroundColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeBGColorAction"), "16x16/actions/applications-graphics-5.png", "22x22/actions/applications-graphics-5.png");
+	public ChangeLabelColorAction() {
+		super(IGBConstants.BUNDLE.getString("changeLabelColorAction"), "16x16/actions/format-text-bold.png", "22x22/actions/format-text-bold.png");
 	}
 
 	@Override
 	protected void setChooserColor(JColorChooser chooser, ITrackStyleExtended style) {
-		chooser.setColor(style.getBackground());
+		chooser.setColor(style.getLabelForeground());
 	}
 
 	@Override
 	protected void setStyleColor(JColorChooser chooser, ITrackStyleExtended style) {
-		style.setBackground(chooser.getColor());
+		style.setLabelForeground(chooser.getColor());
 	}
 }

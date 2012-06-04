@@ -1,10 +1,14 @@
 package com.affymetrix.igb.action;
 
+import java.awt.Color;
+
+import javax.swing.JColorChooser;
+
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import java.awt.event.ActionEvent;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.shared.AbstractGraphGlyph;
 
 public class ChangeForegroundColorAction extends ChangeColorActionA {
 	private static final long serialVersionUID = 1L;
@@ -19,26 +23,22 @@ public class ChangeForegroundColorAction extends ChangeColorActionA {
 	}
 
 	public ChangeForegroundColorAction() {
-		super(IGBConstants.BUNDLE.getString("changeColorAction"), "16x16/categories/applications-graphics.png", "22x22/categories/applications-graphics.png");
+		super(IGBConstants.BUNDLE.getString("changeFGColorAction"), "16x16/categories/applications-graphics.png", "22x22/categories/applications-graphics.png");
 	}
 
 	@Override
-	public java.awt.Color getBackgroundColor(){
-		return DEFAULT_COLOR;
+	protected void setChooserColor(JColorChooser chooser, ITrackStyleExtended style) {
+		chooser.setColor(style.getForeground());
 	}
-	
+
 	@Override
-	public java.awt.Color getForegroundColor(){
-		if(getTierManager().getSelectedTiers().size() == 1){
-			return getTierManager().getSelectedTiers().get(0).getForegroundColor();
-		}
-		return DEFAULT_COLOR.brighter();
+	protected void setStyleColor(JColorChooser chooser, ITrackStyleExtended style) {
+		style.setForeground(chooser.getColor());
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		changeColor(getTierManager().getSelectedTierLabels(), true);
-		TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
+	protected void setGraphColor(AbstractGraphGlyph gg, Color color) {
+		gg.setColor(color);
 	}
+
 }

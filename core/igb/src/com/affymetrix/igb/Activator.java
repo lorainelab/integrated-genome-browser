@@ -267,6 +267,7 @@ public class Activator implements BundleActivator {
 		RepackAllTiersAction.getAction();
 		ChangeForegroundColorAction.getAction();
 		ChangeBackgroundColorAction.getAction();
+		ChangeLabelColorAction.getAction();
 		ShowStrandAction.getAction();
 		CollapseExpandAction.getAction();
 		ZoomInXAction.getAction();

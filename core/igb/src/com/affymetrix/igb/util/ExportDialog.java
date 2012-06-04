@@ -615,11 +615,9 @@ public class ExportDialog implements ExportConstants {
 						component.getWidth(), component.getHeight());
 				Graphics g = exportImage.createGraphics();
 				component.paintAll(g);
-
-				exportImage = GraphicsUtil.resizeImage(exportImage,
-						(int) imageInfo.getWidth(), (int) imageInfo.getHeight());
 			}
-
+			
+			exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
 			Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
 			while (iw.hasNext()) {
 				ImageWriter writer = iw.next();

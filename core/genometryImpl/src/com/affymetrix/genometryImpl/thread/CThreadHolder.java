@@ -70,6 +70,11 @@ public class CThreadHolder implements WaitHelperI {
 
 	public void notifyStartThread(CThreadWorker<?,?> worker) {
 		synchronized(thread2CThreadWorker) {
+			if (thread2CThreadWorker.get(Thread.currentThread()) != null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+					"Thread " + Thread.currentThread() + " already has " + thread2CThreadWorker.get(Thread.currentThread()) +
+					", and is starting " + worker);
+			}
 			thread2CThreadWorker.put(Thread.currentThread(), worker);
 		}
 		fireThreadEvent(worker, CThreadEvent.STARTED);

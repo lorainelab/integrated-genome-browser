@@ -215,7 +215,7 @@
         <Component class="javax.swing.JComboBox" name="nameSizeComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="tat.trackNameSizeComboBox.getModel()" type="code"/>
+              <Connection code="tat.styleP_trackNameSizeComboBox.getModel()" type="code"/>
             </Property>
           </Properties>
           <Events>
@@ -800,8 +800,8 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="selectAllB" min="-2" pref="156" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Component id="selectAllCB" min="-2" pref="156" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Component id="trackNameTextField" max="32767" attributes="0"/>
@@ -818,9 +818,9 @@
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="height_slider" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="selectAllB" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel8" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="trackNameTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="selectAllCB" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -844,30 +844,25 @@
             <Property name="text" type="java.lang.String" value="Height:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="selectAllB">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Lucida Grande" size="14" style="1"/>
-            </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="&quot;Select All   &quot;" type="code"/>
-            </Property>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="2"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectAllBMouseClicked"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.selectAllB"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JTextField" name="trackNameTextField">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackNameTextFieldActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.trackName"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="selectAllCB">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="tat.selectAllCBModel" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllCBActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tat.selectAllCB"/>
           </AuxValues>
         </Component>
       </SubComponents>

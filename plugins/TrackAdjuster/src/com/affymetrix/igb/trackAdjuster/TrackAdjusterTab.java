@@ -43,12 +43,13 @@ public final class TrackAdjusterTab
 
 	//System.out.println() statements do not show on the screen, they are not translated.
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("trackAdjuster");
+	private static final String SELECT_ALL_PROMPT = "Select All";
+	private static final String SELECT_ALL_SUFFIX = " tracks";
+	private static final String SELECT_ALL_ITEM = "";
+	private static final String SELECT_NONE_ITEM = "no";
 	private static TrackAdjusterTab singleton;
 	private static final Map<GraphType, String> graphType2ViewMode = new EnumMap<GraphType, String>(GraphType.class);
 	private static final String viewModePrefix = "viewmode_";
-	private final static int xoffset_pop = 0;
-	private final static int yoffset_pop = 30;
-	private final static JPopupMenu selectAllPopup = new JPopupMenu();
 
 	static {
 		graphType2ViewMode.put(GraphType.BAR_GRAPH, "bargraph");
@@ -164,7 +165,17 @@ public final class TrackAdjusterTab
 	public boolean is_listening = true; // used to turn on and off listening to GUI events
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
-	public JRPButton selectAllB = new JRPButton("TrackAdjusterTab_selectAllB");
+	private static final String[] SELECT_ALL_ITEMS = new String[FileTypeCategory.values().length + 3];
+	static {
+		SELECT_ALL_ITEMS[0] = SELECT_ALL_PROMPT;
+		SELECT_ALL_ITEMS[1] = SELECT_ALL_ITEM + SELECT_ALL_SUFFIX;
+		SELECT_ALL_ITEMS[2] = SELECT_NONE_ITEM + SELECT_ALL_SUFFIX;
+		for (int i = 0; i < FileTypeCategory.values().length; i++) {
+			SELECT_ALL_ITEMS[i + 3] = FileTypeCategory.values()[i].name() + SELECT_ALL_SUFFIX;
+		}
+	}
+	public ComboBoxModel selectAllCBModel = new DefaultComboBoxModel(SELECT_ALL_ITEMS);
+	public JRPComboBox selectAllCB = new JRPComboBox("TrackAdjusterTab_selectAllCB");
 	public JRPRadioButton graphP_mmavgB = new JRPRadioButton("TrackAdjusterTab_graphP_mmavgB", BUNDLE.getString("minMaxAvgButton"));
 	public JRPRadioButton graphP_lineB = new JRPRadioButton("TrackAdjusterTab_graphP_lineB", BUNDLE.getString("lineButton"));
 	public JRPRadioButton graphP_barB = new JRPRadioButton("TrackAdjusterTab_graphP_barB", BUNDLE.getString("barButton"));
@@ -287,12 +298,6 @@ public final class TrackAdjusterTab
 		TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
 		igbService.addListSelectionListener(this);
 
-		for (FileTypeCategory category : FileTypeCategory.values()) {
-			JRPMenuItem item = new JRPMenuItem("Track_Adjuster_Select_Menu_"
-					+ category.name(), SelectAllAction.getAction(category));
-			selectAllPopup.add(item);
-		}
-
 		floatCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (floatCB.isSelected()) {
@@ -325,14 +330,22 @@ public final class TrackAdjusterTab
 		});
 	}
 
-	public void selectAllBMouseClicked(JComponent c, MouseEvent e) {
-		if (c.getWidth() * 0.75 - e.getX() < 0) {
-			if (selectAllPopup.getComponentCount() > 0) {
-				selectAllPopup.show(c, xoffset_pop, yoffset_pop);
-			}
-		} else {
+	public void selectAllCBSelected() {
+		String displayItem = (String)selectAllCB.getSelectedItem();
+		if (SELECT_ALL_PROMPT.equals(displayItem)) {
+			return;
+		}
+		String item = displayItem.substring(0, displayItem.length() - SELECT_ALL_SUFFIX.length());
+		if (SELECT_ALL_ITEM.equals(item)) {
 			SelectAllAction.getAction().execute();
 		}
+		else if (SELECT_NONE_ITEM.equals(item)) {
+			DeselectAllAction.getAction().execute();
+		}
+		else {
+			SelectAllAction.getAction(FileTypeCategory.valueOf(item)).execute();
+		}
+		selectAllCB.setSelectedIndex(0);
 	}
 
 	public boolean isTierGlyph(GlyphI glyph) {
@@ -427,7 +440,6 @@ public final class TrackAdjusterTab
 			height_slider.setValue(0);
 			disableDisplayButtons(true, true);
 		}
-		selectAllB.setEnabled(select);
 		trackName.setEnabled(select);
 		height_slider.setEnabled(select);
 	}

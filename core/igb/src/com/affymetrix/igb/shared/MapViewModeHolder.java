@@ -112,16 +112,24 @@ public class MapViewModeHolder {
 	 * @param uri - the uri of the data source of the track
 	 * @return the factory to use
 	 */
-	public MapViewGlyphFactoryI getAutoloadFactory(String uri) {
+	public MapViewGlyphFactoryI getAutoloadFactory(ITrackStyleExtended style) {
 		FileTypeCategory category = null;
-		FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(uri);
+		FileTypeHandler handler = null;
+		if(style.getFileType() != null && style.getFileType().length() > 0){
+			handler = FileTypeHolder.getInstance().getFileTypeHandler(style.getFileType());
+		}
+		
+		if(handler == null){
+			handler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(style.getMethodName());
+		}
+		
 		if (handler != null) {
 			category = handler.getFileTypeCategory();
 		}
 		if (category != null) {
 			for (Entry<String, MapViewGlyphFactoryI> entry : view2Factory.entrySet()) {
 				MapViewGlyphFactoryI emv = entry.getValue();
-				if (emv.isCategorySupported(category) && emv.canAutoLoad(uri)) {
+				if (emv.isCategorySupported(category) && emv.canAutoLoad(style.getMethodName())) {
 					return emv;
 				}
 			}

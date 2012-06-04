@@ -398,7 +398,7 @@ public class TrackView {
 
 	private void addTierFor(ITrackStyleExtended style, SeqMapView gviewer, SeqSymmetry requestSym, boolean setViewMode) {
 		if(setViewMode){
-			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
+			MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style);
 			String viewmode = factory.getName();
 			style.setViewMode(viewmode);
 		}

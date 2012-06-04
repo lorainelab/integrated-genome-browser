@@ -894,7 +894,7 @@ public class SeqMapView extends JPanel
 	 * @return a tier
 	 */
 	public TierGlyph getTrack(SeqSymmetry sym, ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
-		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style.getMethodName());
+		MapViewGlyphFactoryI factory = MapViewModeHolder.getInstance().getAutoloadFactory(style);
 		return getTrack(sym, style, tier_direction, factory);
 	}
 

@@ -1,11 +1,14 @@
 
-package com.affymetrix.igb.action;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.TierGlyph;
-import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.action.SeqMapViewActionA;
+
 import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,11 +26,21 @@ public class TransformAction extends SeqMapViewActionA {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		for(TierGlyph tg : getTierManager().getSelectedTiers()){
+		List<TierGlyph> trackList;
+		if (e != null && e.getSource() instanceof TrackListProvider) {
+			trackList = ((TrackListProvider)e.getSource()).getTrackList();
+		}
+		else {
+			trackList = getTierManager().getSelectedTiers();
+		}
+		for(TierGlyph tg : trackList){
 			final ITrackStyleExtended style = tg.getAnnotStyle();
-			if (style instanceof TrackStyle) {
+			try {
 				style.setOperator(operator.getName());
 				refreshMap(false, false);
+			}
+			catch (Exception ex) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Transform error " + ex.getMessage());
 			}
 		}
 	}

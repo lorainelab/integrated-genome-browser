@@ -11,6 +11,7 @@ package com.affymetrix.igb.trackAdjuster;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.operator.DepthOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -49,7 +50,6 @@ public final class TrackAdjusterTab
 	private static final String SELECT_NONE_ITEM = "no";
 	private static TrackAdjusterTab singleton;
 	private static final Map<GraphType, String> graphType2ViewMode = new EnumMap<GraphType, String>(GraphType.class);
-	private static final String viewModePrefix = "viewmode_";
 
 	static {
 		graphType2ViewMode.put(GraphType.BAR_GRAPH, "bargraph");
@@ -66,102 +66,13 @@ public final class TrackAdjusterTab
 		ANNOTATION,
 		GRAPH,
 		AUTO,
-		SEQUENCE,
-		PLUGIN,
-		NONE;
+		PLUGIN;
 	}
 
-	enum ViewMode {
-
-		//Graphs
-		viewmode_mismatch(viewModePrefix + "mismatch"),
-		viewmode_bargraph(viewModePrefix + "bargraph"),
-		viewmode_fillbargraph(viewModePrefix + "fillbargraph"),
-		viewmode_heatmapgraph(viewModePrefix + "heatmapgraph"),
-		viewmode_linegraph(viewModePrefix + "linegraph"),
-		viewmode_minmaxavggraph(viewModePrefix + "minmaxavggraph"),
-		viewmode_stairstepgraph(viewModePrefix + "stairstepgraph"),
-		viewmode_dotgraph(viewModePrefix + "dotgraph"),
-		viewmode_scored_bargraph(viewModePrefix + "scored_bargraph"),
-		viewmode_scored_dotgraph(viewModePrefix + "scored_dotgraph"),
-		viewmode_scored_fillbargraph(viewModePrefix + "scored_fillbargraph"),
-		viewmode_scored_heatmapgraph(viewModePrefix + "scored_heatmapgraph"),
-		viewmode_scored_linegraph(viewModePrefix + "scored_linegraph"),
-		viewmode_scored_minmaxavggraph(viewModePrefix + "scored_minmaxavggraph"),
-		viewmode_scored_stairstepgraph(viewModePrefix + "scored_stairstepgraph"),
-		//Annotations
-		viewmode_annotation(viewModePrefix + "annotation"),
-		viewmode_alignment(viewModePrefix + "alignment"),
-		viewmode_probeset(viewModePrefix + "probeset"),
-		viewmode_sequence(viewModePrefix + "sequence"),
-		//Auto 
-		viewmode_semantic_zoom_annotation(viewModePrefix + "semantic_zoom_annotation"),
-		viewmode_semantic_zoom_alignment(viewModePrefix + "semantic_zoom_alignment"),
-		viewmode_bai_semantic_zoom(viewModePrefix + "bai_semantic_zoom"),
-		viewmode_tbi_semantic_zoom(viewModePrefix + "tbi_semantic_zoom"),
-		//None
-		viewmode_unloaded("unloaded");
-		String stringValue;
-		final static Map<String, ViewMode> string2ViewMode;
-
-		static {
-			string2ViewMode = new HashMap<String, ViewMode>();
-			for (ViewMode type : values()) {
-				string2ViewMode.put(type.stringValue, type);
-			}
-		}
-
-		ViewMode(String stringValue) {
-			this.stringValue = stringValue;
-		}
-
-		static ViewMode getViewMode(String stringValue) {
-			ViewMode nr = string2ViewMode.get(stringValue);
-			if (nr != null) {
-				return nr;
-			}
-			return null;
-		}
-
-		@Override
-		public String toString() {
-			return stringValue;
-		}
-	}
-	private static final Map<ViewMode, DisplayType> viewMode2DisplayType = new EnumMap<ViewMode, DisplayType>(ViewMode.class);
-
-	static {
-		//Graphs
-		viewMode2DisplayType.put(ViewMode.viewmode_mismatch, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_bargraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_dotgraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_fillbargraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_heatmapgraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_linegraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_minmaxavggraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_scored_stairstepgraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_bargraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_fillbargraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_heatmapgraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_linegraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_minmaxavggraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_stairstepgraph, DisplayType.GRAPH);
-		viewMode2DisplayType.put(ViewMode.viewmode_dotgraph, DisplayType.GRAPH);
-		//Annotations
-		viewMode2DisplayType.put(ViewMode.viewmode_annotation, DisplayType.ANNOTATION);
-		viewMode2DisplayType.put(ViewMode.viewmode_probeset, DisplayType.ANNOTATION);
-		viewMode2DisplayType.put(ViewMode.viewmode_alignment, DisplayType.ANNOTATION);
-		viewMode2DisplayType.put(ViewMode.viewmode_sequence, DisplayType.ANNOTATION);
-		//Auto
-		viewMode2DisplayType.put(ViewMode.viewmode_semantic_zoom_annotation, DisplayType.AUTO);
-		viewMode2DisplayType.put(ViewMode.viewmode_semantic_zoom_alignment, DisplayType.AUTO);
-		viewMode2DisplayType.put(ViewMode.viewmode_bai_semantic_zoom, DisplayType.AUTO);
-		viewMode2DisplayType.put(ViewMode.viewmode_tbi_semantic_zoom, DisplayType.AUTO);
-		//NONE
-		viewMode2DisplayType.put(ViewMode.viewmode_unloaded, DisplayType.NONE);
-	}
 //	private BioSeq current_seq;
 	private GenometryModel gmodel;
+	private GenericAction annotationDepthTransformAction = new TransformAction(new DepthOperator(FileTypeCategory.Annotation));
+	private GenericAction alignmentDepthTransformAction = new TransformAction(new DepthOperator(FileTypeCategory.Alignment));
 	public boolean is_listening = true; // used to turn on and off listening to GUI events
 	public GraphVisibleBoundsSetter vis_bounds_setter;
 	boolean DEBUG_EVENTS = false;
@@ -409,27 +320,38 @@ public final class TrackAdjusterTab
 		// track name, view mode
 		int selectedTrackCount = selectedTiers.size();
 		boolean select = selectedTrackCount > 0;
+		annotationDisplayAsB.setSelected(false);
+		graphDisplayAsB.setSelected(false);
+		autoDisplayAsB.setSelected(false);
+		pluginDisplayAsB.setSelected(false);
 		if (selectedTrackCount == 1) {
 			ITrackStyleExtended style = selectedTiers.get(0).getAnnotStyle();
+			RootSeqSymmetry rootSym = (RootSeqSymmetry)selectedTiers.get(0).getInfo();
+			FileTypeCategory category = rootSym.getCategory();
 			if (style == null) {
-				disableDisplayButtons(true, true);
 				return;
 			}
-			MapViewGlyphFactoryI mode = MapViewModeHolder.getInstance().getViewFactory(style.getViewMode());
-			String viewModeName = viewModePrefix + mode.getName();
-			ViewMode viewMode = ViewMode.string2ViewMode.get(viewModeName);
-			DisplayType type = viewMode2DisplayType.get(viewMode);
-			if (type == null) {
-				//Should fix a reported bug, but could not reproduce to test.
-				disableDisplayButtons(true, true);
-				return;
-			}
-			setDisplayTypeButton(type);
-			setEnabledDisplayButtonsBySelection();
 			trackName.setText(style.getTrackName());
+			String viewmode = style.getViewMode();
+			if ("annotation".equals(viewmode) || "alignment".equals(viewmode)) {
+				annotationDisplayAsB.setSelected(true);
+			}
+			else if (viewmode.indexOf("semantic") > -1) {
+				autoDisplayAsB.setSelected(true);
+			}
+			else if (graphType2ViewMode.values().contains(viewmode)) {
+				graphDisplayAsB.setSelected(true);
+			}
+			annotationDisplayAsB.setEnabled(category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
+//			graphDisplayAsB.setEnabled(category == FileTypeCategory.Graph || category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
+			graphDisplayAsB.setEnabled(category == FileTypeCategory.Graph);
+			autoDisplayAsB.setEnabled(category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment);
 		}
 		else {
 			trackName.setText("");
+			annotationDisplayAsB.setEnabled(false);
+			graphDisplayAsB.setEnabled(false);
+			autoDisplayAsB.setEnabled(false);
 		}
 
 		if (select) {
@@ -438,10 +360,10 @@ public final class TrackAdjusterTab
 		}
 		else {
 			height_slider.setValue(0);
-			disableDisplayButtons(true, true);
 		}
 		trackName.setEnabled(select);
 		height_slider.setEnabled(select);
+		pluginDisplayAsB.setEnabled(false);
 	}
 
 	private void resetStylePanel() {
@@ -588,86 +510,6 @@ public final class TrackAdjusterTab
 			graphP_labelCB.setSelected(all_show_label);
 		}
 
-	}
-
-	private void setDisplayTypeButton(DisplayType type) {
-		if (type == null) {
-			return;
-		}
-		switch (type) {
-			case ANNOTATION:
-				annotationDisplayAsB.setSelected(true);
-				break;
-			case GRAPH:
-				graphDisplayAsB.setSelected(true);
-				break;
-			case AUTO:
-				autoDisplayAsB.setSelected(true);
-				break;
-			case PLUGIN:
-				pluginDisplayAsB.setSelected(true);
-				break;
-			case NONE:
-				disableDisplayButtons(true, true);
-				break;
-			default:
-				//Should never happen
-				disableDisplayButtons(true, true);
-				break;
-		}
-	}
-
-	private void setEnabledDisplayButtonsBySelection() {
-		disableDisplayButtons(false, true);
-
-		for (TierGlyph tier : selectedTiers) {
-			final RootSeqSymmetry rootSym = (RootSeqSymmetry) tier.getInfo();
-			final ITrackStyleExtended style = tier.getAnnotStyle();
-			if (style != null && MapViewModeHolder.getInstance() != null && rootSym != null) {
-				for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-					String viewModeName = "viewmode_" + mode.getName();
-					ViewMode viewMode = ViewMode.string2ViewMode.get(viewModeName);
-					switch (viewMode2DisplayType.get(viewMode)) {
-						case ANNOTATION:
-							annotationDisplayAsB.setEnabled(true);
-							break;
-						case GRAPH:
-							graphDisplayAsB.setEnabled(true);
-							//TO DO: Enable graph panel and sliders
-							//Reselection is currently required, but this is not acceptable for the future
-							break;
-						case AUTO:
-							autoDisplayAsB.setEnabled(true);
-							break;
-						case PLUGIN:
-							pluginDisplayAsB.setEnabled(true);
-							break;
-						case NONE:
-							disableDisplayButtons(true, true);
-							break;
-						default:
-							//Should never happen
-							disableDisplayButtons(true, true);
-							break;
-					}
-				}
-			}
-		}
-	}
-
-	private void disableDisplayButtons(boolean select, boolean enable) {
-		if (select) {
-			annotationDisplayAsB.setSelected(false);
-			graphDisplayAsB.setSelected(false);
-			autoDisplayAsB.setSelected(false);
-			pluginDisplayAsB.setSelected(false);
-		}
-		if (enable) {
-			annotationDisplayAsB.setEnabled(false);
-			graphDisplayAsB.setEnabled(false);
-			autoDisplayAsB.setEnabled(false);
-			pluginDisplayAsB.setEnabled(false);
-		}
 	}
 
 	private void collectSymsAndGlyphs(List<RootSeqSymmetry> selected_syms, int symcount) {
@@ -972,22 +814,47 @@ public final class TrackAdjusterTab
 		for (GlyphI g : new CopyOnWriteArrayList<TierGlyph>(selectedTiers)) {
 			final TierGlyph tier = (TierGlyph) g;
 			final RootSeqSymmetry rootSym = (RootSeqSymmetry) tier.getInfo();
+			FileTypeCategory category = rootSym.getCategory();
 			final ITrackStyleExtended style = tier.getAnnotStyle();
 			final ITrackStyleExtended comboStyle = (tier.getViewModeGlyph() instanceof AbstractGraphGlyph)
 					? ((AbstractGraphGlyph) tier.getViewModeGlyph()).getGraphState().getComboStyle() : null;
-			for (final MapViewGlyphFactoryI mode : MapViewModeHolder.getInstance().getAllViewModesFor(rootSym.getCategory(), style.getMethodName())) {
-				String viewModeName = viewModePrefix + mode.getName();
-				ViewMode viewMode = ViewMode.string2ViewMode.get(viewModeName);
-				if (viewMode2DisplayType.get(viewMode).equals(displayType)) {
-					if (style.getSeparate() && !mode.supportsTwoTrack()) {
-						style.setSeparate(false);
+			MapViewGlyphFactoryI mode;
+			if (graphDisplayAsB.isSelected() && category == FileTypeCategory.Annotation) {
+				TrackListProvider tlp = new TrackListProvider() {
+					@Override
+					public List<TierGlyph> getTrackList() {
+						return Arrays.asList(new TierGlyph[]{tier});
 					}
-					igbService.changeViewMode(igbService.getSeqMapView(), style, mode.getName(), rootSym, comboStyle);
-					break;
-				}
+				};
+				ActionEvent ae = new ActionEvent(tlp, -1, null);
+				annotationDepthTransformAction.actionPerformed(ae);
+				continue;
 			}
+			if (graphDisplayAsB.isSelected() && category == FileTypeCategory.Alignment) {
+				TrackListProvider tlp = new TrackListProvider() {
+					@Override
+					public List<TierGlyph> getTrackList() {
+						return Arrays.asList(new TierGlyph[]{tier});
+					}
+				};
+				ActionEvent ae = new ActionEvent(tlp, -1, null);
+				alignmentDepthTransformAction.actionPerformed(ae);
+				continue;
+			}
+			if (autoDisplayAsB.isSelected() && category == FileTypeCategory.Annotation) {
+				mode = MapViewModeHolder.getInstance().getViewFactory("semantic_zoom_annotation");
+			}
+			else if (autoDisplayAsB.isSelected() && category == FileTypeCategory.Alignment) {
+				mode = MapViewModeHolder.getInstance().getViewFactory("semantic_zoom_alignment");
+			}
+			else {
+				mode = MapViewModeHolder.getInstance().getDefaultFactoryFor(category);
+			}
+			if (style.getSeparate() && !mode.supportsTwoTrack()) {
+				style.setSeparate(false);
+			}
+			igbService.changeViewMode(igbService.getSeqMapView(), style, mode.getName(), rootSym, comboStyle);
 		}
-
 		igbService.getSeqMapView().updatePanel(false, false);
 		is_listening = true;
 	}

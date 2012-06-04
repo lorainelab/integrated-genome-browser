@@ -62,7 +62,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 			gviewer.updatePanel(preserve_view_x, preserve_view_y);
 		} else {
 			// if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
-			handler.repackTheTiers(false, stretch_vertically);
+			getTierManager().repackTheTiers(false, stretch_vertically);
 		}
 	}
 }
